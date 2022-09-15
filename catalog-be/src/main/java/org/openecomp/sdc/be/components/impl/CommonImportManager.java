@@ -69,8 +69,7 @@ public class CommonImportManager {
     private final ModelOperation modelOperation;
 
     @Autowired
-    public CommonImportManager(final ComponentsUtils componentsUtils,
-                               final PropertyOperation propertyOperation,
+    public CommonImportManager(final ComponentsUtils componentsUtils, final PropertyOperation propertyOperation,
                                final ModelOperation modelOperation) {
         this.componentsUtils = componentsUtils;
         this.propertyOperation = propertyOperation;
@@ -509,8 +508,8 @@ public class CommonImportManager {
     }
 
     private <T extends ToscaTypeDataDefinition> T setNonToscaMetaDataOnType(Map<String, ToscaTypeMetadata> toscaTypeMetadata, T toscaTypeDefinition) {
-        String toscaType = toscaTypeDefinition.getType();
-        ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaType);
+        final String toscaType = toscaTypeDefinition.getType();
+        final ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaType);
         if (typeMetaData == null) {
             log.debug("failing while trying to associate metadata for type {}. type not exist", toscaType);
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
@@ -538,7 +537,7 @@ public class CommonImportManager {
     public void addTypesToDefaultImports(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
         modelOperation.addTypesToDefaultImports(elementTypeEnum, typesYaml, modelName);
     }
-    
+
     public void updateTypesInAdditionalTypesImport(final ElementTypeEnum elementTypeEnum, final String dataTypeYml, final String modelName) {
         modelOperation.updateTypesInAdditionalTypesImport(elementTypeEnum, dataTypeYml, modelName);
     }
@@ -547,8 +546,5 @@ public class CommonImportManager {
 
         T3 createElement(T1 firstArg, T2 secondArg);
     }
-
-
-
 
 }

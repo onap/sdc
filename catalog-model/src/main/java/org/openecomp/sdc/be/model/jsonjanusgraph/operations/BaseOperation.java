@@ -46,7 +46,6 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
@@ -597,7 +596,6 @@ public abstract class BaseOperation {
 
     public <T extends ToscaDataDefinition> StorageOperationStatus deleteToscaDataDeepElementsBlockOfToscaElement(String toscaElementUid,
                                                                                                                  EdgeLabelEnum edgeLabel,
-                                                                                                                 VertexTypeEnum vertexLabel,
                                                                                                                  String key) {
         StorageOperationStatus statusRes = null;
         Either<GraphVertex, JanusGraphOperationStatus> getToscaElementRes;
@@ -609,7 +607,7 @@ public abstract class BaseOperation {
             statusRes = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
         if (statusRes == null) {
-            statusRes = deleteToscaDataDeepElementsBlockToToscaElement(getToscaElementRes.left().value(), edgeLabel, vertexLabel, key);
+            statusRes = deleteToscaDataDeepElementsBlockToToscaElement(getToscaElementRes.left().value(), edgeLabel, key);
         }
         if (statusRes == null) {
             statusRes = StorageOperationStatus.OK;
@@ -619,7 +617,6 @@ public abstract class BaseOperation {
 
     public <T extends ToscaDataDefinition> StorageOperationStatus deleteToscaDataDeepElementsBlockToToscaElement(GraphVertex toscaElement,
                                                                                                                  EdgeLabelEnum edgeLabel,
-                                                                                                                 VertexTypeEnum vertexLabel,
                                                                                                                  String key) {
         StorageOperationStatus result = null;
         GraphVertex toscaDataVertex = null;
@@ -1081,10 +1078,9 @@ public abstract class BaseOperation {
      *
      * @param toscaElementUid
      * @param edgeLabel
-     * @param vertexLabel
      * @return
      */
-    public StorageOperationStatus removeToscaData(String toscaElementUid, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel) {
+    public StorageOperationStatus removeToscaData(String toscaElementUid, EdgeLabelEnum edgeLabel) {
         StorageOperationStatus statusRes = StorageOperationStatus.OK;
         Either<GraphVertex, JanusGraphOperationStatus> getToscaElementRes;
         getToscaElementRes = janusGraphDao.getVertexById(toscaElementUid, JsonParseFlagEnum.NoParse);
@@ -1095,7 +1091,7 @@ public abstract class BaseOperation {
             statusRes = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
         if (statusRes == StorageOperationStatus.OK) {
-            statusRes = removeToscaDataVertex(getToscaElementRes.left().value(), edgeLabel, vertexLabel);
+            statusRes = removeToscaDataVertex(getToscaElementRes.left().value(), edgeLabel);
         }
         return statusRes;
     }
@@ -1105,10 +1101,9 @@ public abstract class BaseOperation {
      *
      * @param toscaElement
      * @param edgeLabel
-     * @param vertexLabel
      * @return
      */
-    public StorageOperationStatus removeToscaDataVertex(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel) {
+    private StorageOperationStatus removeToscaDataVertex(GraphVertex toscaElement, EdgeLabelEnum edgeLabel) {
         StorageOperationStatus result = null;
         GraphVertex toscaDataVertex = null;
         Iterator<Edge> edges = null;
@@ -1208,7 +1203,7 @@ public abstract class BaseOperation {
             statusRes = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
         if (statusRes == StorageOperationStatus.OK) {
-            statusRes = deleteToscaDataElement(getToscaElementRes.left().value(), edgeLabel, vertexLabel, uniqueKey, mapKeyField);
+            statusRes = deleteToscaDataElement(getToscaElementRes.left().value(), edgeLabel, uniqueKey);
         }
         return statusRes;
     }
@@ -1218,14 +1213,12 @@ public abstract class BaseOperation {
      *
      * @param toscaElementUid
      * @param edgeLabel
-     * @param vertexLabel
      * @param uniqueKey
      * @param pathKeys
-     * @param mapKeyField
      * @return
      */
-    public StorageOperationStatus deleteToscaDataDeepElement(String toscaElementUid, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel,
-                                                             String uniqueKey, List<String> pathKeys, JsonPresentationFields mapKeyField) {
+    public StorageOperationStatus deleteToscaDataDeepElement(String toscaElementUid, EdgeLabelEnum edgeLabel,
+                                                             String uniqueKey, List<String> pathKeys) {
         StorageOperationStatus statusRes = StorageOperationStatus.OK;
         Either<GraphVertex, JanusGraphOperationStatus> getToscaElementRes;
         getToscaElementRes = janusGraphDao.getVertexById(toscaElementUid, JsonParseFlagEnum.NoParse);
@@ -1236,7 +1229,7 @@ public abstract class BaseOperation {
             statusRes = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
         if (statusRes == StorageOperationStatus.OK) {
-            statusRes = deleteToscaDataDeepElement(getToscaElementRes.left().value(), edgeLabel, vertexLabel, uniqueKey, pathKeys, mapKeyField);
+            statusRes = deleteToscaDataDeepElement(getToscaElementRes.left().value(), edgeLabel, uniqueKey, pathKeys);
         }
         return statusRes;
     }
@@ -1246,21 +1239,19 @@ public abstract class BaseOperation {
      *
      * @param toscaElement
      * @param edgeLabel
-     * @param vertexLabel
      * @param uniqueKey
      * @param pathKeys
-     * @param mapKeyField
      * @return
      */
-    public StorageOperationStatus deleteToscaDataDeepElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel,
-                                                             String uniqueKey, List<String> pathKeys, JsonPresentationFields mapKeyField) {
+    public StorageOperationStatus deleteToscaDataDeepElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel,
+                                                             String uniqueKey, List<String> pathKeys) {
         List<String> uniqueKeys = new ArrayList<>();
         uniqueKeys.add(uniqueKey);
-        return deleteToscaDataDeepElements(toscaElement, edgeLabel, vertexLabel, uniqueKeys, pathKeys, mapKeyField);
+        return deleteToscaDataDeepElements(toscaElement, edgeLabel, uniqueKeys, pathKeys);
     }
 
-    public StorageOperationStatus deleteToscaDataDeepElements(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel,
-                                                              List<String> uniqueKeys, List<String> pathKeys, JsonPresentationFields mapKeyField) {
+    public StorageOperationStatus deleteToscaDataDeepElements(GraphVertex toscaElement, EdgeLabelEnum edgeLabel,
+                                                              List<String> uniqueKeys, List<String> pathKeys) {
         StorageOperationStatus result = null;
         GraphVertex toscaDataVertex;
         Map<String, ToscaDataDefinition> existingToscaDataMap = null;
@@ -1304,13 +1295,11 @@ public abstract class BaseOperation {
      *
      * @param toscaElement
      * @param edgeLabel
-     * @param vertexLabel
      * @param uniqueKey
-     * @param mapKeyField
      * @return
      */
-    public StorageOperationStatus deleteToscaDataElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexLabel,
-                                                         String uniqueKey, JsonPresentationFields mapKeyField) {
+    public StorageOperationStatus deleteToscaDataElement(GraphVertex toscaElement, EdgeLabelEnum edgeLabel,
+                                                         String uniqueKey) {
         List<String> uniqueKeys = new ArrayList<>();
         uniqueKeys.add(uniqueKey);
         return deleteToscaDataElements(toscaElement, edgeLabel, uniqueKeys);
@@ -1470,8 +1459,7 @@ public abstract class BaseOperation {
     }
 
     protected GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDataDefinition group,
-                                                                           ComponentInstanceDataDefinition componentInstance,
-                                                                           Map<String, ArtifactDataDefinition> instDeplArtifMap) {
+                                                                           ComponentInstanceDataDefinition componentInstance) {
         String componentInstanceName = componentInstance.getName();
         Long creationDate = System.currentTimeMillis();
         GroupInstanceDataDefinition groupInstance = new GroupInstanceDataDefinition();
@@ -1485,7 +1473,7 @@ public abstract class BaseOperation {
         groupInstance.setGroupName(group.getName());
         groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
         groupInstance
-            .setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
+            .setUniqueId(UniqueIdBuilder.buildResourceInstanceUniqueId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
         groupInstance.setArtifacts(group.getArtifacts());
         groupInstance.setArtifactsUuid(group.getArtifactsUuid());
         groupInstance.setProperties(group.getProperties());

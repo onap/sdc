@@ -419,8 +419,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 List<String> uniqueKeys = new ArrayList<>(i.getValue().getMapToscaDataDefinition().keySet());
                 List<String> pathKeys = new ArrayList<>();
                 pathKeys.add(i.getKey());
-                StorageOperationStatus status = deleteToscaDataDeepElements(nodeTypeVertex, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS,
-                    uniqueKeys, pathKeys, JsonPresentationFields.NAME);
+                StorageOperationStatus status = deleteToscaDataDeepElements(nodeTypeVertex, EdgeLabelEnum.INST_INPUTS,
+                    uniqueKeys, pathKeys);
                 if (status != StorageOperationStatus.OK) {
                     return;
                 }
@@ -1576,7 +1576,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     public StorageOperationStatus removePolicyFromToscaElement(GraphVertex componentV, String policyId) {
-        return deleteToscaDataElement(componentV, EdgeLabelEnum.POLICIES, VertexTypeEnum.POLICIES, policyId, JsonPresentationFields.UNIQUE_ID);
+        return deleteToscaDataElement(componentV, EdgeLabelEnum.POLICIES, policyId);
     }
 
     public StorageOperationStatus updateGroupOfToscaElement(GraphVertex componentV, GroupDefinition groupDefinition) {

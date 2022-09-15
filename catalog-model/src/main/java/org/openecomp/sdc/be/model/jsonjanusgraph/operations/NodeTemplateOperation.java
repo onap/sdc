@@ -154,7 +154,7 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     public static String createCapPropertyKey(String key, String instanceId) {
-        StringBuffer sb = new StringBuffer(instanceId);
+        StringBuilder sb = new StringBuilder(instanceId);
         sb.append(ModelConverter.CAP_PROP_DELIM).append(instanceId).append(ModelConverter.CAP_PROP_DELIM).append(key);
         return sb.toString();
     }
@@ -189,7 +189,7 @@ public class NodeTemplateOperation extends BaseOperation {
             componentInstanceData = buildComponentInstanceDataDefinition(componentInstance, container.getUniqueId(),
                 newInstanceNameRes.left().value(), true, originToscaElement);
             addComponentInstanceRes = addComponentInstanceToTopologyTemplate(container, originToscaElement, componentInstanceData,
-                metadataVertex.left().value(), allowDeleted, user);
+                metadataVertex.left().value(), allowDeleted);
             if (addComponentInstanceRes.isRight()) {
                 StorageOperationStatus status = addComponentInstanceRes.right().value();
                 if (status == StorageOperationStatus.NOT_FOUND) {
@@ -240,7 +240,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 : calcCap.get(componentInstanceData.getUniqueId());
         /******** capability ****************************/
         StorageOperationStatus status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(),
-            EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES, componentInstanceData.getUniqueId());
+            EdgeLabelEnum.CALCULATED_CAPABILITIES, componentInstanceData.getUniqueId());
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty  for instance {} in container {}. error {] ",
                 componentInstanceData.getUniqueId(), updatedContainer.getUniqueId(), status);
@@ -263,7 +263,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
             /******** capability property ****************************/
             status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
-                VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceData.getUniqueId());
+                componentInstanceData.getUniqueId());
             if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                     "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ",
@@ -302,7 +302,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 calcReg == null || !calcReg.containsKey(componentInstanceData.getUniqueId()) ? new MapListRequirementDataDefinition()
                     : calcReg.get(componentInstanceData.getUniqueId());
             status = deleteToscaDataDeepElementsBlockOfToscaElement(updatedContainer.getUniqueId(), EdgeLabelEnum.CALCULATED_REQUIREMENTS,
-                VertexTypeEnum.CALCULATED_REQUIREMENTS, componentInstanceData.getUniqueId());
+                componentInstanceData.getUniqueId());
             if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
                 CommonUtility
                     .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove calculated Requirements for instance {} in container {}. error {] ",
@@ -372,7 +372,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 .getVertexById(updatedContainer.getUniqueId(), JsonParseFlagEnum.NoParse);
             if (getToscaElementRes.isLeft()) {
                 deleteToscaDataDeepElementsBlockToToscaElement(getToscaElementRes.left().value(), EdgeLabelEnum.INST_PROPERTIES,
-                    VertexTypeEnum.INST_PROPERTIES, componentInstance.getUniqueId());
+                    componentInstance.getUniqueId());
             }
             StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(updatedContainer.getUniqueId(),
                 EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, instProperties,
@@ -439,8 +439,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     public Either<TopologyTemplate, StorageOperationStatus> addComponentInstanceToTopologyTemplate(
         TopologyTemplate container, ToscaElement originToscaElement,
-        ComponentInstanceDataDefinition componentInstance, GraphVertex metadataVertex, boolean allowDeleted,
-        User user) {
+        ComponentInstanceDataDefinition componentInstance, GraphVertex metadataVertex, boolean allowDeleted) {
 
         Either<TopologyTemplate, StorageOperationStatus> result = null;
         Either<ToscaElement, StorageOperationStatus> updateContainerComponentRes = null;
@@ -728,14 +727,14 @@ public class NodeTemplateOperation extends BaseOperation {
 
     private StorageOperationStatus deleteComponentInstanceToscaDataFromContainerComponent(GraphVertex containerV, String componentInstanceId) {
         StorageOperationStatus status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES,
-            VertexTypeEnum.CALCULATED_CAPABILITIES, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty  for instance {} in container {}. error {] ",
                 componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
-            VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                 "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ", componentInstanceId,
@@ -743,7 +742,7 @@ public class NodeTemplateOperation extends BaseOperation {
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS,
-            VertexTypeEnum.CALCULATED_REQUIREMENTS, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
                 .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove calculated requirement  for instance {} in container {}. error {] ",
@@ -751,7 +750,7 @@ public class NodeTemplateOperation extends BaseOperation {
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES,
-            VertexTypeEnum.FULLFILLED_CAPABILITIES, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
                 .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove fullfilled capabilities  for instance {} in container {}. error {] ",
@@ -759,35 +758,35 @@ public class NodeTemplateOperation extends BaseOperation {
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS,
-            VertexTypeEnum.FULLFILLED_REQUIREMENTS, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
                 .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove fullfilled requirement  for instance {} in container {}. error {] ",
                     componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_ATTRIBUTES,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove attributes for instance {} in container {}. error {] ",
                 componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_PROPERTIES,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove properties for instance {} in container {}. error {] ",
                 componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_INPUTS,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove instance inputs  for instance {} in container {}. error {] ",
                 componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_GROUPS,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
@@ -796,21 +795,21 @@ public class NodeTemplateOperation extends BaseOperation {
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS,
-            VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
                 .addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove instance deployment artifacts  for instance {} in container {}. error {] ",
                     componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INSTANCE_ARTIFACTS, VertexTypeEnum.INSTANCE_ARTIFACTS,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INSTANCE_ARTIFACTS,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to remove instance artifacts  for instance {} in container {}. error {] ",
                 componentInstanceId, containerV.getUniqueId(), status);
             return status;
         }
-        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.EXTERNAL_REFS, VertexTypeEnum.EXTERNAL_REF,
+        status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.EXTERNAL_REFS,
             componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
@@ -819,7 +818,7 @@ public class NodeTemplateOperation extends BaseOperation {
             return status;
         }
         status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_INTERFACES,
-            VertexTypeEnum.INST_INTERFACES, componentInstanceId);
+            componentInstanceId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                 "Failed to remove service instance interfaces  for instance {} in container {}. " +
@@ -1191,7 +1190,10 @@ public class NodeTemplateOperation extends BaseOperation {
 
         listRequirementDataDefinition.getListToscaDataDefinition().stream()
             .filter(e -> requirementDataDefinition.getOwnerId().equals(e.getOwnerId()) && requirementDataDefinition.getName().equals(e.getName()))
-            .forEach(r -> {r.setExternal(requirementDataDefinition.isExternal()); r.setExternalName(requirementDataDefinition.getExternalName());});
+            .forEach(r -> {
+                r.setExternal(requirementDataDefinition.isExternal());
+                r.setExternalName(requirementDataDefinition.getExternalName());
+            });
 
         return updateCalculatedReqOnGraph(componentId, containerV, existingReqs);
     }
@@ -1474,7 +1476,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 Optional<GroupDefinition> groupOptional = groups.stream().filter(g -> g.getUniqueId().equals(groupArtifacts.getKey())).findFirst();
                 if (groupOptional.isPresent()) {
                     GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition((GroupDataDefinition) groupOptional.get(),
-                        (ComponentInstanceDataDefinition) componentInstance, null);
+                        (ComponentInstanceDataDefinition) componentInstance);
                     groupInstance.setGroupInstanceArtifacts(
                         groupArtifacts.getValue().stream().map(ArtifactDataDefinition::getUniqueId).collect(Collectors.toList()));
                     groupInstance.setGroupInstanceArtifactsUuid(
@@ -1522,7 +1524,7 @@ public class NodeTemplateOperation extends BaseOperation {
         dataDefinition.setIcon(resourceInstance.getIcon());
         if (generateUid) {
             dataDefinition.setUniqueId(
-                UniqueIdBuilder.buildResourceInstanceUniuqeId(containerComponentId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
+                UniqueIdBuilder.buildResourceInstanceUniqueId(containerComponentId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
             resourceInstance.setUniqueId(dataDefinition.getUniqueId());
         }
         if (StringUtils.isEmpty(dataDefinition.getComponentVersion()) && originToscaElement != null) {
@@ -1560,17 +1562,17 @@ public class NodeTemplateOperation extends BaseOperation {
 
     private String buildComponentInstanceName(String instanceSuffixNumber, String instanceName) {
         String delimiter = ConfigurationManager.getConfigurationManager().getConfiguration().getComponentInstanceCounterDelimiter();
-        if(delimiter == null){
+        if (delimiter == null) {
             delimiter = " ";
         }
         return instanceName + delimiter + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
     }
 
-    public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(Component component, String componentId,
+    public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String componentId,
                                                                                                   RequirementCapabilityRelDef relation) {
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         relations.add(relation);
-        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances = associateResourceInstances(component,
+        Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances = associateResourceInstances(
             componentId, relations);
         if (associateResourceInstances.isRight()) {
             return Either.right(associateResourceInstances.right().value());
@@ -1580,7 +1582,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     @SuppressWarnings({"unchecked"})
     public <T extends ToscaDataDefinition> Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances(
-        Component component, String componentId, List<RequirementCapabilityRelDef> relations) {
+        String componentId, List<RequirementCapabilityRelDef> relations) {
         Either<GraphVertex, JanusGraphOperationStatus> containerVEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll);
         if (containerVEither.isRight()) {
             JanusGraphOperationStatus error = containerVEither.right().value();
@@ -2409,7 +2411,7 @@ public class NodeTemplateOperation extends BaseOperation {
     private RelationshipInstDataDefinition buildRelationshipInstData(String fromResInstanceUid, String toInstId, RelationshipInfo relationPair,
                                                                      boolean originUI) {
         RelationshipInstDataDefinition relationshipInstData = new RelationshipInstDataDefinition();
-        relationshipInstData.setUniqueId(UniqueIdBuilder.buildRelationsipInstInstanceUid(fromResInstanceUid, toInstId));
+        relationshipInstData.setUniqueId(UniqueIdBuilder.buildRelationshipInstInstanceUid());
         relationshipInstData.setType(relationPair.getRelationship().getType());
         Long creationDate = System.currentTimeMillis();
         relationshipInstData.setCreationTime(creationDate);

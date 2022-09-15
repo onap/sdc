@@ -44,7 +44,6 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
@@ -55,7 +54,6 @@ import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -92,7 +90,6 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
@@ -684,7 +681,7 @@ public class ToscaOperationFacade {
     public Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> associateResourceInstances(Component component, String componentId,
                                                                                                         List<RequirementCapabilityRelDef> relations) {
         Either<List<RequirementCapabilityRelDef>, StorageOperationStatus> reqAndCapListEither = nodeTemplateOperation
-            .associateResourceInstances(component, componentId, relations);
+            .associateResourceInstances(componentId, relations);
         if (component != null) {
             updateInstancesCapAndReqOnComponentFromDB(component);
         }
@@ -1347,7 +1344,6 @@ public class ToscaOperationFacade {
                     maxCounter = currCounter;
                 }
             } catch (NumberFormatException e) {
-                continue;
             }
         }
         return currCounter == null ? null : maxCounter;
@@ -1355,7 +1351,7 @@ public class ToscaOperationFacade {
 
     public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(Component component, String componentId,
                                                                                                   RequirementCapabilityRelDef requirementDef) {
-        return nodeTemplateOperation.associateResourceInstances(component, componentId, requirementDef);
+        return nodeTemplateOperation.associateResourceInstances(componentId, requirementDef);
     }
 
     public Either<List<InputDefinition>, StorageOperationStatus> createAndAssociateInputs(Map<String, InputDefinition> inputs, String componentId) {
@@ -3172,7 +3168,7 @@ public class ToscaOperationFacade {
                                                                                                                String componentInstanceId) {
         String uniqueId = componentInstance.getUniqueId();
         StorageOperationStatus status = nodeTemplateOperation
-            .deleteToscaDataDeepElementsBlockOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS,
+            .deleteToscaDataDeepElementsBlockOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_GROUPS,
                 uniqueId);
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             CommonUtility
@@ -3335,7 +3331,7 @@ public class ToscaOperationFacade {
                                                                                        final Component component) {
 
         final boolean match = component.getInterfaces().keySet().stream().anyMatch(s -> s.equals(interfaceName));
-        StorageOperationStatus status = StorageOperationStatus.OK;
+        StorageOperationStatus status;
         final ToscaElementOperation toscaElementOperation = getToscaElementOperation(component);
         if (match) {
             status = toscaElementOperation.updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.INTERFACE_ARTIFACTS,
@@ -3382,14 +3378,14 @@ public class ToscaOperationFacade {
 
     public StorageOperationStatus deleteAllCalculatedCapabilitiesRequirements(String topologyTemplateId) {
         StorageOperationStatus status = topologyTemplateOperation
-            .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_CAPABILITIES, VertexTypeEnum.CALCULATED_CAPABILITIES);
+            .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (status == StorageOperationStatus.OK) {
             status = topologyTemplateOperation
-                .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS);
+                .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
         }
         if (status == StorageOperationStatus.OK) {
             status = topologyTemplateOperation
-                .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES);
+                .removeToscaData(topologyTemplateId, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES);
         }
         return status;
     }

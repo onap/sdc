@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Model;
@@ -88,7 +87,6 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
     public static final String VERSION_DELIMITER = ".";
     public static final String VERSION_DELIMITER_REGEXP = "\\.";
-    private static final String FAILED_TO_DELETE_LAST_STATE_EDGE_STATUS_IS = "Failed to delete last state edge. Status is {}. ";
     private static final String FAILED_TO_GET_VERTICES = "Failed to get vertices by id {}. Status is {}. ";
     private static final Logger log = Logger.getLogger(ToscaElementLifecycleOperation.class);
     private final ModelOperation modelOperation;
@@ -132,7 +130,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         try {
             return janusGraphDao.getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForCheckin(toscaElementId, modifierId, ownerId))
                 .right().map(status -> handleFailureToPrepareParameters(status, toscaElementId)).left().bind(
-                    verticesMap -> checkinToscaELement(currState, verticesMap.get(toscaElementId), verticesMap.get(ownerId),
+                    verticesMap -> checkinToscaELement(verticesMap.get(toscaElementId), verticesMap.get(ownerId),
                         verticesMap.get(modifierId), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN).left().bind(checkinResult -> {
                         //We retrieve the operation
                         ToscaElementOperation operation = getToscaElementOperation(verticesMap.get(toscaElementId).getLabel());
@@ -236,9 +234,10 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId, String model) {
         try {
             return janusGraphDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata).right().map(errorStatus -> {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
-                return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus);
-            }).left().bind(this::retrieveAndUpdatePreviousVersion).left().bind(tuple -> updateEdgeToCatalogRootAndReturnPreVersionElement(tuple, model));
+                    CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
+                    return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus);
+                }).left().bind(this::retrieveAndUpdatePreviousVersion).left()
+                .bind(tuple -> updateEdgeToCatalogRootAndReturnPreVersionElement(tuple, model));
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during undo checkout tosca element {}. {}", toscaElementId,
                 e.getMessage());
@@ -324,7 +323,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
     private Either<ToscaElement, StorageOperationStatus> handleRelationsBeforeCertifyingAndProcessClone(GraphVertex toscaElement,
                                                                                                         GraphVertex modifier, Integer majorVersion) {
-        StorageOperationStatus status = handleRelationsOfPreviousToscaElementBeforeCertifying(toscaElement, modifier, majorVersion);
+        StorageOperationStatus status = handleRelationsOfPreviousToscaElementBeforeCertifying(toscaElement, majorVersion);
         if (status != StorageOperationStatus.OK) {
             return Either.right(logDebugMessageAndReturnStorageOperationStatus(status,
                 "Failed to handle relations of previous tosca element before certifying {}. Status is {}. ", toscaElement.getUniqueId(), status));
@@ -384,7 +383,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return result;
     }
 
-    private StorageOperationStatus handleRelationsOfPreviousToscaElementBeforeCertifying(GraphVertex toscaElement, GraphVertex modifier,
+    private StorageOperationStatus handleRelationsOfPreviousToscaElementBeforeCertifying(GraphVertex toscaElement,
                                                                                          Integer majorVersion) {
         StorageOperationStatus result = null;
         if (majorVersion > 0) {
@@ -440,10 +439,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 
     private boolean isCertifiedVersion(String version) {
         String[] versionParts = version.split(VERSION_DELIMITER_REGEXP);
-        if (Integer.parseInt(versionParts[0]) > 0 && Integer.parseInt(versionParts[1]) == 0) {
-            return true;
-        }
-        return false;
+        return Integer.parseInt(versionParts[0]) > 0 && Integer.parseInt(versionParts[1]) == 0;
     }
 
     private StorageOperationStatus updateOldToscaElementBeforeUndoCheckout(Vertex previousVersionToscaElement) {
@@ -783,7 +779,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                     Map<String, GroupInstanceDataDefinition> groupInstanceToCreate = new HashMap<>();
                     for (GroupDataDefinition group : filteredGroups) {
                         CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "create new groupInstance  {} ", group.getName());
-                        GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(group, vfInst, instDeplArtifMap);
+                        GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(group, vfInst);
                         List<String> artifactsUid = new ArrayList<>();
                         List<String> artifactsId = new ArrayList<>();
                         if (instDeplArtifMap != null) {
@@ -842,7 +838,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
         }
         if (!MapUtils.isEmpty(toscaElementVertex.getJson())) {
-            nextVersionToscaElementVertex.setJson(new HashMap<String, ToscaDataDefinition>(toscaElementVertex.getJson()));
+            nextVersionToscaElementVertex.setJson(new HashMap<>(toscaElementVertex.getJson()));
         }
         return nextVersionToscaElementVertex;
     }
@@ -899,7 +895,9 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 if (status != JanusGraphOperationStatus.OK) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                         "Failed to create edge with label {} from vertex {} to tosca element vertex {} on graph. Status is {}. ",
-                        EdgeLabelEnum.VERSION, null != previousCertifiedToscaElement ? previousCertifiedToscaElement.property(GraphPropertyEnum.UNIQUE_ID.getProperty()) : null,
+                        EdgeLabelEnum.VERSION,
+                        null != previousCertifiedToscaElement ? previousCertifiedToscaElement.property(GraphPropertyEnum.UNIQUE_ID.getProperty())
+                            : null,
                         clonedToscaElement.getUniqueId(), status);
                     result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 }
@@ -978,16 +976,16 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
             nextVersionToscaElementVertex.updateMetadataJsonWithCurrentMetadataProperties();
         }
         if (!MapUtils.isEmpty(toscaElementVertex.getJson())) {
-            nextVersionToscaElementVertex.setJson(new HashMap<String, ToscaDataDefinition>(toscaElementVertex.getJson()));
+            nextVersionToscaElementVertex.setJson(new HashMap<>(toscaElementVertex.getJson()));
         }
         return nextVersionToscaElementVertex;
     }
 
-    private Either<GraphVertex, StorageOperationStatus> checkinToscaELement(LifecycleStateEnum currState, GraphVertex toscaElementVertex,
+    private Either<GraphVertex, StorageOperationStatus> checkinToscaELement(GraphVertex toscaElementVertex,
                                                                             GraphVertex ownerVertex, GraphVertex modifierVertex,
                                                                             LifecycleStateEnum nextState) {
         Either<GraphVertex, StorageOperationStatus> updateRelationsRes;
-        Either<GraphVertex, StorageOperationStatus> result = changeStateToCheckedIn(currState, toscaElementVertex, ownerVertex, modifierVertex);
+        Either<GraphVertex, StorageOperationStatus> result = changeStateToCheckedIn(toscaElementVertex, ownerVertex, modifierVertex);
         if (result.isLeft()) {
             toscaElementVertex.addMetadataProperty(GraphPropertyEnum.STATE, nextState.name());
             toscaElementVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
@@ -1016,7 +1014,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return result;
     }
 
-    private Either<GraphVertex, StorageOperationStatus> changeStateToCheckedIn(LifecycleStateEnum currState, GraphVertex toscaElementVertex,
+    private Either<GraphVertex, StorageOperationStatus> changeStateToCheckedIn(GraphVertex toscaElementVertex,
                                                                                GraphVertex ownerVertex, GraphVertex modifierVertex) {
         Either<GraphVertex, StorageOperationStatus> result = null;
         LifecycleStateEnum nextState = LifecycleStateEnum.NOT_CERTIFIED_CHECKIN;
@@ -1201,7 +1199,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         if (preV == null) {
             return updateEdgeToCatalogRoot(null, curV);
         }
-        String uniqueIdPreVer = (String) janusGraphDao.getProperty((JanusGraphVertex) preV, GraphPropertyEnum.UNIQUE_ID.getProperty());
+        String uniqueIdPreVer = (String) janusGraphDao.getProperty(preV, GraphPropertyEnum.UNIQUE_ID.getProperty());
         LifecycleStateEnum state = LifecycleStateEnum.findState((String) janusGraphDao.getProperty(preV, GraphPropertyEnum.STATE.getProperty()));
         if (state == LifecycleStateEnum.CERTIFIED) {
             return updateEdgeToCatalogRoot(null, curV);
