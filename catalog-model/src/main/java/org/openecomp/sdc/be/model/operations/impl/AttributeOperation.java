@@ -109,12 +109,14 @@ public class AttributeOperation extends AbstractOperation {
             return Either.right(propertiesStatus);
         }
         final Either<ImmutablePair<DataTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType, DataTypeData.class);
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
+                DataTypeData.class);
         log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
         if (parentNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
             if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}", uniqueId, janusGraphOperationStatus);
+                log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}", uniqueId,
+                    janusGraphOperationStatus);
                 return Either.right(janusGraphOperationStatus);
             }
         } else {
@@ -133,7 +135,8 @@ public class AttributeOperation extends AbstractOperation {
     }
 
     private JanusGraphOperationStatus fillProperties(final String uniqueId, final DataTypeDefinition dataTypeDefinition) {
-        final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
+        final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode = findPropertiesOfNode(NodeTypeEnum.DataType,
+            uniqueId);
         if (findPropertiesOfNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = findPropertiesOfNode.right().value();
             log.debug("After looking for properties of vertex {}. status is {}", uniqueId, janusGraphOperationStatus);
@@ -163,7 +166,8 @@ public class AttributeOperation extends AbstractOperation {
                                                                                                     final String uniqueId) {
         final Map<String, PropertyDefinition> resourceProps = new HashMap<>();
         final Either<List<ImmutablePair<PropertyData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
-            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property, PropertyData.class);
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property,
+                PropertyData.class);
         if (childrenNodes.isRight()) {
             final JanusGraphOperationStatus operationStatus = childrenNodes.right().value();
             return Either.right(operationStatus);
@@ -300,7 +304,8 @@ public class AttributeOperation extends AbstractOperation {
             return StorageOperationStatus.INVALID_VALUE;
         }
         final JsonElement jsonElement = validateResult.left;
-        log.trace("Going to update value in attribute definition {} {}", attributeDefinition.getName(), (jsonElement != null ? jsonElement.toString() : null));
+        log.trace("Going to update value in attribute definition {} {}", attributeDefinition.getName(),
+            (jsonElement != null ? jsonElement.toString() : null));
         updateAttributeValue(attributeDefinition, jsonElement);
         return StorageOperationStatus.OK;
     }

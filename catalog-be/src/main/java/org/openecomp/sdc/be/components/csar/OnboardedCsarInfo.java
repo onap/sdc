@@ -22,6 +22,10 @@
 package org.openecomp.sdc.be.components.csar;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DATA_TYPES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUP_TYPES;
+
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,13 +42,12 @@ import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.yaml.snakeyaml.Yaml;
-import fj.data.Either;
 
 /**
- * Provides access to the contents of a CSAR which has been created through the SDC onboarding
- * process
+ * Provides access to the contents of a CSAR which has been created through the SDC onboarding process
  */
 public class OnboardedCsarInfo extends CsarInfo {
 
@@ -55,13 +58,13 @@ public class OnboardedCsarInfo extends CsarInfo {
     }
 
     public OnboardedCsarInfo(final User modifier, final String csarUUID, final Map<String, byte[]> csar, final String vfResourceName,
-            final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
+                             final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
         super(modifier, csarUUID, csar, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
         this.globalSubstitutes = getGlobalSubstitutes(csar);
     }
 
     public OnboardedCsarInfo(final User modifier, final String csarUUID, final String csarVersionId, final Map<String, byte[]> csarContent,
-            final String vfResourceName, final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
+                             final String vfResourceName, final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
         super(modifier, csarUUID, csarVersionId, csarContent, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
         this.globalSubstitutes = getGlobalSubstitutes(csar);
     }
@@ -93,13 +96,13 @@ public class OnboardedCsarInfo extends CsarInfo {
 
     @SuppressWarnings("unchecked")
     private void extractNodeTypeInfo(final Map<String, NodeTypeInfo> nodeTypesInfo, final Set<String> nodeTypesUsedInNodeTemplates,
-            final Map.Entry<String, byte[]> entry) {
+                                     final Map.Entry<String, byte[]> entry) {
         if (isAServiceTemplate(entry.getKey()) && !isGlobalSubstitute(entry.getKey())) {
             final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(new String(entry.getValue()));
             findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP).right()
-                    .on(sub -> handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>) sub));
+                .on(sub -> handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>) sub));
             final Either<Object, ResultStatusEnum> nodeTypesEither =
-                    findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
+                findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
             if (nodeTypesEither.isLeft()) {
                 final Map<String, Map<String, Object>> nodeTemplates = (Map<String, Map<String, Object>>) nodeTypesEither.left().value();
                 nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
@@ -113,15 +116,16 @@ public class OnboardedCsarInfo extends CsarInfo {
 
     private boolean isGlobalSubstitute(final String fileName) {
         return fileName.equalsIgnoreCase(Constants.GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE)
-                || fileName.equalsIgnoreCase(Constants.ABSTRACT_SUBSTITUTE_GLOBAL_TYPES_SERVICE_TEMPLATE);
+            || fileName.equalsIgnoreCase(Constants.ABSTRACT_SUBSTITUTE_GLOBAL_TYPES_SERVICE_TEMPLATE);
     }
 
 
     private ResultStatusEnum handleSubstitutionMappings(final Map<String, NodeTypeInfo> nodeTypesInfo, final Map.Entry<String, byte[]> entry,
-            final Map<String, Object> mappedToscaTemplate, final Map<String, Object> substitutionMappings) {
+                                                        final Map<String, Object> mappedToscaTemplate,
+                                                        final Map<String, Object> substitutionMappings) {
         final Set<String> nodeTypesDefinedInTemplate = findNodeTypesDefinedInTemplate(mappedToscaTemplate);
         if (substitutionMappings.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName())
-                && !nodeTypesDefinedInTemplate.contains(substitutionMappings.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()))) {
+            && !nodeTypesDefinedInTemplate.contains(substitutionMappings.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()))) {
             NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
             nodeTypeInfo.setSubstitutionMapping(true);
             nodeTypeInfo.setType((String) substitutionMappings.get(TypeUtils.ToscaTagNamesEnum.NODE_TYPE.getElementName()));
@@ -135,7 +139,7 @@ public class OnboardedCsarInfo extends CsarInfo {
     @SuppressWarnings("unchecked")
     private Set<String> findNodeTypesDefinedInTemplate(final Map<String, Object> mappedToscaTemplate) {
         final Either<Object, ResultStatusEnum> nodeTypesEither =
-                findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+            findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
         if (nodeTypesEither.isLeft()) {
             final Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
             return nodeTypes.keySet();
@@ -149,7 +153,7 @@ public class OnboardedCsarInfo extends CsarInfo {
             final String yamlFileContents = new String(entry.getValue());
             final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
             Either<Object, ResultStatusEnum> nodeTypesEither =
-                    findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+                findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
             if (nodeTypesEither.isLeft()) {
                 Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
                 for (Map.Entry<String, Object> nodeType : nodeTypes.entrySet()) {
@@ -174,9 +178,9 @@ public class OnboardedCsarInfo extends CsarInfo {
     private void addGlobalSubstitutionsToNodeTypes(final Set<String> nodeTypesUsedInNodeTemplates, final Map<String, NodeTypeInfo> nodeTypesInfo) {
         for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
             final String yamlFileContents = new String(entry.getValue());
-            final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
+            final Map<String, Object> mappedToscaTemplate = new Yaml().load(yamlFileContents);
             final Either<Object, ResultStatusEnum> nodeTypesEither =
-                    findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
+                findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES, ToscaElementTypeEnum.MAP);
             if (nodeTypesEither.isLeft()) {
                 final Map<String, Object> nodeTypes = (Map<String, Object>) nodeTypesEither.left().value();
                 for (final Map.Entry<String, Object> nodeType : nodeTypes.entrySet()) {
@@ -190,16 +194,22 @@ public class OnboardedCsarInfo extends CsarInfo {
 
     @Override
     public Map<String, Object> getDataTypes() {
-        if (datatypeDefinitions == null) {
-            datatypeDefinitions = new HashMap<>();
-            for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
-                final String yamlFileContents = new String(entry.getValue());
-                final Map<String, Object> mappedToscaTemplate = new Yaml().load(yamlFileContents);
-                datatypeDefinitions.putAll(getTypesFromTemplate(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES));
-            }
-            datatypeDefinitions.putAll(getTypesFromTemplate(mappedToscaMainTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES));
+        return getTypes(DATA_TYPES);
+    }
+
+    @Override
+    public Map<String, Object> getGroupTypes() {
+        return getTypes(GROUP_TYPES);
+    }
+
+    private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
+        final Map<String, Object> types = new HashMap<>();
+        for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
+            final Map<String, Object> mappedToscaTemplate = new Yaml().load(new String(entry.getValue()));
+            types.putAll(getTypesFromTemplate(mappedToscaTemplate, toscaTag));
         }
-        return datatypeDefinitions;
+        types.putAll(getTypesFromTemplate(mappedToscaMainTemplate, toscaTag));
+        return types;
     }
 
 }
