@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "81a9dec4_4f7f9ed6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "default icon already applied",
+      "parentUuid": "1d803657_582126b2",
+      "range": {
+        "startLine": 513,
+        "startChar": 0,
+        "endLine": 513,
+        "endChar": 35
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0598b1dc_9f363d9e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cad6368_8d887a88",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "used similar to Policy approach \norg.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic#createPolicyTypeFromYaml",
+      "parentUuid": "0598b1dc_9f363d9e",
+      "range": {
+        "startLine": 281,
+        "startChar": 121,
+        "endLine": 281,
+        "endChar": 134
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "76731c02_9d80b110",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "322ad7ce_2915f732",
+      "range": {
+        "startLine": 329,
+        "startChar": 44,
+        "endLine": 329,
+        "endChar": 52
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9092ac5e_86d50079",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8253b234_3ed77223",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9092ac5e_86d50079",
+      "range": {
+        "startLine": 39,
+        "startChar": 13,
+        "endLine": 39,
+        "endChar": 28
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "e36d820a_d6f0d64d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "they are redundant\ngetKeyByNodeType returns same (GraphPropertiesDictionary.UNIQUE_ID.getProperty())",
+      "parentUuid": "5a78b40d_e028e67e",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 12
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ff9f08ca_d241608f",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c138910_3dfe0a8f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ff9f08ca_d241608f",
+      "range": {
+        "startLine": 129,
+        "startChar": 25,
+        "endLine": 129,
+        "endChar": 56
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -187,6 +331,30 @@
     },
     {
       "key": {
+        "uuid": "9a3bd93d_696a15fc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "reverted",
+      "parentUuid": "a4529148_ccd9a24d",
+      "range": {
+        "startLine": 185,
+        "startChar": 45,
+        "endLine": 185,
+        "endChar": 66
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf30e27e_b52cc3c7",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
@@ -210,6 +378,30 @@
     },
     {
       "key": {
+        "uuid": "8e52474e_05394274",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "reverted",
+      "parentUuid": "bf30e27e_b52cc3c7",
+      "range": {
+        "startLine": 193,
+        "startChar": 63,
+        "endLine": 193,
+        "endChar": 95
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7695e01_d4e2dbff",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
@@ -230,6 +422,30 @@
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe88478e_71c60696",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "reverted",
+      "parentUuid": "f7695e01_d4e2dbff",
+      "range": {
+        "startLine": 222,
+        "startChar": 45,
+        "endLine": 222,
+        "endChar": 70
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -299,6 +515,30 @@
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11d56dc3_3167aafe",
+        "filename": "catalog-ui/cypress/fixtures/common/group-types.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-15T13:29:07Z",
+      "side": 1,
+      "message": "reverted",
+      "parentUuid": "d4c126c9_b3a4d0bc",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 71
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
