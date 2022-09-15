@@ -90,6 +90,7 @@ import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.IPropertyInputCommon;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -112,6 +113,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -135,6 +137,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     private final ApplicationDataTypeCache applicationDataTypeCache = mock(ApplicationDataTypeCache.class);
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
+    private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -245,8 +248,6 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(applicationDataTypeCache.get(any(), eq("onap.datatypes.ToscaConceptIdentifier.datatype"))).thenReturn(Either.left(typeToBeUpdated));
         when(applicationDataTypeCache.get(any(), matches("^((?!(tosca.datatypes.test_|onap.datatypes.ToscaConceptIdentifier)).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
 
-
-
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
@@ -256,6 +257,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
                 .thenReturn(resourceTemplate);
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
+        when(groupTypeOperation.getGroupTypeByUid(anyString())).thenReturn(Either.left(new GroupTypeDefinition()));
 
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
