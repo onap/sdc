@@ -1191,7 +1191,10 @@ public class NodeTemplateOperation extends BaseOperation {
 
         listRequirementDataDefinition.getListToscaDataDefinition().stream()
             .filter(e -> requirementDataDefinition.getOwnerId().equals(e.getOwnerId()) && requirementDataDefinition.getName().equals(e.getName()))
-            .forEach(r -> {r.setExternal(requirementDataDefinition.isExternal()); r.setExternalName(requirementDataDefinition.getExternalName());});
+            .forEach(r -> {
+                r.setExternal(requirementDataDefinition.isExternal());
+                r.setExternalName(requirementDataDefinition.getExternalName());
+            });
 
         return updateCalculatedReqOnGraph(componentId, containerV, existingReqs);
     }
@@ -1522,7 +1525,7 @@ public class NodeTemplateOperation extends BaseOperation {
         dataDefinition.setIcon(resourceInstance.getIcon());
         if (generateUid) {
             dataDefinition.setUniqueId(
-                UniqueIdBuilder.buildResourceInstanceUniuqeId(containerComponentId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
+                UniqueIdBuilder.buildResourceInstanceUniqueId(containerComponentId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
             resourceInstance.setUniqueId(dataDefinition.getUniqueId());
         }
         if (StringUtils.isEmpty(dataDefinition.getComponentVersion()) && originToscaElement != null) {
@@ -1560,7 +1563,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
     private String buildComponentInstanceName(String instanceSuffixNumber, String instanceName) {
         String delimiter = ConfigurationManager.getConfigurationManager().getConfiguration().getComponentInstanceCounterDelimiter();
-        if(delimiter == null){
+        if (delimiter == null) {
             delimiter = " ";
         }
         return instanceName + delimiter + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
@@ -2409,7 +2412,7 @@ public class NodeTemplateOperation extends BaseOperation {
     private RelationshipInstDataDefinition buildRelationshipInstData(String fromResInstanceUid, String toInstId, RelationshipInfo relationPair,
                                                                      boolean originUI) {
         RelationshipInstDataDefinition relationshipInstData = new RelationshipInstDataDefinition();
-        relationshipInstData.setUniqueId(UniqueIdBuilder.buildRelationsipInstInstanceUid(fromResInstanceUid, toInstId));
+        relationshipInstData.setUniqueId(UniqueIdBuilder.buildRelationshipInstInstanceUid());
         relationshipInstData.setType(relationPair.getRelationship().getType());
         Long creationDate = System.currentTimeMillis();
         relationshipInstData.setCreationTime(creationDate);

@@ -1485,7 +1485,7 @@ public abstract class BaseOperation {
         groupInstance.setGroupName(group.getName());
         groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
         groupInstance
-            .setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
+            .setUniqueId(UniqueIdBuilder.buildResourceInstanceUniqueId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
         groupInstance.setArtifacts(group.getArtifacts());
         groupInstance.setArtifactsUuid(group.getArtifactsUuid());
         groupInstance.setProperties(group.getProperties());

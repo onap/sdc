@@ -25,6 +25,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+
 import fj.data.Either;
 import java.util.Collections;
 import org.junit.jupiter.api.AfterEach;
@@ -42,7 +43,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-public class DataTypesImportManagerTest {
+class DataTypesImportManagerTest {
 
     private static final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
     private static final JanusGraphGenericDao janusGraphGenericDao = mock(JanusGraphGenericDao.class);
@@ -67,7 +68,7 @@ public class DataTypesImportManagerTest {
     }
 
     @Test
-    public void testCreateDataTypes() {
+    void testCreateDataTypes() {
 
         DataTypeDefinition rootDataTypeDef = new DataTypeDefinition();
         rootDataTypeDef.setName("tosca.datatypes.Root");
@@ -82,19 +83,19 @@ public class DataTypesImportManagerTest {
         when(propertyOperation.getDataTypeByName("tosca.datatypes.test_c", null)).thenReturn(Either.left(testCDataTypeDef));
 
         when(propertyOperation.getJanusGraphGenericDao()).thenReturn(janusGraphGenericDao);
-        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.Root.datatype", true)).thenReturn(Either.left(rootDataTypeDef));
-        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_a.datatype", true))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_b.datatype", true))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_c.datatype", true))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.Root.dataType", true)).thenReturn(Either.left(rootDataTypeDef));
+        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_a.dataType", true))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_b.dataType", true))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(propertyOperation.getDataTypeByUidWithoutDerived("tosca.datatypes.test_c.dataType", true))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(propertyOperation.addDataType(any())).thenReturn(Either.left(testADataTypeDef));
 
-        String dataTypeYml = 
-                "tosca.datatypes.test_a:\n" + 
-                "  derived_from: tosca.datatypes.Root\n" + 
-                "  properties:\n" + 
+        String dataTypeYml =
+            "tosca.datatypes.test_a:\n" +
+                "  derived_from: tosca.datatypes.Root\n" +
+                "  properties:\n" +
                 "    prop2:\n" +
                 "      type: tosca.datatypes.test_b\n" +
                 "tosca.datatypes.test_b:\n" +
@@ -116,6 +117,5 @@ public class DataTypesImportManagerTest {
         assertEquals("tosca.datatypes.test_b", dataTypeDefinitionCaptor.getAllValues().get(1).getName());
         assertEquals("tosca.datatypes.test_a", dataTypeDefinitionCaptor.getAllValues().get(2).getName());
     }
-
 
 }
