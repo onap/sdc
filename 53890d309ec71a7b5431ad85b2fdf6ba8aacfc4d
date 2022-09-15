@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0e407404_b7f88e2b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-15T10:06:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef0f968c_1be21357",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 1
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d4eee11d_a9951238",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e00363e_41c1d398",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-15T10:06:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4eee11d_a9951238",
+      "range": {
+        "startLine": 148,
+        "startChar": 2,
+        "endLine": 149,
+        "endChar": 100
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d74a602d_0acc64d0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-15T10:06:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e233fa18_ba97de0c",
+      "range": {
+        "startLine": 153,
+        "startChar": 2,
+        "endLine": 159,
+        "endChar": 15
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4eaf96f_36b2a768",
         "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab264f4c_4870b1fb",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-15T10:06:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a4eaf96f_36b2a768",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 49
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
