@@ -3727,7 +3727,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     if (sourceAttributeName.equals(destAttribute.getName())) {
                         log.debug("Start to copy the attribute exists {}", sourceAttributeName);
                         sourceAttribute.setUniqueId(
-                            UniqueIdBuilder.buildResourceInstanceUniuqeId("attribute", destComponentInstanceId.split("\\.")[1], sourceAttributeName));
+                            UniqueIdBuilder.buildResourceInstanceUniqueId("attribute", destComponentInstanceId.split("\\.")[1], sourceAttributeName));
                         Either<ComponentInstanceAttribute, ResponseFormat> updateAttributeValueEither = createOrUpdateAttributeValueForCopyPaste(
                             ComponentTypeEnum.SERVICE, destComponent.getUniqueId(), destComponentInstanceId, sourceAttribute, userId);
                         if (updateAttributeValueEither.isRight()) {
