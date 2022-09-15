@@ -19,39 +19,36 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.resources.data.ResourceCategoryData;
-import org.openecomp.sdc.be.resources.data.ServiceCategoryData;
 import org.openecomp.sdc.be.resources.data.TagData;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UniqueIdBuilder {
 
-    private static final String HEAT_PARAM_PREFIX = "heat_";
-    private static String DOT = ".";
-    private static UserData userData = new UserData();
-    private static TagData tagData = new TagData();
-    private static ResourceCategoryData resCategoryData = new ResourceCategoryData();
-    private static ServiceCategoryData serCategoryData = new ServiceCategoryData();
-    private static Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new HashMap<>();
+    static final String HEAT_PARAM_PREFIX = "heat_";
+    static final String DOT = ".";
+    private static final UserData userData = new UserData();
+    private static final TagData tagData = new TagData();
+    private static final Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new EnumMap<>(NodeTypeEnum.class);
 
     static {
         nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.User, userData.getUniqueIdKey());
         nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.Tag, tagData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ResourceCategory, resCategoryData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ServiceCategory, serCategoryData.getUniqueIdKey());
     }
 
     public static String buildPropertyUniqueId(String resourceId, String propertyName) {
-        return resourceId + DOT + propertyName;
+        return buildUid(resourceId, propertyName);
     }
 
     static String buildHeatParameterUniqueId(String resourceId, String propertyName) {
@@ -90,15 +87,15 @@ public class UniqueIdBuilder {
     }
 
     public static String buildCapabilityTypeUid(final String modelName, String type) {
-        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
+        return StringUtils.isEmpty(modelName) ? type : buildUid(modelName, type);
     }
 
     public static String buildRelationshipTypeUid(final String modelName, final String type) {
-        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
+        return StringUtils.isEmpty(modelName) ? type : buildUid(modelName, type);
     }
 
     public static String buildInterfaceTypeUid(final String modelName, String type) {
-        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
+        return StringUtils.isEmpty(modelName) ? type : buildUid(modelName, type);
     }
 
     public static String buildAttributeUid(String resourceId, String attName) {
@@ -106,7 +103,7 @@ public class UniqueIdBuilder {
     }
 
     public static String buildRequirementUid(String resourceId, String reqName) {
-        return resourceId + DOT + reqName;
+        return buildUid(resourceId, reqName);
     }
 
     public static String buildCapabilityUid(String resourceId, String capabilityName) {
@@ -121,11 +118,11 @@ public class UniqueIdBuilder {
         return buildTypeUid(parentId, instanceId, artifactLabel);
     }
 
-    public static String buildResourceInstanceUniuqeId(String serviceId, String resourceId, String logicalName) {
+    public static String buildResourceInstanceUniqueId(String serviceId, String resourceId, String logicalName) {
         return buildTypeUid(serviceId, resourceId, logicalName);
     }
 
-    public static String buildRelationsipInstInstanceUid(String resourceInstUid, String requirement) {
+    public static String buildRelationshipInstInstanceUid() {
         return generateUUID();
     }
 
@@ -140,28 +137,28 @@ public class UniqueIdBuilder {
      * TODO Pavel To be removed when new category logic comes in
      */
     static String buildServiceCategoryUid(String categoryName, NodeTypeEnum type) {
-        return type.getName() + DOT + categoryName;
+        return buildUid(type.getName(), categoryName);
     }
 
     // New logic
     public static String buildCategoryUid(String categoryName, NodeTypeEnum type) {
-        return type.getName() + DOT + categoryName;
+        return buildUid(type.getName(), categoryName);
     }
 
     public static String buildComponentCategoryUid(String categoryName, VertexTypeEnum type) {
-        return type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName);
+        return buildUid(type.getName(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
     }
 
     public static String buildSubCategoryUid(String categoryUid, String subCategoryName) {
-        return categoryUid + DOT + subCategoryName;
+        return buildUid(categoryUid, subCategoryName);
     }
 
     public static String buildGroupingUid(String subCategoryUid, String groupingName) {
-        return subCategoryUid + DOT + groupingName;
+        return buildUid(subCategoryUid, groupingName);
     }
 
     static String buildResourceInstancePropertyValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "property" + DOT + index;
+        return buildUid(resourceInstanceUniqueId, NodeTypeEnum.Property, index);
     }
 
     public static String buildComponentPropertyUniqueId(String resourceId, String propertyName) {
@@ -169,57 +166,67 @@ public class UniqueIdBuilder {
     }
 
     static String buildResourceInstanceAttributeValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "attribute" + DOT + index;
+        return buildUid(resourceInstanceUniqueId, NodeTypeEnum.Attribute, index);
     }
 
     static String buildResourceInstanceInputValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "input" + DOT + index;
+        return buildUid(resourceInstanceUniqueId, NodeTypeEnum.Input, index);
     }
 
     static String buildAdditionalInformationUniqueId(String resourceUniqueId) {
-        return resourceUniqueId + DOT + "additionalinformation";
+        return buildUid(resourceUniqueId, "additionalinformation");
     }
 
     public static String buildDataTypeUid(final String modelName, final String name) {
-        return StringUtils.isEmpty(modelName) ? name + DOT + "datatype" : modelName + DOT + name + DOT + "datatype";
+        return buildTypeUidWithModel(modelName, name, "datatype");
     }
 
     public static String buildInvariantUUID() {
         return generateUUID();
     }
 
-    public static String buildGroupTypeUid(String modelName, String type, String version, String resourceName) {
-        return buildTypeUidWithModel(modelName, type, version, resourceName);
+    public static String buildGroupTypeUid(final String modelName, final String type, final String version) {
+        return buildTypeUidWithModel(modelName, type, version, "grouptype");
     }
 
     public static String buildPolicyTypeUid(String modelName, String type, String version, String resourceName) {
         return buildTypeUidWithModel(modelName, type, version, resourceName);
     }
 
-    static String buildTypeUidWithModel(String modelName, String type, String version, String resourceName) {
-        if (StringUtils.isEmpty(modelName)){
-            return buildTypeUid(type, version, resourceName);
-        }
-        return modelName + DOT + buildTypeUid(type, version, resourceName);
+    private static String buildTypeUidWithModel(String modelName, String type, String version, String resourceName) {
+        return StringUtils.isEmpty(modelName) ?
+            buildTypeUid(type, version, resourceName) : modelName + DOT + buildTypeUid(type, version, resourceName);
     }
 
     static String buildTypeUid(String type, String version, String resourceName) {
-        return type + DOT + version + DOT + resourceName;
+        return type + DOT + buildUid(version, resourceName);
     }
 
     public static String buildPolicyUniqueId(String componentId, String name) {
-        return componentId + DOT + name + Constants.POLICY_UID_POSTFIX;
+        return buildUid(componentId, name) + Constants.POLICY_UID_POSTFIX;
     }
 
     public static String buildGroupPropertyValueUid(String groupUniqueId, Integer index) {
-        return groupUniqueId + DOT + "property" + DOT + index;
+        return buildUid(groupUniqueId, NodeTypeEnum.Property, index);
     }
 
-    public static String buildModelUid(final String modelName) {
-        return NodeTypeEnum.Model.getName() + DOT + modelName;
+    static String buildModelUid(final String modelName) {
+        return buildUid(NodeTypeEnum.Model.getName(), modelName);
     }
 
-    public static String  buildArtifactTypeUid(final String modelName, final String name) {
-        return StringUtils.isEmpty(modelName) ? name + DOT + "artifactype" : modelName + DOT + name + DOT + "artifactype";
+    public static String buildArtifactTypeUid(final String modelName, final String name) {
+        return buildTypeUidWithModel(modelName, name, "artifactype");
+    }
+
+    private static String buildTypeUidWithModel(final String modelName, final String name, final String nodeType) {
+        return StringUtils.isEmpty(modelName) ? buildUid(name, nodeType) : modelName + DOT + buildUid(name, nodeType);
+    }
+
+    private static String buildUid(final String first, final String second) {
+        return first + DOT + second;
+    }
+
+    private static String buildUid(final String first, final NodeTypeEnum nodeType, final Integer index) {
+        return first + DOT + nodeType.getName() + DOT + index;
     }
 }

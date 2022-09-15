@@ -725,8 +725,8 @@ public class ArtifactsOperations extends BaseOperation {
             if (triple.getMiddle()) {
                 List<String> pathKeys = new ArrayList<>();
                 pathKeys.add(instanceId);
-                status = deleteToscaDataDeepElement(componentId, edgeLabelEnum, vertexTypeEnum, artifactFromGraph.getArtifactLabel(), pathKeys,
-                    JsonPresentationFields.ARTIFACT_LABEL);
+                status = deleteToscaDataDeepElement(componentId, edgeLabelEnum, artifactFromGraph.getArtifactLabel(), pathKeys
+                );
             } else {
                 status = deleteToscaDataElement(componentId, edgeLabelEnum, vertexTypeEnum, artifactFromGraph.getArtifactLabel(),
                     JsonPresentationFields.ARTIFACT_LABEL);

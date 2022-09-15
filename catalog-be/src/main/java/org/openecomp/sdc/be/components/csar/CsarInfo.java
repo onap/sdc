@@ -89,13 +89,11 @@ public abstract class CsarInfo {
     private boolean isUpdate;
     @Getter
     private Map<String, Resource> createdNodes;
-    protected Map<String, Object> datatypeDefinitions;
     protected Map<String, Object> artifacttypeDefinitions;
     private Map<String, Object> policytypeDefinitions;
 
-
-    public CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName,
-                    String mainTemplateContent, boolean isUpdate) {
+    protected CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName,
+                       String mainTemplateContent, boolean isUpdate) {
         this.vfResourceName = vfResourceName;
         this.modifier = modifier;
         this.csarUUID = csarUUID;
@@ -109,13 +107,13 @@ public abstract class CsarInfo {
         this.createdNodes = new HashMap<>();
         this.nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
     }
-    
+
     public String getVfResourceName() {
         return vfResourceName;
     }
 
-    public CsarInfo(final User modifier, final String csarUUID, final String csarVersionId, final Map<String, byte[]> csarContent,
-                    final String vfResourceName, final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
+    protected CsarInfo(final User modifier, final String csarUUID, final String csarVersionId, final Map<String, byte[]> csarContent,
+                       final String vfResourceName, final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
         this(modifier, csarUUID, csarContent, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
         this.csarVersionId = csarVersionId;
     }
@@ -169,15 +167,17 @@ public abstract class CsarInfo {
     public void setUpdate(boolean isUpdate) {
         this.isUpdate = isUpdate;
     }
-    
+
     public abstract Map<String, NodeTypeInfo> extractTypesInfo();
-    
+
     /**
      * Get the data types defined in the CSAR
-     * 
+     *
      * @return map with the data type name as key and representaion of the data type defintion as value
      */
     public abstract Map<String, Object> getDataTypes();
+
+    public abstract Map<String, Object> getGroupTypes();
 
     public abstract Map<String, Object> getArtifactTypes();
 
@@ -188,11 +188,10 @@ public abstract class CsarInfo {
         }
         return policytypeDefinitions;
     }
-    
+
     @SuppressWarnings("unchecked")
     protected Map<String, Object> getTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum type) {
-        final Either<Object, ResultStatusEnum> dataTypesEither = findToscaElement(mappedToscaTemplate, type,
-                        ToscaElementTypeEnum.MAP);
+        final Either<Object, ResultStatusEnum> dataTypesEither = findToscaElement(mappedToscaTemplate, type, ToscaElementTypeEnum.MAP);
         if (dataTypesEither != null && dataTypesEither.isLeft()) {
             return (Map<String, Object>) dataTypesEither.left().value();
         }
@@ -200,15 +199,14 @@ public abstract class CsarInfo {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> getTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum type, Collection<String> names) {
+    protected Map<String, Object> getTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum type,
+                                                       Collection<String> names) {
         Map<String, Object> allTypes = getTypesFromTemplate(mappedToscaTemplate, type);
 
         final Map<String, Object> typesToReturn = new HashMap<>();
         final Stream<Map.Entry<String, Object>> requestedTypes = allTypes.entrySet().stream().filter(entry -> names.contains(entry.getKey()));
 
-        requestedTypes.forEach(requestedType -> {
-            typesToReturn.put(requestedType.getKey(), requestedType.getValue());
-        });
+        requestedTypes.forEach(requestedType -> typesToReturn.put(requestedType.getKey(), requestedType.getValue()));
 
         return typesToReturn;
     }
@@ -223,7 +221,7 @@ public abstract class CsarInfo {
 
     @SuppressWarnings("unchecked")
     protected NodeTypeInfo buildNodeTypeInfo(final Map.Entry<String, Object> nodeType, final String templateFileName,
-                                           final Map<String, Object> mappedToscaTemplate) {
+                                             final Map<String, Object> mappedToscaTemplate) {
         final NodeTypeInfo nodeTypeInfo = new NodeTypeInfo();
         nodeTypeInfo.setSubstitutionMapping(false);
         nodeTypeInfo.setNested(true);

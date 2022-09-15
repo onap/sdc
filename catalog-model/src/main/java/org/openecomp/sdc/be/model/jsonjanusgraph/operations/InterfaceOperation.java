@@ -87,9 +87,9 @@ public class InterfaceOperation extends BaseOperation {
     public Either<String, StorageOperationStatus> deleteInterface(final Component component, final String interfacesToDelete) {
         final String componentId = component.getUniqueId();
         if (isVfc(component)) {
-            return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE_ARTIFACTS, VertexTypeEnum.INTERFACE_ARTIFACTS);
+            return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE_ARTIFACTS);
         } else {
-            return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
+            return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE);
         }
     }
 
@@ -98,7 +98,7 @@ public class InterfaceOperation extends BaseOperation {
     }
 
     private Either<String, StorageOperationStatus> deleteInterface(final String componentId, final String interfacesToDelete,
-                                                                   final EdgeLabelEnum edgeLabel, final VertexTypeEnum vertexType) {
+                                                                   final EdgeLabelEnum edgeLabel) {
         StorageOperationStatus statusRes = deleteToscaDataElements(componentId, edgeLabel, Collections.singletonList(interfacesToDelete));
         if (!statusRes.equals(StorageOperationStatus.OK)) {
             return Either.right(statusRes);
@@ -109,7 +109,7 @@ public class InterfaceOperation extends BaseOperation {
         }
         final Map<String, InterfaceDataDefinition> interfaceDataDefinitionMap = interfaceEither.left().value();
         if (MapUtils.isEmpty(interfaceDataDefinitionMap)) {
-            statusRes = removeToscaData(componentId, edgeLabel, vertexType);
+            statusRes = removeToscaData(componentId, edgeLabel);
             if (!statusRes.equals(StorageOperationStatus.OK)) {
                 return Either.right(statusRes);
             }

@@ -143,12 +143,12 @@ public class GroupsOperation extends BaseOperation {
 
     private StorageOperationStatus removeCalculatedCapabilityFromComponent(String componentId, String groupId) {
         return deleteToscaDataDeepElementsBlockOfToscaElement(componentId, EdgeLabelEnum.CALCULATED_CAPABILITIES,
-            VertexTypeEnum.CALCULATED_CAPABILITIES, groupId);
+            groupId);
     }
 
     private StorageOperationStatus removeCalculatedCapabilityPropertiesFromComponent(String componentId, String groupId) {
         return deleteToscaDataDeepElementsBlockOfToscaElement(componentId, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES,
-            VertexTypeEnum.CALCULATED_CAP_PROPERTIES, groupId);
+            groupId);
     }
 
     public Either<List<GroupDefinition>, StorageOperationStatus> createGroups(Component component, Map<String, GroupDataDefinition> groups) {
