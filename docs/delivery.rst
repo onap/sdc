@@ -54,7 +54,7 @@ Deployment dependency map
     onboarding-be [label = "sdc-onboard-backend", class = "app"];
     cs [label = "sdc-cassandra", class = "app"];
     be-init [label = "sdc-backend-init", class = "job"];
-    cd-init [label = "sdc-cassandra-init", class = "job"];
+    cs-init [label = "sdc-cassandra-init", class = "job"];
     cs-onboarding-init [label = "sdc-cassandra-onboard-init", class = "job"];
     sdc-wfd-fe [label = "sdc-workflow-fe", class = "app"];
     sdc-wfd-be [label = "sdc-workflow-be", class = "app"];
@@ -64,7 +64,7 @@ Deployment dependency map
 
     onboarding-be -> cs-onboarding-init -> cs-init -> cs;
     be-init -> be -> cs-init -> cs;
-    sdc-wfd-fe -> sdc-wfd-be-init -> sdc-wfd-be -> cs-init;
+    sdc-wfd-fe -> sdc-wfd-be-init -> sdc-wfd-be -> cs-init -> cs;
     fe;
 
 Connectivity Matrix
