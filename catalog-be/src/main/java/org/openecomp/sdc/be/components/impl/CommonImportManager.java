@@ -509,14 +509,14 @@ public class CommonImportManager {
     }
 
     private <T extends ToscaTypeDataDefinition> T setNonToscaMetaDataOnType(Map<String, ToscaTypeMetadata> toscaTypeMetadata, T toscaTypeDefinition) {
-        String toscaType = toscaTypeDefinition.getType();
-        ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaType);
-        if (typeMetaData == null) {
-            log.debug("failing while trying to associate metadata for type {}. type not exist", toscaType);
-            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+        final ToscaTypeMetadata typeMetaData = toscaTypeMetadata.get(toscaTypeDefinition.getType());
+        if (typeMetaData != null) {
+            toscaTypeDefinition.setIcon(typeMetaData.getIcon());
+            toscaTypeDefinition.setName(typeMetaData.getDisplayName());
+        } else {
+            toscaTypeDefinition.setIcon("");
+            toscaTypeDefinition.setName(toscaTypeDefinition.getType());
         }
-        toscaTypeDefinition.setIcon(typeMetaData.getIcon());
-        toscaTypeDefinition.setName(typeMetaData.getDisplayName());
         return toscaTypeDefinition;
     }
 
@@ -538,7 +538,7 @@ public class CommonImportManager {
     public void addTypesToDefaultImports(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
         modelOperation.addTypesToDefaultImports(elementTypeEnum, typesYaml, modelName);
     }
-    
+
     public void updateTypesInAdditionalTypesImport(final ElementTypeEnum elementTypeEnum, final String dataTypeYml, final String modelName) {
         modelOperation.updateTypesInAdditionalTypesImport(elementTypeEnum, dataTypeYml, modelName);
     }
@@ -547,8 +547,6 @@ public class CommonImportManager {
 
         T3 createElement(T1 firstArg, T2 secondArg);
     }
-
-
 
 
 }

@@ -19,32 +19,18 @@
  */
 package org.openecomp.sdc.be.model.normatives;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ToscaTypeMetadata {
 
     private String icon;
     private String displayName;
 
-    public ToscaTypeMetadata() {
-    }
-
-    public ToscaTypeMetadata(String icon, String displayName) {
-        this.icon = icon;
-        this.displayName = displayName;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
 }
