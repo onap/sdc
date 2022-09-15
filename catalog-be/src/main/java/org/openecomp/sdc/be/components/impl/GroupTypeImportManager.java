@@ -33,7 +33,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -73,7 +72,8 @@ public class GroupTypeImportManager {
     }
 
     public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData,
-                                                                                                      String modelName, final boolean includeToModelDefaultImports) {
+                                                                                                      String modelName,
+                                                                                                      final boolean includeToModelDefaultImports) {
         final Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao, modelName);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
@@ -100,7 +100,7 @@ public class GroupTypeImportManager {
         List<GroupTypeDefinition> groupTypesToCreate, String modelName) {
         return commonImportManager.createElementTypesWithVersionByDao(groupTypesToCreate, this::validateGroupType,
             groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, UniqueIdBuilder.buildGroupTypeUid(groupType.getModel(),
-                groupType.getType(), groupType.getVersion(), NodeTypeEnum.GroupType.getName()).toLowerCase()),
+                groupType.getType(), groupType.getVersion())),
             groupTypeOperation::getLatestGroupTypeByType,
             groupTypeOperation::addGroupType, this::updateGroupType, modelName);
     }
