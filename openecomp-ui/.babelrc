@@ -8,8 +8,7 @@
 		"transform-object-rest-spread",
 		"transform-class-properties",
 		"transform-runtime",
-		"transform-decorators-legacy",
-		"react-hot-loader/babel"
+		"transform-decorators-legacy"
 	],
 	"sourceMap": "inline"
 }
