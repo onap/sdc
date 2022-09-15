@@ -6,14 +6,13 @@ const { DefinePlugin, HotModuleReplacementPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const devConfig = require('./tools/getDevConfig');
 const proxyServer = require('./proxy-server');
-const fs = require('fs');
 
-let devPort = process.env.PORT || devConfig.port;
-let publicPath = 'http://localhost:' + devPort + '/onboarding/';
+const devPort = process.env.PORT || devConfig.port;
+const publicPath = 'http://localhost:' + devPort + '/onboarding/';
 
 module.exports = (env, argv) => {
-    let DEV = argv.mode && argv.mode === 'development';
-    let language = null;
+    const IS_DEV = argv.mode && argv.mode === 'development';
+    let language;
     if (
         env === undefined ||
         env.language === undefined ||
@@ -26,12 +25,12 @@ module.exports = (env, argv) => {
         console.log('Setting language to  "' + env.language + '".');
     }
 
-    var webpackConfig = {
+    const webpackConfig = {
         entry: {
             'punch-outs': ['sdc-app/punch-outs.js']
         },
         cache: true,
-        devtool: DEV ? 'eval-source-map' : undefined,
+        devtool: IS_DEV ? 'eval-source-map' : undefined,
         performance: { hints: false },
         resolve: {
             modules: [path.resolve('.'), path.join(__dirname, 'node_modules')],
@@ -46,8 +45,8 @@ module.exports = (env, argv) => {
         },
         output: {
             path: path.join(__dirname, 'dist'),
-            publicPath: DEV ? publicPath : './',
-            filename: DEV ? '[name].js' : '[name]_' + language + '.js'
+            publicPath: IS_DEV ? publicPath : './',
+            filename: IS_DEV ? '[name].js' : '[name]_' + language + '.js'
         },
         module: {
             rules: [
@@ -86,7 +85,7 @@ module.exports = (env, argv) => {
                     ],
                     include: [
                         /resources/,
-                        path.join(__dirname, DEV ? '../dox-sequence-diagram-ui/' : 'node_modules/dox-sequence-diagram-ui/'),
+                        path.join(__dirname, IS_DEV ? '../dox-sequence-diagram-ui/' : 'node_modules/dox-sequence-diagram-ui/'),
                         path.join(__dirname, 'node_modules/react-datepicker/'),
                         path.join(__dirname, 'node_modules/react-select/'),
                         path.join(__dirname, 'node_modules/onap-ui-common/'),
@@ -114,19 +113,19 @@ module.exports = (env, argv) => {
                 }
             ]
         },
-        plugins: DEV
+        plugins: IS_DEV
             ? [
                   new CleanWebpackPlugin(['dist'], { watch: false }),
                   new DefinePlugin({
-                      DEBUG: DEV === true,
-                      DEV: DEV === true
+                      DEBUG: true,
+                      DEV: true
                   }),
                   new HotModuleReplacementPlugin()
               ]
             : [
                   new DefinePlugin({
-                      DEBUG: DEV === true,
-                      DEV: DEV === true
+                      DEBUG: false,
+                      DEV: false,
                   }),
                   new HtmlWebpackPlugin({
                     filename: 'index.html',
@@ -134,7 +133,7 @@ module.exports = (env, argv) => {
                   })
               ]
     };
-    if (DEV) {
+    if (IS_DEV) {
         webpackConfig.output.globalObject = 'this';
         webpackConfig.entry['punch-outs'].push('react-hot-loader/patch');
         webpackConfig.entry['punch-outs'].push(
@@ -155,6 +154,6 @@ module.exports = (env, argv) => {
             before: proxyServer
         };
     }
-    console.log('Running build for : ' + argv.mode);
+    console.log('Running build for: ' + argv.mode);
     return webpackConfig;
 };
