@@ -31,9 +31,9 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public class GroupTypeData extends GraphNode {
 
-    private static Type listType = new TypeToken<List<String>>() {
+    private static final Type listType = new TypeToken<List<String>>() {
     }.getType();
-    private static Type mapType = new TypeToken<HashMap<String, String>>() {
+    private static final Type mapType = new TypeToken<HashMap<String, String>>() {
     }.getType();
     private GroupTypeDataDefinition groupTypeDataDefinition;
 

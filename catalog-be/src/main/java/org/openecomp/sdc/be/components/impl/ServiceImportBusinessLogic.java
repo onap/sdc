@@ -36,6 +36,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,6 +61,7 @@ import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.impl.utils.CINodeFilterUtils;
 import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -81,8 +83,8 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -101,6 +103,7 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -132,9 +135,11 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
+import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -142,6 +147,7 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -188,6 +194,8 @@ public class ServiceImportBusinessLogic {
     private final ToscaFunctionService toscaFunctionService;
     private final DataTypeBusinessLogic dataTypeBusinessLogic;
     private ApplicationDataTypeCache applicationDataTypeCache;
+    private final GroupTypeImportManager groupTypeImportManager;
+    private final GroupTypeOperation groupTypeOperation;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -198,7 +206,8 @@ public class ServiceImportBusinessLogic {
                                       final ServiceImportParseLogic serviceImportParseLogic, final PolicyBusinessLogic policyBusinessLogic,
                                       final ResourceImportManager resourceImportManager, final JanusGraphDao janusGraphDao,
                                       final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService,
-                                      final DataTypeBusinessLogic dataTypeBusinessLogic) {
+                                      final DataTypeBusinessLogic dataTypeBusinessLogic, final GroupTypeImportManager groupTypeImportManager,
+                                      final GroupTypeOperation groupTypeOperation) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -216,6 +225,8 @@ public class ServiceImportBusinessLogic {
         this.graphLockOperation = graphLockOperation;
         this.toscaFunctionService = toscaFunctionService;
         this.dataTypeBusinessLogic = dataTypeBusinessLogic;
+        this.groupTypeImportManager = groupTypeImportManager;
+        this.groupTypeOperation = groupTypeOperation;
     }
 
     @Autowired
@@ -259,13 +270,20 @@ public class ServiceImportBusinessLogic {
             final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(service.getModel(), csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
-                dataTypesToCreate.entrySet().stream().forEach(createdOrUpdatedDataType -> {
-                    applicationDataTypeCache.reload(service.getModel(), UniqueIdBuilder.buildDataTypeUid(service.getModel(), createdOrUpdatedDataType.getKey()));
-                });
+                dataTypesToCreate.entrySet().stream().forEach(createdOrUpdatedDataType ->
+                    applicationDataTypeCache.reload(service.getModel(),
+                        UniqueIdBuilder.buildDataTypeUid(service.getModel(), createdOrUpdatedDataType.getKey())));
             }
             final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(service.getModel(), csarInfo);
             if (CollectionUtils.isNotEmpty(nodeTypesToCreate)) {
                 createNodeTypes(nodeTypesToCreate, service.getModel(), csarInfo.getModifier());
+            }
+
+            final Map<String, Object> groupTypesToCreate = getGroupTypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(groupTypesToCreate)) {
+                final Map<String, ToscaTypeMetadata> toscaTypeMetadata = fillToscaTypeMetadata(groupTypesToCreate);
+                final ToscaTypeImportData toscaTypeImportData = new ToscaTypeImportData(new Yaml().dump(groupTypesToCreate), toscaTypeMetadata);
+                groupTypeImportManager.createGroupTypes(toscaTypeImportData, service.getModel(), true);
             }
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
@@ -285,6 +303,31 @@ public class ServiceImportBusinessLogic {
         }
     }
 
+    private Map<String, ToscaTypeMetadata> fillToscaTypeMetadata(final Map<String, Object> groupTypesToCreate) {
+        final Map<String, ToscaTypeMetadata> toscaTypeMetadata = new HashMap<>();
+        groupTypesToCreate.entrySet().forEach(entry -> {
+            final ToscaTypeMetadata metadata = new ToscaTypeMetadata();
+            metadata.setIcon(getIconFromGroupType(entry.getValue()));
+            metadata.setDisplayName(extractDisplayName(entry.getKey()));
+            toscaTypeMetadata.put(entry.getKey(), metadata);
+        });
+        return toscaTypeMetadata;
+    }
+
+    private String extractDisplayName(final String key) {
+        final String[] split = key.split("\\.");
+        return split[split.length - 1];
+    }
+
+    private String getIconFromGroupType(final Object value) {
+        final Either<GroupTypeDefinition, StorageOperationStatus> groupType = groupTypeOperation.getLatestGroupTypeByType(
+            (String) ((LinkedHashMap) value).get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()), null);
+        if (groupType.isLeft()) {
+            return groupType.left().value().getIcon();
+        }
+        return null;
+    }
+
     private Map<String, Object> getDatatypesToCreate(final String model, final CsarInfo csarInfo) {
         final Map<String, Object> dataTypesToCreate = new HashMap<>();
 
@@ -293,19 +336,36 @@ public class ServiceImportBusinessLogic {
                 UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
             if (result.isRight() && result.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
-                log.info("Deploying unknown type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
+                log.info("Deploying unknown type {} to model {} from package {}", dataTypeEntry.getKey(), model, csarInfo.getCsarUUID());
             }
             if (hasNewProperties(result, (Map<String, Map<String, Object>>) dataTypeEntry.getValue())) {
                 dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
-                log.info("Deploying new version of type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
+                log.info("Deploying new version of type {} to model {} from package {}", dataTypeEntry.getKey(), model, csarInfo.getCsarUUID());
             }
         }
         return dataTypesToCreate;
     }
-    
-    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result, final Map<String, Map<String, Object>> dataType) {
+
+    private Map<String, Object> getGroupTypesToCreate(final String model, final CsarInfo csarInfo) {
+        final Map<String, Object> groupTypesToCreate = new HashMap<>();
+        final Map<String, Object> groupTypes = csarInfo.getGroupTypes();
+        if (MapUtils.isNotEmpty(groupTypes)) {
+            for (final Entry<String, Object> entry : groupTypes.entrySet()) {
+                final Either<GroupTypeDefinition, StorageOperationStatus> result
+                    = groupTypeOperation.getGroupTypeByUid(UniqueIdBuilder.buildGroupTypeUid(model, entry.getKey(), "1.0"));
+                if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                    groupTypesToCreate.put(entry.getKey(), entry.getValue());
+                    log.info("Deploying new group type {} to model {} from package {}", entry.getKey(), model, csarInfo.getCsarUUID());
+                }
+            }
+        }
+        return groupTypesToCreate;
+    }
+
+    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result,
+                                     final Map<String, Map<String, Object>> dataType) {
         return result.isLeft() && dataType.containsKey("properties") && result.left().value().getProperties() != null
-                && result.left().value().getProperties().size() != dataType.get("properties").size();
+            && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
 
     private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, String model, User user) {
@@ -317,7 +377,7 @@ public class ServiceImportBusinessLogic {
             nodeTypeMetadataList.add(nodeType.getNodeTypeMetadata());
         });
         nodeTypesMetadataList.setNodeMetadataList(nodeTypeMetadataList);
-        resourceImportManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, model,true, false);
+        resourceImportManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, model, true, false);
     }
 
     private List<NodeTypeDefinition> getNodeTypesToCreate(final String model, final ServiceCsarInfo csarInfo) {
@@ -331,10 +391,10 @@ public class ServiceImportBusinessLogic {
             } else if (result.isLeft()) {
                 Resource latestResource = (Resource) result.left().value();
                 Entry<String, Object> latestMappedToscaTemplate = getResourceToscaTemplate(latestResource.getUniqueId(),
-                        latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
+                    latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
                 Map<String, Object> mappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
                 Map<String, Object> newMappedToscaTemplate =
-                        getNewChangesToToscaTemplate(mappedToscaTemplate, (Map<String, Object>) latestMappedToscaTemplate.getValue());
+                    getNewChangesToToscaTemplate(mappedToscaTemplate, (Map<String, Object>) latestMappedToscaTemplate.getValue());
                 if (!newMappedToscaTemplate.equals(latestMappedToscaTemplate.getValue())) {
                     latestMappedToscaTemplate.setValue(newMappedToscaTemplate);
                     nodeTypeDefinition.setMappedNodeType(latestMappedToscaTemplate);
@@ -348,15 +408,14 @@ public class ServiceImportBusinessLogic {
     private Entry<String, Object> getResourceToscaTemplate(String uniqueId, ArtifactDefinition assetToscaTemplate, String userId) {
         String assetToToscaTemplate = assetToscaTemplate.getUniqueId();
         ImmutablePair<String, byte[]> toscaTemplate = artifactsBusinessLogic.
-                handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
+            handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
         Map<String, Object> mappedToscaTemplate = new Yaml().load(new String(toscaTemplate.right));
         Either<Map<String, Object>, ImportUtils.ResultStatusEnum> eitherNodeTypes =
-                findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+            findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (eitherNodeTypes.isRight()) {
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
-        Entry<String, Object> entry = eitherNodeTypes.left().value().entrySet().iterator().next();
-        return entry;
+        return eitherNodeTypes.left().value().entrySet().iterator().next();
     }
 
     private Map<String, Object> getNewChangesToToscaTemplate(Map<String, Object> mappedToscaTemplate, Map<String, Object> latestMappedToscaTemplate) {
@@ -1899,9 +1958,9 @@ public class ServiceImportBusinessLogic {
                 }
                 final var property = new ComponentInstanceProperty(curPropertyDef, value, null);
                 String validatedPropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, true, allDataTypes);
-                
+
                 addSubPropertyYamlToscaFunctions(validatedPropValue, value, property.getType(), propertyInfo, allDataTypes);
-                
+
                 if (CollectionUtils.isNotEmpty(propertyInfo.getSubPropertyToscaFunctions())) {
                     validatedPropValue = value;
                 }
@@ -1954,12 +2013,14 @@ public class ServiceImportBusinessLogic {
         instProperties.put(currentCompInstance.getUniqueId(), instPropList);
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
-    
+
     private boolean tryHandlingAsYamlToscaFunction(String validatedPropValue, String value, UploadPropInfo propertyInfo) {
-        return StringUtils.isEmpty(validatedPropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null && CollectionUtils.isEmpty(propertyInfo.getSubPropertyToscaFunctions());
+        return StringUtils.isEmpty(validatedPropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null
+            && CollectionUtils.isEmpty(propertyInfo.getSubPropertyToscaFunctions());
     }
-    
-    private void addSubPropertyYamlToscaFunctions(final String validatedPropValue, final String value, final String propertyType, final UploadPropInfo propertyInfo, final Map<String, DataTypeDefinition> allDataTypes) {
+
+    private void addSubPropertyYamlToscaFunctions(final String validatedPropValue, final String value, final String propertyType,
+                                                  final UploadPropInfo propertyInfo, final Map<String, DataTypeDefinition> allDataTypes) {
         if (StringUtils.isNotEmpty(validatedPropValue) || StringUtils.isEmpty(value) || ToscaPropertyType.isValidType(propertyType) != null) {
             return;
         }
@@ -1968,14 +2029,14 @@ public class ServiceImportBusinessLogic {
 
             final DataTypeDefinition dataTypeDefinition = allDataTypes.get(propertyType);
             final List<String> propertyNames =
-                    dataTypeDefinition.getProperties().stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
+                dataTypeDefinition.getProperties().stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
 
             boolean hasSubPropertyValues = jsonObject.entrySet().stream().allMatch(entry -> propertyNames.contains(entry.getKey()));
 
             if (hasSubPropertyValues) {
                 for (final PropertyDefinition prop : dataTypeDefinition.getProperties()) {
                     if (propertyInfo.getSubPropertyToscaFunctions().stream()
-                            .anyMatch(subPropertyToscaFunction -> subPropertyToscaFunction.getSubPropertyPath().get(0).equals(prop.getName()))) {
+                        .anyMatch(subPropertyToscaFunction -> subPropertyToscaFunction.getSubPropertyPath().get(0).equals(prop.getName()))) {
                         continue;
                     }
                     Optional<SubPropertyToscaFunction> subPropertyToscaFunction = createSubPropertyYamlToscaFunction(jsonObject, prop, allDataTypes);
@@ -1988,14 +2049,15 @@ public class ServiceImportBusinessLogic {
             log.info("Cannot create YAML value for {}", value);
         }
     }
-    
-    private Optional<SubPropertyToscaFunction> createSubPropertyYamlToscaFunction(final JsonObject jsonObject, final PropertyDefinition prop, final Map<String, DataTypeDefinition> allDataTypes) {
+
+    private Optional<SubPropertyToscaFunction> createSubPropertyYamlToscaFunction(final JsonObject jsonObject, final PropertyDefinition prop,
+                                                                                  final Map<String, DataTypeDefinition> allDataTypes) {
         JsonElement propJsonElement = jsonObject.get(prop.getName());
         if (propJsonElement != null) {
             final String subPropValue = propJsonElement.toString();
             final ComponentInstanceProperty subProperty = new ComponentInstanceProperty(prop, subPropValue, null);
             final String validateSubPropValue =
-                    serviceBusinessLogic.validatePropValueBeforeCreate(subProperty, subPropValue, true, allDataTypes);
+                serviceBusinessLogic.validatePropValueBeforeCreate(subProperty, subPropValue, true, allDataTypes);
 
             if (StringUtils.isEmpty(validateSubPropValue) && StringUtils.isNotEmpty(subPropValue)) {
                 try {
@@ -2084,7 +2146,7 @@ public class ServiceImportBusinessLogic {
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
                                                 ListDataDefinition<OperationInputDefinition> instanceInputs) {
         if (inputsFromNodeType == null || CollectionUtils.isEmpty(inputsFromNodeType.getListToscaDataDefinition()) || instanceInputs == null
-                || CollectionUtils.isEmpty(instanceInputs.getListToscaDataDefinition())) {
+            || CollectionUtils.isEmpty(instanceInputs.getListToscaDataDefinition())) {
             return;
         }
         instanceInputs.getListToscaDataDefinition().forEach(
