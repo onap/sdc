@@ -184,8 +184,8 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
         parsedToscaYamlInfo.setInstances(getInstances(
-                mappedToscaTemplate,
-                createdNodesToscaResourceNames
+            mappedToscaTemplate,
+            createdNodesToscaResourceNames
         ));
         associateRelationshipTemplatesToInstances(parsedToscaYamlInfo.getInstances(), mappedTopologyTemplate);
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
@@ -389,32 +389,32 @@ public class YamlTemplateParsingHandler {
     }
 
     private Map<String, UploadComponentInstanceInfo> getInstances(
-            Map<String, Object> toscaJson,
-            Map<String, String> createdNodesToscaResourceNames
+        Map<String, Object> toscaJson,
+        Map<String, String> createdNodesToscaResourceNames
     ) {
         Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES)
-                .left().on(err -> new HashMap<>());
+            .left().on(err -> new HashMap<>());
         if (nodeTemplates.isEmpty()) {
             return Collections.emptyMap();
         }
         return getInstances(
-                toscaJson,
-                createdNodesToscaResourceNames,
-                nodeTemplates
+            toscaJson,
+            createdNodesToscaResourceNames,
+            nodeTemplates
         );
     }
 
     private Map<String, UploadComponentInstanceInfo> getInstances(
-            Map<String, Object> toscaJson,
-            Map<String, String> createdNodesToscaResourceNames,
-            Map<String, Object> nodeTemplates
+        Map<String, Object> toscaJson,
+        Map<String, String> createdNodesToscaResourceNames,
+        Map<String, Object> nodeTemplates
     ) {
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
         return nodeTemplates.entrySet().stream()
             .map(node -> buildModuleComponentInstanceInfo(
-                    node,
-                    substitutionMappings,
-                    createdNodesToscaResourceNames
+                node,
+                substitutionMappings,
+                createdNodesToscaResourceNames
             ))
             .collect(Collectors.toMap(UploadComponentInstanceInfo::getName, i -> i));
     }
@@ -504,7 +504,7 @@ public class YamlTemplateParsingHandler {
                 interfaceDefinition.getOperations()
                     .forEach((operationType, operationValue) ->
                         operationUiList.add(buildOperation(interfaceDefinition.getType(), operationType, (Map<String, Object>) operationValue))
-            ));
+                    ));
         return operationUiList;
     }
 
@@ -793,9 +793,9 @@ public class YamlTemplateParsingHandler {
 
     @SuppressWarnings("unchecked")
     private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(
-            Map.Entry<String, Object> nodeTemplateJsonEntry,
-            Map<String, Object> substitutionMappings,
-            Map<String, String> createdNodesToscaResourceNames
+        Map.Entry<String, Object> nodeTemplateJsonEntry,
+        Map<String, Object> substitutionMappings,
+        Map<String, String> createdNodesToscaResourceNames
     ) {
         UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
         nodeTemplateInfo.setName(nodeTemplateJsonEntry.getKey());
@@ -860,12 +860,12 @@ public class YamlTemplateParsingHandler {
     }
 
     private void updateInterfaces(
-            UploadComponentInstanceInfo nodeTemplateInfo,
-            Map<String, Object> nodeTemplateJsonMap
-    ){
+        UploadComponentInstanceInfo nodeTemplateInfo,
+        Map<String, Object> nodeTemplateJsonMap
+    ) {
         if (nodeTemplateJsonMap.containsKey(INTERFACES.getElementName())) {
             Map<String, UploadInterfaceInfo> interfaces = buildInterfacesModuleFromYaml(
-                    nodeTemplateJsonMap
+                nodeTemplateJsonMap
             );
             if (!interfaces.isEmpty()) {
                 nodeTemplateInfo.setInterfaces(interfaces);
@@ -946,7 +946,8 @@ public class YamlTemplateParsingHandler {
         return moduleRequirements;
     }
 
-    private void addModuleNodeTemplateReq(Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName, String nodeName) {
+    private void addModuleNodeTemplateReq(Map<String, List<UploadReqInfo>> moduleRequirements, Object requirementJson, String requirementName,
+                                          String nodeName) {
         UploadReqInfo requirement = buildModuleNodeTemplateReg(requirementJson, nodeName);
         requirement.setName(requirementName);
         if (moduleRequirements.containsKey(requirementName)) {
@@ -1107,7 +1108,7 @@ public class YamlTemplateParsingHandler {
             if (nodeTemplateJsonMap.containsKey(RELATIONSHIP.getElementName())) {
                 final String template = (String) nodeTemplateJsonMap.get(RELATIONSHIP.getElementName());
                 if (StringUtils.isNotEmpty(nodeName) && template.contains(nodeName)) {
-                regTemplateInfo.setRelationshipTemplate(template);
+                    regTemplateInfo.setRelationshipTemplate(template);
                 }
             }
         }
@@ -1115,7 +1116,7 @@ public class YamlTemplateParsingHandler {
     }
 
     private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(
-            Map<String, Object> nodeTemplateJsonMap) {
+        Map<String, Object> nodeTemplateJsonMap) {
         Map<String, UploadAttributeInfo> moduleAttribute = new HashMap<>();
         Either<Map<String, Object>, ResultStatusEnum> toscaAttributes = findFirstToscaMapElement(nodeTemplateJsonMap, ATTRIBUTES);
         if (toscaAttributes.isLeft()) {
@@ -1142,7 +1143,7 @@ public class YamlTemplateParsingHandler {
     }
 
     private Map<String, UploadInterfaceInfo> buildInterfacesModuleFromYaml(
-            Map<String, Object> nodeTemplateJsonMap
+        Map<String, Object> nodeTemplateJsonMap
     ) {
         Map<String, UploadInterfaceInfo> moduleInterfaces = new HashMap<>();
         Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = findFirstToscaMapElement(nodeTemplateJsonMap, INTERFACES);
@@ -1287,7 +1288,8 @@ public class YamlTemplateParsingHandler {
         if (value instanceof Map) {
             log.debug("Creating interface operation input '{}'", inputName);
             Gson gson = new Gson();
-            Type type = new TypeToken<LinkedHashMap<String, Object>>(){}.getType();
+            Type type = new TypeToken<LinkedHashMap<String, Object>>() {
+            }.getType();
             String stringValue = gson.toJson(value, type);
             operationInput.setValue(stringValue);
         }
@@ -1307,10 +1309,10 @@ public class YamlTemplateParsingHandler {
         }
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
-                ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("primary")) {
-            
-            final Object primary = ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
-            if(primary instanceof Map) {
+            ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("primary")) {
+
+            final Object primary = ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
+            if (primary instanceof Map) {
                 Map<String, Object> implDetails = (Map) primary;
 
                 if (implDetails.get("file") != null) {
@@ -1324,10 +1326,9 @@ public class YamlTemplateParsingHandler {
                     artifactDataDefinition.setArtifactVersion(implDetails.get("artifact_version").toString());
                 }
 
-                if(implDetails.get("properties") instanceof Map) {
-                    List<PropertyDataDefinition> operationProperties = artifactDataDefinition.getProperties() == null ? new ArrayList<>() : artifactDataDefinition.getProperties();
+                if (implDetails.get("properties") instanceof Map) {
                     Map<String, Object> properties = (Map<String, Object>) implDetails.get("properties");
-                    properties.forEach((k,v) -> {
+                    properties.forEach((k, v) -> {
                         ToscaPropertyType type = getTypeFromObject(v);
                         if (type != null) {
                             PropertyDataDefinition propertyDef = new PropertyDataDefinition();

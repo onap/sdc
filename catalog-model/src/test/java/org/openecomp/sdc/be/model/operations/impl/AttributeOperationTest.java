@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -51,7 +52,6 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 
@@ -63,9 +63,6 @@ class AttributeOperationTest extends ModelTestBase {
 
     @Mock
     private HealingJanusGraphGenericDao janusGraphGenericDao;
-
-    @Mock
-    private DataTypeValidatorConverter dataTypeValidatorConverter;
 
     @BeforeAll
     public static void setupBeforeClass() {
@@ -89,13 +86,14 @@ class AttributeOperationTest extends ModelTestBase {
         final ImmutablePair<GraphNode, GraphEdge> pairDataTypeData = new ImmutablePair<>(new DataTypeData(), edge);
 
         when(janusGraphGenericDao.getNode(any(), any(), any())).thenReturn(Either.left(new DataTypeData()));
-        when(janusGraphGenericDao.getChildrenNodes(eq("uid"), eq("null.datatype"), any(GraphEdgeLabels.class), any(NodeTypeEnum.class), any()))
-            .thenReturn(Either.<List<ImmutablePair<GraphNode, GraphEdge>>, JanusGraphOperationStatus>left(list));
-        when(janusGraphGenericDao.getChild(eq("uid"), eq("null.datatype"), any(GraphEdgeLabels.class), any(NodeTypeEnum.class), any()))
-            .thenReturn(Either.<ImmutablePair<GraphNode, GraphEdge>, JanusGraphOperationStatus>left(pairDataTypeData));
-
-        when(janusGraphGenericDao.getChildrenNodes(eq("uid"), eq(null), any(GraphEdgeLabels.class), any(NodeTypeEnum.class), any()))
-            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        doReturn(Either.<List<ImmutablePair<GraphNode, GraphEdge>>, JanusGraphOperationStatus>left(list))
+            .when(janusGraphGenericDao)
+            .getChildrenNodes("uid", "null.dataType", GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property, PropertyData.class);
+        doReturn(Either.<ImmutablePair<GraphNode, GraphEdge>, JanusGraphOperationStatus>left(pairDataTypeData))
+            .when(janusGraphGenericDao).getChild("uid", "null.dataType", GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType, DataTypeData.class);
+        doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND))
+            .when(janusGraphGenericDao)
+            .getChildrenNodes("uid", null, GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property, PropertyData.class);
         when(janusGraphGenericDao.getChild(eq("uid"), eq(null), any(GraphEdgeLabels.class), any(NodeTypeEnum.class), any()))
             .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
 
