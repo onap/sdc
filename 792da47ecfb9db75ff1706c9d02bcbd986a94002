@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "628f5800_cbad3d24",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-distribution-engine-configuration.yaml.erb",
+        "patchSetId": 9
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-15T17:22:24Z",
+      "side": 1,
+      "message": "can we default to the old values so it will still work the old way where no kafka config has been provided",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 68
+      },
+      "revId": "792da47ecfb9db75ff1706c9d02bcbd986a94002",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
