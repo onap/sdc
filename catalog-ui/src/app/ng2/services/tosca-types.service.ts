@@ -46,7 +46,10 @@ export class ToscaTypesServiceNg2 {
     return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
   }
 
-  async fetchNodeTypes(): Promise<NodeTypesMap> {
+  async fetchNodeTypes(modelName: string): Promise<NodeTypesMap> {
+    if(modelName) {
+      return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes', {params: {model: modelName}}).toPromise();
+    }
     return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
   }
 
