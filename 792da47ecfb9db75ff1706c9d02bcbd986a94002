@@ -22,6 +22,30 @@
       "revId": "792da47ecfb9db75ff1706c9d02bcbd986a94002",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48891cea_ef532df2",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-distribution-engine-configuration.yaml.erb",
+        "patchSetId": 9
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-09-16T08:14:18Z",
+      "side": 1,
+      "message": "Or as an alternative, would it make sense to add a separate \"DistributionTopics\" section to the AUTO.json config?",
+      "parentUuid": "628f5800_cbad3d24",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 68
+      },
+      "revId": "792da47ecfb9db75ff1706c9d02bcbd986a94002",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
