@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "94fdb46d_1d469aa5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-16T10:54:15Z",
+      "side": 1,
+      "message": "For sure, I will work on that, thanks for catching",
+      "parentUuid": "56dea9ee_1bcc3e3b",
+      "range": {
+        "startLine": 303,
+        "startChar": 28,
+        "endLine": 303,
+        "endChar": 41
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5ce6aa18_91f78423",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2022-09-16T08:17:37Z",
       "side": 1,
       "message": "what is the rational here?",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 84
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f16c0ab0_56985b0c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-16T10:54:15Z",
+      "side": 1,
+      "message": "The capabilities filters are grouped by the capability name.\nWe need to delete a specific filter, not the group of filters (as it was broken before).\nThe index we a referring is the index of the filter, not the group.\nSo I\u0027m iterating through the capabilities groups and counting how many filters it has. \nIf a group has less or equal filters than the actual index, it means that the filter I want to delete is not inside the group, so I\u0027m just decreasing the index count and going to the next group.\nWhen the index is inside the group, I\u0027m removing the filter from that group. E.g.:\nGiven a index 4 (0 is included), I have to delete the 5th filter.\nHaving two groups, one with 3 filters and the second with 4, total 7 filters.\nI will start with the index at 4. 4 \u003c\u003d 3 is false, so I\u0027m decreasing it from 3, index is now 1.\nNext group: 1 \u003c\u003d 4 is true, the filter I want to delete belongs to this group, so I\u0027m just removing the filter from the position 1 (which is the 5th filter in overall).\n\nLet me know if it is clear.\n\nNot sure if there is a better way to do that. The order is aligned with how the system shows the filters in the UI and how they are persisted in the database, so the indexes will not be different, unless, of course, some other call or procedure removed a filter.\n\nI\u0027m sure using list index to remove an item is a naive way to delete from an API, but that is the way it is implemented, I\u0027m just fixing something that was broken as it was deleting the group before, instead of the filters inside it.\n\nTo not use indexes we need to provide some sort of unique id to the filters.",
+      "parentUuid": "5ce6aa18_91f78423",
       "range": {
         "startLine": 150,
         "startChar": 0,
