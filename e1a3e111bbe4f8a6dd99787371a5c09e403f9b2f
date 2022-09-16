@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56dea9ee_1bcc3e3b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-16T08:17:37Z",
+      "side": 1,
+      "message": "do we need to check for null on next line",
+      "range": {
+        "startLine": 303,
+        "startChar": 28,
+        "endLine": 303,
+        "endChar": 41
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ce6aa18_91f78423",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-16T08:17:37Z",
+      "side": 1,
+      "message": "what is the rational here?",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 84
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
