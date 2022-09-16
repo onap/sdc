@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "92a55fea_458f2bd6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-16T16:28:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94fdb46d_1d469aa5",
+      "range": {
+        "startLine": 303,
+        "startChar": 28,
+        "endLine": 303,
+        "endChar": 41
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ce6aa18_91f78423",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
         "patchSetId": 6
@@ -117,6 +141,30 @@
       "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dda41727_e354866c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-16T16:28:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9cee982d_c557a7c6",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 84
+      },
+      "revId": "e1a3e111bbe4f8a6dd99787371a5c09e403f9b2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
