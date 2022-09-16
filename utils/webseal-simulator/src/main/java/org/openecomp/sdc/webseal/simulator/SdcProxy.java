@@ -51,6 +51,8 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -108,7 +110,7 @@ public class SdcProxy extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         proxy(request, response, MethodEnum.GET);
     }
 
@@ -138,18 +140,16 @@ public class SdcProxy extends HttpServlet {
     }
 
     @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         proxy(request, response, MethodEnum.PUT);
     }
 
     @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         proxy(request, response, MethodEnum.DELETE);
     }
 
     private void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException {
-
-        Map<String, String[]> requestParameters = request.getParameterMap();
         String userIdHeader = getUseridFromRequest(request);
         // new request - forward to login page
         if (userIdHeader == null) {
@@ -157,9 +157,17 @@ public class SdcProxy extends HttpServlet {
             response.sendRedirect("/login");
             return;
         }
+        final String contentTypeHeader = request.getHeader(HttpHeaders.CONTENT_TYPE);
+        if (contentTypeHeader == null || contentTypeHeader.isBlank()) {
+            response.setStatus(HttpStatus.SC_BAD_REQUEST);
+            response.getWriter().write("Missing header " + HttpHeaders.CONTENT_TYPE);
+            response.getWriter().flush();
+            return;
+        }
 
         final User user = getUser(userIdHeader);
 
+        Map<String, String[]> requestParameters = request.getParameterMap();
         String uri = getUri(request, requestParameters);
         HttpRequestBase httpMethod = createHttpMethod(request, methodEnum, uri);
         addHeadersToMethod(httpMethod, user, request);
