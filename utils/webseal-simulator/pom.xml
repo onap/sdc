@@ -44,6 +44,11 @@
             <artifactId>httpcore</artifactId>
             <version>${httpcore.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${lang3.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-logging</groupId>
