@@ -50,7 +50,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -72,8 +75,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.openecomp.sdc.webseal.simulator.conf.Conf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SdcProxy extends HttpServlet {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SdcProxy.class);
 
     private static final long serialVersionUID = 1L;
     private static final Set<String> RESERVED_HEADERS =
@@ -108,13 +115,12 @@ public class SdcProxy extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         proxy(request, response, MethodEnum.GET);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String userId = request.getParameter("userId");
         String password = request.getParameter("password");
 
@@ -128,38 +134,42 @@ public class SdcProxy extends HttpServlet {
         if (password != null && getUser(userId, password) == null) {
             MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
             RequestDispatcher view = request.getRequestDispatcher("login");
-            request.setAttribute("message", "ERROR: userid or password incorect");
+            request.setAttribute("message", "ERROR: userid or password incorrect");
             view.forward(mutableRequest, response);
         } else {
-            System.out.println("SdcProxy -> doPost going to doGet");
+            if (!verifyContentType(request, response)) {
+                return;
+            }
             request.setAttribute(HTTP_IV_USER, userId);
             proxy(request, response, MethodEnum.POST);
         }
     }
 
     @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (!verifyContentType(request, response)) {
+            return;
+        }
         proxy(request, response, MethodEnum.PUT);
     }
 
     @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         proxy(request, response, MethodEnum.DELETE);
     }
 
     private void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException {
-
-        Map<String, String[]> requestParameters = request.getParameterMap();
         String userIdHeader = getUseridFromRequest(request);
         // new request - forward to login page
         if (userIdHeader == null) {
-            System.out.print("Going to login");
+            LOGGER.debug("{} not provided. Redirecting to /login", USER_ID);
             response.sendRedirect("/login");
             return;
         }
 
         final User user = getUser(userIdHeader);
 
+        Map<String, String[]> requestParameters = request.getParameterMap();
         String uri = getUri(request, requestParameters);
         HttpRequestBase httpMethod = createHttpMethod(request, methodEnum, uri);
         addHeadersToMethod(httpMethod, user, request);
@@ -179,6 +189,27 @@ public class SdcProxy extends HttpServlet {
                 write(responseBodyStream, response.getOutputStream());
             }
         }
+    }
+
+    private boolean verifyContentType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String contentTypeHeader = request.getHeader(HttpHeaders.CONTENT_TYPE);
+        if (StringUtils.isBlank(contentTypeHeader)) {
+            response.setStatus(HttpStatus.SC_BAD_REQUEST);
+            response.getWriter().write("Missing header " + HttpHeaders.CONTENT_TYPE);
+            response.getWriter().flush();
+            return false;
+        }
+        try {
+            getContentType(request);
+        } catch (final Exception e) {
+            final String errorMsg = "Invalid content type";
+            LOGGER.debug(errorMsg, e);
+            response.setStatus(HttpStatus.SC_BAD_REQUEST);
+            response.getWriter().write(errorMsg);
+            response.getWriter().flush();
+            return false;
+        }
+        return true;
     }
 
     private User getUser(String userId, String password) {
