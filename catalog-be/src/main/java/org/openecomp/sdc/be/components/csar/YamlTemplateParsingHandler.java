@@ -1023,21 +1023,12 @@ public class YamlTemplateParsingHandler {
     @SuppressWarnings("unchecked")
     private Map<String, List<UploadCapInfo>> createCapModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
         Map<String, List<UploadCapInfo>> moduleCap = new HashMap<>();
-        Either<List<Object>, ResultStatusEnum> capabilitiesListRes = findFirstToscaListElement(nodeTemplateJsonMap, CAPABILITIES);
-        if (capabilitiesListRes.isLeft()) {
-            for (Object jsonCapObj : capabilitiesListRes.left().value()) {
-                String key = ((Map<String, Object>) jsonCapObj).keySet().iterator().next();
-                Object capJson = ((Map<String, Object>) jsonCapObj).get(key);
-                addModuleNodeTemplateCap(moduleCap, capJson, key);
-            }
-        } else {
-            Either<Map<String, Object>, ResultStatusEnum> capabilitiesMapRes = findFirstToscaMapElement(nodeTemplateJsonMap, CAPABILITIES);
-            if (capabilitiesMapRes.isLeft()) {
-                for (Map.Entry<String, Object> entry : capabilitiesMapRes.left().value().entrySet()) {
-                    String capName = entry.getKey();
-                    Object capJson = entry.getValue();
-                    addModuleNodeTemplateCap(moduleCap, capJson, capName);
-                }
+        Map<String, Object> capabilities = (Map<String, Object>) nodeTemplateJsonMap.get(CAPABILITIES.getElementName());
+        if (MapUtils.isNotEmpty(capabilities)) {
+            for (Map.Entry<String, Object> entry : capabilities.entrySet()) {
+                String capName = entry.getKey();
+                Object capJson = entry.getValue();
+                addModuleNodeTemplateCap(moduleCap, capJson, capName);
             }
         }
         return moduleCap;
