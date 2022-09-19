@@ -22,6 +22,30 @@
       "revId": "62da32217e7ada243fceca3f6d3f3fd14b5b9a26",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a39f51d3_ccedbf9c",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/SdcProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-19T10:04:42Z",
+      "side": 1,
+      "message": "The Apache commons library was not available in the project, I didn\u0027t want to introduce it just for that. But just did as you suggested.",
+      "parentUuid": "c31ce77a_455ab68d",
+      "range": {
+        "startLine": 161,
+        "startChar": 11,
+        "endLine": 161,
+        "endChar": 68
+      },
+      "revId": "62da32217e7ada243fceca3f6d3f3fd14b5b9a26",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
