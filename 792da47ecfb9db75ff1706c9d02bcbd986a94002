@@ -46,6 +46,30 @@
       "revId": "792da47ecfb9db75ff1706c9d02bcbd986a94002",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40aa9f51_2afebbfd",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-distribution-engine-configuration.yaml.erb",
+        "patchSetId": 9
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-09-19T15:51:55Z",
+      "side": 1,
+      "message": "Should default to old topic names now if not present in the AUTO.json\nStill to test on OOM deploy as no access to cloud at present",
+      "parentUuid": "48891cea_ef532df2",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 68
+      },
+      "revId": "792da47ecfb9db75ff1706c9d02bcbd986a94002",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
