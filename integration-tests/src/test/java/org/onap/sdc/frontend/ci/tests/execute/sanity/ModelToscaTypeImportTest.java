@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -104,7 +104,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         final var vf = new ResourceCreateData();
         vf.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
         vf.setCategory(ResourceCategoryEnum.GENERIC_ABSTRACT.getSubCategory());
-        vf.setTagList(Collections.singletonList(vf.getName()));
+        vf.setTagList(Arrays.asList(vf.getName()));
         vf.setDescription("Test");
         vf.setVendorName("EST");
         vf.setVendorRelease("2.5.1");
@@ -149,13 +149,13 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         final Map<String, byte[]> csarFiles = FileHandling.getFilesFromZip(downloadFolderPath, toscaArtifactsPage.getDownloadedArtifactList().get(0));
 
         assertEquals(8, csarFiles.size());
-        assertTrue(csarFiles.keySet().stream().anyMatch(filename -> filename.contains(NODE_TYPE_TO_ADD.concat("-template.yml"))));
-        assertTrue(csarFiles.keySet().stream().anyMatch(filename -> filename.contains(MODEL_VNFD_TYPES.concat(".yaml"))));
-        assertTrue(csarFiles.keySet().stream().anyMatch(filename -> filename.contains(MODEL_NSD_TYPES.concat(".yaml"))));
-        assertTrue(csarFiles.keySet().stream().anyMatch(filename -> filename.contains("-template-interface".concat(".yml"))));
-        assertTrue(csarFiles.keySet().stream().anyMatch(filename -> filename.contains(ADDITIONAL_TYPE_DEFINITIONS.concat(".yaml"))));
-        assertTrue(csarFiles.values().stream().anyMatch(bytes -> new String(bytes).contains(TOSCA_CAPABILITIES_NETWORK_LINK)));
-        assertTrue(csarFiles.values().stream().anyMatch(bytes -> new String(bytes).contains(ADDITIONAL_SERVICE_DATA)));
+        assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(NODE_TYPE_TO_ADD.concat("-template.yml"))).findAny().isPresent());
+        assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(MODEL_VNFD_TYPES.concat(".yaml"))).findAny().isPresent());
+        assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(MODEL_NSD_TYPES.concat(".yaml"))).findAny().isPresent());
+        assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains("-template-interface".concat(".yml"))).findAny().isPresent());
+        assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(ADDITIONAL_TYPE_DEFINITIONS.concat(".yaml"))).findAny().isPresent());
+        assertTrue(csarFiles.values().stream().filter(bytes -> new String(bytes).contains(TOSCA_CAPABILITIES_NETWORK_LINK)).findAny().isPresent());
+        assertTrue(csarFiles.values().stream().filter(bytes -> new String(bytes).contains(ADDITIONAL_SERVICE_DATA)).findAny().isPresent());
     }
 
     private ComponentPage addProperty(ComponentPage serviceComponentPage, final Map<String, String> propertyMap, String name) {

@@ -802,11 +802,11 @@ public class ToscaExportHandler {
         if (CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
             Map<String, ToscaProperty> convertedProperties = properties.stream()
-                .map(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition, component.getInputs()))
-                .collect(Collectors.toMap(PropertyDataDefinition::getName,
-                    property -> propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY)));
+                .map(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition, component.getInputs())).collect(Collectors
+                    .toMap(PropertyDataDefinition::getName,
+                        property -> propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY)));
             // merge component properties and inputs properties
-            convertedProperties.forEach((k, v) -> mergedProperties.putIfAbsent(k, v));
+            mergedProperties.putAll(convertedProperties);
         }
         if (MapUtils.isNotEmpty(mergedProperties)) {
             toscaNodeType.setProperties(mergedProperties);
@@ -940,7 +940,7 @@ public class ToscaExportHandler {
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             NodeFilter nodeFilter = convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter());
-            if (nodeFilter != null && nodeFilter.hasData()) {
+            if(nodeFilter != null && nodeFilter.hasData()){
                 nodeTemplate.setNode_filter(nodeFilter);
             }
             final Either<Component, Boolean> originComponentRes = capabilityRequirementConverter
@@ -1755,7 +1755,7 @@ public class ToscaExportHandler {
     }
 
     private Map<String, ToscaProperty> convertInputsToProperties(Map<String, DataTypeDefinition> dataTypes, List<InputDefinition> componentInputs,
-                                                                 String componentUniqueId) {
+                                                             String componentUniqueId) {
         if (CollectionUtils.isEmpty(componentInputs)) {
             return new HashMap<>();
         }
@@ -1774,10 +1774,6 @@ public class ToscaExportHandler {
         removeOperationImplementationForProxyNodeType(proxyComponentInterfaces);
         return Optional
             .ofNullable(interfacesOperationsConverter.getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false, false));
-    }
-
-    private Configuration getConfiguration() {
-        return ConfigurationManager.getConfigurationManager().getConfiguration();
     }
 
     private static class CustomRepresenter extends Representer {
@@ -1933,6 +1929,10 @@ public class ToscaExportHandler {
             Collection<Property> fields = getPropertiesMap(type, BeanAccess.FIELD).values();
             return new LinkedHashSet<>(fields);
         }
+    }
+
+    private Configuration getConfiguration() {
+        return ConfigurationManager.getConfigurationManager().getConfiguration();
     }
 
 }
