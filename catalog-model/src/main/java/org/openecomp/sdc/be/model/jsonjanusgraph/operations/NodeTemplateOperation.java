@@ -939,9 +939,7 @@ public class NodeTemplateOperation extends BaseOperation {
                 req.addToPath(componentInstance.getUniqueId());
                 log.debug("enter populateRequirement,get init Requirements OwnerId:{},get componentInstance UniqueId:{}",
                     req.getOwnerId(), componentInstance.getUniqueId());
-                if (req.getOwnerId() == null || req.getOwnerId().isEmpty()) {
-                    req.setOwnerId(componentInstance.getUniqueId());
-                }
+                req.setOwnerId(componentInstance.getUniqueId());
                 log.debug("enter populateRequirement,get init Requirements OwnerName:{}", req.getOwnerName());
                 if (req.getOwnerName() == null || req.getOwnerName().isEmpty()) {
                     req.setOwnerName(componentInstance.getName());
