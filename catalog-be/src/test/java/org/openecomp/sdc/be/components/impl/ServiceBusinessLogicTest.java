@@ -31,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
@@ -41,12 +39,12 @@ import fj.data.Either;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -59,11 +57,9 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -90,16 +86,14 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
     @Test
     void testGetComponentAuditRecordsCertifiedVersion() {
-        Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(CERTIFIED_VERSION, COMPONNET_ID,
-            user.getUserId());
+        Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(CERTIFIED_VERSION, COMPONNET_ID, user.getUserId());
         assertTrue(componentAuditRecords.isLeft());
         assertEquals(3, componentAuditRecords.left().value().size());
     }
 
     @Test
     void testGetComponentAuditRecordsUnCertifiedVersion() {
-        Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(UNCERTIFIED_VERSION, COMPONNET_ID,
-            user.getUserId());
+        Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(UNCERTIFIED_VERSION, COMPONNET_ID, user.getUserId());
         assertTrue(componentAuditRecords.isLeft());
         assertEquals(4, componentAuditRecords.left().value().size());
     }
@@ -192,6 +186,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         final Service actualService = createResponse.left().value();
         org.hamcrest.MatcherAssert.assertThat("Service should not be null", service, is(notNullValue()));
 
+
         assertEqualsServiceObject(expectedService, actualService);
     }
 
@@ -221,7 +216,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         }
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
-
     private void assertEqualsServiceObject(final Service expectedService, final Service actualService) {
         assertEquals(expectedService.getContactId(), actualService.getContactId());
         assertEquals(expectedService.getCategories(), actualService.getCategories());
@@ -302,9 +296,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private void testServiceNameEmpty() {
         Service serviceExccedsNameLimit = createServiceObject(false);
         serviceExccedsNameLimit.setName(null);
-        try {
+        try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -316,9 +310,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         // contains :
         String nameWrongFormat = "ljg\\fd";
         service.setName(nameWrongFormat);
-        try {
+        try{
             bl.createService(service, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -331,21 +325,20 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private void testServiceDescriptionEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription("");
-        try {
+        try{
             bl.createService(serviceExist, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
         fail();
     }
-
     private void testServiceDescriptionMissing() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setDescription(null);
-        try {
+        try{
             bl.createService(serviceExist, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -356,20 +349,19 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Service serviceExccedsDescLimit = createServiceObject(false);
         // 1025 chars, the limit is 1024
         String tooLongServiceDesc = "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
-            + "AOf9Tf2xtXxPCuCIMCR5wOGnNTaFxgnJEHAGxilBhZDgeMNHmCN1rMK5B5IRJOnZxcpcL1NeG3APTCIMP1lNAxngYulDm9heFSBc8TfXAADq7703AvkJT0QPpGq2z2P"
-            + "tlikcAnIjmWgfC5Tm7UH462BAlTyHg4ExnPPL4AO8c92VrD7kZSgSqiy73cN3gLT8uigkKrUgXQFGVUFrXVyyQXYtVM6bLBeuCGQf4C2j8lkNg6M0J3PC0PzMRoinOxk"
-            + "Ae2teeCtVcIj4A1KQo3210j8q2v7qQU69Mabsa6DT9FgE4rcrbiFWrg0Zto4SXWD3o1eJA9o29lTg6kxtklH3TuZTmpi5KVp1NFhS1RpnqF83tzv4mZLKsx7Zh1fEgYvRFwx1"
-            + "ar3RolyDfNoZiGBGTMsZzz7RPFBf2hTnLmNqVGQnHKhhGj0Y5s8t2cbqbO2nmHiJb9uaUVrCGypgbAcJL3KPOBfAVW8PcpmNj4yVjI3L4x5zHjmGZbp9vKshEQODcrmcgsYAoKqe"
-            + "uu5u7jk8XVxEfQ0m5qL8UOErXPlJovSmKUmP5B5T0w299zIWDYCzSoNasHpHjOMDLAiDDeHbozUOn9t3Qou00e9POq4RMM0VnIx1H38nJoJZz2XH8CI5YMQe7oTagaxgQTF2aa0qaq2"
-            + "V6nJsfRGRklGjNhFFYP2cS4Xv2IJO9DSX6LTXOmENrGVJJvMOZcvnBaZPfoAHN0LU4i1SoepLzulIxnZBfkUWFJgZ5wQ0Bco2GC1HMqzW21rwy4XHRxXpXbmW8LVyoA1KbnmVmROycU4"
-            + "scTZ62IxIcIWCVeMjBIcTviXULbPUyqlfEPXWr8IMJtpAaELWgyquPClAREMDs2b9ztKmUeXlMccFES1XWbFTrhBHhmmDyVReEgCwfokrUFR13LTUK1k8I6OEHOs";
+                + "AOf9Tf2xtXxPCuCIMCR5wOGnNTaFxgnJEHAGxilBhZDgeMNHmCN1rMK5B5IRJOnZxcpcL1NeG3APTCIMP1lNAxngYulDm9heFSBc8TfXAADq7703AvkJT0QPpGq2z2P"
+                + "tlikcAnIjmWgfC5Tm7UH462BAlTyHg4ExnPPL4AO8c92VrD7kZSgSqiy73cN3gLT8uigkKrUgXQFGVUFrXVyyQXYtVM6bLBeuCGQf4C2j8lkNg6M0J3PC0PzMRoinOxk"
+                + "Ae2teeCtVcIj4A1KQo3210j8q2v7qQU69Mabsa6DT9FgE4rcrbiFWrg0Zto4SXWD3o1eJA9o29lTg6kxtklH3TuZTmpi5KVp1NFhS1RpnqF83tzv4mZLKsx7Zh1fEgYvRFwx1"
+                + "ar3RolyDfNoZiGBGTMsZzz7RPFBf2hTnLmNqVGQnHKhhGj0Y5s8t2cbqbO2nmHiJb9uaUVrCGypgbAcJL3KPOBfAVW8PcpmNj4yVjI3L4x5zHjmGZbp9vKshEQODcrmcgsYAoKqe"
+                + "uu5u7jk8XVxEfQ0m5qL8UOErXPlJovSmKUmP5B5T0w299zIWDYCzSoNasHpHjOMDLAiDDeHbozUOn9t3Qou00e9POq4RMM0VnIx1H38nJoJZz2XH8CI5YMQe7oTagaxgQTF2aa0qaq2"
+                + "V6nJsfRGRklGjNhFFYP2cS4Xv2IJO9DSX6LTXOmENrGVJJvMOZcvnBaZPfoAHN0LU4i1SoepLzulIxnZBfkUWFJgZ5wQ0Bco2GC1HMqzW21rwy4XHRxXpXbmW8LVyoA1KbnmVmROycU4"
+                + "scTZ62IxIcIWCVeMjBIcTviXULbPUyqlfEPXWr8IMJtpAaELWgyquPClAREMDs2b9ztKmUeXlMccFES1XWbFTrhBHhmmDyVReEgCwfokrUFR13LTUK1k8I6OEHOs";
 
         serviceExccedsDescLimit.setDescription(tooLongServiceDesc);
-        try {
+        try{
             bl.createService(serviceExccedsDescLimit, user);
-        } catch (ComponentException e) {
-            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.SERVICE.getValue(),
-                "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
+        } catch(ComponentException e){
+            assertComponentException(e, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.SERVICE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
             return;
         }
         fail();
@@ -380,9 +372,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         // Not english
         String tooLongServiceDesc = "\uC2B5";
         notEnglish.setDescription(tooLongServiceDesc);
-        try {
+        try{
             bl.createService(notEnglish, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e){
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -395,15 +387,14 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private void testServiceIconEmpty() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon("");
-        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist, user, AuditingActionEnum.CREATE_SERVICE);
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist,user,AuditingActionEnum.CREATE_SERVICE);
         assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
 
     }
-
     private void testServiceIconMissing() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setIcon(null);
-        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist, user, AuditingActionEnum.CREATE_SERVICE);
+        Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(serviceExist,user,AuditingActionEnum.CREATE_SERVICE);
         assertThat(service.left().value().getIcon()).isEqualTo(DEFAULT_ICON);
     }
 
@@ -422,9 +413,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         List<String> tagsList = new ArrayList<>();
         tagsList.add(tag1);
         serviceExccedsNameLimit.setTags(tagsList);
-        try {
+        try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
             return;
         }
@@ -437,9 +428,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         List<String> tagsList = new ArrayList<>();
         tagsList.add(tag1);
         serviceExccedsNameLimit.setTags(tagsList);
-        try {
+        try{
             bl.createService(serviceExccedsNameLimit, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.INVALID_FIELD_FORMAT, "Service", "tag");
             return;
         }
@@ -470,23 +461,22 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         // 59 chars instead of 50
         String contactIdTooLong = "thisNameIsVeryLongAndExeccedsTheNormalLengthForContactId";
         serviceContactId.setContactId(contactIdTooLong);
-        try {
+        try{
             bl.createService(serviceContactId, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
         fail();
     }
-
     private void testContactIdWrongFormatCreate() {
         Service serviceContactId = createServiceObject(false);
         // 3 letters and 3 digits and special characters
         String contactIdTooLong = "yrt134!!!";
         serviceContactId.setContactId(contactIdTooLong);
-        try {
+        try{
             bl.createService(serviceContactId, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -496,9 +486,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private void testResourceContactIdMissing() {
         Service resourceExist = createServiceObject(false);
         resourceExist.setContactId(null);
-        try {
+        try{
             bl.createService(resourceExist, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -511,15 +501,14 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     private void testServiceCategoryExist() {
         Service serviceExist = createServiceObject(false);
         serviceExist.setCategories(null);
-        try {
+        try{
             bl.createService(serviceExist, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
         fail();
     }
-
     @Test
     void markDistributionAsDeployedTestAlreadyDeployed() {
         String notifyAction = "DNotify";
@@ -540,7 +529,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         resultList.add(event);
         Either<List<DistributionDeployEvent>, ActionStatus> eventList = Either.left(resultList);
 
-        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), eq(resultAction), Mockito.anyString())).thenReturn(eventList);
+        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq(resultAction), Mockito.anyString())).thenReturn(eventList);
 
         Either<Service, ResponseFormat> markDeployed = bl.markDistributionAsDeployed(did, did, user);
         assertTrue(markDeployed.isLeft());
@@ -572,7 +561,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         setupBeforeDeploy(notifyAction, requestAction, did);
         List<ResourceAdminEvent> emptyList = new ArrayList<>();
         Either<List<ResourceAdminEvent>, ActionStatus> emptyEventList = Either.left(emptyList);
-        Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), eq(requestAction))).thenReturn(emptyEventList);
+        Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), Mockito.eq(requestAction))).thenReturn(emptyEventList);
 
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
         Mockito.when(toscaOperationFacade.getToscaElement(did)).thenReturn(notFound);
@@ -592,9 +581,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
         serviceExist.setCategories(categories);
-        try {
+        try{
             bl.createService(serviceExist, user);
-        } catch (ComponentException e) {
+        } catch(ComponentException e) {
             assertComponentException(e, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
             return;
         }
@@ -611,8 +600,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
         try {
             bl.createService(serviceExist, user);
-        } catch (ComponentException exp) {
-            assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
+        } catch(ComponentException exp) {
+           assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
             return;
         }
         fail();
@@ -626,7 +615,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
         try {
             bl.createService(serviceExist, user);
-        } catch (ComponentException exp) {
+        } catch(ComponentException exp) {
             assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
             return;
         }
@@ -641,7 +630,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
         try {
             bl.createService(serviceExist, user);
-        } catch (ComponentException exp) {
+        } catch(ComponentException exp) {
             assertComponentException(exp, ActionStatus.INVALID_PROJECT_CODE);
             return;
         }
@@ -690,7 +679,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         eitherService.left().value().setArchived(false);
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
         final ComponentException actualException = assertThrows(ComponentException.class, () -> bl.deleteServiceAllVersions(serviceId, user));
-        assertEquals(ActionStatus.COMPONENT_NOT_ARCHIVED, actualException.getActionStatus());
+        assertEquals(actualException.getActionStatus(), ActionStatus.COMPONENT_NOT_ARCHIVED);
         assertEquals(actualException.getParams()[0], serviceId);
     }
 
@@ -698,20 +687,20 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     void testDeleteArchivedService_DeleteServiceSpecificModel() throws ToscaOperationException {
         String serviceId = "12345";
         String model = "serviceSpecificModel";
-        List<String> deletedServcies = new ArrayList<>();
+        List<String> deletedServcies= new ArrayList<>();
         deletedServcies.add("54321");
         Model normativeExtensionModel = new Model("normativeExtensionModel", ModelTypeEnum.NORMATIVE_EXTENSION);
         Either<Component, StorageOperationStatus> eitherService = Either.left(createNewService());
         eitherService.left().value().setArchived(true);
         eitherService.left().value().setModel(model);
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
-        Mockito.when(toscaOperationFacade.deleteService(Mockito.anyString(), eq(true))).thenReturn(deletedServcies);
+        Mockito.when(toscaOperationFacade.deleteService(Mockito.anyString(), Mockito.eq(true))).thenReturn(deletedServcies);
         Mockito.when(modelOperation.findModelByName(model)).thenReturn(Optional.of(normativeExtensionModel));
         bl.deleteServiceAllVersions(serviceId, user);
         Mockito.verify(modelOperation, Mockito.times(1)).deleteModel(normativeExtensionModel, false);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     void testFindGroupInstanceOnRelatedComponentInstance() {
 
@@ -724,7 +713,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
         Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> findGroupInstanceRes;
         Object[] argObjects = {service, componentInstances.get(1).getUniqueId(), componentInstances.get(1).getGroupInstances().get(1).getUniqueId()};
-        Class[] argClasses = {Component.class, String.class, String.class};
+        Class[] argClasses = {Component.class, String.class,String.class};
         try {
             Method method = targetClass.getDeclaredMethod(methodName, argClasses);
             method.setAccessible(true);
@@ -732,26 +721,27 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
             findGroupInstanceRes = (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjects);
             assertNotNull(findGroupInstanceRes);
             assertEquals(findGroupInstanceRes.left().value().getKey().getUniqueId(), componentInstances.get(1)
-                .getUniqueId());
+                                                                                                       .getUniqueId());
             assertEquals(findGroupInstanceRes.left().value().getValue().getUniqueId(), componentInstances.get(1)
-                .getGroupInstances()
-                .get(1)
-                .getUniqueId());
+                                                                                                         .getGroupInstances()
+                                                                                                         .get(1)
+                                                                                                         .getUniqueId());
 
-            Object[] argObjectsInvalidCiId = {service, invalidId, componentInstances.get(1).getGroupInstances().get(1).getUniqueId()};
+            Object[] argObjectsInvalidCiId = {service, invalidId , componentInstances.get(1).getGroupInstances().get(1).getUniqueId()};
 
-            findGroupInstanceRes = (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidCiId);
+            findGroupInstanceRes =    (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidCiId);
             assertNotNull(findGroupInstanceRes);
             assertTrue(findGroupInstanceRes.isRight());
             assertEquals("SVC4593", findGroupInstanceRes.right().value().getMessageId());
 
-            Object[] argObjectsInvalidGiId = {service, componentInstances.get(1).getUniqueId(), invalidId};
+            Object[] argObjectsInvalidGiId = {service, componentInstances.get(1).getUniqueId() , invalidId};
 
-            findGroupInstanceRes = (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidGiId);
+            findGroupInstanceRes =    (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidGiId);
             assertNotNull(findGroupInstanceRes);
             assertTrue(findGroupInstanceRes.isRight());
             assertEquals("SVC4653", findGroupInstanceRes.right().value().getMessageId());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -764,15 +754,15 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         service.setUniqueId("serviceUniqueId");
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance ci;
-        for (int i = 0; i < listSize; ++i) {
+        for(int i= 0; i<listSize; ++i){
             ci = new ComponentInstance();
             ci.setName("ciName" + i);
             ci.setUniqueId("ciId" + i);
-            List<GroupInstance> groupInstances = new ArrayList<>();
+            List<GroupInstance>  groupInstances= new ArrayList<>();
             GroupInstance gi;
-            for (int j = 0; j < listSize; ++j) {
+            for(int j = 0; j<listSize; ++j){
                 gi = new GroupInstance();
-                gi.setName(ci.getName() + "giName" + j);
+                gi.setName(ci.getName( )+ "giName" + j);
                 gi.setUniqueId(ci.getName() + "giId" + j);
                 groupInstances.add(gi);
             }
@@ -784,22 +774,15 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     }
 
     protected Service createNewService() {
-        return (Service) createNewComponent();
+        return (Service)createNewComponent();
     }
 
     @Test
     void testDerivedFromGeneric() {
         Service service = createServiceObject(true);
-        Service newService = createServiceObject(false);
-        newService.setInputs(Collections.singletonList(new InputDefinition()));
         service.setDerivedFromGenericInfo(genericService);
-        newService.setDerivedFromGenericInfo(genericService);
-        when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(newService));
+        when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
-        when(inputsBusinessLogic.getInputs(any(), any())).thenReturn(Either.left(Collections.singletonList(new InputDefinition())));
-        when(inputsBusinessLogic.declareProperties(any(), any(), eq(ComponentTypeEnum.SERVICE), any(ComponentInstInputsMap.class)))
-            .thenReturn(Either.left(Collections.singletonList(new InputDefinition())));
-
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
         assertTrue(createResponse.isLeft());
         service = createResponse.left().value();
@@ -893,7 +876,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     @Test
     void testCreateDefaultMetadataServiceFunction() {
         Service currentService = createServiceObject(true);
-        assertThat(currentService.getServiceFunction()).isEmpty();
+        assertThat(currentService.getServiceFunction()).isEqualTo("");
     }
 
     @Test
@@ -923,8 +906,9 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         newService.setServiceFunction(null);
         resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService);
         assertThat(resultOfUpdate.isLeft()).isTrue();
-        assertThat(updatedService.getServiceFunction()).isEmpty();
+        assertThat(updatedService.getServiceFunction()).isEqualTo("");
     }
+
 
 
     @Test
@@ -945,7 +929,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
     }
 
     @Test
-    void testServiceFunctionInvalidCharacter() {
+    void testServiceFunctionInvalidCharacter(){
         String serviceName = "Service";
         String serviceFunction = "a?";
         Service serviceFunctionExceedLength = createServiceObject(false);
@@ -966,8 +950,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", "2", "3",
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", "2", "3",
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
@@ -978,8 +962,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", "2", "3",
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", "2", "3",
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
@@ -993,8 +977,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         String weirdUniqueServiceInstanceId = UUID.randomUUID().toString();
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", weirdUniqueServiceInstanceId, "3",
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", weirdUniqueServiceInstanceId, "3",
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
@@ -1007,8 +991,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
@@ -1021,15 +1005,15 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap =
-            Maps.newHashMap();
+                Maps.newHashMap();
         componentInstancesInterfacesMap.put(aService.getUniqueId(),
-            Lists.newArrayList(new ComponentInstanceInterface("1", new InterfaceInstanceDataDefinition())));
+                Lists.newArrayList(new ComponentInstanceInterface("1", new InterfaceInstanceDataDefinition())));
 
         aService.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
@@ -1043,10 +1027,10 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
         String operationId = "operationId";
         ComponentInstanceInterface componentInstanceInterface =
-            new ComponentInstanceInterface("interfaceId", new InterfaceInstanceDataDefinition());
+                new ComponentInstanceInterface("interfaceId", new InterfaceInstanceDataDefinition());
         Map<String, Operation> operationsMap = Maps.newHashMap();
         operationsMap.put(operationId, new Operation(new ArtifactDataDefinition(), "1",
-            new ListDataDefinition<>(), new ListDataDefinition<>()));
+                new ListDataDefinition<>(), new ListDataDefinition<>()));
         componentInstanceInterface.setOperationsMap(operationsMap);
 
         Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = Maps.newHashMap();
@@ -1054,8 +1038,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         aService.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
 
         Either<Operation, ResponseFormat> operationEither =
-            bl.addPropertyServiceConsumption("1", aService.getUniqueId(), operationId,
-                user.getUserId(), new ServiceConsumptionData());
+                bl.addPropertyServiceConsumption("1", aService.getUniqueId(), operationId,
+                        user.getUserId(), new ServiceConsumptionData());
         assertTrue(operationEither.isRight());
         assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }

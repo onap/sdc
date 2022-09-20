@@ -213,7 +213,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
         component = getComponentEither.left().value();
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-        if (op.isEmpty()) {
+        if (!op.isPresent()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, parentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -369,7 +369,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
         component = getComponentEither.left().value();
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-        if (op.isEmpty()) {
+        if (!op.isPresent()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -664,7 +664,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 filter(input -> input.getUniqueId().equals(inputId)).
             // Get the input
                 findAny();
-        if (optionalInput.isEmpty()) {
+        if (!optionalInput.isPresent()) {
             throw new ByActionStatusComponentException(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId);
         }
         InputDefinition inputForDelete = optionalInput.get();
@@ -770,7 +770,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             }
             Component component = getComponentEither.left().value();
             Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-            if (op.isEmpty()) {
+            if (!op.isPresent()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
                 log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));

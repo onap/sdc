@@ -140,7 +140,6 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
 
     public ServiceBusinessLogicBaseTestSetup() {
 
@@ -173,7 +172,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         user.setRole(Role.ADMIN.name());
 
         when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
-        when(userValidations.validateUserExists("jh0003")).thenReturn(user);
+        when(userValidations.validateUserExists(eq("jh0003"))).thenReturn(user);
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
@@ -205,7 +204,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
             interfaceLifecycleTypeOperation, artifactBl, distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation,
             forwardingPathValidator, uiComponentDataConverter, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
-            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator, inputsBusinessLogic);
+            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator, null);
         bl.setComponentContactIdValidator(componentContactIdValidator);
         bl.setComponentIconValidator(componentIconValidator);
         bl.setComponentTagsValidator(componentTagsValidator);
