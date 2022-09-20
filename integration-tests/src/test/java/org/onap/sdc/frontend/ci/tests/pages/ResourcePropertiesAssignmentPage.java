@@ -45,8 +45,8 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
     @Override
     public void isLoaded() {
         super.isLoaded();
-        waitForElementVisibility(XpathSelector.MAIN_DIV.getXpath());
-        waitForElementVisibility(XpathSelector.TITLE_DIV.getXpath());
+        waitForElementVisibility((By.xpath(XpathSelector.MAIN_DIV.getXpath())));
+        waitForElementVisibility(By.xpath(XpathSelector.TITLE_DIV.getXpath()));
         resourcePropertiesAssignmentTab.isLoaded();
     }
 
@@ -54,7 +54,7 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
      * Select the Properties Tab to be displayed
      */
     public void selectPropertiesTab() {
-        findElement(XpathSelector.PROPERTIES_TAB.getXpath()).click();
+        findElement(By.xpath(XpathSelector.PROPERTIES_TAB.getXpath())).click();
         resourcePropertiesAssignmentTab.isLoaded();
     }
 
@@ -62,7 +62,7 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
      * Select the Input Tab to be displayed
      */
     public void selectInputTab() {
-        findElement(XpathSelector.INPUT_TAB.getXpath()).click();
+        findElement(By.xpath(XpathSelector.INPUT_TAB.getXpath())).click();
         resourcePropertiesAssignmentInputTab.isLoaded();
     }
 
@@ -72,10 +72,6 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
 
     public void setPropertyValue(final String propertyName, final Object value) {
         resourcePropertiesAssignmentTab.setPropertyValue(propertyName, value);
-    }
-
-    public void setInputValue(final String inputName, final Object value) {
-        resourcePropertiesAssignmentInputTab.setInputValue(inputName, value);
     }
 
     /**
@@ -134,23 +130,23 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
     /**
      * select property
      */
-    public void selectProperty(String propertyName) {
+    public void selectProperty(String propertyName){
         resourcePropertiesAssignmentTab.selectProperty(propertyName);
     }
 
-    public void loadComponentInstanceProperties(final String instanceName) {
+    public void loadComponentInstanceProperties(final String instanceName){
         resourcePropertiesAssignmentTab.loadComponentInstanceProperties(instanceName);
     }
 
-    public void clickOnDeclareInput() {
+    public void clickOnDeclareInput(){
         resourcePropertiesAssignmentTab.clickOnDeclareInput();
     }
 
-    public void loadCompositionTab() {
+    public void loadCompositionTab(){
         resourcePropertiesAssignmentTab.loadCompositionTab();
     }
 
-    public void clickInputTab(String propertyName) {
+    public void clickInputTab(String propertyName){
         waitForElementVisibility(By.xpath(XpathSelector.DECLARE_NOTIFIFICATION.getXpath()));
         ExtentTestActions.takeScreenshot(Status.INFO, "Declare-Input", String.format("Added declared input for property %s", propertyName));
         selectInputTab();

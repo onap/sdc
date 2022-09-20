@@ -56,7 +56,7 @@ public class InputConverter {
      *              description
      *              list of properties */
     public Map<String, ToscaProperty> convertInputs(List<InputDefinition> inputDef, Map<String, DataTypeDefinition> dataTypes) {
-        log.debug("convert inputs to tosca");
+        log.debug("convert inputs to to tosca  ");
         Map<String, ToscaProperty> inputs = new HashMap<>();
         if (inputDef != null) {
             inputDef.forEach(i -> {
