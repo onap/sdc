@@ -3068,39 +3068,36 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private void checkForExternalReqAndCapabilities(Component component, ComponentInstance resResourceInfo) {
-        Map<String, List<RequirementDefinition>> requirementsMap = resResourceInfo.getRequirements();
-        Map<String, List<RequirementDefinition>> externalRequirementsMap = new HashMap<>();
-        List<RequirementDefinition> externalRequirementList = new ArrayList<>();
-        if (requirementsMap != null && !requirementsMap.isEmpty()) {
-            requirementsMap.forEach((type, requirementDefinitions) -> {
-                if (requirementDefinitions != null && !requirementDefinitions.isEmpty()) {
-                    for (final RequirementDefinition requirementDefinition : requirementDefinitions) {
-                        if (requirementDefinition.isExternal()) {
-                            externalRequirementList.add(requirementDefinition);
-                            externalRequirementsMap.put(type, externalRequirementList);
-                        }
+        if (MapUtils.isNotEmpty(component.getRequirements())) {
+            component.getRequirements().entrySet().forEach(requirementsMap -> {
+                if (MapUtils.isNotEmpty(resResourceInfo.getRequirements()) && resResourceInfo.getRequirements().containsKey(requirementsMap.getKey())) {
+                    List<RequirementDefinition> resourceReqList = resResourceInfo.getRequirements().get(requirementsMap.getKey());
+                    for (RequirementDefinition requirements : requirementsMap.getValue()) {
+                        String requirementName = requirements.getName();
+                        resourceReqList.forEach(requirementDefinition -> {
+                            if (requirementName.equals(requirementDefinition.getName()) && requirementDefinition.isExternal()) {
+                                requirements.setExternal(requirementDefinition.isExternal());
+                            }
+                        });
                     }
                 }
             });
         }
-
-        Map<String, List<CapabilityDefinition>> capabilitiesMap = resResourceInfo.getCapabilities();
-        Map<String, List<CapabilityDefinition>> externalCapabilitiesMap = new HashMap<>();
-        List<CapabilityDefinition> externalCapabilitiesList = new ArrayList<>();
-        if (capabilitiesMap != null && !capabilitiesMap.isEmpty()) {
-            capabilitiesMap.forEach((type, capabilityDefinitions) -> {
-                if (capabilityDefinitions != null && !capabilityDefinitions.isEmpty()) {
-                    for (final CapabilityDefinition capabilityDefinition : capabilityDefinitions) {
-                        if (capabilityDefinition.isExternal()) {
-                            externalCapabilitiesList.add(capabilityDefinition);
-                            externalCapabilitiesMap.put(type, externalCapabilitiesList);
+        if (MapUtils.isNotEmpty(component.getCapabilities())) {
+            component.getCapabilities().entrySet().forEach(capabilityMap -> {
+                if (MapUtils.isNotEmpty(resResourceInfo.getCapabilities()) && resResourceInfo.getCapabilities().containsKey(capabilityMap.getKey())) {
+                    List<CapabilityDefinition> resourceCapList = resResourceInfo.getCapabilities().get(capabilityMap.getKey());
+                    capabilityMap.getValue().forEach(capabilities -> {
+                        String capabilityName = capabilities.getName();
+                        for (CapabilityDefinition capDef : resourceCapList) {
+                            if (capabilityName.equals(capDef.getName()) && capDef.isExternal()) {
+                                capabilities.setExternal(capDef.isExternal());
+                            }
                         }
-                    }
+                    });
                 }
             });
         }
-        component.setCapabilities(externalCapabilitiesMap);
-        component.setRequirements(externalRequirementsMap);
     }
 
     private boolean isFillProxyRes(StorageOperationStatus fillProxyRes) {
