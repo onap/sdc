@@ -65,10 +65,8 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
         //All Relationships - container (service) holds info about all relations
 
         //Filter by UniqueId in from/to
-        List<RequirementCapabilityRelDef> relationsFrom = getRelations(RequirementCapabilityRelDef::getFromNode, containerComponent,
-            currentResourceInstance);
-        List<RequirementCapabilityRelDef> relationsTo = getRelations(RequirementCapabilityRelDef::getToNode, containerComponent,
-            currentResourceInstance);
+        List<RequirementCapabilityRelDef> relationsFrom = getRelations(RequirementCapabilityRelDef::getFromNode, containerComponent);
+        List<RequirementCapabilityRelDef> relationsTo = getRelations(RequirementCapabilityRelDef::getToNode, containerComponent);
         if (!relationsFrom.isEmpty() || !relationsTo.isEmpty()) {
             ComponentInstanceBuildingBlocks instBuildingBlocks = mergeInstanceUtils
                 .getInstanceAtomicBuildingBlocks(currentResourceInstance, originComponent);
@@ -179,14 +177,12 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
         return updatedRelationsStream.collect(Collectors.toList());
     }
 
-    private List<RequirementCapabilityRelDef> getRelations(Function<RequirementCapabilityRelDef, String> getNodeFunc, Component containerComponent,
-                                                           ComponentInstance currentResourceInstance) {
+    private List<RequirementCapabilityRelDef> getRelations(Function<RequirementCapabilityRelDef, String> getNodeFunc, Component containerComponent) {
         final List<RequirementCapabilityRelDef> componentInstancesRelations = containerComponent.getComponentInstancesRelations();
         if (componentInstancesRelations == null) {
             return Collections.emptyList();
         }
-        final String vfInstanceId = currentResourceInstance.getUniqueId();
-        return componentInstancesRelations.stream().filter(rel -> StringUtils.equals(getNodeFunc.apply(rel), vfInstanceId))
+        return componentInstancesRelations.stream().filter(rel -> StringUtils.equals(getNodeFunc.apply(rel), rel.getUid()))
             .collect(Collectors.toList());
     }
 
