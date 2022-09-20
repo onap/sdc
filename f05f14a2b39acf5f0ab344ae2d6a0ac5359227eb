@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "defcfcec_06dae18a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "/v1/catalog/data-types or /v1/catalog/datatypes",
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee8f2d3f_2df627ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "As this is a new API, I would recommend to avoid using an old class that is already clogged and has multiple purposes.\nI would not extend from this class just to validate if the user is valid. This should be done by a filter if not yet.",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 63
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32fe9f81_bab3df24",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "fetch/find",
+      "range": {
+        "startLine": 90,
+        "startChar": 20,
+        "endLine": 90,
+        "endChar": 42
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6f3c4d0_d642b3e5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "this should also be done by a filter or aspect",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 100,
+        "endChar": 85
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d07f9a1f_9bd1c66c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "the idea was not to use the cache.\nAlso, try to retrieve a single data type from the database, not all the data types and then filter in memory.",
+      "range": {
+        "startLine": 101,
+        "startChar": 12,
+        "endLine": 105,
+        "endChar": 105
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f1ef2a5_e43e4216",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "if not found we should return a 404",
+      "range": {
+        "startLine": 106,
+        "startChar": 16,
+        "endLine": 106,
+        "endChar": 54
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb363cb0_10c101ef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "no need to convert to JSON, it will be converted automatically.\nAs a good practice, we should have an object to represent the data type for the UI, not use the one that comes from the data base DataTypeDefinition.",
+      "range": {
+        "startLine": 107,
+        "startChar": 16,
+        "endLine": 107,
+        "endChar": 84
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad5f18a0_a5e62760",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-20T16:25:16Z",
+      "side": 1,
+      "message": "we should have a responseService or something to handle the responses, instead of relying on the clogged BeGenericServlet.",
+      "range": {
+        "startLine": 108,
+        "startChar": 7,
+        "endLine": 113,
+        "endChar": 5
+      },
+      "revId": "f05f14a2b39acf5f0ab344ae2d6a0ac5359227eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
