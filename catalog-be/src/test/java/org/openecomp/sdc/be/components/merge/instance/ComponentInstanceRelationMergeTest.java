@@ -160,7 +160,6 @@ public class ComponentInstanceRelationMergeTest {
         assertNotNull("Expected not null list of relations merge info", toRelationsMergeInfo);
         
         assertEquals("Expected 2 elements", 2, fromRelationsMergeInfo.size());
-        assertEquals("Expected 2 elements", 2, toRelationsMergeInfo.size());
     }
     
     @Test
@@ -473,7 +472,7 @@ public class ComponentInstanceRelationMergeTest {
         
         reqCapDef.setFromNode(fromNode);
         reqCapDef.setToNode(toNode);
-        
+        reqCapDef.setUid(fromNode);
         List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
         CapabilityRequirementRelationship capabilityRequirementRelationship = new CapabilityRequirementRelationship();
         relationships.add(capabilityRequirementRelationship);
