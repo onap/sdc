@@ -185,8 +185,7 @@ public class ComponentInstanceRelationMerge implements ComponentInstanceMergeInt
         if (componentInstancesRelations == null) {
             return Collections.emptyList();
         }
-        final String vfInstanceId = currentResourceInstance.getUniqueId();
-        return componentInstancesRelations.stream().filter(rel -> StringUtils.equals(getNodeFunc.apply(rel), vfInstanceId))
+        return componentInstancesRelations.stream().filter(rel -> StringUtils.equals(getNodeFunc.apply(rel), rel.getUid()))
             .collect(Collectors.toList());
     }
 

@@ -3068,39 +3068,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private void checkForExternalReqAndCapabilities(Component component, ComponentInstance resResourceInfo) {
-        Map<String, List<RequirementDefinition>> requirementsMap = resResourceInfo.getRequirements();
-        Map<String, List<RequirementDefinition>> externalRequirementsMap = new HashMap<>();
-        List<RequirementDefinition> externalRequirementList = new ArrayList<>();
-        if (requirementsMap != null && !requirementsMap.isEmpty()) {
-            requirementsMap.forEach((type, requirementDefinitions) -> {
-                if (requirementDefinitions != null && !requirementDefinitions.isEmpty()) {
-                    for (final RequirementDefinition requirementDefinition : requirementDefinitions) {
-                        if (requirementDefinition.isExternal()) {
-                            externalRequirementList.add(requirementDefinition);
-                            externalRequirementsMap.put(type, externalRequirementList);
-                        }
-                    }
-                }
-            });
-        }
-
-        Map<String, List<CapabilityDefinition>> capabilitiesMap = resResourceInfo.getCapabilities();
-        Map<String, List<CapabilityDefinition>> externalCapabilitiesMap = new HashMap<>();
-        List<CapabilityDefinition> externalCapabilitiesList = new ArrayList<>();
-        if (capabilitiesMap != null && !capabilitiesMap.isEmpty()) {
-            capabilitiesMap.forEach((type, capabilityDefinitions) -> {
-                if (capabilityDefinitions != null && !capabilityDefinitions.isEmpty()) {
-                    for (final CapabilityDefinition capabilityDefinition : capabilityDefinitions) {
-                        if (capabilityDefinition.isExternal()) {
-                            externalCapabilitiesList.add(capabilityDefinition);
-                            externalCapabilitiesMap.put(type, externalCapabilitiesList);
-                        }
-                    }
-                }
-            });
-        }
-        component.setCapabilities(externalCapabilitiesMap);
-        component.setRequirements(externalRequirementsMap);
+        component.setRequirements(resResourceInfo.getRequirements());
+        component.setCapabilities(resResourceInfo.getCapabilities());
     }
 
     private boolean isFillProxyRes(StorageOperationStatus fillProxyRes) {
