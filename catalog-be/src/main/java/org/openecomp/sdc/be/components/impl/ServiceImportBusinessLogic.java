@@ -142,6 +142,7 @@ import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -201,6 +202,8 @@ public class ServiceImportBusinessLogic {
 
     private final GroupTypeImportManager groupTypeImportManager;
     private final GroupTypeOperation groupTypeOperation;
+    private InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
+    private InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -213,7 +216,9 @@ public class ServiceImportBusinessLogic {
                                       final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService,
                                       final DataTypeBusinessLogic dataTypeBusinessLogic, final ArtifactTypeOperation artifactTypeOperation,
                                       final ArtifactTypeImportManager artifactTypeImportManager, final GroupTypeImportManager groupTypeImportManager,
-                                      final GroupTypeOperation groupTypeOperation) {
+                                      final GroupTypeOperation groupTypeOperation,
+                                      final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                      final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -235,6 +240,8 @@ public class ServiceImportBusinessLogic {
         this.artifactTypeImportManager = artifactTypeImportManager;
         this.groupTypeImportManager = groupTypeImportManager;
         this.groupTypeOperation = groupTypeOperation;
+        this.interfaceLifecycleTypeOperation = interfaceLifecycleTypeOperation;
+        this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
     }
 
     @Autowired
@@ -301,6 +308,11 @@ public class ServiceImportBusinessLogic {
                 groupTypeImportManager.createGroupTypes(toscaTypeImportData, service.getModel(), true);
             }
 
+            final Map<String, Object> interfaceTypesToCreate = getInterfaceTypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(interfaceTypesToCreate)) {
+                interfaceLifecycleTypeImportManager
+                    .createLifecycleTypes(new Yaml().dump(interfaceTypesToCreate), service.getModel(), true);
+            }
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
                 .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
@@ -395,8 +407,21 @@ public class ServiceImportBusinessLogic {
         return artifactTypesToCreate;
     }
 
-    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result,
-                                     final Map<String, Map<String, Object>> dataType) {
+    private Map<String, Object> getInterfaceTypesToCreate(final String model, final CsarInfo csarInfo) {
+        final Map<String, Object> interfaceTypesToCreate = new HashMap<>();
+        Map<String, Object> interfacetypeMap = csarInfo.getInterfaceTypes();
+
+        interfacetypeMap.entrySet().forEach(interfacetypeDef -> {
+            Either<InterfaceDefinition, StorageOperationStatus> interfaceDefinition =
+                interfaceLifecycleTypeOperation.getInterface(UniqueIdBuilder.buildInterfaceTypeUid(model, interfacetypeDef.getKey()));
+            if (interfaceDefinition.isRight() && interfaceDefinition.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                interfaceTypesToCreate.put(interfacetypeDef.getKey(), interfacetypeDef.getValue());
+            }
+        });
+        return interfaceTypesToCreate;
+    }
+
+    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result, final Map<String, Map<String, Object>> dataType) {
         return result.isLeft() && dataType.containsKey("properties") && result.left().value().getProperties() != null
             && result.left().value().getProperties().size() != dataType.get("properties").size();
     }

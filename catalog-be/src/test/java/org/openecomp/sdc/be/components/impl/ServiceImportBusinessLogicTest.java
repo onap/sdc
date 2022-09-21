@@ -80,7 +80,6 @@ import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -142,6 +141,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
     private final ArtifactTypeImportManager artifactTypeImportManager = mock(ArtifactTypeImportManager.class);
     private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
+    private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager = mock(InterfaceLifecycleTypeImportManager.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -254,6 +254,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
+        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces"))).thenReturn(Either.left(new InterfaceDefinition()));
+        when(interfaceLifecycleTypeOperation.getInterface(contains("com.ericsson.so.interfaces"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
@@ -297,6 +300,15 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
         assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());
+
+        ArgumentCaptor<String> interfaceTypes = ArgumentCaptor.forClass(String.class);
+        verify(interfaceLifecycleTypeImportManager).createLifecycleTypes(interfaceTypes.capture(), any(), anyBoolean());
+        Map<String, Object> yamlInterfaceMap = new Yaml().load(interfaceTypes.getValue());
+        assertEquals(3, yamlInterfaceMap.size());
+        assertNotNull(yamlInterfaceMap.get("com.ericsson.so.interfaces.node.lifecycle.Attach"));
+        assertNotNull(yamlInterfaceMap.get("com.ericsson.so.interfaces.node.lifecycle.Detach"));
+        assertNotNull(yamlInterfaceMap.get("com.ericsson.so.interfaces.node.lifecycle.Reconfigure"));
+
     }
 
     @Test

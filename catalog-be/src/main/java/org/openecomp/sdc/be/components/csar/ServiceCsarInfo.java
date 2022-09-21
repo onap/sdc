@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.NodeTypeDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.NodeTypeMetadata;
@@ -167,6 +168,11 @@ public class ServiceCsarInfo extends CsarInfo {
             .forEach(entry -> artifactsTypes.putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES)));
         artifactsTypes.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
         return artifactsTypes;
+    }
+
+    @Override
+    public Map<String, Object> getInterfaceTypes() {
+        return getTypes(ToscaTagNamesEnum.INTERFACE_TYPES);
     }
 
     public List<NodeTypeDefinition> getNodeTypesUsed() {

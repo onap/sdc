@@ -24,6 +24,7 @@ package org.openecomp.sdc.be.components.csar;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DATA_TYPES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUP_TYPES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACE_TYPES;
 
 import fj.data.Either;
 import java.util.ArrayList;
@@ -210,10 +211,14 @@ public class OnboardedCsarInfo extends CsarInfo {
     public Map<String, Object> getDataTypes() {
         return getTypes(DATA_TYPES);
     }
-
     @Override
     public Map<String, Object> getGroupTypes() {
         return getTypes(GROUP_TYPES);
+    }
+
+    @Override
+    public Map<String, Object> getInterfaceTypes() {
+        return getTypes(INTERFACE_TYPES);
     }
 
     private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
@@ -225,5 +230,4 @@ public class OnboardedCsarInfo extends CsarInfo {
         types.putAll(getTypesFromTemplate(mappedToscaMainTemplate, toscaTag));
         return types;
     }
-
 }

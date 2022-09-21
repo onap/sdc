@@ -47,7 +47,7 @@ class ServiceCsarInfoTest {
     private User user;
 
     private static final String CSAR_UUID = "csarUUID";
-    private static final String PAYLOAD_NAME = "csars/serviceWithUnknownDataTypes.csar";
+    private static final String PAYLOAD_NAME = "csars/serviceWithUnknownTypes.csar";
     private static final String SERVICE_NAME = "serviceWithDataType";
     private static final String MAIN_TEMPLATE_NAME = "Definitions/service-Servicewithdatatype-template.yml";
 
@@ -76,6 +76,18 @@ return new ServiceCsarInfo(user, CSAR_UUID, payload, SERVICE_NAME, mainTemplateN
         assertEquals("tosca.datatypes.Root", dataTypeDefinition.get("derived_from"));
         assertEquals("tosca.datatypes.test_h",
                 ((Map<String, Object>) ((Map<String, Object>) dataTypeDefinition.get("properties")).get("prop2")).get("type"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void testGetInterfaceTypes() {
+        final Map<String, Object> interfaceTypes = csarInfo.getInterfaceTypes();
+        assertEquals(9, interfaceTypes.size());
+        final Map<String, Object> interfaceTypeDefinition = (Map<String, Object>) interfaceTypes.get(
+            "com.ericsson.so.interfaces.node.lifecycle.Reconfigure");
+        assertNotNull(interfaceTypeDefinition);
+        assertEquals("tosca.interfaces.Root", interfaceTypeDefinition.get("derived_from"));
+        assertEquals("reconfigure", ((Map<String, Object>) interfaceTypeDefinition.get("Reconfigure")).get("description"));
     }
 
 }
