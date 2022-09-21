@@ -1,7 +1,7 @@
 <div class="workspace-req-and-cap">
     <div>
-        <span class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS'" (click)="addRequiremnet()">Add Requirement</span>
-        <span class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS'" (click)="addCapability()">Add Capability</span>
+        <span class="addTitle" *ngIf="selectTabName === 'REQUIREMENTS' && showAdd()" (click)="addRequirement()">Add Requirement</span>
+        <span class="addTitle" *ngIf="selectTabName !== 'REQUIREMENTS' && showAdd()" (click)="addCapability()">Add Capability</span>
         <span class="req-and-cap-filter" *ngIf="notEmptyTable">
             <sdc-filter-bar
                 [placeHolder]="'Search'"

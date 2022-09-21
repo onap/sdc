@@ -13,6 +13,7 @@ import {CapabilitiesEditorComponent} from "./capabilities/capabilityEditor/capab
 import {ModalComponent} from "onap-ui-angular/dist/modals/modal.component";
 import {EventListenerService} from "../../../../services/event-listener-service";
 import {RequirementsEditorComponent} from "./requirements/requirementEditor/requirements-editor.component";
+import {ComponentState} from "../../../../utils/constants";
 
 @Component({
     selector: 'req-and-capabilities',
@@ -106,6 +107,10 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         this.loadReqOrCap();
     }
 
+    private showAdd() {
+        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+    }
+
     private async loadReqOrCap() {
         if (this.instanceRef) {
             this.instanceRef.destroy();
@@ -178,7 +183,7 @@ export class ReqAndCapabilitiesComponent implements OnInit {
         }
     }
 
-    private addRequiremnet () {
+    private addRequirement () {
         let modalConfig = {
             size: 'md',
             title: 'Add Requirement',
