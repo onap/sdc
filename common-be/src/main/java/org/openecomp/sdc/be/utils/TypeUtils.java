@@ -78,7 +78,8 @@ public class TypeUtils {
         //Operations
         IMPLEMENTATION("implementation"),
         SUBSTITUTION_FILTERS("substitution_filter"),
-        DERIVED_FROM_NAME("derivedFromName");
+        DERIVED_FROM_NAME("derivedFromName"),
+        INTERFACE_TYPES("interface_types");
         // @formatter:om
 
         private final String elementName;

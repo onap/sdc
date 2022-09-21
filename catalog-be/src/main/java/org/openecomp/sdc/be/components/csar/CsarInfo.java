@@ -91,6 +91,7 @@ public abstract class CsarInfo {
     private Map<String, Resource> createdNodes;
     protected Map<String, Object> artifacttypeDefinitions;
     private Map<String, Object> policytypeDefinitions;
+    protected Map<String, Object> interfaceDefinitions;
 
     protected CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName,
                        String mainTemplateContent, boolean isUpdate) {
@@ -180,6 +181,13 @@ public abstract class CsarInfo {
     public abstract Map<String, Object> getGroupTypes();
 
     public abstract Map<String, Object> getArtifactTypes();
+
+    /**
+     * Get the interface types defined in the CSAR
+     *
+     * @return map with the interface type name as key and representation of the interface type definition as value
+     */
+    public abstract Map<String, Object> getInterfaceTypes();
 
     public Map<String, Object> getPolicyTypes() {
         if (policytypeDefinitions == null) {
