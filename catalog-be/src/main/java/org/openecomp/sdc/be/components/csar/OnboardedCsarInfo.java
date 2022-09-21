@@ -216,6 +216,11 @@ public class OnboardedCsarInfo extends CsarInfo {
         return getTypes(GROUP_TYPES);
     }
 
+    @Override
+    public Map<String, Object> getCapabilityTypes() {
+        return getTypes(ToscaTagNamesEnum.CAPABILITY_TYPES);
+    }
+
     private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
         final Map<String, Object> types = new HashMap<>();
         for (Map.Entry<String, byte[]> entry : globalSubstitutes) {

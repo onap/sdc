@@ -154,6 +154,11 @@ public class ServiceCsarInfo extends CsarInfo {
         return getTypes(ToscaTagNamesEnum.GROUP_TYPES);
     }
 
+    @Override
+    public Map<String, Object> getCapabilityTypes() {
+        return getTypes(ToscaTagNamesEnum.CAPABILITY_TYPES);
+    }
+
     private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
         final Map<String, Object> types = new HashMap<>();
         mainTemplateImports.entrySet().stream().forEach(entry -> types.putAll(getTypesFromTemplate(entry.getValue(), toscaTag)));
