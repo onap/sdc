@@ -80,9 +80,9 @@ import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -114,8 +114,9 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -130,8 +131,6 @@ import org.yaml.snakeyaml.Yaml;
 
 class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
-    private static final String DEFAULT_ICON = "defaulticon";
-
     private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
     private final ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
     private final ServletUtils servletUtils = mock(ServletUtils.class);
@@ -142,6 +141,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
     private final ArtifactTypeImportManager artifactTypeImportManager = mock(ArtifactTypeImportManager.class);
     private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
+    private final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
+    private final CapabilityTypeImportManager capabilityTypeImportManager = mock(CapabilityTypeImportManager.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -254,6 +255,12 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
+
+        when(capabilityTypeOperation.getCapabilityType(anyString()))
+            .thenReturn(Either.left(new CapabilityTypeDefinition()));
+        when(capabilityTypeOperation.getCapabilityType(contains("tosca.testcapabilitytypes.Name")))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
@@ -290,6 +297,15 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Object> artifactTypesMap = new Yaml().load(artifactTypes.getValue());
         assertEquals(1, artifactTypesMap.size());
         assertNotNull(artifactTypesMap.get("tosca.testartifacts.Name"));
+
+        ArgumentCaptor<String> capabilityTypes = ArgumentCaptor.forClass(String.class);
+        verify(capabilityTypeImportManager).createCapabilityTypes(
+            capabilityTypes.capture(),
+            isNull(),
+            anyBoolean());
+        Map<String, Object> capabilityTypesMap = new Yaml().load(capabilityTypes.getValue());
+        assertEquals(1, capabilityTypesMap.size());
+        assertNotNull(capabilityTypesMap.get("tosca.testcapabilitytypes.Name"));
 
         ArgumentCaptor<Map<String, Object>> nodeTypes = ArgumentCaptor.forClass(Map.class);
         verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(),
