@@ -179,6 +179,8 @@ public abstract class CsarInfo {
 
     public abstract Map<String, Object> getGroupTypes();
 
+    public abstract Map<String, Object> getCapabilityTypes();
+
     public abstract Map<String, Object> getArtifactTypes();
 
     public Map<String, Object> getPolicyTypes() {

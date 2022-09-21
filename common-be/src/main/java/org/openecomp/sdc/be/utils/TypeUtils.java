@@ -55,7 +55,7 @@ public class TypeUtils {
         // Policy Types
         POLICIES("policies"), TARGETS("targets"),
         // Capabilities
-        CAPABILITIES("capabilities"), VALID_SOURCE_TYPES("valid_source_types"),
+        CAPABILITIES("capabilities"), CAPABILITY_TYPES("capability_types"), VALID_SOURCE_TYPES("valid_source_types"),
         // Requirements
         REQUIREMENTS("requirements"), NODE("node"), RELATIONSHIP("relationship"), CAPABILITY("capability"), INTERFACES("interfaces"),
         NODE_FILTER("node_filter"), TOSCA_ID("tosca_id"),
