@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.anyList;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.matches;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic.CREATE_RESOURCE;
@@ -114,6 +116,8 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -142,6 +146,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
     private final ArtifactTypeImportManager artifactTypeImportManager = mock(ArtifactTypeImportManager.class);
     private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
+    private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager = mock(InterfaceLifecycleTypeImportManager.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -254,6 +259,14 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
+        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces"))).thenReturn(Either.left(new InterfaceDefinition()));
+        when(interfaceLifecycleTypeOperation.getInterface(contains("com.ericsson.so.interfaces"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(interfaceLifecycleTypeImportManager.createInterfaceDefinition(any(), any())).thenReturn(new InterfaceDefinition());
+        InterfaceDefinition interfaceDefinitionCreated = new InterfaceDefinition();
+        interfaceDefinitionCreated.setDescription("description");
+        interfaceDefinitionCreated.setDerivedFrom("tosca.interfaces.Root");
+        when(interfaceLifecycleTypeOperation.createInterfaceType(isNotNull(), anyBoolean())).thenReturn(Either.left(new InterfaceDefinition()));
+
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
@@ -297,6 +310,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
         assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());
+
+        ArgumentCaptor<InterfaceDefinition> interfaceTypes = ArgumentCaptor.forClass(InterfaceDefinition.class);
+        verify(interfaceLifecycleTypeOperation, times(3)).createInterfaceType(interfaceTypes.capture(), anyBoolean());
+        assertNotNull(interfaceTypes);
     }
 
     @Test

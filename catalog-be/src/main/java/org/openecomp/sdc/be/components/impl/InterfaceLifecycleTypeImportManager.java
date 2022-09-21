@@ -119,7 +119,7 @@ public class InterfaceLifecycleTypeImportManager {
         return eitherResult;
     }
 
-    private InterfaceDefinition createInterfaceDefinition(final String interfaceDefinition, final Map<String, Object> toscaJson) {
+    public InterfaceDefinition createInterfaceDefinition(final String interfaceDefinition, final Map<String, Object> toscaJson) {
         final InterfaceDefinition interfaceDef = new InterfaceDefinition();
         interfaceDef.setType(interfaceDefinition);
         final Object descriptionObj = toscaJson.get(ToscaTagNamesEnum.DESCRIPTION.getElementName());

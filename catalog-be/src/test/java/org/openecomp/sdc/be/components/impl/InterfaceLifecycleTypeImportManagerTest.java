@@ -26,7 +26,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -34,7 +36,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,6 +57,7 @@ import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 public class InterfaceLifecycleTypeImportManagerTest {
@@ -135,6 +140,19 @@ public class InterfaceLifecycleTypeImportManagerTest {
             nslcmInterface.getOperationsMap().keySet(),
             containsInAnyOrder(expectedNsclmInterfaceOperationSet.toArray()));
     }
+
+    @Test
+    public void createInterfaceDefinitionFromJson() {
+        String interfaceType = "com.ericsson.so.interfaces.node.lifecycle.Detach";
+        Map<String, Object> interfaceDefMap = new HashMap<>();
+        interfaceDefMap.put(ToscaTagNamesEnum.DESCRIPTION.getElementName(), "description");
+        interfaceDefMap.put(ToscaTagNamesEnum.DERIVED_FROM.getElementName(), "tosca.interfaces.Root");
+        InterfaceDefinition interfaceDefinition = importManager.createInterfaceDefinition(interfaceType, interfaceDefMap);
+        assertNotNull(interfaceDefinition);
+        assertEquals("description", interfaceDefinition.getDescription());
+        assertEquals("tosca.interfaces.Root", interfaceDefinition.getDerivedFrom());
+    }
+
 
     private String getYmlContent() throws IOException {
         Path filePath = Paths.get("src/test/resources/types/interfaceLifecycleTypes.yml");
