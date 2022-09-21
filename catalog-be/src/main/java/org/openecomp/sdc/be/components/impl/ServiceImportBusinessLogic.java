@@ -96,6 +96,7 @@ import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -141,6 +142,7 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -202,6 +204,9 @@ public class ServiceImportBusinessLogic {
     private final GroupTypeImportManager groupTypeImportManager;
     private final GroupTypeOperation groupTypeOperation;
 
+    private final CapabilityTypeImportManager capabilityTypeImportManager;
+    private final CapabilityTypeOperation capabilityTypeOperation;
+
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
                                       final ServiceBusinessLogic serviceBusinessLogic, final CsarBusinessLogic csarBusinessLogic,
@@ -213,7 +218,9 @@ public class ServiceImportBusinessLogic {
                                       final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService,
                                       final DataTypeBusinessLogic dataTypeBusinessLogic, final ArtifactTypeOperation artifactTypeOperation,
                                       final ArtifactTypeImportManager artifactTypeImportManager, final GroupTypeImportManager groupTypeImportManager,
-                                      final GroupTypeOperation groupTypeOperation) {
+                                      final GroupTypeOperation groupTypeOperation,
+                                      final CapabilityTypeImportManager capabilityTypeImportManager,
+                                      final CapabilityTypeOperation capabilityTypeOperation) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -235,6 +242,8 @@ public class ServiceImportBusinessLogic {
         this.artifactTypeImportManager = artifactTypeImportManager;
         this.groupTypeImportManager = groupTypeImportManager;
         this.groupTypeOperation = groupTypeOperation;
+        this.capabilityTypeImportManager = capabilityTypeImportManager;
+        this.capabilityTypeOperation = capabilityTypeOperation;
     }
 
     @Autowired
@@ -301,6 +310,16 @@ public class ServiceImportBusinessLogic {
                 groupTypeImportManager.createGroupTypes(toscaTypeImportData, service.getModel(), true);
             }
 
+            final Map<String, Object> capabilityTypesToCreate =
+                getCapabilityTypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(capabilityTypesToCreate)) {
+                capabilityTypeImportManager.createCapabilityTypes(
+                    new Yaml().dump(capabilityTypesToCreate),
+                    service.getModel(),
+                    true
+                );
+            }
+
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
                 .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
@@ -358,6 +377,22 @@ public class ServiceImportBusinessLogic {
             }
         }
         return groupTypesToCreate;
+    }
+
+    private Map<String, Object> getCapabilityTypesToCreate(final String model, final CsarInfo csarInfo) {
+        final Map<String, Object> capabilityTypesToCreate = new HashMap<>();
+        final Map<String, Object> capabilityTypes = csarInfo.getCapabilityTypes();
+        if (MapUtils.isNotEmpty(capabilityTypes)) {
+            for (final Entry<String, Object> entry : capabilityTypes.entrySet()) {
+                final Either<CapabilityTypeDefinition, StorageOperationStatus> result
+                    = capabilityTypeOperation.getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(model, entry.getKey()));
+                if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                    capabilityTypesToCreate.put(entry.getKey(), entry.getValue());
+                    log.info("Deploying new capability type {} to model {} from package {}", entry.getKey(), model, csarInfo.getCsarUUID());
+                }
+            }
+        }
+        return capabilityTypesToCreate;
     }
 
     private Map<String, Object> getDatatypesToCreate(final String model, final CsarInfo csarInfo) {

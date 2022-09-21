@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
@@ -49,29 +50,44 @@ public class CapabilityTypeImportManager {
     private final ModelOperation modelOperation;
 
     @Autowired
-    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager,
-                                       ModelOperation modelOperation) {
+    public CapabilityTypeImportManager(
+        CapabilityTypeOperation capabilityTypeOperation,
+        CommonImportManager commonImportManager,
+        ModelOperation modelOperation
+    ) {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.commonImportManager = commonImportManager;
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(final String capabilityTypesYml,
-                                                                                                                final String modelName,
-                                                                                                                final boolean includeToModelDefaultImports) {
-        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
-            capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName),
-            this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
+    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(
+        final String capabilityTypesYml,
+        final String modelName,
+        final boolean includeToModelDefaultImports
+    ) {
+        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes =
+            commonImportManager.createElementTypes(
+                capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(
+                    capabilityTypesYml,
+                    modelName
+                ),
+                this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName);
+            commonImportManager.addTypesToDefaultImports(
+                ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName
+            );
         }
         return elementTypes;
     }
 
-    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(final String capabilityTypesYml,
-                                                                                              final String modelName) {
-        final Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes = commonImportManager.createElementTypesFromYml(capabilityTypesYml,
-            this::createCapabilityType);
+    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(
+        final String capabilityTypesYml,
+        final String modelName) {
+        final Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes =
+            commonImportManager.createElementTypesFromYml(
+                capabilityTypesYml,
+                this::createCapabilityType
+            );
         if (capabilityTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
@@ -85,18 +101,27 @@ public class CapabilityTypeImportManager {
 
     private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(
         List<CapabilityTypeDefinition> capabilityTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(capabilityTypesToCreate, capabilityType -> Either.left(ActionStatus.OK),
+        return commonImportManager.createElementTypesByDao(capabilityTypesToCreate,
+            capabilityType -> Either.left(ActionStatus.OK),
             capabilityType -> new ImmutablePair<>(ElementTypeEnum.CAPABILITY_TYPE,
                 UniqueIdBuilder.buildCapabilityTypeUid(capabilityType.getModel(), capabilityType.getType())),
-            capabilityTypeOperation::getCapabilityType, capabilityTypeOperation::addCapabilityType, this::updateCapabilityType);
+            capabilityTypeOperation::getCapabilityType,
+            capabilityTypeOperation::addCapabilityType,
+            this::updateCapabilityType);
     }
 
-    private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(CapabilityTypeDefinition newCapabilityType,
-                                                                                          CapabilityTypeDefinition oldCapabilityType) {
-        Either<CapabilityTypeDefinition, StorageOperationStatus> validationRes = capabilityTypeOperation.validateUpdateProperties(newCapabilityType);
+    private Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityType(
+        CapabilityTypeDefinition newCapabilityType,
+        CapabilityTypeDefinition oldCapabilityType
+    ) {
+        Either<CapabilityTypeDefinition, StorageOperationStatus> validationRes =
+            capabilityTypeOperation.validateUpdateProperties(newCapabilityType);
         if (validationRes.isRight()) {
-            log.error("#updateCapabilityType - One or all properties of capability type {} not valid. status is {}", newCapabilityType,
-                validationRes.right().value());
+            log.error(
+                "#updateCapabilityType - One or all properties of capability type {} not valid. status is {}",
+                newCapabilityType,
+                validationRes.right().value()
+            );
             return validationRes;
         }
         if (TypeCompareUtils.isCapabilityTypesEquals(newCapabilityType, oldCapabilityType)) {
@@ -109,9 +134,17 @@ public class CapabilityTypeImportManager {
         CapabilityTypeDefinition capabilityType = new CapabilityTypeDefinition();
         capabilityType.setType(capabilityTypeName);
         // Description
-        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(), capabilityType::setDescription);
+        commonImportManager.setField(
+            toscaJson,
+            TypeUtils.ToscaTagNamesEnum.DESCRIPTION.getElementName(),
+            capabilityType::setDescription
+        );
         // Derived From
-        commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(), capabilityType::setDerivedFrom);
+        commonImportManager.setField(
+            toscaJson,
+            TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName(),
+            capabilityType::setDerivedFrom
+        );
         // Properties
         commonImportManager.setPropertiesMap(toscaJson, capabilityType::setProperties);
         return capabilityType;
