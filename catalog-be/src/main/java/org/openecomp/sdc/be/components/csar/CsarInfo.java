@@ -183,6 +183,13 @@ public abstract class CsarInfo {
 
     public abstract Map<String, Object> getArtifactTypes();
 
+    /**
+     * Get the interface types defined in the CSAR
+     *
+     * @return map with the interface type name as key and representation of the interface type definition as value
+     */
+    public abstract Map<String, Object> getInterfaceTypes();
+
     public Map<String, Object> getPolicyTypes() {
         if (policytypeDefinitions == null) {
             policytypeDefinitions = new HashMap<>();
