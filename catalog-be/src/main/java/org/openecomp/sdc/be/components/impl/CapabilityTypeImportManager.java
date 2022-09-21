@@ -56,14 +56,22 @@ public class CapabilityTypeImportManager {
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(final String capabilityTypesYml,
-                                                                                                                final String modelName,
-                                                                                                                final boolean includeToModelDefaultImports) {
-        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
-            capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName),
+    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(
+        final String capabilityTypesYml,
+        final String modelName,
+        final boolean includeToModelDefaultImports
+    ) {
+        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes =
+            commonImportManager.createElementTypes(
+            capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(
+                    capabilityTypesYml,
+                    modelName
+                ),
             this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName);
+            commonImportManager.addTypesToDefaultImports(
+                ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName
+            );
         }
         return elementTypes;
     }

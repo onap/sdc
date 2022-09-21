@@ -83,6 +83,7 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -114,6 +115,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -142,6 +144,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
     private final ArtifactTypeImportManager artifactTypeImportManager = mock(ArtifactTypeImportManager.class);
     private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
+    private final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -264,6 +267,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
         when(groupTypeOperation.getGroupTypeByUid(anyString())).thenReturn(Either.left(new GroupTypeDefinition()));
+        when(capabilityTypeOperation.getCapabilityType(anyString())).thenReturn(Either.left(new CapabilityTypeDefinition()));
 
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
