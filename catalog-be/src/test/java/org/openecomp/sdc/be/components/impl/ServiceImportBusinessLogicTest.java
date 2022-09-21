@@ -143,6 +143,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final GroupTypeOperation groupTypeOperation = mock(GroupTypeOperation.class);
     private final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
     private final CapabilityTypeImportManager capabilityTypeImportManager = mock(CapabilityTypeImportManager.class);
+    private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager = mock(InterfaceLifecycleTypeImportManager.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -256,6 +257,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
 
+        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces"))).thenReturn(Either.left(new InterfaceDefinition()));
+        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces.test"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+
         when(capabilityTypeOperation.getCapabilityType(anyString()))
             .thenReturn(Either.left(new CapabilityTypeDefinition()));
         when(capabilityTypeOperation.getCapabilityType(contains("tosca.testcapabilitytypes.Name")))
@@ -313,6 +318,15 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
         assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());
+
+        ArgumentCaptor<String> interfaceTypes = ArgumentCaptor.forClass(String.class);
+        verify(interfaceLifecycleTypeImportManager).createLifecycleTypes(interfaceTypes.capture(), any(), anyBoolean());
+        Map<String, Object> yamlInterfaceMap = new Yaml().load(interfaceTypes.getValue());
+        assertEquals(3, yamlInterfaceMap.size());
+        assertNotNull(yamlInterfaceMap.get("tosca.interfaces.test.node.lifecycle.Attach"));
+        assertNotNull(yamlInterfaceMap.get("tosca.interfaces.test.node.lifecycle.Detach"));
+        assertNotNull(yamlInterfaceMap.get("tosca.interfaces.test.node.lifecycle.Reconfigure"));
+
     }
 
     @Test
