@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9edddff8_3293f76e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-22T17:07:01Z",
+      "side": 1,
+      "message": "This change would mean that the marking of a req or cap as external on a component instance would be lost when the version is updated.\nThe original code was flawed in that any reqs/caps not marked as external were lost. \nI think the correct solution is:\nwhere a req/cap has been marked as external in \"resResourceInfo\", update the existing definition in the req/caps in \"component\". Note there may not be a corresponding cap/req in \"component\" in which case nothing needs to be done for that req/cap",
+      "range": {
+        "startLine": 3071,
+        "startChar": 7,
+        "endLine": 3072,
+        "endChar": 69
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
