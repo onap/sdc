@@ -15,5 +15,9 @@ The `ONAP SDC data model <https://wiki.onap.org/display/DW/SDC+Data+model>`_ sup
 
 The data model for NFV descriptors standardised by ETSI, `version 2.5.1 <https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20001v2.5.1%20-%20GS%20-%20TOSCA-based%20NFV%20descriptors%20spec.pdf>`_. Limited support exists in ONAP components, but some support is provided in SO SOL003 and SOL005 adapters and ETSI Catalog Manager.
 
+**AUTOMATION COMPOSITION**
+
+The data model for designing automation compositions, see `CLAMP Metadata Automation Composition Management using TOSCA <https://docs.onap.org/projects/onap-policy-parent/en/latest/clamp/clamp.html>`_ for further details on Automation Composition Management.
+
 Further models can be added through the :ref:`Supported APIs <offeredapis>` at deployment or runtime.
 Model inheritance is supported though it is expected that the names of the types be unique across the inheritance tree. Resources that are imported or designed to adhere to a particular model can only be used in a service that adheres to the same model.
