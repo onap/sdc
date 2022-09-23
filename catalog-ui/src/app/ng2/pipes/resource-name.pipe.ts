@@ -26,8 +26,9 @@ import * as _ from 'lodash';
 export class ResourceNamePipe implements PipeTransform {
     
     public static getDisplayName (value:string): string {
+        let nameFirstCapital: string = value.charAt(0).toUpperCase() + value.slice(1);
         const newName:string =
-            _.last(value.split(/tosca\.nodes\..*network\..*relationships\..*org\.openecomp\..*resource\.nfv\..*nodes\.module\..*cp\..*vl\./));
+            _.last(nameFirstCapital.split(/tosca\.nodes\..*network\..*relationships\..*org\.openecomp\..*resource\.nfv\..*nodes\.module\..*cp\..*vl\./));
         return (newName) ? newName : value;
     }
 
