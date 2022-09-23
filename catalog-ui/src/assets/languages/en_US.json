@@ -567,6 +567,16 @@
   "VALUE_EXPRESSION_LABEL": "Value Expression",
   "OPERATOR_LABEL": "Operator",
   "CAPABILITY_LABEL": "Capability",
+  "DATA_TYPE_LABEL": "Data Type",
+  "MODEL_LABEL": "Model",
+  "DESCRIPTION_LABEL": "Description",
+  "DERIVED_FROM_LABEL": "Derived From",
+  "TYPE_LABEL": "Type",
+  "CREATED_LABEL": "Created",
+  "CREATE_LABEL": "Create",
+  "CLOSE_LABEL": "Close",
+  "MODIFIED_LABEL": "Modified",
+  "UNIQUE_ID_LABEL": "Unique Id",
   "=========== SERVICE IMPORT ===========": "",
   "IMPORT_FAILURE_MESSAGE_TEXT": "Import Failure - error reading CSAR"
 }

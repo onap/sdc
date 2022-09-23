@@ -1,0 +1,79 @@
+<!--
+  ~ -
+  ~  ============LICENSE_START=======================================================
+  ~  Copyright (C) 2022 Nordix Foundation.
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
+<div class="sdc-workspace-general-step">
+  <form class="w-sdc-form" [formGroup]="formGroup">
+    <div class="w-sdc-form-section-container">
+      <div class="w-sdc-form-columns-wrapper">
+        <div class="w-sdc-form-column">
+          <div class="upper-general-fields">
+            <div class="name-and-category-fields">
+              <div class="i-sdc-form-item" [ngClass]="{'error': false}">
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'TYPE_LABEL' | translate}}:</label>
+                <span>{{dataType.name}}</span>
+              </div>
+
+              <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'MODEL_LABEL' | translate}}:</label>
+                <span>{{dataType.model ? dataType.model : DEFAULT_MODEL_NAME}}</span>
+              </div>
+
+              <div class="i-sdc-form-item">
+                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'DERIVED_FROM_LABEL' | translate}}:</label>
+                <span>{{dataType.derivedFromName}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="i-sdc-form-item description-field">
+            <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'DESCRIPTION_LABEL' | translate}}:</label>
+            <textarea class="description"
+                      formControlName="description"
+                      [ngClass]="{'view-mode': isViewOnly}"
+                      [required]="true"
+                      [attr.test-id]="description"
+                      [value]="dataType.description"></textarea>
+          </div>
+        </div>
+
+        <div class="w-sdc-form-column">
+          <div class="meta-data" data-ng-if="component.creationDate">
+            <div>
+              <strong>{{'CREATED_LABEL' | translate}}:</strong>
+            </div>
+            <div class="meta-data-item-value">{{dataType.creationTime | date:'MM/dd/yyyy'}}</div>
+            <div>
+              <strong>{{'MODIFIED_LABEL' | translate}}:</strong>
+            </div>
+            <div class="meta-data-item-value">
+              {{dataType.modificationTime | date:'MM/dd/yyyy'}}
+            </div>
+            <div>
+              <strong>{{'UNIQUE_ID_LABEL' | translate}}:</strong>
+            </div>
+            <div class="meta-data-item-value">{{dataType.uniqueId}}</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>

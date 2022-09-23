@@ -19,17 +19,13 @@
  */
 
 import * as _ from "lodash";
-import {Component, Inject, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges} from "@angular/core";
-import {IHostedApplication, IUserProperties} from "app/models";
-import {MenuItemGroup, MenuItem} from "app/utils";
+import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output} from "@angular/core";
+import {IHostedApplication, IUserProperties, Plugin, PluginsConfiguration} from "app/models";
+import {MenuItem, MenuItemGroup} from "app/utils";
 import {AuthenticationService} from "../../../services/authentication.service";
-import {SdcConfigToken, ISdcConfig} from "../../../config/sdc-config.config";
+import {ISdcConfig, SdcConfigToken} from "../../../config/sdc-config.config";
 import {TranslateService} from "../../../shared/translator/translate.service";
-import {PluginsConfiguration, Plugin} from "app/models";
-import { Subscription } from "rxjs";
-// import { Store } from "@ngrx/store";
-// import { AppState } from "app/ng2/store/app.state";
-// import * as unsavedChangesReducer from 'app/ng2/store/reducers/unsaved-changes.reducer';
+import {Subscription} from "rxjs";
 
 declare const window:any;
 @Component({
@@ -111,13 +107,13 @@ export class TopNavComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes) {
         if (changes['menuModel']) {
-            console.log('menuModel was changed!');
+            console.debug('menuModel was changed!');
             this.generateMenu();
         }
     }
 
     ngOnInit() {
-        console.log('Nav is init!', this.menuModel);
+        console.debug('Nav is init!', this.menuModel);
         this.user = this.authService.getLoggedinUser();
         this.topNavPlugins = _.filter(PluginsConfiguration.plugins, (plugin: Plugin) => {
             return plugin.pluginDisplayOptions["tab"] !== undefined;
@@ -190,7 +186,7 @@ export class TopNavComponent implements OnInit, OnChanges {
 
         if (item.callback) {
             (item.callback.apply(undefined, item.params)).then(onSuccess, onFailed);
-        } else {
+        } else if (this[item.action]) {
             this[item.action](item.state, item.params).then(onSuccess, onFailed);
         }
     }

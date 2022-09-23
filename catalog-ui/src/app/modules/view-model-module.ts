@@ -37,6 +37,11 @@ import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/managem
 import {InterfaceOperationViewModel} from "../view-models/workspace/tabs/interface-operation/interface-operation-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
 import {InterfaceDefinitionViewModel} from "../view-models/workspace/tabs/interface-definition/interface-definition-view-model";
+import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
+import {downgradeComponent} from "@angular/upgrade/static";
+import {WorkspaceMenuComponent} from "../ng2/pages/type-workspace/workspace-menu/workspace-menu.component";
+import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
+
 let moduleName:string = 'Sdc.ViewModels';
 let viewModelModule:ng.IModule = angular.module(moduleName, []);
 
@@ -61,4 +66,7 @@ viewModelModule
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
   .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
   .controller(moduleName + '.InterfaceDefinitionViewModel', InterfaceDefinitionViewModel)
-  .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel);
+  .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel)
+  .controller(moduleName + '.TypeWorkspaceComponent', downgradeComponent({ component: TypeWorkspaceComponent }))
+  .controller(moduleName + '.WorkspaceMenuComponent', downgradeComponent({ component: WorkspaceMenuComponent }))
+  .controller(moduleName + '.TypeWorkspaceGeneralComponent', downgradeComponent({ component: TypeWorkspaceGeneralComponent }));

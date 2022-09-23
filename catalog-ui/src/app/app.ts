@@ -29,12 +29,7 @@ import './modules/directive-module.ts';
 import './modules/service-module';
 import './modules/view-model-module.ts';
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
-import {
-  CookieService,
-  DataTypesService,
-  EcompHeaderService,
-  LeftPaletteLoaderService
-} from "./services";
+import {CookieService, DataTypesService, EcompHeaderService, LeftPaletteLoaderService} from "./services";
 import {CacheService, CatalogService, HomeService} from "./services-ng2";
 import {AuthenticationService} from "app/ng2/services/authentication.service";
 import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States} from "./utils";
@@ -216,7 +211,14 @@ ng1appModule.config([
     );
 
     $stateProvider.state(
-        'workspace', {
+        States.TYPE_WORKSPACE, {
+          url: '/:previousState/type-workspace/:type/:id/:subPage',
+          template: '<app-type-workspace></app-type-workspace>',
+      }
+    );
+
+    $stateProvider.state(
+        States.WORKSPACE, {
           url: '/:previousState/workspace/:id/:type/',
           params: {
             'importedFile': null,
@@ -228,7 +230,6 @@ ng1appModule.config([
           controller: viewModelsModuleName + '.WorkspaceViewModel',
           resolve: {
             injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function ($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
-
               if ($stateParams.id && $stateParams.id.length) { //need to check length in case ID is an empty string
                 return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
                     (component: Component) => {
@@ -316,7 +317,6 @@ ng1appModule.config([
           parent: 'workspace',
           resolve: {
             componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
-              //injectComponent.componentService = null; // this is for not passing the service so no one will use old api and start using new api
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -401,7 +401,6 @@ ng1appModule.config([
           template: '<composition-page></composition-page>',
           resolve: {
             componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
-              //injectComponent.componentService = null; // this is for not passing the service so no one will use old api and start using new api
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -672,7 +671,6 @@ ng1appModule.run([
 
     //handle http config
     $http.defaults.withCredentials = true;
-    // $http.defaults.headers.common.Authorization = 'Basic YmVlcDpib29w';
     $http.defaults.headers.common[cookieService.getUserIdSuffix()] = cookieService.getUserId();
 
     DataTypesService.loadDataTypesCache(null);
@@ -723,15 +721,15 @@ ng1appModule.run([
     };
 
     let onStateChangeStart: Function = (event, toState, toParams, fromState, fromParams): void => {
-      console.info((new Date()).getTime());
-      console.info('$stateChangeStart', toState.name);
+      console.debug((new Date()).getTime());
+      console.debug('$stateChangeStart', toState.name);
       if (toState.name !== 'error-403' && !authService.getLoggedinUser()) {
 
 
         authService.authenticate().subscribe((userInfo: IUserProperties) => {
           if (!doesUserHasAccess(toState, userInfo)) {
             $state.go('error-403');
-            console.info('User has no permissions');
+            console.debug('User has no permissions');
             return;
           }
           authService.setLoggedinUser(userInfo);
@@ -740,7 +738,6 @@ ng1appModule.run([
             removeLoader();
 
             if (authService.getLoggedinUser().role === 'ADMIN') {
-              // toState.name = "adminDashboard";
               $state.go("adminDashboard", toParams);
               return;
             }
@@ -769,11 +766,10 @@ ng1appModule.run([
         if (!doesUserHasAccess(toState, authService.getLoggedinUser())) {
           event.preventDefault();
           $state.go('error-403');
-          console.info('User has no permissions');
+          console.debug('User has no permissions');
         }
 
         if (authService.getLoggedinUser().role === 'ADMIN') {
-          // toState.name = "adminDashboard";
           $state.go("adminDashboard", toParams);
           return;
         }
@@ -798,7 +794,7 @@ ng1appModule.run([
     };
 
     let onStateChangeSuccess: Function = (event, toState, toParams, fromState, fromParams): void => {
-      console.info('$stateChangeSuccess', toState.name);
+      console.debug('$stateChangeSuccess', toState.name);
 
       // Workaround in case we are entering other state then workspace (user move to catalog)
       // remove the changeComponentCsarVersion, user should open again the VSP list and select one for update.
@@ -831,7 +827,7 @@ ng1appModule.run([
 
     let registerStateChangeStartWatcher: Function = (): void => {
       internalDeregisterStateChangeStartWatcher();
-      console.info('registerStateChangeStartWatcher $stateChangeStart');
+      console.debug('registerStateChangeStartWatcher $stateChangeStart');
       deregisterStateChangeStartWatcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams): void => {
         onStateChangeStart(event, toState, toParams, fromState, fromParams);
       });
