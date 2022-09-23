@@ -299,6 +299,9 @@ const SDC_MENU_CONFIG = {
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
             {"text": "Attributes & Outputs", "action": "onMenuItemPressed", "state": "workspace.attributes_outputs"}
+        ],
+        "DataType": [
+            {"text": "General", "action": "onMenuItemPressed", "state": "general"},
         ]
     }
 

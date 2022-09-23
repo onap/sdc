@@ -13,10 +13,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -- */
-  
+
 import {IAppMenu} from "app/models";
 
-export function getSdcMenu() : IAppMenu{
-    const sdcMenu:IAppMenu = require('./../../../../configurations/menu.js');
-    return sdcMenu;
+export function getSdcMenu(): IAppMenu {
+    return require('./../../../../configurations/menu.js');
 }

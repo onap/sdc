@@ -29,36 +29,39 @@ import {PROPERTY_DATA} from "../utils/constants";
 
 export class DataTypeModel {
 
-    //server data
-    name:string;
-    uniqueId:string;
-    derivedFromName:string;
-    derivedFrom:DataTypeModel;
-    creationTime:string;
-    modificationTime:string;
+    name: string;
+    uniqueId: string;
+    derivedFromName: string;
+    derivedFrom: DataTypeModel;
+    description: string;
+    creationTime: string;
+    modificationTime: string;
     properties: Array<PropertyBEModel>;
     attributes: Array<AttributeBEModel>;
     model: Model;
 
-    constructor(dataType: DataTypeModel) {
-        if (dataType) {
-            this.uniqueId = dataType.uniqueId;
-            this.name = dataType.name;
-            this.derivedFromName = dataType.derivedFromName;
-            if (dataType.derivedFrom) {
-                this.derivedFrom = new DataTypeModel(dataType.derivedFrom);
-            }
-            this.creationTime = dataType.creationTime;
-            this.modificationTime = dataType.modificationTime;
-            if (dataType.properties) {
-                this.properties = [];
-                dataType.properties.forEach(property => {
-                    this.properties.push(new PropertyBEModel(property));
-                });
-            }
-            this.attributes = dataType.attributes;
-            this.model = dataType.model;
+    constructor(dataType?: DataTypeModel) {
+        if (!dataType) {
+            return;
         }
+
+        this.uniqueId = dataType.uniqueId;
+        this.name = dataType.name;
+        this.description = dataType.description;
+        this.derivedFromName = dataType.derivedFromName;
+        if (dataType.derivedFrom) {
+            this.derivedFrom = new DataTypeModel(dataType.derivedFrom);
+        }
+        this.creationTime = dataType.creationTime;
+        this.modificationTime = dataType.modificationTime;
+        if (dataType.properties) {
+            this.properties = [];
+            dataType.properties.forEach(property => {
+                this.properties.push(new PropertyBEModel(property));
+            });
+        }
+        this.attributes = dataType.attributes;
+        this.model = dataType.model;
     }
 
     public toJSON = ():any => {

@@ -1,0 +1,54 @@
+@import '../../../../../assets/styles/variables.less';
+@import '../../../../../assets/styles/mixins.less';
+
+.w-sdc-left-sidebar {
+    padding: 0;
+    background-color: @tlv_color_t;
+    box-shadow: none;
+    z-index: 2;
+    border-right: 1px solid @main_color_o;
+
+    .menu-header {
+        border-bottom: 1px solid @main_color_o;
+        height: 53px;
+        .f-type._16_m;
+        font-weight: 700;
+        line-height: 53px;
+        padding-left: 40px;
+        padding-right: 10px;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .i-sdc-designer-sidebar-section-content-item {
+        .f-type._13_m;
+        color: @main_color_m;
+        margin-left: 20px;
+        padding-left: 20px;
+        margin-top: 20px;
+        height: 17px;
+        .hand;
+
+        &:hover {
+            color: @func_color_s;
+            font-weight: 600;
+        }
+
+        &.selected {
+            border-left: 4px solid @main_color_a;
+            color: @main_color_a;
+            margin-left: 18px;
+            padding-left: 18px;
+            font-weight: 600;
+
+        }
+    }
+
+}
+
+.hand {
+    cursor: pointer;
+}
