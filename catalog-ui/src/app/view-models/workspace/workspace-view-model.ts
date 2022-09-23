@@ -23,38 +23,34 @@
  */
 'use strict';
 import * as _ from 'lodash';
+import {Component, IAppMenu, IUserProperties, Plugin, PluginsConfiguration, Resource, Service} from 'app/models';
 import {
-    IUserProperties,
-    IAppMenu,
-    Resource,
-    Service, 
-    Component,
-    Plugin,
-    PluginsConfiguration,
-    PluginDisplayOptions
-} from 'app/models';
-import {
-    MenuItem, ModalsHandler, States, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ResourceType, PREVIOUS_CSAR_COMPONENT,
-    WorkspaceMode, ComponentFactory, ChangeLifecycleStateHandler, Role, ComponentState, MenuItemGroup, MenuHandler
+    CHANGE_COMPONENT_CSAR_VERSION_FLAG,
+    ChangeLifecycleStateHandler,
+    ComponentFactory,
+    ComponentState,
+    EVENTS,
+    MenuHandler,
+    MenuItem,
+    MenuItemGroup,
+    PREVIOUS_CSAR_COMPONENT,
+    ResourceType,
+    Role,
+    States,
+    WorkspaceMode
 } from 'app/utils';
-import {
-    EventListenerService,
-    LeftPaletteLoaderService,
-    ProgressService
-} from 'app/services';
-import {
-    CacheService
-} from 'app/services-ng2';
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
-import { AutomatedUpgradeService } from '../../ng2/pages/automated-upgrade/automated-upgrade.service';
-import { CatalogService } from '../../ng2/services/catalog.service';
-import { ComponentServiceNg2 } from '../../ng2/services/component-services/component.service';
-import { EventBusService } from '../../ng2/services/event-bus.service';
-import { HomeService } from '../../ng2/services/home.service';
-import { PluginsService } from '../../ng2/services/plugins.service';
-import { IDependenciesServerResponse } from '../../ng2/services/responses/dependencies-server-response';
-import { WorkspaceNg1BridgeService } from '../../ng2/pages/workspace/workspace-ng1-bridge-service';
-import { WorkspaceService } from '../../ng2/pages/workspace/workspace.service';
+import {EventListenerService, LeftPaletteLoaderService, ProgressService} from 'app/services';
+import {CacheService} from 'app/services-ng2';
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
+import {AutomatedUpgradeService} from '../../ng2/pages/automated-upgrade/automated-upgrade.service';
+import {CatalogService} from '../../ng2/services/catalog.service';
+import {ComponentServiceNg2} from '../../ng2/services/component-services/component.service';
+import {EventBusService} from '../../ng2/services/event-bus.service';
+import {HomeService} from '../../ng2/services/home.service';
+import {PluginsService} from '../../ng2/services/plugins.service';
+import {IDependenciesServerResponse} from '../../ng2/services/responses/dependencies-server-response';
+import {WorkspaceNg1BridgeService} from '../../ng2/pages/workspace/workspace-ng1-bridge-service';
+import {WorkspaceService} from '../../ng2/pages/workspace/workspace.service';
 
 export interface IWorkspaceViewModelScope extends ng.IScope {
 
@@ -87,7 +83,6 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     progressService: ProgressService;
     progressMessage: string;
     ComponentServiceNg2: ComponentServiceNg2;
-    // leftPanelComponents:Array<Models.Components.Component>; //this is in order to load the left panel once, and not wait long time when moving to composition
     unsavedChanges: boolean;
     unsavedChangesCallback: Function;
     unsavedFile: boolean;
@@ -184,7 +179,6 @@ export class WorkspaceViewModel {
                 private workspaceService: WorkspaceService) {
 
                 this.initScope();
-                // this.initAfterScope();
                 this.$scope.updateSelectedMenuItem(this.$state.current.name);
     }
 
@@ -773,7 +767,7 @@ export class WorkspaceViewModel {
         };
 
         this.$scope.reload = (component: Component): void => {
-            const isGeneralTab = this.$state.current.name === 'workspace.general';
+            const isGeneralTab = this.$state.current.name === States.WORKSPACE_GENERAL;
             // nullify the componentCsar in case we are in general tab so we know we didnt came from updateVsp Modal
             if (isGeneralTab) {
                 this.$state.go(this.$state.current.name, {id: component.uniqueId, componentCsar: null}, {reload: true});

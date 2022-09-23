@@ -281,6 +281,7 @@ export class GraphUIObjects {
 
 
 export class States {
+  public static WORKSPACE = 'workspace';
   public static WORKSPACE_GENERAL = 'workspace.general';
   public static WORKSPACE_ACTIVITY_LOG = 'workspace.activity_log';
   public static WORKSPACE_DEPLOYMENT_ARTIFACTS = 'workspace.deployment_artifacts';
@@ -303,6 +304,7 @@ export class States {
   public static WORKSPACE_REQUIREMENTS_AND_CAPABILITIES_EDITABLE = 'workspace.reqAndCapEditable';
   public static WORKSPACE_PLUGINS = 'workspace.plugins';
   public static WORKSPACE_NG2 = 'workspace.ng2';
+  public static TYPE_WORKSPACE = 'type-workspace';
 }
 
 export class EVENTS {

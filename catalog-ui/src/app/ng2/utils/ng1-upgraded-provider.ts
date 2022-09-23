@@ -21,14 +21,13 @@
 /**
  * Created by rc2122 on 4/6/2017.
  */
-import { DataTypesService } from "../../services/data-types-service";
-import ICacheObject = angular.ICacheObject;
-import { CookieService } from "../../services/cookie-service";
+import {DataTypesService} from "../../services/data-types-service";
+import {CookieService} from "../../services/cookie-service";
 import {ComponentFactory} from "../../utils/component-factory"
-import { EventListenerService } from "app/services/event-listener-service";
-import { ModalsHandler } from "app/utils";
-import IScope = angular.IScope;
-import { SharingService } from "../services/sharing.service";
+import {EventListenerService} from "app/services/event-listener-service";
+import {ModalsHandler} from "app/utils";
+import {SharingService} from "../services/sharing.service";
+import ICacheObject = angular.ICacheObject;
 
 /** Services we need to upgrade from angular1 to angular2 - in the future we need to rewrite them all to angular2 **/
 
@@ -115,12 +114,6 @@ export const StateParamsServiceFactory = {
     useFactory: stateParamsServiceFactory,
     deps: ['$injector']
 };
-//
-// export const EventListenerServiceProvider = {
-//     provide: EventListenerService,
-//     useFactory: eventListenerServiceServiceFactory,
-//     deps: ['$injector']
-// };
 
 export const NotificationServiceProvider = {
     provide: 'Notification',
