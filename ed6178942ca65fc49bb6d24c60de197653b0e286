@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad61f574_42a3f290",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-23T09:11:07Z",
+      "side": 1,
+      "message": "Why not just call InterfaceLifecycleTypeImportManager.createLifecycleTypes (similar to what is done for the other types) rather than decomposing that method here and calling parts of it individually. \nYou are also missing calling addTypesToDefaultImports. That is called by the createLifecycleTypes to add the new definitions to the model but is missing here",
+      "range": {
+        "startLine": 311,
+        "startChar": 11,
+        "endLine": 315,
+        "endChar": 103
+      },
+      "revId": "ed6178942ca65fc49bb6d24c60de197653b0e286",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7b8e461_c4331a8c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-23T09:11:07Z",
+      "side": 1,
+      "message": "rather than asserting not null can you assert the returned value is as expected (or at least that some of the elements of it are as expected)",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 47
+      },
+      "revId": "ed6178942ca65fc49bb6d24c60de197653b0e286",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
