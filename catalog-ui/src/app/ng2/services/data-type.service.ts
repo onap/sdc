@@ -19,11 +19,15 @@
  */
 
 import * as _ from "lodash";
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import { DataTypeModel, DataTypesMap, PropertyFEModel, DerivedFEProperty} from "app/models";
 import { DataTypesService } from "app/services/data-types-service";
 import { PROPERTY_DATA } from "app/utils";
 import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
+import {ISdcConfig} from "../config/sdc-config.config.factory";
+import {SdcConfigToken} from "../config/sdc-config.config";
+import {HttpClient} from "@angular/common/http";
+import {Observable} from "rxjs/Observable";
 
 /** This is a new service for NG2, to eventually replace app/services/data-types-service.ts
  *
@@ -34,10 +38,15 @@ import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-att
 @Injectable()
 export class DataTypeService {
     public dataTypes: DataTypesMap;
+    private readonly baseUrl: string;
+    private readonly dataTypeUrl: string;
 
-    constructor(private dataTypeService: DataTypesService) {
+    constructor(private dataTypeService: DataTypesService, private httpClient: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
         this.dataTypes = dataTypeService.getAllDataTypes(); //This should eventually be replaced by an NG2 call to the backend instead of utilizing Angular1 downgraded component.
+        this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
+        this.dataTypeUrl = `${this.baseUrl}data-types`
     }
+
 
     public getDataTypeByModelAndTypeName(modelName: string, typeName: string): DataTypeModel {
         this.dataTypes = this.dataTypeService.getAllDataTypesFromModel(modelName);
@@ -62,6 +71,11 @@ export class DataTypeService {
 
     public findAllDataTypesByModel(modelName: string): Promise<Map<string, DataTypeModel>> {
         return this.dataTypeService.findAllDataTypesByModel(modelName);
+    }
+
+    public findById(id: string): Observable<DataTypeModel> {
+        const url = `${this.dataTypeUrl}/${id}`
+        return this.httpClient.get<DataTypeModel>(url);
     }
 
     public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){

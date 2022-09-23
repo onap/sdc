@@ -96,6 +96,8 @@ import {DistributionComponent} from '../ng2/pages/workspace/disribution/distribu
 import {AttributesOutputsComponent} from "../ng2/pages/attributes-outputs/attributes-outputs.page.component";
 import {InterfaceDefinitionComponent} from "../ng2/pages/interface-definition/interface-definition.page.component";
 import {ToscaFunctionComponent} from '../ng2/pages/properties-assignment/tosca-function/tosca-function.component';
+import {DataTypeWorkspaceComponent} from "../ng2/pages/data-type-workspace/data-type-workspace.component";
+import {TypeWorkspaceGeneralComponent} from "../ng2/pages/data-type-workspace/type-workspace-general/type-workspace-general.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -319,5 +321,17 @@ directiveModule.directive('deploymentArtifactPage', downgradeComponent({
 directiveModule.directive('toscaFunction', downgradeComponent({
   component: ToscaFunctionComponent,
   inputs: ['componentInstanceMap', 'property'],
+  outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('appDataTypeWorkspace', downgradeComponent({
+  component: DataTypeWorkspaceComponent,
+  inputs: [],
+  outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('appTypeWorkspaceGeneral', downgradeComponent({
+  component: TypeWorkspaceGeneralComponent,
+  inputs: [],
   outputs: []
 }) as angular.IDirectiveFactory);

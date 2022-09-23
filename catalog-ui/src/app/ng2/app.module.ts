@@ -108,6 +108,7 @@ import {ElementService} from "./services/element.service";
 import {ModelService} from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
+import {DataTypeWorkspaceModule} from "./pages/data-type-workspace/data-type-workspace.module";
 
 declare const __ENV__: string;
 
@@ -172,6 +173,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ServiceDependenciesModule,
     ServiceDependenciesEditorModule,
     WorkspaceModule,
+    DataTypeWorkspaceModule,
     ModalsModule,
     CatalogModule,
     HomeModule,

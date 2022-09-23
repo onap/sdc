@@ -1,0 +1,13 @@
+<div class="w-sdc-left-sidebar">
+  <div class="menu-header" tooltips [attr.tooltip-content]="menuHeader" [title]="menuHeader">
+    {{menuHeader}}
+  </div>
+  <div class="i-sdc-designer-sidebar-section-content-item"
+       [ngClass]="{'selected': isSelected(menuItem)}"
+       *ngFor="let menuItem of leftBarTabs.menuItems">
+    <div class="expand-collapse-menu-box-item-text" ng-class="{'disabled': menuItem.isDisabled }">
+      <button [attr.data-tests-id]="menuItem.text + 'LeftSideMenu'" type="button" class="i-sdc-designer-sidebar-section-content-item-service-cat"
+              (click)="menuItem.callback()" [disabled]="menuItem.disabledCategory">{{menuItem.text}}</button>
+    </div>
+  </div>
+</div>

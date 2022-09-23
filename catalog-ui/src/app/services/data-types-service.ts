@@ -19,15 +19,16 @@
  */
 
 'use strict';
-import { DataTypePropertyModel } from "../models/data-type-properties";
+import {DataTypePropertyModel} from "../models/data-type-properties";
 import {
     ComponentInstance,
-    InputModel,
+    DataTypeModel,
     DataTypesMap,
-    PropertyModel,
-    InputPropertyBase,
     IAppConfigurtaion,
-    SchemaProperty, DataTypeModel
+    InputModel,
+    InputPropertyBase,
+    PropertyModel,
+    SchemaProperty
 } from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
 

@@ -18,9 +18,9 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable, Inject} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {ICookie} from "../../models/app-config";
-import {SdcConfigToken, ISdcConfig} from "../config/sdc-config.config";
+import {ISdcConfig, SdcConfigToken} from "../config/sdc-config.config";
 
 @Injectable()
 export class Cookie2Service {
@@ -36,7 +36,6 @@ export class Cookie2Service {
         if ((junctionName !== null) && (junctionName !== '')) {
             this.cookiePrefix = this.cookie.prefix + junctionName + '!';
         }
-        console.log("junctionName:" + junctionName);
     }
 
     private getCookieByName = (cookieName:string):string => {
