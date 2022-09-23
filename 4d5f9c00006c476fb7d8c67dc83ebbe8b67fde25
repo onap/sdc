@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "250f73df_d66d88a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CapabilityTypeImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-23T11:27:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46a382ad_e6d999d6",
+      "range": {
+        "startLine": 59,
+        "startChar": 2,
+        "endLine": 77,
+        "endChar": 5
+      },
+      "revId": "4d5f9c00006c476fb7d8c67dc83ebbe8b67fde25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f518cd7f_451b1cf3",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "4d5f9c00006c476fb7d8c67dc83ebbe8b67fde25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1fba3ce_878d8b4b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-23T11:27:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f518cd7f_451b1cf3",
+      "range": {
+        "startLine": 172,
+        "startChar": 0,
+        "endLine": 245,
+        "endChar": 0
+      },
+      "revId": "4d5f9c00006c476fb7d8c67dc83ebbe8b67fde25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
