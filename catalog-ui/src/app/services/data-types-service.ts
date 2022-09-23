@@ -24,13 +24,14 @@ import {
     ComponentInstance,
     DataTypeModel,
     DataTypesMap,
-    IAppConfigurtaion,
-    InputModel,
+    IAppConfigurtaion, InputModel,
     InputPropertyBase,
     PropertyModel,
     SchemaProperty
 } from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
+import {List} from "lodash";
+import {Observable} from "rxjs/Observable";
 
 export interface IDataTypesService {
 
@@ -95,6 +96,26 @@ export class DataTypesService implements IDataTypesService {
     public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
         this.loadDataTypesCache(modelName);
         return this.dataTypes;
+    }
+
+    public getDataTypesFromAllModel = (): Observable<Array<DataTypeModel>> => {
+        return new Observable<Array<DataTypeModel>>(subscriber => {
+            this.$http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes")
+            .then(promiseValue => {
+                const allDataTypes = this.getDataTypesItems(promiseValue.data);
+                subscriber.next(allDataTypes);
+            });
+        });
+    }
+
+    private getDataTypesItems(dataTypesListOfMap: List<DataTypesMap>):Array<DataTypeModel> {
+        const dataTypes = new Array<DataTypeModel>();
+        angular.forEach(dataTypesListOfMap, (dataTypesMap: DataTypesMap): void => {
+            for (const dataTypeKey of Object.keys(dataTypesMap)) {
+                dataTypes.push(new DataTypeModel(dataTypesMap[dataTypeKey]))
+            }
+        });
+        return dataTypes;
     }
 
     public findAllDataTypesByModel = (modelName: string): Promise<Map<string, DataTypeModel>> => {

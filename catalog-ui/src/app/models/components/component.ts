@@ -27,16 +27,11 @@ import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyM
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
-import {QueueUtils} from "../../utils/functions";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
-import {Capability} from "../capability";
-import {Requirement} from "../requirement";
-import {Relationship} from "../graph/relationship";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";
 import { Metadata } from "app/models/metadata";
-import {Model} from "../model";
 
 
 // import {}
