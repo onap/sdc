@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "fcbdda1a_82e05533",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CapabilityTypeImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-23T12:53:55Z",
+      "side": 1,
+      "message": "you still seem to be wrapping at a length shorter than 150, both here and in the test class",
+      "parentUuid": "250f73df_d66d88a9",
+      "range": {
+        "startLine": 59,
+        "startChar": 2,
+        "endLine": 77,
+        "endChar": 5
+      },
+      "revId": "4d5f9c00006c476fb7d8c67dc83ebbe8b67fde25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f518cd7f_451b1cf3",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
         "patchSetId": 1
