@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0e5fa576_80104329",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-23T15:39:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad61f574_42a3f290",
+      "range": {
+        "startLine": 311,
+        "startChar": 11,
+        "endLine": 315,
+        "endChar": 103
+      },
+      "revId": "ed6178942ca65fc49bb6d24c60de197653b0e286",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7b8e461_c4331a8c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "ed6178942ca65fc49bb6d24c60de197653b0e286",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "741ab768_ad29dcf8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-23T15:39:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7b8e461_c4331a8c",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 47
+      },
+      "revId": "ed6178942ca65fc49bb6d24c60de197653b0e286",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
