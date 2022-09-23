@@ -16,9 +16,10 @@
  
 <div class="sdc-tile sdc-tile-fix-width">
 
-    <div class='sdc-tile-header' [ngClass]="{'purple': component.isResource(), 'blue': !component.isResource()}">
+    <div class='sdc-tile-header' [ngClass]="{'purple': component.isResource() || component.isDataType(), 'blue': !component.isResource()}">
         <div *ngIf="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
         <div *ngIf="component.isService()">S</div>
+        <div *ngIf="component.isDataType()">{{component.getSubToscaType()}}</div>
     </div>
 
     <div class='sdc-tile-content' data-tests-id="dashboard-Elements" (click)="tileClicked()">
@@ -35,7 +36,8 @@
                                     (hasEllipsisChanged)="hasEllipsis = $event">{{component.name | resourceName}}
                 </multiline-ellipsis>
             </div>
-            <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.name+'Version'">V
+            <div class="sdc-tile-info-line subtitle" *ngIf="component.isResource() || component.isService()"
+                 [attr.data-tests-id]="component.name+'Version'">V
                 {{component.version}}
             </div>
             <div class="sdc-tile-info-line subtitle" [attr.data-tests-id]="component.model">
@@ -46,7 +48,7 @@
 
     <div class='sdc-tile-footer'>
         <div class="sdc-tile-footer-content">
-            <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+            <div class='sdc-tile-footer-text' *ngIf="component.isResource() || component.isService()">{{component.getStatus(sdcMenu)}}</div>
         </div>
     </div>
 

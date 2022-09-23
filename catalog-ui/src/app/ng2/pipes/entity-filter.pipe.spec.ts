@@ -22,7 +22,7 @@
 import { TestBed } from "@angular/core/testing";
 import { EntityFilterPipe } from './entity-filter.pipe';
 import { IEntityFilterObject } from './entity-filter.pipe';
-import { Component } from "app/models";
+import {Component, DataTypeModel} from "app/models";
 import { ISearchFilter } from './entity-filter.pipe';
 
 describe('EntityFilterPipe', () => {
@@ -42,35 +42,38 @@ describe('EntityFilterPipe', () => {
     });
 
     it('Transform method should filter objects by type matching with selectedComponentTypes', () => {
-        let componentList: Array<Component> = [];
-
-        const mockComponent = {
-            componentType: 'testtype',
-            isResource: jest.fn().mockImplementation(() => false)
-        } as Partial<Component> as Component;
-        componentList.push(mockComponent);
+        let componentList: Array<Component | DataTypeModel> = [];
 
         const mockComponent1 = {
-            componentType: 'newtesttype',
-            isResource: jest.fn().mockImplementation(() => false)
+            componentType: 'SERVICE',
+            isResource: jest.fn().mockImplementation(() => false),
         } as Partial<Component> as Component;
         componentList.push(mockComponent1);
 
         const mockComponent2 = {
-            componentType: 'newtesttype',
+            componentType: 'RESOURCE',
             isResource: jest.fn().mockImplementation(() => true),
             getComponentSubType: jest.fn().mockImplementation(() => 'subComponent')
         } as Partial<Component> as Component;
         componentList.push(mockComponent2);
 
+        const mockComponent3 = {
+            componentType: 'TOSCA_TYPE',
+            isDataType: jest.fn().mockImplementation(() => true),
+            getSubToscaType: jest.fn().mockImplementation(() => 'toscaSubComponent')
+        } as Partial<DataTypeModel> as DataTypeModel;
+        componentList.push(mockComponent3);
+
         entityFilterMock = {
-            selectedComponentTypes: ['Testtype', 'Testtype1'],
-            selectedResourceSubTypes: ['subComponent']
+            selectedComponentTypes: ['Service', 'RESOURCE'],
+            selectedResourceSubTypes: ['subComponent'],
+            selectedToscaSubTypes: ['toscaSubComponent']
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
-        expect(response).toHaveLength(2);
-        expect(response[0]).toEqual(mockComponent);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
+        expect(response).toHaveLength(3);
+        expect(response[0]).toEqual(mockComponent1);
         expect(response[1]).toEqual(mockComponent2);
+        expect(response[2]).toEqual(mockComponent3);
     });
 
     it('Transform method should filter objects by categories & subcategories matching with selectedCategoriesModel', () => {
@@ -104,7 +107,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedCategoriesModel: ['categoryname.subcategoryname', 'resourceNewCategory.name', 'serviceNewCategory.name']
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(3);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
@@ -132,7 +135,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedStatuses: ['lifecyclestatus', 'DISTRIBUTED']
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(2);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
@@ -153,7 +156,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             distributed: ['diststatus', 'localstatus']
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(1);
         expect(response[0]).toEqual(mockComponent);
     });
@@ -178,7 +181,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             selectedModels: ['testModel', 'localTest', 'SDC AID']
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(2);
         expect(response[0]).toEqual(mockComponent);
         expect(response[1]).toEqual(mockComponent2);
@@ -204,7 +207,7 @@ describe('EntityFilterPipe', () => {
         entityFilterMock = {
             search: searchFilter
         };
-        let response: Array<Component> = entityFilterPipe.transform(componentList, entityFilterMock);
+        let response: Array<Component | DataTypeModel> = entityFilterPipe.transform(componentList, entityFilterMock);
         expect(response).toHaveLength(1);
         expect(response[0]).toEqual(mockComponent);
     });

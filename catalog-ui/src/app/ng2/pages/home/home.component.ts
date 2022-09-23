@@ -19,7 +19,7 @@
  */
 'use strict';
 import {Component as NgComponent, Inject, OnInit} from '@angular/core';
-import {Component, ComponentMetadata, IConfigRoles, IUserProperties, Resource} from 'app/models';
+import {Component, ComponentMetadata, DataTypeModel, IConfigRoles, IUserProperties, Resource, Service} from 'app/models';
 import {HomeFilter} from 'app/models/home-filter';
 import {AuthenticationService, CacheService, HomeService, ResourceServiceNg2} from 'app/services-ng2';
 import {ComponentState, ModalsHandler} from 'app/utils';
@@ -41,8 +41,8 @@ import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding
 export class HomeComponent implements OnInit {
     public numberOfItemToDisplay: number;
     public homeItems: Component[];
-    public homeFilteredItems: Component[];
-    public homeFilteredSlicedItems: Component[];
+    public homeFilteredItems: Array<Component | DataTypeModel>;
+    public homeFilteredSlicedItems: Array<Component | DataTypeModel>;
     public folders: FoldersMenu;
     public roles: IConfigRoles;
     public user: IUserProperties;
@@ -358,12 +358,12 @@ export class HomeComponent implements OnInit {
         this.homeFilteredSlicedItems = this.homeFilteredItems.slice(0, this.numberOfItemToDisplay);
     }
 
-    private makeFilteredItems(homeItems: Component[], filter: HomeFilter) {
-        let filteredComponents: Component[] = homeItems;
+    private makeFilteredItems(homeItems: Array<Component | DataTypeModel>, filter: HomeFilter) {
+        let filteredComponents: Array<Component | DataTypeModel> = homeItems;
 
         // filter: exclude all resources of type 'vfcmtType':
-        filteredComponents = filteredComponents.filter((c) =>
-            !c.isResource() || (c as Resource).resourceType.indexOf(this.vfcmtType) === -1);
+            filteredComponents = filteredComponents.filter((c) =>
+                !c.isResource() || (c as Resource).resourceType.indexOf(this.vfcmtType) === -1);
 
         // common entity filter
         // --------------------------------------------------------------------------

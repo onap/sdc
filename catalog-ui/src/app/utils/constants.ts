@@ -43,6 +43,16 @@ export class ComponentType {
   static SERVICE_SUBSTITUTION = 'ServiceSubstitution'
 }
 
+export class ToscaType {
+  static TOSCA_TYPE = 'TOSCA_TYPE';
+  static DATATYPE = 'DATATYPE';
+}
+
+export class Icon {
+  static DEFAULT_ICON = 'defaulticon';
+  static DATATYPE_ICON = 'securityrules';
+}
+
 export class ServerTypeUrl {
   static RESOURCES = 'resources/';
   static SERVICES = 'services/';

@@ -23,8 +23,7 @@ import * as _ from "lodash";
 import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
 import {ServiceService, ResourceService} from "app/services";
 import {CacheService} from "app/services-ng2";
-import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
-import {ComponentMetadata} from "../models/component-metadata";
+import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service, DataTypeModel} from "app/models";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
 
@@ -71,6 +70,11 @@ export class ComponentFactory {
         let newResource:Resource = new Resource(this.ResourceService, this.$q, <Resource> resource);
         return newResource;
     };
+
+    public createDataType = (dataType:DataTypeModel): DataTypeModel => {
+        let newDataType:DataTypeModel = new DataTypeModel(dataType);
+        return newDataType;
+    }
 
     public updateComponentFromCsar = (csarComponent:Resource, oldComponent: Resource): Component => {
           _.pull(oldComponent.tags, oldComponent.name);

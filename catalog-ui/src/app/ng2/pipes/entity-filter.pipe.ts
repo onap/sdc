@@ -19,8 +19,8 @@
  */
 
 import {Pipe, PipeTransform} from "@angular/core";
-import {Component, Resource} from "app/models";
-import {ComponentType, DEFAULT_MODEL_NAME} from "app/utils/constants";
+import {Component, DataTypeModel, Resource} from "app/models";
+import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
 
 export interface ISearchFilter {
     [key:string]: string;
@@ -32,6 +32,7 @@ export interface IEntityFilterObject {
     // Types
     selectedComponentTypes?:Array<string>;
     selectedResourceSubTypes?:Array<string>;
+    selectedToscaSubTypes?:Array<string>
     // Categories
     selectedCategoriesModel?:Array<string>;
     // Statuses
@@ -50,29 +51,38 @@ export class EntityFilterPipe implements PipeTransform{
     constructor() {
     }
 
-    public static transform(components:Array<Component>, filter:IEntityFilterObject) {
-        let filteredComponents:Array<Component> = components;
+    public static transform(components:Array<Component | DataTypeModel>, filter:IEntityFilterObject) {
+        let filteredComponents:Array<Component | DataTypeModel> = components;
 
         // filter by type
         // --------------------------------------------------------------------------
-        if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)) {
+        if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)
+            || (filter.selectedToscaSubTypes && filter.selectedToscaSubTypes.length > 0)) {
             let filteredTypes = [];
-            angular.forEach(components, (component:Component):void => {
+            angular.forEach(components, (component: Component | DataTypeModel): void => {
                 // Filter by component type
-                let typeLower:string = component.componentType.toLowerCase();
-                let typeFirstCapital:string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
-                if (filter.selectedComponentTypes.indexOf(typeFirstCapital) !== -1) {
-                    filteredTypes.push(component);
-                }
 
-                // Filter by resource sub type, only in case the resource checkbox was not selected (because in this case we already added all the components in above section).
-                if (component.isResource() && filter.selectedComponentTypes.indexOf("Resource") === -1 && filter.selectedResourceSubTypes.length > 0) {
-                    //filteredComponents.pop(); // Remove the last inserted component.
-                    let resource:Resource = <Resource>component;
-                    if (filter.selectedResourceSubTypes.indexOf(resource.getComponentSubType()) !== -1) {
+                    if (component.componentType === ComponentType.RESOURCE || ComponentType.SERVICE && component.componentType !== ToscaType.TOSCA_TYPE) {
+                        let typeLower: string = component.componentType.toLowerCase();
+                        let typeFirstCapital: string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
+                        if (filter.selectedComponentTypes.indexOf(typeFirstCapital) !== -1) {
+                            filteredTypes.push(component);
+                        }
+
+                        // Filter by resource sub type, only in case the resource checkbox was not selected (because in this case we already added all the components in above section).
+                        if (component.isResource() && filter.selectedComponentTypes.indexOf("Resource") === -1 && filter.selectedResourceSubTypes.length > 0) {
+                            //filteredComponents.pop(); // Remove the last inserted component.
+                            let resource: Resource = <Resource>component;
+                            if (filter.selectedResourceSubTypes.indexOf(resource.getComponentSubType()) !== -1) {
+                                filteredTypes.push(component);
+                            }
+                        }
+                    }
+
+                    if (component.componentType === ToscaType.TOSCA_TYPE && filter.selectedToscaSubTypes.length > 0) {
                         filteredTypes.push(component);
                     }
-                }
+
             });
             filteredComponents = filteredTypes;
         }
@@ -164,7 +174,7 @@ export class EntityFilterPipe implements PipeTransform{
         return filteredComponents;
     }
 
-    public transform(components:Array<Component>, filter:IEntityFilterObject) {
+    public transform(components:Array<any>, filter:IEntityFilterObject) {
         return EntityFilterPipe.transform(components, filter);
     }
 }

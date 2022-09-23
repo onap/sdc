@@ -25,14 +25,19 @@
 import {PropertyBEModel} from "./properties-inputs/property-be-model";
 import {AttributeBEModel} from "./attributes-outputs/attribute-be-model";
 import {Model} from "./model";
-import {PROPERTY_DATA} from "../utils/constants";
+import {Icon, PROPERTY_DATA, ToscaType} from "../utils/constants";
+import {IToscaType} from "./components/toscatype";
 
-export class DataTypeModel {
+export class DataTypeModel implements IToscaType{
 
     name: string;
     uniqueId: string;
     derivedFromName: string;
     derivedFrom: DataTypeModel;
+    componentType: string;
+    componentSubType: string;
+    icon: string;
+    iconSprite: string;
     description: string;
     creationTime: string;
     modificationTime: string;
@@ -44,10 +49,13 @@ export class DataTypeModel {
         if (!dataType) {
             return;
         }
-
         this.uniqueId = dataType.uniqueId;
         this.name = dataType.name;
         this.description = dataType.description;
+        this.componentType = this.getToscaType();
+        this.componentSubType = this.getSubToscaType();
+        this.icon = Icon.DATATYPE_ICON;
+        this.iconSprite = 'sprite-resource-icons';
         this.derivedFromName = dataType.derivedFromName;
         if (dataType.derivedFrom) {
             this.derivedFrom = new DataTypeModel(dataType.derivedFrom);
@@ -88,5 +96,27 @@ export class DataTypeModel {
 
         return defaultValue === {} ? undefined : defaultValue;
     }
+
+    public getToscaType(): string {
+        return ToscaType.TOSCA_TYPE;
+    }
+
+    public getSubToscaType(): string {
+        return ToscaType.DATATYPE;
+    }
+
+    public isDataType(): boolean {
+        return this instanceof DataTypeModel;
+    }
+
+    public isResource(): boolean {
+        return !(this instanceof DataTypeModel);
+    }
+
+    public isService(): boolean {
+        return !(this instanceof DataTypeModel);
+    }
+
+
 }
 

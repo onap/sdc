@@ -24,10 +24,19 @@ import { SdcUiCommon, SdcUiServices } from "onap-ui-angular";
 import { CacheService, CatalogService } from "app/services-ng2";
 import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
 import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
-import { Component, ICategoryBase, IMainCategory, ISubCategory, IConfigStatuses, ICatalogSelector, CatalogSelectorTypes } from "app/models";
+import {
+    Component,
+    ICategoryBase,
+    IMainCategory,
+    ISubCategory,
+    IConfigStatuses,
+    ICatalogSelector,
+    CatalogSelectorTypes,
+    DataTypeModel
+} from "app/models";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import { DEFAULT_MODEL_NAME } from "app/utils/constants";
+import {DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
 
 interface Gui {
     onComponentSubTypesClick:Function;
@@ -81,9 +90,9 @@ export class CatalogComponent {
     public filteredCategories:Array<IMainCategory>;
     public confStatus:IConfigStatuses;
     public componentTypes:{[key:string]: Array<string>};
-    public catalogItems:Array<Component>;
-    public catalogFilteredItems:Array<Component>;
-    public catalogFilteredSlicedItems:Array<Component>;
+    public catalogItems:Array<Component | DataTypeModel>;
+    public catalogFilteredItems:Array<Component | DataTypeModel>;
+    public catalogFilteredSlicedItems:Array<Component | DataTypeModel>;
     public expandedSection:Array<string>;
     public version:string;
     public sortBy:string;
@@ -195,7 +204,8 @@ export class CatalogComponent {
     private buildChecklistModelForTypes() {
         this.componentTypes = {
             Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
-            Service: null
+            Service: null,
+            TOSCA_Type: ['Data Type']
         };
         this.typesChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.componentTypes._main,
             Object.keys(this.componentTypes).map((ct) => {
@@ -268,6 +278,7 @@ export class CatalogComponent {
         this.checkboxesFilter = <IEntityFilterObject>{};
         this.checkboxesFilter.selectedComponentTypes = [];
         this.checkboxesFilter.selectedResourceSubTypes = [];
+        this.checkboxesFilter.selectedToscaSubTypes = [];
         this.checkboxesFilter.selectedCategoriesModel = [];
         this.checkboxesFilter.selectedStatuses = [];
         this.checkboxesFilter.selectedModels = [];
@@ -431,7 +442,7 @@ export class CatalogComponent {
         if (forceReload || this.componentShouldReload()) {
             this.loaderService.activate();
 
-            let onSuccess = (followedResponse:Array<Component>):void => {
+            let onSuccess = (followedResponse:Array<Component | DataTypeModel>):void => {
                 this.updateCatalogItems(followedResponse);
                 this.loaderService.deactivate();
                 this.cacheService.set('breadcrumbsComponentsState', this.$state.current.name);  //catalog
@@ -471,7 +482,7 @@ export class CatalogComponent {
         }
     }
 
-    private updateCatalogItems = (items:Array<Component>):void => {
+    private updateCatalogItems = (items:Array<Component | DataTypeModel>):void => {
         this.catalogItems = items;
         this.catalogItems.forEach(this.addFilterTermToComponent);
         this.filterCatalogItems();
@@ -524,7 +535,11 @@ export class CatalogComponent {
         this.checkboxesFilter.selectedComponentTypes = this.checkboxesFilterKeys.componentTypes._main;
         Object.keys(this.checkboxesFilterKeys.componentTypes).forEach((chKey) => {
             if (chKey !== '_main') {
-                this.checkboxesFilter['selected' + chKey + 'SubTypes'] = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
+                if (chKey === 'TOSCA_Type') {
+                    this.checkboxesFilter['selectedToscaSubTypes'] = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
+                } else if (chKey === 'Resource') {
+                    this.checkboxesFilter['selected' + chKey + 'SubTypes'] = this.checkboxesFilterKeys.componentTypes[chKey].map((st) => st.substr(chKey.length + 1));
+                }
             }
         });
 
@@ -639,6 +654,8 @@ export class CatalogComponent {
                 // rebuild the checkboxes to show selected
                 this.buildCheckboxLists();
             }
+        }).catch(function (err) {
+            console.log(err.name + ":", err.message);
         });
         this.applyFilterParamsToView(this.filterParams);
     }
@@ -685,13 +702,15 @@ export class CatalogComponent {
         return sortedCategories;
     }
 
-    private addFilterTermToComponent(component:Component) {
-        component.filterTerm = component.name +  ' '  + component.description + ' ' + component.tags.toString() + ' ' + component.version;
-        component.filterTerm = component.filterTerm.toLowerCase();
+    private addFilterTermToComponent(component:Component | DataTypeModel) {
+        if (component instanceof Component) {
+            component.filterTerm = component.name + ' ' + component.description + ' ' + component.tags.toString() + ' ' + component.version;
+            component.filterTerm = component.filterTerm.toLowerCase();
+        }
     }
 
-    private makeFilteredItems(catalogItems:Array<Component>, filter:IEntityFilterObject, search:ISearchFilter, sortBy:string, reverse:boolean) {
-        let filteredComponents:Array<Component> = catalogItems;
+    private makeFilteredItems(catalogItems:Array<Component | DataTypeModel>, filter:IEntityFilterObject, search:ISearchFilter, sortBy:string, reverse:boolean) {
+        let filteredComponents:Array<Component | DataTypeModel> = catalogItems;
 
         // common entity filter
         // --------------------------------------------------------------------------
@@ -712,7 +731,6 @@ export class CatalogComponent {
                 _.reverse(filteredComponents);
             }
         }
-
         return filteredComponents;
     }
 }

@@ -27,16 +27,11 @@ import {AsdcComment, ArtifactModel, ArtifactGroupModel, IFileDownload, PropertyM
 
 import {IComponentService} from "../../services/components/component-service";
 import {CommonUtils} from "../../utils/common-utils";
-import {QueueUtils} from "../../utils/functions";
 import {ArtifactGroupType} from "../../utils/constants";
 import {ComponentMetadata} from "../component-metadata";
-import {Capability} from "../capability";
-import {Requirement} from "../requirement";
-import {Relationship} from "../graph/relationship";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";
 import { Metadata } from "app/models/metadata";
-import {Model} from "../model";
 
 
 // import {}
@@ -79,6 +74,7 @@ export interface IComponent {
     isComplex():boolean;
     getAllVersionsAsSortedArray():Array<any>;
     getStatus(sdcMenu:IAppMenu):string;
+    isDataType(): boolean;
 }
 
 
@@ -485,6 +481,10 @@ export abstract class Component implements IComponent {
     public isComplex = ():boolean => {
         return true;
     };
+
+    public isDataType(): boolean {
+        return !(this instanceof Service || Resource);
+    }
 
     //sort string version value from hash to sorted version (i.e 1.9 before 1.11)
     private sortVersions = (v1:string, v2:string):number => {
