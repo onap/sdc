@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +69,10 @@ import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -93,6 +96,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
     private final ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
+    private final ModelOperation modelOperation;
 
     @Inject
     public TypesFetchServlet(
@@ -104,7 +108,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         CapabilitiesBusinessLogic capabilitiesBusinessLogic,
         InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
         ResourceBusinessLogic resourceBusinessLogic,
-        ArtifactTypeBusinessLogic artifactTypeBusinessLogic
+        ArtifactTypeBusinessLogic artifactTypeBusinessLogic,
+        ModelOperation modelOperation
     ) {
         super(
             componentInstanceBL,
@@ -117,6 +122,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
         this.resourceBusinessLogic = resourceBusinessLogic;
         this.artifactTypeBusinessLogic = artifactTypeBusinessLogic;
+        this.modelOperation = modelOperation;
     }
 
     @GET
@@ -142,6 +148,43 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
                 .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), modelName);
             String dataTypeJson = gson.toJson(dataTypes);
+            Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
+            responseWrapper.setInnerElement(okResponse);
+        }
+        return responseWrapper.getInnerElement();
+    }
+
+    @GET
+    @Path("allDataTypes")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get data types", method = "GET", summary = "Returns all data types from all models", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "allDataTypes"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Data types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getAllDataTypesFromAllModels(@Context final HttpServletRequest request,
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
+        init();
+        validateUserExist(responseWrapper, userWrapper, userId);
+        if (responseWrapper.isEmpty()) {
+            String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug("Start handle request of {} - modifier id is {}", url, userId);
+            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
+            final List<Map<String, DataTypeDefinition>> dataTypesList = new ArrayList<>();
+            List<Model> models = modelOperation.findAllModels();
+            Model defaultModel = new Model();
+            defaultModel.setName(null);
+            models.add(defaultModel);
+            models.forEach(model -> {
+                final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
+                    .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), model.getName());
+                dataTypesList.add(dataTypes);
+            });
+            String dataTypeJson = gson.toJson(dataTypesList);
             Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
             responseWrapper.setInnerElement(okResponse);
         }

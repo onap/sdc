@@ -245,8 +245,8 @@ describe('catalog component', () => {
         component.componentInstance.checkboxesFilterKeys = checkboxesFilterKeysMock;
         component.componentInstance.buildChecklistModelForTypes();
         expect(component.componentInstance.componentTypes).toEqual({ Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
-            Service: null})
-        expect(component.componentInstance.typesChecklistModel.checkboxes.length).toEqual(2);
+            Service: null, 'TOSCA Type': ["Data Type"]})
+        expect(component.componentInstance.typesChecklistModel.checkboxes.length).toEqual(3);
     });
 
     it ('should call on catalog component buildChecklistModelForCategories' , () => {

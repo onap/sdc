@@ -20,7 +20,8 @@
 
 import {Pipe, PipeTransform} from "@angular/core";
 import {Component, Resource} from "app/models";
-import {ComponentType, DEFAULT_MODEL_NAME} from "app/utils/constants";
+import {ComponentType, DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
+import {DataTypeCatalogComponent} from "../../models/data-type-catalog-component";
 
 export interface ISearchFilter {
     [key:string]: string;
@@ -32,6 +33,7 @@ export interface IEntityFilterObject {
     // Types
     selectedComponentTypes?:Array<string>;
     selectedResourceSubTypes?:Array<string>;
+    selectedToscaTypes?:Array<string>
     // Categories
     selectedCategoriesModel?:Array<string>;
     // Statuses
@@ -50,29 +52,37 @@ export class EntityFilterPipe implements PipeTransform{
     constructor() {
     }
 
-    public static transform(components:Array<Component>, filter:IEntityFilterObject) {
-        let filteredComponents:Array<Component> = components;
+    public static transform(components:Array<Component | DataTypeCatalogComponent>, filter:IEntityFilterObject) {
+        let filteredComponents:Array<Component | DataTypeCatalogComponent> = components;
 
         // filter by type
         // --------------------------------------------------------------------------
-        if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)) {
+        if ((filter.selectedComponentTypes && filter.selectedComponentTypes.length > 0) || (filter.selectedResourceSubTypes && filter.selectedResourceSubTypes.length > 0)
+            || (filter.selectedToscaTypes && filter.selectedToscaTypes.length > 0)) {
             let filteredTypes = [];
-            angular.forEach(components, (component:Component):void => {
+            angular.forEach(components, (component: Component | DataTypeCatalogComponent): void => {
                 // Filter by component type
-                let typeLower:string = component.componentType.toLowerCase();
-                let typeFirstCapital:string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
-                if (filter.selectedComponentTypes.indexOf(typeFirstCapital) !== -1) {
-                    filteredTypes.push(component);
-                }
+                    if (component.componentType === ComponentType.RESOURCE || ComponentType.SERVICE && component.componentType !== ToscaType.DATATYPE) {
+                        let typeLower: string = component.componentType.toLowerCase();
+                        let typeFirstCapital: string = typeLower.charAt(0).toUpperCase() + typeLower.slice(1);
+                        if (filter.selectedComponentTypes.indexOf(typeFirstCapital) !== -1) {
+                            filteredTypes.push(component);
+                        }
 
-                // Filter by resource sub type, only in case the resource checkbox was not selected (because in this case we already added all the components in above section).
-                if (component.isResource() && filter.selectedComponentTypes.indexOf("Resource") === -1 && filter.selectedResourceSubTypes.length > 0) {
-                    //filteredComponents.pop(); // Remove the last inserted component.
-                    let resource:Resource = <Resource>component;
-                    if (filter.selectedResourceSubTypes.indexOf(resource.getComponentSubType()) !== -1) {
+                        // Filter by resource sub type, only in case the resource checkbox was not selected (because in this case we already added all the components in above section).
+                        if (component.isResource() && filter.selectedComponentTypes.indexOf("Resource") === -1 && filter.selectedResourceSubTypes.length > 0) {
+                            //filteredComponents.pop(); // Remove the last inserted component.
+                            let resource: Resource = <Resource>component;
+                            if (filter.selectedResourceSubTypes.indexOf(resource.getComponentSubType()) !== -1) {
+                                filteredTypes.push(component);
+                            }
+                        }
+                    }
+
+                    if (component.componentType === ToscaType.DATATYPE && filter.selectedToscaTypes.length > 0) {
                         filteredTypes.push(component);
                     }
-                }
+
             });
             filteredComponents = filteredTypes;
         }
@@ -138,7 +148,7 @@ export class EntityFilterPipe implements PipeTransform{
         if (filter.selectedModels && filter.selectedModels.length > 0) {
             let filteredModels = [];
             let allSelectedModels =  [].concat.apply([], filter.selectedModels);
-            angular.forEach(filteredComponents, (component:Component):void => {
+            angular.forEach(filteredComponents, (component:Component | DataTypeCatalogComponent):void => {
                 if (component.model && allSelectedModels.indexOf(component.model) > -1) {
                     filteredModels.push(component);
                 } else if (!component.model && allSelectedModels.indexOf(DEFAULT_MODEL_NAME) > -1) {
@@ -151,20 +161,29 @@ export class EntityFilterPipe implements PipeTransform{
         // filter by search
         // --------------------------------------------------------------------------
         if (filter.search != undefined) {
+            let filteredSearchComponents = [];
             Object.keys(filter.search).forEach((searchKey) => {
                 let searchVal = filter.search[searchKey];
                 if (searchVal) {
                     searchVal = searchVal.toLowerCase();
-                    filteredComponents = filteredComponents.filter((component:Component) =>
-                        component[searchKey].toLowerCase().indexOf(searchVal) !== -1);
+                    angular.forEach(filteredComponents, (component: Component | DataTypeCatalogComponent): void => {
+                        if (component instanceof Component && component[searchKey].toLowerCase().indexOf(searchVal) !== -1) {
+                            filteredSearchComponents.push(component);
+                        } else if (component instanceof DataTypeCatalogComponent && component.name.indexOf(searchVal) !== -1) {
+                            filteredSearchComponents.push(component);
+                        }
+                    });
                 }
             });
+            if (filteredSearchComponents.length > 0) {
+                filteredComponents = filteredSearchComponents;
+            }
         }
 
         return filteredComponents;
     }
 
-    public transform(components:Array<Component>, filter:IEntityFilterObject) {
+    public transform(components:Array<any>, filter:IEntityFilterObject) {
         return EntityFilterPipe.transform(components, filter);
     }
 }

@@ -24,7 +24,6 @@ import {DEFAULT_ICON, ResourceType, ComponentType} from "./constants";
 import {ServiceService, ResourceService} from "app/services";
 import {CacheService} from "app/services-ng2";
 import {IMainCategory, ISubCategory, ICsarComponent, Component, Resource, Service} from "app/models";
-import {ComponentMetadata} from "../models/component-metadata";
 import {ComponentServiceNg2} from "../ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "../ng2/services/responses/component-generic-response";
 

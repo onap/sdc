@@ -63,6 +63,7 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
 import org.openecomp.sdc.be.servlets.exception.OperationExceptionMapper;
 import org.openecomp.sdc.be.user.Role;
@@ -116,6 +117,8 @@ class TypesFetchServletTest extends JerseyTest {
     private ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
     @Mock
     private ResponseFormatManager responseFormatManager;
+    @Mock
+    private ModelOperation modelOperation;
 
     private final Path rootPath = Path.of("/v1/catalog");
     private final Path nodeTypesPath = rootPath.resolve("nodeTypes");
@@ -214,6 +217,7 @@ class TypesFetchServletTest extends JerseyTest {
                     bind(capabilitiesBusinessLogic).to(CapabilitiesBusinessLogic.class);
                     bind(interfaceOperationBusinessLogic).to(InterfaceOperationBusinessLogic.class);
                     bind(artifactTypeBusinessLogic).to(ArtifactTypeBusinessLogic.class);
+                    bind(modelOperation).to(ModelOperation.class);
                 }
             })
             .register(new OperationExceptionMapper(
@@ -258,6 +262,8 @@ class TypesFetchServletTest extends JerseyTest {
             .thenReturn(resourceBusinessLogic);
         when(webApplicationContext.getBean(ArtifactTypeBusinessLogic.class))
             .thenReturn(artifactTypeBusinessLogic);
+        when(webApplicationContext.getBean(ModelOperation.class))
+            .thenReturn(modelOperation);
     }
 
     void initConfig() {
