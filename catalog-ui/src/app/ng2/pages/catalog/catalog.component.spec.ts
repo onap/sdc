@@ -245,8 +245,8 @@ describe('catalog component', () => {
         component.componentInstance.checkboxesFilterKeys = checkboxesFilterKeysMock;
         component.componentInstance.buildChecklistModelForTypes();
         expect(component.componentInstance.componentTypes).toEqual({ Resource: ['VF', 'VFC', 'CR', 'PNF', 'CP', 'VL'],
-            Service: null})
-        expect(component.componentInstance.typesChecklistModel.checkboxes.length).toEqual(2);
+            Service: null, 'TOSCA Type': ["Data Type"]})
+        expect(component.componentInstance.typesChecklistModel.checkboxes.length).toEqual(3);
     });
 
     it ('should call on catalog component buildChecklistModelForCategories' , () => {
@@ -359,8 +359,8 @@ describe('catalog component', () => {
     it ('should call on catalog component raiseNumberOfElementToDisplay with empty catalogFilteredItems' , () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.catalogFilteredItems = []
-        component.componentInstance.raiseNumberOfElementToDisplay(true);
-        expect(component.componentInstance.numberOfItemToDisplay).toEqual(NaN);
+        component.componentInstance.raiseNumberOfElementToDisplay();
+        expect(component.componentInstance.numberOfItemToDisplay).toEqual(0);
         expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([]);
     });
 
@@ -368,7 +368,7 @@ describe('catalog component', () => {
         const component = TestBed.createComponent(CatalogComponent);
         component.componentInstance.catalogFilteredItems = [1 , 2 , 3, 4, 5, 6]
         component.componentInstance.numberOfItemToDisplay = 2;
-        component.componentInstance.raiseNumberOfElementToDisplay(false);
+        component.componentInstance.raiseNumberOfElementToDisplay();
          expect(component.componentInstance.numberOfItemToDisplay).toEqual(6);
          expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1 , 2 , 3, 4, 5, 6]);
     });
@@ -514,7 +514,7 @@ describe('catalog component', () => {
        // component.componentInstance.catalogFilteredItems = component.componentInstance.makeFilteredItems();
         component.componentInstance.filterCatalogItems();
         expect(component.componentInstance.makeFilteredItems).toHaveBeenCalledWith(["firstComponent", "secondComponent"], {}, {}, "",true);
-        expect(component.componentInstance.raiseNumberOfElementToDisplay).toHaveBeenCalledWith(true);
+        expect(component.componentInstance.raiseNumberOfElementToDisplay);
         expect(component.componentInstance.catalogFilteredSlicedItems).toEqual([1,2]);
     });
 
