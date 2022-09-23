@@ -43,6 +43,25 @@ export class ComponentType {
   static SERVICE_SUBSTITUTION = 'ServiceSubstitution'
 }
 
+export class ToscaType {
+  static DATATYPE = 'DATATYPE';
+}
+
+export class Icon {
+  static DEFAULT_ICON = 'defaulticon';
+  static DATATYPE_ICON = 'securityrules';
+  static SERVICE_TYPE_60 = 'services_60';
+  static COLOR_LIGHTBLUE = 'lightBlue'
+  static COLOR_WHITE = 'white';
+  static COLOR_PURPLE = 'purple';
+  static RESOURCE_TYPE_24 = 'resources_24';
+  static RESOURCE_TYPE_60 = 'resources_60';
+  static SHAPE_CIRCLE = 'circle';
+  static SIZE_MEDIUM = 'medium';
+  static SIZE_X_LARGE = 'x_large';
+  static ERROR = 'error';
+}
+
 export class ServerTypeUrl {
   static RESOURCES = 'resources/';
   static SERVICES = 'services/';

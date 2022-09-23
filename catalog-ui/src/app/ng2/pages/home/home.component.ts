@@ -19,7 +19,7 @@
  */
 'use strict';
 import {Component as NgComponent, Inject, OnInit} from '@angular/core';
-import {Component, ComponentMetadata, IConfigRoles, IUserProperties, Resource} from 'app/models';
+import {Component, ComponentMetadata, IConfigRoles, IUserProperties, Resource, Service} from 'app/models';
 import {HomeFilter} from 'app/models/home-filter';
 import {AuthenticationService, CacheService, HomeService, ResourceServiceNg2} from 'app/services-ng2';
 import {ComponentState, ModalsHandler} from 'app/utils';
@@ -32,6 +32,7 @@ import {EntityFilterPipe} from '../../pipes/entity-filter.pipe';
 import {TranslateService} from '../../shared/translator/translate.service';
 import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
 import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
+import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
 
 @NgComponent({
     selector: 'home-page',
@@ -41,8 +42,8 @@ import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding
 export class HomeComponent implements OnInit {
     public numberOfItemToDisplay: number;
     public homeItems: Component[];
-    public homeFilteredItems: Component[];
-    public homeFilteredSlicedItems: Component[];
+    public homeFilteredItems: Array<Component | DataTypeCatalogComponent>;
+    public homeFilteredSlicedItems: Array<Component | DataTypeCatalogComponent>;
     public folders: FoldersMenu;
     public roles: IConfigRoles;
     public user: IUserProperties;
@@ -358,12 +359,12 @@ export class HomeComponent implements OnInit {
         this.homeFilteredSlicedItems = this.homeFilteredItems.slice(0, this.numberOfItemToDisplay);
     }
 
-    private makeFilteredItems(homeItems: Component[], filter: HomeFilter) {
-        let filteredComponents: Component[] = homeItems;
+    private makeFilteredItems(homeItems: Array<Component>, filter: HomeFilter) {
+        let filteredComponents: Array<Component | DataTypeCatalogComponent> = homeItems;
 
         // filter: exclude all resources of type 'vfcmtType':
-        filteredComponents = filteredComponents.filter((c) =>
-            !c.isResource() || (c as Resource).resourceType.indexOf(this.vfcmtType) === -1);
+            filteredComponents = filteredComponents.filter((c) =>
+                !c.isResource() || (c as Resource).resourceType.indexOf(this.vfcmtType) === -1);
 
         // common entity filter
         // --------------------------------------------------------------------------
