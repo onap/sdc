@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a285b18d_067833ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-25T12:30:23Z",
+      "side": 1,
+      "message": "adjust your IDE to 150 chars line length",
+      "range": {
+        "startLine": 313,
+        "startChar": 12,
+        "endLine": 322,
+        "endChar": 0
+      },
+      "revId": "d28105fc98945d3f07116353f7eeebdb60ea70a9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
