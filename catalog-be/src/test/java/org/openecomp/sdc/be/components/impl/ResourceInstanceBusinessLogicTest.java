@@ -90,7 +90,7 @@ class ResourceInstanceBusinessLogicTest extends BaseBusinessLogicMock {
     private final ForwardingPathOperation forwardingPathOperation = mock(ForwardingPathOperation.class);
     private final NodeFilterOperation serviceFilterOperation = mock(NodeFilterOperation.class);
     private final ToscaFunctionValidator toscaFunctionValidator = mock(ToscaFunctionValidator.class);
-
+    private final PropertyBusinessLogic propertyBusinessLogic = mock(PropertyBusinessLogic.class);
     private static final UserBusinessLogic userAdminManager = mock(UserBusinessLogic.class);
     public static final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
     public static final IGroupInstanceOperation groupInstanceOperation = mock(IGroupInstanceOperation.class);
@@ -101,7 +101,7 @@ class ResourceInstanceBusinessLogicTest extends BaseBusinessLogicMock {
     private final ComponentInstanceBusinessLogic bl = new ComponentInstanceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
         groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
         componentInstanceOperation, artifactBusinessLogic, compInstMergeDataBL, onChangeInstanceOperationOrchestrator,
-        forwardingPathOperation, serviceFilterOperation, artifactToscaOperation, toscaFunctionValidator);
+        forwardingPathOperation, serviceFilterOperation, artifactToscaOperation, toscaFunctionValidator, propertyBusinessLogic);
 
     @BeforeEach
     void setUp() throws Exception {

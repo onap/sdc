@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import lombok.SneakyThrows;
 import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,6 +73,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -190,7 +192,8 @@ class ComponentInstanceBusinessLogicTest {
     private CompositionBusinessLogic compositionBusinessLogic;
     @Mock
     private ToscaFunctionValidator toscaFunctionValidator;
-
+    @Mock
+    private PropertyBusinessLogic propertyBusinessLogic;
     private Component service;
     private Component resource;
     private ComponentInstance toInstance;
@@ -216,7 +219,7 @@ class ComponentInstanceBusinessLogicTest {
     void init() {
         MockitoAnnotations.openMocks(this);
         componentInstanceBusinessLogic = new ComponentInstanceBusinessLogic(null, null, null, null, null, null, null, artifactsBusinessLogic, null,
-            null, forwardingPathOperation, null, null, toscaFunctionValidator);
+            null, forwardingPathOperation, null, null, toscaFunctionValidator, propertyBusinessLogic);
         componentInstanceBusinessLogic.setComponentsUtils(componentsUtils);
         componentInstanceBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
         componentInstanceBusinessLogic.setUserValidations(userValidations);
@@ -305,6 +308,7 @@ class ComponentInstanceBusinessLogicTest {
 
     }
 
+    @SneakyThrows
     @Test
     void testCreateOrUpdatePropertiesValues2() {
         String containerComponentID = "containerId";
@@ -356,6 +360,10 @@ class ComponentInstanceBusinessLogicTest {
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
             .thenReturn(StorageOperationStatus.OK);
+        when(propertyBusinessLogic.getComponentModelByComponentId(any())).thenReturn(component.getModel());
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(types));
+        PropertyValueConstraintValidationUtil validationUtil = Mockito.mock(PropertyValueConstraintValidationUtil.class);
+        when(validationUtil.validatePropertyConstraints(any(),any(),any())).thenReturn(Either.left(any()));
 
         Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = componentInstanceBusinessLogic
             .createOrUpdatePropertiesValues(
@@ -365,6 +373,7 @@ class ComponentInstanceBusinessLogicTest {
 
 
 
+    @SneakyThrows
     @Test
     void testCreateOrUpdatePropertiesValuesPropertyNotExists() {
         String containerComponentID = "containerId";
@@ -396,6 +405,12 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.unlockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
             .thenReturn(StorageOperationStatus.OK);
+        when(propertyBusinessLogic.getComponentModelByComponentId(any())).thenReturn(component.getModel());
+        Map<String, DataTypeDefinition> dataTypeMap = new HashMap<>();
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(dataTypeMap));
+        PropertyValueConstraintValidationUtil validationUtil = Mockito.mock(PropertyValueConstraintValidationUtil.class);
+        when(validationUtil.validatePropertyConstraints(any(),any(),any()))
+            .thenReturn(Either.left(any()));
 
         try {
             componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
@@ -406,6 +421,7 @@ class ComponentInstanceBusinessLogicTest {
 
     }
 
+    @SneakyThrows
     @Test
     void testCreateOrUpdatePropertiesValuesValidationFailure() {
         String containerComponentID = "containerId";
@@ -449,15 +465,22 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.right(false));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST))
             .thenReturn(ActionStatus.INVALID_CONTENT);
+        when(propertyBusinessLogic.getComponentModelByComponentId(any())).thenReturn(component.getModel());
+        Map<String, DataTypeDefinition> dataTypeMap = new HashMap<>();
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(dataTypeMap));
+        PropertyValueConstraintValidationUtil validationUtil = Mockito.mock(PropertyValueConstraintValidationUtil.class);
+        when(validationUtil.validatePropertyConstraints(any(),any(),any()))
+            .thenReturn(Either.left(any()));
 
         final Either<List<ComponentInstanceProperty>, ResponseFormat> response = componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
             ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
         assertThat(response.isRight()).as("Response should be an error").isTrue();
         final ResponseFormat responseFormat = response.right().value();
         assertThat(responseFormat.getStatus()).as("Response status should be as expected").isEqualTo(400);
-        assertThat(responseFormat.getMessageId()).as("Error message id should be as expected").isEqualTo("SVC4000");
+        assertThat(responseFormat.getMessageId()).as("Error message id should be as expected").isEqualTo("SVC4726");
     }
 
+    @SneakyThrows
     @Test
     void testCreateOrUpdatePropertiesValuesMissingFieldFailure() {
         String containerComponentID = "containerId";
@@ -491,6 +514,12 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
             .thenReturn(StorageOperationStatus.OK);
+        when(propertyBusinessLogic.getComponentModelByComponentId(any())).thenReturn(component.getModel());
+        Map<String, DataTypeDefinition> dataTypeMap = new HashMap<>();
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(dataTypeMap));
+        PropertyValueConstraintValidationUtil validationUtil = Mockito.mock(PropertyValueConstraintValidationUtil.class);
+        when(validationUtil.validatePropertyConstraints(any(),any(),any()))
+            .thenReturn(Either.left(any()));
 
         try {
             componentInstanceBusinessLogic.createOrUpdatePropertiesValues(
