@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -77,6 +78,9 @@ public class PropertyValueConstraintValidationUtil {
     }
 
     private boolean isValuePresent(PropertyDefinition propertyDefinition) {
+        if (propertyDefinition instanceof ComponentInstanceInput) {
+            return StringUtils.isNotEmpty(propertyDefinition.getValue());
+        }
         if (propertyDefinition instanceof InputDefinition) {
             return StringUtils.isNotEmpty(propertyDefinition.getDefaultValue());
         }
@@ -90,6 +94,11 @@ public class PropertyValueConstraintValidationUtil {
         }
         completeInputName = "";
         completePropertyName = new StringBuilder();
+        if (propertyDefinition instanceof ComponentInstanceInput) {
+            setCompletePropertyName(propertyDefinition);
+            evaluateComplexTypeProperties(propertyDefinition);
+            return;
+        }
         if (propertyDefinition instanceof InputDefinition) {
             completeInputName = propertyDefinition.getName();
             propertyDefinition = getPropertyDefinitionObjectFromInputs(propertyDefinition);

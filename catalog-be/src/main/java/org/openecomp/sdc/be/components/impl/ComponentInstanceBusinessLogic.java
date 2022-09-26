@@ -63,6 +63,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -187,6 +188,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     @Autowired
     private ContainerInstanceTypesData containerInstanceTypesData;
     private final ToscaFunctionValidator toscaFunctionValidator;
+    private final PropertyBusinessLogic propertyBusinessLogic;
 
     @Autowired
     public ComponentInstanceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
@@ -196,7 +198,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                           ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL,
                                           ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator,
                                           ForwardingPathOperation forwardingPathOperation, NodeFilterOperation nodeFilterOperation,
-                                          ArtifactsOperations artifactToscaOperation, final ToscaFunctionValidator toscaFunctionValidator) {
+                                          ArtifactsOperations artifactToscaOperation, final ToscaFunctionValidator toscaFunctionValidator,
+                                          PropertyBusinessLogic propertyBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.componentInstanceOperation = componentInstanceOperation;
@@ -206,6 +209,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         this.forwardingPathOperation = forwardingPathOperation;
         this.nodeFilterOperation = nodeFilterOperation;
         this.toscaFunctionValidator = toscaFunctionValidator;
+        this.propertyBusinessLogic = propertyBusinessLogic;
     }
 
     public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId,
@@ -1953,6 +1957,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
 
+        // Validate instance property against it's constrains
+        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(properties,componentId);
+        if (constraintValidatorResponse.isRight()) {
+            log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
+            return Either.right(constraintValidatorResponse.right().value());
+        }
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
@@ -3905,6 +3915,16 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         } catch (ComponentException e) {
             log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
             return Either.right(new ResponseFormat());
+        }
+    }
+
+    private Either<Boolean, ResponseFormat> validatePropertyValueConstraint(List<ComponentInstanceProperty> properties, final String componentId) {
+        try {
+            String propertyModel = propertyBusinessLogic.getComponentModelByComponentId(componentId);
+            PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = new PropertyValueConstraintValidationUtil();
+            return propertyValueConstraintValidationUtil.validatePropertyConstraints(properties, applicationDataTypeCache, propertyModel);
+        } catch (BusinessLogicException e) {
+            return Either.right(e.getResponseFormat());
         }
     }
 
