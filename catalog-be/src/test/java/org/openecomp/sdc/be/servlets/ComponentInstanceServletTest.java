@@ -70,6 +70,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -93,6 +94,7 @@ import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -132,6 +134,8 @@ class ComponentInstanceServletTest extends JerseyTest {
     private ServiceBusinessLogic serviceBusinessLogic;
     private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private ComponentBusinessLogicProvider componentBusinessLogicProvider;
+    private ApplicationDataTypeCache applicationDataTypeCache;
+    private PropertyBusinessLogic propertyBusinessLogic;
     private ConfigurationManager configurationManager;
     private User user;
     private String inputData;
@@ -345,6 +349,8 @@ class ComponentInstanceServletTest extends JerseyTest {
                     bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
                     bind(componentNodeFilterBusinessLogic).to(ComponentNodeFilterBusinessLogic.class);
                     bind(componentBusinessLogicProvider).to(ComponentBusinessLogicProvider.class);
+                    bind(applicationDataTypeCache).to(ApplicationDataTypeCache.class);
+                    bind(propertyBusinessLogic).to(PropertyBusinessLogic.class);
                 }
             })
             .property("contextConfig", context);
@@ -366,6 +372,8 @@ class ComponentInstanceServletTest extends JerseyTest {
         serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
         componentNodeFilterBusinessLogic = Mockito.mock(ComponentNodeFilterBusinessLogic.class);
         componentBusinessLogicProvider = Mockito.mock(ComponentBusinessLogicProvider.class);
+        applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+        propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
         userValidations = Mockito.mock(UserValidations.class);
     }
 

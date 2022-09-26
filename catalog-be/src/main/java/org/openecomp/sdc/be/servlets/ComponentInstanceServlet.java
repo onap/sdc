@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -78,6 +79,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ForwardingPaths;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
@@ -100,6 +102,7 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
@@ -148,15 +151,20 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private final GroupBusinessLogic groupBL;
     private final ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic;
     private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
+    private final PropertyBusinessLogic propertyBusinessLogic;
 
     @Inject
-    public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL,
-                                    ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
-                                    ResourceImportManager resourceImportManager, ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic, ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+    public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+                                    ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                                    ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic, ComponentBusinessLogicProvider componentBusinessLogicProvider,
+                                    ApplicationDataTypeCache applicationDataTypeCache, PropertyBusinessLogic propertyBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
         this.nodeFilterBusinessLogic = nodeFilterBusinessLogic;
         this.componentBusinessLogicProvider = componentBusinessLogicProvider;
+        this.applicationDataTypeCache = applicationDataTypeCache;
+        this.propertyBusinessLogic = propertyBusinessLogic;
     }
 
     @POST
@@ -652,6 +660,21 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         if (componentInstanceBusinessLogic == null) {
             log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+        }
+        // Validate instance input value and Constraint of the instance input and Fetch all data types from cache
+        try {
+            Either<Boolean, ResponseFormat> constraintValidatorResponse = new PropertyValueConstraintValidationUtil()
+                .validatePropertyConstraints(inputsToUpdate, applicationDataTypeCache,
+                    propertyBusinessLogic.getComponentModelByComponentId(componentId));
+            if (constraintValidatorResponse.isRight()) {
+                log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
+                return buildErrorResponse(constraintValidatorResponse.right().value());
+            }
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Resource Instance - updateResourceInstanceProperties");
+            log.debug("update resource instance input with exception", e);
+            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            return buildErrorResponse(responseFormat);
         }
         Either<List<ComponentInstanceInput>, ResponseFormat> actionResponse = componentInstanceBusinessLogic
             .createOrUpdateInstanceInputValues(componentTypeEnum, componentId, componentInstanceId, inputsToUpdate, userId);
