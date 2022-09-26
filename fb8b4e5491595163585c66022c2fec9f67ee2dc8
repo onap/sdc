@@ -22,6 +22,53 @@
       "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f237072_7e27f279",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-26T08:52:13Z",
+      "side": 1,
+      "message": "Yes, correct, that is what I\u0027ve had recommended to do.\nYou should take all the new version capabilities and requirements, then compare with the previous ones if there is any marked as \"external\" and mark in the new ones.",
+      "parentUuid": "9edddff8_3293f76e",
+      "range": {
+        "startLine": 3071,
+        "startChar": 7,
+        "endLine": 3072,
+        "endChar": 69
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12917fc4_219b905c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceRelationMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-26T08:52:13Z",
+      "side": 1,
+      "message": "could you explain this change? It seems that now you are getting all the relationships instead just the one that had the currentResourceInstance id.",
+      "range": {
+        "startLine": 188,
+        "startChar": 109,
+        "endLine": 188,
+        "endChar": 121
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
