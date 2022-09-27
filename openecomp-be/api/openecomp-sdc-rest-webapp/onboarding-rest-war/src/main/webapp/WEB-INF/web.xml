@@ -4,7 +4,6 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     version="3.0">
 
-
     <!-- Spring -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -24,6 +23,15 @@
     <listener>
         <listener-class>org.openecomp.server.listeners.OnboardingAppStartupListener</listener-class>
     </listener>
+
+    <filter>
+        <filter-name>XFrameOptionsHeaderFilter</filter-name>
+        <filter-class>org.openecomp.sdc.common.filters.XFrameOptionsHeaderFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>XFrameOptionsHeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter>
         <filter-name>PermissionsFilter</filter-name>
