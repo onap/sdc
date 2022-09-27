@@ -774,7 +774,6 @@ public class ComponentsUtils {
                 responseEnum = ActionStatus.INVALID_CONTENT;
                 break;
             default:
-                responseEnum = ActionStatus.GENERAL_ERROR;
                 break;
         }
         return responseEnum;
@@ -1193,7 +1192,7 @@ public class ComponentsUtils {
                 responseEnum = ActionStatus.OK;
                 break;
             case ELEMENT_NOT_FOUND:
-                if (elementType != null && elementType == JsonPresentationFields.PROPERTY) {
+                if (elementType == JsonPresentationFields.PROPERTY) {
                     responseEnum = ActionStatus.PROPERTY_NOT_FOUND;
                 }
                 break;
@@ -1208,7 +1207,6 @@ public class ComponentsUtils {
                 responseEnum = ActionStatus.INVALID_ATTRIBUTE;
                 break;
             default:
-                responseEnum = ActionStatus.GENERAL_ERROR;
                 break;
         }
         return responseEnum;
