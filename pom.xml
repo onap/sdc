@@ -206,6 +206,11 @@ Modifications copyright (c) 2018-2019 Nokia
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>9.0.67</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
@@ -282,6 +287,11 @@ Modifications copyright (c) 2018-2019 Nokia
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <!-- must be on the classpath -->
             <groupId>org.jacoco</groupId>
