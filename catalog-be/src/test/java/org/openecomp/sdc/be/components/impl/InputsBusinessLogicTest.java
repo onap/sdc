@@ -100,6 +100,7 @@ public class InputsBusinessLogicTest {
     private static final String LISTINPUT_PROP2_TYPE = "integer";
     private static final String OLD_VALUE = "old value";
     private static final String NEW_VALUE = "new value";
+    private static final String TEST_MODEL = "testModel";
     static ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
     static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
@@ -770,11 +771,16 @@ public class InputsBusinessLogicTest {
         oldInputDef.setMetadata(oldMetadata);
         oldInputDefs.add(oldInputDef);
         service.setInputs(oldInputDefs);
+        service.setModel(TEST_MODEL);
+
+        DataTypeDefinition testType = new DataTypeDefinition();
+        testType.setName(INPUT_TYPE);
+        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(testType.getName(), testType);
 
         List<InputDefinition> newInputDefs = new ArrayList<>();
         InputDefinition inputDef = new InputDefinition();
         inputDef.setUniqueId(INPUT_ID);
-        inputDef.setType(INPUT_TYPE);
+        inputDef.setType(testType.getName());
         inputDef.setDefaultValue(NEW_VALUE); // update value
         inputDef.setRequired(Boolean.TRUE); // update value
         Map<String, String> newMetadata = new HashMap<>();
@@ -795,6 +801,7 @@ public class InputsBusinessLogicTest {
             .thenReturn(Either.left(NEW_VALUE));
         when(toscaOperationFacadeMock.updateInputOfComponent(service, oldInputDef))
             .thenReturn(Either.left(inputDef));
+        when(applicationDataTypeCache.getAll(TEST_MODEL)).thenReturn(Either.left(dataTypes));
 
         Either<List<InputDefinition>, ResponseFormat> result =
             testInstance.updateInputsValue(service.getComponentType(), COMPONENT_ID, newInputDefs, USER_ID, true);

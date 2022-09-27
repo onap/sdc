@@ -338,13 +338,13 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         List<InputDefinition> inputDefinitions = new ArrayList<>();
         for (InputDefinition inputDefinition : inputs) {
             InputDefinition inputDef = new InputDefinition();
-            inputDefinition.setDefaultValue(inputDefinition.getDefaultValue());
-            inputDefinition.setInputPath(inputDefinition.getSubPropertyInputPath());
-            inputDefinition.setType(inputDefinition.getType());
+            inputDef.setDefaultValue(inputDefinition.getDefaultValue());
+            inputDef.setInputPath(inputDefinition.getSubPropertyInputPath());
+            inputDef.setType(inputDefinition.getType());
             if (Objects.nonNull(inputDefinition.getParentPropertyType())) {
                 ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
                 propertyDefinition.setType(inputDefinition.getParentPropertyType());
-                inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
+                inputDef.setProperties(Collections.singletonList(propertyDefinition));
             }
             inputDefinitions.add(inputDef);
         }
