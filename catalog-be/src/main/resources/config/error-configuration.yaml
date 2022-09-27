@@ -2411,7 +2411,7 @@ errors:
       # %1 - property name
         code: 400,
         message: 'Error: Invalid Content. %1 has invalid format.',
-        messageId: "SVC4723"
+        messageId: "SVC4731"
     }
     #---------SVC4734------------------------------
     # %1 - list of validation errors
@@ -2821,3 +2821,10 @@ errors:
         code: 400
         message: "Capability '%1' not found in '%2' '%3'."
         messageId: "SVC4186"
+
+    #---------SVC4001------------------------------
+    NOT_PERMITTED_SPECIAL_CHARS: {
+        code: 406,
+        message: 'Error: Special characters not allowed.',
+        messageId: "SVC4001"
+    }
