@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "994729b3_a1bc8b52",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-27T19:01:02Z",
+      "side": 1,
+      "message": "the system uses Jetty, couldn\u0027t we try to find a solution for Jetty, instead of having to add a tomcat dependency to resolve the issue?\nI believe we could create a filter that adds this header in every response.",
+      "range": {
+        "startLine": 207,
+        "startChar": 8,
+        "endLine": 211,
+        "endChar": 21
+      },
+      "revId": "2bdc1d0cb5e2a94dcf540ce594392d7d3c2d7f5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
