@@ -34,6 +34,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+
         <!--JSON and YAML Parsing-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

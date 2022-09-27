@@ -200,6 +200,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <minio.version>8.3.4</minio.version>
         <okhttp.version>4.9.3</okhttp.version>
 
+        <jsoup.version>1.15.3</jsoup.version>
+
         <verbose>false</verbose>
     </properties>
 
