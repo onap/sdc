@@ -141,6 +141,30 @@
       "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a0858a2_4fe00d0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceRelationMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-09-28T14:55:35Z",
+      "side": 1,
+      "message": "Since, we are passing getNodeFunc (function parameter), which will provide us the fromNode when called for relationFrom and toNode for relationTo, so we just need to check its Uid is equals to fromNode/ToNode which will get us the right data.",
+      "parentUuid": "ae03a6f7_ae814d82",
+      "range": {
+        "startLine": 188,
+        "startChar": 109,
+        "endLine": 188,
+        "endChar": 121
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
