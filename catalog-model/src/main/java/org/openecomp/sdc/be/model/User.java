@@ -20,33 +20,42 @@
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
-import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.be.utils.NoHtml;
 
 @JsonInclude
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class User {
 
     public static final String FORCE_DELETE_HEADER_FLAG = "FORCE_DELETE";
+    @NoHtml
     private String firstName;
+    @NoHtml
     private String lastName;
+    @NoHtml
     private String userId;
+    @NoHtml
     private String email;
+    @NoHtml
     private String role;
     private Long lastLoginTime;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private UserStatusEnum status = UserStatusEnum.ACTIVE;
-
-    public User() {
-    }
 
     public User(String userId) {
         this.userId = userId;
-    }
-
-    public User(UserData userDate) {
-        this(userDate.getFirstName(), userDate.getLastName(), userDate.getUserId(), userDate.getEmail(), userDate.getRole(),
-            userDate.getLastLoginTime());
     }
 
     public User(String firstName, String lastName, String userId, String emailAddress, String role, Long lastLoginTime) {
@@ -74,46 +83,6 @@ public class User {
         this.lastLoginTime = other.getLastLoginTime();
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getFullName() {
         return this.getFirstName() + " " + this.getLastName();
     }
@@ -123,95 +92,4 @@ public class User {
         this.lastLoginTime = now.getMillis();
     }
 
-    public Long getLastLoginTime() {
-        return this.lastLoginTime;
-    }
-
-    public void setLastLoginTime(Long time) {
-        this.lastLoginTime = time;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        result = prime * result + ((lastLoginTime == null) ? 0 : lastLoginTime.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        User other = (User) obj;
-        if (userId == null) {
-            if (other.userId != null) {
-                return false;
-            }
-        } else if (!userId.equals(other.userId)) {
-            return false;
-        }
-        if (email == null) {
-            if (other.email != null) {
-                return false;
-            }
-        } else if (!email.equals(other.email)) {
-            return false;
-        }
-        if (firstName == null) {
-            if (other.firstName != null) {
-                return false;
-            }
-        } else if (!firstName.equals(other.firstName)) {
-            return false;
-        }
-        if (lastName == null) {
-            if (other.lastName != null) {
-                return false;
-            }
-        } else if (!lastName.equals(other.lastName)) {
-            return false;
-        }
-        if (role == null) {
-            if (other.role != null) {
-                return false;
-            }
-        } else if (!role.equals(other.role)) {
-            return false;
-        }
-        if (lastLoginTime == null) {
-            if (other.lastLoginTime != null) {
-                return false;
-            }
-        } else if (!lastLoginTime.equals(other.lastLoginTime)) {
-            return false;
-        }
-        return true;
-    }
-
-    public UserStatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(UserStatusEnum status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "User [firstName=" + firstName + ", lastName=" + lastName + ", userId=" + userId + ", email=" + email + ", role=" + role
-            + ", last login time=" + lastLoginTime + "]";
-    }
 }
