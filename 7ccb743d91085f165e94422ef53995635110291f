@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d79eca3e_703db719",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/CacheFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T15:36:17Z",
+      "side": 1,
+      "message": "add javadoc to describe purpose of class",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 44
+      },
+      "revId": "7ccb743d91085f165e94422ef53995635110291f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7281d996_0482ea6e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T15:36:17Z",
+      "side": 1,
+      "message": "add javadoc to describe purpose of class - general comment for all new classes",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 52
+      },
+      "revId": "7ccb743d91085f165e94422ef53995635110291f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25d89c63_82e6dc9c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T15:36:17Z",
+      "side": 1,
+      "message": "please use more meaningful name",
+      "range": {
+        "startLine": 49,
+        "startChar": 25,
+        "endLine": 49,
+        "endChar": 29
+      },
+      "revId": "7ccb743d91085f165e94422ef53995635110291f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ead000f_da76bf03",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/BeGenericServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T15:36:17Z",
+      "side": 1,
+      "message": "this is removing digits and \"_\" as allowed in property names?",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 65
+      },
+      "revId": "7ccb743d91085f165e94422ef53995635110291f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8a7a885_6032edd5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/DataValidator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T15:36:17Z",
+      "side": 1,
+      "message": "add javadoc to public methods",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 5
+      },
+      "revId": "7ccb743d91085f165e94422ef53995635110291f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
