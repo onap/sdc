@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,31 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package org.openecomp.sdc.be.utils;
 
-public abstract class BasicServlet {
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+
+/**
+ * Provides mechanizm to annotate METHOD and/or FIELD to be validated by {@link org.openecomp.sdc.be.servlets.utils.DataValidator}.
+ */
+@Documented
+@Constraint(validatedBy = NoHtmlValidator.class)
+@Target({METHOD, FIELD})
+@Retention(RUNTIME)
+public @interface NoHtml {
+
+    String message() default "Unsafe html content";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }
