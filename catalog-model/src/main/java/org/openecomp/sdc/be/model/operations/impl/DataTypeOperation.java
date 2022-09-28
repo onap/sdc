@@ -71,38 +71,38 @@ public class DataTypeOperation extends AbstractOperation {
         }
 
         final List<DataTypeData> allDataTypeNodesWithModel = getAllDataTypesWithModel();
-        if(CollectionUtils.isNotEmpty(allDataTypeNodesWithModel)) {
+        if (CollectionUtils.isNotEmpty(allDataTypeNodesWithModel)) {
             dataTypesFound.addAll(allDataTypeNodesWithModel);
         }
         return dataTypesFound;
     }
-    
+
     public Map<String, List<String>> getAllDataTypeUidsToModels() {
         final Map<String, List<String>> dataTypesFound = new HashMap<>();
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
             janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
 
         final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
-        
-        for (DataTypeData dataType: dataTypesValidated) {
-            if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+
+        for (DataTypeData dataType : dataTypesValidated) {
+            if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
                 dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
             }
             dataTypesFound.get(dataType.getUniqueId()).add(null);
         }
-        
+
         modelOperation.findAllModels()
             .forEach(model -> {
-                for (DataTypeData dataType: getAllDataTypesWithModel(model.getName())) {
-                    if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+                for (DataTypeData dataType : getAllDataTypesWithModel(model.getName())) {
+                    if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
                         dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
                     }
                     dataTypesFound.get(dataType.getUniqueId()).add(model.getName());
                 }
-        });
+            });
         return dataTypesFound;
     }
-    
+
     private List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesByModel = janusGraphGenericDao
             .getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class);
@@ -129,7 +129,7 @@ public class DataTypeOperation extends AbstractOperation {
         if (getDataTypes.isRight()) {
             final var status = getDataTypes.right().value();
             if (LOGGER.isErrorEnabled()) {
-                final var errorMsg= String.format("Failed to fetch data types from database with model %s. Status is %s", modelName, status);
+                final var errorMsg = String.format("Failed to fetch data types from database with model %s. Status is %s", modelName, status);
                 LOGGER.error(String.valueOf(EcompLoggerErrorCode.UNKNOWN_ERROR), DataTypeOperation.class.getName(), errorMsg);
                 BeEcompErrorManager.getInstance().logInternalConnectionError(DataTypeOperation.class.getName(), errorMsg, ErrorSeverity.ERROR);
             }
@@ -150,6 +150,20 @@ public class DataTypeOperation extends AbstractOperation {
             traversal.V(dataTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
             dataTypeVertex.remove();
         });
+    }
+
+    public List<DataTypeData> getDataTypeByUid(final String dataTypeUid) {
+        final Map<String, Object> props = new HashMap<>();
+        props.put(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), dataTypeUid);
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> dataTypes = janusGraphGenericDao
+            .getByCriteria(NodeTypeEnum.DataType, props, DataTypeData.class);
+        if (dataTypes.isRight()) {
+            final JanusGraphOperationStatus status = dataTypes.right().value();
+            final String errorMsg = String.format("Failed to fetch data types from database. Status is %s", status);
+            LOGGER.error(String.valueOf(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR.getErrorCode()), DataTypeOperation.class.getName(), errorMsg);
+            BeEcompErrorManager.getInstance().logInternalConnectionError(DataTypeOperation.class.getName(), errorMsg, ErrorSeverity.ERROR);
+        }
+        return dataTypes.left().value();
     }
 
 }
