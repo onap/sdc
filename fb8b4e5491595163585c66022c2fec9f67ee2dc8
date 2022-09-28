@@ -117,6 +117,30 @@
       "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae03a6f7_ae814d82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceRelationMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-28T12:45:37Z",
+      "side": 1,
+      "message": "I dont see the explanation of this change?",
+      "parentUuid": "d739b54c_5c98a554",
+      "range": {
+        "startLine": 188,
+        "startChar": 109,
+        "endLine": 188,
+        "endChar": 121
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
