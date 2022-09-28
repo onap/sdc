@@ -5,6 +5,96 @@
 Release Notes
 =============
 
+Version: 1.11.9
+==============
+
+:Release Date: 2022-09-28
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn M4 release
+
+**Epics**
+
+*  `SDC-4034 <https://jira.onap.org/browse/SDC-4034>`_ - Service Import
+*  `SDC-4037 <https://jira.onap.org/browse/SDC-4037>`_ - Additional TOSCA constructs support Kohn
+*  `SDC-4035 <https://jira.onap.org/browse/SDC-4035>`_ - Deletion of archived assets
+*  `SDC-4037 <https://jira.onap.org/browse/SDC-4037>`_ - Additional TOSCA constructs support Kohn
+*  `SDC-4036 <https://jira.onap.org/browse/SDC-4036>`_ - Enable application metrics
+
+
+**Stories**
+
+*  `SDC-4186 <https://jira.onap.org/browse/SDC-4186>`_ - Service import - Import unknown interface types
+*  `SDC-4187 <https://jira.onap.org/browse/SDC-4187>`_ - Service import - Import unknown capability types
+*  `SDC-4176 <https://jira.onap.org/browse/SDC-4176>`_ - Service import - Import unknown group types
+*  `SDC-4173 <https://jira.onap.org/browse/SDC-4173>`_ - Support tosca functions for node capability filters
+*  `SDC-4153 <https://jira.onap.org/browse/SDC-4153>`_ - Service import - Import necessary artifact types
+*  `SDC-4162 <https://jira.onap.org/browse/SDC-4162>`_ - Service Import - yaml error
+
+
+**Bug Fixes**
+
+*  `SDC-4125 <https://jira.onap.org/browse/SDC-4125>`_ - Error thrown when setting policy property with get_property
+*  `SDC-4188 <https://jira.onap.org/browse/SDC-4188>`_ - Fix show add button for Req and Capabilities in VF
+*  `SDC-4181 <https://jira.onap.org/browse/SDC-4181>`_ - Simulator showing server exception when no content type is provided
+*  `SDC-4179 <https://jira.onap.org/browse/SDC-4179>`_ - maven-resources-plugin filtering problem with plugins-configuration.yaml
+*  `SDC-4175 <https://jira.onap.org/browse/SDC-4175>`_ - Capablity Types not refreshing after model change
+
+
+**Tasks**
+
+*  `SDC-4183 <https://jira.onap.org/browse/SDC-4183>`_ - Improve the catalog-fe README
+*  `SDC-4066 <https://jira.onap.org/browse/SDC-4066>`_ - Improve catalog-ui test coverage
+*  `SDC-4180 <https://jira.onap.org/browse/SDC-4180>`_ - Local paths shown in the compiled onboard UI app
+*  `SDC-4178 <https://jira.onap.org/browse/SDC-4178>`_ - Update 'Deployment dependency map'
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.8
 ==============
 
