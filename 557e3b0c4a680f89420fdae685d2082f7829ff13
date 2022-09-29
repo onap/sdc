@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "6cecda71_eb71ea8a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T17:18:03Z",
+      "side": 1,
+      "message": "how do you know this is a complex type property?",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 62
+      },
+      "revId": "557e3b0c4a680f89420fdae685d2082f7829ff13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c665948e_7472a106",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
         "patchSetId": 1
