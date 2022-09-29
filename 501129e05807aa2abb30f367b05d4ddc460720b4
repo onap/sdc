@@ -1,0 +1,372 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50ce20f6_e6186781",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/CacheFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 40,
+        "startChar": 12,
+        "endLine": 40,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "422e1f1a_28b65e0f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/CacheFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "any specific reason to declare as a component?",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 25
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "044cfdc8_c0e7b32b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/CacheFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "why cache? I don\u0027t see it caching anything, maybe I missed something.\nAfter seeing more of the code, I understood that this filter main role is to wrap the Request with the RequestWrapper, correct?\nI would suggest to call RequestWrapperFilter.",
+      "range": {
+        "startLine": 43,
+        "startChar": 13,
+        "endLine": 43,
+        "endChar": 18
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fef9623_31d48b59",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 46,
+        "startChar": 12,
+        "endLine": 46,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1829bb12_e4287c98",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "any specific reason to declare as a component?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 33
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb31404c_844c61cf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "maybe InputValidationFilter",
+      "range": {
+        "startLine": 49,
+        "startChar": 13,
+        "endLine": 49,
+        "endChar": 32
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1388f23_e75d5cfe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RequestWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "than",
+      "range": {
+        "startLine": 36,
+        "startChar": 69,
+        "endLine": 36,
+        "endChar": 73
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45b1ae89_af682e0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RequestWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 36,
+        "startChar": 12,
+        "endLine": 36,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45c57b65_513faa16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RequestWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "there is no validation about the content in this moment. This was an error during the request body reading.\nAlso you are loosing the exception, it would be good to log it at least.",
+      "range": {
+        "startLine": 55,
+        "startChar": 12,
+        "endLine": 55,
+        "endChar": 97
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9320b144_5728526b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RequestWrapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "you could use lombok",
+      "range": {
+        "startLine": 90,
+        "startChar": 4,
+        "endLine": 93,
+        "endChar": 5
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ece060b0_bf83c3c4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/DataValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 31,
+        "startChar": 12,
+        "endLine": 31,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57cde7af_8b9d7407",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/DataValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "maybe InputValidator",
+      "range": {
+        "startLine": 34,
+        "startChar": 13,
+        "endLine": 34,
+        "endChar": 26
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71351d20_034d3fab",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/DataValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "I don\u0027t believe it needs all that protection if it is already a spring component.\nIt will be a singleton with the default scope, so I think a simple final attribute and its instantiation in the constructor would suffice.\nAfter looking more into the code, you are not injecting it anywhere, just instantiating it. So I believe there is no point to set is as a @Component, unless you are injecting it somewhere.",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31dca260_62c055d8",
+        "filename": "catalog-be/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "will it be possible to change this parameters in runtime?",
+      "range": {
+        "startLine": 154,
+        "startChar": 12,
+        "endLine": 154,
+        "endChar": 72
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6aa5f574_8441602e",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/NoHtml.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e49f0845_9002eedd",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/NoHtmlValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-29T15:20:44Z",
+      "side": 1,
+      "message": "mechanism",
+      "range": {
+        "startLine": 29,
+        "startChar": 12,
+        "endLine": 29,
+        "endChar": 21
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
