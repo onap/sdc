@@ -298,6 +298,9 @@ public class InterfacesOperationsConverter {
                                                         final OperationDataDefinition operationDataDefinition,
                                                         final ToscaLifecycleOperationDefinition toscaOperation,
                                                         final Map<String, DataTypeDefinition> dataTypes) {
+        if (operationDataDefinition.getImplementation() == null) {
+            return;
+        }
         final String operationArtifactPath;
         final ToscaInterfaceOperationImplementation toscaInterfaceOperationImplementation = new ToscaInterfaceOperationImplementation();
         toscaInterfaceOperationImplementation.setPrimary(new ToscaArtifactDefinition());
