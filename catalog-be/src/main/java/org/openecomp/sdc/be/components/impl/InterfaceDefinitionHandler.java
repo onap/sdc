@@ -159,6 +159,10 @@ public class InterfaceDefinitionHandler {
         final OperationDataDefinition operation = new OperationDataDefinition();
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setName(operationName);
+        
+        if (MapUtils.isEmpty(operationDefinitionMap)) {
+            return operation;
+        }
         Object operationDescription = operationDefinitionMap.get(
                 DESCRIPTION.getElementName()
         );

@@ -22,12 +22,14 @@ package org.openecomp.sdc.be.components.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -146,8 +148,10 @@ public class InterfaceLifecycleTypeImportManager {
                 .asList(ToscaTagNamesEnum.DERIVED_FROM.getElementName(), ToscaTagNamesEnum.DESCRIPTION.getElementName(),
                     ToscaTagNamesEnum.VERSION.getElementName(), ToscaTagNamesEnum.METADATA.getElementName(),
                     ToscaTagNamesEnum.INPUTS.getElementName(), ToscaTagNamesEnum.NOTIFICATIONS.getElementName());
-            operationsMap = toscaJson.entrySet().stream().filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            
+            Stream<Entry<String, Object>> oldFormatOperations =  toscaJson.entrySet().stream().filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()));
+            operationsMap = new HashMap<>();
+            oldFormatOperations.forEach(entry -> operationsMap.put(entry.getKey(), entry.getValue()));
         }
         interfaceDef.setOperationsMap(handleOperations(operationsMap));
         return interfaceDef;
@@ -162,6 +166,9 @@ public class InterfaceLifecycleTypeImportManager {
     }
 
     private Operation createOperation(final Map<String, Object> toscaOperationMap) {
+        if (toscaOperationMap == null) {
+            return new Operation();
+        }
         final Operation operation = new Operation();
         operation.setDescription((String) toscaOperationMap.get(ToscaTagNamesEnum.DESCRIPTION.getElementName()));
         return operation;
