@@ -516,7 +516,7 @@ public class ServiceImportParseLogic {
             while (intItr.hasNext() && eitherResult.isLeft()) {
                 InterfaceDefinition interfaceDefinition = intItr.next();
                 String intType = interfaceDefinition.getUniqueId();
-                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation.getInterface(intType);
+                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation.getInterface(UniqueIdBuilder.buildInterfaceTypeUid(resource.getModel(), intType));
                 if (eitherCapTypeFound.isRight()) {
                     if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                         BeEcompErrorManager.getInstance()
