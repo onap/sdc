@@ -679,10 +679,10 @@ public class ServiceServlet extends AbstractValidationsServlet {
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
         ServiceAuthorityTypeEnum serviceAuthorityTypeEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
         commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, serviceAuthorityTypeEnum, userId, data);
-        specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request,
+        specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, request,
             data, serviceAuthorityTypeEnum);
         if (responseWrapper.isEmpty()) {
-            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), serviceUniqueId);
+            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement());
         }
         return responseWrapper;
     }
@@ -762,7 +762,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 serviceInfoJsonString);
             fillServicePayload(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, modifier, serviceInfoJsonString, serviceAuthorityEnum,
                 file);
-            specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request,
+            specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, request,
                 serviceInfoJsonString, serviceAuthorityEnum);
             log.debug("importReplaceService:get payload:{}", uploadServiceInfoWrapper.getInnerElement().getPayloadData());
             ServiceMetadataDataDefinition serviceMetadataDataDefinition = (ServiceMetadataDataDefinition) oldService.getComponentMetadataDefinition()
@@ -774,10 +774,10 @@ public class ServiceServlet extends AbstractValidationsServlet {
             uploadServiceInfoWrapper.getInnerElement().setProjectCode(oldService.getProjectCode());
             if (responseWrapper.isEmpty()) {
                 log.debug("importReplaceService:start handleImportService");
-                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), null);
+                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement());
             }
             return responseWrapper.getInnerElement();
-        } catch (IOException | ZipException e) {
+        } catch (final ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Service");
             log.debug("import service failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
