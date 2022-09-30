@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7bd6ce7c_a51539fa",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-30T14:48:27Z",
+      "side": 1,
+      "message": "singular rather than plural",
+      "range": {
+        "startLine": 156,
+        "startChar": 62,
+        "endLine": 156,
+        "endChar": 71
+      },
+      "revId": "d74a76388e5dfb7851de5f0ffdaeb19588c26065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
