@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56e1d764_395b206a",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "what is the reason of using form here?",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 10
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a54274c7_4b28d6b9",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "I believe in this case you just need one way binding from the Component to the view: [ngModel].\nBut I don\u0027t see a reason to have this input.",
+      "range": {
+        "startLine": 32,
+        "startChar": 27,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c3c9523_8342f0a8",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "this is always true because of line 30",
+      "range": {
+        "startLine": 43,
+        "startChar": 10,
+        "endLine": 43,
+        "endChar": 28
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4dfeee03_2f310012",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "also always true because of line 56",
+      "range": {
+        "startLine": 60,
+        "startChar": 41,
+        "endLine": 60,
+        "endChar": 61
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "982a1fab_6fea142c",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "maybe it is better to provide false as default value",
+      "range": {
+        "startLine": 45,
+        "startChar": 2,
+        "endLine": 45,
+        "endChar": 44
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ab27cae_71d240a6",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "add space after \":\"",
+      "range": {
+        "startLine": 57,
+        "startChar": 11,
+        "endLine": 57,
+        "endChar": 12
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a299f59a_a407cc92",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "adjust format",
+      "range": {
+        "startLine": 159,
+        "startChar": 41,
+        "endLine": 163,
+        "endChar": 37
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "543443df_38cc35af",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-30T15:43:35Z",
+      "side": 1,
+      "message": "I suggest to create a function isNumber and use here in line 139",
+      "range": {
+        "startLine": 255,
+        "startChar": 8,
+        "endLine": 255,
+        "endChar": 90
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
