@@ -213,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "a93ca30a_5ab2ccfe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-03T10:17:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1829bb12_e4287c98",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 33
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb31404c_844c61cf",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
         "patchSetId": 7
@@ -624,6 +648,30 @@
       "side": 1,
       "message": "no as I know, web.xml is inside of catalog-be.war, and read once in deployment time",
       "parentUuid": "31dca260_62c055d8",
+      "range": {
+        "startLine": 154,
+        "startChar": 12,
+        "endLine": 154,
+        "endChar": 72
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "084600a3_8a9f8309",
+        "filename": "catalog-be/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-03T10:17:08Z",
+      "side": 1,
+      "message": "all right, a suggestion, maybe not in this change, we could put this in the system configuration file",
+      "parentUuid": "ce8e67dd_155b8e70",
       "range": {
         "startLine": 154,
         "startChar": 12,
