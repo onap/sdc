@@ -516,7 +516,7 @@ class TypesUploadServletTest extends JerseyTest {
         MockitoAnnotations.openMocks(this);
 
         forceSet(TestProperties.CONTAINER_PORT, "0");
-        final TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, componentUtils,
+        final TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, componentUtils,
             servletUtils, null, capabilityTypeImportManager, interfaceLifecycleTypeImportManager,
             categoriesImportManager, dataTypeImportManager,
             groupTypeImportManager, policyTypeImportManager, relationshipTypeImportManager, artifactTypeImportManager);

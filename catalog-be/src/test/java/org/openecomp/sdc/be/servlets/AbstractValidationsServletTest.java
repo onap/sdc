@@ -55,8 +55,8 @@ public class AbstractValidationsServletTest {
     private static ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
     private static ArtifactsBusinessLogic artifactsBusinessLogic = mock(ArtifactsBusinessLogic.class);
 
-    private static AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
-            componentInstanceBL, componentsUtils, servletUtils,  resourceImportManager, artifactsBusinessLogic);
+    private static AbstractValidationsServlet servlet = new ArtifactExternalServlet(
+        componentInstanceBL, componentsUtils, servletUtils,  resourceImportManager, artifactsBusinessLogic);
 
     private static final String BASIC_TOSCA_TEMPLATE = "tosca_definitions_version: tosca_simple_yaml_%s";
 

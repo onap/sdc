@@ -50,7 +50,6 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -69,9 +68,9 @@ public class ComponentAttributeServlet extends BeGenericServlet {
     private final AttributeBusinessLogic attributeBusinessLogic;
 
     @Inject
-    public ComponentAttributeServlet(final UserBusinessLogic userBusinessLogic, final ComponentsUtils componentsUtils,
+    public ComponentAttributeServlet(final ComponentsUtils componentsUtils,
                                      final AttributeBusinessLogic attributeBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.attributeBusinessLogic = attributeBusinessLogic;
     }
 

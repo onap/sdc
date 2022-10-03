@@ -280,7 +280,8 @@ class PolicyServletTest extends JerseySpringBaseTest {
         assertThat(response.getStatus()).isEqualTo(Response.Status.FORBIDDEN.getStatusCode());
     }
 
-    @Test//(expected = ComponentException.class)
+    @Test
+//(expected = ComponentException.class)
     void getPolicyProperties_unHandledError_returnGeneralError() {
         when(businessLogic.getPolicyProperties(ComponentTypeEnum.SERVICE, SERVICE_ID, POLICY_ID, USER_ID))
             .thenThrow(new RuntimeException());
@@ -515,7 +516,7 @@ class PolicyServletTest extends JerseySpringBaseTest {
     protected ResourceConfig configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return super.configure()
-            .register(new PolicyServlet(null, null, componentsUtils,
+            .register(new PolicyServlet(null, componentsUtils,
                 servletUtils, null, businessLogic));
     }
 

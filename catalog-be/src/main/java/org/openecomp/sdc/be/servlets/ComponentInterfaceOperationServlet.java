@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -92,11 +91,11 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
     private final ComponentInterfaceOperationBusinessLogic componentInterfaceOperationBusinessLogic;
 
     @Autowired
-    public ComponentInterfaceOperationServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+    public ComponentInterfaceOperationServlet(final ComponentInstanceBusinessLogic componentInstanceBL,
                                               final ComponentsUtils componentsUtils, final ServletUtils servletUtils,
                                               final ResourceImportManager resourceImportManager,
                                               final ComponentInterfaceOperationBusinessLogic componentInterfaceOperationBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.componentInterfaceOperationBusinessLogic = componentInterfaceOperationBusinessLogic;
     }
 

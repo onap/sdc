@@ -46,7 +46,6 @@ import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
@@ -65,9 +64,9 @@ public class BeMonitoringServlet extends BeGenericServlet {
     private final HealthCheckBusinessLogic healthCheckBusinessLogic;
 
     @Inject
-    public BeMonitoringServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public BeMonitoringServlet(ComponentsUtils componentsUtils,
                                HealthCheckBusinessLogic healthCheckBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.healthCheckBusinessLogic = healthCheckBusinessLogic;
     }
 

@@ -49,7 +49,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.info.DistributionStatusOfServiceListResponce;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -69,9 +68,9 @@ public class DistributionServiceServlet extends BeGenericServlet {
     private DistributionMonitoringBusinessLogic distributionMonitoringLogic;
 
     @Inject
-    public DistributionServiceServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public DistributionServiceServlet(ComponentsUtils componentsUtils,
                                       DistributionMonitoringBusinessLogic distributionMonitoringLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.distributionMonitoringLogic = distributionMonitoringLogic;
     }
 

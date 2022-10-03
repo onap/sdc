@@ -69,7 +69,7 @@ class PolicyTypesEndpointTest extends JerseySpringBaseTest {
         UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
         ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
         return super.configure()
-            .register(new PolicyTypesEndpoint(userBusinessLogic, componentsUtils, policyTypeBusinessLogic));
+            .register(new PolicyTypesEndpoint(componentsUtils, policyTypeBusinessLogic));
     }
 
     @Test

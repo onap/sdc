@@ -60,7 +60,6 @@ import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -83,9 +82,9 @@ public class GroupServlet extends AbstractValidationsServlet {
     private final GroupBusinessLogic groupBL;
 
     @Inject
-    public GroupServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
+    public GroupServlet(GroupBusinessLogic groupBL, ComponentInstanceBusinessLogic componentInstanceBL,
                         ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
     }
 

@@ -26,9 +26,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +47,6 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -71,8 +68,8 @@ public class ArchiveEndpoint extends BeGenericServlet {
     private final ArchiveBusinessLogic archiveBusinessLogic;
 
     @Inject
-    public ArchiveEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, ArchiveBusinessLogic archiveBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public ArchiveEndpoint(ComponentsUtils componentsUtils, ArchiveBusinessLogic archiveBusinessLogic) {
+        super(componentsUtils);
         this.archiveBusinessLogic = archiveBusinessLogic;
     }
 

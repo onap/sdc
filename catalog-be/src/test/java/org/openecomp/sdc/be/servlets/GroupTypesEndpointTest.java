@@ -103,7 +103,7 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
         GroupTypesEndpoint groupTypesEndpoint() {
             UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-            return new GroupTypesEndpoint(userBusinessLogic, componentsUtils, groupTypeBusinessLogic());
+            return new GroupTypesEndpoint(componentsUtils, groupTypeBusinessLogic());
         }
 
         @Bean

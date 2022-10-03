@@ -74,7 +74,6 @@ import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerFourParam;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
@@ -106,14 +105,14 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private final ArtifactTypeImportManager artifactTypeImportManager;
 
     @Inject
-    public TypesUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public TypesUploadServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                               ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                               CapabilityTypeImportManager capabilityTypeImportManager,
                               InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
                               CategoriesImportManager categoriesImportManager, DataTypeImportManager dataTypeImportManager,
                               GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager,
                               RelationshipTypeImportManager relationshipTypeImportManager, ArtifactTypeImportManager artifactTypeImportManager) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
         this.categoriesImportManager = categoriesImportManager;
@@ -190,13 +189,14 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Tosca Artifact Type already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadArtifactTypes(@Parameter(description = "Zip file containing a yaml with the TOSCA artifact types definition")
-                                            @FormDataParam("artifactsZip") File file,
+                                        @FormDataParam("artifactsZip") File file,
                                         @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                         @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                         @Parameter(description = "A flag to add types to the default imports")
-                                            @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+                                        @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         final ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
-            createElementsType(responseWrapper, () -> artifactTypeImportManager.createArtifactTypes(ymlPayload, modelName, includeToModelDefaultImports));
+            createElementsType(responseWrapper,
+                () -> artifactTypeImportManager.createArtifactTypes(ymlPayload, modelName, includeToModelDefaultImports));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.ArtifactType.getName());
     }
 

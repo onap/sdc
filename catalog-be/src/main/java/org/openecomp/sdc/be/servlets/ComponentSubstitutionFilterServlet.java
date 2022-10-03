@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.tosca.utils.SubstitutionFilterConverter;
 import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,11 +94,11 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
     private final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic;
 
     @Inject
-    public ComponentSubstitutionFilterServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+    public ComponentSubstitutionFilterServlet(final ComponentInstanceBusinessLogic componentInstanceBL,
                                               final ComponentsUtils componentsUtils, final ServletUtils servletUtils,
                                               final ResourceImportManager resourceImportManager,
                                               final ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.componentSubstitutionFilterBusinessLogic = componentSubstitutionFilterBusinessLogic;
     }
 
@@ -246,7 +245,7 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
             final FilterConstraintDto filterConstraintDto = new FilterConstraintMapper().mapFrom(uiConstraint);
 
             final Optional<SubstitutionFilterDataDefinition> actionResponse = componentSubstitutionFilterBusinessLogic
-                .updateSubstitutionFilter(componentId.toLowerCase(), filterConstraintDto, index , true);
+                .updateSubstitutionFilter(componentId.toLowerCase(), filterConstraintDto, index, true);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_SUBSTITUTION_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));

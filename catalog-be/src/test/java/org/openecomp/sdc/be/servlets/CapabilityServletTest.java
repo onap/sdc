@@ -221,7 +221,7 @@ class CapabilityServletTest extends JerseyTest {
     }
 
     private void createTestObject() {
-        capabilityServlet = new CapabilityServlet(userBusinessLogic, componentInstanceBusinessLogic,
+        capabilityServlet = new CapabilityServlet(componentInstanceBusinessLogic,
             componentsUtils, servletUtils, resourceImportManager, capabilitiesBusinessLogic);
     }
 

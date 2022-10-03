@@ -55,7 +55,6 @@ import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -75,9 +74,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
     private final AdditionalInformationBusinessLogic businessLogic;
 
     @Inject
-    public AdditionalInformationServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public AdditionalInformationServlet(ComponentsUtils componentsUtils,
                                         AdditionalInformationBusinessLogic businessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.businessLogic = businessLogic;
     }
 

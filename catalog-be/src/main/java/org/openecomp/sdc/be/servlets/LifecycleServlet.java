@@ -59,7 +59,6 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -81,8 +80,8 @@ public class LifecycleServlet extends BeGenericServlet {
     private LifecycleBusinessLogic lifecycleBusinessLogic;
 
     @Inject
-    public LifecycleServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, LifecycleBusinessLogic lifecycleBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public LifecycleServlet(ComponentsUtils componentsUtils, LifecycleBusinessLogic lifecycleBusinessLogic) {
+        super(componentsUtils);
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
     }
 

@@ -88,10 +88,8 @@ public class BeGenericServlet extends BasicServlet {
     @Context
     protected HttpServletRequest servletRequest;
     protected ComponentsUtils componentsUtils;
-    private UserBusinessLogic userAdminManager;
 
-    public BeGenericServlet(UserBusinessLogic userAdminManager, ComponentsUtils componentsUtils) {
-        this.userAdminManager = userAdminManager;
+    public BeGenericServlet(ComponentsUtils componentsUtils) {
         this.componentsUtils = componentsUtils;
     }
 

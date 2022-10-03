@@ -75,7 +75,7 @@ class ComponentServletTest extends JerseySpringBaseTest {
         resourceBusinessLogic = mock(ResourceBusinessLogic.class);
         UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
         ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-        ComponentServlet componentServlet = new ComponentServlet(userBusinessLogic, componentsUtils,
+        ComponentServlet componentServlet = new ComponentServlet(componentsUtils,
             new ComponentBusinessLogicProvider(resourceBusinessLogic, null, null));
         return super.configure().register(componentServlet);
     }

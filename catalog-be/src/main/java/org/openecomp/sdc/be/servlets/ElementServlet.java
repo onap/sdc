@@ -103,10 +103,10 @@ public class ElementServlet extends BeGenericServlet {
     private final ModelBusinessLogic modelBusinessLogic;
 
     @Inject
-    public ElementServlet(final UserBusinessLogic userBusinessLogic, final ComponentsUtils componentsUtils,
+    public ElementServlet(final ComponentsUtils componentsUtils,
                           final ComponentsCleanBusinessLogic componentsCleanBusinessLogic, final ElementBusinessLogic elementBusinessLogic,
                           final ArtifactsBusinessLogic artifactsBusinessLogic, final ModelBusinessLogic modelBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.componentsCleanBusinessLogic = componentsCleanBusinessLogic;
         this.elementBusinessLogic = elementBusinessLogic;
         this.artifactsBusinessLogic = artifactsBusinessLogic;

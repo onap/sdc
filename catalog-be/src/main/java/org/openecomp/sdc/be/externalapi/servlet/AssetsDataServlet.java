@@ -77,7 +77,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -106,11 +105,11 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     @Inject
-    public AssetsDataServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public AssetsDataServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                              ServletUtils servletUtils, ResourceImportManager resourceImportManager, ElementBusinessLogic elementBusinessLogic,
                              AssetMetadataConverter assetMetadataConverter, ComponentBusinessLogicProvider componentBusinessLogicProvider,
                              ServiceBusinessLogic serviceBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.elementBusinessLogic = elementBusinessLogic;
         this.assetMetadataConverter = assetMetadataConverter;
         this.serviceBusinessLogic = serviceBusinessLogic;

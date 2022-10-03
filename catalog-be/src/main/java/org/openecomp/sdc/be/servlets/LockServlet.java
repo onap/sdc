@@ -18,8 +18,15 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -30,27 +37,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
-
-import com.jcabi.aspects.Loggable;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
@@ -65,9 +60,9 @@ public class LockServlet extends BeGenericServlet {
     private final IGraphLockOperation graphLockOperation;
 
     @Inject
-    public LockServlet(final UserBusinessLogic userBusinessLogic, final ComponentsUtils componentsUtils,
-            final UserValidations userValidations, IGraphLockOperation graphLockOperation) {
-        super(userBusinessLogic, componentsUtils);
+    public LockServlet(final ComponentsUtils componentsUtils,
+                       final UserValidations userValidations, IGraphLockOperation graphLockOperation) {
+        super(componentsUtils);
         this.userValidations = userValidations;
         this.graphLockOperation = graphLockOperation;
     }
@@ -83,7 +78,7 @@ public class LockServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "500", description = "Update disable locking failed")
     })
     public Response toggleDisableLocking(@Context final HttpServletRequest request, @HeaderParam("USER_ID") String userId,
-            @Parameter(description = "Disable Locking") boolean disable) {
+                                         @Parameter(description = "Disable Locking") boolean disable) {
         log.info("User {} attempting to set disable locking with value {}", userId, disable);
         userValidations.validateUserRole(userValidations.validateUserExists(userId), Arrays.asList(Role.DESIGNER, Role.ADMIN));
         try {

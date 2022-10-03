@@ -28,7 +28,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
@@ -48,9 +47,9 @@ public class ServiceUploadServlet extends AbstractValidationsServlet {
     public static final String USER_TYPE_SERVICE_UI_IMPORT = "user-servcie-ui-import";
     private static final Logger log = Logger.getLogger(ServiceUploadServlet.class);
 
-    public ServiceUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public ServiceUploadServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                 ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
     }
 
     public enum ServiceAuthorityTypeEnum {

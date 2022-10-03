@@ -124,7 +124,7 @@ class AutomatedUpgradeEndpointTest extends JerseySpringBaseTest {
             UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
 
-            return new AutomatedUpgradeEndpoint(userBusinessLogic, componentsUtils,
+            return new AutomatedUpgradeEndpoint(componentsUtils,
                 upgradeBusinessLogic());
         }
 

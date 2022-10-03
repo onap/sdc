@@ -53,7 +53,6 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.EntryData;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -77,9 +76,9 @@ public class ComponentPropertyServlet extends BeGenericServlet {
     private final ApplicationDataTypeCache applicationDataTypeCache;
 
     @Inject
-    public ComponentPropertyServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public ComponentPropertyServlet(ComponentsUtils componentsUtils,
                                     ApplicationDataTypeCache applicationDataTypeCache, PropertyBusinessLogic propertyBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.applicationDataTypeCache = applicationDataTypeCache;
         this.propertyBusinessLogic = propertyBusinessLogic;
     }

@@ -57,7 +57,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -83,14 +82,15 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     private HttpServletRequest request;
 
     @Inject
-    public DistributionCatalogServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public DistributionCatalogServlet(ComponentsUtils componentsUtils,
                                       ArtifactsBusinessLogic artifactsBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
     // *******************************************************
     // Download (GET) artifacts
     // **********************************************************/
+
     /**
      * @param requestId
      * @param instanceIdHeader

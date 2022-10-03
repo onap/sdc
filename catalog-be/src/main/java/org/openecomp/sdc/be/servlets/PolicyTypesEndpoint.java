@@ -44,7 +44,6 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.PolicyTypeMixin;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -63,9 +62,9 @@ public class PolicyTypesEndpoint extends BeGenericServlet {
     private static final Logger log = Logger.getLogger(PolicyTypesEndpoint.class);
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
 
-    public PolicyTypesEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public PolicyTypesEndpoint(ComponentsUtils componentsUtils,
                                PolicyTypeBusinessLogic policyTypeBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
     }
 
@@ -82,7 +81,7 @@ public class PolicyTypesEndpoint extends BeGenericServlet {
         @Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
         @QueryParam("internalComponentType") String internalComponentType,
         @QueryParam("componentModel") String internalComponentModel,
-    @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         log.debug("(get) Start handle request of GET policyTypes");
         if (internalComponentModel != null) {
             internalComponentModel = ValidationUtils.sanitizeInputString(internalComponentModel.trim());

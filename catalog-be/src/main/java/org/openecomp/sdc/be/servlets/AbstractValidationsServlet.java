@@ -101,9 +101,9 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     protected ResourceImportManager resourceImportManager;
     protected ServiceImportManager serviceImportManager;
 
-    public AbstractValidationsServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public AbstractValidationsServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                       ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.servletUtils = servletUtils;
         this.resourceImportManager = resourceImportManager;
         this.componentInstanceBusinessLogic = componentInstanceBL;

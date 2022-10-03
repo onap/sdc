@@ -46,7 +46,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +58,8 @@ public class DirectiveServlet extends BeGenericServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(DirectiveServlet.class);
 
     @Inject
-    public DirectiveServlet(final UserBusinessLogic userAdminManager, final ComponentsUtils componentsUtils) {
-        super(userAdminManager, componentsUtils);
+    public DirectiveServlet(final ComponentsUtils componentsUtils) {
+        super(componentsUtils);
     }
 
     @GET

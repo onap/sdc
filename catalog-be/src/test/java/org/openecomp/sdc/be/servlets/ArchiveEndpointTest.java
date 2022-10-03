@@ -151,7 +151,7 @@ class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveEndpoint archiveEndpoint() {
-            return new ArchiveEndpoint(userAdmin, componentUtils, archiveBusinessLogic());
+            return new ArchiveEndpoint(componentUtils, archiveBusinessLogic());
         }
 
         @Bean

@@ -66,7 +66,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -95,10 +94,10 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     @Inject
-    public ArtifactExternalServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public ArtifactExternalServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                    ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                    ArtifactsBusinessLogic artifactsBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
 
@@ -743,8 +742,8 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
         if (!responseWrapper.isEmpty()) {
             getComponentsUtils().auditExternalDownloadArtifact(responseFormat,
-                    resourceCommonInfo, new DistributionData(instanceIdHeader, requestURI),
-                    requestId, artifactUUID, userId);
+                resourceCommonInfo, new DistributionData(instanceIdHeader, requestURI),
+                requestId, artifactUUID, userId);
             return responseWrapper.getInnerElement();
         }
         byte[] value = artifactsBusinessLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
@@ -812,11 +811,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         }
         if (!responseWrapper.isEmpty()) {
             getComponentsUtils().auditExternalDownloadArtifact(responseFormat, new ResourceCommonInfo(resourceInstanceName, componentTypeValue),
-                    new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);
+                new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);
             return responseWrapper.getInnerElement();
         }
         byte[] value = artifactsBusinessLogic
-                .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
+            .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
         try (InputStream is = new ByteArrayInputStream(value)) {
             Map<String, String> headers = new HashMap<>();
             headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));

@@ -48,7 +48,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -71,8 +70,8 @@ public class GroupEndpoint extends BeGenericServlet {
     private final GroupBusinessLogicNew groupBusinessLogic;
 
     @Inject
-    public GroupEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, GroupBusinessLogicNew groupBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public GroupEndpoint(ComponentsUtils componentsUtils, GroupBusinessLogicNew groupBusinessLogic) {
+        super(componentsUtils);
         this.groupBusinessLogic = groupBusinessLogic;
     }
 

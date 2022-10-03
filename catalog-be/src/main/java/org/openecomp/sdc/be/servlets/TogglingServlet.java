@@ -48,7 +48,6 @@ import org.openecomp.sdc.be.components.impl.TogglingBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
@@ -65,9 +64,9 @@ public class TogglingServlet extends AbstractValidationsServlet {
     private final TogglingBusinessLogic togglingBusinessLogic;
 
     @Inject
-    public TogglingServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public TogglingServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                            ServletUtils servletUtils, ResourceImportManager resourceImportManager, TogglingBusinessLogic togglingBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.togglingBusinessLogic = togglingBusinessLogic;
     }
 
