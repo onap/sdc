@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package org.openecomp.sdc.be.utils;
 
-public abstract class BasicServlet {
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 
-    protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+/**
+ * Provides mechanism to check if code annotated with {@link NoHtml} is valid.
+ */
+public class NoHtmlValidator implements ConstraintValidator<NoHtml, String> {
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext ctx) {
+        return value == null || Jsoup.isValid(value, Safelist.none());
+    }
 }

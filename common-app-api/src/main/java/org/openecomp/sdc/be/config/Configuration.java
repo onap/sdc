@@ -147,6 +147,7 @@ public class Configuration extends BasicConfiguration {
     private ExternalCsarStore externalCsarStore;
     private CsarFormat csarFormat;
     private String componentInstanceCounterDelimiter;
+    private String excludedUrls; // Comma separated list of excluded URLs
 
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
