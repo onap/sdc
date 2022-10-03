@@ -237,6 +237,30 @@
       "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c5c0659_f679a27f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceRelationMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-03T18:20:43Z",
+      "side": 1,
+      "message": "I see now in testing that there is an issue here when the requirement for the node type is defined on the type it is derived from rather than the type itself (e.g. \u0027dependency\u0027 requirement that is defined on tosca.nodes.Root)\n\nHowever the fix you were proposing is still wrong. The issue looks to be caused by the  owner id not being correctly set (id of the node type it is defined on used rather than id of the component instance).\nI would suggest the following as a fix:\nNodeTemplateOperation: In method \u0027populateRequirement\u0027 remove the if statement on the setting of the ownerid",
+      "parentUuid": "63318200_99d5f966",
+      "range": {
+        "startLine": 188,
+        "startChar": 109,
+        "endLine": 188,
+        "endChar": 121
+      },
+      "revId": "fb8b4e5491595163585c66022c2fec9f67ee2dc8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
