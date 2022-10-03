@@ -55,7 +55,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -79,10 +78,10 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     @Inject
-    public ServiceActivationServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public ServiceActivationServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                     ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                     ServiceBusinessLogic serviceBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
     }
 

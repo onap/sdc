@@ -54,7 +54,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ConsumerDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -72,8 +71,8 @@ public class ConsumerServlet extends BeGenericServlet {
     private final ConsumerBusinessLogic businessLogic;
 
     @Inject
-    public ConsumerServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, ConsumerBusinessLogic businessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public ConsumerServlet(ComponentsUtils componentsUtils, ConsumerBusinessLogic businessLogic) {
+        super(componentsUtils);
         this.businessLogic = businessLogic;
     }
 

@@ -63,7 +63,6 @@ import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.ui.model.ModelCreateRequest;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
@@ -85,10 +84,10 @@ public class ModelServlet extends AbstractValidationsServlet {
     private final UserValidations userValidations;
 
     @Inject
-    public ModelServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+    public ModelServlet(final ComponentInstanceBusinessLogic componentInstanceBL,
                         final ComponentsUtils componentsUtils, final ServletUtils servletUtils, final ResourceImportManager resourceImportManager,
                         final ModelBusinessLogic modelBusinessLogic, final UserValidations userValidations) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.modelBusinessLogic = modelBusinessLogic;
         this.userValidations = userValidations;
     }
@@ -105,9 +104,9 @@ public class ModelServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "409", description = "Model already exists")})
     public Response createModel(@Parameter(description = "model to be created", required = true)
-                                    @NotNull @Valid @FormDataParam("model") final ModelCreateRequest modelCreateRequest,
+                                @NotNull @Valid @FormDataParam("model") final ModelCreateRequest modelCreateRequest,
                                 @Parameter(description = "the model TOSCA imports zipped", required = true)
-                                    @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
+                                @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
                                 @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         final var modelName = ValidationUtils.sanitizeInputString(modelCreateRequest.getName().trim());
@@ -141,7 +140,8 @@ public class ModelServlet extends AbstractValidationsServlet {
     public Response listModels(@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @QueryParam("modelType") final String modelType) {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         try {
-            final List<Model> modelList = StringUtils.isEmpty(modelType)? modelBusinessLogic.listModels() : modelBusinessLogic.listModels(getModelTypeEnum(modelType));
+            final List<Model> modelList =
+                StringUtils.isEmpty(modelType) ? modelBusinessLogic.listModels() : modelBusinessLogic.listModels(getModelTypeEnum(modelType));
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(modelList));
         } catch (final BusinessException e) {
             throw e;
@@ -152,7 +152,7 @@ public class ModelServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-    
+
     private ModelTypeEnum getModelTypeEnum(final String modelType) {
         final ModelTypeEnum modelTypeEnum = ModelTypeEnum.valueOf(modelType.toUpperCase());
         if (modelTypeEnum == null) {
@@ -173,9 +173,9 @@ public class ModelServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Model not found")})
     public Response updateModelImports(@Parameter(description = "model to be created", required = true)
-                                           @NotNull @FormDataParam("modelName") String modelName,
+                                       @NotNull @FormDataParam("modelName") String modelName,
                                        @Parameter(description = "the model TOSCA imports zipped", required = true)
-                                           @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
+                                       @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
                                        @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         modelName = ValidationUtils.sanitizeInputString(modelName);

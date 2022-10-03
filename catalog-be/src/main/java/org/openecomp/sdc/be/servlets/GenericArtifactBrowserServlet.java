@@ -50,7 +50,6 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GenericArtifactBrowserBusinessLogic;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.GenericArtifactQueryInfo;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Controller;
@@ -69,9 +68,9 @@ public class GenericArtifactBrowserServlet extends BeGenericServlet {
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Inject
-    public GenericArtifactBrowserServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public GenericArtifactBrowserServlet(ComponentsUtils componentsUtils,
                                          ArtifactsBusinessLogic artifactsBusinessLogic, GenericArtifactBrowserBusinessLogic gabLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
         this.gabLogic = gabLogic;
     }

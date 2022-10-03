@@ -51,7 +51,6 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -77,9 +76,9 @@ public class TypesUploadEndpoint extends BeGenericServlet {
     private final AnnotationTypeOperations annotationTypeOperations;
     private final AccessValidations accessValidations;
 
-    public TypesUploadEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, CommonImportManager commonImportManager,
+    public TypesUploadEndpoint(ComponentsUtils componentsUtils, CommonImportManager commonImportManager,
                                AnnotationTypeOperations annotationTypeOperations, AccessValidations accessValidations) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.commonImportManager = commonImportManager;
         this.annotationTypeOperations = annotationTypeOperations;
         this.accessValidations = accessValidations;

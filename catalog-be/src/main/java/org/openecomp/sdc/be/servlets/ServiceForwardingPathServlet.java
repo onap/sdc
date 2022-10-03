@@ -67,7 +67,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -88,10 +87,10 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
-    public ServiceForwardingPathServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public ServiceForwardingPathServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                         ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                         ServiceBusinessLogic serviceBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
     }
 

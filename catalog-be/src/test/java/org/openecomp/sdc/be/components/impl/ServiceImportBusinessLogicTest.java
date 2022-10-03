@@ -134,7 +134,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
     private final ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
     private final ServletUtils servletUtils = mock(ServletUtils.class);
-    private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
+    private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(
         componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     private final ApplicationDataTypeCache applicationDataTypeCache = mock(ApplicationDataTypeCache.class);
     private final ArtifactTypeOperation artifactTypeOperation = mock(ArtifactTypeOperation.class);

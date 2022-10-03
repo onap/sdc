@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -82,10 +81,10 @@ public class OutputsServlet extends AbstractValidationsServlet {
     private final OutputsBusinessLogic outputsBusinessLogic;
 
     @Inject
-    public OutputsServlet(final UserBusinessLogic userBusinessLogic, final OutputsBusinessLogic outputsBusinessLogic,
+    public OutputsServlet(final OutputsBusinessLogic outputsBusinessLogic,
                           final ComponentInstanceBusinessLogic componentInstanceBL, final ComponentsUtils componentsUtils,
                           final ServletUtils servletUtils, final ResourceImportManager resourceImportManager) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.outputsBusinessLogic = outputsBusinessLogic;
     }
 

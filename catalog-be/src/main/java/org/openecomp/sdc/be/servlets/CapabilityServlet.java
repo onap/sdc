@@ -58,7 +58,6 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -77,10 +76,10 @@ public class CapabilityServlet extends AbstractValidationsServlet {
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
 
     @Inject
-    public CapabilityServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public CapabilityServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                              ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                              CapabilitiesBusinessLogic capabilitiesBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
     }
 

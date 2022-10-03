@@ -244,7 +244,6 @@ class AbstractTemplateServletTest extends JerseyTest {
 
     private CrudExternalServlet createMockServlet() {
         return new CrudExternalServlet(
-            userBusinessLogic,
             componentInstanceBusinessLogic,
             componentsUtils,
             servletUtils,

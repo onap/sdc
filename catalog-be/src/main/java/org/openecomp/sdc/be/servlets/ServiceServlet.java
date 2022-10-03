@@ -86,7 +86,6 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.ServiceUploadServlet.ServiceAuthorityTypeEnum;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
@@ -111,10 +110,10 @@ public class ServiceServlet extends AbstractValidationsServlet {
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
-    public ServiceServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public ServiceServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                           ServletUtils servletUtils, ResourceImportManager resourceImportManager, ServiceBusinessLogic serviceBusinessLogic,
                           ResourceBusinessLogic resourceBusinessLogic, ElementBusinessLogic elementBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.elementBusinessLogic = elementBusinessLogic;
     }

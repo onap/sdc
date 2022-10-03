@@ -71,7 +71,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiLeftPaletteComponent;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -94,9 +93,9 @@ public class ComponentServlet extends BeGenericServlet {
     private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
 
     @Inject
-    public ComponentServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public ComponentServlet(ComponentsUtils componentsUtils,
                             ComponentBusinessLogicProvider componentBusinessLogicProvider) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.componentBusinessLogicProvider = componentBusinessLogicProvider;
     }
 

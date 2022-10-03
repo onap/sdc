@@ -57,7 +57,6 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -76,10 +75,10 @@ public class RequirementServlet extends AbstractValidationsServlet {
     private final RequirementBusinessLogic requirementBusinessLogic;
 
     @Inject
-    public RequirementServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public RequirementServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                               ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                               RequirementBusinessLogic requirementBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.requirementBusinessLogic = requirementBusinessLogic;
     }
 

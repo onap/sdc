@@ -54,7 +54,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
@@ -112,7 +111,7 @@ class GroupEndpointTest extends JerseySpringBaseTest {
             UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
 
-            return new GroupEndpoint(userBusinessLogic, componentsUtils, groupBusinessLogic());
+            return new GroupEndpoint(componentsUtils, groupBusinessLogic());
         }
 
         @Bean
@@ -198,9 +197,9 @@ class GroupEndpointTest extends JerseySpringBaseTest {
         when(groupsOperation
             .updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList(),
                 any(PromoteVersionEnum.class))).thenAnswer((Answer<Either>) invocationOnMock -> {
-                    Object[] args = invocationOnMock.getArguments();
-                    return Either.left(Collections.singletonList(args[2]));
-                });
+            Object[] args = invocationOnMock.getArguments();
+            return Either.left(Collections.singletonList(args[2]));
+        });
     }
 
     @Test

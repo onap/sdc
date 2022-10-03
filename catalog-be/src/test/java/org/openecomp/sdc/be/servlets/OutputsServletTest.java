@@ -240,7 +240,7 @@ class OutputsServletTest extends JerseyTest {
     }
 
     private OutputsServlet createTestObject() {
-        return new OutputsServlet(userBusinessLogic, outputsBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        return new OutputsServlet(outputsBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
     }
 
     @Override

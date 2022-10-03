@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -93,11 +92,11 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
     private HttpServletRequest request;
 
     @Inject
-    public AbstractTemplateServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public AbstractTemplateServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                    ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                    ElementBusinessLogic elementBusinessLogic, AbstractTemplateBusinessLogic abstractTemplateBusinessLogic,
                                    ServiceBusinessLogic serviceBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.elementBusinessLogic = elementBusinessLogic;
         this.abstractTemplateBusinessLogic = abstractTemplateBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;

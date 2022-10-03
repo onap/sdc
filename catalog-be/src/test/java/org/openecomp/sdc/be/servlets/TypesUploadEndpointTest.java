@@ -242,7 +242,7 @@ class TypesUploadEndpointTest extends JerseySpringBaseTest {
         TypesUploadEndpoint typesUploadEndpoint() {
             UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
             ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-            return new TypesUploadEndpoint(userBusinessLogic, componentsUtils, commonImportManager(),
+            return new TypesUploadEndpoint(componentsUtils, commonImportManager(),
                 annotationTypeOperations(), accessValidations);
         }
 

@@ -45,7 +45,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
@@ -60,9 +59,9 @@ public class ExternalRefsServlet extends BeGenericServlet {
     private final ExternalRefsBusinessLogic businessLogic;
 
     @Inject
-    public ExternalRefsServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public ExternalRefsServlet(ComponentsUtils componentsUtils,
                                ExternalRefsBusinessLogic externalRefsBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.businessLogic = externalRefsBusinessLogic;
     }
 

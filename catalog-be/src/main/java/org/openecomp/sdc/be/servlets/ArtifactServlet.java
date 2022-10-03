@@ -59,7 +59,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -86,8 +85,8 @@ public class ArtifactServlet extends BeGenericServlet {
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Inject
-    public ArtifactServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, ArtifactsBusinessLogic artifactsBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public ArtifactServlet(ComponentsUtils componentsUtils, ArtifactsBusinessLogic artifactsBusinessLogic) {
+        super(componentsUtils);
         this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
 

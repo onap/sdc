@@ -63,7 +63,6 @@ import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.mapper.UIConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +91,11 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @Inject
-    public ComponentNodeFilterServlet(final UserBusinessLogic userBusinessLogic, final ComponentInstanceBusinessLogic componentInstanceBL,
+    public ComponentNodeFilterServlet(final ComponentInstanceBusinessLogic componentInstanceBL,
                                       final ComponentsUtils componentsUtils, final ServletUtils servletUtils,
                                       final ResourceImportManager resourceImportManager,
                                       final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.componentNodeFilterBusinessLogic = componentNodeFilterBusinessLogic;
     }
 

@@ -65,7 +65,6 @@ import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTargetDTO;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -91,9 +90,9 @@ public class PolicyServlet extends AbstractValidationsServlet {
     private final PolicyBusinessLogic policyBusinessLogic;
 
     @Inject
-    public PolicyServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public PolicyServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                          ServletUtils servletUtils, ResourceImportManager resourceImportManager, PolicyBusinessLogic policyBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.policyBusinessLogic = policyBusinessLogic;
         this.servletUtils = servletUtils;
         this.resourceImportManager = resourceImportManager;

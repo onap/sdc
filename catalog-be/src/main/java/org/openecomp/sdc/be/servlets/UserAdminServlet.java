@@ -70,7 +70,7 @@ public class UserAdminServlet extends BeGenericServlet {
     private final UserBusinessLogicExt userBusinessLogicExt;
 
     UserAdminServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, UserBusinessLogicExt userBusinessLogicExt) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.userBusinessLogic = userBusinessLogic;
         this.userBusinessLogicExt = userBusinessLogicExt;
     }

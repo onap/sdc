@@ -57,7 +57,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -81,9 +80,9 @@ public class AttributeServlet extends AbstractValidationsServlet {
     private static final String ATTRIBUTE_CONTENT_IS_INVALID = "Attribute content is invalid - {}";
 
     @Inject
-    public AttributeServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
+    public AttributeServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                             ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
     }
 
     /**

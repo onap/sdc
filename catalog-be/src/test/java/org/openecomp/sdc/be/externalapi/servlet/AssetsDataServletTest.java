@@ -222,7 +222,7 @@ class AssetsDataServletTest extends JerseyTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig()
-            .register(new CrudExternalServlet(userBusinessLogic, componentInstanceBusinessLogic, componentsUtils,
+            .register(new CrudExternalServlet(componentInstanceBusinessLogic, componentsUtils,
                 servletUtils, resourceImportManager, elementBusinessLogic, assetMetadataConverter,
                 lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
             .register(new AbstractBinder() {

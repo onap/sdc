@@ -51,7 +51,6 @@ import org.openecomp.sdc.be.components.upgrade.UpgradeStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
@@ -69,8 +68,8 @@ public class AutomatedUpgradeEndpoint extends BeGenericServlet {
     private final UpgradeBusinessLogic businessLogic;
 
     @Inject
-    public AutomatedUpgradeEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, UpgradeBusinessLogic businessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public AutomatedUpgradeEndpoint(ComponentsUtils componentsUtils, UpgradeBusinessLogic businessLogic) {
+        super(componentsUtils);
         this.businessLogic = businessLogic;
     }
 

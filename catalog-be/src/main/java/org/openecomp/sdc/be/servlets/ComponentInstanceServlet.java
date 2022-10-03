@@ -104,7 +104,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
@@ -150,10 +149,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
 
     @Inject
-    public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL,
+    public ComponentInstanceServlet(GroupBusinessLogic groupBL,
                                     ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
-                                    ResourceImportManager resourceImportManager, ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic, ComponentBusinessLogicProvider componentBusinessLogicProvider) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+                                    ResourceImportManager resourceImportManager, ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic,
+                                    ComponentBusinessLogicProvider componentBusinessLogicProvider) {
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
         this.nodeFilterBusinessLogic = nodeFilterBusinessLogic;
         this.componentBusinessLogicProvider = componentBusinessLogicProvider;
@@ -580,17 +580,17 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     }
 
     private void handleDeprecatedComponentInstancePropertyStructure(final List<ComponentInstanceProperty> propertiesToUpdate,
-            final ComponentTypeEnum componentTypeEnum) {
+                                                                    final ComponentTypeEnum componentTypeEnum) {
         propertiesToUpdate.stream().forEach(property -> {
             if (property.getGetInputValues() != null) {
                 property.getGetInputValues().stream()
-                        .forEach(getInputValue -> property.setToscaFunction(createToscaFunction(getInputValue, componentTypeEnum)));
+                    .forEach(getInputValue -> property.setToscaFunction(createToscaFunction(getInputValue, componentTypeEnum)));
             }
         });
     }
 
     private ToscaGetFunctionDataDefinition createToscaFunction(final GetInputValueDataDefinition getInput,
-            final ComponentTypeEnum componentTypeEnum) {
+                                                               final ComponentTypeEnum componentTypeEnum) {
         final String[] inputIdSplit = getInput.getInputId().split("\\.");
 
         ToscaGetFunctionDataDefinition toscaFunction = new ToscaGetFunctionDataDefinition();

@@ -44,7 +44,6 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.GroupTypeMixin;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -61,8 +60,8 @@ public class GroupTypesEndpoint extends BeGenericServlet {
 
     private final GroupTypeBusinessLogic groupTypeBusinessLogic;
 
-    public GroupTypesEndpoint(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, GroupTypeBusinessLogic groupTypeBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public GroupTypesEndpoint(ComponentsUtils componentsUtils, GroupTypeBusinessLogic groupTypeBusinessLogic) {
+        super(componentsUtils);
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
     }
 

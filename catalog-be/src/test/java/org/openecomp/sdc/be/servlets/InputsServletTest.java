@@ -174,7 +174,7 @@ class InputsServletTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        InputsServlet inputsServlet = new InputsServlet(userBusinessLogic, inputsBusinessLogic,
+        InputsServlet inputsServlet = new InputsServlet(inputsBusinessLogic,
             componentInstanceBL, componentsUtils,
             servletUtils, resourceImportManager, dataTypeBusinessLogic);
         forceSet(TestProperties.CONTAINER_PORT, "0");

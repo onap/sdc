@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.types.ServiceConsumptionSource;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -88,9 +87,9 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
     private final ServiceBusinessLogic serviceBusinessLogic;
 
     @Inject
-    public ServiceConsumptionServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils,
+    public ServiceConsumptionServlet(ComponentsUtils componentsUtils,
                                      InterfaceOperationBusinessLogic interfaceOperationBusinessLogic, ServiceBusinessLogic serviceBusinessLogic) {
-        super(userBusinessLogic, componentsUtils);
+        super(componentsUtils);
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;
     }

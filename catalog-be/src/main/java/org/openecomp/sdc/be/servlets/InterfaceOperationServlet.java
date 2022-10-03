@@ -62,7 +62,6 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -82,10 +81,10 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     @Inject
-    public InterfaceOperationServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public InterfaceOperationServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                      ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                      InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
     }
 

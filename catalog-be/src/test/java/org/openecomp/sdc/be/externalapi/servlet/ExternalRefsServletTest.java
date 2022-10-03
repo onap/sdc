@@ -624,7 +624,7 @@ class ExternalRefsServletTest extends JerseyTest {
 
         @Bean
         ExternalRefsServlet externalRefsServlet() {
-            return new ExternalRefsServlet(userAdmin, componentUtils, externalRefsBusinessLogic());
+            return new ExternalRefsServlet(componentUtils, externalRefsBusinessLogic());
         }
 
         @Bean

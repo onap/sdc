@@ -73,7 +73,6 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -100,7 +99,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
     @Inject
     public TypesFetchServlet(
-        UserBusinessLogic userBusinessLogic,
         ComponentInstanceBusinessLogic componentInstanceBL,
         ComponentsUtils componentsUtils,
         ServletUtils servletUtils,
@@ -113,7 +111,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         ArtifactsBusinessLogic artifactsBusinessLogic
     ) {
         super(
-            userBusinessLogic,
             componentInstanceBL,
             componentsUtils,
             servletUtils,
@@ -219,7 +216,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes(modelName);
+                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes(
+                    modelName);
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all capability types. Reason - {}", allDataTypes.right().value());
                     Response errorResponse = buildErrorResponse(allDataTypes.right().value());
@@ -375,7 +373,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         }
         componentList = actionResponse.left().value();
         return Either.left(ListUtils.emptyIfNull(componentList).stream().filter(component ->
-            ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName() != null)
+                ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName() != null)
             .collect(Collectors.toMap(
                 component -> ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition())
                     .getToscaResourceName(), component -> component, (component1, component2) -> component1)));

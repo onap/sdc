@@ -57,7 +57,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.BeGenericServlet;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -85,8 +84,8 @@ public class DistributionServlet extends BeGenericServlet {
     private HttpServletRequest request;
 
     @Inject
-    public DistributionServlet(UserBusinessLogic userBusinessLogic, ComponentsUtils componentsUtils, DistributionBusinessLogic distributionLogic) {
-        super(userBusinessLogic, componentsUtils);
+    public DistributionServlet(ComponentsUtils componentsUtils, DistributionBusinessLogic distributionLogic) {
+        super(componentsUtils);
         this.distributionLogic = distributionLogic;
     }
 

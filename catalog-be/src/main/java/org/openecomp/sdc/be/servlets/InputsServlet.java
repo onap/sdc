@@ -73,7 +73,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -99,10 +98,10 @@ public class InputsServlet extends AbstractValidationsServlet {
     private final InputsBusinessLogic inputsBusinessLogic;
 
     @Inject
-    public InputsServlet(UserBusinessLogic userBusinessLogic, InputsBusinessLogic inputsBusinessLogic,
+    public InputsServlet(InputsBusinessLogic inputsBusinessLogic,
                          ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
                          ResourceImportManager resourceImportManager, DataTypeBusinessLogic dataTypeBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.inputsBusinessLogic = inputsBusinessLogic;
         this.businessLogic = dataTypeBusinessLogic;
     }

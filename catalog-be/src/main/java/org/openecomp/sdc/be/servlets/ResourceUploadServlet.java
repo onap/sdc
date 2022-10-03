@@ -63,7 +63,6 @@ import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
-import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -91,10 +90,10 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     private final ModelBusinessLogic modelBusinessLogic;
 
     @Inject
-    public ResourceUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
+    public ResourceUploadServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                  ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
                                  ModelBusinessLogic modelBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.modelBusinessLogic = modelBusinessLogic;
     }
 
@@ -213,6 +212,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
 
     /**
      * The Model field is an optional entry when uploading a resource. If the field is present, it validates if the Model name exists.
+     *
      * @param modelName Model names declared on the resource json representation
      */
     private void validateModel(final String modelName) {
