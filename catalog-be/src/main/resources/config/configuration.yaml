@@ -927,3 +927,6 @@ directives:
   - selectable
   - substitute
   - substitutable
+
+#Space separated list of permitted ancestors
+permittedAncestors: ""
