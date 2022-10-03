@@ -91,10 +91,8 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         }
         List<DataTypeDefinition> dataTypes = dataTypesResult.left().value();
         Optional<DataTypeDefinition> findResult = dataTypes.stream().filter(e -> e.getName().equals(dataTypeName)).findAny();
-        if (!findResult.isPresent()) {
-            return Either.right(StorageOperationStatus.NOT_FOUND);
-        }
-        return Either.left(findResult.get());
+        return findResult.<Either<DataTypeDefinition, StorageOperationStatus>>map(Either::left)
+            .orElseGet(() -> Either.right(StorageOperationStatus.NOT_FOUND));
     }
 
     /**
