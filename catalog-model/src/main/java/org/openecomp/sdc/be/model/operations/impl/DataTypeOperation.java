@@ -24,17 +24,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.slf4j.Logger;
@@ -47,17 +52,12 @@ public class DataTypeOperation extends AbstractOperation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataTypeOperation.class);
 
-    private ModelOperation modelOperation;
+    private final ModelOperation modelOperation;
 
     @Autowired
-    public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao) {
-        this.janusGraphGenericDao = janusGraphGenericDao;
-    }
-
-    //circular dependency ModelOperation->ModelElementOperation->DataTypeOperation
-    @Autowired
-    public void setModelOperation(final ModelOperation modelOperation) {
+    public DataTypeOperation(final ModelOperation modelOperation, final HealingJanusGraphGenericDao janusGraphGenericDao) {
         this.modelOperation = modelOperation;
+        this.janusGraphGenericDao = janusGraphGenericDao;
     }
 
     public List<DataTypeData> getAllDataTypeNodes() {
@@ -71,38 +71,38 @@ public class DataTypeOperation extends AbstractOperation {
         }
 
         final List<DataTypeData> allDataTypeNodesWithModel = getAllDataTypesWithModel();
-        if(CollectionUtils.isNotEmpty(allDataTypeNodesWithModel)) {
+        if (CollectionUtils.isNotEmpty(allDataTypeNodesWithModel)) {
             dataTypesFound.addAll(allDataTypeNodesWithModel);
         }
         return dataTypesFound;
     }
-    
+
     public Map<String, List<String>> getAllDataTypeUidsToModels() {
         final Map<String, List<String>> dataTypesFound = new HashMap<>();
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
             janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
 
         final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
-        
-        for (DataTypeData dataType: dataTypesValidated) {
-            if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+
+        for (DataTypeData dataType : dataTypesValidated) {
+            if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
                 dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
             }
             dataTypesFound.get(dataType.getUniqueId()).add(null);
         }
-        
+
         modelOperation.findAllModels()
             .forEach(model -> {
-                for (DataTypeData dataType: getAllDataTypesWithModel(model.getName())) {
-                    if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+                for (DataTypeData dataType : getAllDataTypesWithModel(model.getName())) {
+                    if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
                         dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
                     }
                     dataTypesFound.get(dataType.getUniqueId()).add(model.getName());
                 }
-        });
+            });
         return dataTypesFound;
     }
-    
+
     private List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesByModel = janusGraphGenericDao
             .getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class);
@@ -129,7 +129,7 @@ public class DataTypeOperation extends AbstractOperation {
         if (getDataTypes.isRight()) {
             final var status = getDataTypes.right().value();
             if (LOGGER.isErrorEnabled()) {
-                final var errorMsg= String.format("Failed to fetch data types from database with model %s. Status is %s", modelName, status);
+                final var errorMsg = String.format("Failed to fetch data types from database with model %s. Status is %s", modelName, status);
                 LOGGER.error(String.valueOf(EcompLoggerErrorCode.UNKNOWN_ERROR), DataTypeOperation.class.getName(), errorMsg);
                 BeEcompErrorManager.getInstance().logInternalConnectionError(DataTypeOperation.class.getName(), errorMsg, ErrorSeverity.ERROR);
             }
@@ -152,4 +152,19 @@ public class DataTypeOperation extends AbstractOperation {
         });
     }
 
+    public Optional<DataTypeDataDefinition> getDataTypeByUid(final String uniqueId) {
+        final Either<DataTypeData, JanusGraphOperationStatus> dataTypeEither = janusGraphGenericDao
+            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, DataTypeData.class);
+        if (dataTypeEither.isRight()) {
+            if (JanusGraphOperationStatus.NOT_FOUND.equals(dataTypeEither.right().value())) {
+                return Optional.empty();
+            }
+            final StorageOperationStatus storageOperationStatus
+                = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(dataTypeEither.right().value());
+            LOGGER.warn("Failed to fetch data type '{}' from JanusGraph. Status is: {}", uniqueId, storageOperationStatus);
+            throw new OperationException(ActionStatus.GENERAL_ERROR,
+                String.format("Failed to fetch data type '%s' from JanusGraph. Status is: %s", uniqueId, storageOperationStatus));
+        }
+        return Optional.of(dataTypeEither.left().value().getDataTypeDataDefinition());
+    }
 }

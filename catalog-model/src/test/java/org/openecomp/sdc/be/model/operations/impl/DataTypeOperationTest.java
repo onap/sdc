@@ -19,6 +19,11 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -27,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -34,6 +40,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -61,7 +68,6 @@ class DataTypeOperationTest {
     @BeforeEach
     void beforeEachInit() {
         MockitoAnnotations.openMocks(this);
-        dataTypeOperation.setModelOperation(modelOperation);
         initTestData();
     }
 
@@ -110,6 +116,23 @@ class DataTypeOperationTest {
         assertThat(dataTypesFound).isEmpty();
     }
 
+    @Test
+    void getDataTypeByUidTest_Success() {
+        doReturn(Either.left(createDataTypeData("test.data.type99", "test.data.type00099", 888L, 999L, modelName)))
+            .when(janusGraphGenericDao).getNode(eq("uid"), eq("dataType"), any());
+        final Optional<DataTypeDataDefinition> dataType = dataTypeOperation.getDataTypeByUid("dataType");
+        assertTrue(dataType.isPresent());
+        assertEquals("test.data.type99", dataType.get().getName());
+        assertEquals("test.data.type00099", dataType.get().getUniqueId());
+        assertEquals(modelName, dataType.get().getModel());
+    }
+
+    @Test
+    void getDataTypeByUidTest_Fail() {
+        doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao).getNode(eq("uid"), eq("dataType"), any());
+        Optional<DataTypeDataDefinition> result = dataTypeOperation.getDataTypeByUid("dataType");
+        assertTrue(result.isEmpty());
+    }
 
     private void initTestData() {
         model = new Model(modelName, ModelTypeEnum.NORMATIVE);

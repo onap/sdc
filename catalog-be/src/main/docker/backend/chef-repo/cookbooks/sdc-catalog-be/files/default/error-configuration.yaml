@@ -2821,3 +2821,9 @@ errors:
         code: 400
         message: "Capability '%1' not found in '%2' '%3'."
         messageId: "SVC4186"
+
+    # %1 - The data type Uid
+    DATA_TYPE_NOT_FOUND:
+        code: 404
+        message: "Data type '%1' was not found."
+        messageId: "SVC4011"
