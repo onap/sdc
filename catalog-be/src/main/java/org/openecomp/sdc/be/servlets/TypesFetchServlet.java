@@ -28,15 +28,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -53,7 +50,6 @@ import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
-import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -83,14 +79,14 @@ import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-2 APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDCE-2 APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class TypesFetchServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(TypesFetchServlet.class);
     private static final String FAILED_TO_GET_ALL_NON_ABSTRACT = "failed to get all non abstract {}";
-    private final PropertyBusinessLogic propertyBusinessLogic;
+    private static final String START_HANDLE_REQUEST_OF_MODIFIER_ID_IS = "Start handle request of {} | modifier id is {}";
     private final RelationshipTypeBusinessLogic relationshipTypeBusinessLogic;
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
@@ -103,7 +99,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         ComponentsUtils componentsUtils,
         ServletUtils servletUtils,
         ResourceImportManager resourceImportManager,
-        PropertyBusinessLogic propertyBusinessLogic,
         RelationshipTypeBusinessLogic relationshipTypeBusinessLogic,
         CapabilitiesBusinessLogic capabilitiesBusinessLogic,
         InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
@@ -116,7 +111,6 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             servletUtils,
             resourceImportManager
         );
-        this.propertyBusinessLogic = propertyBusinessLogic;
         this.relationshipTypeBusinessLogic = relationshipTypeBusinessLogic;
         this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
@@ -173,7 +167,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             validateUserExist(responseWrapper, userWrapper, userId);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
-                log.info("Start handle request of {} | modifier id is {}", url, userId);
+                log.info(START_HANDLE_REQUEST_OF_MODIFIER_ID_IS, url, userId);
                 Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes = interfaceOperationBusinessLogic
                     .getAllInterfaceLifecycleTypes(modelName);
                 if (allInterfaceLifecycleTypes.isRight()) {
@@ -206,7 +200,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request,
                                                  @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-                                                 @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
+                                                 @Parameter(description = "model") @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         try {
@@ -215,7 +209,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
-                log.debug("Start handle request of {} | modifier id is {}", url, userId);
+                log.debug(START_HANDLE_REQUEST_OF_MODIFIER_ID_IS, url, userId);
                 Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes(
                     modelName);
                 if (allDataTypes.isRight()) {
@@ -251,7 +245,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request,
                                                    @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-                                                   @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
+                                                   @Parameter(description = "model") @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         try {
@@ -260,7 +254,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
-                log.debug("Start handle request of {} | modifier id is {}", url, userId);
+                log.debug(START_HANDLE_REQUEST_OF_MODIFIER_ID_IS, url, userId);
                 Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> allDataTypes = relationshipTypeBusinessLogic
                     .getAllRelationshipTypes(modelName);
                 if (allDataTypes.isRight()) {
@@ -296,11 +290,10 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     public Response getAllNodeTypesServlet(
         @Context final HttpServletRequest request,
         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-        @Parameter(description = "model", required = false) @QueryParam("model") String modelName
+        @Parameter(description = "model") @QueryParam("model") String modelName
     ) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
-        ServletContext context = request.getSession().getServletContext();
         Either<Map<String, Component>, Response> response;
         Map<String, Component> componentMap;
         try {
@@ -309,7 +302,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
-                log.debug("Start handle request of {} | modifier id is {}", url, userId);
+                log.debug(START_HANDLE_REQUEST_OF_MODIFIER_ID_IS, url, userId);
                 response = getComponent(resourceBusinessLogic, true, userId, modelName);
                 if (response.isRight()) {
                     return response.right().value();
@@ -343,7 +336,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Tosca Artifact Types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllToscaArtifactTypes(@Parameter(description = "Model name") @QueryParam("model") String model,
-                                             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+                                             @Context final HttpServletRequest request, @HeaderParam(Constants.USER_ID_HEADER) String creator) {
         try {
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), artifactsBusinessLogic.getAllToscaArtifacts(model));
         } catch (final BusinessException e) {

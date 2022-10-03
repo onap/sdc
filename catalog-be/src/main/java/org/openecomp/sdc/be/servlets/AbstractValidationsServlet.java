@@ -27,7 +27,6 @@ import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -96,13 +95,17 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         .asList(TOSCA_SIMPLE_YAML_PREFIX + "1_0_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1_0", "tosca_simple_profile_for_nfv_1_0_0",
             TOSCA_SIMPLE_YAML_PREFIX + "1_0", TOSCA_SIMPLE_YAML_PREFIX + "1_1", TOSCA_SIMPLE_YAML_PREFIX + "1_2", TOSCA_SIMPLE_YAML_PREFIX + "1_3");
     private static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(".yml", ".yaml", ".csar", ".meta");
+    private static final String INVALID_JSON_WAS_RECEIVED = "Invalid json was received.";
+    private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
+    private static final String VALIDATE_USER_ROLE = "validate user role";
+    private static final String USER_IS_NOT_IN_APPROPRIATE_ROLE_TO_PERFORM_ACTION = "user is not in appropriate role to perform action";
     protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     protected ServletUtils servletUtils;
     protected ResourceImportManager resourceImportManager;
     protected ServiceImportManager serviceImportManager;
 
-    public AbstractValidationsServlet(ComponentInstanceBusinessLogic componentInstanceBL,
-                                      ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
+    protected AbstractValidationsServlet(ComponentInstanceBusinessLogic componentInstanceBL,
+                                         ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
         super(componentsUtils);
         this.servletUtils = servletUtils;
         this.resourceImportManager = resourceImportManager;
@@ -186,11 +189,11 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void validateUserRole(Wrapper<Response> errorResponseWrapper, User user) {
-        log.debug("validate user role");
+        log.debug(VALIDATE_USER_ROLE);
         if (!user.getRole().equals(Role.ADMIN.name()) && !user.getRole().equals(Role.DESIGNER.name())) {
-            log.info("user is not in appropriate role to perform action");
+            log.info(USER_IS_NOT_IN_APPROPRIATE_ROLE_TO_PERFORM_ACTION);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-            log.debug("audit before sending response");
+            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
             getComponentsUtils().auditResource(responseFormat, user, "", AuditingActionEnum.IMPORT_RESOURCE);
             Response response = buildErrorResponse(responseFormat);
             errorResponseWrapper.setInnerElement(response);
@@ -251,7 +254,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         try (InputStream fileInputStream = new FileInputStream(file)) {
             byte[] data = new byte[(int) file.length()];
             if (fileInputStream.read(data) == -1) {
-                log.info("Invalid json was received.");
+                log.info(INVALID_JSON_WAS_RECEIVED);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
                 Response errorResp = buildErrorResponse(responseFormat);
                 responseWrapper.setInnerElement(errorResp);
@@ -268,12 +271,12 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void validateUserRole(Wrapper<Response> errorResponseWrapper, User user, ResourceAuthorityTypeEnum resourceAuthority) {
-        log.debug("validate user role");
+        log.debug(VALIDATE_USER_ROLE);
         if (resourceAuthority == ResourceAuthorityTypeEnum.NORMATIVE_TYPE_BE) {
             if (!user.getRole().equals(Role.ADMIN.name())) {
-                log.info("user is not in appropriate role to perform action");
+                log.info(USER_IS_NOT_IN_APPROPRIATE_ROLE_TO_PERFORM_ACTION);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-                log.debug("audit before sending response");
+                log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
                 getComponentsUtils().auditResource(responseFormat, user, "", AuditingActionEnum.IMPORT_RESOURCE);
                 Response response = buildErrorResponse(responseFormat);
                 errorResponseWrapper.setInnerElement(response);
@@ -306,7 +309,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             isValid = false;
         }
         if (!isValid) {
-            log.info("Invalid json was received.");
+            log.info(INVALID_JSON_WAS_RECEIVED);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             getComponentsUtils().auditResource(responseFormat, user, "", AuditingActionEnum.IMPORT_RESOURCE);
             Response errorResp = buildErrorResponse(responseFormat);
@@ -332,6 +335,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         return getServletUtils().getGson();
     }
 
+    @Override
     public ComponentsUtils getComponentsUtils() {
         return getServletUtils().getComponentsUtils();
     }
@@ -470,7 +474,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     private void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user) {
         String toscaTemplatePayloadName = uploadResourceInfo.getPayloadName();
-        boolean isValidSuffix = isToscaTemplatePayloadNameValid(responseWrapper, toscaTemplatePayloadName);
+        boolean isValidSuffix = isToscaTemplatePayloadNameValid(toscaTemplatePayloadName);
         if (!isValidSuffix) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_FILE_EXTENSION);
             Response errorResponse = buildErrorResponse(responseFormat);
@@ -479,7 +483,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    private boolean isToscaTemplatePayloadNameValid(Wrapper<Response> responseWrapper, String toscaTemplatePayloadName) {
+    private boolean isToscaTemplatePayloadNameValid(String toscaTemplatePayloadName) {
         boolean isValidSuffix = false;
         if (toscaTemplatePayloadName != null && !toscaTemplatePayloadName.isEmpty()) {
             for (String validSuffix : TOSCA_YML_CSAR_VALID_SUFFIX) {
@@ -913,21 +917,21 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             validateUserRole(responseWrapper, userWrapper.getInnerElement(), serviceAuthorityEnum);
         }
         if (responseWrapper.isEmpty()) {
-            validateAndFillServiceJson(responseWrapper, uploadServiceInfoWrapper, userWrapper.getInnerElement(), serviceAuthorityEnum,
+            validateAndFillServiceJson(responseWrapper, uploadServiceInfoWrapper, serviceAuthorityEnum,
                 serviceInfoJsonString);
         }
         if (responseWrapper.isEmpty()) {
-            validateToscaTemplatePayloadName(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), userWrapper.getInnerElement());
+            validateToscaTemplatePayloadName(responseWrapper, uploadServiceInfoWrapper.getInnerElement());
         }
     }
 
     protected void validateUserRole(Wrapper<Response> errorResponseWrapper, User user, ServiceAuthorityTypeEnum serviceAuthority) {
-        log.debug("validate user role");
+        log.debug(VALIDATE_USER_ROLE);
         if (serviceAuthority == ServiceAuthorityTypeEnum.NORMATIVE_TYPE_BE) {
             if (!user.getRole().equals(Role.ADMIN.name())) {
-                log.info("user is not in appropriate role to perform action");
+                log.info(USER_IS_NOT_IN_APPROPRIATE_ROLE_TO_PERFORM_ACTION);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-                log.debug("audit before sending response");
+                log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
                 Response response = buildErrorResponse(responseFormat);
                 errorResponseWrapper.setInnerElement(response);
             }
@@ -936,7 +940,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void validateAndFillServiceJson(Wrapper<Response> responseWrapper, Wrapper<UploadServiceInfo> uploadServiceInfoWrapper, User user,
+    protected void validateAndFillServiceJson(Wrapper<Response> responseWrapper, Wrapper<UploadServiceInfo> uploadServiceInfoWrapper,
                                               ServiceAuthorityTypeEnum serviceAuthorityEnum, String serviceInfo) {
         boolean isValid;
         try {
@@ -961,16 +965,16 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             isValid = false;
         }
         if (!isValid) {
-            log.info("Invalid json was received.");
+            log.info(INVALID_JSON_WAS_RECEIVED);
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             Response errorResp = buildErrorResponse(responseFormat);
             responseWrapper.setInnerElement(errorResp);
         }
     }
 
-    protected void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper, UploadServiceInfo uploadServiceInfo, User user) {
+    protected void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper, UploadServiceInfo uploadServiceInfo) {
         String toscaTemplatePayloadName = uploadServiceInfo.getPayloadName();
-        boolean isValidSuffix = isToscaTemplatePayloadNameValid(responseWrapper, toscaTemplatePayloadName);
+        boolean isValidSuffix = isToscaTemplatePayloadNameValid(toscaTemplatePayloadName);
         if (!isValidSuffix) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_TOSCA_FILE_EXTENSION);
             Response errorResponse = buildErrorResponse(responseFormat);
@@ -979,35 +983,33 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
     }
 
     protected void specificServiceAuthorityValidations(Wrapper<Response> responseWrapper, Wrapper<UploadServiceInfo> uploadServiceInfoWrapper,
-                                                       Wrapper<String> yamlStringWrapper, User user, HttpServletRequest request,
-                                                       String serviceInfoJsonString, ServiceAuthorityTypeEnum serviceAuthorityEnum)
-        throws FileNotFoundException {
+                                                       Wrapper<String> yamlStringWrapper, HttpServletRequest request,
+                                                       String serviceInfoJsonString, ServiceAuthorityTypeEnum serviceAuthorityEnum) {
         if (responseWrapper.isEmpty()) {
             // UI Only Validation
             if (!serviceAuthorityEnum.isBackEndImport()) {
-                importUIValidations(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), user, request, serviceInfoJsonString);
+                importUIValidations(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), request, serviceInfoJsonString);
             }
             // User Defined Type Services
-            if (serviceAuthorityEnum.isUserTypeService() && !CsarValidationUtils
-                .isCsarPayloadName(uploadServiceInfoWrapper.getInnerElement().getPayloadName())) {
-                if (responseWrapper.isEmpty()) {
-                    validatePayloadNameSpace(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), user, yamlStringWrapper.getInnerElement());
-                }
+            if (serviceAuthorityEnum.isUserTypeService()
+                && !CsarValidationUtils.isCsarPayloadName(uploadServiceInfoWrapper.getInnerElement().getPayloadName())
+                && responseWrapper.isEmpty()) {
+                validatePayloadNameSpace(responseWrapper, uploadServiceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement());
             }
         }
     }
 
-    protected void importUIValidations(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, User user, HttpServletRequest request,
+    protected void importUIValidations(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, HttpServletRequest request,
                                        String serviceInfoJsonString) {
         if (responseWrapper.isEmpty()) {
-            validateMD5(responseWrapper, user, serviceInfo, request, serviceInfoJsonString);
+            validateMD5(responseWrapper, request, serviceInfoJsonString);
         }
         if (responseWrapper.isEmpty() && request != null && request.getMethod() != null && request.getMethod().equals("POST")) {
-            validateServiceDoesNotExist(responseWrapper, user, serviceInfo.getName());
+            validateServiceDoesNotExist(responseWrapper, serviceInfo.getName());
         }
     }
 
-    protected void validatePayloadNameSpace(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, User user, String toscaPayload) {
+    protected void validatePayloadNameSpace(Wrapper<Response> responseWrapper, UploadServiceInfo serviceInfo, String toscaPayload) {
         boolean isValid;
         String nameSpace = "";
         Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
@@ -1036,7 +1038,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void validateMD5(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfo, HttpServletRequest request,
+    protected void validateMD5(Wrapper<Response> responseWrapper, HttpServletRequest request,
                                String serviceInfoJsonString) {
         boolean isValid;
         String recievedMD5 = request.getHeader(Constants.MD5_HEADER);
@@ -1053,7 +1055,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void validateServiceDoesNotExist(Wrapper<Response> responseWrapper, User user, String serviceName) {
+    protected void validateServiceDoesNotExist(Wrapper<Response> responseWrapper, String serviceName) {
         if (serviceImportManager.isServiceExist(serviceName)) {
             ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.SERVICE_ALREADY_EXISTS);
             Response errorResponse = buildErrorResponse(responseFormat);
@@ -1061,13 +1063,12 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void handleImportService(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfoObject, String serviceUniqueId)
-        throws ZipException {
+    protected void handleImportService(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfoObject) {
         Response response = null;
         ImmutablePair<Service, ActionStatus> importedServiceStatus = null;
         if (CsarValidationUtils.isCsarPayloadName(serviceInfoObject.getPayloadName())) {
             log.debug("import service from csar");
-            importedServiceStatus = importServiceFromUICsar(serviceInfoObject, user, serviceUniqueId);
+            importedServiceStatus = importServiceFromUICsar(serviceInfoObject, user);
         }
         if (importedServiceStatus != null) {
             Object representation = null;
@@ -1081,8 +1082,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         responseWrapper.setInnerElement(response);
     }
 
-    private ImmutablePair<Service, ActionStatus> importServiceFromUICsar(UploadServiceInfo serviceInfoObject, User user, String serviceUniqueId)
-        throws ZipException {
+    private ImmutablePair<Service, ActionStatus> importServiceFromUICsar(UploadServiceInfo serviceInfoObject, User user) {
         Service service = new Service();
         String payloadName = serviceInfoObject.getPayloadName();
         fillServiceFromServiceInfoObject(service, serviceInfoObject);
@@ -1098,7 +1098,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         fillArtifacts(service, serviceInfoObject);
     }
 
-    private Map<String, byte[]> getCsarFromPayload(UploadServiceInfo innerElement) throws ZipException {
+    private Map<String, byte[]> getCsarFromPayload(UploadServiceInfo innerElement) {
         String csarUUID = innerElement.getPayloadName();
         String payloadData = innerElement.getPayloadData();
         return getComponentCsarFromPayload(csarUUID, payloadData);
@@ -1180,7 +1180,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             log.debug("enter fillServicePayloadDataFromFile");
             byte[] data = new byte[(int) file.length()];
             if (fileInputStream.read(data) == -1) {
-                log.info("Invalid json was received.");
+                log.info(INVALID_JSON_WAS_RECEIVED);
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
                 Response errorResp = buildErrorResponse(responseFormat);
                 responseWrapper.setInnerElement(errorResp);
