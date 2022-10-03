@@ -684,6 +684,30 @@
     },
     {
       "key": {
+        "uuid": "ecbd720d_f4183663",
+        "filename": "catalog-be/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-03T14:21:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "084600a3_8a9f8309",
+      "range": {
+        "startLine": 154,
+        "startChar": 12,
+        "endLine": 154,
+        "endChar": 72
+      },
+      "revId": "501129e05807aa2abb30f367b05d4ddc460720b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6aa5f574_8441602e",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/NoHtml.java",
         "patchSetId": 7
