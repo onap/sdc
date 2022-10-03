@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e053cee_0b109575",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-03T09:28:12Z",
+      "side": 1,
+      "message": "in fact the BusinessException should not be unexpected as they were thrown deliberately by us, you should let them pass. All BusinessException should have a ExceptionMapper (handler) to give the expected response.\nFor the others, yes, you could catch and give a generic error message.",
+      "range": {
+        "startLine": 88,
+        "startChar": 17,
+        "endLine": 88,
+        "endChar": 42
+      },
+      "revId": "089374d642284e0736588ff61fe08ca7f26f9e9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "816f057e_238bfa0a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-03T09:28:12Z",
+      "side": 1,
+      "message": "you need to check first if it is not found, because not found should not be an exception.\nAlso, I recommend the method to return an Optional\u003cDataTypeDataDefinition\u003e, that will be empty if it is not found.",
+      "range": {
+        "startLine": 163,
+        "startChar": 12,
+        "endLine": 164,
+        "endChar": 108
+      },
+      "revId": "089374d642284e0736588ff61fe08ca7f26f9e9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
