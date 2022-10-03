@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "301ad141_e22255e0",
+        "filename": "catalog-fe/src/main/webapp/WEB-INF/web.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-03T14:06:07Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ff3c0e1c_5ab359da",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 39
+      },
+      "revId": "34af7e28405eae76332360d863c7708f93de733f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "26c5c8b4_dd5e0946",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/filters/XFrameOptionsHeaderFilter.java",
         "patchSetId": 7
