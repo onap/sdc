@@ -47,8 +47,6 @@
 
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
-
-
     </servlet>
 
     <servlet-mapping>
@@ -72,23 +70,21 @@
         <param-value>false</param-value>
     </context-param>
 
+    <filter>
+        <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
+        <filter-class>org.openecomp.sdc.fe.filters.ContentSecurityPolicyHeaderFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter>
         <filter-name>AuditLogServletFilter</filter-name>
         <filter-class>org.onap.logging.filter.base.AuditLogServletFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
-
-    <!--	<filter>-->
-    <!--		<filter-name>SecurityFilter</filter-name>-->
-    <!--		<filter-class>org.openecomp.sdc.fe.filters.SecurityFilter</filter-class>-->
-    <!--        <async-supported>true</async-supported>-->
-    <!--        <init-param>-->
-    <!--            <param-name>excludedUrls</param-name>-->
-    <!--            &lt;!&ndash; Comma separated list of excluded servlet URLs  &ndash;&gt;-->
-    <!--            <param-value>/config,/configmgr,/rest</param-value>-->
-    <!--        </init-param>-->
-    <!--	</filter>-->
 
     <filter>
         <filter-name>gzipFilter</filter-name>
@@ -100,11 +96,6 @@
         <filter-name>AuditLogServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!--	<filter-mapping>-->
-    <!--		<filter-name>SecurityFilter</filter-name>-->
-    <!--		<url-pattern>/*</url-pattern>-->
-    <!--    </filter-mapping>-->
 
     <filter-mapping>
         <filter-name>gzipFilter</filter-name>
