@@ -162,7 +162,7 @@ public class HealthCheckBusinessLogic {
     }
 
     private HealthCheckInfo getDmaapProducerHealthCheck() {
-        if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive()) {
+        if (ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration().isActive() && !Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "false"))) {
             String appVersion = getAppVersion();
             dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
             return dmaapProducerHealth.getHealthCheckInfo();
