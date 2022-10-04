@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c7375c2_a72839d7",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 11
+      },
+      "lineNbr": 1297,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T09:27:48Z",
+      "side": 1,
+      "message": "We should set from an ENV var to enable setting at deployment time (see how cassandra_ssl_enabled is handled in BE_2_setup_configuration.rb as example)",
+      "range": {
+        "startLine": 1297,
+        "startChar": 0,
+        "endLine": 1297,
+        "endChar": 18
+      },
+      "revId": "813a84a70ec53c0be5294812ff0faf54e55dd284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b219d82_68f39287",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/filters/ContentSecurityPolicyHeaderFilter.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T09:27:48Z",
+      "side": 1,
+      "message": "The configuration used here is the BE configuration, but this filter is also being used in the FE where the BE configuration will not be present.",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 105
+      },
+      "revId": "813a84a70ec53c0be5294812ff0faf54e55dd284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
