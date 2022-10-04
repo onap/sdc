@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eec4e5dd_21853eeb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-10-04T10:34:58Z",
+      "side": 1,
+      "message": "In evaluateComplexTypeProperties function itself we have a check for primitive and collection type, so i guess we don\u0027t have to check it externally.",
+      "parentUuid": "6cecda71_eb71ea8a",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 62
+      },
+      "revId": "557e3b0c4a680f89420fdae685d2082f7829ff13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c665948e_7472a106",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "b22a2a05_1e64e692",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-10-04T10:34:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c665948e_7472a106",
+      "range": {
+        "startLine": 635,
+        "startChar": 0,
+        "endLine": 635,
+        "endChar": 138
+      },
+      "revId": "557e3b0c4a680f89420fdae685d2082f7829ff13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4fbb2d4_cfdab26b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "557e3b0c4a680f89420fdae685d2082f7829ff13",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69271828_8eb3da0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-10-04T10:34:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4fbb2d4_cfdab26b",
+      "range": {
+        "startLine": 664,
+        "startChar": 4,
+        "endLine": 678,
+        "endChar": 9
+      },
+      "revId": "557e3b0c4a680f89420fdae685d2082f7829ff13",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
