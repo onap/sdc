@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "31bdb0e3_b62844a1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afc1479c_64cd6cc5",
+      "range": {
+        "startLine": 466,
+        "startChar": 6,
+        "endLine": 472,
+        "endChar": 9
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d05ac26_83fafaef",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 6
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "bf36b35b_612256b1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9588b27_4bd57bf4",
+      "range": {
+        "startLine": 500,
+        "startChar": 45,
+        "endLine": 500,
+        "endChar": 65
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ebb4fcc_b437f0c5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d05ac26_83fafaef",
+      "range": {
+        "startLine": 500,
+        "startChar": 147,
+        "endLine": 500,
+        "endChar": 157
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "413b19bc_4bc9ecbf",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 6
@@ -91,6 +163,30 @@
       "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd1f7358_77e48da0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 508,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "413b19bc_4bc9ecbf",
+      "range": {
+        "startLine": 508,
+        "startChar": 43,
+        "endLine": 508,
+        "endChar": 53
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "8fae8141_27bd20e7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "297928f1_49eaf64c",
+      "range": {
+        "startLine": 509,
+        "startChar": 22,
+        "endLine": 509,
+        "endChar": 152
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d9cdadd_68a44d34",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 6
@@ -128,6 +248,30 @@
       "writtenOn": "2022-09-23T11:34:06Z",
       "side": 1,
       "message": "why are we comparing the requirement definitions rather than the names?\nTwo requirements with different names can have the same definition, e.g. \n\n    requirements:\n      - external_virtual_link:\n          capability: tosca.capabilities.nfv.VirtualLinkable\n          relationship: tosca.relationships.nfv.VirtualLinksTo\n      - internal_virtual_link:\n          capability: tosca.capabilities.nfv.VirtualLinkable\n          relationship: tosca.relationships.nfv.VirtualLinksTo\n\nif im reading this code right then it would consider the above 2 requirements the same",
+      "range": {
+        "startLine": 521,
+        "startChar": 0,
+        "endLine": 521,
+        "endChar": 123
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f72dc25_b556fb85",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-04T08:47:32Z",
+      "side": 1,
+      "message": "I think it is comparing the names. It compares the keyset which would be the names of the requirements",
+      "parentUuid": "4d9cdadd_68a44d34",
       "range": {
         "startLine": 521,
         "startChar": 0,
