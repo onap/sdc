@@ -206,6 +206,11 @@ Modifications copyright (c) 2018-2019 Nokia
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.2.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
