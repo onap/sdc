@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "a7090d2f_1bcd8598",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-04T10:46:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51bf6c9c_a855f238",
+      "range": {
+        "startLine": 88,
+        "startChar": 17,
+        "endLine": 88,
+        "endChar": 42
+      },
+      "revId": "089374d642284e0736588ff61fe08ca7f26f9e9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "816f057e_238bfa0a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
         "patchSetId": 10
