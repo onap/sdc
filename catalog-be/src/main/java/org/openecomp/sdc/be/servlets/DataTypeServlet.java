@@ -22,16 +22,19 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -45,6 +48,8 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.common.api.Constants;
@@ -99,6 +104,21 @@ public class DataTypeServlet extends BeGenericServlet {
             throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, dataTypeUid);
         }
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeByUid);
+    }
+
+    @GET
+    @Path("{id}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get a data type properties", method = "GET", summary = "Returns the data type properties", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = PropertyDefinition.class)))),
+        @ApiResponse(responseCode = "200", description = "Data type found, properties may be empty"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Data type not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response fetchProperties(@PathParam("id") final String id) {
+        final List<PropertyDefinition> allProperties = dataTypeOperation.findAllProperties(id);
+        return buildOkResponse(allProperties);
     }
 
 }

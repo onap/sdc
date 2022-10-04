@@ -21,11 +21,13 @@ package org.openecomp.sdc.be.model.operations.impl;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -38,6 +40,8 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
@@ -53,6 +57,7 @@ public class DataTypeOperation extends AbstractOperation {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataTypeOperation.class);
 
     private ModelOperation modelOperation;
+    private PropertyOperation propertyOperation;
 
     @Autowired
     public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao) {
@@ -63,6 +68,11 @@ public class DataTypeOperation extends AbstractOperation {
     @Autowired
     public void setModelOperation(final ModelOperation modelOperation) {
         this.modelOperation = modelOperation;
+    }
+
+    @Autowired
+    public void setPropertyOperation(PropertyOperation propertyOperation) {
+        this.propertyOperation = propertyOperation;
     }
 
     public List<DataTypeData> getAllDataTypeNodes() {
@@ -172,4 +182,26 @@ public class DataTypeOperation extends AbstractOperation {
         }
         return Optional.of(dataTypeEither.left().value().getDataTypeDataDefinition());
     }
+
+    public List<PropertyDefinition> findAllProperties(final String uniqueId) {
+        final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesEither =
+            propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
+        if (propertiesEither.isRight()) {
+            final JanusGraphOperationStatus status = propertiesEither.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                return List.of();
+            }
+            LOGGER.error("Could not retrieve data type '{}' properties. JanusGraphOperationStatus: '{}'", uniqueId, status);
+
+            throw DataTypeOperationExceptionSupplier.unexpectedErrorWhileFetchingProperties(uniqueId).get();
+        }
+        final Map<String, PropertyDefinition> propertyMap = propertiesEither.left().value();
+        if (MapUtils.isEmpty(propertyMap)) {
+            return List.of();
+        }
+        final List<PropertyDefinition> propertyDefinitions = new ArrayList<>(propertyMap.values());
+        propertyDefinitions.sort(Comparator.comparing(PropertyDefinition::getName));
+        return propertyDefinitions;
+    }
+
 }

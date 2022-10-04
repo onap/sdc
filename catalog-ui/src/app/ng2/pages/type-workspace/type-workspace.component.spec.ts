@@ -22,7 +22,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TypeWorkspaceComponent} from './type-workspace.component';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {DataTypeService} from "../../services/data-type.service";
@@ -37,6 +37,7 @@ import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {States} from "../../../utils/constants";
 import {IUserProperties} from "../../../models/user";
 import {Observable} from "rxjs/Observable";
+import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type-workspace-properties.component";
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
@@ -88,9 +89,10 @@ describe('TypeWorkspaceComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TypeWorkspaceComponent, WorkspaceMenuComponent, TypeWorkspaceGeneralComponent ],
+      declarations: [ TypeWorkspaceComponent, WorkspaceMenuComponent, TypeWorkspaceGeneralComponent, TypeWorkspacePropertiesComponent ],
       imports: [
         ReactiveFormsModule,
+        FormsModule,
         TranslateModule,
         UiElementsModule,
         LayoutModule

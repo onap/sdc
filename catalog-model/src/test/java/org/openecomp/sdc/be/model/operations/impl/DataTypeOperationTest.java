@@ -20,6 +20,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,8 +44,11 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.exception.OperationException;
+import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -57,6 +61,8 @@ class DataTypeOperationTest {
     private ModelOperation modelOperation;
     @Mock
     private HealingJanusGraphGenericDao janusGraphGenericDao;
+    @Mock
+    private PropertyOperation propertyOperation;
 
     private final String modelName = "ETSI-SDC-MODEL-TEST";
     private final List<DataTypeData> dataTypesWithoutModel = new ArrayList<>();
@@ -69,6 +75,7 @@ class DataTypeOperationTest {
     void beforeEachInit() {
         MockitoAnnotations.openMocks(this);
         dataTypeOperation.setModelOperation(modelOperation);
+        dataTypeOperation.setPropertyOperation(propertyOperation);
         initTestData();
     }
 
@@ -133,6 +140,51 @@ class DataTypeOperationTest {
         doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao).getNode(eq("uid"), eq("dataType"), any());
         Optional<DataTypeDataDefinition> result = dataTypeOperation.getDataTypeByUid("dataType");
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findAllPropertiesTest_Success() {
+        final PropertyDefinition property1 = new PropertyDefinition();
+        property1.setName("property1");
+        final PropertyDefinition property2 = new PropertyDefinition();
+        property2.setName("property2");
+        final PropertyDefinition property3 = new PropertyDefinition();
+        property3.setName("property3");
+
+        when(propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, "uniqueId"))
+            .thenReturn(Either.left(Map.of(property3.getName(), property3, property1.getName(), property1, property2.getName(), property2)));
+        final List<PropertyDefinition> dataTypeProperties = dataTypeOperation.findAllProperties("uniqueId");
+        assertEquals(3, dataTypeProperties.size());
+        assertEquals(property1.getName(), dataTypeProperties.get(0).getName());
+        assertEquals(property2.getName(), dataTypeProperties.get(1).getName());
+        assertEquals(property3.getName(), dataTypeProperties.get(2).getName());
+    }
+
+    @Test
+    void findAllPropertiesTest_propertiesNotFoundSuccess() {
+        when(propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, "uniqueId"))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        final List<PropertyDefinition> dataTypeProperties = dataTypeOperation.findAllProperties("uniqueId");
+        assertTrue(dataTypeProperties.isEmpty());
+    }
+
+    @Test
+    void findAllPropertiesTest_emptyPropertiesSuccess() {
+        when(propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, "uniqueId"))
+            .thenReturn(Either.left(Map.of()));
+        final List<PropertyDefinition> dataTypeProperties = dataTypeOperation.findAllProperties("uniqueId");
+        assertTrue(dataTypeProperties.isEmpty());
+    }
+
+    @Test
+    void findAllPropertiesTest_unknownError() {
+        final String uniqueId = "uniqueId";
+        when(propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId))
+            .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final OperationException actualException = assertThrows(OperationException.class, () -> dataTypeOperation.findAllProperties(uniqueId));
+        final OperationException expectedException =
+            DataTypeOperationExceptionSupplier.unexpectedErrorWhileFetchingProperties(uniqueId).get();
+        assertEquals(expectedException.getMessage(), actualException.getMessage());
     }
 
     private void initTestData() {

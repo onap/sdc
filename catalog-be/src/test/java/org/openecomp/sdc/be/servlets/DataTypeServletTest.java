@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.MediaType;
@@ -44,6 +46,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.common.api.Constants;
@@ -56,6 +59,7 @@ class DataTypeServletTest extends JerseySpringBaseTest {
     private static final String USER_ID = "cs0008";
     private static final String DATA_TYPE_UID = "ETSI SOL001 v2.5.1.tosca.datatypes.nfv.L3AddressData.datatype";
     private static final String PATH = "/v1/catalog/data-types/" + DATA_TYPE_UID;
+    private static final String DATA_TYPE_PROPERTIES_PATH = "/v1/catalog/data-types/%s/properties";
 
     @InjectMocks
     private DataTypeServlet dataTypeServlet;
@@ -147,6 +151,29 @@ class DataTypeServletTest extends JerseySpringBaseTest {
             .get(Response.class);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+    }
+
+    @Test
+    void fetchDataTypePropertiesTest_Success() {
+        final DataTypeDataDefinition expectedDataType = new DataTypeDataDefinition();
+        final PropertyDefinition expectedProperty1 = new PropertyDefinition();
+        expectedProperty1.setName("property1");
+        final PropertyDefinition expectedProperty2 = new PropertyDefinition();
+        expectedProperty2.setName("property2");
+        expectedDataType.setUniqueId(DATA_TYPE_UID);
+        when(dataTypeOperation.findAllProperties(DATA_TYPE_UID)).thenReturn(List.of(expectedProperty1, expectedProperty2));
+
+        final Response response = target()
+            .path(String.format(DATA_TYPE_PROPERTIES_PATH, DATA_TYPE_UID))
+            .request(MediaType.APPLICATION_JSON)
+            .header("USER_ID", USER_ID)
+            .get(Response.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        final List<Map<String, Object>> actualResponse = response.readEntity(List.class);
+        assertEquals(2, actualResponse.size());
+        assertEquals(expectedProperty1.getName(), actualResponse.get(0).get("name"));
+        assertEquals(expectedProperty2.getName(), actualResponse.get(1).get("name"));
     }
 
 }
