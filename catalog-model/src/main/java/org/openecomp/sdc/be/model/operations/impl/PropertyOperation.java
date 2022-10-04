@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,6 +74,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -86,7 +86,6 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
@@ -123,10 +122,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final Logger log = Logger.getLogger(PropertyOperation.class.getName());
     private final DerivedFromOperation derivedFromOperation;
     private ToscaFunctionValidator toscaFunctionValidator;
-    private DataTypeOperation dataTypeOperation;
+    private final DataTypeOperation dataTypeOperation;
 
     @Autowired
-    public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation) {
+    public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation,
+                             DataTypeOperation dataTypeOperation) {
+        this.dataTypeOperation = dataTypeOperation;
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
     }
@@ -134,12 +135,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     @Autowired
     public void setToscaFunctionValidator(final ToscaFunctionValidator toscaFunctionValidator) {
         this.toscaFunctionValidator = toscaFunctionValidator;
-    }
-
-    //circular dependency DataTypeOperation->ModelOperation->ModelElementOperation->PropertyOperation
-    @Autowired
-    public void setDataTypeOperation(DataTypeOperation dataTypeOperation) {
-        this.dataTypeOperation = dataTypeOperation;
     }
 
     public PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
@@ -842,7 +837,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
         return true;
     }
-    
+
     public boolean isPropertyTypeValid(final IComplexDefaultValue property, final Map<String, DataTypeDefinition> dataTypes) {
         if (property == null) {
             return false;
@@ -1153,25 +1148,27 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
         DataTypeData resultCTD = createDataTypeResult.left().value();
         List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
-        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(), dataTypeDefinition.getModel(),
+        Either<Map<String, PropertyData>, JanusGraphOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(),
+            dataTypeDefinition.getModel(),
             properties);
         if (addPropertiesToDataType.isRight()) {
             log.debug("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
             return Either.right(addPropertiesToDataType.right().value());
         }
-        
+
         final Either<GraphRelation, JanusGraphOperationStatus> modelRelationship = addDataTypeToModel(dataTypeDefinition);
         if (modelRelationship.isRight()) {
             return Either.right(modelRelationship.right().value());
-        }        
-        
+        }
+
         String derivedFrom = dataTypeDefinition.getDerivedFromName();
         if (derivedFrom != null) {
-            final Either<DataTypeDefinition, JanusGraphOperationStatus> derivedFromDataType = getDataTypeByNameValidForModel(derivedFrom, dataTypeDefinition.getModel());
+            final Either<DataTypeDefinition, JanusGraphOperationStatus> derivedFromDataType = getDataTypeByNameValidForModel(derivedFrom,
+                dataTypeDefinition.getModel());
             if (derivedFromDataType.isRight()) {
                 return Either.right(derivedFromDataType.right().value());
             }
-            
+
             log.debug("Before creating relation between data type {} to its parent {}", dtUniqueId, derivedFrom);
             UniqueIdData from = new UniqueIdData(NodeTypeEnum.DataType, dtUniqueId);
             final String deriveFromUid = derivedFromDataType.left().value().getUniqueId();
@@ -1185,17 +1182,17 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
         return Either.left(createDataTypeResult.left().value());
     }
-    
+
     private Either<GraphRelation, JanusGraphOperationStatus> addDataTypeToModel(final DataTypeDefinition dataTypeDefinition) {
-      final String model = dataTypeDefinition.getModel();
-      if (model == null) {
-          return Either.left(null);
-      }
-      final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-      final GraphNode to = new UniqueIdData(NodeTypeEnum.DataType, dataTypeDefinition.getUniqueId());
-      log.info("Connecting model {} to type {}", from, to);
-      return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
-  }
+        final String model = dataTypeDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
+        final GraphNode to = new UniqueIdData(NodeTypeEnum.DataType, dataTypeDefinition.getUniqueId());
+        log.info("Connecting model {} to type {}", from, to);
+        return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
+    }
 
     private DataTypeData buildDataTypeData(DataTypeDefinition dataTypeDefinition, String ctUniqueId) {
         DataTypeData dataTypeData = new DataTypeData(dataTypeDefinition);
@@ -1264,7 +1261,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
         return Either.left(propertiesData);
     }
-    
+
     public Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeByNameValidForModel(final String name, final String modelName) {
         final Either<DataTypeData, JanusGraphOperationStatus> dataTypesRes = janusGraphGenericDao
             .getNode(GraphPropertiesDictionary.NAME.getProperty(), name, DataTypeData.class, modelName);
@@ -1281,13 +1278,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             return Either.right(propertiesStatus);
         }
         final Either<ImmutablePair<DataTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeDefinition.getUniqueId(), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
-              DataTypeData.class);
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeDefinition.getUniqueId(), GraphEdgeLabels.DERIVED_FROM,
+                NodeTypeEnum.DataType,
+                DataTypeData.class);
         log.debug(AFTER_RETRIEVING_DERIVED_FROM_NODE_OF_STATUS_IS, dataTypeDefinition.getUniqueId(), parentNode);
         if (parentNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
             if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                log.error(BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}", dataTypeDefinition.getUniqueId(), janusGraphOperationStatus);
+                log.error(BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}",
+                    dataTypeDefinition.getUniqueId(), janusGraphOperationStatus);
                 return Either.right(janusGraphOperationStatus);
             }
         } else {
@@ -1302,7 +1301,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             dataTypeDefinition.setDerivedFrom(parentDataTypeDefinition);
         }
         return Either.left(dataTypeDefinition);
-  }
+    }
 
     /**
      * Build Data type object from graph by unique id
@@ -1416,7 +1415,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     }
 
     @Override
-    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(final String name, final String validForModel, final boolean inTransaction) {
+    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(final String name, final String validForModel,
+                                                                                final boolean inTransaction) {
         Either<DataTypeDefinition, StorageOperationStatus> result = null;
         try {
             Either<DataTypeDefinition, JanusGraphOperationStatus> ctResult = this.getDataTypeByNameValidForModel(name, validForModel);
@@ -1447,7 +1447,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(final String name, final String validForModel) {
         return getDataTypeByName(name, validForModel, true);
     }
-    
+
     public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByUidWithoutDerived(String uid, boolean inTransaction) {
         Either<DataTypeDefinition, StorageOperationStatus> result = null;
         try {
@@ -1455,7 +1455,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             if (ctResult.isRight()) {
                 JanusGraphOperationStatus status = ctResult.right().value();
                 if (status != JanusGraphOperationStatus.NOT_FOUND) {
-                  log.error(BUSINESS_PROCESS_ERROR, "Failed to retrieve information on data type {} status is {}", uid, status);
+                    log.error(BUSINESS_PROCESS_ERROR, "Failed to retrieve information on data type {} status is {}", uid, status);
                 }
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(ctResult.right().value()));
                 return result;
@@ -1532,7 +1532,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         final Map<String, Map<String, DataTypeDefinition>> dataTypes = new HashMap<>();
         Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result = Either.left(dataTypes);
         final Map<String, DataTypeDefinition> allDataTypesFound = new HashMap<>();
-        
+
         final Map<String, List<String>> dataTypeUidstoModels = dataTypeOperation.getAllDataTypeUidsToModels();
 
         if (dataTypeUidstoModels != null) {
@@ -1548,7 +1548,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     }
                     return Either.right(status);
                 }
-                for (final String model: entry.getValue()) {
+                for (final String model : entry.getValue()) {
                     if (!dataTypes.containsKey(model)) {
                         dataTypes.put(model, new HashMap<String, DataTypeDefinition>());
                     }
@@ -1556,7 +1556,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     dataTypes.get(model).put(dataTypeDefinition.getName(), dataTypeDefinition);
                 }
             }
-            
+
         }
         if (log.isTraceEnabled()) {
             if (result.isRight()) {
@@ -1823,7 +1823,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             String dataTypeName = newDataTypeDefinition.getName();
             List<PropertyDefinition> propertiesToAdd = new ArrayList<>();
             if (isPropertyTypeChanged(dataTypeName, newProperties, oldProperties, propertiesToAdd)
-                    || isDerivedFromNameChanged(dataTypeName, newDerivedFromName, oldDerivedFromName)) {
+                || isDerivedFromNameChanged(dataTypeName, newDerivedFromName, oldDerivedFromName)) {
                 log.debug("The new data type {} is invalid.", dataTypeName);
                 result = Either.right(StorageOperationStatus.CANNOT_UPDATE_EXISTING_ENTITY);
                 return result;
