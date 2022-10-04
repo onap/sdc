@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,6 @@ import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
@@ -73,20 +72,11 @@ public class PropertyOperationTest extends ModelTestBase {
 
     final DataTypeOperation dataTypeOperation = mock(DataTypeOperation.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, dataTypeOperation);
 
     @Before
     public void setup() {
-        propertyOperation.setDataTypeOperation(dataTypeOperation);
         propertyOperation.setJanusGraphGenericDao(janusGraphGenericDao);
-    }
-
-    private PropertyDefinition buildPropertyDefinition() {
-        PropertyDefinition property = new PropertyDefinition();
-        property.setDefaultValue("10");
-        property.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
-        property.setType(ToscaType.INTEGER.name().toLowerCase());
-        return property;
     }
 
     @Test
@@ -260,7 +250,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules = new ArrayList<>();
         PropertyRule propertyRule = new PropertyRule();
-        String[] ruleArr = { "node1", ".+", "node3" };
+        String[] ruleArr = {"node1", ".+", "node3"};
         List<String> rule1 = new ArrayList<>(Arrays.asList(ruleArr));
         propertyRule.setRule(rule1);
         propertyRule.setValue("88");
@@ -303,13 +293,13 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules = new ArrayList<>();
         PropertyRule propertyRule1 = new PropertyRule();
-        String[] ruleArr1 = { "node1", "node2", ".+" };
+        String[] ruleArr1 = {"node1", "node2", ".+"};
         List<String> rule1 = new ArrayList<>(Arrays.asList(ruleArr1));
         propertyRule1.setRule(rule1);
         propertyRule1.setValue("88");
 
         PropertyRule propertyRule2 = new PropertyRule();
-        String[] ruleArr2 = { "node1", "node2", "node3" };
+        String[] ruleArr2 = {"node1", "node2", "node3"};
         List<String> rule2 = new ArrayList<>(Arrays.asList(ruleArr2));
         propertyRule2.setRule(rule2);
         propertyRule2.setValue("99");
@@ -355,13 +345,13 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules = new ArrayList<>();
         PropertyRule propertyRule1 = new PropertyRule();
-        String[] ruleArr1 = { "node1", "node2", ".+" };
+        String[] ruleArr1 = {"node1", "node2", ".+"};
         List<String> rule1 = new ArrayList<>(Arrays.asList(ruleArr1));
         propertyRule1.setRule(rule1);
         propertyRule1.setValue("88");
 
         PropertyRule propertyRule2 = new PropertyRule();
-        String[] ruleArr2 = { "node1", "node2", "node3" };
+        String[] ruleArr2 = {"node1", "node2", "node3"};
         List<String> rule2 = new ArrayList<>(Arrays.asList(ruleArr2));
         propertyRule2.setRule(rule2);
         propertyRule2.setValue("99");
@@ -378,7 +368,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules3 = new ArrayList<>();
         PropertyRule propertyRule3 = new PropertyRule();
-        String[] ruleArr3 = { "node2", "node3" };
+        String[] ruleArr3 = {"node2", "node3"};
         List<String> rule3 = new ArrayList<>(Arrays.asList(ruleArr3));
         propertyRule3.setRule(rule3);
         propertyRule3.setValue("77");
@@ -417,13 +407,13 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules = new ArrayList<>();
         PropertyRule propertyRule1 = new PropertyRule();
-        String[] ruleArr1 = { "node1", "node2", ".+" };
+        String[] ruleArr1 = {"node1", "node2", ".+"};
         List<String> rule1 = new ArrayList<>(Arrays.asList(ruleArr1));
         propertyRule1.setRule(rule1);
         propertyRule1.setValue("88");
 
         PropertyRule propertyRule2 = new PropertyRule();
-        String[] ruleArr2 = { "node1", "node2", "node3" };
+        String[] ruleArr2 = {"node1", "node2", "node3"};
         List<String> rule2 = new ArrayList<>(Arrays.asList(ruleArr2));
         propertyRule2.setRule(rule2);
         propertyRule2.setValue("99");
@@ -440,7 +430,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
         List<PropertyRule> rules3 = new ArrayList<>();
         PropertyRule propertyRule3 = new PropertyRule();
-        String[] ruleArr3 = { "node2", "node333" };
+        String[] ruleArr3 = {"node2", "node333"};
         List<String> rule3 = new ArrayList<>(Arrays.asList(ruleArr3));
         propertyRule3.setRule(rule3);
         propertyRule3.setValue("77");
@@ -454,585 +444,553 @@ public class PropertyOperationTest extends ModelTestBase {
         assertEquals("check value", propertyRule2.getValue(), instanceProperty.getValue());
         assertEquals("check default value", "vv1", instanceProperty.getDefaultValue());
 
-	}
-
-    private PropertyOperation createTestSubject() {
-        final var propertyOperation = new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
-        propertyOperation.setDataTypeOperation(dataTypeOperation);
-        return propertyOperation;
     }
 
-	@Test
-	public void testConvertPropertyDataToPropertyDefinition() throws Exception {
-		PropertyOperation testSubject;
-		PropertyData propertyDataResult = new PropertyData();
-		String propertyName = "";
-		String resourceId = "";
-		PropertyDefinition result;
+    private PropertyOperation createTestSubject() {
+        return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, dataTypeOperation);
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.convertPropertyDataToPropertyDefinition(propertyDataResult, propertyName, resourceId);
-	}
-	
-	@Test
-	public void testAddProperty() throws Exception {
-		PropertyOperation testSubject;
-		String propertyName = "";
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		String resourceId = "";
-		Either<PropertyData, StorageOperationStatus> result;
+    @Test
+    public void testConvertPropertyDataToPropertyDefinition() throws Exception {
+        PropertyOperation testSubject;
+        PropertyData propertyDataResult = new PropertyData();
+        String propertyName = "";
+        String resourceId = "";
+        PropertyDefinition result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addProperty(propertyName, propertyDefinition, resourceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.convertPropertyDataToPropertyDefinition(propertyDataResult, propertyName, resourceId);
+    }
 
-	
-	@Test
-	public void testValidateAndUpdateProperty() throws Exception {
-		PropertyOperation testSubject;
-		IComplexDefaultValue propertyDefinition = new PropertyDefinition();
-		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-		dataTypes.put("", new DataTypeDefinition());
-		StorageOperationStatus result;
+    @Test
+    public void testAddProperty() throws Exception {
+        PropertyOperation testSubject;
+        String propertyName = "";
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        String resourceId = "";
+        Either<PropertyData, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validateAndUpdateProperty(propertyDefinition, dataTypes);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.addProperty(propertyName, propertyDefinition, resourceId);
+    }
 
-	
-	@Test
-	public void testAddPropertyToGraph() throws Exception {
-		PropertyOperation testSubject;
-		String propertyName = "";
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		String resourceId = "";
-		Either<PropertyData, JanusGraphOperationStatus> result;
+    @Test
+    public void testValidateAndUpdateProperty() throws Exception {
+        PropertyOperation testSubject;
+        IComplexDefaultValue propertyDefinition = new PropertyDefinition();
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        dataTypes.put("", new DataTypeDefinition());
+        StorageOperationStatus result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addPropertyToGraph(propertyName, propertyDefinition, resourceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.validateAndUpdateProperty(propertyDefinition, dataTypes);
+    }
 
-	
-	@Test
-	public void testAddPropertyToGraphByVertex() throws Exception {
-		PropertyOperation testSubject;
-		JanusGraphVertex metadataVertex = null;
-		String propertyName = "";
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		String resourceId = "";
-		JanusGraphOperationStatus result;
+    @Test
+    public void testAddPropertyToGraph() throws Exception {
+        PropertyOperation testSubject;
+        String propertyName = "";
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        String resourceId = "";
+        Either<PropertyData, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addPropertyToGraphByVertex(metadataVertex, propertyName, propertyDefinition, resourceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.addPropertyToGraph(propertyName, propertyDefinition, resourceId);
+    }
 
-	
-	@Test
-	public void testGetJanusGraphGenericDao() throws Exception {
-		PropertyOperation testSubject;
-		JanusGraphGenericDao result;
+    @Test
+    public void testAddPropertyToGraphByVertex() throws Exception {
+        PropertyOperation testSubject;
+        JanusGraphVertex metadataVertex = null;
+        String propertyName = "";
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        String resourceId = "";
+        JanusGraphOperationStatus result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getJanusGraphGenericDao();
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.addPropertyToGraphByVertex(metadataVertex, propertyName, propertyDefinition, resourceId);
+    }
 
-	@Test
-	public void testDeletePropertyFromGraph() throws Exception {
-		PropertyOperation testSubject;
-		String propertyId = "";
-		Either<PropertyData, JanusGraphOperationStatus> result;
+    @Test
+    public void testGetJanusGraphGenericDao() throws Exception {
+        PropertyOperation testSubject;
+        JanusGraphGenericDao result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.deletePropertyFromGraph(propertyId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getJanusGraphGenericDao();
+    }
 
-	
-	@Test
-	public void testUpdateProperty() throws Exception {
-		PropertyOperation testSubject;
-		String propertyId = "";
-		PropertyDefinition newPropertyDefinition = new PropertyDefinition();
-		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-		Either<PropertyData, StorageOperationStatus> result;
+    @Test
+    public void testDeletePropertyFromGraph() throws Exception {
+        PropertyOperation testSubject;
+        String propertyId = "";
+        Either<PropertyData, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updateProperty(propertyId, newPropertyDefinition, dataTypes);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.deletePropertyFromGraph(propertyId);
+    }
 
-	
-	@Test
-	public void testUpdatePropertyFromGraph() throws Exception {
-		PropertyOperation testSubject;
-		String propertyId = "";
-		PropertyDefinition propertyDefinition = null;
-		Either<PropertyData, JanusGraphOperationStatus> result;
+    @Test
+    public void testUpdateProperty() throws Exception {
+        PropertyOperation testSubject;
+        String propertyId = "";
+        PropertyDefinition newPropertyDefinition = new PropertyDefinition();
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        Either<PropertyData, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updatePropertyFromGraph(propertyId, propertyDefinition);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.updateProperty(propertyId, newPropertyDefinition, dataTypes);
+    }
 
+    @Test
+    public void testUpdatePropertyFromGraph() throws Exception {
+        PropertyOperation testSubject;
+        String propertyId = "";
+        PropertyDefinition propertyDefinition = null;
+        Either<PropertyData, JanusGraphOperationStatus> result;
 
-	@Test
-	public void testSetJanusGraphGenericDao()  {
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.updatePropertyFromGraph(propertyId, propertyDefinition);
+    }
 
-		PropertyOperation testSubject;
+    @Test
+    public void testSetJanusGraphGenericDao() {
+
+        PropertyOperation testSubject;
         HealingJanusGraphGenericDao janusGraphGenericDao = null;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setJanusGraphGenericDao(janusGraphGenericDao);
-	}
+        // default test
+        testSubject = createTestSubject();
+        testSubject.setJanusGraphGenericDao(janusGraphGenericDao);
+    }
 
-	
-	@Test
-	public void testAddPropertyToNodeType()  {
-		PropertyOperation testSubject;
-		String propertyName = "";
-		PropertyDefinition propertyDefinition = new PropertyDefinition();
-		NodeTypeEnum nodeType = NodeTypeEnum.Attribute;
-		String uniqueId = "";
-		Either<PropertyData, JanusGraphOperationStatus> result;
+    @Test
+    public void testAddPropertyToNodeType() {
+        PropertyOperation testSubject;
+        String propertyName = "";
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        NodeTypeEnum nodeType = NodeTypeEnum.Attribute;
+        String uniqueId = "";
+        Either<PropertyData, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addPropertyToNodeType(propertyName, propertyDefinition, nodeType, uniqueId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.addPropertyToNodeType(propertyName, propertyDefinition, nodeType, uniqueId);
+    }
 
-	
-	@Test
-	public void testFindPropertiesOfNode() throws Exception {
-		PropertyOperation testSubject;
-		NodeTypeEnum nodeType = null;
-		String uniqueId = "";
-		Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> result;
+    @Test
+    public void testFindPropertiesOfNode() throws Exception {
+        PropertyOperation testSubject;
+        NodeTypeEnum nodeType = null;
+        String uniqueId = "";
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findPropertiesOfNode(nodeType, uniqueId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.findPropertiesOfNode(nodeType, uniqueId);
+    }
 
-	
-	@Test
-	public void testDeletePropertiesAssociatedToNode() throws Exception {
-		PropertyOperation testSubject;
-		NodeTypeEnum nodeType = null;
-		String uniqueId = "";
-		Either<Map<String, PropertyDefinition>, StorageOperationStatus> result;
+    @Test
+    public void testDeletePropertiesAssociatedToNode() throws Exception {
+        PropertyOperation testSubject;
+        NodeTypeEnum nodeType = null;
+        String uniqueId = "";
+        Either<Map<String, PropertyDefinition>, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.deletePropertiesAssociatedToNode(nodeType, uniqueId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.deletePropertiesAssociatedToNode(nodeType, uniqueId);
+    }
 
-	
-	@Test
-	public void testDeleteAllPropertiesAssociatedToNode() throws Exception {
-		PropertyOperation testSubject;
-		NodeTypeEnum nodeType = null;
-		String uniqueId = "";
-		Either<Map<String, PropertyDefinition>, StorageOperationStatus> result;
+    @Test
+    public void testDeleteAllPropertiesAssociatedToNode() throws Exception {
+        PropertyOperation testSubject;
+        NodeTypeEnum nodeType = null;
+        String uniqueId = "";
+        Either<Map<String, PropertyDefinition>, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.deleteAllPropertiesAssociatedToNode(nodeType, uniqueId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.deleteAllPropertiesAssociatedToNode(nodeType, uniqueId);
+    }
 
-	
-	@Test
-	public void testIsPropertyExist() throws Exception {
-		PropertyOperation testSubject;
-		List<PropertyDefinition> properties = null;
-		String resourceUid = "";
-		String propertyName = "";
-		String propertyType = "";
-		boolean result;
+    @Test
+    public void testIsPropertyExist() throws Exception {
+        PropertyOperation testSubject;
+        List<PropertyDefinition> properties = null;
+        String resourceUid = "";
+        String propertyName = "";
+        String propertyType = "";
+        boolean result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isPropertyExist(properties, resourceUid, propertyName, propertyType);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.isPropertyExist(properties, resourceUid, propertyName, propertyType);
+    }
 
-	
-	@Test
-	public void testValidateAndUpdateRules() throws Exception {
-		PropertyOperation testSubject;
-		String propertyType = "";
-		List<PropertyRule> rules = null;
-		String innerType = "";
-		Map<String, DataTypeDefinition> dataTypes = null;
-		boolean isValidate = false;
-		ImmutablePair<String, Boolean> result;
+    @Test
+    public void testValidateAndUpdateRules() throws Exception {
+        PropertyOperation testSubject;
+        String propertyType = "";
+        List<PropertyRule> rules = null;
+        String innerType = "";
+        Map<String, DataTypeDefinition> dataTypes = null;
+        boolean isValidate = false;
+        ImmutablePair<String, Boolean> result;
 
-		// test 1
-		testSubject = createTestSubject();
-		rules = null;
-		result = testSubject.validateAndUpdateRules(propertyType, rules, innerType, dataTypes, isValidate);
-	}
+        // test 1
+        testSubject = createTestSubject();
+        rules = null;
+        result = testSubject.validateAndUpdateRules(propertyType, rules, innerType, dataTypes, isValidate);
+    }
 
-	
-	@Test
-	public void testAddRulesToNewPropertyValue() throws Exception {
-		PropertyOperation testSubject;
-		PropertyValueData propertyValueData = new PropertyValueData();
-		ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
-		String resourceInstanceId = "";
+    @Test
+    public void testAddRulesToNewPropertyValue() throws Exception {
+        PropertyOperation testSubject;
+        PropertyValueData propertyValueData = new PropertyValueData();
+        ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
+        String resourceInstanceId = "";
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.addRulesToNewPropertyValue(propertyValueData, resourceInstanceProperty, resourceInstanceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        testSubject.addRulesToNewPropertyValue(propertyValueData, resourceInstanceProperty, resourceInstanceId);
+    }
 
-	
-	@Test
-	public void testFindPropertyValue() throws Exception {
-		PropertyOperation testSubject;
-		String resourceInstanceId = "";
-		String propertyId = "";
-		ImmutablePair<JanusGraphOperationStatus, String> result;
+    @Test
+    public void testFindPropertyValue() throws Exception {
+        PropertyOperation testSubject;
+        String resourceInstanceId = "";
+        String propertyId = "";
+        ImmutablePair<JanusGraphOperationStatus, String> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.findPropertyValue(resourceInstanceId, propertyId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.findPropertyValue(resourceInstanceId, propertyId);
+    }
 
-	
-	@Test
-	public void testUpdateRulesInPropertyValue() throws Exception {
-		PropertyOperation testSubject;
-		PropertyValueData propertyValueData = new PropertyValueData();
-		ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
-		String resourceInstanceId = "";
+    @Test
+    public void testUpdateRulesInPropertyValue() throws Exception {
+        PropertyOperation testSubject;
+        PropertyValueData propertyValueData = new PropertyValueData();
+        ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
+        String resourceInstanceId = "";
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.updateRulesInPropertyValue(propertyValueData, resourceInstanceProperty, resourceInstanceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        testSubject.updateRulesInPropertyValue(propertyValueData, resourceInstanceProperty, resourceInstanceId);
+    }
 
-	
-	@Test
-	public void testGetAllPropertiesOfResourceInstanceOnlyPropertyDefId() throws Exception {
-		PropertyOperation testSubject;
-		String resourceInstanceUid = "";
-		Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
+    @Test
+    public void testGetAllPropertiesOfResourceInstanceOnlyPropertyDefId() throws Exception {
+        PropertyOperation testSubject;
+        String resourceInstanceUid = "";
+        Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllPropertiesOfResourceInstanceOnlyPropertyDefId(resourceInstanceUid);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getAllPropertiesOfResourceInstanceOnlyPropertyDefId(resourceInstanceUid);
+    }
 
-	
-	@Test
-	public void testRemovePropertyOfResourceInstance() throws Exception {
-		PropertyOperation testSubject;
-		String propertyValueUid = "";
-		String resourceInstanceId = "";
-		Either<PropertyValueData, JanusGraphOperationStatus> result;
+    @Test
+    public void testRemovePropertyOfResourceInstance() throws Exception {
+        PropertyOperation testSubject;
+        String propertyValueUid = "";
+        String resourceInstanceId = "";
+        Either<PropertyValueData, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.removePropertyOfResourceInstance(propertyValueUid, resourceInstanceId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.removePropertyOfResourceInstance(propertyValueUid, resourceInstanceId);
+    }
 
-	
-	@Test
-	public void testRemovePropertyValueFromResourceInstance() throws Exception {
-		PropertyOperation testSubject;
-		String propertyValueUid = "";
-		String resourceInstanceId = "";
-		boolean inTransaction = false;
-		Either<ComponentInstanceProperty, StorageOperationStatus> result;
+    @Test
+    public void testRemovePropertyValueFromResourceInstance() throws Exception {
+        PropertyOperation testSubject;
+        String propertyValueUid = "";
+        String resourceInstanceId = "";
+        boolean inTransaction = false;
+        Either<ComponentInstanceProperty, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.removePropertyValueFromResourceInstance(propertyValueUid, resourceInstanceId,
-				inTransaction);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.removePropertyValueFromResourceInstance(propertyValueUid, resourceInstanceId,
+            inTransaction);
+    }
 
-	
-	@Test
-	public void testBuildResourceInstanceProperty() throws Exception {
-		PropertyOperation testSubject;
-		PropertyValueData propertyValueData = new PropertyValueData();
-		ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
-		ComponentInstanceProperty result;
+    @Test
+    public void testBuildResourceInstanceProperty() throws Exception {
+        PropertyOperation testSubject;
+        PropertyValueData propertyValueData = new PropertyValueData();
+        ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
+        ComponentInstanceProperty result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.buildResourceInstanceProperty(propertyValueData, resourceInstanceProperty);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.buildResourceInstanceProperty(propertyValueData, resourceInstanceProperty);
+    }
 
-	
-	@Test
-	public void testIsPropertyDefaultValueValid() throws Exception {
-		PropertyOperation testSubject;
-		IComplexDefaultValue propertyDefinition = null;
-		Map<String, DataTypeDefinition> dataTypes = null;
-		boolean result;
+    @Test
+    public void testIsPropertyDefaultValueValid() throws Exception {
+        PropertyOperation testSubject;
+        IComplexDefaultValue propertyDefinition = null;
+        Map<String, DataTypeDefinition> dataTypes = null;
+        boolean result;
 
-		// test 1
-		testSubject = createTestSubject();
-		propertyDefinition = null;
-		result = testSubject.isPropertyDefaultValueValid(propertyDefinition, dataTypes);
-		Assert.assertEquals(false, result);
-	}
+        // test 1
+        testSubject = createTestSubject();
+        propertyDefinition = null;
+        result = testSubject.isPropertyDefaultValueValid(propertyDefinition, dataTypes);
+        Assert.assertEquals(false, result);
+    }
 
-	
-	@Test
-	public void testIsPropertyTypeValid() throws Exception {
-		PropertyOperation testSubject;
-		IComplexDefaultValue property = null;
-		boolean result;
+    @Test
+    public void testIsPropertyTypeValid() throws Exception {
+        PropertyOperation testSubject;
+        IComplexDefaultValue property = null;
+        boolean result;
 
-		// test 1
-		testSubject = createTestSubject();
-		property = null;
-		result = testSubject.isPropertyTypeValid(property, (String)null);
-		Assert.assertEquals(false, result);
-	}
+        // test 1
+        testSubject = createTestSubject();
+        property = null;
+        result = testSubject.isPropertyTypeValid(property, (String) null);
+        Assert.assertEquals(false, result);
+    }
 
-	
-	@Test
-	public void testIsPropertyInnerTypeValid() throws Exception {
-		PropertyOperation testSubject;
-		IComplexDefaultValue property = null;
-		Map<String, DataTypeDefinition> dataTypes = null;
-		ImmutablePair<String, Boolean> result;
+    @Test
+    public void testIsPropertyInnerTypeValid() throws Exception {
+        PropertyOperation testSubject;
+        IComplexDefaultValue property = null;
+        Map<String, DataTypeDefinition> dataTypes = null;
+        ImmutablePair<String, Boolean> result;
 
-		// test 1
-		testSubject = createTestSubject();
-		property = null;
-		result = testSubject.isPropertyInnerTypeValid(property, dataTypes);
-	}
+        // test 1
+        testSubject = createTestSubject();
+        property = null;
+        result = testSubject.isPropertyInnerTypeValid(property, dataTypes);
+    }
 
-	
-	@Test
-	public void testGetAllPropertiesOfResourceInstanceOnlyPropertyDefId_1() throws Exception {
-		PropertyOperation testSubject;
-		String resourceInstanceUid = "";
-		NodeTypeEnum instanceNodeType = null;
-		Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
+    @Test
+    public void testGetAllPropertiesOfResourceInstanceOnlyPropertyDefId_1() throws Exception {
+        PropertyOperation testSubject;
+        String resourceInstanceUid = "";
+        NodeTypeEnum instanceNodeType = null;
+        Either<List<ComponentInstanceProperty>, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllPropertiesOfResourceInstanceOnlyPropertyDefId(resourceInstanceUid, instanceNodeType);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getAllPropertiesOfResourceInstanceOnlyPropertyDefId(resourceInstanceUid, instanceNodeType);
+    }
 
-	
-	@Test
-	public void testFindDefaultValueFromSecondPosition() throws Exception {
-		PropertyOperation testSubject;
-		List<String> pathOfComponentInstances = null;
-		String propertyUniqueId = "";
-		String defaultValue = "";
-		Either<String, JanusGraphOperationStatus> result;
+    @Test
+    public void testFindDefaultValueFromSecondPosition() throws Exception {
+        PropertyOperation testSubject;
+        List<String> pathOfComponentInstances = null;
+        String propertyUniqueId = "";
+        String defaultValue = "";
+        Either<String, JanusGraphOperationStatus> result;
 
-		// test 1
-		testSubject = createTestSubject();
-		pathOfComponentInstances = null;
-		result = testSubject.findDefaultValueFromSecondPosition(pathOfComponentInstances, propertyUniqueId,
-				defaultValue);
-	}
+        // test 1
+        testSubject = createTestSubject();
+        pathOfComponentInstances = null;
+        result = testSubject.findDefaultValueFromSecondPosition(pathOfComponentInstances, propertyUniqueId,
+            defaultValue);
+    }
 
-	
-	@Test
-	public void testUpdatePropertyByBestMatch() throws Exception {
-		PropertyOperation testSubject;
-		String propertyUniqueId = "";
-		ComponentInstanceProperty instanceProperty = new ComponentInstanceProperty();
-		List<String> path = new ArrayList<>();
-		path.add("path");
-		instanceProperty.setPath(path);
-		Map<String, ComponentInstanceProperty> instanceIdToValue = new HashMap<>();
-		instanceIdToValue.put("123", instanceProperty);
+    @Test
+    public void testUpdatePropertyByBestMatch() throws Exception {
+        PropertyOperation testSubject;
+        String propertyUniqueId = "";
+        ComponentInstanceProperty instanceProperty = new ComponentInstanceProperty();
+        List<String> path = new ArrayList<>();
+        path.add("path");
+        instanceProperty.setPath(path);
+        Map<String, ComponentInstanceProperty> instanceIdToValue = new HashMap<>();
+        instanceIdToValue.put("123", instanceProperty);
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.updatePropertyByBestMatch(propertyUniqueId, instanceProperty, instanceIdToValue);
-	}
+        // default test
+        testSubject = createTestSubject();
+        testSubject.updatePropertyByBestMatch(propertyUniqueId, instanceProperty, instanceIdToValue);
+    }
 
-	
-	@Test
-	public void testGetDataTypeByUid() throws Exception {
-		PropertyOperation testSubject;
-		String uniqueId = "";
-		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
+    @Test
+    public void testGetDataTypeByUid() throws Exception {
+        PropertyOperation testSubject;
+        String uniqueId = "";
+        Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDataTypeByUid(uniqueId);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getDataTypeByUid(uniqueId);
+    }
 
-	
-	@Test
-	public void testAddAndGetDataType() throws Exception {
-	    final String dataTypeName = "myDataType";
-		DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
-		dataTypeDefinition.setName("myDataType");
-		Either<DataTypeDefinition, StorageOperationStatus> result;
-		
+    @Test
+    public void testAddAndGetDataType() throws Exception {
+        final String dataTypeName = "myDataType";
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName("myDataType");
+        Either<DataTypeDefinition, StorageOperationStatus> result;
+
         Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
             .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
-        
+
         Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
             .getNode(GraphPropertiesDictionary.NAME.getProperty(), dataTypeName, DataTypeData.class, null);
-        
-        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
-            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property), Mockito.eq(PropertyData.class));
 
-		result = propertyOperation.addDataType(dataTypeDefinition);
+        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
+            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property),
+                Mockito.eq(PropertyData.class));
+
+        result = propertyOperation.addDataType(dataTypeDefinition);
         assertTrue(result.isLeft());
-        
+
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
-            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType), Mockito.eq(DataTypeData.class));
-		
-	    result = propertyOperation.getDataTypeByName(dataTypeName, null, false);
-	    assertTrue(result.isLeft());
-	    
-	    result = propertyOperation.getDataTypeByName(dataTypeName, null);
-	    assertTrue(result.isLeft());
-	    
+            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType),
+                Mockito.eq(DataTypeData.class));
+
+        result = propertyOperation.getDataTypeByName(dataTypeName, null, false);
+        assertTrue(result.isLeft());
+
+        result = propertyOperation.getDataTypeByName(dataTypeName, null);
+        assertTrue(result.isLeft());
+
         Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
             .getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), dataTypeName + ".datatype", DataTypeData.class);
-	    
-	    Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("myDataType.datatype");
-	    assertTrue(resultGetByUid.isLeft());
-	    
-	    Either<Boolean, JanusGraphOperationStatus> resultIsDefinedDataType = propertyOperation.isDefinedInDataTypes(dataTypeName, null);
+
+        Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("myDataType.datatype");
+        assertTrue(resultGetByUid.isLeft());
+
+        Either<Boolean, JanusGraphOperationStatus> resultIsDefinedDataType = propertyOperation.isDefinedInDataTypes(dataTypeName, null);
         assertTrue(resultIsDefinedDataType.isLeft());
-	}
-	
-	   @Test
-	    public void testAddDataTypeToModel() throws Exception {
-	        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
-	        dataTypeDefinition.setName("testName");
-	        dataTypeDefinition.setModel("testModel");
-	        Either<DataTypeDefinition, StorageOperationStatus> result;
+    }
 
-	        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
-                .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
-	        
-	        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
-                .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
+    @Test
+    public void testAddDataTypeToModel() throws Exception {
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName("testName");
+        dataTypeDefinition.setModel("testModel");
+        Either<DataTypeDefinition, StorageOperationStatus> result;
 
-	        result = propertyOperation.addDataType(dataTypeDefinition);
-	        assertTrue(result.isLeft());
-	        
-	        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
-	            .getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "testModel.testName.datatype", DataTypeData.class);
-	        
-	        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
-	            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property), Mockito.eq(PropertyData.class));
-	        
-	        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
-	            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType), Mockito.eq(DataTypeData.class));
-	        
-	        Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("testModel.testName.datatype");
-	        assertTrue(resultGetByUid.isLeft());
-	    }
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
 
-	
-	@Test
-	public void testGetDataTypeByUidWithoutDerivedDataTypes() throws Exception {
-		PropertyOperation testSubject;
-		String uniqueId = "";
-		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
+        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
+            .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDataTypeByUidWithoutDerivedDataTypes(uniqueId);
-	}
+        result = propertyOperation.addDataType(dataTypeDefinition);
+        assertTrue(result.isLeft());
 
-	
-	@Test
-	public void testGetAllDataTypes() throws Exception {
-		PropertyOperation testSubject;
-		Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result;
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "testModel.testName.datatype", DataTypeData.class);
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllDataTypes();
-	}
+        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
+            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property),
+                Mockito.eq(PropertyData.class));
 
-	
-	@Test
-	public void testCheckInnerType() throws Exception {
-		PropertyOperation testSubject;
-		PropertyDataDefinition propDataDef = new PropertyDataDefinition();
-		Either<String, JanusGraphOperationStatus> result;
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
+            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType),
+                Mockito.eq(DataTypeData.class));
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.checkInnerType(propDataDef);
-	}
+        Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("testModel.testName.datatype");
+        assertTrue(resultGetByUid.isLeft());
+    }
 
-	@Test
-	public void testValidateAndUpdatePropertyValue() throws Exception {
-		PropertyOperation testSubject;
-		String propertyType = "";
-		String value = "";
-		boolean isValidate = false;
-		String innerType = "";
-		Map<String, DataTypeDefinition> dataTypes = null;
-		Either<Object, Boolean> result;
+    @Test
+    public void testGetDataTypeByUidWithoutDerivedDataTypes() throws Exception {
+        PropertyOperation testSubject;
+        String uniqueId = "";
+        Either<DataTypeDefinition, JanusGraphOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validateAndUpdatePropertyValue(propertyType, value, isValidate, innerType, dataTypes);
-	}
-
-	
-	@Test
-	public void testValidateAndUpdatePropertyValue_1() throws Exception {
-		PropertyOperation testSubject;
-		String propertyType = "";
-		String value = "";
-		String innerType = "";
-		Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-		dataTypes.put("", new DataTypeDefinition());
-		Either<Object, Boolean> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.validateAndUpdatePropertyValue(propertyType, value, innerType, dataTypes);
-	}
-
-	
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getDataTypeByUidWithoutDerivedDataTypes(uniqueId);
+    }
 
 
-	
-	@Test
-	public void testAddPropertiesToElementType() throws Exception {
-		PropertyOperation testSubject;
-		String uniqueId = "";
-		NodeTypeEnum elementType = null;
-		List<PropertyDefinition> properties = null;
-		Either<Map<String, PropertyData>, JanusGraphOperationStatus> result;
+    @Test
+    public void testGetAllDataTypes() throws Exception {
+        PropertyOperation testSubject;
+        Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result;
 
-		// test 1
-		testSubject = createTestSubject();
-		properties = null;
-		result = testSubject.addPropertiesToElementType(uniqueId, elementType, properties);
-	}
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.getAllDataTypes();
+    }
 
-	
-	@Test
-	public void testUpdateDataType() throws Exception {
-		PropertyOperation testSubject;
-		DataTypeDefinition newDataTypeDefinition = new DataTypeDefinition();
-		DataTypeDefinition oldDataTypeDefinition = new DataTypeDefinition();
-		Either<DataTypeDefinition, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updateDataType(newDataTypeDefinition, oldDataTypeDefinition);
-	}
+    @Test
+    public void testCheckInnerType() throws Exception {
+        PropertyOperation testSubject;
+        PropertyDataDefinition propDataDef = new PropertyDataDefinition();
+        Either<String, JanusGraphOperationStatus> result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.checkInnerType(propDataDef);
+    }
+
+    @Test
+    public void testValidateAndUpdatePropertyValue() throws Exception {
+        PropertyOperation testSubject;
+        String propertyType = "";
+        String value = "";
+        boolean isValidate = false;
+        String innerType = "";
+        Map<String, DataTypeDefinition> dataTypes = null;
+        Either<Object, Boolean> result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.validateAndUpdatePropertyValue(propertyType, value, isValidate, innerType, dataTypes);
+    }
+
+    @Test
+    public void testValidateAndUpdatePropertyValue_1() throws Exception {
+        PropertyOperation testSubject;
+        String propertyType = "";
+        String value = "";
+        String innerType = "";
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        dataTypes.put("", new DataTypeDefinition());
+        Either<Object, Boolean> result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.validateAndUpdatePropertyValue(propertyType, value, innerType, dataTypes);
+    }
+
+    @Test
+    public void testAddPropertiesToElementType() throws Exception {
+        PropertyOperation testSubject;
+        String uniqueId = "";
+        NodeTypeEnum elementType = null;
+        List<PropertyDefinition> properties = null;
+        Either<Map<String, PropertyData>, JanusGraphOperationStatus> result;
+
+        // test 1
+        testSubject = createTestSubject();
+        properties = null;
+        result = testSubject.addPropertiesToElementType(uniqueId, elementType, properties);
+    }
+
+    @Test
+    public void testUpdateDataType() throws Exception {
+        PropertyOperation testSubject;
+        DataTypeDefinition newDataTypeDefinition = new DataTypeDefinition();
+        DataTypeDefinition oldDataTypeDefinition = new DataTypeDefinition();
+        Either<DataTypeDefinition, StorageOperationStatus> result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.updateDataType(newDataTypeDefinition, oldDataTypeDefinition);
+    }
+
 }
