@@ -20,7 +20,7 @@
 
 import * as _ from "lodash";
 import {Inject, Injectable} from '@angular/core';
-import { DataTypeModel, DataTypesMap, PropertyFEModel, DerivedFEProperty} from "app/models";
+import {DataTypeModel, DataTypesMap, PropertyFEModel, DerivedFEProperty, PropertyBEModel} from "app/models";
 import { DataTypesService } from "app/services/data-types-service";
 import { PROPERTY_DATA } from "app/utils";
 import {DerivedFEAttribute} from "../../models/attributes-outputs/derived-fe-attribute";
@@ -76,6 +76,11 @@ export class DataTypeService {
     public findById(id: string): Observable<DataTypeModel> {
         const url = `${this.dataTypeUrl}/${id}`
         return this.httpClient.get<DataTypeModel>(url);
+    }
+
+    public findAllProperties(id: string): Observable<Array<PropertyBEModel>> {
+        const url = `${this.dataTypeUrl}/${id}/properties`
+        return this.httpClient.get<Array<PropertyBEModel>>(url);
     }
 
     public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){

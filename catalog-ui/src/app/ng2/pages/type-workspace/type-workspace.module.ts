@@ -28,9 +28,10 @@ import {UiElementsModule} from "../../components/ui/ui-elements.module";
 import {LayoutModule} from "../../components/layout/layout.module";
 import {TypeWorkspaceGeneralComponent} from './type-workspace-general/type-workspace-general.component';
 import {UpgradeModule} from "@angular/upgrade/static";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {DataTypeService} from "../../services/data-type.service";
+import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
 
 @NgModule({
     imports: [
@@ -40,11 +41,13 @@ import {DataTypeService} from "../../services/data-type.service";
         UpgradeModule,
         ReactiveFormsModule,
         TranslateModule,
+        FormsModule,
     ],
     declarations: [
         TypeWorkspaceComponent,
         WorkspaceMenuComponent,
-        TypeWorkspaceGeneralComponent
+        TypeWorkspaceGeneralComponent,
+        TypeWorkspacePropertiesComponent
     ],
     providers: [
         CacheService,

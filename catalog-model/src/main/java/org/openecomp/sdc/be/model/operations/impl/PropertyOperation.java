@@ -330,13 +330,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         List<PropertyConstraint> constraints = propertyDefinition.getConstraints();
         propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(uniqueId, propertyName));
         PropertyData propertyData = new PropertyData(propertyDefinition, convertConstraintsToString(constraints));
-        if (log.isDebugEnabled()) {
-            log.debug(BEFORE_ADDING_PROPERTY_TO_GRAPH, propertyData);
-        }
+        log.debug(BEFORE_ADDING_PROPERTY_TO_GRAPH, propertyData);
         Either<PropertyData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao.createNode(propertyData, PropertyData.class);
-        if (log.isDebugEnabled()) {
-            log.debug(AFTER_ADDING_PROPERTY_TO_GRAPH, propertyData);
-        }
+        log.debug(AFTER_ADDING_PROPERTY_TO_GRAPH, propertyData);
         if (createNodeResult.isRight()) {
             JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
             log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
@@ -346,8 +342,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         props.put(GraphPropertiesDictionary.NAME.getProperty(), propertyName);
         UniqueIdData uniqueIdData = new UniqueIdData(nodeType, uniqueId);
         log.debug("Before associating {} to property {}", uniqueIdData, propertyName);
-        Either<GraphRelation, JanusGraphOperationStatus> createRelResult = janusGraphGenericDao
-            .createRelation(uniqueIdData, propertyData, GraphEdgeLabels.PROPERTY, props);
+        Either<GraphRelation, JanusGraphOperationStatus> createRelResult =
+            janusGraphGenericDao.createRelation(uniqueIdData, propertyData, GraphEdgeLabels.PROPERTY, props);
         if (createRelResult.isRight()) {
             JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
             log.error(FAILED_TO_ASSOCIATE_RESOURCE_TO_PROPERTY_IN_GRAPH_STATUS_IS, uniqueId, propertyName, operationStatus);

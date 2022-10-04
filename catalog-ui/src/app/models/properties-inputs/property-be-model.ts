@@ -197,5 +197,17 @@ export class PropertyBEModel {
     public isToscaFunction(): boolean {
         return this.toscaFunction != null;
     }
+
+    /**
+     * Gets the schema type, if there is a schema. Otherwise, returns undefined.
+     *
+     * @return the schema type.
+     */
+    public getSchemaType(): string {
+        if (this.schema && this.schema.property) {
+            return this.schema.property.type;
+        }
+        return undefined;
+    }
 }
 

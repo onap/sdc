@@ -1,0 +1,62 @@
+<!--
+  ~ -
+  ~  ============LICENSE_START=======================================================
+  ~  Copyright (C) 2022 Nordix Foundation.
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
+<div class="workspace-properties">
+  <div id="left-top-bar">
+    <span id="properties-count">{{'PROPERTY_SHOWING_LABEL' | translate}}: {{filteredProperties.length}} of {{properties.length}}</span>
+    <input id="search-by-name" type="search" [placeholder]="'SEARCH_LABEL' | translate" [ngModel]="tableFilterTerm" (ngModelChange)="this.tableSearchTermUpdate.next($event)"/>
+    <span class="sprite magnification-glass search-button"></span>
+  </div>
+  <div class="table-container-flex">
+    <div class="table" [ngClass]="{'view-mode': isViewOnly}">
+      <div class="head flex-container">
+        <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="onUpdateSort(header.property)">{{header.title}}
+          <span *ngIf="tableSortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': tableColumnReverse, 'up': !tableColumnReverse}"></span>
+        </div>
+        <div class="table-no-text-header head-row flex-item" *ngIf="!isViewOnly"><span class="delete-col-header"></span></div>
+      </div>
+
+      <div class="body">
+          <div *ngIf="filteredProperties.length === 0" class="no-row-text">
+            {{'PROPERTY_LIST_EMPTY_MESSAGE' | translate}}
+          </div>
+            <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row">
+            <div class="table-col-general flex-item text" [title]="property.name">
+              <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': isViewOnly}">{{property.name}}</a>
+            </div>
+
+            <div class="table-col-general flex-item text" [title]="property.type">
+              <span [attr.data-tests-id]="'property-type-' + property.name">{{property.type}}</span>
+            </div>
+            <div class="table-col-general flex-item text" [title]="property.getSchemaType() || ''">
+              <span [attr.data-tests-id]="'property-schema-' + property.name">{{property.getSchemaType() || ''}}</span>
+            </div>
+            <div class="table-col-general flex-item text" [title]="property.description">
+              <span [attr.data-tests-id]="'property-description-' + property.name" [title]="property.description">{{property.description}}</span>
+            </div>
+            <div class="table-btn-col flex-item" *ngIf="!isViewOnly"></div>
+          </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
