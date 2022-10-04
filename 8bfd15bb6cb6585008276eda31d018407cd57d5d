@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a281d6a_9a4cf239",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 12
+      },
+      "lineNbr": 1297,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "Update docs/configuration.rst as well",
+      "range": {
+        "startLine": 1296,
+        "startChar": 0,
+        "endLine": 1297,
+        "endChar": 68
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97da9e35_e1747b5c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/DataValidatorFilter.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "do we need to clean any leading/trailing spaces from the elements of the comma separated list",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 77
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db3dfa88_d15f13db",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/RequestWrapperFilter.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "Could we not just instantiate RequestWrapper in doFilter in DataValidatorFilter instead of creating this whole class to do it?",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 87
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d00dc09_0caf1118",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/DataValidator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "Not obvious what constraints, please expand so reader can understand that basis of the validation and where the pplied constraints come from",
+      "range": {
+        "startLine": 30,
+        "startChar": 43,
+        "endLine": 30,
+        "endChar": 66
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12afcc7e_158593ae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/utils/SecureString.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "too vague",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 38
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bd8b457_8e678ebb",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/NoHtml.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "validated by NoHtlmValidator",
+      "range": {
+        "startLine": 34,
+        "startChar": 61,
+        "endLine": 34,
+        "endChar": 131
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "116454b8_5958838b",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/NoHtmlValidator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-04T11:09:01Z",
+      "side": 1,
+      "message": "change to \"contains no html\"",
+      "range": {
+        "startLine": 29,
+        "startChar": 68,
+        "endLine": 29,
+        "endChar": 78
+      },
+      "revId": "8bfd15bb6cb6585008276eda31d018407cd57d5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
