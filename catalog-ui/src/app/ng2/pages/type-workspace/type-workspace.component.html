@@ -42,9 +42,11 @@
             {{currentMenu.text}}
           </div>
         </div>
-        <div class="w-sdc-main-container-body-content">
-          <app-type-workspace-general *ngIf="currentMenu.state === 'general' && dataType" [dataType]="dataType"></app-type-workspace-general>
+        <div class="w-sdc-main-container-body-content" *ngIf="dataType">
+          <app-type-workspace-general *ngIf="currentMenu.state === 'general'" [dataType]="dataType"></app-type-workspace-general>
+          <app-type-workspace-properties *ngIf="currentMenu.state === 'properties'" [dataType]="dataType"></app-type-workspace-properties>
         </div>
+
       </div>
 
     </div>

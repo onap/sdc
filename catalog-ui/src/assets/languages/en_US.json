@@ -41,6 +41,7 @@
   "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
   "GENERAL_LABEL_SOURCE_SERVICE_NAME": "Source Service Name:",
   "GENERAL_LABEL_RESOURCE_CUSTOMIZATION_UUID": "Resource Customization UUID:",
+  "SEARCH_LABEL": "Search",
   "=========== GENERAL_TAB ===========": "",
   "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER": "Vendor Model Number",
   "GENERAL_TAB_LABEL_SERVICE_TYPE": "Service Type",
@@ -578,5 +579,8 @@
   "MODIFIED_LABEL": "Modified",
   "UNIQUE_ID_LABEL": "Unique Id",
   "=========== SERVICE IMPORT ===========": "",
-  "IMPORT_FAILURE_MESSAGE_TEXT": "Import Failure - error reading CSAR"
+  "IMPORT_FAILURE_MESSAGE_TEXT": "Import Failure - error reading CSAR",
+  "=========== PROPERTIES ===========": "",
+  "PROPERTY_LIST_EMPTY_MESSAGE": "There are no properties to display",
+  "PROPERTY_SHOWING_LABEL": "Showing Properties"
 }
