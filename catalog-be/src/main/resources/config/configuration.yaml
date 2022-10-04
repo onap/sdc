@@ -927,3 +927,6 @@ directives:
   - selectable
   - substitute
   - substitutable
+
+# Comma separated list of excluded URLs by the DataValidatorFilter
+dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
