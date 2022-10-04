@@ -64,6 +64,7 @@ template "catalog-be-config" do
                 :cassandra_usr => node['cassandra'][:cassandra_user],
                 :cassandra_truststore_password => node['cassandra'][:truststore_password],
                 :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}",
+                :permittedAncestors => "#{ENV['permittedAncestors']}",
                 :dmaap_active => node['DMAAP']['active']
             })
 end
