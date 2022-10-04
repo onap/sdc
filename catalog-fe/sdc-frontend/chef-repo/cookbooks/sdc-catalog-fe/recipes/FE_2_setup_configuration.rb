@@ -13,6 +13,7 @@ template "catalog-fe-config" do
       :basic_auth_flag => node['basic_auth']['enabled'],
       :user_name => node['basic_auth'][:user_name],
       :user_pass => node['basic_auth'][:user_pass],
+      :permittedAncestors => "#{ENV['permittedAncestors']}",
       :dcae_fe_vip  => node['DCAE_FE_VIP']
    })
 end

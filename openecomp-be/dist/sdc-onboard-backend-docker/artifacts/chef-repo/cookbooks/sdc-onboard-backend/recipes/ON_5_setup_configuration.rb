@@ -23,11 +23,10 @@ template "onboard-be-config" do
       :catalog_notification_url        => node['ONBOARDING_BE']['catalog_notification_url'],
       :catalog_be_http_port            => node['BE'][:http_port],
       :catalog_be_ssl_port             => node['BE'][:https_port],
+      :permittedAncestors              => "#{ENV['permittedAncestors']}",
       :catalog_be_fqdn                 => node['Nodes']['BE']
    })
 end
-
-
 
 template "VnfrepoConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/config-vnfrepo.yaml"
@@ -40,7 +39,6 @@ template "VnfrepoConfiguration" do
       :VNFREPO_PORT => node['VnfRepo']['vnfRepoPort']
    })
 end
-
 
 template "HelmValidatorConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/config-helmvalidator.yaml"
@@ -57,7 +55,6 @@ template "HelmValidatorConfiguration" do
       :HVALIDATOR_STRICT_LINTABLE   => node['HelmValidator']['strict_lintable']
    })
 end
-
 
 template "ExternalTestingConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/externaltesting-configuration.yaml"

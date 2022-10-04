@@ -2,6 +2,8 @@
 	webseal {
 		fe="<%= @fe_url %>"
 		portalCookieName="EPService"
+		#Space separated list of permitted ancestors
+		permittedAncestors="<%= @permittedAncestors %>"
 		users = [
 			{
 				userId="cs0008"
@@ -9,7 +11,7 @@
 				firstName="Carlos"
 				lastName="Santana"
 				role="Designer"
-				email="csantana@sdc.com"			
+				email="csantana@sdc.com"
 			},
 			{
 				userId="jh0003"

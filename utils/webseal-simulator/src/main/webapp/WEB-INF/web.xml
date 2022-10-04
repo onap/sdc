@@ -38,9 +38,18 @@
         <url-pattern>/create</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
+        <filter-class>org.openecomp.sdc.webseal.simulator.ContentSecurityPolicyHeaderFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <welcome-file-list>
         <welcome-file>login</welcome-file>
     </welcome-file-list>
 
 </web-app>
-

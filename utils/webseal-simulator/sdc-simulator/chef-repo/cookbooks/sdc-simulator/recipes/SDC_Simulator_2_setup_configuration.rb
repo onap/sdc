@@ -6,7 +6,6 @@ else
     fe_url="http://#{node['Nodes']['FE']}:#{node['FE'][:http_port]}"
 end
 
-
 template "webseal.conf" do
    path "#{ENV['JETTY_BASE']}/config/sdc-simulator/webseal.conf"
    source "SDC-Simulator-webseal.conf.erb"
@@ -14,6 +13,7 @@ template "webseal.conf" do
    group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
-      :fe_url  =>"#{fe_url}"
+      :fe_url  =>"#{fe_url}",
+      :permittedAncestors => "#{ENV['permittedAncestors']}"
    })
 end
