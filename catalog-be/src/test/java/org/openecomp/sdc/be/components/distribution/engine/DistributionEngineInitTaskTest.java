@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
@@ -54,6 +55,8 @@ class DistributionEngineInitTaskTest {
 
     private CambriaHandler cambriaHandler;
 
+    private KafkaHandler kafkaHandler;
+
     @BeforeEach
     public void setup() {
         ExternalConfiguration.setAppName("catalog-be");
@@ -65,6 +68,7 @@ class DistributionEngineInitTaskTest {
 
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         cambriaHandler = Mockito.mock(CambriaHandler.class);
+        kafkaHandler = Mockito.mock(KafkaHandler.class);
     }
 
     @Test
@@ -88,7 +92,7 @@ class DistributionEngineInitTaskTest {
         assertEquals("check next retry interval reach max retry interval", initTask.getCurrentRetryInterval(), maxRetry);
 
     }
-    
+
     @Test
     void checkStartTask() {
 
@@ -100,10 +104,10 @@ class DistributionEngineInitTaskTest {
         deConfiguration.setInitRetryIntervalSec(retry);
         deConfiguration.setInitMaxIntervalSec(maxRetry);
         DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
-        
+
         initTask.startTask();
     }
-    
+
     @Test
     void checkRestartTask() {
 
@@ -115,10 +119,10 @@ class DistributionEngineInitTaskTest {
         deConfiguration.setInitRetryIntervalSec(retry);
         deConfiguration.setInitMaxIntervalSec(maxRetry);
         DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
-        
+
         initTask.restartTask();
     }
-    
+
     @Test
     void checkStopTask() {
 
@@ -130,12 +134,12 @@ class DistributionEngineInitTaskTest {
         deConfiguration.setInitRetryIntervalSec(retry);
         deConfiguration.setInitMaxIntervalSec(maxRetry);
         DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
-        
+
         initTask.stopTask();
         initTask.startTask();
         initTask.stopTask();
     }
-    
+
     @Test
     void checkDestroy() {
 
@@ -147,10 +151,10 @@ class DistributionEngineInitTaskTest {
         deConfiguration.setInitRetryIntervalSec(retry);
         deConfiguration.setInitMaxIntervalSec(maxRetry);
         DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, deConfiguration, envName, new AtomicBoolean(false), componentsUtils, null, readEnvFromConfig(deConfiguration));
-        
+
         initTask.destroy();
     }
-    
+
     @Test
     void checkRun() {
 
@@ -193,10 +197,10 @@ class DistributionEngineInitTaskTest {
         initTask.setCambriaHandler(cambriaHandler);
 
         boolean initFlow = initTask.initFlow();
-        
+
         initTask.run();
     }
-    
+
     @Test
     void testInitFlowScenarioSuccess() {
 
@@ -241,6 +245,20 @@ class DistributionEngineInitTaskTest {
         boolean initFlow = initTask.initFlow();
         assertTrue("check init flow succeed", initFlow);
 
+    }
+
+    @Test
+    void testInitFlowSuccessKafkaEnabled(){
+        DistributionEngineConfiguration config = new DistributionEngineConfiguration();
+        config.setInitRetryIntervalSec(1);
+        config.setInitMaxIntervalSec(1);
+
+        when(kafkaHandler.isKafkaActive()).thenReturn(true);
+        DistributionEngineInitTask initTask = new DistributionEngineInitTask(0l, config, null, new AtomicBoolean(false), componentsUtils, null, null);
+        initTask.setKafkaHandler(kafkaHandler);
+
+        boolean initFlow = initTask.initFlow();
+        assertTrue("check init flow succeed", initFlow);
     }
 
     @Test
