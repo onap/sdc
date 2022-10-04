@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "51bf6c9c_a855f238",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-04T09:10:23Z",
+      "side": 1,
+      "message": "You should let the BusinessException pass:\ncatch (final BusinessException e) {\n   throw e;\n}\nIt will be handled by some ExceptionMapper.",
+      "parentUuid": "4c82c60a_003c184c",
+      "range": {
+        "startLine": 88,
+        "startChar": 17,
+        "endLine": 88,
+        "endChar": 42
+      },
+      "revId": "089374d642284e0736588ff61fe08ca7f26f9e9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "816f057e_238bfa0a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
         "patchSetId": 10
