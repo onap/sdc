@@ -92,6 +92,10 @@ public class DmaapHealth {
             log.debug("Dmaap health check task disabled");
             return this;
         }
+        if (Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "false"))) {
+            log.debug("Dmaap no longer in use");
+            return this;
+        }
         log.trace("Enter init method of Dmaap health");
         synchronized (DmaapHealth.class) {
             this.configuration = ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration();
