@@ -36,8 +36,8 @@ public class DistributionNotificationSender {
     private static final Logger logger = Logger.getLogger(DistributionNotificationSender.class.getName());
     @javax.annotation.Resource
     protected ComponentsUtils componentUtils;
-    private CambriaHandler cambriaHandler = new CambriaHandler();
-    private DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
+    private final CambriaHandler cambriaHandler = new CambriaHandler();
+    private final DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 
     public ActionStatus sendNotification(String topicName, String distributionId, EnvironmentMessageBusData messageBusData,
                                          INotificationData notificationData, Service service, User modifier) {
