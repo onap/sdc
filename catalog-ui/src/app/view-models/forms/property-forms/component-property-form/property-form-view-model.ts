@@ -62,6 +62,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     dataTypes:DataTypesMap;
     isTypeDataType:boolean;
     maxLength:number;
+    isViewOnly:boolean;
     isPropertyValueOwner:boolean;
     isVnfConfiguration:boolean;
     constraints:string[];
@@ -101,6 +102,7 @@ export class PropertyFormViewModel {
         'ModalServiceSdcUI',
         'filteredProperties',
         '$timeout',
+        'isViewOnly',
         'isPropertyValueOwner',
         'propertyOwnerType',
         'propertyOwnerId',
@@ -125,6 +127,7 @@ export class PropertyFormViewModel {
                 private modalService:SdcUiServices.ModalService,
                 private filteredProperties:Array<PropertyModel>,
                 private $timeout:ng.ITimeoutService,
+                private isViewOnly:boolean,
                 private isPropertyValueOwner:boolean,
                 private propertyOwnerType:string,
                 private propertyOwnerId:string,
@@ -232,6 +235,7 @@ export class PropertyFormViewModel {
     private initScope = ():void => {
 
         //scope properties
+        this.$scope.isViewOnly = this.isViewOnly;
         this.$scope.isLoading = true;
         this.$scope.forms = {};
         this.$scope.validationPattern = this.ValidationPattern;
@@ -398,17 +402,17 @@ export class PropertyFormViewModel {
 
         this.$scope.$watch("forms.editForm.$invalid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaFunction;
+                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
             } else {
-                this.$scope.footerButtons[0].disabled = newVal;
+                this.$scope.footerButtons[0].disabled = newVal || this.isViewOnly;
             }
         });
 
         this.$scope.$watch("forms.editForm.$valid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaFunction;
+                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
             } else {
-                this.$scope.footerButtons[0].disabled = !newVal;
+                this.$scope.footerButtons[0].disabled = !newVal || this.isViewOnly;
             }
         });
 
