@@ -73,7 +73,7 @@ export class PropertiesViewModel {
     }
 
     private openEditPropertyModal = (property:PropertyModel):void => {
-        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false, 'component', this.$scope.component.uniqueId);
+        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false, 'component', this.$scope.component.uniqueId, this.$scope.isViewMode());
     };
 
     private initScope = ():void => {

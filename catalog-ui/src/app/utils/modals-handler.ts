@@ -24,7 +24,7 @@ import { ComponentMetadata } from '../models/component-metadata';
 export interface IModalsHandler {
 
     openEditPropertyModal(property: PropertyModel, component: Component, filteredProperties: PropertyModel[], isPropertyOwnValue: boolean,
-                          propertyOwnerType: string, propertyOwnerId: string): ng.IPromise<any>;
+                          propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean): ng.IPromise<any>;
 }
 
 export class ModalsHandler implements IModalsHandler {
@@ -67,7 +67,7 @@ export class ModalsHandler implements IModalsHandler {
      * @returns {IPromise<T>} - Promise telling if the modal has opened or not
      */
     openEditPropertyModal = (property: PropertyModel, component: Component | ComponentMetadata, filteredProperties: PropertyModel[],
-                             isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string): ng.IPromise<any> => {
+                             isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean = false): ng.IPromise<any> => {
         const deferred = this.$q.defer();
 
         const modalOptions: ng.ui.bootstrap.IModalSettings = {
@@ -94,6 +94,9 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 propertyOwnerId: (): string => {
                     return propertyOwnerId;
+                },
+                isViewOnly: (): boolean => {
+                    return isViewOnly;
                 }
             }
         };
