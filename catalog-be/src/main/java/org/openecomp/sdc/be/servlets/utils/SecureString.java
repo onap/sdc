@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package org.openecomp.sdc.be.servlets.utils;
 
-public abstract class BasicServlet {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.openecomp.sdc.be.utils.NoHtml;
 
-    protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+/**
+ * Provides wrapper for string to be checked by {@link DataValidator}.
+ */
+@Getter
+@AllArgsConstructor
+public class SecureString {
+
+    @NoHtml
+    private String data;
+
 }
