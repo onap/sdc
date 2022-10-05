@@ -281,6 +281,30 @@
       "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f725cd60_f883a834",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-05T12:33:04Z",
+      "side": 1,
+      "message": "ok, yes, you are right. However the TreeSet comparator does not work as expected, I have seen in testing a requirement with the same name being added from both the new and existing. I believe the reason is as follows:\nWhen adding to the TreeSet the implementation will compare the value being added to an existing value in the TreeSet, if the new value is deemed to be greater than the existing value, then the impplementation will only check the compare the value being added to the values greater than that existing value (as it cannot be equal to a lessor value). The comparator returns +1 indicating greater than when it is not greater than, just different, so the TreeSet is not comparing the values being added to ALL existing elements",
+      "parentUuid": "0f72dc25_b556fb85",
+      "range": {
+        "startLine": 521,
+        "startChar": 0,
+        "endLine": 521,
+        "endChar": 123
+      },
+      "revId": "fa7661b0991510e1e3f9f6800188a58490744628",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
