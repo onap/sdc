@@ -44,7 +44,7 @@ import org.springframework.stereotype.Component;
 @Component("gatewayFilter")
 public class GatewayFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(BeServletFilter.class);
+    private static final Logger log = Logger.getLogger(GatewayFilter.class);
     private Configuration.CookieConfig authCookieConf;
     private Configuration config;
     @Autowired

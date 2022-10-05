@@ -75,6 +75,7 @@ public class Configuration extends BasicConfiguration {
     private List<List<String>> identificationHeaderFields;
     private List<List<String>> optionalHeaderFields;
     private List<String> forwardHeaderFields;
+    private String dataValidatorFilterExcludedUrls; // Comma separated list of excluded URLs by the DataValidatorFilter
     private String permittedAncestors; // Space separated list of permitted ancestors
 
     public Integer getHealthCheckSocketTimeoutInMs(int defaultVal) {
