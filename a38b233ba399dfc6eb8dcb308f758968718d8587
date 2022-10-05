@@ -1,0 +1,383 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c4672be_b426533d",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 1033,
+        "startChar": 21,
+        "endLine": 1038,
+        "endChar": 28
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b247baa8_cfc0f75a",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "any particular reason for using version different from parent-pom (3.2.0) ?\nplease extract and reuse",
+      "range": {
+        "startLine": 1042,
+        "startChar": 21,
+        "endLine": 1042,
+        "endChar": 26
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebb9e8f4_d39348bf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/engine/CambriaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "remove it or re-implement",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 0
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bf3068a_2c159744",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngineInitTaskTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "use org.junit.jupiter.api.Assertions#assertDoesNotThrow(org.junit.jupiter.api.function.Executable, java.lang.String)\nto check this",
+      "range": {
+        "startLine": 263,
+        "startChar": 8,
+        "endLine": 265,
+        "endChar": 9
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b5b9617_d8a960ad",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "all new TCs must be implemented by Junit 5, please migrate",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 22
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "492289a5_1685ec30",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "JUnit assertTrue/assertFalse should be simplified to the corresponding dedicated assertion",
+      "range": {
+        "startLine": 75,
+        "startChar": 14,
+        "endLine": 75,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f2d5c3b_69d94bc2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 86,
+        "startChar": 14,
+        "endLine": 86,
+        "endChar": 60
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8b06dac_bf9ae3f6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 95,
+        "startChar": 14,
+        "endLine": 96,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c861c7a_278adfc2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 105,
+        "startChar": 14,
+        "endLine": 106,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0d507f5_686d7ce9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 116,
+        "startChar": 14,
+        "endLine": 117,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bf20717_8701bb4c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "coverage should be at least 55% , please add more TCs",
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "504a877e_9227a3b8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "all new TCs must be implemented by Junit 5, please migrate",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 22
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "290e1c21_aff6277e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "coverage should be at least 55% , please add more TCs",
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d1e8cc7_e3bb8b9a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "all new TCs must be implemented by Junit 5, please migrate",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 22
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e906434_79a7753e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "JUnit assertTrue/assertFalse should be simplified to the corresponding dedicated assertion",
+      "range": {
+        "startLine": 45,
+        "startChar": 14,
+        "endLine": 45,
+        "endChar": 34
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "510f5580_f6d81ad1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 55,
+        "startChar": 14,
+        "endLine": 55,
+        "endChar": 34
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f63f802a_8bb0bb1f",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-05T18:10:28Z",
+      "side": 1,
+      "message": "please extract and reuse in catalog-be/pom.xml",
+      "range": {
+        "startLine": 211,
+        "startChar": 25,
+        "endLine": 211,
+        "endChar": 30
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
