@@ -95,13 +95,15 @@ public class PropertyValueConstraintValidationUtil {
             propertyDefinition = getPropertyDefinitionObjectFromInputs(propertyDefinition);
         }
         if (propertyDefinition != null) {
+            List<PropertyConstraint> propertyConstraints =
+                dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints();
             if (ToscaType.isPrimitiveType(propertyDefinition.getType())) {
                 propertyDefinition.setConstraints(org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
-                    dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
+                    propertyConstraints.isEmpty() ? new ArrayList<>() : propertyConstraints));
                 evaluateConstraintsOnProperty(propertyDefinition);
             } else if (ToscaType.isCollectionType(propertyDefinition.getType())) {
                 propertyDefinition.setConstraints(org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
-                    dataTypeDefinitionCache.get(propertyDefinition.getType()).safeGetConstraints()));
+                    propertyConstraints.isEmpty() ? new ArrayList<>() : propertyConstraints));
                 evaluateConstraintsOnProperty(propertyDefinition);
                 evaluateCollectionTypeProperties(propertyDefinition);
             } else {
