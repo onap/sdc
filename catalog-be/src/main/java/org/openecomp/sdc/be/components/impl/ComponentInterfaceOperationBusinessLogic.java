@@ -20,26 +20,39 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fj.data.Either;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -49,6 +62,8 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -60,7 +75,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentInterfaceOperationBusinessLogic.class);
+    private static final String UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE =
+        "Update Interface Operation on Component instance";
+    private static final String EXCEPTION_OCCURRED_WHEN_UPDATING_COMPONENT_INSTANCE_INTERFACES =
+        "Exception occurred when updating Component Instance Interfaces {}";
     private final ComponentValidations componentValidations;
+    private final PropertyBusinessLogic propertyBusinessLogic;
+    private final ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
 
     @Autowired
     public ComponentInterfaceOperationBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
@@ -68,10 +89,14 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
                                                     final IGroupTypeOperation groupTypeOperation, final InterfaceOperation interfaceOperation,
                                                     final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                                     final ArtifactsOperations artifactToscaOperation,
-                                                    final ComponentValidations componentValidations) {
+                                                    final ComponentValidations componentValidations,
+                                                    final PropertyBusinessLogic propertyBusinessLogic,
+                                                    final ArtifactTypeBusinessLogic artifactTypeBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.componentValidations = componentValidations;
+        this.propertyBusinessLogic = propertyBusinessLogic;
+        this.artifactTypeBusinessLogic = artifactTypeBusinessLogic;
     }
 
     public Optional<ComponentInstance> updateComponentInstanceInterfaceOperation(final String componentId, final String componentInstanceId,
@@ -119,19 +144,30 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             errorWrapper.setInnerElement(responseFormat);
             return Optional.empty();
         }
+
+        final String model = propertyBusinessLogic.getComponentModelByComponentId(componentId);
+        Either<Boolean, ResponseFormat> constraintValidatorResponse = validateConstraints(updatedOperationDataDefinition, model, false);
+        if (!isConstraintsValidationSucceed(constraintValidatorResponse, errorWrapper, updatedOperationDataDefinition)) {
+            return Optional.empty();
+        }
+        constraintValidatorResponse = validateConstraints(updatedOperationDataDefinition, model, true);
+        if (!isConstraintsValidationSucceed(constraintValidatorResponse, errorWrapper, updatedOperationDataDefinition)) {
+            return Optional.empty();
+        }
+
         updateOperationDefinitionImplementation(updatedOperationDataDefinition);
         optionalComponentInstanceInterface.get().getOperations().replace(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(componentId, component, "Update Interface Operation on Component instance");
+                lockComponent(componentId, component, UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE);
                 wasLocked = true;
             }
             final StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId);
             if (status != StorageOperationStatus.OK) {
                 janusGraphDao.rollback();
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-                LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
+                LOGGER.error(EXCEPTION_OCCURRED_WHEN_UPDATING_COMPONENT_INSTANCE_INTERFACES, responseFormat);
                 errorWrapper.setInnerElement(responseFormat);
                 return Optional.empty();
             }
@@ -163,6 +199,33 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             }
         }
         return componentInstanceOptional;
+    }
+
+    private Either<Boolean, ResponseFormat> validateConstraints (OperationDataDefinition operationDataDefinition,
+                                                                 String model, boolean isArtifacts) {
+        PropertyValueConstraintValidationUtil constraintValidatorUtil = new PropertyValueConstraintValidationUtil();
+        if (isArtifacts) {
+            return constraintValidatorUtil
+                .validatePropertyConstraints(convertOperationArtifactPropsToPropertyDefinitions(operationDataDefinition, model), applicationDataTypeCache,
+                    model);
+        }
+        return constraintValidatorUtil
+            .validatePropertyConstraints(convertOperationInputsToPropertyDefinitions(operationDataDefinition), applicationDataTypeCache,
+                model);
+    }
+
+    private boolean isConstraintsValidationSucceed(Either<Boolean, ResponseFormat> constraintValidatorResponse,
+                                                   Wrapper<ResponseFormat> errorWrapper,
+                                                   OperationDataDefinition updatedOperationDataDefinition) {
+        if (constraintValidatorResponse.isRight()) {
+            ResponseFormat responseFormat = constraintValidatorResponse.right().value();
+            LOGGER.error("Failed constraints validation on inputs for interface operation: {} - {}",
+                updatedOperationDataDefinition.getName(),
+                constraintValidatorResponse.right().value());
+            errorWrapper.setInnerElement(responseFormat);
+            return false;
+        }
+        return true;
     }
 
     public Optional<Component> updateResourceInterfaceOperation(final String componentId,
@@ -209,14 +272,14 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(componentId, component, "Update Interface Operation on Component instance");
+                lockComponent(componentId, component, UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE);
                 wasLocked = true;
             }
             final StorageOperationStatus status = toscaOperationFacade.updateComponentInterfaces(component, interfaceDefinitionType);
             if (status != StorageOperationStatus.OK) {
                 janusGraphDao.rollback();
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-                LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
+                LOGGER.error(EXCEPTION_OCCURRED_WHEN_UPDATING_COMPONENT_INSTANCE_INTERFACES, responseFormat);
                 errorWrapper.setInnerElement(responseFormat);
                 return Optional.empty();
             }
@@ -287,7 +350,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         boolean wasLocked = false;
         try {
             if (shouldLock) {
-                lockComponent(componentId, component, "Update Interface Operation on Component instance");
+                lockComponent(componentId, component, UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE);
                 wasLocked = true;
             }
             final Either<InterfaceDefinition, StorageOperationStatus> operationStatusEither =
@@ -295,7 +358,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             if (operationStatusEither.isRight()) {
                 janusGraphDao.rollback();
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-                LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
+                LOGGER.error(EXCEPTION_OCCURRED_WHEN_UPDATING_COMPONENT_INSTANCE_INTERFACES, responseFormat);
                 errorWrapper.setInnerElement(responseFormat);
                 return Optional.empty();
             }
@@ -328,5 +391,62 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         final ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition(updatedOperationDataDefinition.getImplementation());
         artifactInfo.setArtifactName(String.format("'%s'", updatedOperationDataDefinition.getImplementation().getArtifactName()));
         updatedOperationDataDefinition.setImplementation(artifactInfo);
+    }
+
+    private List<PropertyDefinition> convertOperationInputsToPropertyDefinitions(final OperationDataDefinition operationDataDefinition) {
+        List<PropertyDefinition> propertyDefinitions = new ArrayList<>();
+        ListDataDefinition<OperationInputDefinition> inputsDefinitionListData = operationDataDefinition.getInputs();
+        if (null != inputsDefinitionListData && !inputsDefinitionListData.isEmpty()) {
+            List<OperationInputDefinition> inputDefinitionList =
+                inputsDefinitionListData.getListToscaDataDefinition();
+            for (OperationInputDefinition operationInputDefinition : inputDefinitionList) {
+                PropertyDefinition propertyDefinition = new PropertyDefinition();
+                propertyDefinition.setValue(operationInputDefinition.getValue());
+                propertyDefinition.setType(operationInputDefinition.getType());
+                propertyDefinition.setName(operationInputDefinition.getName());
+                propertyDefinition.setDefaultValue(operationInputDefinition.getDefaultValue());
+                propertyDefinition.setInputPath(operationInputDefinition.getInputPath());
+                propertyDefinitions.add(propertyDefinition);
+            }
+        }
+        return propertyDefinitions;
+    }
+
+    private List<PropertyDefinition> convertOperationArtifactPropsToPropertyDefinitions(final OperationDataDefinition operationDataDefinition,
+                                                                         final String model) {
+        List<PropertyDefinition> artifactPropertiesToValidateCollection = new ArrayList<>();
+        final ArtifactDataDefinition artifactDataDefinition = operationDataDefinition.getImplementation();
+        if (null != artifactDataDefinition) {
+            final String artifactType = artifactDataDefinition.getArtifactType();
+            final String uniqueId = UniqueIdBuilder.buildArtifactTypeUid(model, artifactType);
+            ArtifactTypeDefinition retrievedArtifact = artifactTypeBusinessLogic.getArtifactTypeByUid(uniqueId);
+            if (retrievedArtifact != null) {
+                List<PropertyDataDefinition> artifactPropertiesList = artifactDataDefinition.getProperties();
+                if (null != artifactPropertiesList && !artifactPropertiesList.isEmpty()) {
+                    for (PropertyDataDefinition propertyDataDefinition : artifactPropertiesList) {
+                        PropertyDefinition propertyDefinition = new PropertyDefinition();
+                        propertyDefinition.setConstraints(deserializePropertyConstraints(propertyDataDefinition.getPropertyConstraints()));
+                        propertyDefinition.setValue(propertyDataDefinition.getValue());
+                        propertyDefinition.setType(propertyDataDefinition.getType());
+                        propertyDefinition.setName(propertyDataDefinition.getName());
+                        propertyDefinition.setDefaultValue(propertyDataDefinition.getDefaultValue());
+                        propertyDefinition.setInputPath(propertyDataDefinition.getInputPath());
+                        artifactPropertiesToValidateCollection.add(propertyDefinition);
+                    }
+                }
+            }
+        }
+        return artifactPropertiesToValidateCollection;
+    }
+
+    private List<PropertyConstraint> deserializePropertyConstraints(List<String> constraints) {
+        if (CollectionUtils.isNotEmpty(constraints)) {
+            Type constraintType = new TypeToken<PropertyConstraint>() {
+            }.getType();
+            Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyOperation.PropertyConstraintDeserialiser()).create();
+            return constraints.stream().map(c -> (PropertyConstraint) gson.fromJson(c, constraintType)).collect(
+                Collectors.toList());
+        }
+        return null;
     }
 }
