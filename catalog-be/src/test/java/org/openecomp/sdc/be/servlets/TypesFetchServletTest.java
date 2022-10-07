@@ -43,7 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ArtifactTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
@@ -113,7 +113,7 @@ class TypesFetchServletTest extends JerseyTest {
     @Mock
     private ResourceBusinessLogic resourceBusinessLogic;
     @Mock
-    private ArtifactsBusinessLogic artifactsBusinessLogic;
+    private ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
     @Mock
     private ResponseFormatManager responseFormatManager;
 
@@ -213,7 +213,7 @@ class TypesFetchServletTest extends JerseyTest {
                     bind(relationshipTypeBusinessLogic).to(RelationshipTypeBusinessLogic.class);
                     bind(capabilitiesBusinessLogic).to(CapabilitiesBusinessLogic.class);
                     bind(interfaceOperationBusinessLogic).to(InterfaceOperationBusinessLogic.class);
-                    bind(artifactsBusinessLogic).to(ArtifactsBusinessLogic.class);
+                    bind(artifactTypeBusinessLogic).to(ArtifactTypeBusinessLogic.class);
                 }
             })
             .register(new OperationExceptionMapper(
@@ -256,8 +256,8 @@ class TypesFetchServletTest extends JerseyTest {
             .thenReturn(interfaceOperationBusinessLogic);
         when(webApplicationContext.getBean(ResourceBusinessLogic.class))
             .thenReturn(resourceBusinessLogic);
-        when(webApplicationContext.getBean(ArtifactsBusinessLogic.class))
-            .thenReturn(artifactsBusinessLogic);
+        when(webApplicationContext.getBean(ArtifactTypeBusinessLogic.class))
+            .thenReturn(artifactTypeBusinessLogic);
     }
 
     void initConfig() {

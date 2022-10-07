@@ -4261,13 +4261,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
     }
 
-    public Map<String, ArtifactTypeDefinition> getAllToscaArtifacts(final String modelName) {
-        if (StringUtils.isNotEmpty(modelName)) {
-            artifactTypeOperation.validateModel(modelName);
-        }
-        return artifactTypeOperation.getAllArtifactTypes(modelName);
-    }
-
     public enum ArtifactOperationEnum {
         CREATE, UPDATE, DELETE, DOWNLOAD, LINK;
 

@@ -45,6 +45,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.ListUtils;
+import org.openecomp.sdc.be.components.impl.ArtifactTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -91,7 +92,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
-    private final ArtifactsBusinessLogic artifactsBusinessLogic;
+    private final ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
 
     @Inject
     public TypesFetchServlet(
@@ -103,7 +104,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         CapabilitiesBusinessLogic capabilitiesBusinessLogic,
         InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
         ResourceBusinessLogic resourceBusinessLogic,
-        ArtifactsBusinessLogic artifactsBusinessLogic
+        ArtifactTypeBusinessLogic artifactTypeBusinessLogic
     ) {
         super(
             componentInstanceBL,
@@ -115,7 +116,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
         this.resourceBusinessLogic = resourceBusinessLogic;
-        this.artifactsBusinessLogic = artifactsBusinessLogic;
+        this.artifactTypeBusinessLogic = artifactTypeBusinessLogic;
     }
 
     @GET
@@ -338,7 +339,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     public Response getAllToscaArtifactTypes(@Parameter(description = "Model name") @QueryParam("model") String model,
                                              @Context final HttpServletRequest request, @HeaderParam(Constants.USER_ID_HEADER) String creator) {
         try {
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), artifactsBusinessLogic.getAllToscaArtifacts(model));
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), artifactTypeBusinessLogic.getAllToscaArtifactTypes(model));
         } catch (final BusinessException e) {
             throw e;
         } catch (final Exception e) {
