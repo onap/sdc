@@ -20,11 +20,13 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,25 +43,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.components.validation.UserValidations;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 @ExtendWith(MockitoExtension.class)
 public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock {
@@ -81,6 +95,12 @@ public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLo
     private UserValidations userValidations;
     @Mock
     private ComponentValidations componentValidations;
+    @Mock
+    PropertyBusinessLogic propertyBusinessLogic;
+    @Mock
+    private ApplicationDataTypeCache applicationDataTypeCache;
+    @Mock
+    private ArtifactsBusinessLogic artifactsBusinessLogic;
 
     private Component component;
     private ComponentInstance componentInstance;
@@ -92,19 +112,19 @@ public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLo
         componentInterfaceOperationBusinessLogic =
             new ComponentInterfaceOperationBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
                 groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation,
-                componentValidations);
+                componentValidations, propertyBusinessLogic, artifactsBusinessLogic);
         componentInterfaceOperationBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
         componentInterfaceOperationBusinessLogic.setGraphLockOperation(graphLockOperation);
         componentInterfaceOperationBusinessLogic.setComponentsUtils(componentsUtils);
         componentInterfaceOperationBusinessLogic.setUserValidations(userValidations);
         componentInterfaceOperationBusinessLogic.setJanusGraphGenericDao(janusGraphGenericDao);
         componentInterfaceOperationBusinessLogic.setJanusGraphDao(janusGraphDao);
-
+        componentInterfaceOperationBusinessLogic.setApplicationDataTypeCache(applicationDataTypeCache);
         initComponentData();
     }
 
     @Test
-    public void updateSubstitutionFilterTest() throws BusinessLogicException {
+    public void updateComponentInstanceInterfaceOperationTest() throws BusinessLogicException {
         final String componentId = component.getUniqueId();
         final String componentInstanceId = componentInstance.getUniqueId();
         final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
@@ -141,6 +161,7 @@ public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLo
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
         final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
             .updateComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
@@ -148,7 +169,192 @@ public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLo
         assertThat(result).isPresent();
     }
 
-    public void initComponentData() {
+    @Test
+    public void valueForInputFailsConstraintsValidation() throws BusinessLogicException {
+        final String inputType = "myType";
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        final Map<String, OperationDataDefinition> operations = new HashMap<>();
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        final ListDataDefinition<OperationInputDefinition> inputsDefinitionListData = new ListDataDefinition<>();
+        OperationInputDefinition input1 = new OperationInputDefinition();
+        input1.setName("input_1");
+        input1.setType(inputType);
+        input1.setValue("{\"input_range\": \"invalid\"}");
+        inputsDefinitionListData.add(input1);
+        artifactDataDefinition.setArtifactName("EO Implementation info");
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        operationDataDefinition.setInputs(inputsDefinitionListData);
+        operations.put("configure", operationDataDefinition);
+        interfaceDefinition.setOperations(operations );
+
+        DataTypeDefinition myType = new DataTypeDefinition();
+        myType.setName(inputType);
+        PropertyDefinition input_range = new PropertyDefinition();
+        input_range.setName("input_range");
+        input_range.setType("string");
+        PropertyConstraint constraint1 = new ValidValuesConstraint(Arrays.asList("value1", "value2", "value3"));
+        input_range.setConstraints(List.of(constraint1));
+        myType.setProperties(List.of(input_range));
+        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
+        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+
+        final ComponentInstanceInterface componentInstanceInterface =
+            new ComponentInstanceInterface("interfaceId", interfaceDefinition);
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, Collections.singletonList(componentInstanceInterface));
+        component.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .updateComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, errorWrapper, false);
+        assertThat(result).isNotPresent();
+        assertThat(errorWrapper.getInnerElement().getStatus() == 400).isTrue();
+        assertThat(errorWrapper.getInnerElement().getRequestError().getRequestError().getServiceException().getText()
+            .contains("Error: Invalid property values provided")).isTrue();
+    }
+
+    @Test
+    public void valueForInputSucceedsConstraintsValidation() throws BusinessLogicException {
+        final String inputType = "myType";
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        final Map<String, OperationDataDefinition> operations = new HashMap<>();
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        final ListDataDefinition<OperationInputDefinition> inputsDefinitionListData = new ListDataDefinition<>();
+        OperationInputDefinition input1 = new OperationInputDefinition();
+        input1.setName("input_1");
+        input1.setType(inputType);
+        input1.setValue("{\"input_range\": \"value1\"}");
+        inputsDefinitionListData.add(input1);
+        artifactDataDefinition.setArtifactName("EO Implementation info");
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        operationDataDefinition.setInputs(inputsDefinitionListData);
+        operations.put("configure", operationDataDefinition);
+        interfaceDefinition.setOperations(operations );
+
+        DataTypeDefinition myType = new DataTypeDefinition();
+        myType.setName(inputType);
+        PropertyDefinition input_range = new PropertyDefinition();
+        input_range.setName("input_range");
+        input_range.setType("string");
+        PropertyConstraint constraint1 = new ValidValuesConstraint(Arrays.asList("value1", "value2", "value3"));
+        input_range.setConstraints(List.of(constraint1));
+        myType.setProperties(List.of(input_range));
+        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
+        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+
+        final ComponentInstanceInterface componentInstanceInterface =
+            new ComponentInstanceInterface("interfaceId", interfaceDefinition);
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, Collections.singletonList(componentInstanceInterface));
+        component.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+        when(toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade
+            .updateComponentInstanceMetadataOfTopologyTemplate(any(Service.class), any(ComponentParametersView.class)))
+            .thenReturn(Either.left(component));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .updateComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, errorWrapper, false);
+        assertThat(result).isPresent();
+    }
+
+    @Test
+    public void valueForArtifactInputFailsConstraintsValidation() throws BusinessLogicException {
+        final String inputType = "myType";
+        final String artifactType = "artifactType";
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        final Map<String, OperationDataDefinition> operations = new HashMap<>();
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+
+        artifactDataDefinition.setArtifactName("EO Implementation info");
+        artifactDataDefinition.setArtifactType(artifactType);
+        PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
+        propertyDataDefinition.setName("prop1");
+        propertyDataDefinition.setType(inputType);
+        propertyDataDefinition.setValue("{\"input_range\": \"invalid\"}");
+
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        //operationDataDefinition.setInputs(inputsDefinitionListData);
+        operations.put("configure", operationDataDefinition);
+        interfaceDefinition.setOperations(operations );
+
+        DataTypeDefinition myType = new DataTypeDefinition();
+        ArtifactTypeDefinition myArtifactType = new ArtifactTypeDefinition();
+        myArtifactType.setName(inputType);
+        myType.setName(inputType);
+        PropertyDefinition input_range = new PropertyDefinition();
+        input_range.setName("input_range");
+        input_range.setType("string");
+        PropertyConstraint constraint1 = new ValidValuesConstraint(Arrays.asList("value1", "value2", "value3"));
+        input_range.setConstraints(List.of(constraint1));
+        myArtifactType.setProperties(List.of(input_range));
+        myType.setProperties(List.of(input_range));
+        final Map<String, ArtifactTypeDefinition> artifactTypeDefinitionCache = Collections.singletonMap(myArtifactType.getName(), myArtifactType);
+        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
+        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+
+        final ComponentInstanceInterface componentInstanceInterface =
+            new ComponentInstanceInterface("interfaceId", interfaceDefinition);
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, Collections.singletonList(componentInstanceInterface));
+        component.setComponentInstancesInterfaces(componentInstancesInterfacesMap);
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
+        when(artifactsBusinessLogic.getAllToscaArtifacts(null)).thenReturn(artifactTypeDefinitionCache);
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .updateComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, errorWrapper, false);
+        assertThat(result).isNotPresent();
+        //assertThat(errorWrapper.getInnerElement().getStatus() == 400).isTrue();
+        //assertThat(errorWrapper.getInnerElement().getRequestError().getRequestError().getServiceException().getText()
+            //.contains("Error: Invalid property values provided")).isTrue();
+    }
+
+
+
+    private void initComponentData() {
         try {
             component = new Service();
             component.setName("MyTestService");
