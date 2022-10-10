@@ -15,6 +15,15 @@
     </listener>
 
     <filter>
+        <filter-name>dataValidatorFilter</filter-name>
+        <filter-class>org.openecomp.sdc.common.filters.DataValidatorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>dataValidatorFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
         <filter-class>org.openecomp.sdc.common.filters.ContentSecurityPolicyHeaderFilter</filter-class>
         <async-supported>true</async-supported>
@@ -54,6 +63,7 @@
         <filter-name>RestrictionAccessFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <!-- Spring WS Mapping -->
     <servlet>
         <servlet-name>spring-mapper</servlet-name>
