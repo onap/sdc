@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
 @Provider
 public class StorageExceptionMapper implements ExceptionMapper<StorageException> {
 
-    private static final Logger log = Logger.getLogger(DefaultExceptionMapper.class);
+    private static final Logger log = Logger.getLogger(StorageExceptionMapper.class);
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final ComponentsUtils componentsUtils;
 
