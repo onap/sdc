@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d02bccb3_e5a9a0b6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-10T14:28:39Z",
+      "side": 1,
+      "message": "actually, it is not redundant, +1 to this change",
+      "parentUuid": "8f1b41e5_7567cbec",
+      "range": {
+        "startLine": 102,
+        "startChar": 19,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ddd6db4_f5010ac3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -83,6 +107,30 @@
       "writtenOn": "2022-10-10T13:56:04Z",
       "side": 1,
       "message": "same reason as previous",
+      "parentUuid": "8ddd6db4_f5010ac3",
+      "range": {
+        "startLine": 106,
+        "startChar": 20,
+        "endLine": 106,
+        "endChar": 52
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8c8beb38_4b7553d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-10T14:28:39Z",
+      "side": 1,
+      "message": "actually, it is not redundant, +1 to this change",
       "parentUuid": "8ddd6db4_f5010ac3",
       "range": {
         "startLine": 106,
