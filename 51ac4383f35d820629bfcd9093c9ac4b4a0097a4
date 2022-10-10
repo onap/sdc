@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cd891488_c216fd47",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "the propertyConstraints, if empty, its a Collection.EmptyList. When trying to add an item to it in the merge method, an UnsupportedOpertaionException is thrown.",
+      "parentUuid": "8f1b41e5_7567cbec",
+      "range": {
+        "startLine": 102,
+        "startChar": 19,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ddd6db4_f5010ac3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fad2275_a09ac53b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "same reason as previous",
+      "parentUuid": "8ddd6db4_f5010ac3",
+      "range": {
+        "startLine": 106,
+        "startChar": 20,
+        "endLine": 106,
+        "endChar": 52
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a7c8c656_e14f8978",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2abc145_99ae59a2",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 6
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa891dc5_b266301a",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d29d56d5_675270c3",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa891dc5_b266301a",
+      "range": {
+        "startLine": 98,
+        "startChar": 4,
+        "endLine": 98,
+        "endChar": 25
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "6b13fc6f_e464f620",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17390416_ef29b181",
+      "range": {
+        "startLine": 126,
+        "startChar": 4,
+        "endLine": 126,
+        "endChar": 10
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4ed92d7_e66c11e5",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a41d54b_7fd57e3d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-10-10T13:56:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4ed92d7_e66c11e5",
+      "range": {
+        "startLine": 172,
+        "startChar": 4,
+        "endLine": 172,
+        "endChar": 10
+      },
+      "revId": "51ac4383f35d820629bfcd9093c9ac4b4a0097a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
