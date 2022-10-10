@@ -259,18 +259,17 @@ public class CsarUtils {
                                                                                   Map<String, Set<List<String>>> collectedWarningMessages) {
         Either<ArtifactGroupTypeEnum, Boolean> result;
         try {
-            ArtifactGroupTypeEnum artifactGroupType = ArtifactGroupTypeEnum.findType(groupType.toUpperCase());
-            if (artifactGroupType == null || (artifactGroupType != ArtifactGroupTypeEnum.INFORMATIONAL
-                && artifactGroupType != ArtifactGroupTypeEnum.DEPLOYMENT)) {
-                String warningMessage = "Warning - unrecognized artifact group type {} was received.";
-                List<String> messageArguments = new ArrayList<>();
+            final ArtifactGroupTypeEnum artifactGroupType = ArtifactGroupTypeEnum.findType(groupType.toUpperCase());
+            if (artifactGroupType != ArtifactGroupTypeEnum.INFORMATIONAL && artifactGroupType != ArtifactGroupTypeEnum.DEPLOYMENT) {
+                final String warningMessage = "Warning - unrecognized artifact group type {} was received.";
+                final List<String> messageArguments = new ArrayList<>();
                 messageArguments.add(groupType);
-                if (!collectedWarningMessages.containsKey(warningMessage)) {
-                    Set<List<String>> messageArgumentLists = new HashSet<>();
+                if (collectedWarningMessages.containsKey(warningMessage)) {
+                    collectedWarningMessages.get(warningMessage).add(messageArguments);
+                } else {
+                    final Set<List<String>> messageArgumentLists = new HashSet<>();
                     messageArgumentLists.add(messageArguments);
                     collectedWarningMessages.put(warningMessage, messageArgumentLists);
-                } else {
-                    collectedWarningMessages.get(warningMessage).add(messageArguments);
                 }
                 result = Either.right(false);
             } else {
@@ -880,9 +879,9 @@ public class CsarUtils {
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, firstThreeOctets, CONFORMANCE_LEVEL));
     }
 
-    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {        
+    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
         return artifactCassandraDao.getArtifact(cassandraId).right().map(operationstatus -> {
-            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);        
+            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);
             StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(operationstatus);
             return componentsUtils.convertFromStorageResponse(storageStatus);
         }).left().map(DAOArtifactData::getDataAsArray);

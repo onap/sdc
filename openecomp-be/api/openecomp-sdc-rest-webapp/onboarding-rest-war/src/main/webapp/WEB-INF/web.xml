@@ -25,8 +25,18 @@
     </listener>
 
     <filter>
+        <filter-name>dataValidatorFilter</filter-name>
+        <filter-class>org.openecomp.sdc.common.filters.DataValidatorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>dataValidatorFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
-        <filter-class>org.openecomp.sdc.common.filters.ContentSecurityPolicyHeaderFilter</filter-class>
+        <filter-class>org.openecomp.sdc.common.filters.ContentSecurityPolicyHeaderFilter
+        </filter-class>
         <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
@@ -109,7 +119,47 @@
         <filter-name>SessionContextFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <!-- Spring WS Mapping -->
+<!--    <servlet>-->
+<!--        <servlet-name>jersey</servlet-name>-->
+<!--        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>-->
+<!--        <init-param>-->
+<!--            <param-name>jersey.config.server.provider.packages</param-name>-->
+<!--            <param-value>-->
+<!--&lt;!&ndash;                io.swagger.v3.jaxrs2.integration.resources,&ndash;&gt;-->
+<!--                org.openecomp.sdc.be.servlets-->
+<!--            </param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>jersey.config.server.provider.classnames</param-name>-->
+<!--            <param-value>-->
+<!--                org.glassfish.jersey.media.multipart.MultiPartFeature,-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.filters.BasicAuthenticationFilter,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.filters.BeServletFilter,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.filters.DataValidatorFilter,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,&ndash;&gt;-->
+<!--                org.openecomp.sdc.common.filters.DataValidatorFilter,-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.servlets.exception.ConstraintViolationExceptionMapper,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper,&ndash;&gt;-->
+<!--&lt;!&ndash;                org.openecomp.sdc.be.view.MixinModelWriter,&ndash;&gt;-->
+<!--                org.openecomp.sdc.config.ObjectMapperProvider,-->
+<!--            </param-value>-->
+<!--        </init-param>-->
+<!--        <init-param>-->
+<!--            <param-name>exclude_url_endpoints</param-name>-->
+<!--            <param-value>/api/v3/analytics,/api/v3/storeAnalytics</param-value>-->
+<!--        </init-param>-->
+<!--        <load-on-startup>1</load-on-startup>-->
+<!--    </servlet>-->
+    <servlet-mapping>
+        <servlet-name>jersey</servlet-name>
+        <url-pattern>/sdc2/rest/*</url-pattern>
+<!--        <url-pattern>/*</url-pattern>-->
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>spring-mapper</servlet-name>
         <servlet-class>
