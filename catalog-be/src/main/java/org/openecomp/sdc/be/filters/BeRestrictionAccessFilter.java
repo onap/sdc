@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Component("beRestrictionAccessFilter")
 public class BeRestrictionAccessFilter extends RestrictionAccessFilter {
 
-    private static final Logger log = Logger.getLogger(RestrictionAccessFilter.class.getName());
+    private static final Logger log = Logger.getLogger(BeRestrictionAccessFilter.class.getName());
 
     public BeRestrictionAccessFilter(FilterConfiguration configuration, ThreadLocalUtils threadLocalUtils, PortalClient portalClient) {
         super(configuration, threadLocalUtils, portalClient);
