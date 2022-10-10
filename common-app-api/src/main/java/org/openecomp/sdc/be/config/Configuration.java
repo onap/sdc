@@ -147,6 +147,7 @@ public class Configuration extends BasicConfiguration {
     private ExternalCsarStore externalCsarStore;
     private CsarFormat csarFormat;
     private String componentInstanceCounterDelimiter;
+    private String dataValidatorFilterExcludedUrls; // Comma separated list of excluded URLs by the DataValidatorFilter
     private String permittedAncestors; // Space separated list of permitted ancestors
 
     @SuppressWarnings("unchecked")

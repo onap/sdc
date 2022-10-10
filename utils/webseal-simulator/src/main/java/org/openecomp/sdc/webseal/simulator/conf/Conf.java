@@ -39,6 +39,7 @@ public class Conf {
     private Map<String, User> users = new HashMap<String, User>();
     private String portalCookieName;
     private String permittedAncestors; // Space separated list of permitted ancestors
+    private String dataValidatorFilterExcludedUrls; // Comma separated list of excluded URLs by the DataValidatorFilter
 
     private Conf() {
         initConf();
