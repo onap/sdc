@@ -2086,6 +2086,22 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         final ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
 
+        // Validate instance attributes against it's constraints
+        List<PropertyDefinition> attributesToValidate = new ArrayList<>();
+        attributes.forEach((componentInstanceAttribute) -> {
+            PropertyDefinition propertyDefinition = new PropertyDefinition();
+            propertyDefinition.setValue(componentInstanceAttribute.getValue());
+            propertyDefinition.setType(componentInstanceAttribute.getType());
+            propertyDefinition.setName(componentInstanceAttribute.getName());
+            propertyDefinition.setUniqueId(componentInstanceAttribute.getUniqueId());
+            attributesToValidate.add(propertyDefinition);
+        });
+        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(attributesToValidate,componentId);
+        if (constraintValidatorResponse.isRight()) {
+            log.error("Failed validation value and constraint of attribute: {}", constraintValidatorResponse.right().value());
+            return Either.right(constraintValidatorResponse.right().value());
+        }
+
         // lock resource
         final StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
@@ -3918,7 +3934,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<Boolean, ResponseFormat> validatePropertyValueConstraint(List<ComponentInstanceProperty> properties, final String componentId) {
+    private Either<Boolean, ResponseFormat> validatePropertyValueConstraint(List<? extends PropertyDefinition> properties, final String componentId) {
         try {
             String propertyModel = propertyBusinessLogic.getComponentModelByComponentId(componentId);
             PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = new PropertyValueConstraintValidationUtil();
