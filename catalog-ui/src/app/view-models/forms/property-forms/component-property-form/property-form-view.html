@@ -13,11 +13,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<ng1-modal modal="modalInstanceProperty" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : isViewOnly ? '' : 'Update'}} Property {{isViewOnly ? 'Definition' : ''}}" show-close-button="true" data-tests-id="sdc-edit-property-container">
+<ng1-modal modal="modalInstanceProperty" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : 'Update' }} Property" show-close-button="true" data-tests-id="sdc-edit-property-container">
     <loader data-display="isLoading" relative="false" size="medium"></loader>
     <div class="sdc-modal-top-bar" data-ng-if="!isNew">
         <div class="sdc-modal-top-bar-buttons">
-            <span ng-click="delete(editPropertyModel.property)" data-ng-class="{'disabled' : isPropertyValueOwner || editPropertyModel.property.readonly || propertyOwnerType == 'group' || propertyOwnerType == 'policy' || isViewOnly}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
+            <span ng-click="delete(editPropertyModel.property)" data-ng-class="{'disabled' : isPropertyValueOwner || editPropertyModel.property.readonly || propertyOwnerType == 'group' || propertyOwnerType == 'policy'}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
             <span class="delimiter"></span>
             <span data-ng-click="getPrev()" data-ng-class="{'disabled' : !currentPropertyIndex }" class="sprite-new left-arrow" data-tests-id="get-prev" sdc-smart-tooltip="">Previous</span>
             <span data-ng-click="getNext()" data-ng-class="{'disabled' : isLastProperty }" class="sprite-new right-arrow" data-tests-id="get-next" sdc-smart-tooltip="">Next</span>
@@ -37,9 +37,9 @@
                             <label class="i-sdc-form-label" ng-class="{'required': !componentMetadata.isService}">Name</label>
                             <input class="i-sdc-form-input"
                                    data-tests-id="propertyName"
-                                   data-ng-maxlength="50"
-                                   data-ng-disabled="!isNew || editPropertyModel.property.readonly || isViewOnly"
-                                   maxlength="50"
+                                   data-ng-maxlength="nameMaxLength"
+                                   data-ng-disabled="!isNew || editPropertyModel.property.readonly"
+                                   maxlength="{{nameMaxLength}}"
                                    data-ng-model="editPropertyModel.property.name"
                                    type="text"
                                    name="propertyName"
@@ -50,7 +50,7 @@
 
                             <div class="input-error" data-ng-show="forms.editForm.propertyName.$dirty && forms.editForm.propertyName.$invalid">
                                 <span ng-show="forms.editForm.propertyName.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Property name' }"></span>
-                                <span ng-show="forms.editForm.propertyName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                                <span ng-show="forms.editForm.propertyName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{nameMaxLength}}' }"></span>
                                 <span ng-show="forms.editForm.propertyName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                                     <select class="i-sdc-form-select"
                                             data-tests-id="propertyType"
                                             data-required
-                                            data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly || isViewOnly"
+                                            data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly"
                                             name="type"
                                             data-ng-change="onTypeChange()"
                                             data-ng-model="editPropertyModel.property.type">
@@ -88,7 +88,7 @@
                                     <select class="i-sdc-form-select"
                                             data-required
                                             data-tests-id="schema-type"
-                                            data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly || isViewOnly"
+                                            data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly"
                                             name="schemaType"
                                             data-ng-change="onSchemaTypeChange()"
                                             data-ng-model="editPropertyModel.property.schema.property.type">
@@ -122,7 +122,7 @@
                     <label class="i-sdc-form-label">Description</label>
                             <textarea  class="i-sdc-form-textarea"
                                        data-ng-maxlength="400"
-                                       data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly || isViewOnly"
+                                       data-ng-disabled="isPropertyValueOwner || editPropertyModel.property.readonly"
                                        maxlength="400"
                                        data-ng-pattern="commentValidationPattern"
                                        name="description"
@@ -167,7 +167,7 @@
                                               type-name="editPropertyModel.property.type"
                                               parent-form-obj="forms.editForm"
                                               fields-prefix-name="currentPropertyIndex"
-                                              read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isViewOnly"
+                                              read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                               default-value="{{getDefaultValue()}}"
                                               expand-by-default="true"></fields-structure>
 
@@ -178,7 +178,7 @@
                                           schema-property="editPropertyModel.property.schema.property"
                                           parent-form-obj="forms.editForm"
                                           fields-prefix-name="currentPropertyIndex"
-                                          read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration || isViewOnly"
+                                          read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration"
                                           default-value="{{getDefaultValue()}}"
                                           max-length="maxLength"
                                           constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues">
@@ -190,7 +190,7 @@
                                            schema-property="editPropertyModel.property.schema.property"
                                            parent-form-obj="forms.editForm"
                                            fields-prefix-name="currentPropertyIndex"
-                                           read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isViewOnly"
+                                           read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                            default-value="{{getDefaultValue()}}"
                                            max-length="maxLength"
                                            constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues"></type-list>
@@ -205,7 +205,7 @@
                                     <select class="i-sdc-form-select"
                                             data-tests-id="constraints"
                                             ng-if="(editPropertyModel.property.constraints)"
-                                            data-ng-disabled="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isViewOnly"
+                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
 
                                             data-ng-change="onValueChange()"
                                             data-ng-model="editPropertyModel.property.value">
@@ -226,7 +226,7 @@
                                            data-tests-id="defaultvalue"
                                            ng-if="!(editPropertyModel.property.constraints) && !((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
                                            data-ng-maxlength="maxLength"
-                                           data-ng-disabled="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isViewOnly"
+                                           data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                            maxlength="{{maxLength}}"
                                            data-ng-model="editPropertyModel.property.value"
                                            type="text"
@@ -241,7 +241,7 @@
                                     <select class="i-sdc-form-select"
                                             data-tests-id="booleantype"
                                             ng-if="(editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean'"
-                                            data-ng-disabled="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isViewOnly"
+                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                             name="value"
                                             data-ng-change="onValueChange()"
                                             data-ng-model="editPropertyModel.property.value">
