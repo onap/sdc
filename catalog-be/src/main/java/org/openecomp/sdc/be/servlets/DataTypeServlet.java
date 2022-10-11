@@ -84,9 +84,9 @@ public class DataTypeServlet extends BeGenericServlet {
                                   @PathParam("dataTypeUid") String dataTypeUid) {
         final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {} - modifier id is {}", url, userId);
-        final Optional<DataTypeDataDefinition> dataTypeByUid;
+        final Optional<DataTypeDataDefinition> dataTypeFoundOptional;
         try {
-            dataTypeByUid = dataTypeOperation.getDataTypeByUid(dataTypeUid);
+            dataTypeFoundOptional = dataTypeOperation.getDataTypeByUid(dataTypeUid);
         } catch (final BusinessException e) {
             throw e;
         } catch (final Exception ex) {
@@ -95,10 +95,8 @@ public class DataTypeServlet extends BeGenericServlet {
             log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, this.getClass().getName(), errorMsg, ex);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
-        if (dataTypeByUid.isEmpty()) {
-            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, dataTypeUid);
-        }
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeByUid);
+        var dataType = dataTypeFoundOptional.orElseThrow(() -> new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, dataTypeUid));
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataType);
     }
 
 }
