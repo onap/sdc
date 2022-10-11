@@ -47,6 +47,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     editForm:ng.IFormController;
     footerButtons:Array<any>;
     isNew:boolean;
+    nameMaxLength:number;
     isLoading:boolean;
     componentMetadata: { isService: boolean, isVfc: boolean }
     validationPattern:RegExp;
@@ -241,6 +242,7 @@ export class PropertyFormViewModel {
         this.$scope.validationPattern = this.ValidationPattern;
         this.$scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         this.$scope.commentValidationPattern = this.CommentValidationPattern;
+        this.$scope.nameMaxLength = PROPERTY_VALUE_CONSTRAINTS.NAME_MAX_LENGTH;
         this.$scope.isNew = (this.formState === FormState.CREATE);
         this.$scope.componentMetadata = {
             isService: this.workspaceService.metadata.isService(),

@@ -25,7 +25,7 @@
 import * as _ from "lodash";
 import {DataTypesService} from "app/services/data-types-service";
 import {PropertyModel, DataTypesMap, Component} from "app/models";
-import {ValidationUtils, PROPERTY_DATA} from "app/utils";
+import {ValidationUtils, PROPERTY_DATA, PROPERTY_VALUE_CONSTRAINTS} from "app/utils";
 
 export interface IPropertyFormBaseViewScope extends ng.IScope {
 
@@ -51,6 +51,7 @@ export interface IPropertyFormBaseViewScope extends ng.IScope {
     isDescriptionDisable:boolean;
     isPropertyValueDisable:boolean;
     isArrowsDisabled:boolean;
+    nameMaxLength:number;
 
     //Validation pattern
     validationPattern:RegExp;
@@ -138,6 +139,7 @@ export abstract class PropertyFormBaseView {
         this.$scope.dataTypes = this.DataTypesService.getAllDataTypesFromModel(this.component.model); //Get all data types in service
         this.$scope.modalPropertyFormBase = this.$uibModalInstance;
         this.$scope.isNew = !angular.isDefined(this.$scope.property.name);
+        this.$scope.nameMaxLength = PROPERTY_VALUE_CONSTRAINTS.NAME_MAX_LENGTH;
 
         this.initValidations();
         this.initButtonsState();
