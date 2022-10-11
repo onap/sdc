@@ -51,6 +51,7 @@ export interface IPropertyFormBaseViewScope extends ng.IScope {
     isDescriptionDisable:boolean;
     isPropertyValueDisable:boolean;
     isArrowsDisabled:boolean;
+    nameMaxLength:number;
 
     //Validation pattern
     validationPattern:RegExp;
@@ -138,6 +139,7 @@ export abstract class PropertyFormBaseView {
         this.$scope.dataTypes = this.DataTypesService.getAllDataTypesFromModel(this.component.model); //Get all data types in service
         this.$scope.modalPropertyFormBase = this.$uibModalInstance;
         this.$scope.isNew = !angular.isDefined(this.$scope.property.name);
+        this.$scope.nameMaxLength = 100;
 
         this.initValidations();
         this.initButtonsState();
