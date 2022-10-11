@@ -44,7 +44,7 @@
         "react-input-autosize": "^2.2.1",
         "react-redux": "^5.0.7",
         "react-select": "1.2.1",
-        "react-show-more-text": "^1.0.3",
+        "react-show-more-text": "1.6.1",
         "react-sortable": "^1.2.1",
         "react-transition-group": "^2.4.0",
         "redux": "^3.7.2",
