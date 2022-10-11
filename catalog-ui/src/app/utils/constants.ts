@@ -165,6 +165,7 @@ export class PROPERTY_DATA {
 export class PROPERTY_VALUE_CONSTRAINTS {
   public static MAX_LENGTH = 2500;
   public static JSON_MAX_LENGTH = 4096;
+  public static NAME_MAX_LENGTH = 100;
 }
 
 export class Role {

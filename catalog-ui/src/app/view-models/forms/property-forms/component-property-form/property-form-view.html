@@ -37,9 +37,9 @@
                             <label class="i-sdc-form-label" ng-class="{'required': !componentMetadata.isService}">Name</label>
                             <input class="i-sdc-form-input"
                                    data-tests-id="propertyName"
-                                   data-ng-maxlength="50"
+                                   data-ng-maxlength="nameMaxLength"
                                    data-ng-disabled="!isNew || editPropertyModel.property.readonly"
-                                   maxlength="50"
+                                   maxlength="{{nameMaxLength}}"
                                    data-ng-model="editPropertyModel.property.name"
                                    type="text"
                                    name="propertyName"
@@ -50,7 +50,7 @@
 
                             <div class="input-error" data-ng-show="forms.editForm.propertyName.$dirty && forms.editForm.propertyName.$invalid">
                                 <span ng-show="forms.editForm.propertyName.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Property name' }"></span>
-                                <span ng-show="forms.editForm.propertyName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                                <span ng-show="forms.editForm.propertyName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{nameMaxLength}}' }"></span>
                                 <span ng-show="forms.editForm.propertyName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
                             </div>
                         </div>
