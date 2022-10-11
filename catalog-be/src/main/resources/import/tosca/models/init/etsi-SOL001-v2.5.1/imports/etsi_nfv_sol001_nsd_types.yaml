@@ -405,6 +405,10 @@ node_types:
         type: string
         description: Identifies an NSD in a version independent manner. This attribute is invariant across versions of NSD.
         required: true
+      flavour_id:
+        type: string
+        description: Identifier of the NS Deployment Flavour within the NSD
+        required: true
     requirements:
       - virtual_link:
           capability: tosca.capabilities.nfv.VirtualLinkable
