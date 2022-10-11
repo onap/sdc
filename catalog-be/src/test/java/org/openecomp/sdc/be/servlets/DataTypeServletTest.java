@@ -98,8 +98,10 @@ class DataTypeServletTest extends JerseySpringBaseTest {
 
     @Test
     void fetchDataTypeTest_Success() {
+        final DataTypeDataDefinition expectedDataType = new DataTypeDataDefinition();
+        expectedDataType.setUniqueId(DATA_TYPE_UID);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.SC_OK));
-        when(dataTypeOperation.getDataTypeByUid(DATA_TYPE_UID)).thenReturn(Optional.of(new DataTypeDataDefinition()));
+        when(dataTypeOperation.getDataTypeByUid(DATA_TYPE_UID)).thenReturn(Optional.of(expectedDataType));
 
         final Response response = target()
             .path(PATH)
@@ -108,6 +110,8 @@ class DataTypeServletTest extends JerseySpringBaseTest {
             .get(Response.class);
         assertNotNull(response);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
+        final DataTypeDataDefinition actualDataType = response.readEntity(DataTypeDataDefinition.class);
+        assertEquals(expectedDataType.getUniqueId(), actualDataType.getUniqueId());
     }
 
     @Test
