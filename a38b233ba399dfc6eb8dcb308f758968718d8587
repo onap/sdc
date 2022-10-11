@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "90dfff16_c03b83ba",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c4672be_b426533d",
+      "range": {
+        "startLine": 1033,
+        "startChar": 21,
+        "endLine": 1038,
+        "endChar": 28
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b247baa8_cfc0f75a",
         "filename": "catalog-be/pom.xml",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb85ac6f_9df71e7f",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b247baa8_cfc0f75a",
+      "range": {
+        "startLine": 1042,
+        "startChar": 21,
+        "endLine": 1042,
+        "endChar": 26
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "6f465089_e7deac96",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/engine/CambriaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ebb9e8f4_d39348bf",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 0
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0bf3068a_2c159744",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngineInitTaskTest.java",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a031f12b_ee70f12e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngineInitTaskTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bf3068a_2c159744",
+      "range": {
+        "startLine": 263,
+        "startChar": 8,
+        "endLine": 265,
+        "endChar": 9
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "92dcf6fc_69a42ab5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b5b9617_d8a960ad",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 22
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "492289a5_1685ec30",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
         "patchSetId": 4
@@ -137,6 +257,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46ca425b_9844c6a5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "492289a5_1685ec30",
+      "range": {
+        "startLine": 75,
+        "startChar": 14,
+        "endLine": 75,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "b2507f62_59ddd046",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f2d5c3b_69d94bc2",
+      "range": {
+        "startLine": 86,
+        "startChar": 14,
+        "endLine": 86,
+        "endChar": 60
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f8b06dac_bf9ae3f6",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
         "patchSetId": 4
@@ -183,6 +351,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5494b232_9fc4a87a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8b06dac_bf9ae3f6",
+      "range": {
+        "startLine": 95,
+        "startChar": 14,
+        "endLine": 96,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "e68dc45a_445eb823",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c861c7a_278adfc2",
+      "range": {
+        "startLine": 105,
+        "startChar": 14,
+        "endLine": 106,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0d507f5_686d7ce9",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
         "patchSetId": 4
@@ -232,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "428872f8_91a82a63",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/KafkaHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c0d507f5_686d7ce9",
+      "range": {
+        "startLine": 116,
+        "startChar": 14,
+        "endLine": 117,
+        "endChar": 48
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3bf20717_8701bb4c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumerTest.java",
         "patchSetId": 4
@@ -246,6 +486,42 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "913b867d_4bb0804d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3bf20717_8701bb4c",
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7dc90db4_2273a75b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3bf20717_8701bb4c",
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -289,6 +565,24 @@
     },
     {
       "key": {
+        "uuid": "d5b03208_755f2997",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "290e1c21_aff6277e",
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6d1e8cc7_e3bb8b9a",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
         "patchSetId": 4
@@ -309,6 +603,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e75b61b2_0a1e3951",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d1e8cc7_e3bb8b9a",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 22
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -335,6 +653,30 @@
     },
     {
       "key": {
+        "uuid": "558be476_35f325dd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e906434_79a7753e",
+      "range": {
+        "startLine": 45,
+        "startChar": 14,
+        "endLine": 45,
+        "endChar": 34
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "510f5580_f6d81ad1",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
         "patchSetId": 4
@@ -358,6 +700,30 @@
     },
     {
       "key": {
+        "uuid": "80ac529d_12ad3126",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "510f5580_f6d81ad1",
+      "range": {
+        "startLine": 55,
+        "startChar": 14,
+        "endLine": 55,
+        "endChar": 34
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f63f802a_8bb0bb1f",
         "filename": "pom.xml",
         "patchSetId": 4
@@ -378,6 +744,30 @@
       "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b57170f_157bb094",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-11T15:45:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f63f802a_8bb0bb1f",
+      "range": {
+        "startLine": 211,
+        "startChar": 25,
+        "endLine": 211,
+        "endChar": 30
+      },
+      "revId": "a38b233ba399dfc6eb8dcb308f758968718d8587",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
