@@ -53,6 +53,9 @@ limitations under the License.
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
         <it.helm-validator.version>1.3.1</it.helm-validator.version>
+        <it.skip.init>false</it.skip.init>
+        <onboard.backend.dependsOn>sdc-cassandra-onboard-init</onboard.backend.dependsOn>
+        <backend.dependsOn>sdc-cassandra-init</backend.dependsOn>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.7.0</sdc-tosca-parser.version>
@@ -505,6 +508,11 @@ limitations under the License.
                     <apiVersion>${docker.api.version}</apiVersion>
                     <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
                     <startParallel>true</startParallel>
+                    <volumes>
+                        <volume>
+                            <name>sdc-cassandra</name>
+                        </volume>
+                    </volumes>
                     <images>
                         <image>
                             <name>${docker.namespace}/sdc-cassandra:${it.docker.version}</name>
@@ -520,8 +528,8 @@ limitations under the License.
                                 <hostname>sdc-cs</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments
-                                        </volume>
+                                        <volume>${it.chef.config}:/root/chef-solo/environments</volume>
+                                        <volume>sdc-cassandra:/var/lib/cassandra</volume>
                                     </bind>
                                 </volumes>
                                 <ulimits>
@@ -560,6 +568,7 @@ limitations under the License.
                             <name>${docker.namespace}/sdc-cassandra-init:${it.docker.version}</name>
                             <alias>sdc-cassandra-init</alias>
                             <run>
+                                <skip>${it.skip.init}</skip>
                                 <dependsOn>
                                     <container>sdc-cassandra</container>
                                 </dependsOn>
@@ -575,7 +584,6 @@ limitations under the License.
                                     <bind>
                                         <volume>${it.chef.config}:/home/sdc/chef-solo/environments
                                         </volume>
-
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -593,6 +601,7 @@ limitations under the License.
                             <name>${docker.namespace}/sdc-onboard-cassandra-init:${it.docker.version}</name>
                             <alias>sdc-cassandra-onboard-init</alias>
                             <run>
+                                <skip>${it.skip.init}</skip>
                                 <dependsOn>
                                     <container>sdc-cassandra-init</container>
                                 </dependsOn>
@@ -628,7 +637,7 @@ limitations under the License.
                             <alias>sdc-onboard-backend</alias>
                             <run>
                                 <dependsOn>
-                                    <container>sdc-cassandra-onboard-init</container>
+                                    <container>${onboard.backend.dependsOn}</container>
                                 </dependsOn>
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}
@@ -681,7 +690,7 @@ limitations under the License.
                             <alias>sdc-backend</alias>
                             <run>
                                 <dependsOn>
-                                    <container>sdc-cassandra-init</container>
+                                    <container>${backend.dependsOn}</container>
                                 </dependsOn>
                                 <env>
                                     <cassandra_ssl_enabled>${it.cassandra.ssl.enabled}
@@ -732,6 +741,7 @@ limitations under the License.
                             <name>${docker.namespace}/sdc-backend-init:${it.docker.version}</name>
                             <alias>sdc-backend-init</alias>
                             <run>
+                                <skip>${it.skip.init}</skip>
                                 <dependsOn>
                                     <container>sdc-backend</container>
                                 </dependsOn>
@@ -991,6 +1001,14 @@ limitations under the License.
             <properties>
                 <surefire.skip.tests>true</surefire.skip.tests>
                 <skipTest>false</skipTest>
+            </properties>
+        </profile>
+        <profile>
+            <id>it-skip-init</id>
+            <properties>
+                <onboard.backend.dependsOn></onboard.backend.dependsOn>
+                <backend.dependsOn></backend.dependsOn>
+                <it.skip.init>true</it.skip.init>
             </properties>
         </profile>
         <profile>
