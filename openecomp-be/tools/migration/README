@@ -42,7 +42,7 @@ Usage -
 		The migration result will be listed in a CSV file: upgradereport.csv
 		"None" is an indication that the VSP was not in a checkout status prior to the upgrade.
 
-	Exmample for a valid output:
+	Example for a valid output:
 
 		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: ABC, locked by: None, status not started
 		Service VSP-OK was tested and does not need a migration

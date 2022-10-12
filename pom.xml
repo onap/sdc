@@ -81,8 +81,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <javax.servlet.version>${servlet-api.version}</javax.servlet.version>
 
-        <jetty.version>9.4.45.v20220203</jetty.version>
-        <jetty-distribution.version>9.4.45.v20220203</jetty-distribution.version>
+        <jetty.version>9.4.49.v20220914</jetty.version>
+        <jetty-distribution.version>${jetty.version}</jetty-distribution.version>
         <cxf.version>3.4.4</cxf.version>
 
         <org.owasp.esapi.version>2.4.0.0</org.owasp.esapi.version>
@@ -199,6 +199,8 @@ Modifications copyright (c) 2018-2019 Nokia
 
         <minio.version>8.3.4</minio.version>
         <okhttp.version>4.9.3</okhttp.version>
+
+        <jsoup.version>1.15.3</jsoup.version>
 
         <verbose>false</verbose>
     </properties>
