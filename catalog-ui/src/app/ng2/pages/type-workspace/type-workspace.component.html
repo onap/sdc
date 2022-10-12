@@ -44,7 +44,7 @@
         </div>
         <div class="w-sdc-main-container-body-content" *ngIf="dataType">
           <app-type-workspace-general *ngIf="currentMenu.state === 'general'" [dataType]="dataType"></app-type-workspace-general>
-          <app-type-workspace-properties *ngIf="currentMenu.state === 'properties'" [dataType]="dataType"></app-type-workspace-properties>
+          <app-type-workspace-properties *ngIf="currentMenu.state === 'properties'" [dataType]="dataType" [isViewOnly]="false"></app-type-workspace-properties>
         </div>
 
       </div>

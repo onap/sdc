@@ -22,9 +22,12 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,6 +44,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -114,9 +118,31 @@ public class DataTypeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Data type not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response fetchProperties(@PathParam("id") final String id) {
+    public Response fetchProperties(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
+                                    @PathParam("id") final String id) {
         final List<PropertyDefinition> allProperties = dataTypeOperation.findAllProperties(id);
         return buildOkResponse(allProperties);
+    }
+
+    @POST
+    @Path("{id}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Create a property in the given data type", method = "POST", description = "Create a property in the given data type",
+        responses = {
+            @ApiResponse(content = @Content(schema = @Schema(implementation = PropertyDefinitionDto.class))),
+            @ApiResponse(responseCode = "201", description = "Property created in the data type"),
+            @ApiResponse(responseCode = "400", description = "Invalid payload"),
+            @ApiResponse(responseCode = "409", description = "Property already exists in the data type"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Data type not found")
+        })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response createProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
+                                       @PathParam("id") final String id,
+                                   @RequestBody(description = "Property to add", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
+        final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
+        return Response.status(Status.CREATED).entity(property).build();
     }
 
 }

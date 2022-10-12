@@ -24,14 +24,28 @@ package org.openecomp.sdc.be.exception.supplier;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.openecomp.sdc.be.exception.OperationException;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataTypeOperationExceptionSupplier {
 
     public static Supplier<OperationException> unexpectedErrorWhileFetchingProperties(final String uniqueId) {
-        final String errorMessage = String.format("An unexpected error has occurred while retrieving the data type '%s' properties", uniqueId);
-        return () -> new OperationException(errorMessage);
+        return () -> new OperationException(ActionStatus.UNEXPECTED_ERROR, String.format("retrieving the data type '%s' properties", uniqueId));
+    }
+
+    public static Supplier<OperationException> dataTypeNotFound(final String dataTypeId) {
+        return () -> new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, dataTypeId);
+    }
+
+    public static Supplier<OperationException> dataTypePropertyAlreadyExists(final String dataTypeId, final String propertyName) {
+        return () -> new OperationException(ActionStatus.DATA_TYPE_PROPERTY_ALREADY_EXISTS, dataTypeId, propertyName);
+    }
+
+    public static Supplier<OperationException> unexpectedErrorWhileCreatingProperty(String dataTypeId, String propertyName) {
+        return () -> new OperationException(ActionStatus.UNEXPECTED_ERROR,
+            String.format("creating the property '%s' in the data type '%s'", propertyName, dataTypeId)
+        );
     }
 
 }
