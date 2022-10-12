@@ -31,7 +31,10 @@ import {UpgradeModule} from "@angular/upgrade/static";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {DataTypeService} from "../../services/data-type.service";
-import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
+import {TypeWorkspacePropertiesComponent} from './type-workspace-properties/type-workspace-properties.component';
+import {ModalService} from "../../services/modal.service";
+import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
+import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
 
 @NgModule({
     imports: [
@@ -42,19 +45,22 @@ import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/ty
         ReactiveFormsModule,
         TranslateModule,
         FormsModule,
+        InterfaceOperationHandlerModule,
     ],
     declarations: [
         TypeWorkspaceComponent,
         WorkspaceMenuComponent,
         TypeWorkspaceGeneralComponent,
-        TypeWorkspacePropertiesComponent
+        TypeWorkspacePropertiesComponent,
+        AddPropertyComponent,
     ],
     providers: [
         CacheService,
         WorkspaceMenuComponent,
-        DataTypeService
+        DataTypeService,
+        ModalService
     ],
-    entryComponents: [TypeWorkspaceComponent],
+    entryComponents: [TypeWorkspaceComponent, AddPropertyComponent],
     exports: [TypeWorkspaceComponent]
 })
 export class TypeWorkspaceModule {

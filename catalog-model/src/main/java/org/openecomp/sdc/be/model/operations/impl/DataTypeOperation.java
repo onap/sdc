@@ -39,12 +39,16 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.mapper.PropertyDefinitionDtoMapper;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,6 +206,31 @@ public class DataTypeOperation extends AbstractOperation {
         final List<PropertyDefinition> propertyDefinitions = new ArrayList<>(propertyMap.values());
         propertyDefinitions.sort(Comparator.comparing(PropertyDefinition::getName));
         return propertyDefinitions;
+    }
+
+    public PropertyDefinitionDto createProperty(final String dataTypeId, final PropertyDefinitionDto propertyDefinitionDto) {
+        final String propertyName = propertyDefinitionDto.getName();
+        LOGGER.debug("Adding property '{}' to data type '{}'.", propertyName, dataTypeId);
+
+        getDataTypeByUid(dataTypeId).orElseThrow(DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId));
+
+        final Either<PropertyData, JanusGraphOperationStatus> resultEither =
+            propertyOperation.addPropertyToNodeType(propertyName, PropertyDefinitionDtoMapper.mapTo(propertyDefinitionDto),
+                NodeTypeEnum.DataType, dataTypeId, false);
+        if (resultEither.isRight()) {
+            final JanusGraphOperationStatus status = resultEither.right().value();
+            LOGGER.debug("Could not create property '{}' on data type '{}'. JanusGraph status is '{}'", propertyName, dataTypeId, status);
+            if (status == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
+                throw DataTypeOperationExceptionSupplier.dataTypePropertyAlreadyExists(dataTypeId, propertyName).get();
+            }
+            LOGGER.error("Could not create property '{}' on data type '{}'. JanusGraph status is '{}'", propertyName, dataTypeId, status);
+            throw DataTypeOperationExceptionSupplier.unexpectedErrorWhileCreatingProperty(dataTypeId, propertyName).get();
+        }
+        LOGGER.debug("Property '{}' was added to data type '{}'.", propertyName, dataTypeId);
+        final PropertyData propertyData = resultEither.left().value();
+        final PropertyDataDefinition propertyDataDefinition = propertyData.getPropertyDataDefinition();
+        propertyDataDefinition.setName(propertyName);
+        return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
 
 }

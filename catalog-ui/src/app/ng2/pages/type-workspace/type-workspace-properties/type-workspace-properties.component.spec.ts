@@ -30,9 +30,11 @@ import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../models/data-types";
 import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
+import {ModalService} from "../../../services/modal.service";
 
 describe('TypeWorkspacePropertiesComponent', () => {
     const messages = require("../../../../../assets/languages/en_US.json");
+    let modalService: Partial<ModalService> = {};
     let testHostComponent: TestHostComponent;
     let testHostFixture: ComponentFixture<TestHostComponent>;
     let dataTypeServiceMock: Partial<DataTypeService> = {
@@ -62,7 +64,8 @@ describe('TypeWorkspacePropertiesComponent', () => {
             ],
             providers: [
                 {provide: DataTypeService, useValue: dataTypeServiceMock},
-                {provide: TranslateService, useValue: translateServiceMock}
+                {provide: TranslateService, useValue: translateServiceMock},
+                {provide: ModalService, useValue: modalService}
             ]
         })
         .compileComponents();

@@ -33,6 +33,7 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinit
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * Handles the input list inside the interface operation modal.
@@ -71,8 +72,12 @@ public class InterfaceOperationInputListComponent extends AbstractPageObject {
         if (value == null) {
             return;
         }
-        if (value instanceof String || value instanceof Integer || value instanceof Boolean) {
+        if (value instanceof String || value instanceof Integer) {
             fillSimpleValue(inputName, String.valueOf(value));
+            return;
+        }
+        if (value instanceof Boolean) {
+            fillBooleanValue(inputName, String.valueOf(value));
             return;
         }
         throw new UnsupportedOperationException("Set input value not yet implemented for value type: " + value.getClass().getName());
@@ -141,6 +146,15 @@ public class InterfaceOperationInputListComponent extends AbstractPageObject {
         inputOpt.ifPresent(webElement -> webElement.findElement(simpleInputValueSelector).sendKeys(inputValue));
     }
 
+    private void fillBooleanValue(final String inputName, final String inputValue) {
+        toggleInputExpansion(inputName);
+        final Optional<WebElement> inputOpt = findInput(inputName);
+        assertTrue(inputOpt.isPresent(), String.format("Could not set value for input '%s'. The input was not found.", inputName));
+        final By simpleInputValueSelector = By.xpath(XpathSelector.BOOLEAN_VALUE_INPUT_RELATIVE_FROM_INPUT_INFO.getXPath());
+        final WebElement booleanDropdownWebElement = inputOpt.get().findElement(simpleInputValueSelector);
+        new Select(booleanDropdownWebElement).selectByValue(inputValue);
+    }
+
     @AllArgsConstructor
     private enum XpathSelector {
         WRAPPING_ELEMENT("//div[@class='input-tree']"),
@@ -148,6 +162,7 @@ public class InterfaceOperationInputListComponent extends AbstractPageObject {
         INPUT_LABEL("label[@class='input-label']"),
         INPUT_TYPE("em[@data-tests-id='input-type']"),
         SIMPLE_VALUE_INPUT_RELATIVE_FROM_INPUT_INFO("..//li[@class='input-value']/input"),
+        BOOLEAN_VALUE_INPUT_RELATIVE_FROM_INPUT_INFO("..//li[@class='input-value']/select"),
         EXPAND_ICON("em[contains(concat(' ',normalize-space(@class),' '),' round-expand-icon ')]"),
         DELETE_ICON("span[contains(concat(' ',normalize-space(@class),' '),' delete-btn ')]");
 

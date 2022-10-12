@@ -19,7 +19,9 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,14 +44,18 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.exception.OperationException;
 import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.mapper.PropertyDefinitionDtoMapper;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -87,9 +93,10 @@ class DataTypeOperationTest {
         when(janusGraphGenericDao.getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class))
             .thenReturn(Either.left(dataTypesWithModel));
         final var dataTypesFound = dataTypeOperation.getAllDataTypeNodes();
-        assertThat(dataTypesFound.size()).isEqualTo(4);
-        assertThat(dataTypesFound.containsAll(dataTypesWithoutModel)).isTrue();
-        assertThat(dataTypesFound.containsAll(dataTypesWithModel)).isTrue();
+        assertThat(dataTypesFound)
+            .hasSize(4)
+            .containsAll(dataTypesWithoutModel)
+            .containsAll(dataTypesWithModel);
     }
 
     @Test
@@ -100,8 +107,9 @@ class DataTypeOperationTest {
         when(janusGraphGenericDao.getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class))
             .thenReturn(Either.left(dataTypesWithModel));
         final var dataTypesFound = dataTypeOperation.getAllDataTypeNodes();
-        assertThat(dataTypesFound.size()).isEqualTo(2);
-        assertThat(dataTypesFound.containsAll(dataTypesWithModel)).isTrue();
+        assertThat(dataTypesFound)
+            .hasSize(2)
+            .containsAll(dataTypesWithModel);
         assertThat(dataTypesFound.containsAll(dataTypesWithoutModel)).isFalse();
     }
 
@@ -110,7 +118,7 @@ class DataTypeOperationTest {
         when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class))
             .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         final var dataTypesFound = dataTypeOperation.getAllDataTypeNodes();
-        assertThat(dataTypesFound.isEmpty()).isTrue();
+        assertThat(dataTypesFound).isEmpty();
     }
 
     @Test
@@ -185,6 +193,79 @@ class DataTypeOperationTest {
         final OperationException expectedException =
             DataTypeOperationExceptionSupplier.unexpectedErrorWhileFetchingProperties(uniqueId).get();
         assertEquals(expectedException.getMessage(), actualException.getMessage());
+    }
+
+    @Test
+    void createPropertyTest_Success() {
+        final String dataTypeId = "uniqueId";
+        final var property1 = new PropertyDefinitionDto();
+        property1.setName("property1");
+        final var propertyData = new PropertyData();
+        final var propertyDataDefinition = new PropertyDataDefinition();
+        propertyDataDefinition.setName("property1");
+        propertyData.setPropertyDataDefinition(propertyDataDefinition);
+        when(janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeId, DataTypeData.class))
+            .thenReturn(Either.left(new DataTypeData()));
+        when(propertyOperation.addPropertyToNodeType(eq(property1.getName()), any(PropertyDefinition.class),
+            eq(NodeTypeEnum.DataType), eq(dataTypeId), eq(false)))
+            .thenReturn(Either.left(propertyData));
+        final PropertyDefinitionDto propertyDefinitionDto = dataTypeOperation.createProperty(dataTypeId, property1);
+        assertNotNull(propertyDefinitionDto);
+        assertEquals(property1.getName(), propertyDefinitionDto.getName());
+    }
+
+    @Test
+    void createPropertyTest_DataTypePropertyAlreadyExists() {
+        final String dataTypeId = "uniqueId";
+        final var property1 = new PropertyDefinitionDto();
+        property1.setName("property1");
+        when(janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeId, DataTypeData.class))
+            .thenReturn(Either.left(new DataTypeData()));
+        when(propertyOperation.addPropertyToNodeType(eq(property1.getName()), any(PropertyDefinition.class),
+            eq(NodeTypeEnum.DataType), eq(dataTypeId), eq(false)))
+            .thenReturn(Either.right(JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION));
+        final OperationException actualException = assertThrows(OperationException.class,
+            () -> dataTypeOperation.createProperty(dataTypeId, property1));
+        final OperationException expectedException =
+            DataTypeOperationExceptionSupplier.dataTypePropertyAlreadyExists(dataTypeId, property1.getName()).get();
+
+        assertEquals(expectedException.getActionStatus(), actualException.getActionStatus());
+        assertArrayEquals(expectedException.getParams(), actualException.getParams());
+    }
+
+    @Test
+    void createPropertyTest_DataTypeNotFound() {
+        final String dataTypeId = "uniqueId";
+        final var property1 = new PropertyDefinitionDto();
+        property1.setName("property1");
+        when(janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeId, DataTypeData.class))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        final OperationException actualException = assertThrows(OperationException.class,
+            () -> dataTypeOperation.createProperty(dataTypeId, property1));
+        final OperationException expectedException =
+            DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId).get();
+
+        assertEquals(expectedException.getActionStatus(), actualException.getActionStatus());
+        assertArrayEquals(expectedException.getParams(), actualException.getParams());
+    }
+
+    @Test
+    void createPropertyTest_UnexpectedError() {
+        final String dataTypeId = "uniqueId";
+        final var property1 = new PropertyDefinitionDto();
+        property1.setName("property1");
+        when(janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), dataTypeId, DataTypeData.class))
+            .thenReturn(Either.left(new DataTypeData()));
+        when(propertyOperation.addPropertyToNodeType(eq(property1.getName()), any(PropertyDefinition.class),
+            eq(NodeTypeEnum.DataType), eq(dataTypeId), eq(false)))
+            .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final OperationException actualException = assertThrows(OperationException.class,
+            () -> dataTypeOperation.createProperty(dataTypeId, property1));
+        final OperationException expectedException =
+            DataTypeOperationExceptionSupplier.unexpectedErrorWhileCreatingProperty(dataTypeId, property1.getName()).get();
+
+        assertEquals(expectedException.getActionStatus(), actualException.getActionStatus());
+        assertArrayEquals(expectedException.getParams(), actualException.getParams());
     }
 
     private void initTestData() {
