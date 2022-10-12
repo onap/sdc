@@ -25,35 +25,36 @@
     <input id="search-by-name" type="search" [placeholder]="'SEARCH_LABEL' | translate" [ngModel]="tableFilterTerm" (ngModelChange)="this.tableSearchTermUpdate.next($event)"/>
     <span class="sprite magnification-glass search-button"></span>
   </div>
+  <div class="add-btn" data-tests-id="add-link" *ngIf="!isViewOnly" (click)="onClickAddProperty()">Add Property</div>
   <div class="table-container-flex">
     <div class="table" [ngClass]="{'view-mode': isViewOnly}">
       <div class="head flex-container">
         <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="onUpdateSort(header.property)">{{header.title}}
           <span *ngIf="tableSortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': tableColumnReverse, 'up': !tableColumnReverse}"></span>
         </div>
-        <div class="table-no-text-header head-row flex-item" *ngIf="!isViewOnly"><span class="delete-col-header"></span></div>
       </div>
 
       <div class="body">
-          <div *ngIf="filteredProperties.length === 0" class="no-row-text">
-            {{'PROPERTY_LIST_EMPTY_MESSAGE' | translate}}
+        <div *ngIf="filteredProperties.length === 0" class="no-row-text">
+          {{'PROPERTY_LIST_EMPTY_MESSAGE' | translate}}
+        </div>
+        <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row" (click)="onRowClick(property)">
+          <div class="table-col-general flex-item text" [title]="property.name">
+            <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': isViewOnly}">{{property.name}}</a>
           </div>
-            <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row">
-            <div class="table-col-general flex-item text" [title]="property.name">
-              <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': isViewOnly}">{{property.name}}</a>
-            </div>
-
-            <div class="table-col-general flex-item text" [title]="property.type">
-              <span [attr.data-tests-id]="'property-type-' + property.name">{{property.type}}</span>
-            </div>
-            <div class="table-col-general flex-item text" [title]="property.getSchemaType() || ''">
-              <span [attr.data-tests-id]="'property-schema-' + property.name">{{property.getSchemaType() || ''}}</span>
-            </div>
-            <div class="table-col-general flex-item text" [title]="property.description">
-              <span [attr.data-tests-id]="'property-description-' + property.name" [title]="property.description">{{property.description}}</span>
-            </div>
-            <div class="table-btn-col flex-item" *ngIf="!isViewOnly"></div>
+          <div class="table-col-general flex-item text" [title]="property.type">
+            <span [attr.data-tests-id]="'property-type-' + property.name">{{property.type}}</span>
           </div>
+          <div class="table-col-general flex-item text" [title]="property.schemaType || ''">
+            <span [attr.data-tests-id]="'property-schema-' + property.name">{{property.schemaType || ''}}</span>
+          </div>
+          <div class="table-col-general flex-item text" [title]="property.required ? 'Yes' : 'No'">
+            <span [attr.data-tests-id]="'property-required-' + property.name">{{property.required ? 'Yes' : 'No'}}</span>
+          </div>
+          <div class="table-col-general flex-item text" [title]="property.description || ''">
+            <span [attr.data-tests-id]="'property-description-' + property.name" [title]="property.description">{{property.description}}</span>
+          </div>
+        </div>
       </div>
 
     </div>

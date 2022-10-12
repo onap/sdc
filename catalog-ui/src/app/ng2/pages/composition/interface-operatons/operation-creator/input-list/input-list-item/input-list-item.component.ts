@@ -21,12 +21,13 @@
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataTypeModel} from '../../../../../../../models/data-types';
-import {SchemaPropertyGroupModel} from '../../../../../../../models/schema-property';
-import {DerivedPropertyType, PropertyBEModel} from '../../../../../../../models/properties-inputs/property-be-model';
-import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../../utils/constants';
+import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../../../models/schema-property';
+import {PropertyBEModel} from '../../../../../../../models/properties-inputs/property-be-model';
+import {PROPERTY_TYPES} from '../../../../../../../utils/constants';
 import {ToscaFunction} from '../../../../../../../models/tosca-function';
-import {ToscaFunctionValidationEvent} from "../../../../../../../ng2/pages/properties-assignment/tosca-function/tosca-function.component";
+import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
+import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
 
 @Component({
   selector: 'app-input-list-item',
@@ -41,6 +42,7 @@ export class InputListItemComponent implements OnInit {
   @Input() type: DataTypeModel;
   @Input() schema: SchemaPropertyGroupModel;
   @Input() nestingLevel: number;
+  @Input() isExpanded: boolean = false;
   @Input() isListChild: boolean = false;
   @Input() isMapChild: boolean = false;
   @Input() showToscaFunctionOption: boolean = false;
@@ -53,12 +55,11 @@ export class InputListItemComponent implements OnInit {
   @Output('onDelete') onDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output('onChildListItemDelete') onChildListItemDeleteEvent: EventEmitter<number> = new EventEmitter<number>();
 
-  isExpanded: boolean = false;
   mapEntryName: string;
   isToscaFunction: boolean = false;
   property: PropertyBEModel;
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (!this.nestingLevel) {
       this.nestingLevel = 0;
     }
@@ -93,32 +94,32 @@ export class InputListItemComponent implements OnInit {
     }
   }
 
-  getType(typeName: string): DerivedPropertyType {
-    if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(typeName) > -1) {
-      return DerivedPropertyType.SIMPLE;
-    } else if (typeName === PROPERTY_TYPES.LIST) {
-      return DerivedPropertyType.LIST;
-    } else if (typeName === PROPERTY_TYPES.MAP) {
-      return DerivedPropertyType.MAP;
-    } else {
-      return DerivedPropertyType.COMPLEX;
-    }
-  }
-
   isTypeSimple(typeName: string): boolean {
-    return this.getType(typeName) == DerivedPropertyType.SIMPLE;
+    return ToscaTypeHelper.isTypeSimple(typeName);
   }
 
   isTypeList(typeName: string): boolean {
-    return this.getType(typeName) == DerivedPropertyType.LIST;
+    return ToscaTypeHelper.isTypeList(typeName);
   }
 
   isTypeMap(typeName: string): boolean {
-    return this.getType(typeName) == DerivedPropertyType.MAP;
+    return ToscaTypeHelper.isTypeMap(typeName);
   }
 
   isTypeComplex(typeName: string): boolean {
-    return !this.isTypeSimple(typeName) && !this.isTypeList(typeName) && !this.isTypeMap(typeName);
+    return ToscaTypeHelper.isTypeComplex(typeName);
+  }
+
+  isTypeNumber(type: string): boolean {
+    return ToscaTypeHelper.isTypeNumber(type);
+  }
+
+  isTypeBoolean(type: string): boolean {
+    return ToscaTypeHelper.isTypeBoolean(type);
+  }
+
+  isTypeLiteral(type: string): boolean {
+    return ToscaTypeHelper.isTypeLiteral(type);
   }
 
   expandAndCollapse() {
@@ -144,7 +145,7 @@ export class InputListItemComponent implements OnInit {
   }
 
   onValueChange(value: any): void {
-    if (this.isNumber(this.type.name)) {
+    if (this.isTypeNumber(this.type.name)) {
       this.emitValueChangeEvent(this.parseNumber(value));
       return;
     }
@@ -261,14 +262,20 @@ export class InputListItemComponent implements OnInit {
   }
 
   getSimpleValueInputType() {
-    if (this.isNumber(this.type.name)){
+    if (this.isTypeNumber(this.type.name)){
       return 'number';
     }
     return 'text';
   }
 
-  isNumber(type: string): boolean {
-    return type === PROPERTY_TYPES.INTEGER || type === PROPERTY_TYPES.FLOAT;
+  buildSchemaGroupProperty(): SchemaPropertyGroupModel {
+    const schemaProperty = new SchemaProperty();
+    if (this.schema.property.type === PROPERTY_TYPES.MAP || this.schema.property.type === PROPERTY_TYPES.LIST) {
+      schemaProperty.type = PROPERTY_TYPES.STRING;
+    } else {
+      schemaProperty.type = this.schema.property.type
+    }
+    return new SchemaPropertyGroupModel(schemaProperty);
   }
 
   private parseBoolean(value: any) {

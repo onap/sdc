@@ -23,18 +23,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.eclipse.jetty.http.HttpStatus;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 @Provider
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
-    private static final Logger log = Logger.getLogger(DefaultExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
     @Override
-    public Response toResponse(Exception exception) {
-        log.debug("#toResponse - An error occurred: ", exception);
+    public Response toResponse(final Exception exception) {
+        LOGGER.error("An unhandled error has occurred", exception);
         return Response.status(HttpStatus.INTERNAL_SERVER_ERROR_500).entity(exception.getMessage()).build();
     }
 }
