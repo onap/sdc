@@ -976,6 +976,9 @@ BE-configuration.yaml
     definedResourceNamespace:
        - org.openecomp.resource.
 
+    # Comma separated list of excluded URLs by the DataValidatorFilter
+    dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
+
 BE-distribution-engine-configuration.yaml
 *****************************************
 
@@ -1340,6 +1343,9 @@ FE-configuration.yaml
 
         # What is the interval of the statistics collection
         probeIntervalInSeconds: 15
+
+    # Comma separated list of excluded URLs by the DataValidatorFilter
+    dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
 
 
 FE-plugins-configuration.yaml
