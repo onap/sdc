@@ -67,12 +67,16 @@
       <ul *ngIf="isExpanded">
         <li class="input-value">
           <ng-container *ngIf="isViewOnly">
-            {{valueObjRef}}<em class="empty-value" *ngIf="valueObjRef !== false && !valueObjRef">empty</em>
+            {{valueObjRef}}<em class="empty-value" *ngIf="valueObjRef !== false && !valueObjRef">{{'GENERAL_LABEL_EMPTY' | translate | lowercase}}</em>
           </ng-container>
-          <input *ngIf="!isViewOnly" [type]="getSimpleValueInputType()" name="value"
-                [(ngModel)]="valueObjRef"
-                (ngModelChange)="onValueChange($event)"
-          />
+          <input *ngIf="!isViewOnly && isTypeLiteral(type.name)" type="text" name="value"
+                 [(ngModel)]="valueObjRef" (ngModelChange)="onValueChange($event)"/>
+          <input *ngIf="!isViewOnly && isTypeNumber(type.name)" type="number"
+                 [(ngModel)]="valueObjRef" (ngModelChange)="onValueChange($event)"/>
+          <select *ngIf="!isViewOnly && isTypeBoolean(type.name)" [(ngModel)]="valueObjRef" (ngModelChange)="onValueChange($event)">
+            <option [value]="true">{{'GENERAL_LABEL_TRUE' | translate}}</option>
+            <option [value]="false">{{'GENERAL_LABEL_FALSE' | translate}}</option>
+          </select>
         </li>
       </ul>
     </ng-container>
@@ -110,7 +114,7 @@
               [type]="getDataType(schema.property.type)"
               [dataTypeMap]="dataTypeMap"
               [valueObjRef]="valueObjRef[i]"
-              [schema]="schema"
+              [schema]="buildSchemaGroupProperty()"
               [nestingLevel]="nestingLevel + 1"
               [listIndex]="i"
               [isListChild]="true"
@@ -142,7 +146,7 @@
               [type]="getDataType(schema.property.type)"
               [dataTypeMap]="dataTypeMap"
               [valueObjRef]="valueObjRef[key]"
-              [schema]="schema"
+              [schema]="buildSchemaGroupProperty()"
               [isMapChild]="true"
               [nestingLevel]="nestingLevel + 1"
               [isViewOnly]="isViewOnly"
