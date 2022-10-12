@@ -1,0 +1,66 @@
+<div class="add-property-container">
+  <loader [display]="isLoading" [size]="'large'" [relative]="true" [loaderDelay]="500"></loader>
+  <form class="w-sdc-form" [formGroup]="formGroup">
+
+    <div class="side-by-side">
+      <div class="i-sdc-form-item">
+        <label class="i-sdc-form-label required">{{'PROPERTY_NAME_LABEL' | translate}}</label>
+        <input class="i-sdc-form-input"
+               type="text"
+               data-tests-id="property-name"
+               formControlName="name"
+               [readOnly]="readOnly"/>
+      </div>
+      <div class="i-sdc-form-item">
+        <label class="i-sdc-form-label required">{{'PROPERTY_TYPE_LABEL' | translate}}</label>
+        <select formControlName="type" (change)="onTypeChange()" [attr.disabled]="readOnly ? readOnly : null">
+          <option [ngValue]="null">{{'GENERAL_LABEL_SELECT' | translate}}</option>
+          <option *ngFor="let type of typeList"
+                  [ngValue]="type">{{type}}</option>
+        </select>
+      </div>
+      <div class="i-sdc-form-item">
+        <input type="checkbox" formControlName="required" [attr.disabled]="readOnly ? readOnly : null"/> {{'PROPERTY_REQUIRED_LABEL' | translate}}
+      </div>
+      <div class="i-sdc-form-item propertySchemaType" *ngIf="showSchema">
+        <label class="i-sdc-form-label required">{{'PROPERTY_SCHEMA_LABEL' | translate}}</label>
+        <select formControlName="schema" (change)="onSchemaChange()" [attr.disabled]="readOnly ? readOnly : null">
+          <option [ngValue]="null">{{'GENERAL_LABEL_SELECT' | translate}}</option>
+          <option *ngFor="let type of schemaTypeList"
+                  [ngValue]="type">{{type}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="i-sdc-form-item">
+      <label class="i-sdc-form-label">{{'PROPERTY_DESCRIPTION_LABEL' | translate}}</label>
+      <textarea class="i-sdc-form-textarea"
+                formControlName="description"
+                data-tests-id="property-description"
+                [readOnly]="readOnly">
+      </textarea>
+    </div>
+    <div class="default-value-container i-sdc-form-item" *ngIf="showDefaultValue()">
+      <label class="i-sdc-form-label">{{'PROPERTY_DEFAULT_VALUE_LABEL' | translate}}</label>
+      <ng-container *ngIf="!readOnly">
+        <input type="checkbox" formControlName="hasDefaultValue" [attr.disabled]="readOnly ? readOnly : null"/> {{'PROPERTY_SET_DEFAULT_VALUE_MSG' | translate}}
+      </ng-container>
+      <ng-container *ngIf="hasDefaultValueForm.value">
+        <ul>
+          <app-input-list-item
+              [name]="nameForm.value"
+              [type]="getDataType(typeForm.value)"
+              [dataTypeMap]="dataTypeMap"
+              [valueObjRef]="defaultValueForm.value"
+              [schema]="buildSchemaGroupProperty()"
+              [nestingLevel]="0"
+              [isViewOnly]="readOnly"
+              [allowDeletion]="false"
+              [isExpanded]="true"
+              (onValueChange)="onPropertyValueChange($event)">
+          </app-input-list-item>
+        </ul>
+      </ng-container>
+    </div>
+  </form>
+</div>

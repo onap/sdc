@@ -2821,3 +2821,23 @@ errors:
         code: 400
         message: "Capability '%1' not found in '%2' '%3'."
         messageId: "SVC4186"
+
+    # %1 - The data type Uid
+    DATA_TYPE_NOT_FOUND:
+        code: 404
+        message: "Data type '%1' was not found."
+        messageId: "SVC4011"
+
+    # %1 - The data type Uid
+    # %2 - The property name
+    DATA_TYPE_PROPERTY_ALREADY_EXISTS:
+        code: 409
+        message: "Data type '%1' property '%2' already exists."
+        messageId: "SVC4012"
+
+    # %1 - The operation that the error occurred
+    UNEXPECTED_ERROR:
+        code: 500
+        message: "An unexpected error occurred while %1."
+        messageId: "SVC4013"
+

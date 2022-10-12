@@ -24,12 +24,17 @@ package org.openecomp.sdc.be.model.mapper;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyDefinitionDtoMapper {
 
     public static PropertyDefinition mapTo(final PropertyDefinitionDto propertyDefinitionDto) {
@@ -38,11 +43,19 @@ public class PropertyDefinitionDtoMapper {
         propertyDefinition.setType(propertyDefinitionDto.getType());
         propertyDefinition.setRequired(propertyDefinitionDto.getRequired());
         propertyDefinition.setName(propertyDefinitionDto.getName());
+        if (StringUtils.isNotBlank(propertyDefinitionDto.getSchemaType())) {
+            final PropertyDefinition schemaProperty = new PropertyDefinition();
+            schemaProperty.setType(propertyDefinitionDto.getSchemaType());
+            final SchemaDefinition schema = new SchemaDefinition();
+            schema.setProperty(schemaProperty);
+            propertyDefinition.setSchema(schema);
+        }
         if (CollectionUtils.isNotEmpty(propertyDefinitionDto.getConstraints())) {
             final List<PropertyConstraint> propertyConstraints = new ArrayList<>();
             propertyDefinition.setConstraints(propertyConstraints);
             propertyConstraints.addAll(propertyDefinitionDto.getConstraints());
         }
+        propertyDefinition.setDescription(propertyDefinitionDto.getDescription());
         propertyDefinition.setValue(new Gson().toJson(propertyDefinitionDto.getValue()));
         propertyDefinition.setDefaultValue(new Gson().toJson(propertyDefinitionDto.getDefaultValue()));
         return propertyDefinition;
@@ -52,9 +65,11 @@ public class PropertyDefinitionDtoMapper {
         final var propertyDefinition = new PropertyDefinition(propertyDataDefinition);
         final var propertyDefinitionDto = new PropertyDefinitionDto();
         propertyDefinitionDto.setUniqueId(propertyDefinition.getUniqueId());
-        propertyDefinitionDto.setType(propertyDefinition.getType());
-        propertyDefinitionDto.setRequired(propertyDefinition.getRequired());
         propertyDefinitionDto.setName(propertyDefinition.getName());
+        propertyDefinitionDto.setType(propertyDefinition.getType());
+        propertyDefinitionDto.setDescription(propertyDefinition.getDescription());
+        propertyDefinitionDto.setRequired(propertyDefinition.getRequired());
+        propertyDefinitionDto.setSchemaType(propertyDefinition.getSchemaType());
         if (CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
             final List<PropertyConstraint> propertyConstraints = new ArrayList<>();
             propertyDefinitionDto.setConstraints(propertyConstraints);

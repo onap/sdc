@@ -332,6 +332,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
     public Either<PropertyData, JanusGraphOperationStatus> addPropertyToNodeType(String propertyName, PropertyDefinition propertyDefinition,
                                                                                  NodeTypeEnum nodeType, String uniqueId) {
+        return addPropertyToNodeType(propertyName, propertyDefinition, nodeType, uniqueId, true);
+    }
+
+    public Either<PropertyData, JanusGraphOperationStatus> addPropertyToNodeType(final String propertyName,
+                                                                                 final PropertyDefinition propertyDefinition,
+                                                                                 final NodeTypeEnum nodeType, final String uniqueId,
+                                                                                 final boolean inTransaction) {
         List<PropertyConstraint> constraints = propertyDefinition.getConstraints();
         propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(uniqueId, propertyName));
         PropertyData propertyData = new PropertyData(propertyDefinition, convertConstraintsToString(constraints));
@@ -339,6 +346,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         Either<PropertyData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao.createNode(propertyData, PropertyData.class);
         log.debug(AFTER_ADDING_PROPERTY_TO_GRAPH, propertyData);
         if (createNodeResult.isRight()) {
+            if (!inTransaction) {
+                janusGraphGenericDao.rollback();
+            }
             JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
             log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
             return Either.right(operationStatus);
@@ -350,9 +360,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         Either<GraphRelation, JanusGraphOperationStatus> createRelResult =
             janusGraphGenericDao.createRelation(uniqueIdData, propertyData, GraphEdgeLabels.PROPERTY, props);
         if (createRelResult.isRight()) {
+            if (!inTransaction) {
+                janusGraphGenericDao.rollback();
+            }
             JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
             log.error(FAILED_TO_ASSOCIATE_RESOURCE_TO_PROPERTY_IN_GRAPH_STATUS_IS, uniqueId, propertyName, operationStatus);
             return Either.right(operationStatus);
+        }
+        if (!inTransaction) {
+            janusGraphGenericDao.commit();
         }
         return Either.left(createNodeResult.left().value());
     }
