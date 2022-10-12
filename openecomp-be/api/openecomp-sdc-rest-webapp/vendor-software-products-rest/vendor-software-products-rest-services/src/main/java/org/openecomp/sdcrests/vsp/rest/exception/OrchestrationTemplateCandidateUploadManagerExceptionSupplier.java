@@ -32,16 +32,16 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.errors.VendorSoftwareProductNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatus;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
-
-    private OrchestrationTemplateCandidateUploadManagerExceptionSupplier() {
-    }
 
     public static Supplier<CoreException> vspUploadAlreadyInProgress(final String vspId, final String vspVersionId) {
         final String errorMsg = String.format("Upload already in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
@@ -61,7 +61,8 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
         return () -> new CoreException(errorCode, exception);
     }
 
-    public static Supplier<CoreException> couldNotUpdateLock(final UUID lockId, final String vspId, final String vspVersionId, final Exception exception) {
+    public static Supplier<CoreException> couldNotUpdateLock(final UUID lockId, final String vspId, final String vspVersionId,
+                                                             final Exception exception) {
         final String errorMsg = String.format("Could not update the lock %s for the VSP %s, version %s", lockId, vspId, vspVersionId);
         final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPDATE_UPLOAD_LOCK_ERROR).withMessage(errorMsg).build();
         return () -> new CoreException(errorCode, exception);
@@ -107,6 +108,5 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
         final String errorMsg = String.format("Can't update to a status that represents a upload completion as '%s'", status);
         return () -> new IllegalArgumentException(errorMsg);
     }
-
 
 }
