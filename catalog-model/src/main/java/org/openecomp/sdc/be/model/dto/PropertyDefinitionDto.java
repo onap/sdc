@@ -30,7 +30,9 @@ public class PropertyDefinitionDto {
 
     private String uniqueId;
     private String type;
+    private String schemaType;
     private String name;
+    private String description;
     private Boolean required;
     private Object value;
     private Object defaultValue;
