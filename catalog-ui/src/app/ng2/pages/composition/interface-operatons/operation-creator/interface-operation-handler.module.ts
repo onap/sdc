@@ -36,31 +36,32 @@ import {PropertyTableModule} from "app/ng2/components/logic/properties-table/pro
 import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function/tosca-function.module';
 
 @NgModule({
-  declarations: [
-    InterfaceOperationHandlerComponent,
-    PropertyParamRowComponent,
-    AddInputComponent,
-    InputListComponent,
-    InputListItemComponent
-  ],
-  imports: [
-    CommonModule,
-    SdcUiComponentsModule,
-    FormsModule,
-    FormElementsModule,
-    TranslateModule,
-    UiElementsModule,
-    PropertyTableModule,
-    ReactiveFormsModule,
-    ToscaFunctionModule
-  ],
-  exports: [
-    PropertyParamRowComponent
-  ],
-  entryComponents: [
-    InterfaceOperationHandlerComponent
-  ],
-  providers: []
+    declarations: [
+        InterfaceOperationHandlerComponent,
+        PropertyParamRowComponent,
+        AddInputComponent,
+        InputListComponent,
+        InputListItemComponent
+    ],
+    imports: [
+        CommonModule,
+        SdcUiComponentsModule,
+        FormsModule,
+        FormElementsModule,
+        TranslateModule,
+        UiElementsModule,
+        PropertyTableModule,
+        ReactiveFormsModule,
+        ToscaFunctionModule
+    ],
+    exports: [
+        PropertyParamRowComponent,
+        InputListItemComponent
+    ],
+    entryComponents: [
+        InterfaceOperationHandlerComponent
+    ],
+    providers: []
 })
 
 export class InterfaceOperationHandlerModule {

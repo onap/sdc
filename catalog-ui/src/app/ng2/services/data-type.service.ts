@@ -83,6 +83,11 @@ export class DataTypeService {
         return this.httpClient.get<Array<PropertyBEModel>>(url);
     }
 
+    public createProperty(id: string, property: PropertyBEModel): Observable<PropertyBEModel> {
+        const url = `${this.dataTypeUrl}/${id}/properties`
+        return this.httpClient.post<PropertyBEModel>(url, property);
+    }
+
     public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){
         // const property = this.dataTypes[rootPropertyType].properties.filter(property =>
         //     property.name == propertyName);
