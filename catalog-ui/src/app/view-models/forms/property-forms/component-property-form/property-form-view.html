@@ -261,6 +261,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="constraints-section i-sdc-form-item" data-ng-if="editPropertyModel.property.constraints || !isViewOnly">
+                    <label class="i-sdc-form-label">Constraints</label>
+                    <ng-container>
+                        <app-constraints [property]="editPropertyModel.property"
+                                         [is-view-only]="isViewOnly || componentMetadata.isService"
+                                         (on-constraint-change)="onConstraintChange($event)">
+                        </app-constraints>
+                    </ng-container>
+                </div>
                 <span  class="w-sdc-form-note"  data-ng-show="forms.editForm.$invalid && false" translate="LABEL_ALL_FIELDS_ARE_MANDATORY"></span>
             </form>
         </perfect-scrollbar>
