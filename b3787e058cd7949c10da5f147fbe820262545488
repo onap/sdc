@@ -16,6 +16,24 @@
       "revId": "b3787e058cd7949c10da5f147fbe820262545488",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e35b72a8_f853c272",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/base-property-form/property-form-base-view.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-10-13T14:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3da222d_53d81ffb",
+      "revId": "b3787e058cd7949c10da5f147fbe820262545488",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
