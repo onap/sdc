@@ -68,6 +68,6 @@ public class GreaterThanConstraint extends AbstractComparablePropertyConstraint 
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%f property value must be > %f", greaterThan);
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than %s", greaterThan);
     }
 }

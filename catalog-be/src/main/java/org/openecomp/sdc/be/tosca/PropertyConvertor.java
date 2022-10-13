@@ -26,31 +26,56 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fj.data.Either;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintGreaterOrEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintGreaterThan;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintInRange;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessOrEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessThan;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMaxLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMinLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
+
 
 @Service
 public class PropertyConvertor {
@@ -102,7 +127,54 @@ public class PropertyConvertor {
             prop.setStatus(property.getStatus());
         }
         prop.setMetadata(property.getMetadata());
+        
+        List<ToscaPropertyConstraint> constraints = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(property.getConstraints())) {
+            constraints = convertConstraints(property.getConstraints());
+            prop.setConstraints(constraints);
+        }
         return prop;
+    }
+    
+    private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints) {
+        List<ToscaPropertyConstraint> convertedConstraints = new ArrayList<>();
+        for (PropertyConstraint constraint: constraints){
+            if (constraint instanceof EqualConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintEqual(((EqualConstraint) constraint).getEqual()));
+            }
+            if (constraint instanceof GreaterThanConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintGreaterThan(((GreaterThanConstraint) constraint).getGreaterThan()));
+            }
+            if (constraint instanceof GreaterOrEqualConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintGreaterOrEqual(((GreaterOrEqualConstraint) constraint).getGreaterOrEqual()));
+            }
+            if (constraint instanceof LessThanConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintLessThan(((LessThanConstraint) constraint).getLessThan()));
+            }
+            if (constraint instanceof LessOrEqualConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintLessOrEqual(((LessOrEqualConstraint) constraint).getLessOrEqual()));
+            }
+            if (constraint instanceof InRangeConstraint) {
+                InRangeConstraint inRangeConstraint = (InRangeConstraint) constraint;
+                List<String> range = new ArrayList<>();
+                range.add(inRangeConstraint.getRangeMinValue());
+                range.add(inRangeConstraint.getRangeMaxValue());
+                convertedConstraints.add(new ToscaPropertyConstraintInRange(range));
+            }
+            if (constraint instanceof ValidValuesConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintValidValues(((ValidValuesConstraint) constraint).getValidValues()));
+            }
+            if (constraint instanceof LengthConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintLength(((LengthConstraint) constraint).getLength().toString()));
+            }
+            if (constraint instanceof MinLengthConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintMinLength(((MinLengthConstraint) constraint).getMinLength()));
+            }
+            if (constraint instanceof MaxLengthConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintMaxLength(((MaxLengthConstraint) constraint).getMaxLength()));
+            }
+        }
+        return convertedConstraints;
     }
 
     public Object convertToToscaObject(PropertyDataDefinition property, String value, Map<String, DataTypeDefinition> dataTypes,

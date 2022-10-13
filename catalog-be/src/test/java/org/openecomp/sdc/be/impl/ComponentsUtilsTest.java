@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -48,6 +49,15 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
@@ -61,6 +71,7 @@ import org.openecomp.sdc.test.utils.TestConfigurationProvider;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -770,6 +781,45 @@ public class ComponentsUtilsTest {
 		assertThat(response.isLeft()).isTrue();
 		assertThat(response.left().value()).isEqualTo(assertuser);
 	}
+
+    @Test
+    public void testconvertJsonToObjectUsingObjectMapper() {
+
+        AuditingManager auditingmanager = Mockito.mock(AuditingManager.class);
+        ComponentsUtils compUtils = new ComponentsUtils(auditingmanager);
+        when(auditingmanager.auditEvent(any())).thenReturn("OK");
+
+        User user = new User();
+        String data =
+                "[{\"constraints\":[{\"equal\":\"value\"}]},"
+                        + "{\"constraints\":[{\"greaterOrEqual\":5}]},"
+                        + "{\"constraints\":[{\"lessThan\":7}]},"
+                        + "{\"constraints\":[{\"lessOrEqual\":9}]},"
+                        + "{\"constraints\":[{\"inRange\":[\"5\", \"10\"]}]},"
+                        + "{\"constraints\":[{\"validValues\":[\"abc\", \"def\", \"hij\"]}]},"
+                        + "{\"constraints\":[{\"length\":11}]},"
+                        + "{\"constraints\":[{\"minLength\":13}]},"
+                        + "{\"constraints\":[{\"maxLength\":15}]}"
+                +"]";
+
+
+        Either<ComponentInstanceProperty[], ResponseFormat> response = compUtils.convertJsonToObjectUsingObjectMapper(data, user,
+                ComponentInstanceProperty[].class, null, ComponentTypeEnum.RESOURCE_INSTANCE);
+
+        assertThat(response.isLeft()).isTrue();
+        ComponentInstanceProperty[] properties = response.left().value();
+        assertEquals(9, properties.length);
+        assertEquals("value", ((EqualConstraint)properties[0].getConstraints().iterator().next()).getEqual());
+        assertEquals("5", ((GreaterOrEqualConstraint)properties[1].getConstraints().iterator().next()).getGreaterOrEqual());
+        assertEquals("7", ((LessThanConstraint)properties[2].getConstraints().iterator().next()).getLessThan());
+        assertEquals("9", ((LessOrEqualConstraint)properties[3].getConstraints().iterator().next()).getLessOrEqual());
+        assertEquals("5", ((InRangeConstraint)properties[4].getConstraints().iterator().next()).getRangeMinValue());
+        assertEquals("10", ((InRangeConstraint)properties[4].getConstraints().iterator().next()).getRangeMaxValue());
+        assertEquals(3, ((ValidValuesConstraint)properties[5].getConstraints().iterator().next()).getValidValues().size());
+        assertEquals(11, ((LengthConstraint)properties[6].getConstraints().iterator().next()).getLength());
+        assertEquals(13, ((MinLengthConstraint)properties[7].getConstraints().iterator().next()).getMinLength());
+        assertEquals(15, ((MaxLengthConstraint)properties[8].getConstraints().iterator().next()).getMaxLength());
+    }
 
 	@Test
 	public void testconvertJsonToObject_NllData() {

@@ -43,7 +43,7 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName, String errorMessage,
                                   String... propertyValue) {
         if (e instanceof ConstraintViolationException) {
-            return String.format(errorMessage, propertyName, Arrays.toString(propertyValue));
+            return String.format(errorMessage, propertyName, propertyValue.length == 1 ? propertyValue[0] : Arrays.toString(propertyValue));
         }
         return String.format(INVALID_VALUE_ERROR_MESSAGE, propertyName, toscaType.getType());
     }

@@ -21,6 +21,7 @@
  */
 package org.openecomp.sdc.be.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -210,6 +211,7 @@ public class ComponentsUtils {
             module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
             module.addDeserializer(ToscaFunction.class, new ToscaFunctionJsonDeserializer());
             mapper.registerModule(module);
+            mapper.setSerializationInclusion(Include.NON_NULL);
             component = mapper.readValue(data, clazz);
             if (component == null) {
                 BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);

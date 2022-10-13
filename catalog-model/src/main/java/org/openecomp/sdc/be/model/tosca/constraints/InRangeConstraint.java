@@ -125,7 +125,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%f property value must be between >= [%s] and <= [%s]", String.valueOf(min),
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be between >= [%s] and <= [%s]", String.valueOf(min),
             String.valueOf(max));
     }
 }

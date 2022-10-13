@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2022 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,20 +18,32 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
- * Represents a Tosca Property Constraint
+ * Represents a TOSCA equal constraint
  */
-public interface ToscaPropertyConstraint {
+@Getter
+@Setter
+@AllArgsConstructor
+public class ToscaPropertyConstraintEqual implements ToscaPropertyConstraint {
 
-    ConstraintType getConstraintType();
-    
-    /**
-     * Get the TOSCA entry name of an attribute in this class.
-     *
-     * @param attributeName the class attribute name
-     * @return the TOSCA entry represented by the attribute
-     */
-    String getEntryToscaName(final String attributeName);
+    private String equal;
+    private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.EQUAL;
+
+    @Override
+    public String getEntryToscaName(final String attributeName) {
+        if ("equal".equals(attributeName)) {
+            return CONSTRAINT_TYPE.getType();
+        }
+        return attributeName;
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return CONSTRAINT_TYPE;
+    }
 }
