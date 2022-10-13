@@ -460,6 +460,10 @@ export class PropertyFormViewModel {
             }
         }
 
+        this.$scope.onConstraintChange = (constraints: any[]): void => {
+            console.log(constraints);
+        }
+
         this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
