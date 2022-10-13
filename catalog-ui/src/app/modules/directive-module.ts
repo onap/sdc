@@ -96,6 +96,7 @@ import {DistributionComponent} from '../ng2/pages/workspace/disribution/distribu
 import {AttributesOutputsComponent} from "../ng2/pages/attributes-outputs/attributes-outputs.page.component";
 import {InterfaceDefinitionComponent} from "../ng2/pages/interface-definition/interface-definition.page.component";
 import {ToscaFunctionComponent} from '../ng2/pages/properties-assignment/tosca-function/tosca-function.component';
+import {ConstraintsComponent} from '../ng2/pages/properties-assignment/constraints/constraints.component';
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
 
@@ -322,6 +323,12 @@ directiveModule.directive('toscaFunction', downgradeComponent({
   component: ToscaFunctionComponent,
   inputs: ['componentInstanceMap', 'property'],
   outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('appConstraints', downgradeComponent({
+  component: ConstraintsComponent,
+  inputs: ['property', 'isViewOnly'],
+  outputs: ['onConstraintChange']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('appTypeWorkspace', downgradeComponent({
