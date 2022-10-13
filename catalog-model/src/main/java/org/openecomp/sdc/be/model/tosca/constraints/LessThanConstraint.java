@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -29,6 +30,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
+@Getter
 @AllArgsConstructor
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
@@ -58,6 +60,6 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s value must be < %s", lessThan);
+        return getErrorMessage(toscaType, e, propertyName, "%s value must be less than %s", lessThan);
     }
 }

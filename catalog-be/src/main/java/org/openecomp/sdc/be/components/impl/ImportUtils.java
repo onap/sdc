@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.components.impl;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.openecomp.sdc.be.components.impl.ResourceImportManager.PROPERTY_NAME_PATTERN_IGNORE_LENGTH;
 import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsName;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -286,7 +285,9 @@ public final class ImportUtils {
         final Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
         for (final Object constraintJson : propertyFieldConstraints) {
             final PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson);
-            constraintList.add(propertyConstraint);
+            if (propertyConstraint != null) {
+                constraintList.add(propertyConstraint);
+            }
         }
         return constraintList;
     }

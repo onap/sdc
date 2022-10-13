@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -226,6 +227,7 @@ public class BeGenericServlet extends BasicServlet {
             SimpleModule module = new SimpleModule("customDeserializationModule");
             module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
             mapper.registerModule(module);
+            mapper.setSerializationInclusion(Include.NON_NULL);
             object = mapper.readValue(json, clazz);
             if (object != null) {
                 return object;

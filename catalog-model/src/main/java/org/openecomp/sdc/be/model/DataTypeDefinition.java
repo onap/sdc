@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,6 +55,6 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     }
 
     public List<PropertyConstraint> safeGetConstraints() {
-        return CollectionUtils.safeGetList(constraints);
+        return new ArrayList<PropertyConstraint>(CollectionUtils.safeGetList(constraints));
     }
 }
