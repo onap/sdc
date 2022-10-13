@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3760b1c9_07032c15",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DmaapHealth.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "I think we should prob leave the health in for now. Needs a separate story/task imho.\nNeeding to have backwards compatibility will need some closer attention.",
+      "range": {
+        "startLine": 95,
+        "startChar": 24,
+        "endLine": 95,
+        "endChar": 36
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea9f4f11_8dc39bc6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Can remove for now and revisit",
+      "range": {
+        "startLine": 154,
+        "startChar": 123,
+        "endLine": 154,
+        "endChar": 135
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "504da5a8_ffdd87f5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Can be removed as kafka will log on success\nthis.log.info(\"Subscribed to topic(s): {}\", Utils.join(topics, \", \"));",
+      "range": {
+        "startLine": 86,
+        "startChar": 16,
+        "endLine": 86,
+        "endChar": 49
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86b338d2_ca99c6f7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Should really be error",
+      "range": {
+        "startLine": 93,
+        "startChar": 16,
+        "endLine": 93,
+        "endChar": 20
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40a5e8ce_0b3821cc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Suggest the following edits to the configs\n\n        props.put(ConsumerConfig.CLIENT_ID_CONFIG, configuration.getConsumerID() + \"-consumer-\" + UUID.randomUUID());\n        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, \"latest\");\n        props.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG, false);",
+      "range": {
+        "startLine": 64,
+        "startChar": 63,
+        "endLine": 64,
+        "endChar": 71
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cbc4d1f_49894566",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "topic\n\nSame for below",
+      "range": {
+        "startLine": 99,
+        "startChar": 34,
+        "endLine": 99,
+        "endChar": 39
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3cc5875_787ecc06",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Can be removed as kafka will log on success\nthis.log.info(\"Subscribed to topic(s): {}\", Utils.join(topics, \", \"));",
+      "range": {
+        "startLine": 100,
+        "startChar": 9,
+        "endLine": 100,
+        "endChar": 37
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da458d81_65c92c25",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "I think we can get away with a simple poll as we are only listening on 1 topic per consumer\n\npublic List\u003cString\u003e poll() {\n        List\u003cString\u003e msgs \u003d new ArrayList\u003c\u003e();\n        ConsumerRecords\u003cString, String\u003e records \u003d consumer.poll(Duration.ofSeconds(pollTimeout));\n        for (ConsumerRecord\u003cString, String\u003e rec : records) {\n            msgs.add(rec.value());\n        }\n        return msgs;\n    }",
+      "range": {
+        "startLine": 110,
+        "startChar": 43,
+        "endLine": 110,
+        "endChar": 47
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d7e09a0_d20f45f1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Can be removed",
+      "range": {
+        "startLine": 143,
+        "startChar": 45,
+        "endLine": 143,
+        "endChar": 50
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66f863f3_274132e5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Dos this need to be a member variable? Only used in the constructor",
+      "range": {
+        "startLine": 44,
+        "startChar": 44,
+        "endLine": 44,
+        "endChar": 59
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a988346a_27c8b442",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-13T11:17:41Z",
+      "side": 1,
+      "message": "Suggest adding the following config\nprops.put(ProducerConfig.CLIENT_ID_CONFIG, configuration.getConsumerID() + \"-producer-\" + UUID.randomUUID());",
+      "range": {
+        "startLine": 51,
+        "startChar": 26,
+        "endLine": 51,
+        "endChar": 29
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
