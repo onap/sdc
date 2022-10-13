@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2a513c73_b831ca6a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DmaapHealth.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3760b1c9_07032c15",
+      "range": {
+        "startLine": 95,
+        "startChar": 24,
+        "endLine": 95,
+        "endChar": 36
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea9f4f11_8dc39bc6",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
         "patchSetId": 7
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "899e0323_7a664b2a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea9f4f11_8dc39bc6",
+      "range": {
+        "startLine": 154,
+        "startChar": 123,
+        "endLine": 154,
+        "endChar": 135
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "504da5a8_ffdd87f5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
         "patchSetId": 7
@@ -68,6 +116,30 @@
       "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0037b5e_b740ad11",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "504da5a8_ffdd87f5",
+      "range": {
+        "startLine": 86,
+        "startChar": 16,
+        "endLine": 86,
+        "endChar": 49
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "c346df3c_99ced087",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "40a5e8ce_0b3821cc",
+      "range": {
+        "startLine": 64,
+        "startChar": 63,
+        "endLine": 64,
+        "endChar": 71
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3cbc4d1f_49894566",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
         "patchSetId": 7
@@ -137,6 +233,30 @@
       "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fa8b207_746a5126",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3cbc4d1f_49894566",
+      "range": {
+        "startLine": 99,
+        "startChar": 34,
+        "endLine": 99,
+        "endChar": 39
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +283,30 @@
     },
     {
       "key": {
+        "uuid": "95b15a58_ed04a6d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e3cc5875_787ecc06",
+      "range": {
+        "startLine": 100,
+        "startChar": 9,
+        "endLine": 100,
+        "endChar": 37
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da458d81_65c92c25",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
         "patchSetId": 7
@@ -183,6 +327,30 @@
       "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cb35877_4e7159dc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Yeah, that\u0027s kind of what I done below.\nI gave them the three options of returning \n- the full ConsumerRecords\n- For the specific Topic, And\n- Narrowed down to messages for the specific topic.\n\nBut maybe that was overkill. I\u0027ll remove the bloat. :)",
+      "parentUuid": "da458d81_65c92c25",
+      "range": {
+        "startLine": 110,
+        "startChar": 43,
+        "endLine": 110,
+        "endChar": 47
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +377,30 @@
     },
     {
       "key": {
+        "uuid": "654a0cda_a44722fc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaConsumer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d7e09a0_d20f45f1",
+      "range": {
+        "startLine": 143,
+        "startChar": 45,
+        "endLine": 143,
+        "endChar": 50
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "66f863f3_274132e5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
         "patchSetId": 7
@@ -232,6 +424,30 @@
     },
     {
       "key": {
+        "uuid": "e3ab9ed0_34e8cf9d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "66f863f3_274132e5",
+      "range": {
+        "startLine": 44,
+        "startChar": 44,
+        "endLine": 44,
+        "endChar": 59
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a988346a_27c8b442",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
         "patchSetId": 7
@@ -252,6 +468,30 @@
       "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f655fc00_2477175e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-13T12:49:45Z",
+      "side": 1,
+      "message": "ConsumerId? Just didn\u0027t ring right for producer. :)",
+      "parentUuid": "a988346a_27c8b442",
+      "range": {
+        "startLine": 51,
+        "startChar": 26,
+        "endLine": 51,
+        "endChar": 29
+      },
+      "revId": "a9687fd298e848d58784b75408ebfc3e08386fea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
