@@ -28,30 +28,28 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunction
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
+import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
 
     @NotNull
-    private String constraintValue;
+    @Getter
+    private String equal;
     private Object typed;
 
-    public EqualConstraint(String constraintValue) {
+    public EqualConstraint(String equal) {
         super();
-        this.constraintValue = constraintValue;
-    }
-
-    public String getConstraintValue() {
-        return constraintValue;
+        this.equal = equal;
     }
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        if (propertyType.isValidValue(constraintValue)) {
-            typed = propertyType.convert(constraintValue);
+        if (propertyType.isValidValue(equal)) {
+            typed = propertyType.convert(equal);
         } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                "constraintValue constraint has invalid value <" + constraintValue + "> property type is <" + propertyType.toString() + ">");
+                "constraintValue constraint has invalid value <" + equal + "> property type is <" + propertyType.toString() + ">");
         }
     }
 
@@ -62,8 +60,6 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
                 fail(null);
             }
         } else if (typed == null) {
-            fail(propertyValue);
-        } else if (typed instanceof Comparable && typed != propertyValue) {
             fail(propertyValue);
         } else if (!typed.equals(propertyValue)) {
             fail(propertyValue);
@@ -81,11 +77,11 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
 
     private void fail(Object propertyValue) throws ConstraintViolationException {
         throw new ConstraintViolationException(
-            "Equal constraint violation, the reference is <" + constraintValue + "> but the value to compare is <" + propertyValue + ">");
+            "Equal constraint violation, the reference is <" + equal + "> but the value to compare is <" + propertyValue + ">");
     }
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", constraintValue);
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", equal);
     }
 }

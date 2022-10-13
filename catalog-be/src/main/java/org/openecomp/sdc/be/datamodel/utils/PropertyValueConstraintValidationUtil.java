@@ -128,8 +128,7 @@ public class PropertyValueConstraintValidationUtil {
 
     private void evaluateConstraintsOnProperty(PropertyDefinition propertyDefinition) {
         ToscaType toscaType = ToscaType.isValidType(propertyDefinition.getType());
-        if (isPropertyNotMappedAsInput(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())
-            && isValidValueConstraintPresent(propertyDefinition.getConstraints())) {
+        if (isPropertyNotMappedAsInput(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
                     propertyConstraint.initialize(toscaType);

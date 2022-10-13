@@ -1,6 +1,6 @@
 /*
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2020 Nordix Foundation
+ *  Copyright (C) 2022 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,20 +18,34 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
- * Represents a Tosca Property Constraint
+ * Represents a TOSCA in_range constraint
  */
-public interface ToscaPropertyConstraint {
+@Getter
+@Setter
+@AllArgsConstructor
+public class ToscaPropertyConstraintInRange implements ToscaPropertyConstraint {
 
-    ConstraintType getConstraintType();
-    
-    /**
-     * Get the TOSCA entry name of an attribute in this class.
-     *
-     * @param attributeName the class attribute name
-     * @return the TOSCA entry represented by the attribute
-     */
-    String getEntryToscaName(final String attributeName);
+    private List<String> inRange;
+    private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.IN_RANGE;
+
+    @Override
+    public String getEntryToscaName(final String attributeName) {
+        if ("inRange".equals(attributeName)) {
+            return CONSTRAINT_TYPE.getType();
+        }
+        
+        return attributeName;
+    }
+
+    @Override
+    public ConstraintType getConstraintType() {
+        return CONSTRAINT_TYPE;
+    }
 }

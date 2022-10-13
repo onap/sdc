@@ -60,7 +60,7 @@ public class NsdTemplateRepresenter extends Representer {
             return handleToscaTemplate(javaBean, property, propertyValue, customTag);
         }
         if (javaBean instanceof ToscaPropertyConstraintValidValues) {
-            return handleToscaPropertyConstraintValidValues(javaBean, property, propertyValue, customTag);
+            return handleToscaPropertyConstraintValidValues((ToscaPropertyConstraintValidValues)javaBean, property, propertyValue, customTag);
         }
         if (javaBean instanceof ToscaProperty) {
             return handleToscaProperty(javaBean, property, propertyValue, customTag);
@@ -76,11 +76,11 @@ public class NsdTemplateRepresenter extends Representer {
         return nodeTuple;
     }
 
-    private NodeTuple handleToscaPropertyConstraintValidValues(final Object javaBean, final Property property, final Object propertyValue,
+    private NodeTuple handleToscaPropertyConstraintValidValues(final ToscaPropertyConstraintValidValues javaBean, final Property property, final Object propertyValue,
                                                                final Tag customTag) {
         final NodeTuple nodeTuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
         if ("validValues".equals(property.getName())) {
-            final String validValuesEntryName = ToscaPropertyConstraintValidValues.getEntryToscaName("validValues");
+            final String validValuesEntryName = javaBean.getEntryToscaName("validValues");
             return new NodeTuple(representData(validValuesEntryName), nodeTuple.getValueNode());
         }
         return nodeTuple;

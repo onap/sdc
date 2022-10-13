@@ -24,6 +24,7 @@ import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_P
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -36,16 +37,17 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import fj.data.Either;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,11 +89,14 @@ import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
@@ -2146,6 +2151,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     log.warn("ConstraintType was not found for constraint name:{}", key);
                 } else {
                     switch (constraintType) {
+                        case EQUAL:
+                            if (value != null) {
+                                String asString = value.getAsString();
+                                log.debug("Before adding value to EqualConstraint object. value = {}", asString);
+                                propertyConstraint = new EqualConstraint(asString);
+                                break;
+                            } else {
+                                log.warn("The value of equal constraint is null");
+                            }
+                            break;
                         case IN_RANGE:
                             if (value != null) {
                                 if (value instanceof JsonArray) {
@@ -2227,6 +2242,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 }
                             }
                             break;
+                        case LENGTH:
+                            if (value != null) {
+                                int asInt = value.getAsInt();
+                                log.debug("Before adding value to length constraint. value = {}", asInt);
+                                propertyConstraint = new LengthConstraint(asInt);
+                                break;
+                            } else {
+                                log.warn("The value of length constraint is null");
+                            }
+                            break;
                         case MIN_LENGTH:
                             if (value != null) {
                                 int asInt = value.getAsInt();
@@ -2235,6 +2260,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 break;
                             } else {
                                 log.warn("The value of MinLengthConstraint is null");
+                            }
+                            break;
+                        case MAX_LENGTH:
+                            if (value != null) {
+                                int asInt = value.getAsInt();
+                                log.debug("Before adding value to max length constraint. value = {}", asInt);
+                                propertyConstraint = new MaxLengthConstraint(asInt);
+                                break;
+                            } else {
+                                log.warn("The value of max length constraint is null");
                             }
                             break;
                         default:
@@ -2252,8 +2287,125 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         public PropertyConstraint deserialize(com.fasterxml.jackson.core.JsonParser json, DeserializationContext context) throws IOException {
             ObjectCodec oc = json.getCodec();
             JsonNode node = oc.readTree(json);
+            PropertyConstraint propertyConstraint = null;
+
+            Iterator<Entry<String, JsonNode>> fieldsIterator = node.fields();
+            while (fieldsIterator.hasNext()) {
+                Entry<String, JsonNode> field = fieldsIterator.next();
+                ConstraintType constraintType = ConstraintType.findByType(field.getKey()).orElse(null);
+                JsonNode value = field.getValue();
+
+                if (constraintType == null) {
+                    log.warn("ConstraintType was not found for constraint name:{}", field.getKey());
+                } else {
+                    if (value == null) {
+                        log.warn("The value of " + constraintType + " constraint is null");
+                    }
+                    switch (constraintType) {
+                        case EQUAL:
+                            propertyConstraint = deserializeConstraintWithStringOperand(value, EqualConstraint.class);
+                            break;
+                        case IN_RANGE:
+                            propertyConstraint = deserializeInRangeConstraintConstraint(value);
+                            break;
+                        case GREATER_THAN:
+                            propertyConstraint = deserializeConstraintWithStringOperand(value, GreaterThanConstraint.class);
+                            break;
+                        case LESS_THAN:
+                            propertyConstraint = deserializeConstraintWithStringOperand(value, LessThanConstraint.class);
+                            break;
+                        case GREATER_OR_EQUAL:
+                            propertyConstraint = deserializeConstraintWithStringOperand(value, GreaterOrEqualConstraint.class);
+                            break;
+                        case LESS_OR_EQUAL:
+                            propertyConstraint = deserializeConstraintWithStringOperand(value, LessOrEqualConstraint.class);
+                            break;
+                        case VALID_VALUES:
+                            propertyConstraint = deserializeValidValuesConstraint(value);
+                            break;
+                        case LENGTH:
+                            propertyConstraint = deserializeConstraintWithIntegerOperand(value, LengthConstraint.class);
+                            break;
+                        case MIN_LENGTH:
+                            propertyConstraint = deserializeConstraintWithIntegerOperand(value, MinLengthConstraint.class);
+                            break;
+                        case MAX_LENGTH:
+                            propertyConstraint = deserializeConstraintWithIntegerOperand(value, MaxLengthConstraint.class);
+                            break;
+                        default:
+                            log.warn("Key {} is not supported. Ignored.", field.getKey());
+                    }
+                }
+            }
+
+            return propertyConstraint;
+        }
+        
+        private PropertyConstraint deserializeConstraintWithStringOperand(JsonNode value, Class<? extends PropertyConstraint> constraintClass) {
+            String asString = value.asText();
+            log.debug("Before adding value to {} object. value = {}", constraintClass, asString);
+            try {
+                return constraintClass.getConstructor(String.class).newInstance(asString);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                    | SecurityException exception) {
+                log.error("Error deserializing constraint", exception);
+                return null;
+            }
+        }
+
+        private PropertyConstraint deserializeConstraintWithIntegerOperand(JsonNode value, Class<? extends PropertyConstraint> constraintClass) {
+            Integer asInt = value.asInt();
+            log.debug("Before adding value to {} object. value = {}", constraintClass, asInt);
+            try {
+                return constraintClass.getConstructor(Integer.class).newInstance(asInt);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                    | SecurityException exception) {
+                log.error("Error deserializing constraint", exception);
+                return null;
+            }
+        }
+
+        private PropertyConstraint deserializeInRangeConstraintConstraint(JsonNode value) {
+            if (value instanceof ArrayNode) {
+                ArrayNode rangeArray = (ArrayNode) value;
+                if (rangeArray.size() != 2) {
+                    log.error("The range constraint content is invalid. value = {}", value);
+                } else {
+                    InRangeConstraint rangeConstraint = new InRangeConstraint();
+                    String minValue = rangeArray.get(0).asText();
+                    String maxValue;
+                    JsonNode maxElement = rangeArray.get(1);
+                    if (maxElement.isNull()) {
+                        maxValue = null;
+                    } else {
+                        maxValue = maxElement.asText();
+                    }
+                    rangeConstraint.setRangeMinValue(minValue);
+                    rangeConstraint.setRangeMaxValue(maxValue);
+                    return rangeConstraint;
+                }
+            }
             return null;
         }
+        
+        private PropertyConstraint deserializeValidValuesConstraint(JsonNode value) {
+            ArrayNode rangeArray = (ArrayNode) value;
+            if (rangeArray.size() == 0) {
+                log.error("The valid values constraint content is invalid. value = {}", value);
+            } else {
+                ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
+                List<String> validValues = new ArrayList<>();
+                for (JsonNode jsonElement : rangeArray) {
+                    String item = jsonElement.asText();
+                    validValues.add(item);
+                }
+                vvConstraint.setValidValues(validValues);
+                return vvConstraint;
+            }
+            return null;
+        }
+        
+        
     }
 
 }

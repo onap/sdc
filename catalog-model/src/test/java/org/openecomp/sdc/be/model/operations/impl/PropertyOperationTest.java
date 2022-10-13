@@ -60,9 +60,16 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
@@ -137,16 +144,44 @@ public class PropertyOperationTest extends ModelTestBase {
 
     private List<PropertyConstraint> buildConstraints() {
         List<PropertyConstraint> constraints = new ArrayList<>();
-        GreaterThanConstraint propertyConstraint1 = new GreaterThanConstraint("0");
-        LessOrEqualConstraint propertyConstraint2 = new LessOrEqualConstraint("10");
-        List<String> range = new ArrayList<>();
-        range.add("0");
-        range.add("100");
-        InRangeConstraint propertyConstraint3 = new InRangeConstraint(range);
+        EqualConstraint propertyConstraint1 = new EqualConstraint("0");
+        GreaterThanConstraint propertyConstraint2 = new GreaterThanConstraint("1");
+        GreaterOrEqualConstraint propertyConstraint3 = new GreaterOrEqualConstraint("3");
+        LessThanConstraint propertyConstraint4 = new LessThanConstraint("5");
+        LessOrEqualConstraint propertyConstraint5 = new LessOrEqualConstraint("7");
+        InRangeConstraint propertyConstraint6 = buildInRangeConstraint();
+        ValidValuesConstraint propertyConstraint7 = buildValidValuesConstraint();
+        LengthConstraint propertyConstraint8 = new LengthConstraint(9);
+        MinLengthConstraint propertyConstraint9 = new MinLengthConstraint(11);
+        MaxLengthConstraint propertyConstraint10 = new MaxLengthConstraint(13);
         constraints.add(propertyConstraint1);
         constraints.add(propertyConstraint2);
         constraints.add(propertyConstraint3);
+        constraints.add(propertyConstraint4);
+        constraints.add(propertyConstraint5);
+        constraints.add(propertyConstraint6);
+        constraints.add(propertyConstraint7);
+        constraints.add(propertyConstraint8);
+        constraints.add(propertyConstraint9);
+        constraints.add(propertyConstraint10);
         return constraints;
+    }
+    
+    private InRangeConstraint buildInRangeConstraint() {
+        List<String> range = new ArrayList<>();
+        range.add("23");
+        range.add("67");
+        InRangeConstraint inRangeConstraint = new InRangeConstraint(range);
+        return inRangeConstraint;
+    }
+    
+    private ValidValuesConstraint buildValidValuesConstraint() {
+        List<String> validValues = new ArrayList<>();
+        validValues.add("abc");
+        validValues.add("def");
+        validValues.add("fhi");
+        ValidValuesConstraint validValuesConstraint = new ValidValuesConstraint(validValues);
+        return validValuesConstraint;
     }
 
     @Test

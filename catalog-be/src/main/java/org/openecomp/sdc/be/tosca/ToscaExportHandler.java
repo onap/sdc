@@ -127,6 +127,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaPolicyTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignment;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
 import org.openecomp.sdc.be.tosca.model.ToscaRelationshipTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
@@ -271,6 +272,8 @@ public class ToscaExportHandler {
         options.setCanonical(false);
         representer.addClassTag(toscaTemplate.getClass(), Tag.MAP);
         representer.setPropertyUtils(new UnsortedPropertyUtils());
+        
+       
         Yaml yaml = new Yaml(representer, options);
         String yamlAsString = yaml.dumpAsMap(toscaTemplate);
         StringBuilder sb = new StringBuilder();
@@ -1817,12 +1820,22 @@ public class ToscaExportHandler {
             if (javaBean instanceof ToscaRelationshipTemplate && "name".equals(property.getName())) {
                 return null;
             }
+            if (javaBean instanceof ToscaPropertyConstraint) {
+                return handleToscaPropertyConstraint((ToscaPropertyConstraint)javaBean, property, propertyValue, customTag);
+            }
             removeDefaultP(propertyValue);
             NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
             if (javaBean instanceof ToscaTopolgyTemplate && "relationshipTemplates".equals(property.getName())) {
                 return new NodeTuple(representData("relationship_templates"), defaultNode.getValueNode());
             }
             return "_defaultp_".equals(property.getName()) ? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;
+        }
+        
+        private NodeTuple handleToscaPropertyConstraint(final ToscaPropertyConstraint javaBean, final Property property, final Object propertyValue,
+                final Tag customTag) {
+            final NodeTuple nodeTuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+            final String entryToscaName = javaBean.getEntryToscaName(property.getName());
+            return new NodeTuple(representData(entryToscaName), nodeTuple.getValueNode());
         }
 
         private void removeDefaultP(final Object propertyValue) {

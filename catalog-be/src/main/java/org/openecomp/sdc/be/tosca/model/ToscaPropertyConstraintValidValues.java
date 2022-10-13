@@ -34,13 +34,8 @@ public class ToscaPropertyConstraintValidValues implements ToscaPropertyConstrai
 
     private List<String> validValues;
 
-    /**
-     * Get the TOSCA entry name of an attribute in this class.
-     *
-     * @param attributeName the class attribute name
-     * @return the TOSCA entry represented by the attribute
-     */
-    public static String getEntryToscaName(final String attributeName) {
+    @Override
+    public String getEntryToscaName(final String attributeName) {
         if ("validValues".equals(attributeName)) {
             return "valid_values";
         }
