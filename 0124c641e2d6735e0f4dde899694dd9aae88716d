@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ef9f05b_2a7d4088",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "extract to separate method with appropriate name that explains what is happening rather than adding the code directly into this method with comment to explain. If the new method name is clear then there is no need for comment",
+      "range": {
+        "startLine": 138,
+        "startChar": 0,
+        "endLine": 151,
+        "endChar": 9
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f53b715_9094d1c7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "same comment",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 165,
+        "endChar": 9
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e3d81e0_ad4229d1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "remove \"updated\"",
+      "range": {
+        "startLine": 378,
+        "startChar": 91,
+        "endLine": 378,
+        "endChar": 121
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8f458bf_9e2d05a2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "method names should start with a verb, e.g. convertOperationInputsToPropertyDefinitions",
+      "range": {
+        "startLine": 378,
+        "startChar": 37,
+        "endLine": 378,
+        "endChar": 59
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb1f6863_0590b12c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "the fact that the output of the method is used for validation is not relevant in the context of this method. The method could be re-used elsewhere for different purposes. Also these are the properties created from the inputs.\nTherefore rename to \"propertyDefinitions\"",
+      "range": {
+        "startLine": 379,
+        "startChar": 33,
+        "endLine": 379,
+        "endChar": 58
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "772b8b5e_9742a47d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "artifactsBusinessLogic should not have a method related to getting aritfact types - that class is related to artifacts rather than artifact types.\nCan you create a new class ArtifactTypeBusinessLogic and move that method to the new class.\nAlso can we add a method to  fetch only the artifact type that we are interested in rather than loasding all of them",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 400,
+        "endChar": 131
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff46d1bf_4e6a037f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "no need for the comments, code is self explanatory. \nIn general if you feel clarity is needed then extracting to an appropriately name method is better than adding comments, for exmaple here I might extract the fetching of the artifact type definition from the db to a separate method to reduce the complexity in this method",
+      "range": {
+        "startLine": 405,
+        "startChar": 0,
+        "endLine": 405,
+        "endChar": 43
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd2360e5_00d9c1a0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T07:30:56Z",
+      "side": 1,
+      "message": "the constraints can be read from propertyDefinition instead of having to fetch from the artifact type definition",
+      "range": {
+        "startLine": 418,
+        "startChar": 23,
+        "endLine": 420,
+        "endChar": 25
+      },
+      "revId": "0124c641e2d6735e0f4dde899694dd9aae88716d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
