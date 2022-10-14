@@ -321,10 +321,8 @@ public class BeGenericServlet extends BasicServlet {
 
     protected String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
         JSONObject root = new JSONObject();
-        String propertyName = property.getKey();
         PropertyDefinition propertyDefinition = property.getValue();
-        JSONObject propertyDefinitionO = getPropertyDefinitionJSONObject(propertyDefinition);
-        root.put(propertyName, propertyDefinitionO);
+        root.put(property.getKey(), getPropertyDefinitionJSONObject(propertyDefinition));
         propertyDefinition.getType();
         return root.toString();
     }

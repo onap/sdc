@@ -23,6 +23,6 @@
         testId="instanceName"></sdc-input>
      <sdc-validation [validateElement]="updateNameInput" (validityChanged)="validityChanged($event)">
         <sdc-required-validator message="Name is required."></sdc-required-validator>
-        <sdc-regex-validator message="Special characters not allowed." [pattern]="pattern"></sdc-regex-validator>
+        <sdc-regex-validator message="HTML elements not permitted in field values." [pattern]="pattern"></sdc-regex-validator>
     </sdc-validation>
 </div>

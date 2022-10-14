@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2022 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.servlets;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package org.openecomp.sdc.exception;
 
-public abstract class BasicServlet {
 
-    protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+import lombok.Getter;
+
+@Getter
+public class NotAllowedSpecialCharsException extends RuntimeException {
+
+    private static final String ERROR_SPECIAL_CHARACTERS_NOT_ALLOWED = "Error: HTML elements not permitted in field values.";
+    private final String errorId;
+    private final String message;
+
+    public NotAllowedSpecialCharsException() {
+        this.errorId = "NOT_PERMITTED_SPECIAL_CHARS";
+        this.message = ERROR_SPECIAL_CHARACTERS_NOT_ALLOWED;
+    }
+
 }
