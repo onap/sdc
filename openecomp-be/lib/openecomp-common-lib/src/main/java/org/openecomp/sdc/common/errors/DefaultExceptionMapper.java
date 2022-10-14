@@ -16,10 +16,12 @@
 package org.openecomp.sdc.common.errors;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
@@ -29,8 +31,12 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.onap.sdc.security.RepresentationUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.exception.NotAllowedSpecialCharsException;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.exception.ServiceException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -113,4 +119,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     private Object toEntity(final Status status, final ErrorCode code) {
         return new ErrorCodeAndMessage(status, code);
     }
+
+    public void writeToResponse(final NotAllowedSpecialCharsException e, final HttpServletResponse httpResponse) throws IOException {
+        final ResponseFormat responseFormat = new ResponseFormat(400);
+        responseFormat.setServiceException(new ServiceException(e.getErrorId(), e.getMessage(), new String[0]));
+        httpResponse.setStatus(responseFormat.getStatus());
+        httpResponse.setContentType("application/json");
+        httpResponse.setCharacterEncoding("UTF-8");
+        httpResponse.getWriter().write(RepresentationUtils.toRepresentation(responseFormat.getRequestError()));
+    }
+
 }
