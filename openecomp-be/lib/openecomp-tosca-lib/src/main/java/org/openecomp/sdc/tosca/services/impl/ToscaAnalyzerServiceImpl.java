@@ -56,10 +56,10 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipSlipException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaFlatData;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
@@ -414,10 +414,12 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                             public String getKey() {
                                 return mappedNodeTemplateId;
                             }
+
                             @Override
                             public NodeTemplate getValue() {
                                 return nodeTemplate;
                             }
+
                             @Override
                             public NodeTemplate setValue(final NodeTemplate nodeTemplate) {
                                 return null;

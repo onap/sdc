@@ -20,17 +20,18 @@
 
 package org.openecomp.sdc.tosca.services.impl;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
-import org.openecomp.sdc.tosca.csar.ManifestTokenType;
-import org.openecomp.sdc.tosca.csar.ManifestUtils;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.services.ToscaConstants;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.APPLICATION_NAME;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.APPLICATION_PROVIDER;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ENTRY_DEFINITION_TYPE;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.CREATED_BY_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.CSAR_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.TOSCA_META_FILE_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,19 +45,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.APPLICATION_NAME;
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.APPLICATION_PROVIDER;
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ENTRY_DEFINITION_TYPE;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.CREATED_BY_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.CSAR_VERSION_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ETSI_ENTRY_MANIFEST;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.TOSCA_META_FILE_VERSION_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestTokenType;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 
 public class ToscaFileOutputServiceCsarImplTest {
 
@@ -71,17 +70,17 @@ public class ToscaFileOutputServiceCsarImplTest {
     public void testCreationMetaFile() {
         String createdMeta = toscaFileOutputServiceCsarImpl.createMetaFile("entryFile.yaml", false);
         String expectedMeta =
-                "TOSCA-Meta-File-Version: 1.0\n" +
-                        "CSAR-Version: 1.1\n" +
-                        "Created-By: ASDC Onboarding portal\n" +
-                        "Entry-Definitions: Definitions" + File.separator + "entryFile.yaml";
+            "TOSCA-Meta-File-Version: 1.0\n" +
+                "CSAR-Version: 1.1\n" +
+                "Created-By: ASDC Onboarding portal\n" +
+                "Entry-Definitions: Definitions" + File.separator + "entryFile.yaml";
         assertEquals(createdMeta.replaceAll("\\s+", ""), expectedMeta.replaceAll("\\s+", ""));
     }
 
     @Test
     public void testCSARFileCreationWithExternalArtifacts() throws IOException {
         ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
-                new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
+            new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
         ServiceTemplate mainServiceTemplate = new ServiceTemplate();
         Map<String, String> metadata1 = new HashMap<>();
         metadata1.put("Template_author", "OPENECOMP");
@@ -102,10 +101,9 @@ public class ToscaFileOutputServiceCsarImplTest {
 
         Map<String, ServiceTemplate> definitionsInput = new HashMap<>();
         definitionsInput
-                .put(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate), mainServiceTemplate);
+            .put(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate), mainServiceTemplate);
         definitionsInput.put(ToscaUtil.getServiceTemplateFileName(additionalServiceTemplate),
-                additionalServiceTemplate);
-
+            additionalServiceTemplate);
 
         Map<String, byte[]> dummyHeatArtifacts = new HashMap<>();
         String file1Content = "this is file number 1";
@@ -115,7 +113,6 @@ public class ToscaFileOutputServiceCsarImplTest {
         String file2 = "file2.yml";
         dummyHeatArtifacts.put(file2, file2Content.getBytes());
 
-
         FileContentHandler heatFiles = new FileContentHandler();
         heatFiles.setFiles(dummyHeatArtifacts);
         Map<String, byte[]> licenseArtifacts = new HashMap<>();
@@ -123,17 +120,17 @@ public class ToscaFileOutputServiceCsarImplTest {
         FileContentHandler licenseArtifactsFiles = new FileContentHandler();
 
         licenseArtifacts.put(
-                ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
-                        "license-file-1.xml", file1Content.getBytes());
+            ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
+                "license-file-1.xml", file1Content.getBytes());
         licenseArtifacts.put(
-                ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
-                        "license-file-2.xml", file1Content.getBytes());
+            ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
+                "license-file-2.xml", file1Content.getBytes());
 
         licenseArtifactsFiles.setFiles(licenseArtifacts);
 
         byte[] csarFile = toscaFileOutputServiceCSARImpl.createOutputFile(
-                new ToscaServiceModel(heatFiles, definitionsInput,
-                        ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
+            new ToscaServiceModel(heatFiles, definitionsInput,
+                ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
 
         File file = File.createTempFile("resultFile", "zip");
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -176,38 +173,38 @@ public class ToscaFileOutputServiceCsarImplTest {
 
         FileContentHandler handler = new FileContentHandler();
         String metaFile = new StringBuilder()
-                .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
-                .append(CSAR_VERSION_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
-                .append(CREATED_BY_ENTRY.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
-                .append(ENTRY_DEFINITIONS.getName())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("Definitions/asd.yaml").append("\n")
-                .append(ETSI_ENTRY_MANIFEST.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "asd.mf").append("\n").toString();
+            .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
+            .append(CSAR_VERSION_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.1").append("\n")
+            .append(CREATED_BY_ENTRY.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" Vendor").append("\n")
+            .append(ENTRY_DEFINITIONS.getName())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("Definitions/asd.yaml").append("\n")
+            .append(ETSI_ENTRY_MANIFEST.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + "asd.mf").append("\n").toString();
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
         Map<String, byte[]> manifestMap = new HashMap<>();
         String manifestContent = new StringBuilder().append("metadata")
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("\n")
-                .append(ENTRY_DEFINITION_TYPE.getToken())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("asd").append("\n")
-                .append(ManifestTokenType.RELEASE_DATE_TIME.getToken())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("2021-10-21T11:30:00+05:00").append("\n")
-                .append(APPLICATION_NAME.getToken())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("SampleApp").append("\n")
-                .append(APPLICATION_PROVIDER.getToken())
-                .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("MyCompany")
-                .toString();
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("\n")
+            .append(ENTRY_DEFINITION_TYPE.getToken())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("asd").append("\n")
+            .append(ManifestTokenType.RELEASE_DATE_TIME.getToken())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("2021-10-21T11:30:00+05:00").append("\n")
+            .append(APPLICATION_NAME.getToken())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("SampleApp").append("\n")
+            .append(APPLICATION_PROVIDER.getToken())
+            .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append("MyCompany")
+            .toString();
         String manifestFile = "asd.mf";
         manifestMap.put(manifestFile, manifestContent.getBytes());
         handler.setFiles(manifestMap);
 
         Map<String, ServiceTemplate> definitionsInput = new HashMap<>();
         definitionsInput
-                .put(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate), mainServiceTemplate);
+            .put(ToscaUtil.getServiceTemplateFileName(mainServiceTemplate), mainServiceTemplate);
         definitionsInput.put(ToscaUtil.getServiceTemplateFileName(additionalServiceTemplate),
-                additionalServiceTemplate);
+            additionalServiceTemplate);
 
         Map<String, byte[]> dummyHeatArtifacts = new HashMap<>();
         String file1Content = "this is file number 1";
@@ -218,7 +215,6 @@ public class ToscaFileOutputServiceCsarImplTest {
         dummyHeatArtifacts.put(file2, file2Content.getBytes());
         handler.setFiles(dummyHeatArtifacts);
 
-
         FileContentHandler heatFiles = new FileContentHandler();
         heatFiles.setFiles(dummyHeatArtifacts);
         heatFiles.addAll(handler);
@@ -227,17 +223,17 @@ public class ToscaFileOutputServiceCsarImplTest {
         FileContentHandler licenseArtifactsFiles = new FileContentHandler();
 
         licenseArtifacts.put(
-                ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
-                        "license-file-1.xml", file1Content.getBytes());
+            ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
+                "license-file-1.xml", file1Content.getBytes());
         licenseArtifacts.put(
-                ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
-                        "license-file-2.xml", file1Content.getBytes());
+            ToscaFileOutputServiceCsarImpl.EXTERNAL_ARTIFACTS_FOLDER_NAME + File.separator +
+                "license-file-2.xml", file1Content.getBytes());
 
         licenseArtifactsFiles.setFiles(licenseArtifacts);
 
         byte[] csarFile = toscaFileOutputServiceCsarImpl.createOutputFile(
-                new ToscaServiceModel(heatFiles, definitionsInput,
-                        ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
+            new ToscaServiceModel(heatFiles, definitionsInput,
+                ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
 
         File file = File.createTempFile("resultFile", "zip");
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -272,9 +268,8 @@ public class ToscaFileOutputServiceCsarImplTest {
         String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
         definitionsInput.put(serviceTemplateFileName, serviceTemplate);
         byte[] csarFile = toscaFileOutputServiceCsarImpl
-                .createOutputFile(new ToscaServiceModel(null, definitionsInput, serviceTemplateFileName),
-                        null);
-
+            .createOutputFile(new ToscaServiceModel(null, definitionsInput, serviceTemplateFileName),
+                null);
 
         File file = File.createTempFile("resultFile", "zip");
         try (FileOutputStream fos = new FileOutputStream(file)) {

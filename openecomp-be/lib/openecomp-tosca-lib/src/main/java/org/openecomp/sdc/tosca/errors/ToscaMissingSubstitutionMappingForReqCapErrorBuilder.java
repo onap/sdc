@@ -19,8 +19,8 @@
  */
 package org.openecomp.sdc.tosca.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 /**
  * The type Tosca missing substitution mapping for req cap error builder.

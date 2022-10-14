@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class FileCreationErrorBuilderTest {
 
@@ -37,7 +37,7 @@ public class FileCreationErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.HEAT_PACKAGE_FILE_CREATION, errorCode.id());
         assertEquals(ErrorCategory.SYSTEM, errorCode.category());
         assertEquals("Error while trying to create heat file from the package of vendor software product with Id .",
-                errorCode.message());
+            errorCode.message());
 
     }
 }

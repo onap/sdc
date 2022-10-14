@@ -15,18 +15,11 @@
  */
 package org.openecomp.sdc.tosca.services.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
-import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
-import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ENTRY_DEFINITION_TYPE;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -37,12 +30,18 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ENTRY_DEFINITION_TYPE;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
+import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
+import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
+import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 
 public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
 
@@ -101,7 +100,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         return ARTIFACTS_FOLDER_NAME;
     }
 
-    private boolean isAsdPackage(FileContentHandler artifactFiles){
+    private boolean isAsdPackage(FileContentHandler artifactFiles) {
 
         return artifactFiles != null && !artifactFiles.isEmpty() && asdPackageHelper.isAsdPackage(artifactFiles);
 

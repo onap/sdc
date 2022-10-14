@@ -36,8 +36,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaAnalyzerService;
@@ -604,8 +604,8 @@ public class ConsolidationService {
     private Set<String> getNestedHeatFileNames(Map<String, NodeTemplate> nestedNodeTemplateMap) {
         ToscaAnalyzerService toscaAnalyzerService = new ToscaAnalyzerServiceImpl();
         return nestedNodeTemplateMap.entrySet().stream().filter(
-            entry -> toscaAnalyzerService.isSubstitutableNodeTemplate(entry.getValue()) && toscaAnalyzerService
-                .getSubstituteServiceTemplateName(entry.getKey(), entry.getValue()).isPresent())
+                entry -> toscaAnalyzerService.isSubstitutableNodeTemplate(entry.getValue()) && toscaAnalyzerService
+                    .getSubstituteServiceTemplateName(entry.getKey(), entry.getValue()).isPresent())
             .map(entry -> toscaAnalyzerService.getSubstituteServiceTemplateName(entry.getKey(), entry.getValue()).get()).collect(Collectors.toSet());
     }
 

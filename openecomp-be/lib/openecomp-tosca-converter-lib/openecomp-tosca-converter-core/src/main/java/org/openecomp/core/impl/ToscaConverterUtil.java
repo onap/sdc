@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.converter.errors.CreateToscaObjectErrorBuilder;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.errors.CoreException;
 
 public class ToscaConverterUtil {
 

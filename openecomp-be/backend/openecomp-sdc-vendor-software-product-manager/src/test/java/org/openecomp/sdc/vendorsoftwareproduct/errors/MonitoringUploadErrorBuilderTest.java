@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class MonitoringUploadErrorBuilderTest {
 
@@ -32,15 +32,15 @@ public class MonitoringUploadErrorBuilderTest {
     public void testMonitoringUploadErrorBuilder() {
         //when
         MonitoringUploadErrorBuilder monitoringUploadErrorBuilder =
-                new MonitoringUploadErrorBuilder("1", null, "error");
+            new MonitoringUploadErrorBuilder("1", null, "error");
         ErrorCode errorCode = monitoringUploadErrorBuilder.build();
 
         //then
         assertEquals(VendorSoftwareProductErrorCodes.MONITORING_UPLOAD_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "Monitoring file uploaded for vendor software product with Id 1 and version null is invalid: error",
-                errorCode.message());
+            "Monitoring file uploaded for vendor software product with Id 1 and version null is invalid: error",
+            errorCode.message());
     }
 
 }

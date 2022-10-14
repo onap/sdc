@@ -17,7 +17,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;

@@ -18,8 +18,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.NETWORK_DESCRIPTION_NOT_ALLOWED_FOR_INTERNAL_NETWORK;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.NETWORK_TYPE_UPDATE_NOT_ALLOWED;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class NicInternalNetworkErrorBuilder {
 

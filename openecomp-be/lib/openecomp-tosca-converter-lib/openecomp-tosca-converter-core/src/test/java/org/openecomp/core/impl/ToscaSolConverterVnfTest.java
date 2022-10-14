@@ -24,30 +24,31 @@ package org.openecomp.core.impl;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 
 public class ToscaSolConverterVnfTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ToscaSolConverterVnfTest.class);
 
     private AbstractToscaSolConverter toscaSolConverter;
     private FileContentHandler fileContentHandler;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         toscaSolConverter = new ToscaSolConverterVnf();
         fileContentHandler = new FileContentHandler();
     }
@@ -55,13 +56,13 @@ public class ToscaSolConverterVnfTest {
     @Test
     public void testGivenSOL004WithMetadataDirectoryPackage_whenToscaSolConverterIsCalled_validToscaServiceModelIsReturned() {
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
-                ("TOSCA-Meta-File-Version: 1.0\n " +
+            ("TOSCA-Meta-File-Version: 1.0\n " +
                 "CSAR-Version: 1.1\n" +
                 "Created-By: Ericsson\n" +
                 "Entry-Definitions: Definitions/Main.yaml\n" +
                 "Entry-Manifest: Main.mf\n" +
                 "Entry-Change-Log: Artifacts/ChangeLog.txt")
-                        .getBytes(StandardCharsets.UTF_8));
+                .getBytes(StandardCharsets.UTF_8));
 
         final String mainServiceTemplate = "Main.yaml";
         final String mainManifest = "Main.mf";
@@ -111,13 +112,13 @@ public class ToscaSolConverterVnfTest {
     public void testGivenInvalidServiceTemplate_thenAnExceptionIsThrown() {
 
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
-                ("TOSCA-Meta-File-Version: 1.0\n " +
-                        "CSAR-Version: 1.1\n" +
-                        "Created-By: Ericsson\n" +
-                        "Entry-Definitions: Definitions/Main.yaml\n" +
-                        "Entry-Manifest: Main.mf\n" +
-                        "Entry-Change-Log: Artifacts/ChangeLog.txt")
-                        .getBytes(StandardCharsets.UTF_8));
+            ("TOSCA-Meta-File-Version: 1.0\n " +
+                "CSAR-Version: 1.1\n" +
+                "Created-By: Ericsson\n" +
+                "Entry-Definitions: Definitions/Main.yaml\n" +
+                "Entry-Manifest: Main.mf\n" +
+                "Entry-Change-Log: Artifacts/ChangeLog.txt")
+                .getBytes(StandardCharsets.UTF_8));
 
         fileContentHandler.addFile("Definitions/Main.yaml", getFileResource("/toscaSOlConverter/invalidMainService.yaml"));
         convertToscaSol();

@@ -20,6 +20,7 @@
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
                 org.openecomp.sdc.be.filters.BasicAuthenticationFilter,
                 org.openecomp.sdc.be.filters.BeServletFilter,
+                org.openecomp.sdc.be.filters.DataValidatorFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature,
                 org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
@@ -59,6 +60,7 @@
             <param-value>
                 org.glassfish.jersey.media.multipart.MultiPartFeature,
                 org.openecomp.sdc.be.filters.BeServletFilter,
+                org.openecomp.sdc.be.filters.DataValidatorFilter,
                 org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter,
                 org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper,
                 org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper,
@@ -145,6 +147,18 @@
 
     <filter-mapping>
         <filter-name>reqValidationFilter</filter-name>
+        <url-pattern>/sdc2/rest/*</url-pattern>
+        <url-pattern>/sdc/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>dataValidatorFilter</filter-name>
+        <filter-class>
+            org.openecomp.sdc.be.filters.DataValidatorFilter
+        </filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>dataValidatorFilter</filter-name>
         <url-pattern>/sdc2/rest/*</url-pattern>
         <url-pattern>/sdc/*</url-pattern>
     </filter-mapping>

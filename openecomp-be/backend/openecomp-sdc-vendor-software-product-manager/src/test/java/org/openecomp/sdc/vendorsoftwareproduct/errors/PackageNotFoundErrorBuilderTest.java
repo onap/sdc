@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class PackageNotFoundErrorBuilderTest {
@@ -40,13 +40,13 @@ public class PackageNotFoundErrorBuilderTest {
         assertEquals("Package for vendor software product with Id 1 does not exist.", errorCode.message());
 
         PackageNotFoundErrorBuilder packageNotFoundErrorBuilder2nd =
-                new PackageNotFoundErrorBuilder("1", Version.valueOf("1.0"));
+            new PackageNotFoundErrorBuilder("1", Version.valueOf("1.0"));
 
         ErrorCode errorCode2nd = packageNotFoundErrorBuilder2nd.build();
 
         assertEquals(VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND, errorCode2nd.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode2nd.category());
         assertEquals("Package for vendor software product with Id 1 and version 1.0 does not exist.",
-                errorCode2nd.message());
+            errorCode2nd.message());
     }
 }

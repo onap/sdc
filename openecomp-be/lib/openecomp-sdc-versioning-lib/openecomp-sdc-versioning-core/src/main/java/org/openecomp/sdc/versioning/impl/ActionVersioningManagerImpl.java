@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.ActionVersioningManager;
@@ -145,7 +145,7 @@ public class ActionVersioningManagerImpl implements ActionVersioningManager {
     private static List<Version> toSortedList(
         Set<Version> versions) { // changing the Set to List in DB will require migration...
         return versions.stream().sorted((o1, o2) -> o1.getMajor() > o2.getMajor() ? 1
-            : o1.getMajor() == o2.getMajor() ? (o1.getMinor() > o2.getMinor() ? 1 : o1.getMinor() == o2.getMinor() ? 0 : -1) : -1)
+                : o1.getMajor() == o2.getMajor() ? (o1.getMinor() > o2.getMinor() ? 1 : o1.getMinor() == o2.getMinor() ? 0 : -1) : -1)
             .collect(Collectors.toList());
     }
 

@@ -29,7 +29,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 import org.openecomp.sdc.versioning.dao.ItemDao;
@@ -60,14 +60,14 @@ public class ItemManagerImplTest {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         itemManager = null;
     }
 
     @Test
-    public void archiveTest(){
+    public void archiveTest() {
 
-        Item item  = createItem(ITEM_ID,ITEM_NAME,ITEM_TYPE_A);
+        Item item = createItem(ITEM_ID, ITEM_NAME, ITEM_TYPE_A);
         itemManager.archive(item);
 
         verify(itemDao).update(item);
@@ -75,21 +75,21 @@ public class ItemManagerImplTest {
     }
 
     @Test
-    public void archiveTestNegative(){
+    public void archiveTestNegative() {
 
         expectedException.expect(CoreException.class);
         expectedException.expectMessage(new RegexMatcher("Archive item failed, item .* is already Archived"));
 
-        Item item  = createItem(ITEM_ID,ITEM_NAME,ITEM_TYPE_B);
+        Item item = createItem(ITEM_ID, ITEM_NAME, ITEM_TYPE_B);
         item.setStatus(ItemStatus.ARCHIVED);
         itemManager.archive(item);
 
     }
 
     @Test
-    public void restoreTest(){
+    public void restoreTest() {
 
-        Item item  = createItem(ITEM_ID,ITEM_NAME,ITEM_TYPE_A);
+        Item item = createItem(ITEM_ID, ITEM_NAME, ITEM_TYPE_A);
         item.setStatus(ItemStatus.ARCHIVED);
         itemManager.restore(item);
 
@@ -98,12 +98,12 @@ public class ItemManagerImplTest {
     }
 
     @Test
-    public void restoreTestNegative(){
+    public void restoreTestNegative() {
 
         expectedException.expect(CoreException.class);
         expectedException.expectMessage(new RegexMatcher("Restore item failed, item .* is already Active"));
 
-        Item item  = createItem(ITEM_ID,ITEM_NAME,ITEM_TYPE_B);
+        Item item = createItem(ITEM_ID, ITEM_NAME, ITEM_TYPE_B);
         item.setStatus(ItemStatus.ACTIVE);
         itemManager.restore(item);
     }

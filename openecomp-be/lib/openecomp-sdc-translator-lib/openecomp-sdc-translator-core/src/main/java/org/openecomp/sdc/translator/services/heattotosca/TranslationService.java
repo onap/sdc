@@ -34,7 +34,7 @@ import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;

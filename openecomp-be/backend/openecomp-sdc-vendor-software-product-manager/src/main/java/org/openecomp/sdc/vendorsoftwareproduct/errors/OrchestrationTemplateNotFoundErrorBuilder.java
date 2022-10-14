@@ -21,8 +21,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.ORCHESTRATION_NOT_FOUND;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class OrchestrationTemplateNotFoundErrorBuilder {
 

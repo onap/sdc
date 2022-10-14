@@ -19,8 +19,8 @@
  */
 package org.openecomp.sdc.itempermissions.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 /**
  * Created by ayalaben on 6/28/2017

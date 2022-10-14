@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.errors;
+package org.openecomp.sdc.errors;
 
 import java.io.Serializable;
 
@@ -43,27 +43,12 @@ public class ErrorCode implements Serializable {
         return id;
     }
 
-    @Deprecated
-    protected void id(String id) {
-        this.id = id;
-    }
-
     public String message() {
         return message;
     }
 
-    @Deprecated
-    protected void message(String message) {
-        this.message = message;
-    }
-
     public ErrorCategory category() {
         return category;
-    }
-
-    @Deprecated
-    protected void category(ErrorCategory category) {
-        this.category = category;
     }
 
     public static class ErrorCodeBuilder {

@@ -20,7 +20,7 @@
 package org.openecomp.sdc.tosca.exceptions;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
-import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCategory;
 
 public class CsarCreationErrorBuilder extends BaseErrorBuilder {
 

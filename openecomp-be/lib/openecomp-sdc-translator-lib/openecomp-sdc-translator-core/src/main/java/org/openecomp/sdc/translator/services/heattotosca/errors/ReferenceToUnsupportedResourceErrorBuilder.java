@@ -20,7 +20,7 @@
 package org.openecomp.sdc.translator.services.heattotosca.errors;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
-import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCategory;
 
 public class ReferenceToUnsupportedResourceErrorBuilder extends BaseErrorBuilder {
 

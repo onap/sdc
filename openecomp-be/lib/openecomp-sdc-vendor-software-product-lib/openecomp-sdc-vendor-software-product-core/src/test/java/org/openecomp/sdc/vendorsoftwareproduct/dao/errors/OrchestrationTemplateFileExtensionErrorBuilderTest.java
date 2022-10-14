@@ -19,17 +19,17 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class OrchestrationTemplateFileExtensionErrorBuilderTest {
 
     @Test
     public void shouldReturnInvalidExtentionErrorCode() {
         OrchestrationTemplateFileExtensionErrorBuilder orchestrationTemplateFileExtensionErrorBuilder =
-                new OrchestrationTemplateFileExtensionErrorBuilder();
+            new OrchestrationTemplateFileExtensionErrorBuilder();
         ErrorCode actual = orchestrationTemplateFileExtensionErrorBuilder.build();
         Assert.assertEquals(ErrorCategory.APPLICATION, actual.category());
-        Assert.assertEquals(INVALID_EXTENSION,actual.id());
+        Assert.assertEquals(INVALID_EXTENSION, actual.id());
     }
 }

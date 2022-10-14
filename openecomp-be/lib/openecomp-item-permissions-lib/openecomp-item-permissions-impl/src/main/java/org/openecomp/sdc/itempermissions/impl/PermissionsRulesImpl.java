@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.itempermissions.PermissionsRules;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;

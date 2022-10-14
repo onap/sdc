@@ -22,6 +22,19 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,8 +42,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.model.ItemType;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
@@ -44,20 +57,6 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 class VendorLicenseModelsImplTest {
 

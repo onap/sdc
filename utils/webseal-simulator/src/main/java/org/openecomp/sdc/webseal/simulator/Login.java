@@ -113,7 +113,7 @@ public class Login extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String userId = request.getParameter("userId");
         String password = request.getParameter("password");

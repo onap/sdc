@@ -18,15 +18,14 @@
 
 package org.openecomp.sdc.versioning;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.types.VersionInfo;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.VersionInfo;
 
 public class VersioningUtilTest {
 
@@ -42,8 +41,8 @@ public class VersioningUtilTest {
         versionInfo.setLockingUser("user");
         Version resolveVersion = VersioningUtil.resolveVersion(version, versionInfo, "user");
         Assert.assertNotNull(resolveVersion);
-        Assert.assertEquals(1,resolveVersion.getMajor());
-        Assert.assertEquals(1,resolveVersion.getMinor());
+        Assert.assertEquals(1, resolveVersion.getMajor());
+        Assert.assertEquals(1, resolveVersion.getMinor());
 
     }
 
@@ -79,7 +78,7 @@ public class VersioningUtilTest {
         versionInfo.setActiveVersion(version);
         versionInfo.setViewableVersions(Arrays.asList(new Version()));
         versionInfo.setLatestFinalVersion(version);
-        VersioningUtil.resolveVersion(version, versionInfo,true);
+        VersioningUtil.resolveVersion(version, versionInfo, true);
     }
 
     @Test
@@ -124,7 +123,7 @@ public class VersioningUtilTest {
         entityIds.add("id1");
         entityIds.add("id2");
         VersioningUtil.validateEntitiesExistence(entityIds, new VersionableEntityImplStub(),
-                new VersionInfoDaoImplStub(),"firstClassCitizenType");
+            new VersionInfoDaoImplStub(), "firstClassCitizenType");
     }
 
     @Test(expected = CoreException.class)
@@ -132,7 +131,7 @@ public class VersioningUtilTest {
         Set<String> entityIds = new HashSet<>();
         entityIds.add("id1");
         VersioningUtil.validateEntitiesExistence(entityIds, new VersionableEntityImplStub(),
-                new VersionInfoDaoImplStub(),"firstClassCitizenType");
+            new VersionInfoDaoImplStub(), "firstClassCitizenType");
     }
 
     @Test(expected = CoreException.class)
@@ -142,7 +141,7 @@ public class VersioningUtilTest {
         inputContainedEntityIds.add("id2");
         Set<String> retrievedContainedEntityIds = new HashSet<>();
         VersioningUtil.validateContainedEntitiesExistence("containedEntityType",
-                inputContainedEntityIds, new VersionableEntityImplStub(), retrievedContainedEntityIds);
+            inputContainedEntityIds, new VersionableEntityImplStub(), retrievedContainedEntityIds);
     }
 
     @Test(expected = CoreException.class)
@@ -153,6 +152,6 @@ public class VersioningUtilTest {
         Set<String> retrievedContainedEntityIds = new HashSet<>();
         retrievedContainedEntityIds.add("id1");
         VersioningUtil.validateContainedEntitiesExistence("containedEntityType",
-                inputContainedEntityIds, new VersionableEntityImplStub(), retrievedContainedEntityIds);
+            inputContainedEntityIds, new VersionableEntityImplStub(), retrievedContainedEntityIds);
     }
 }

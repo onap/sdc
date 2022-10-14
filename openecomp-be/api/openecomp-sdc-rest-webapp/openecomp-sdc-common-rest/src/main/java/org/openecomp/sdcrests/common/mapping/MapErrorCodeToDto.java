@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdcrests.common.mapping;
 
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdcrests.common.types.ErrorCodeDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 

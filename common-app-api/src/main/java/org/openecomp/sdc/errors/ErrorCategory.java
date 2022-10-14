@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.common.errors;
+package org.openecomp.sdc.errors;
 
 public enum ErrorCategory {
     /**

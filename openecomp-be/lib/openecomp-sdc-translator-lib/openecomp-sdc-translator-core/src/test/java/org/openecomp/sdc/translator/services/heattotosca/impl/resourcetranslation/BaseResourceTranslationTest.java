@@ -53,10 +53,10 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.be.togglz.ToggleableFeature;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
@@ -126,7 +126,7 @@ public class BaseResourceTranslationTest {
         }
 
         try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);
-             BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
+            BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
             TestUtils.compareTranslatedOutput(expectedResultFileNameSet, expectedResultMap, zis);
         }
         assertEquals(0, expectedResultFileNameSet.size());
@@ -139,14 +139,15 @@ public class BaseResourceTranslationTest {
         TranslatorOutput translatorOutput = translationService.translateHeatFiles(translationContext);
         Assert.assertNotNull(translatorOutput);
         if (MapUtils.isNotEmpty(translatorOutput.getErrorMessages()) && MapUtils.isNotEmpty(
-                MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
+            MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
             throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
                     "Error in validation " + TestUtils.getErrorAsString(translatorOutput.getErrorMessages()))
-                                            .withId("Validation Error").withCategory(ErrorCategory.APPLICATION)
-                                            .build());
+                .withId("Validation Error").withCategory(ErrorCategory.APPLICATION)
+                .build());
         }
 
-        return new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils())).createOutputFile(translatorOutput.getToscaServiceModel(), null);
+        return new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils())).createOutputFile(translatorOutput.getToscaServiceModel(),
+            null);
 
     }
 
@@ -192,7 +193,7 @@ public class BaseResourceTranslationTest {
     }
 
     private static void addFilesFromManifestToTranslationContextManifestFilesMap(TranslationContext translationContext,
-            List<FileData> fileDataListFromManifest) {
+                                                                                 List<FileData> fileDataListFromManifest) {
         for (FileData fileFromManfiest : fileDataListFromManifest) {
             translationContext.addManifestFile(fileFromManfiest.getFile(), fileFromManfiest.getType());
         }
@@ -206,26 +207,26 @@ public class BaseResourceTranslationTest {
     }
 
     protected void validateComputeTemplateConsolidationData(ConsolidationDataValidationType validationType,
-            String testName) {
+                                                            String testName) {
         ConsolidationData consolidationData = translationContext.getConsolidationData();
         Map<String, ServiceTemplate> expectedServiceTemplateModels = TestUtils.getServiceTemplates(expectedResultMap);
         Assert.assertNotNull(consolidationData);
         Assert.assertNotNull(consolidationData.getComputeConsolidationData());
         Set<String> serviceTemplateFileNames =
-                consolidationData.getComputeConsolidationData().getAllServiceTemplateFileNames();
+            consolidationData.getComputeConsolidationData().getAllServiceTemplateFileNames();
         Assert.assertNotNull(serviceTemplateFileNames);
         for (String serviceTemplateName : serviceTemplateFileNames) {
             Assert.assertTrue(expectedServiceTemplateModels.containsKey(serviceTemplateName));
             ServiceTemplate expectedServiceTemplate = expectedServiceTemplateModels.get(serviceTemplateName);
             FileComputeConsolidationData fileComputeConsolidationData = consolidationData.getComputeConsolidationData()
-                                                                                .getFileComputeConsolidationData(
-                                                                                        serviceTemplateName);
+                .getFileComputeConsolidationData(
+                    serviceTemplateName);
             Assert.assertNotNull(fileComputeConsolidationData);
             Set<String> computeTypes = fileComputeConsolidationData.getAllComputeTypes();
             Assert.assertNotNull(computeTypes);
             for (String computeType : computeTypes) {
                 TypeComputeConsolidationData typeComputeConsolidationData =
-                        fileComputeConsolidationData.getTypeComputeConsolidationData(computeType);
+                    fileComputeConsolidationData.getTypeComputeConsolidationData(computeType);
                 Assert.assertNotNull(typeComputeConsolidationData);
 
                 Collection<String> computeNodeTemplateIds = typeComputeConsolidationData.getAllComputeNodeTemplateIds();
@@ -234,28 +235,28 @@ public class BaseResourceTranslationTest {
 
                 for (String computeNodeTemplateId : computeNodeTemplateIds) {
                     ComputeTemplateConsolidationData computeTemplateConsolidationData =
-                            typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId);
+                        typeComputeConsolidationData.getComputeTemplateConsolidationData(computeNodeTemplateId);
                     switch (validationType) {
                         case VALIDATE_GROUP:
                             validateGroupsInConsolidationData(computeNodeTemplateId, computeTemplateConsolidationData,
-                                    expectedServiceTemplate);
+                                expectedServiceTemplate);
                             break;
                         case VALIDATE_PORT:
                             validatePortsInConsolidationData(computeNodeTemplateId, computeTemplateConsolidationData,
-                                    expectedServiceTemplate);
+                                expectedServiceTemplate);
                             break;
                         case VALIDATE_VOLUME:
                             validateVolumeInConsolidationData(computeNodeTemplateId, computeTemplateConsolidationData,
-                                    expectedServiceTemplate, testName);
+                                expectedServiceTemplate, testName);
                             break;
                         case VALIDATE_CONNECTIVITY:
                             validateComputeConnectivityIn(computeTemplateConsolidationData, expectedServiceTemplate);
                             validateComputeConnectivityOut(computeNodeTemplateId, computeTemplateConsolidationData,
-                                    expectedServiceTemplate);
+                                expectedServiceTemplate);
                             break;
                         case VALIDATE_DEPENDS_ON:
                             validateDependsOnInConsolidationData(computeNodeTemplateId,
-                                    computeTemplateConsolidationData, expectedServiceTemplate, testName);
+                                computeTemplateConsolidationData, expectedServiceTemplate, testName);
                             break;
                     }
                 }
@@ -277,13 +278,13 @@ public class BaseResourceTranslationTest {
         Assert.assertNotNull(consolidationData);
         Assert.assertNotNull(consolidationData.getPortConsolidationData());
         Set<String> serviceTemplateFileNames =
-                consolidationData.getPortConsolidationData().getAllServiceTemplateFileNames();
+            consolidationData.getPortConsolidationData().getAllServiceTemplateFileNames();
         Assert.assertNotNull(serviceTemplateFileNames);
         for (String serviceTemplateName : serviceTemplateFileNames) {
             Assert.assertTrue(expectedServiceTemplateModels.containsKey(serviceTemplateName));
             ServiceTemplate expectedServiceTemplate = expectedServiceTemplateModels.get(serviceTemplateName);
             FilePortConsolidationData filePortConsolidationData =
-                    consolidationData.getPortConsolidationData().getFilePortConsolidationData(serviceTemplateName);
+                consolidationData.getPortConsolidationData().getFilePortConsolidationData(serviceTemplateName);
             Assert.assertNotNull(filePortConsolidationData);
 
             Set<String> portNodeTemplateIds = filePortConsolidationData.getAllPortNodeTemplateIds();
@@ -292,12 +293,12 @@ public class BaseResourceTranslationTest {
 
             for (String portNodeTemplateId : portNodeTemplateIds) {
                 PortTemplateConsolidationData portTemplateConsolidationData =
-                        filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
+                    filePortConsolidationData.getPortTemplateConsolidationData(portNodeTemplateId);
                 switch (ConsolidationDataValidationType.VALIDATE_CONNECTIVITY) {
                     case VALIDATE_CONNECTIVITY:
                         validatePortConnectivityIn(portTemplateConsolidationData, expectedServiceTemplate);
                         validatePortConnectivityOut(portNodeTemplateId, portTemplateConsolidationData,
-                                expectedServiceTemplate);
+                            expectedServiceTemplate);
                         break;
                 }
             }

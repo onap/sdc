@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,66 +32,62 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.ImageManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
 public class ImagesTest {
 
-  private static String VSP_ID = "VSP_ID";
-  private static String COMP_ID = "COMP_ID";
-  private static String ID = "ID";
-  public static final Version VERSION01 = new Version("version_id");
+    private static String VSP_ID = "VSP_ID";
+    private static String COMP_ID = "COMP_ID";
+    private static String ID = "ID";
+    public static final Version VERSION01 = new Version("version_id");
 
-  @Mock
-  private VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
+    @Mock
+    private VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
 
-  @Mock
-  private CompositionEntityDataManager compositionEntityDataManager;
+    @Mock
+    private CompositionEntityDataManager compositionEntityDataManager;
 
-  @InjectMocks
-  @Spy
-  private ImageManagerImpl imageManager;
+    @InjectMocks
+    @Spy
+    private ImageManagerImpl imageManager;
 
-  @Before
-  public void setUp() throws Exception {
-    MockitoAnnotations.openMocks(this);
-  }
-
-  @After
-  public void tearDown(){
-    imageManager = null;
-  }
-
-  @Test
-  public void createImage() {
-    ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
-    doReturn(true).when(vendorSoftwareProductInfoDao).isManual(any(), any());
-
-    imageManager.createImage(imageEntity);
-    verify(compositionEntityDataManager).createImage(imageEntity);
-  }
-
-  @Test
-  public void createImageHeat() {
-    ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
-    doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(), any());
-
-    try {
-      imageManager.createImage(imageEntity);
-      Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(),
-          VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING);
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
     }
-  }
+
+    @After
+    public void tearDown() {
+        imageManager = null;
+    }
+
+    @Test
+    public void createImage() {
+        ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
+        doReturn(true).when(vendorSoftwareProductInfoDao).isManual(any(), any());
+
+        imageManager.createImage(imageEntity);
+        verify(compositionEntityDataManager).createImage(imageEntity);
+    }
+
+    @Test
+    public void createImageHeat() {
+        ImageEntity imageEntity = new ImageEntity(VSP_ID, VERSION01, COMP_ID, ID);
+        doReturn(false).when(vendorSoftwareProductInfoDao).isManual(any(), any());
+
+        try {
+            imageManager.createImage(imageEntity);
+            Assert.fail();
+        } catch (CoreException exception) {
+            Assert.assertEquals(exception.code().id(),
+                VendorSoftwareProductErrorCodes.ADD_IMAGE_NOT_ALLOWED_IN_HEAT_ONBOARDING);
+        }
+    }
   /*private static final String USER1 = "imageTestUser1";
   private static final String USER2 = "imageTestUser2";
   private static final Version VERSION01 = new Version(0, 1);

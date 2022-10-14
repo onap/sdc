@@ -20,7 +20,7 @@
 package org.openecomp.sdc.versioning.errors;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
-import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCategory;
 
 /**
  * The type Undo checkout on entity locked by other error builder.

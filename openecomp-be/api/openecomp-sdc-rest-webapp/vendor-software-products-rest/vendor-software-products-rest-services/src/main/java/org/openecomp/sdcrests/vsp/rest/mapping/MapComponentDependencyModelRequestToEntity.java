@@ -15,8 +15,8 @@
  */
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentDependencyModelEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.ComponentDependencyModelErrorBuilder;
 import org.openecomp.sdcrests.mapping.MappingBase;

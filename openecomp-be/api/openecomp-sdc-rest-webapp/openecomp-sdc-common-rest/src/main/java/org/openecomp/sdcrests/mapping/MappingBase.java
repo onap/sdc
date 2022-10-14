@@ -15,8 +15,8 @@
  */
 package org.openecomp.sdcrests.mapping;
 
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 
 /**
  * Base class for all mapping classes. Mapping classes will perform data mapping from source object to target object Base class provides

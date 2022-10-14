@@ -19,11 +19,11 @@ import com.amdocs.zusammen.datatypes.response.Module;
 import java.util.stream.Stream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 

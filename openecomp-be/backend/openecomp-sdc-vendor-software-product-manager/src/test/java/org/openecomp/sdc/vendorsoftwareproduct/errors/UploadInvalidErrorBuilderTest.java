@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class UploadInvalidErrorBuilderTest {
@@ -34,15 +34,14 @@ public class UploadInvalidErrorBuilderTest {
     public void testBuild() {
 
         UploadInvalidErrorBuilder uploadInvalidErrorBuilder =
-                new UploadInvalidErrorBuilder("1", Version.valueOf("1.0"), Collections.emptyMap());
+            new UploadInvalidErrorBuilder("1", Version.valueOf("1.0"), Collections.emptyMap());
 
         ErrorCode errorCode = uploadInvalidErrorBuilder.build();
 
         assertEquals(VendorSoftwareProductErrorCodes.UPLOAD_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("File uploaded for vendor software product with Id 1 and version 1.0 is invalid: ",
-                errorCode.message());
-
+            errorCode.message());
 
         UploadInvalidErrorBuilder uploadInvalidErrorBuilder2 = new UploadInvalidErrorBuilder();
 

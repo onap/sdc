@@ -43,11 +43,11 @@ import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
@@ -179,7 +179,7 @@ public class NetworkPackageHealer implements Healer {
 
     private Element getOrchestrationTemplateValidationElement(Collection<Element> orchestrationTemplateSubs) {
         return orchestrationTemplateSubs.stream().filter(
-            orchestrationTemplateSub -> ElementType.OrchestrationTemplateValidationData.name().equals(orchestrationTemplateSub.getInfo().getName()))
+                orchestrationTemplateSub -> ElementType.OrchestrationTemplateValidationData.name().equals(orchestrationTemplateSub.getInfo().getName()))
             .findFirst().orElseThrow(
                 () -> new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage(MISSING_ORCHESTRATION_TEMPLATE_VALIDATE_DATA_ERROR).build()));
     }
@@ -194,7 +194,7 @@ public class NetworkPackageHealer implements Healer {
     private Id createIfAbsentStructureElementId(Collection<Element> orchestrationTemplateSubs, SessionContext context, ElementContext elementContext,
                                                 Element orchestrationTemplateElement) {
         return orchestrationTemplateSubs.stream().filter(
-            orchestrationTemplateSub -> ElementType.OrchestrationTemplateStructure.name().equals(orchestrationTemplateSub.getInfo().getName()))
+                orchestrationTemplateSub -> ElementType.OrchestrationTemplateStructure.name().equals(orchestrationTemplateSub.getInfo().getName()))
             .findFirst().map(Element::getElementId).orElse(addStructureSubElement(context, elementContext, ElementType.OrchestrationTemplateStructure,
                 orchestrationTemplateElement.getElementId()));
     }
@@ -241,7 +241,7 @@ public class NetworkPackageHealer implements Healer {
         ZusammenElement parentElement = buildElement(parentElementId, Action.IGNORE);
         parentElement.addSubElement(newElement);
         return zusammenAdaptor.saveElement(context, elementContext, parentElement,
-            String.format("Add element %s under element id %s", elementType.name(), parentElementId)).getSubElements().iterator().next()
+                String.format("Add element %s under element id %s", elementType.name(), parentElementId)).getSubElements().iterator().next()
             .getElementId();
     }
 

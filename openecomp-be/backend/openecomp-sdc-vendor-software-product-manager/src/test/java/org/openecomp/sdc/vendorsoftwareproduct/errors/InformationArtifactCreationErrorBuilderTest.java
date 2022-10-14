@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class InformationArtifactCreationErrorBuilderTest {
 
@@ -33,7 +33,7 @@ public class InformationArtifactCreationErrorBuilderTest {
     public void testBuild() {
         //given
         InformationArtifactCreationErrorBuilder informationArtifactCreationErrorBuilder =
-                new InformationArtifactCreationErrorBuilder("1");
+            new InformationArtifactCreationErrorBuilder("1");
 
         //when
         ErrorCode errorCode = informationArtifactCreationErrorBuilder.build();
@@ -42,6 +42,6 @@ public class InformationArtifactCreationErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.HEAT_PACKAGE_FILE_CREATION, errorCode.id());
         assertEquals(ErrorCategory.SYSTEM, errorCode.category());
         assertEquals("Error while trying to information artifact file for vendor software product with Id 1.",
-                errorCode.message());
+            errorCode.message());
     }
 }

@@ -20,12 +20,14 @@
 package org.openecomp.sdc.be.components.impl.exceptions;
 
 import java.util.Arrays;
+import lombok.Getter;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 public class ByActionStatusComponentException extends ComponentException {
 
+    @Getter
     private final ActionStatus actionStatus;
     private final String[] params;
 
@@ -33,10 +35,6 @@ public class ByActionStatusComponentException extends ComponentException {
         super(actionStatus, params);
         this.actionStatus = actionStatus;
         this.params = params.clone();
-    }
-
-    public ActionStatus getActionStatus() {
-        return actionStatus;
     }
 
     public String[] getParams() {

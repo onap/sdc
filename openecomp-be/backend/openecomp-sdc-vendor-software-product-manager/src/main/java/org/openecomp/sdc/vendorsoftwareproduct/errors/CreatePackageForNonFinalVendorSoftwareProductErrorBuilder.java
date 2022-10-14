@@ -21,8 +21,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.CREATE_PACKAGE_FOR_NON_FINAL_VSP;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilder {

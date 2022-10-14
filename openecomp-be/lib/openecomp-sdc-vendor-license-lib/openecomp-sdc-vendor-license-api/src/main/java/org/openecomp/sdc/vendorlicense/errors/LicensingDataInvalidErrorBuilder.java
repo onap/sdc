@@ -21,8 +21,8 @@ package org.openecomp.sdc.vendorlicense.errors;
 
 import java.util.List;
 import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class LicensingDataInvalidErrorBuilder {
 

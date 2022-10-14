@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdc.vendorlicense.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class SubmitUncompletedLicenseModelErrorBuilder {
 

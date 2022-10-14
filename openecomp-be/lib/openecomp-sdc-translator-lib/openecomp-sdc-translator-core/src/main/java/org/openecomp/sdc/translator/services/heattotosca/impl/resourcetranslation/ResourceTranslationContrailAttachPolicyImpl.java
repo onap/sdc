@@ -23,7 +23,7 @@ import static org.openecomp.sdc.translator.services.heattotosca.HeatToToscaLogCo
 
 import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;

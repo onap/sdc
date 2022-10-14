@@ -21,7 +21,7 @@ package org.openecomp.sdc.vendorlicense.facade;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;

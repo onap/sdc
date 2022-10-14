@@ -22,10 +22,11 @@ package org.openecomp.sdc.versioning.errors;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class RequestedVersionInvalidErrorBuilderTest {
+
     @Test
     public void test() {
         RequestedVersionInvalidErrorBuilder builder = new RequestedVersionInvalidErrorBuilder();

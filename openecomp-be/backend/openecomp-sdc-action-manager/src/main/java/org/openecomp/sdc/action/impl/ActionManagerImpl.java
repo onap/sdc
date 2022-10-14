@@ -96,7 +96,7 @@ import org.openecomp.sdc.action.types.ActionArtifactProtection;
 import org.openecomp.sdc.action.types.ActionStatus;
 import org.openecomp.sdc.action.types.ActionSubOperation;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.ActionVersioningManager;

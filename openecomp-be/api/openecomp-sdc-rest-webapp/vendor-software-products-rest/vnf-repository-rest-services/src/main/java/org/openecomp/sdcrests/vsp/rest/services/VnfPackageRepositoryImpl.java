@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,10 +35,10 @@ import javax.ws.rs.core.Response;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.JettySSLUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -79,7 +77,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         try {
             SSLContext sslcontext = JettySSLUtils.getSslContext();
             return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((requestedHost, remoteServerSession)
-                    -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
+                -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
 
         } catch (IOException | GeneralSecurityException e) {
             LOGGER.error("Failed to initialize SSL context", e);

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdcrests.errors;
+package org.openecomp.sdc.common.errors;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
@@ -29,15 +31,14 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.onap.sdc.security.RepresentationUtils;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
-import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
-import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
-import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.exception.ServiceException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
@@ -119,5 +120,14 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
     private Object toEntity(final Status status, final ErrorCode code) {
         return new ErrorCodeAndMessage(status, code);
+    }
+
+    public void writeToResponse(final CoreException ce, final HttpServletResponse httpResponse) throws IOException {
+        final ResponseFormat responseFormat = new ResponseFormat(400);
+        responseFormat.setServiceException(new ServiceException(ce.code().id(), ce.code().message(), new String[0]));
+        httpResponse.setStatus(responseFormat.getStatus());
+        httpResponse.setContentType("application/json");
+        httpResponse.setCharacterEncoding("UTF-8");
+        httpResponse.getWriter().write(RepresentationUtils.toRepresentation(responseFormat.getRequestError()));
     }
 }

@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdcrests.common.types;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCategory;
 
 public class ErrorCodeDto {
 

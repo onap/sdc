@@ -17,11 +17,11 @@ package org.openecomp.sdc.common.session.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.session.SessionContext;
 import org.openecomp.sdc.common.session.SessionContextProvider;
 import org.openecomp.sdc.common.session.User;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class AsdcSessionContextProvider implements SessionContextProvider {
 

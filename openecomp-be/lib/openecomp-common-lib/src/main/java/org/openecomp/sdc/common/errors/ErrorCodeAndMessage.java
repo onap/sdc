@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openecomp.sdc.errors.ErrorCode;
 
 /**
  * This class represents an error object to be returned in failed REST instead of just returning one of HTTP fail statuses.

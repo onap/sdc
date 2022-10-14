@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class ComponentErrorBuilderTest {
 
@@ -37,7 +37,7 @@ public class ComponentErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.VFC_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "All VFC need to have atleast a single Image specified. Please fix the VFC Images and re-submit the VSP",
-                errorCode.message());
+            "All VFC need to have atleast a single Image specified. Please fix the VFC Images and re-submit the VSP",
+            errorCode.message());
     }
 }

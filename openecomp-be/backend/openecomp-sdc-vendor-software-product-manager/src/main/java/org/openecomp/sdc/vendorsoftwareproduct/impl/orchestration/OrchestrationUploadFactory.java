@@ -25,8 +25,8 @@ import org.onap.config.api.Configuration;
 import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.errors.OrchestrationTemplateFileExtensionErrorBuilder;
 
 public class OrchestrationUploadFactory {

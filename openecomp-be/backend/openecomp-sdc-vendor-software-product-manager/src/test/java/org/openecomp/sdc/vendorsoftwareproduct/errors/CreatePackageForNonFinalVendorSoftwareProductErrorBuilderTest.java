@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilderTest {
@@ -33,8 +33,8 @@ public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilderTest {
     public void testBuild() {
         //given
         CreatePackageForNonFinalVendorSoftwareProductErrorBuilder
-                createPackageForNonFinalVendorSoftwareProductErrorBuilder =
-                new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder("1", Version.valueOf("1.1"));
+            createPackageForNonFinalVendorSoftwareProductErrorBuilder =
+            new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder("1", Version.valueOf("1.1"));
 
         //when
         ErrorCode errorCode = createPackageForNonFinalVendorSoftwareProductErrorBuilder.build();
@@ -43,7 +43,7 @@ public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.CREATE_PACKAGE_FOR_NON_FINAL_VSP, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "Package creation for vendor software product with id 1 and version 1.1 is not allowed since it is not final (submitted).",
-                errorCode.message());
+            "Package creation for vendor software product with id 1 and version 1.1 is not allowed since it is not final (submitted).",
+            errorCode.message());
     }
 }

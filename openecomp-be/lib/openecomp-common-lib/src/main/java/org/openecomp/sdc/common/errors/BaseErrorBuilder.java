@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.common.errors;
 
+import org.openecomp.sdc.errors.ErrorCode;
+
 public abstract class BaseErrorBuilder {
 
     private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();

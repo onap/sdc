@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.collections4.MapUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -61,7 +60,7 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.SubstitutionMapping;
 import org.onap.sdc.tosca.datatypes.model.TopologyTemplate;
 import org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 
 /**
@@ -102,7 +101,7 @@ public class DataModelUtilTest {
     public void testAddSubstitutionMapping() throws Exception {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Substitution Mapping' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Substitution Mapping' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addSubstitutionMapping(null, new SubstitutionMapping());
     }
 
@@ -128,18 +127,18 @@ public class DataModelUtilTest {
     public void testAddSubstitutionMappingReq() {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         DataModelUtil.addSubstitutionMappingReq(serviceTemplate,
-                REQUIREMENT_ID, Collections.singletonList("requirement"));
+            REQUIREMENT_ID, Collections.singletonList("requirement"));
 
         Assert.assertNotNull(serviceTemplate.getTopology_template().getSubstitution_mappings().getRequirements());
         Assert.assertEquals(1,
-                serviceTemplate.getTopology_template().getSubstitution_mappings().getRequirements().size());
+            serviceTemplate.getTopology_template().getSubstitution_mappings().getRequirements().size());
     }
 
     @Test
     public void testAddSubstitutionMappingReqServiceTemplateNull() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Substitution Mapping Requirements' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Substitution Mapping Requirements' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addSubstitutionMappingReq(null, REQUIREMENT_ID, Collections.emptyList());
     }
 
@@ -147,7 +146,7 @@ public class DataModelUtilTest {
     public void testAddSubstitutionMappingCapabilityServiceTemplateNull() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Substitution Mapping Capabilities' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Substitution Mapping Capabilities' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addSubstitutionMappingCapability(null, CAPABILITY_ID, Collections.emptyList());
     }
 
@@ -155,11 +154,11 @@ public class DataModelUtilTest {
     public void testAddSubstitutionMappingCapability() {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         DataModelUtil.addSubstitutionMappingCapability(serviceTemplate,
-                CAPABILITY_ID, Collections.singletonList("requirement"));
+            CAPABILITY_ID, Collections.singletonList("requirement"));
 
         Assert.assertNotNull(serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities());
         Assert.assertEquals(1,
-                serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities().size());
+            serviceTemplate.getTopology_template().getSubstitution_mappings().getCapabilities().size());
     }
 
     @Test
@@ -179,8 +178,8 @@ public class DataModelUtilTest {
         serviceTemplate.setTopology_template(new TopologyTemplate());
 
         Map<String, NodeTemplate> nodeTemplateMap = Stream.of(new AbstractMap.SimpleEntry<>("nodeTemplate1", new
-                NodeTemplate())).collect(
-                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            NodeTemplate())).collect(
+            Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         serviceTemplate.getTopology_template().setNode_templates(nodeTemplateMap);
 
@@ -207,8 +206,8 @@ public class DataModelUtilTest {
         serviceTemplate.setTopology_template(new TopologyTemplate());
 
         Map<String, GroupDefinition> nodeTemplateMap = Stream.of(new AbstractMap.SimpleEntry<>("group1", new
-                GroupDefinition())).collect(
-                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            GroupDefinition())).collect(
+            Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         serviceTemplate.getTopology_template().setGroups(nodeTemplateMap);
 
@@ -222,7 +221,7 @@ public class DataModelUtilTest {
     public void testAddNodeTemplateServiceTemplateNull() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Node Template' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Node Template' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addNodeTemplate(null, "123", new NodeTemplate());
     }
 
@@ -245,9 +244,9 @@ public class DataModelUtilTest {
     @Test(expected = CoreException.class)
     public void testAddNodeTypeCapabilitiesDefThrowsException() {
         Map<String, CapabilityDefinition> capabilityDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
-                        CapabilityDefinition())).collect(
-                        Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
+                CapabilityDefinition())).collect(
+                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         DataModelUtil.addNodeTypeCapabilitiesDef(null, capabilityDefinitionMap);
     }
@@ -256,9 +255,9 @@ public class DataModelUtilTest {
     public void testAddNodeTypeCapabilitiesDef() {
         NodeType nodeType = new NodeType();
         Map<String, CapabilityDefinition> capabilityDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
-                        CapabilityDefinition())).collect(
-                        Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
+                CapabilityDefinition())).collect(
+                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         DataModelUtil.addNodeTypeCapabilitiesDef(nodeType, capabilityDefinitionMap);
 
@@ -276,9 +275,9 @@ public class DataModelUtilTest {
     @Test(expected = CoreException.class)
     public void testSetNodeTypeCapabilitiesDefThrowsException() {
         Map<String, CapabilityDefinition> capabilityDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID,
-                        new CapabilityDefinition())).collect(
-                        Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID,
+                new CapabilityDefinition())).collect(
+                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         DataModelUtil.setNodeTypeCapabilitiesDef(null, capabilityDefinitionMap);
     }
@@ -287,9 +286,9 @@ public class DataModelUtilTest {
     public void testSetNodeTypeCapabilitiesDef() {
         NodeType nodeType = new NodeType();
         Map<String, CapabilityDefinition> capabilityDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
-                        CapabilityDefinition())).collect(
-                        Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(CAPABILITY_ID, new
+                CapabilityDefinition())).collect(
+                Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         DataModelUtil.setNodeTypeCapabilitiesDef(nodeType, capabilityDefinitionMap);
 
@@ -314,7 +313,7 @@ public class DataModelUtilTest {
     public void testAddPolicyDefinitionThrowsException() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Policy Definition' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Policy Definition' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addPolicyDefinition(null, "policyId", new PolicyDefinition());
     }
 
@@ -329,7 +328,7 @@ public class DataModelUtilTest {
     public void testAddNodeTypeThrowsException() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Node Type' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Node Type' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addNodeType(null, NODE_TYPE_ID, new NodeType());
     }
 
@@ -345,7 +344,7 @@ public class DataModelUtilTest {
     public void testAddRelationshipTemplateThrowsException() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Relationship Template' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Relationship Template' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addRelationshipTemplate(null, "relationshipTemplateId", new RelationshipTemplate());
     }
 
@@ -361,7 +360,7 @@ public class DataModelUtilTest {
     public void testAddRequirementAssignmentThrowsException() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Requirement Assignment' to 'Node Template', 'Node Template' entity is NULL.");
+            "Invalid action, can't add 'Requirement Assignment' to 'Node Template', 'Node Template' entity is NULL.");
         DataModelUtil.addRequirementAssignment(null, REQUIREMENT_ID, new RequirementAssignment());
     }
 
@@ -414,18 +413,18 @@ public class DataModelUtilTest {
     @Test
     public void testGetRequirementDefinitionWrongKey() {
         Map<String, RequirementDefinition> requirementDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_ID, new RequirementDefinition()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_ID, new RequirementDefinition()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         assertFalse(DataModelUtil.getRequirementDefinition(Collections.singletonList(requirementDefinitionMap),
-                "wrongKey").isPresent());
+            "wrongKey").isPresent());
     }
 
     @Test
     public void testAddGroupToTopologyTemplateThrowsException() {
         thrown.expect(CoreException.class);
         thrown.expectMessage(
-                "Invalid action, can't add 'Group Definition' to 'Service Template', 'Service Template' entity is NULL.");
+            "Invalid action, can't add 'Group Definition' to 'Service Template', 'Service Template' entity is NULL.");
         DataModelUtil.addGroupDefinitionToTopologyTemplate(null, "groupId", new GroupDefinition());
     }
 
@@ -464,8 +463,8 @@ public class DataModelUtilTest {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setTopology_template(new TopologyTemplate());
         Map<String, GroupDefinition> groupDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>("groupName", new GroupDefinition()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>("groupName", new GroupDefinition()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         serviceTemplate.getTopology_template().setGroups(groupDefinitionMap);
 
@@ -477,8 +476,8 @@ public class DataModelUtilTest {
     @Test
     public void testCreateParameterDefinition() {
         assertNotNull(DataModelUtil
-                .createParameterDefinition("parameterType", "description", true, Collections.emptyList(), new
-                        EntrySchema(), null));
+            .createParameterDefinition("parameterType", "description", true, Collections.emptyList(), new
+                EntrySchema(), null));
     }
 
     @Test
@@ -494,7 +493,7 @@ public class DataModelUtilTest {
     @Test
     public void testCreateGetInputPropertyValueFromListParameter() {
         Map inputPropertyMap = DataModelUtil.createGetInputPropertyValueFromListParameter("inputPropertyList", 1,
-                "nestedPropertyName");
+            "nestedPropertyName");
 
         assertNotNull(inputPropertyMap.get(ToscaFunctions.GET_INPUT.getFunctionName()));
     }
@@ -510,7 +509,7 @@ public class DataModelUtilTest {
         propertyDefinition.setType(PROPERTY_DEF_TYPE);
 
         ParameterDefinitionExt parameterDefinitionExt =
-                DataModelUtil.convertPropertyDefToParameterDef(propertyDefinition);
+            DataModelUtil.convertPropertyDefToParameterDef(propertyDefinition);
         assertNotNull(parameterDefinitionExt);
         assertEquals(PROPERTY_DEF_TYPE, parameterDefinitionExt.getType());
     }
@@ -523,7 +522,7 @@ public class DataModelUtilTest {
     @Test
     public void testConvertAttributeDefToParameterDef() {
         ParameterDefinitionExt parameterDefinitionExt =
-                DataModelUtil.convertAttributeDefToParameterDef(new AttributeDefinition(), Collections.emptyMap());
+            DataModelUtil.convertAttributeDefToParameterDef(new AttributeDefinition(), Collections.emptyMap());
 
         assertTrue(MapUtils.isEmpty((Map) parameterDefinitionExt.getValue()));
     }
@@ -536,8 +535,8 @@ public class DataModelUtilTest {
         serviceTemplate.setTopology_template(topologyTemplate);
 
         Map<String, NodeTemplate> nodeTemplateMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(ENTRY_ID, new NodeTemplate()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(ENTRY_ID, new NodeTemplate()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
         topologyTemplate.setNode_templates(nodeTemplateMap);
 
         assertTrue(DataModelUtil.isNodeTemplate(ENTRY_ID, serviceTemplate));
@@ -598,8 +597,8 @@ public class DataModelUtilTest {
     @Test
     public void testGetNodeTemplateRequirementList() {
         Map<String, RequirementAssignment> requirementAssignmentMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_ID, new RequirementAssignment()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_ID, new RequirementAssignment()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         List<Map<String, RequirementAssignment>> requirementList = new ArrayList<>();
         requirementList.add(requirementAssignmentMap);
@@ -618,28 +617,27 @@ public class DataModelUtilTest {
     @Test
     public void testGetRequirementAssignmentRequirementAssignmentListDoseNotContainsKeyPassed() {
         assertFalse(DataModelUtil.getRequirementAssignment(
-                Collections.singletonList(new HashMap<>()), REQUIREMENT_KEY).isPresent());
+            Collections.singletonList(new HashMap<>()), REQUIREMENT_KEY).isPresent());
     }
 
     @Test
     public void testGetRequirementAssignmentRequirementAssignmentListContainsKeyPassed() {
         Map<String, RequirementAssignment> requirementAssignmentMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementAssignment()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementAssignment()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         assertTrue(DataModelUtil.getRequirementAssignment(
-                Collections.singletonList(requirementAssignmentMap), REQUIREMENT_KEY).isPresent());
+            Collections.singletonList(requirementAssignmentMap), REQUIREMENT_KEY).isPresent());
     }
 
     @Test
     public void testRemoveRequirementsDefinition() {
         Map<String, RequirementDefinition> requirementDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementDefinition()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementDefinition()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         List<Map<String, RequirementDefinition>> requirementList =
-                Stream.of(requirementDefinitionMap).collect(Collectors.toList());
+            Stream.of(requirementDefinitionMap).collect(Collectors.toList());
         DataModelUtil.removeRequirementsDefinition(requirementList, REQUIREMENT_KEY);
 
         assertTrue(requirementList.isEmpty());
@@ -648,12 +646,11 @@ public class DataModelUtilTest {
     @Test
     public void testRemoveRequirementsAssignment() {
         Map<String, RequirementAssignment> requirementDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementAssignment()))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, new RequirementAssignment()))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         List<Map<String, RequirementAssignment>> requirementList =
-                Stream.of(requirementDefinitionMap).collect(Collectors.toList());
+            Stream.of(requirementDefinitionMap).collect(Collectors.toList());
         DataModelUtil.removeRequirementsAssignment(requirementList, REQUIREMENT_KEY);
 
         assertTrue(requirementList.isEmpty());
@@ -667,11 +664,11 @@ public class DataModelUtilTest {
         requirementAssignment.setCapability(CAPABILITY_ID);
         requirementAssignment.setRelationship("relationshipId");
         Map<String, RequirementAssignment> requirementDefinitionMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, requirementAssignment))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(REQUIREMENT_KEY, requirementAssignment))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         List<Map<String, RequirementAssignment>> requirementList =
-                Stream.of(requirementDefinitionMap).collect(Collectors.toList());
+            Stream.of(requirementDefinitionMap).collect(Collectors.toList());
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setRequirements(requirementList);
 
@@ -697,7 +694,7 @@ public class DataModelUtilTest {
     @Test
     public void testIsImportAddedToServiceTemplateImportIdExists() {
         Map<String, Import> importMap = Stream.of(new AbstractMap.SimpleEntry<>("imp1", new Import())).collect
-                (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         assertTrue(DataModelUtil.isImportAddedToServiceTemplate(Collections.singletonList(importMap), "imp1"));
     }
@@ -705,7 +702,7 @@ public class DataModelUtilTest {
     @Test
     public void testIsImportAddedToServiceTemplateImportIdNotExists() {
         Map<String, Import> importMap = Stream.of(new AbstractMap.SimpleEntry<>("imp1", new Import())).collect
-                (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         assertFalse(DataModelUtil.isImportAddedToServiceTemplate(Collections.singletonList(importMap), "imp2"));
     }
@@ -724,8 +721,8 @@ public class DataModelUtilTest {
         serviceTemplate.setTopology_template(new TopologyTemplate());
 
         Map<String, ParameterDefinition> outputMap = Stream.of(new AbstractMap.SimpleEntry<>(OUTPUT_ID, new
-                ParameterDefinition())).collect
-                (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            ParameterDefinition())).collect
+            (Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
         serviceTemplate.getTopology_template().setOutputs(outputMap);
 
         assertNotNull(DataModelUtil.getOuputParameter(serviceTemplate, OUTPUT_ID));
@@ -771,7 +768,7 @@ public class DataModelUtilTest {
     public void testGetPropertyValuePropertyNotPresent() {
         NodeTemplate nodeTemplate = new NodeTemplate();
         Map<String, Object> objectMap = Stream.of(new AbstractMap.SimpleEntry<>(PROPERTY_ID, new PropertyDefinition()))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         nodeTemplate.setProperties(objectMap);
         assertNull(DataModelUtil.getPropertyValue(nodeTemplate, "wrongId"));
@@ -781,7 +778,7 @@ public class DataModelUtilTest {
     public void testGetPropertyValue() {
         NodeTemplate nodeTemplate = new NodeTemplate();
         Map<String, Object> objectMap = Stream.of(new AbstractMap.SimpleEntry<>(PROPERTY_ID, new PropertyDefinition()))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         nodeTemplate.setProperties(objectMap);
         assertNotNull(DataModelUtil.getPropertyValue(nodeTemplate, PROPERTY_ID));
@@ -794,8 +791,8 @@ public class DataModelUtilTest {
         NodeTemplate nodeTemplate = new NodeTemplate();
         nodeTemplate.setProperties(new HashMap<>());
         Map<String, NodeTemplate> nodeTemplateMap =
-                Stream.of(new AbstractMap.SimpleEntry<>(NODE_TEMPLATE_ID, nodeTemplate))
-                        .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+            Stream.of(new AbstractMap.SimpleEntry<>(NODE_TEMPLATE_ID, nodeTemplate))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
         serviceTemplate.getTopology_template().setNode_templates(nodeTemplateMap);
 
@@ -921,7 +918,7 @@ public class DataModelUtilTest {
         requirementDefinitionMap.put(REQUIREMENT_ID, new RequirementDefinition());
 
         DataModelUtil.addSubstitutionNodeTypeRequirements(
-                nodeType, Collections.singletonList(requirementDefinitionMap), TEMPLATE_NAME);
+            nodeType, Collections.singletonList(requirementDefinitionMap), TEMPLATE_NAME);
 
         assertEquals(1, nodeType.getRequirements().size());
         assertNotNull(nodeType.getRequirements().get(0).get("requirementId_templateName"));
@@ -967,7 +964,7 @@ public class DataModelUtilTest {
         serviceTemplate.setTopology_template(topologyTemplate);
 
         Optional<RelationshipTemplate> relationshipTemplateOut =
-                DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
+            DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
         Assert.assertNotNull(relationshipTemplateOut);
         Assert.assertEquals(true, relationshipTemplateOut.isPresent());
         Assert.assertEquals(testingRelationshipType, relationshipTemplateOut.get().getType());
@@ -978,7 +975,7 @@ public class DataModelUtilTest {
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         String relationId = "rtest";
         Optional<RelationshipTemplate> relationshipTemplateOut =
-                DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
+            DataModelUtil.getRelationshipTemplate(serviceTemplate, relationId);
         Assert.assertNotNull(relationshipTemplateOut);
         Assert.assertEquals(false, relationshipTemplateOut.isPresent());
     }

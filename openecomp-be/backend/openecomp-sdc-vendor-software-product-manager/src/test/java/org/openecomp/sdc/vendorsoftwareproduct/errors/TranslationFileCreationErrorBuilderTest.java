@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class TranslationFileCreationErrorBuilderTest {
@@ -33,7 +33,7 @@ public class TranslationFileCreationErrorBuilderTest {
     public void testBuild() {
         //given
         TranslationFileCreationErrorBuilder translationFileCreationErrorBuilder =
-                new TranslationFileCreationErrorBuilder("1", Version.valueOf("1.0"));
+            new TranslationFileCreationErrorBuilder("1", Version.valueOf("1.0"));
 
         //when
         ErrorCode errorCode = translationFileCreationErrorBuilder.build();
@@ -42,8 +42,8 @@ public class TranslationFileCreationErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.TRANSLATION_FILE_CREATION, errorCode.id());
         assertEquals(ErrorCategory.SYSTEM, errorCode.category());
         assertEquals(
-                "Error while trying to create translation file from the package of vendor software product with Id 1 and version 1.0.",
-                errorCode.message());
+            "Error while trying to create translation file from the package of vendor software product with Id 1 and version 1.0.",
+            errorCode.message());
     }
 
 }

@@ -16,6 +16,8 @@
 package org.openecomp.sdc.common.errors;
 
 import org.apache.commons.text.RandomStringGenerator;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class GeneralErrorBuilder {
 

@@ -48,8 +48,8 @@ import org.openecomp.core.model.errors.RetrieveServiceTemplateFromDbErrorBuilder
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;

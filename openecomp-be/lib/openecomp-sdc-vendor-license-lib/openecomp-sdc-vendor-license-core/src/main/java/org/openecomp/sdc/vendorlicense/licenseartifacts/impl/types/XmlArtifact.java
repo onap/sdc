@@ -16,7 +16,7 @@
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.errors.JsonErrorBuilder;
 

@@ -15,6 +15,13 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.AbstractToscaSolConverter;
@@ -27,10 +34,10 @@ import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
@@ -48,14 +55,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
@@ -153,7 +152,8 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
 
     private void addOriginalOnboardedPackage(final FileContentHandler fileContentHandler, final OrchestrationTemplateCandidateData candidateData) {
         if (OnboardingTypesEnum.CSAR.getType().equalsIgnoreCase(candidateData.getFileSuffix())) {
-            final String dirPrefix = asdPackageHelper.isAsdPackage(fileContentHandler) ? SDC_ONBOARDED_PACKAGE_DIR_ASD : SDC_ONBOARDED_PACKAGE_DIR_ETSI;
+            final String dirPrefix =
+                asdPackageHelper.isAsdPackage(fileContentHandler) ? SDC_ONBOARDED_PACKAGE_DIR_ASD : SDC_ONBOARDED_PACKAGE_DIR_ETSI;
             fileContentHandler.addFile(dirPrefix + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
                 candidateData.getOriginalFileContentData().array());
         } else {

@@ -84,7 +84,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class BeGenericServlet extends BasicServlet {
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);
-    private static final String PROPERTY_NAME_REGEX = "[\\w,\\d,_:]+";
+    private static final String PROPERTY_NAME_REGEX = "[\\w,:]+";
     @Context
     protected HttpServletRequest servletRequest;
     protected ComponentsUtils componentsUtils;
@@ -321,10 +321,8 @@ public class BeGenericServlet extends BasicServlet {
 
     protected String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
         JSONObject root = new JSONObject();
-        String propertyName = property.getKey();
         PropertyDefinition propertyDefinition = property.getValue();
-        JSONObject propertyDefinitionO = getPropertyDefinitionJSONObject(propertyDefinition);
-        root.put(propertyName, propertyDefinitionO);
+        root.put(property.getKey(), getPropertyDefinitionJSONObject(propertyDefinition));
         propertyDefinition.getType();
         return root.toString();
     }

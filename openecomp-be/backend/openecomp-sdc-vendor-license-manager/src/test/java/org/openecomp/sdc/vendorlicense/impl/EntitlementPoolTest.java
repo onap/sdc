@@ -17,6 +17,18 @@
 
 package org.openecomp.sdc.vendorlicense.impl;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.LimitDao;
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
@@ -39,385 +51,373 @@ import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
 
 public class EntitlementPoolTest {
 
-  //JUnit Test Cases using Mockito
-  private final String USER1 = "epTestUser1";
-  private final String EP1_NAME = "EP1 name";
-  private final String EP2_NAME = "EP2 name";
-  private final String LT1_NAME = "LT1 name";
-  private static String vlm1_id = "vlm1_id";
-  private static String ep1_id = "ep1_id";
-  private static String ep2_id = "ep2_id";
-  public static final Version VERSION01 = new Version(0, 1);
+    //JUnit Test Cases using Mockito
+    private final String USER1 = "epTestUser1";
+    private final String EP1_NAME = "EP1 name";
+    private final String EP2_NAME = "EP2 name";
+    private final String LT1_NAME = "LT1 name";
+    private static String vlm1_id = "vlm1_id";
+    private static String ep1_id = "ep1_id";
+    private static String ep2_id = "ep2_id";
+    public static final Version VERSION01 = new Version(0, 1);
 
-  @Mock
-  private VendorLicenseFacade vendorLicenseFacade;
+    @Mock
+    private VendorLicenseFacade vendorLicenseFacade;
 
-  @Mock
-  private EntitlementPoolDao entitlementPoolDao;
-  @Mock
-  private LimitDao limitDao;
+    @Mock
+    private EntitlementPoolDao entitlementPoolDao;
+    @Mock
+    private LimitDao limitDao;
 
-  @InjectMocks
-  @Spy
-  private VendorLicenseManagerImpl vendorLicenseManagerImpl;
+    @InjectMocks
+    @Spy
+    private VendorLicenseManagerImpl vendorLicenseManagerImpl;
 
-  public EntitlementPoolEntity createEntitlementPool(String vlmId, Version version, String id,
-                                                     String name, String desc, int threshold,
-                                                     ThresholdUnit thresholdUnit,
-                                                     EntitlementPoolType type,
-                                                     EntitlementMetric entitlementMetricChoice,
-                                                     String entitlementMetricOther,
-                                                     String increments,
-                                                     AggregationFunction aggregationFunctionChoice,
-                                                     String aggregationFunctionOther,
-                                                     Set<OperationalScope> operationalScopeChoices,
-                                                     String operationalScopeOther,
-                                                     EntitlementTime timeChoice,
-                                                     String timeOther, String sku) {
-    EntitlementPoolEntity entitlementPool = new EntitlementPoolEntity();
-    entitlementPool.setVendorLicenseModelId(vlmId);
-    entitlementPool.setId(id);
-    entitlementPool.setVersion(version);
-    entitlementPool.setName(name);
-    entitlementPool.setDescription(desc);
-    entitlementPool.setType(type);
-    entitlementPool.setThresholdValue(threshold);
-    entitlementPool.setThresholdUnit(thresholdUnit);
-    entitlementPool.setIncrements(increments);
-    entitlementPool.setOperationalScope(
-        new MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
-    return entitlementPool;
-  }
-
-  @Before
-  public void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
-
-
-  @After
-  public void tearDown(){
-    vendorLicenseManagerImpl = null;
-  }
-
-  @Test
-  public void createTest() {
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool("vlm1Id", null, ep1_id, EP1_NAME, "EP2 dec", 70, ThresholdUnit
-                .Absolute, EntitlementPoolType.Unique,
-            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().format(formatter));
-    ep2.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
-
-    vendorLicenseManagerImpl.createEntitlementPool(ep2);
-    verify(vendorLicenseFacade).createEntitlementPool(ep2);
-
-  }
-
-
-  @Test(expected = CoreException.class)
-  public void createWithInvalidStartExpiryDateTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().format(formatter));
-    ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
-
-  }
-
-  @Test(expected = CoreException.class)
-  public void createWithoutStartDateTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
-
-  }
-
-  @Test(expected = CoreException.class)
-  public void createWithSameStartExpiryDateTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().format(formatter));
-    ep2.setExpiryDate(LocalDate.now().format(formatter));
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
-    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
-  }
-
-  @Test
-  public void createWithExpiryDateNullTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().format(formatter));
-    ep2.setExpiryDate(null);
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.createEntitlementPool(ep2);
-    verify(vendorLicenseFacade).createEntitlementPool(ep2);
-
-  }
-
-  @Test
-  public void createWithStartAndExpiryDateNullTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    ep2.setStartDate(null);
-    ep2.setExpiryDate(null);
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.createEntitlementPool(ep2);
-    verify(vendorLicenseFacade).createEntitlementPool(ep2);
-
-  }
-
-  @Test
-  public void testUpdate() {
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().minusDays(3L).format(formatter));
-    ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
-
-    vendorLicenseManagerImpl.updateEntitlementPool(ep2);
-  }
-
-  @Test(expected = CoreException.class)
-  public void updateWithInvalidStartExpiryDateTest() {
-
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
-    EntitlementPoolEntity ep2 =
-        createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    ep2.setStartDate(LocalDate.now().format(formatter));
-    ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
-    ep2.setVendorLicenseModelId(vlm1_id);
-    vendorLicenseManagerImpl.updateEntitlementPool(ep2);
-    Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
-
-  }
-
-  @Test
-  public void updateWithoutStartDateTest() {
-    try {
-
-      Set<OperationalScope> opScopeChoices;
-      opScopeChoices = new HashSet<>();
-      opScopeChoices.add(OperationalScope.Core);
-      opScopeChoices.add(OperationalScope.CPU);
-      opScopeChoices.add(OperationalScope.Network_Wide);
-      EntitlementPoolEntity ep2 =
-          createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-              ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                  EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
-              null,
-              opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-      ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
-      vendorLicenseManagerImpl.updateEntitlementPool(ep2);
-      Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    public EntitlementPoolEntity createEntitlementPool(String vlmId, Version version, String id,
+                                                       String name, String desc, int threshold,
+                                                       ThresholdUnit thresholdUnit,
+                                                       EntitlementPoolType type,
+                                                       EntitlementMetric entitlementMetricChoice,
+                                                       String entitlementMetricOther,
+                                                       String increments,
+                                                       AggregationFunction aggregationFunctionChoice,
+                                                       String aggregationFunctionOther,
+                                                       Set<OperationalScope> operationalScopeChoices,
+                                                       String operationalScopeOther,
+                                                       EntitlementTime timeChoice,
+                                                       String timeOther, String sku) {
+        EntitlementPoolEntity entitlementPool = new EntitlementPoolEntity();
+        entitlementPool.setVendorLicenseModelId(vlmId);
+        entitlementPool.setId(id);
+        entitlementPool.setVersion(version);
+        entitlementPool.setName(name);
+        entitlementPool.setDescription(desc);
+        entitlementPool.setType(type);
+        entitlementPool.setThresholdValue(threshold);
+        entitlementPool.setThresholdUnit(thresholdUnit);
+        entitlementPool.setIncrements(increments);
+        entitlementPool.setOperationalScope(
+            new MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
+        return entitlementPool;
     }
-  }
 
-  @Test
-  public void updateWithSameStartExpiryDateTest() {
-    try {
-
-      Set<OperationalScope> opScopeChoices;
-      opScopeChoices = new HashSet<>();
-      opScopeChoices.add(OperationalScope.Core);
-      opScopeChoices.add(OperationalScope.CPU);
-      opScopeChoices.add(OperationalScope.Network_Wide);
-      EntitlementPoolEntity ep2 =
-          createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
-              ThresholdUnit.Absolute, EntitlementPoolType.Unique,
-                  EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
-              null,
-              opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-      ep2.setStartDate(LocalDate.now().format(formatter));
-      ep2.setExpiryDate(LocalDate.now().format(formatter));
-      vendorLicenseManagerImpl.updateEntitlementPool(ep2);
-      Assert.fail();
-    } catch (CoreException exception) {
-      Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
-  }
 
-  @Test
-  public void deleteEntitlementPoolTest() {
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
 
-    EntitlementPoolEntity entitlementPool =
-        createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
-            AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    entitlementPool.setStartDate(LocalDate.now().format(formatter));
-    entitlementPool.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
+    @After
+    public void tearDown() {
+        vendorLicenseManagerImpl = null;
+    }
 
-    doReturn(entitlementPool).when(entitlementPoolDao).get(any());
+    @Test
+    public void createTest() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm1Id", null, ep1_id, EP1_NAME, "EP2 dec", 70, ThresholdUnit
+                    .Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().format(formatter));
+        ep2.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
 
-    doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, ep1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2);
+        verify(vendorLicenseFacade).createEntitlementPool(ep2);
 
-    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
-        any(), any());
+    }
 
-    vendorLicenseManagerImpl.deleteEntitlementPool(entitlementPool);
 
-    verify(entitlementPoolDao).delete(entitlementPool);
-  }
+    @Test(expected = CoreException.class)
+    public void createWithInvalidStartExpiryDateTest() {
 
-  @Test
-  public void testGetEntitlementPool() {
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().format(formatter));
+        ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
+        Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
 
-    EntitlementPoolEntity entitlementPool =
-        createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
-            AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+    }
 
-    entitlementPool.setStartDate(LocalDateTime.now().format(formatter));
-    entitlementPool.setExpiryDate(LocalDateTime.now().plusDays(1L).format(formatter));
+    @Test(expected = CoreException.class)
+    public void createWithoutStartDateTest() {
 
-    doReturn(entitlementPool).when(entitlementPoolDao).get(any());
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
+        Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
 
-    EntitlementPoolEntity retrieved = vendorLicenseManagerImpl.getEntitlementPool(entitlementPool);
+    }
 
-    Assert.assertEquals(retrieved.getId(), entitlementPool.getId());
-    Assert.assertEquals(retrieved.getVendorLicenseModelId(),
-        entitlementPool.getVendorLicenseModelId());
-    Assert.assertEquals(retrieved.getVersion(), entitlementPool.getVersion());
-  }
+    @Test(expected = CoreException.class)
+    public void createWithSameStartExpiryDateTest() {
 
-  @Test
-  public void testListEntitlmentPool() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().format(formatter));
+        ep2.setExpiryDate(LocalDate.now().format(formatter));
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2).getId();
+        Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
+    }
 
-    Set<OperationalScope> opScopeChoices;
-    opScopeChoices = new HashSet<>();
-    opScopeChoices.add(OperationalScope.Core);
-    opScopeChoices.add(OperationalScope.CPU);
-    opScopeChoices.add(OperationalScope.Network_Wide);
+    @Test
+    public void createWithExpiryDateNullTest() {
 
-    doReturn(Arrays.asList(
-        createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP1 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric1",
-            "inc1", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time1", "sku1"),
-        createEntitlementPool(vlm1_id, VERSION01, ep2_id, EP2_NAME, "EP2 dec", 70,
-            ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2",
-            "inc2", AggregationFunction.Average, null,
-            opScopeChoices, null, EntitlementTime.Other, "time2", "sku2")))
-        .when(vendorLicenseFacade).listEntitlementPools(vlm1_id, VERSION01);
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().format(formatter));
+        ep2.setExpiryDate(null);
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2);
+        verify(vendorLicenseFacade).createEntitlementPool(ep2);
 
-    Collection<EntitlementPoolEntity> EPs =
-        vendorLicenseManagerImpl.listEntitlementPools(vlm1_id, VERSION01);
+    }
 
-    verify(vendorLicenseFacade).listEntitlementPools(vlm1_id, VERSION01);
-    Assert.assertEquals(EPs.size(), 2);
-    EPs.forEach(ep -> Assert.assertTrue(ep.getId().matches(ep1_id + "|" + ep2_id)));
-  }
+    @Test
+    public void createWithStartAndExpiryDateNullTest() {
+
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        ep2.setStartDate(null);
+        ep2.setExpiryDate(null);
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.createEntitlementPool(ep2);
+        verify(vendorLicenseFacade).createEntitlementPool(ep2);
+
+    }
+
+    @Test
+    public void testUpdate() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().minusDays(3L).format(formatter));
+        ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+
+        vendorLicenseManagerImpl.updateEntitlementPool(ep2);
+    }
+
+    @Test(expected = CoreException.class)
+    public void updateWithInvalidStartExpiryDateTest() {
+
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+        EntitlementPoolEntity ep2 =
+            createEntitlementPool("vlm2Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ep2.setStartDate(LocalDate.now().format(formatter));
+        ep2.setExpiryDate(LocalDate.now().minusDays(2L).format(formatter));
+        ep2.setVendorLicenseModelId(vlm1_id);
+        vendorLicenseManagerImpl.updateEntitlementPool(ep2);
+        Assert.fail("Vendor license model with id vlm1_id has invalid date range.");
+
+    }
+
+    @Test
+    public void updateWithoutStartDateTest() {
+        try {
+
+            Set<OperationalScope> opScopeChoices;
+            opScopeChoices = new HashSet<>();
+            opScopeChoices.add(OperationalScope.Core);
+            opScopeChoices.add(OperationalScope.CPU);
+            opScopeChoices.add(OperationalScope.Network_Wide);
+            EntitlementPoolEntity ep2 =
+                createEntitlementPool("vlm3Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
+                    null,
+                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            ep2.setExpiryDate(LocalDate.now().plusDays(2L).format(formatter));
+            vendorLicenseManagerImpl.updateEntitlementPool(ep2);
+            Assert.fail();
+        } catch (CoreException exception) {
+            Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+        }
+    }
+
+    @Test
+    public void updateWithSameStartExpiryDateTest() {
+        try {
+
+            Set<OperationalScope> opScopeChoices;
+            opScopeChoices = new HashSet<>();
+            opScopeChoices.add(OperationalScope.Core);
+            opScopeChoices.add(OperationalScope.CPU);
+            opScopeChoices.add(OperationalScope.Network_Wide);
+            EntitlementPoolEntity ep2 =
+                createEntitlementPool("vlm4Id", null, ep1_id, EP1_NAME, "EP2 dec", 70,
+                    ThresholdUnit.Absolute, EntitlementPoolType.Unique,
+                    EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average,
+                    null,
+                    opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            ep2.setStartDate(LocalDate.now().format(formatter));
+            ep2.setExpiryDate(LocalDate.now().format(formatter));
+            vendorLicenseManagerImpl.updateEntitlementPool(ep2);
+            Assert.fail();
+        } catch (CoreException exception) {
+            Assert.assertEquals(exception.code().id(), VendorLicenseErrorCodes.DATE_RANGE_INVALID);
+        }
+    }
+
+    @Test
+    public void deleteEntitlementPoolTest() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+
+        EntitlementPoolEntity entitlementPool =
+            createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
+                AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        entitlementPool.setStartDate(LocalDate.now().format(formatter));
+        entitlementPool.setExpiryDate(LocalDate.now().plusDays(1L).format(formatter));
+
+        doReturn(entitlementPool).when(entitlementPoolDao).get(any());
+
+        doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, ep1_id);
+
+        doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
+            any(), any());
+
+        vendorLicenseManagerImpl.deleteEntitlementPool(entitlementPool);
+
+        verify(entitlementPoolDao).delete(entitlementPool);
+    }
+
+    @Test
+    public void testGetEntitlementPool() {
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+
+        EntitlementPoolEntity entitlementPool =
+            createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2", "inc2",
+                AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy'T'HH:mm:ss'Z'");
+
+        entitlementPool.setStartDate(LocalDateTime.now().format(formatter));
+        entitlementPool.setExpiryDate(LocalDateTime.now().plusDays(1L).format(formatter));
+
+        doReturn(entitlementPool).when(entitlementPoolDao).get(any());
+
+        EntitlementPoolEntity retrieved = vendorLicenseManagerImpl.getEntitlementPool(entitlementPool);
+
+        Assert.assertEquals(retrieved.getId(), entitlementPool.getId());
+        Assert.assertEquals(retrieved.getVendorLicenseModelId(),
+            entitlementPool.getVendorLicenseModelId());
+        Assert.assertEquals(retrieved.getVersion(), entitlementPool.getVersion());
+    }
+
+    @Test
+    public void testListEntitlmentPool() {
+
+        Set<OperationalScope> opScopeChoices;
+        opScopeChoices = new HashSet<>();
+        opScopeChoices.add(OperationalScope.Core);
+        opScopeChoices.add(OperationalScope.CPU);
+        opScopeChoices.add(OperationalScope.Network_Wide);
+
+        doReturn(Arrays.asList(
+            createEntitlementPool(vlm1_id, VERSION01, ep1_id, EP1_NAME, "EP1 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric1",
+                "inc1", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time1", "sku1"),
+            createEntitlementPool(vlm1_id, VERSION01, ep2_id, EP2_NAME, "EP2 dec", 70,
+                ThresholdUnit.Absolute, EntitlementPoolType.Unique, EntitlementMetric.Other, "exception metric2",
+                "inc2", AggregationFunction.Average, null,
+                opScopeChoices, null, EntitlementTime.Other, "time2", "sku2")))
+            .when(vendorLicenseFacade).listEntitlementPools(vlm1_id, VERSION01);
+
+        Collection<EntitlementPoolEntity> EPs =
+            vendorLicenseManagerImpl.listEntitlementPools(vlm1_id, VERSION01);
+
+        verify(vendorLicenseFacade).listEntitlementPools(vlm1_id, VERSION01);
+        Assert.assertEquals(EPs.size(), 2);
+        EPs.forEach(ep -> Assert.assertTrue(ep.getId().matches(ep1_id + "|" + ep2_id)));
+    }
 
 
   /*  @Test

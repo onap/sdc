@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class NicInternalNetworkErrorBuilderTest {
 
@@ -35,7 +35,7 @@ public class NicInternalNetworkErrorBuilderTest {
 
         // then
         assertEquals(VendorSoftwareProductErrorCodes.NETWORK_DESCRIPTION_NOT_ALLOWED_FOR_INTERNAL_NETWORK,
-                errorCode.id());
+            errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("Invalid request, Network Description not allowed for Internal Networks", errorCode.message());
     }
@@ -49,8 +49,8 @@ public class NicInternalNetworkErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.NULL_NETWORKID_NOT_ALLOWED, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("Internal Networks are currently not supported for VSP created Manually,"
-                             + " so please fix all the NIC to be of Type External and re-submit the VSP.",
-                errorCode.message());
+                + " so please fix all the NIC to be of Type External and re-submit the VSP.",
+            errorCode.message());
 
     }
 

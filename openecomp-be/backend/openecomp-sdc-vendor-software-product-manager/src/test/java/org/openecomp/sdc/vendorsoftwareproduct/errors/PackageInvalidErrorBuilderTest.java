@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class PackageInvalidErrorBuilderTest {
@@ -33,7 +33,7 @@ public class PackageInvalidErrorBuilderTest {
     public void testBuild() {
         //given
         PackageInvalidErrorBuilder packageInvalidErrorBuilder =
-                new PackageInvalidErrorBuilder("1", Version.valueOf("1.0"));
+            new PackageInvalidErrorBuilder("1", Version.valueOf("1.0"));
 
         //when
         ErrorCode errorCode = packageInvalidErrorBuilder.build();
@@ -42,7 +42,7 @@ public class PackageInvalidErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.PACKAGE_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "Package for vendor software product with Id 1 and version 1.0 is invalid (does not contain translated data).",
-                errorCode.message());
+            "Package for vendor software product with Id 1 and version 1.0 is invalid (does not contain translated data).",
+            errorCode.message());
     }
 }

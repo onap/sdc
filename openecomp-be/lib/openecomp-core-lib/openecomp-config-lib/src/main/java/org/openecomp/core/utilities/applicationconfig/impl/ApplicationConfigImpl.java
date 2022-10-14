@@ -26,9 +26,9 @@ import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDao;
 import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDaoFactory;
 import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class ApplicationConfigImpl implements ApplicationConfig {
 

@@ -22,8 +22,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
-import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.errors.ErrorCategory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class UploadInvalidErrorBuilder extends BaseErrorBuilder {

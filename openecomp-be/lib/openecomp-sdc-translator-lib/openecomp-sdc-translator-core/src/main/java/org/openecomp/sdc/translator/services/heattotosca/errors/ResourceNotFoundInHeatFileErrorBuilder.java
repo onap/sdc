@@ -19,8 +19,8 @@
  */
 package org.openecomp.sdc.translator.services.heattotosca.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class ResourceNotFoundInHeatFileErrorBuilder {
 

@@ -32,10 +32,11 @@ import java.util.Map;
 import org.junit.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.openecomp.sdc.errors.CoreException;
 
 public class CommonUtilTest {
+
     private static final String VALID_ZIP_FILE_PATH = "src/test/resources/valid.zip";
     private static final String VALID_CSAR_FILE_PATH = "src/test/resources/valid.csar";
     private static final String VALID_ZIP_WITH_NOT_YAML_FILE_PATH = "src/test/resources/valid_zip_with_not_yaml_file.zip";
@@ -70,7 +71,7 @@ public class CommonUtilTest {
         assertThat(fch.containsFile("file.two.yaml"), is(true));
     }
 
-    @Test(expected=CoreException.class)
+    @Test(expected = CoreException.class)
     public void testValidateNoFolders() throws IOException {
         byte[] file = getFileAsBytes(VALID_ZIP_WITH_DIR_FILE_PATH);
 

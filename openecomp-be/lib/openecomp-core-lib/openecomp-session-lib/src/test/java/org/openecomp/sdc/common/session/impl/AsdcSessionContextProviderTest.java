@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.session.SessionContext;
+import org.openecomp.sdc.errors.CoreException;
 
 @ExtendWith(MockitoExtension.class)
 class AsdcSessionContextProviderTest {

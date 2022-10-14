@@ -70,7 +70,7 @@ import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Crede
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;

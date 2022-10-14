@@ -23,8 +23,8 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class DeploymentFlavorErrorBuilderTest {
 
@@ -48,8 +48,8 @@ public class DeploymentFlavorErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.INVALID_COMPONENT_COMPUTE_ASSOCIATION, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "VSP cannot be submitted with an invalid Deployment Flavor. All Deployment Flavor should have atleast a VFC included with it's required Compute needs. "
-                        + "Please fix the Deployment Flavor  and re-submit the VSP.", errorCode.message());
+            "VSP cannot be submitted with an invalid Deployment Flavor. All Deployment Flavor should have atleast a VFC included with it's required Compute needs. "
+                + "Please fix the Deployment Flavor  and re-submit the VSP.", errorCode.message());
     }
 
     @Test
@@ -61,8 +61,8 @@ public class DeploymentFlavorErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.FEATUREGROUP_REQUIRED_IN_DEPLOYMENT_FLAVOR, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("VSP cannot be submitted with an invalid Deployment Flavor. All Deployment Flavor should have "
-                             + "FeatureGroup. Please fix the Deployment Flavor  and re-submit the VSP.",
-                errorCode.message());
+                + "FeatureGroup. Please fix the Deployment Flavor  and re-submit the VSP.",
+            errorCode.message());
     }
 
     @Test

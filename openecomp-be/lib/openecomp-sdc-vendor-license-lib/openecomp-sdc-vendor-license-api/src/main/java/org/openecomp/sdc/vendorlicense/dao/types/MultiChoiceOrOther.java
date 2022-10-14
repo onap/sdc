@@ -20,8 +20,8 @@ import com.datastax.driver.mapping.annotations.UDT;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 
 @UDT(keyspace = "dox", name = "multi_choice_or_other")
 public class MultiChoiceOrOther<E extends Enum<E>> {

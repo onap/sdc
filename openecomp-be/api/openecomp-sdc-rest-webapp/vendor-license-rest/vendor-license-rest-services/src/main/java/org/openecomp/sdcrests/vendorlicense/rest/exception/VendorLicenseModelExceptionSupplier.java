@@ -21,17 +21,18 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.exception;
 
+import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_CERTIFIED_AND_NOT_ARCHIVED_DELETE_ERROR;
+import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_IN_USE_DELETE_ERROR;
+
 import java.util.List;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBuilder;
 
-import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_CERTIFIED_AND_NOT_ARCHIVED_DELETE_ERROR;
-import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_IN_USE_DELETE_ERROR;
 /**
  * Supplies exceptions happened for a Vendor License Model operation .
  */
@@ -52,7 +53,7 @@ public class VendorLicenseModelExceptionSupplier {
     /**
      * Provides a cannot delete used Vendor License Model exception.
      *
-     * @param vmlId the Vendor License Model id
+     * @param vmlId       the Vendor License Model id
      * @param vspNameList the list of VSP names that uses the VLM
      * @return a Supplier for the exception
      */

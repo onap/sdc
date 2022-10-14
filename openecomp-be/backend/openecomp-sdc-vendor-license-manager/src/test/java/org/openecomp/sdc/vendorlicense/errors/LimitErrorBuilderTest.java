@@ -20,12 +20,13 @@
 
 package org.openecomp.sdc.vendorlicense.errors;
 
-import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.common.errors.ErrorCode;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.errors.ErrorCode;
+
 public class LimitErrorBuilderTest {
+
     @Test
     public void testGetInvalidValueErrorBuilder() {
         ErrorCode res = LimitErrorBuilder.getInvalidValueErrorBuilder("attrebute", "404");

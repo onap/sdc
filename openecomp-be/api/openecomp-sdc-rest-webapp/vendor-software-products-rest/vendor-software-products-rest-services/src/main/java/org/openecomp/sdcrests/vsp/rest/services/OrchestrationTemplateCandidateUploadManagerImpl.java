@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordDao;
@@ -132,7 +132,8 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         return updateToNotFinalStatus(vspId, vspVersionId, VspUploadStatus.PROCESSING, user);
     }
 
-    private VspUploadStatusDto updateToNotFinalStatus(final String vspId, final String vspVersionId, final VspUploadStatus status, final String user) {
+    private VspUploadStatusDto updateToNotFinalStatus(final String vspId, final String vspVersionId, final VspUploadStatus status,
+                                                      final String user) {
         LOGGER.debug("Updating upload status to '{}' for VSP id '{}', version '{}', triggered by user '{}'", status, vspId, vspVersionId, user);
         if (status.isCompleteStatus()) {
             throw invalidCompletionStatus(status).get();
@@ -174,7 +175,8 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
     }
 
     @Override
-    public VspUploadStatusDto putUploadAsFinished(final String vspId, final String vspVersionId, final UUID lockId, final VspUploadStatus completionStatus,
+    public VspUploadStatusDto putUploadAsFinished(final String vspId, final String vspVersionId, final UUID lockId,
+                                                  final VspUploadStatus completionStatus,
                                                   final String user) {
 
         if (!completionStatus.isCompleteStatus()) {

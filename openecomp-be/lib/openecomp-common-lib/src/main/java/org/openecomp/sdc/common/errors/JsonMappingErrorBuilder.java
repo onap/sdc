@@ -19,6 +19,9 @@
  */
 package org.openecomp.sdc.common.errors;
 
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
+
 public class JsonMappingErrorBuilder {
 
     private static final String JSON_MAPPING_ERROR_ERR_ID = "JSON_MAPPING_ERROR_ERR_ID";

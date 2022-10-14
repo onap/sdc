@@ -19,8 +19,8 @@ package org.openecomp.sdcrests.common.mapping;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdcrests.common.types.ErrorCodeDto;
 
 /**
@@ -36,7 +36,7 @@ public class MapErrorCodeToDtoTest {
         final ErrorCategory category = ErrorCategory.SECURITY;
 
         final ErrorCode source =
-                new ErrorCode.ErrorCodeBuilder().withId(id).withMessage(message).withCategory(category).build();
+            new ErrorCode.ErrorCodeBuilder().withId(id).withMessage(message).withCategory(category).build();
 
         final ErrorCodeDto target = new ErrorCodeDto();
         final MapErrorCodeToDto mapper = new MapErrorCodeToDto();

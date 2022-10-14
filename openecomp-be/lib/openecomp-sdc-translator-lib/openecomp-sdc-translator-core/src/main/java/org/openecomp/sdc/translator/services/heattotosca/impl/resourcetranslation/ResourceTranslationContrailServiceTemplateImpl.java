@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.onap.sdc.tosca.datatypes.model.NodeType;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.tosca.datatypes.ToscaNodeType;
 import org.openecomp.sdc.tosca.datatypes.ToscaTopologyTemplateElements;
 import org.openecomp.sdc.tosca.services.DataModelUtil;

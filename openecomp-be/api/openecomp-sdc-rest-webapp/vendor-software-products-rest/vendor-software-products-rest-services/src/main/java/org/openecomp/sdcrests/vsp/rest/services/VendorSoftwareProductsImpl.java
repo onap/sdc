@@ -28,17 +28,17 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.inject.Named;
@@ -52,11 +52,11 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.itempermissions.PermissionsManagerFactory;
@@ -362,6 +362,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             LOGGER.error("Could not log activity '{}'", message, e);
         }
     }
+
     private void logDeleteFromStorageAllSuccess(final String vspId, final String user) {
         final String message = String.format("VSP '%s' fully deleted from the storage", vspId);
         try {
@@ -387,12 +388,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         final List<VspDetails> listVsp = new ArrayList<>();
         versioningManager.list(vspId).forEach(version -> listVsp.add(vendorSoftwareProductManager.getVsp(vspId, version)));
         listVsp.forEach(vspDetail ->
-                vendorSoftwareProductManager.listPackages(vspDetail.getCategory(), vspDetail.getSubCategory())
-                        .stream().filter(packageInfo -> packageInfo.getVspId().equals(vspId)).collect(Collectors.toList())
-                        .forEach(packInfo -> {
-                            packInfo.setTranslatedFile(ByteBuffer.wrap(new byte[0]));
-                            vendorSoftwareProductManager.updatePackage(packInfo);
-                        })
+            vendorSoftwareProductManager.listPackages(vspDetail.getCategory(), vspDetail.getSubCategory())
+                .stream().filter(packageInfo -> packageInfo.getVspId().equals(vspId)).collect(Collectors.toList())
+                .forEach(packInfo -> {
+                    packInfo.setTranslatedFile(ByteBuffer.wrap(new byte[0]));
+                    vendorSoftwareProductManager.updatePackage(packInfo);
+                })
         );
     }
 

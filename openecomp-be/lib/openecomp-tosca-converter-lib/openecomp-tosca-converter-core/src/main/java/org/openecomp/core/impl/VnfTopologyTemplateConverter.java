@@ -47,7 +47,7 @@ import org.onap.sdc.tosca.datatypes.model.Trigger;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
 import org.openecomp.core.converter.datatypes.Constants;
 import org.openecomp.core.converter.errors.SubstitutionMappingsConverterErrorBuilder;
-import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.errors.CoreException;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 
 public class VnfTopologyTemplateConverter {

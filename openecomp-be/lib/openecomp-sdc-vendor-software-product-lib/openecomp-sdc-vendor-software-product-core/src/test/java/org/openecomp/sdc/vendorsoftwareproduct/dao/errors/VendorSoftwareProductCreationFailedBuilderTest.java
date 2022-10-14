@@ -20,8 +20,8 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 
 public class VendorSoftwareProductCreationFailedBuilderTest {
@@ -35,7 +35,7 @@ public class VendorSoftwareProductCreationFailedBuilderTest {
     }
 
     @Test
-    public void shouldReturnVspNotFoundErrorCode(){
+    public void shouldReturnVspNotFoundErrorCode() {
         ErrorCode actual = vendorSoftwareProductCreationFailedBuilder.build();
         Assert.assertEquals(ErrorCategory.APPLICATION, actual.category());
         Assert.assertEquals(FAILED_TO_CREATE_VSP, actual.id());

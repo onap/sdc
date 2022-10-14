@@ -19,8 +19,8 @@
  */
 package org.openecomp.sdc.tosca.errors;
 
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 
 public class CreateInterfaceOperationObjectErrorBuilder {
 

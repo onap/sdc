@@ -44,10 +44,10 @@ import org.openecomp.conflicts.types.ConflictInfo;
 import org.openecomp.conflicts.types.ConflictResolution;
 import org.openecomp.conflicts.types.ItemVersionConflict;
 import org.openecomp.conflicts.types.Resolution;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 

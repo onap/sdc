@@ -22,7 +22,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.MONITORING_UPLOAD_INVALID;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
-import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCategory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class MonitoringUploadErrorBuilder extends BaseErrorBuilder {

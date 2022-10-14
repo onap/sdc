@@ -19,6 +19,9 @@
  */
 package org.openecomp.sdc.common.errors;
 
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
+
 public class ValidationErrorBuilder {
 
     public static final String FIELD_VALIDATION_ERROR_ERR_ID = "FIELD_VALIDATION_ERROR_ERR_ID";

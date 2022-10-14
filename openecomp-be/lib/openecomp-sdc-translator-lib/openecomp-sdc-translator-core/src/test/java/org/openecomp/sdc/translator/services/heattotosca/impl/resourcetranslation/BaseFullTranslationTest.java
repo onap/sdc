@@ -39,10 +39,10 @@ import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.validation.util.MessageContainerUtil;
 import org.openecomp.sdc.be.togglz.ToggleableFeature;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCategory;
+import org.openecomp.sdc.errors.ErrorCode;
 import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
 import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -93,7 +93,7 @@ public class BaseFullTranslationTest {
         }
 
         try (ByteArrayInputStream fis = new ByteArrayInputStream(translatedZipFile);
-             BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
+            BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
             TestUtils.compareTranslatedOutput(expectedResultFileNameSet, expectedResultMap, zis);
         }
         assertEquals(0, expectedResultFileNameSet.size());
@@ -106,14 +106,15 @@ public class BaseFullTranslationTest {
         TranslatorOutput translatorOutput = heatToToscaTranslator.translate();
         Assert.assertNotNull(translatorOutput);
         if (MapUtils.isNotEmpty(translatorOutput.getErrorMessages()) && MapUtils.isNotEmpty(
-                MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
+            MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, translatorOutput.getErrorMessages()))) {
             throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(
                     "Error in validation " + getErrorAsString(translatorOutput.getErrorMessages()))
-                                            .withId("Validation Error").withCategory(ErrorCategory.APPLICATION)
-                                            .build());
+                .withId("Validation Error").withCategory(ErrorCategory.APPLICATION)
+                .build());
         }
 
-        return new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils())).createOutputFile(translatorOutput.getToscaServiceModel(), null);
+        return new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils())).createOutputFile(translatorOutput.getToscaServiceModel(),
+            null);
     }
 
 }

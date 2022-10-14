@@ -17,8 +17,8 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 
 import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.errors.CoreException;
+import org.openecomp.sdc.errors.ErrorCode;
 
 @UDT(keyspace = "dox", name = "choice_or_other")
 public class ChoiceOrOther<E extends Enum<E>> {

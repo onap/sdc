@@ -24,5 +24,5 @@ import com.google.gson.GsonBuilder;
 
 public abstract class BasicServlet {
 
-    protected Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    protected final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 }
