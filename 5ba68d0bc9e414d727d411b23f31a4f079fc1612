@@ -22,6 +22,30 @@
       "revId": "5ba68d0bc9e414d727d411b23f31a4f079fc1612",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f8d2f30_589c0d63",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-14T13:41:13Z",
+      "side": 1,
+      "message": "good catch, \nno reasons to exclude this one\nfixed 4 pom.xml",
+      "parentUuid": "b3893586_52462f7d",
+      "range": {
+        "startLine": 169,
+        "startChar": 13,
+        "endLine": 176,
+        "endChar": 28
+      },
+      "revId": "5ba68d0bc9e414d727d411b23f31a4f079fc1612",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
