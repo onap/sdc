@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -33,6 +34,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
+    @Getter
     private String lessThan;
 
     @Override

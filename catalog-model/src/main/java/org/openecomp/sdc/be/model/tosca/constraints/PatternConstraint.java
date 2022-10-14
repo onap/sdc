@@ -27,10 +27,12 @@ import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
+import lombok.Getter;
 
 public class PatternConstraint extends AbstractStringPropertyConstraint {
 
     @NotNull
+    @Getter
     private String pattern;
     private Pattern compiledPattern;
 
