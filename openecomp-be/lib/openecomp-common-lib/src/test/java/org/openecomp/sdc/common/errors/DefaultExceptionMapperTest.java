@@ -17,69 +17,71 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdcrests.errors;
 
-import static org.junit.Assert.assertEquals;
+package org.openecomp.sdc.common.errors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DefaultExceptionMapperTest {
+@ExtendWith(MockitoExtension.class)
+class DefaultExceptionMapperTest {
 
     private static final String TEST_MESSAGE = "Test message";
 
     @Mock
     private ConstraintViolation<String> constraintViolation;
-    private PathImpl path = PathImpl.createRootPath();
+    private final PathImpl path = PathImpl.createRootPath();
 
     @Test
-    public void shouldMapCoreExceptionToResponse() {
+    void shouldMapCoreExceptionToResponse() {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         ErrorCode errorCode = new ErrorCodeBuilder().withId("VSP_NOT_FOUND").withCategory(ErrorCategory.APPLICATION).build();
         CoreException exception = new CoreException(errorCode);
-        Response response = defaultExceptionMapper.toResponse(exception);
-        assertEquals(response.getStatus(), 404);
+        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
+            assertEquals(404, response.getStatus());
+        }
     }
 
     @Test
-    public void shouldMapConstraintViolationExceptionToResponse() {
+    void shouldMapConstraintViolationExceptionToResponse() {
         Mockito.when(constraintViolation.getPropertyPath()).thenReturn(path);
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         Set<ConstraintViolation<String>> violations = new HashSet<>();
         violations.add(constraintViolation);
         ConstraintViolationException exception = new ConstraintViolationException(TEST_MESSAGE, violations);
-        Response response = defaultExceptionMapper.toResponse(exception);
-        assertEquals(response.getStatus(), 417);
+        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
+            assertEquals(417, response.getStatus());
+        }
     }
 
     @Test
-    public void shouldMapJsonMappingExceptionToResponse() {
+    void shouldMapJsonMappingExceptionToResponse() {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         JsonMappingException exception = new JsonMappingException(TEST_MESSAGE);
-        Response response = defaultExceptionMapper.toResponse(exception);
-        assertEquals(response.getStatus(), 417);
+        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
+            assertEquals(417, response.getStatus());
+        }
     }
 
     @Test
-    public void shouldMapOtherExceptionToResponse() {
+    void shouldMapOtherExceptionToResponse() {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         Exception exception = new Exception(TEST_MESSAGE);
-        Response response = defaultExceptionMapper.toResponse(exception);
-        assertEquals(response.getStatus(), 500);
+        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
+            assertEquals(500, response.getStatus());
+        }
     }
 }

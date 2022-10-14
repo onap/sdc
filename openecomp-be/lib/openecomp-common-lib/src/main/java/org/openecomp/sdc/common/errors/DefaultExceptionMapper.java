@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdcrests.errors;
+package org.openecomp.sdc.common.errors;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import java.util.ArrayList;
@@ -31,13 +31,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
-import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
-import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
-import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
