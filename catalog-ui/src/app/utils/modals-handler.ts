@@ -24,7 +24,7 @@ import { ComponentMetadata } from '../models/component-metadata';
 export interface IModalsHandler {
 
     openEditPropertyModal(property: PropertyModel, component: Component, filteredProperties: PropertyModel[], isPropertyOwnValue: boolean,
-                          propertyOwnerType: string, propertyOwnerId: string, isViewOnly: boolean): ng.IPromise<any>;
+                          propertyOwnerType: string, propertyOwnerId: string, isViewOnly?: boolean): ng.IPromise<any>;
 }
 
 export class ModalsHandler implements IModalsHandler {
@@ -139,6 +139,9 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 propertyOwnerId: (): string => {
                     return propertyOwnerId;
+                },
+                isViewOnly: (): boolean => {
+                    return false;
                 }
             }
         };
