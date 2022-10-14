@@ -7,7 +7,7 @@
             [placeHolder]="'Enter Name'">
         </sdc-input>
         <sdc-validation [validateElement]="heatName">
-            <sdc-regex-validator [message]="'Special characters not allowed.'" [pattern]="pattern"></sdc-regex-validator>
+            <sdc-regex-validator [message]="'HTML elements not permitted in field values.'" [pattern]="pattern"></sdc-regex-validator>
         </sdc-validation>
     </div>
     <div class="edit-module-name-label module-name" data-tests-id="'popover-module-name'" sdc-tooltip [tooltip-text]="selectModule.moduleName">{{selectModule.moduleName}}</div>
