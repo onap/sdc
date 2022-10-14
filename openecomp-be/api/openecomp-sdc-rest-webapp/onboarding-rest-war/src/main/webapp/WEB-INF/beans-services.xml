@@ -90,7 +90,7 @@
         <jaxrs:providers>
             <ref bean="jsonProvider"/>
             <bean class="org.openecomp.sdc.action.errors.ActionExceptionMapper"/>
-            <bean class="org.openecomp.sdcrests.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.sdc.common.errors.DefaultExceptionMapper"/>
             <bean class="org.openecomp.sdcrests.errors.ZusammenExceptionMapper"/>
             <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter">
                 <property name="requestIdHeaders" value="X-ONAP-RequestID,X-RequestID,X-TransactionId,X-ECOMP-RequestID"/>
