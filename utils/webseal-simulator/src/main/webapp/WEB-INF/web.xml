@@ -39,6 +39,16 @@
     </servlet-mapping>
 
     <filter>
+        <filter-name>dataValidatorFilter</filter-name>
+        <filter-class>org.openecomp.sdc.webseal.simulator.DataValidatorFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>dataValidatorFilter</filter-name>
+        <url-pattern>/login</url-pattern>
+        <url-pattern>/create</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
         <filter-class>org.openecomp.sdc.webseal.simulator.ContentSecurityPolicyHeaderFilter</filter-class>
         <async-supported>true</async-supported>
