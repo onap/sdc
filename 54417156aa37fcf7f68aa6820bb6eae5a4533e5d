@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e76cc50_f2333cd8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2098,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-14T12:37:50Z",
+      "side": 1,
+      "message": "We dont seem to be adding the constraints for the property - i.e. if the attribute definition on the VFC has constraints",
+      "range": {
+        "startLine": 2098,
+        "startChar": 0,
+        "endLine": 2098,
+        "endChar": 11
+      },
+      "revId": "54417156aa37fcf7f68aa6820bb6eae5a4533e5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
