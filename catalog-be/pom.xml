@@ -34,6 +34,12 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
+
         <!--JSON and YAML Parsing-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -101,6 +107,30 @@
         </dependency>
 
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-security</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>common-app-api</artifactId>
             <version>${project.version}</version>
@@ -147,6 +177,14 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-servlet</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -711,12 +749,6 @@
             <artifactId>jetty-proxy</artifactId>
             <version>${jetty.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -728,10 +760,6 @@
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-http</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-continuation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -822,16 +850,6 @@
             <version>${jersey-bom.version}</version>
             <type>pom</type>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-continuation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -845,12 +863,6 @@
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-servlet</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

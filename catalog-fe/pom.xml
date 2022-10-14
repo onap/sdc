@@ -31,6 +31,18 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>common-app-api</artifactId>
             <version>${project.version}</version>
@@ -223,12 +235,6 @@
             <artifactId>jetty-proxy</artifactId>
             <version>${jetty.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -366,16 +372,6 @@
             <version>${jersey-bom.version}</version>
             <type>pom</type>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-continuation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -393,10 +389,6 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-security</artifactId>
                 </exclusion>
             </exclusions>
@@ -407,12 +399,6 @@
             <artifactId>jetty-webapp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-servlet</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
