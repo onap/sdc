@@ -136,17 +136,19 @@ export class MenuHandler {
                 return this.$q.when(true);
             };
 
-            components.forEach((component:Component) => {
-                let menuItem = new MenuItem(
-                    //  component.name,
-                    component.getComponentSubType() + ': ' + this.$filter('resourceName')(component.name),
-                    clickItemCallback,
-                    null,
-                    null,
-                    [component]
-                );
-                //  menuItem.text = component.name;
-                result.menuItems.push(menuItem);
+            components.forEach((component: Component) => {
+                if (component instanceof Component) {
+                    let menuItem = new MenuItem(
+                        //  component.name,
+                        component.getComponentSubType() + ': ' + this.$filter('resourceName')(component.name),
+                        clickItemCallback,
+                        null,
+                        null,
+                        [component]
+                    );
+                    //  menuItem.text = component.name;
+                    result.menuItems.push(menuItem);
+                }
             });
 
             result.selectedIndex = this.findBreadcrumbComponentIndex(components, selected);

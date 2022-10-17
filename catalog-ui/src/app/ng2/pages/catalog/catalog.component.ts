@@ -36,7 +36,7 @@ import {
 } from "app/models";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import {DEFAULT_MODEL_NAME, ToscaType} from "app/utils/constants";
+import {DEFAULT_MODEL_NAME} from "app/utils/constants";
 
 interface Gui {
     onComponentSubTypesClick:Function;
@@ -361,8 +361,12 @@ export class CatalogComponent {
     }
 
 
-    public goToComponent(component: Component): void {
-        this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
+    public goToComponent(component: Component | DataTypeModel): void {
+        if (component instanceof DataTypeModel) {
+            this.$state.go('type-workspace', {id: component.uniqueId});
+        } else {
+            this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
+        }
     }
 
 
