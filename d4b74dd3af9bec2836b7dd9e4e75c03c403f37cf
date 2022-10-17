@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "4cea53d9_7e47e947",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T12:07:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "172fd1b8_6a1de9d0",
+      "range": {
+        "startLine": 105,
+        "startChar": 13,
+        "endLine": 105,
+        "endChar": 20
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eec53281_7b44a503",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
         "patchSetId": 11
