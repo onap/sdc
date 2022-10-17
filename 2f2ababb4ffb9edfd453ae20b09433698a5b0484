@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "097deac6_1ab398cb",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 2828,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-17T15:32:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52d75989_46522835",
+      "range": {
+        "startLine": 2828,
+        "startChar": 17,
+        "endLine": 2828,
+        "endChar": 58
+      },
+      "revId": "2f2ababb4ffb9edfd453ae20b09433698a5b0484",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fe8cad0_c50c5a33",
         "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/filters/DataValidatorFilter.java",
         "patchSetId": 5
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "dc6f61c6_c77a3f52",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/filters/DataValidatorFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-17T15:32:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fe8cad0_c50c5a33",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 70
+      },
+      "revId": "2f2ababb4ffb9edfd453ae20b09433698a5b0484",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "424a8652_1a18893b",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/filters/DataValidatorFilterAbstract.java",
         "patchSetId": 5
@@ -68,6 +116,30 @@
       "revId": "2f2ababb4ffb9edfd453ae20b09433698a5b0484",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa19a0d6_1d95f6b4",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/filters/DataValidatorFilterAbstract.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-17T15:32:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "424a8652_1a18893b",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 69
+      },
+      "revId": "2f2ababb4ffb9edfd453ae20b09433698a5b0484",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
