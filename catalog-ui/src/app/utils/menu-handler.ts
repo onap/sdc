@@ -136,7 +136,9 @@ export class MenuHandler {
                 return this.$q.when(true);
             };
 
-            components.forEach((component:Component) => {
+            components
+            .filter((c) => c instanceof Component)
+            .forEach((component: Component) => {
                 let menuItem = new MenuItem(
                     //  component.name,
                     component.getComponentSubType() + ': ' + this.$filter('resourceName')(component.name),
