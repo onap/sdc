@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "437e913f_8c27f8f3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Can be removed for now",
+      "range": {
+        "startLine": 165,
+        "startChar": 178,
+        "endLine": 165,
+        "endChar": 188
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b2e02a9_aeffc1b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Return type?",
+      "range": {
+        "startLine": 105,
+        "startChar": 13,
+        "endLine": 105,
+        "endChar": 20
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eec53281_7b44a503",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Do we need to try/catch and log this?",
+      "range": {
+        "startLine": 108,
+        "startChar": 27,
+        "endLine": 108,
+        "endChar": 32
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f12b0be7_fb315259",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Should this be void and the exception thrown up the call stack?",
+      "range": {
+        "startLine": 87,
+        "startChar": 12,
+        "endLine": 87,
+        "endChar": 17
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "960a9dca_c13a0d71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Already logged in calling method",
+      "range": {
+        "startLine": 89,
+        "startChar": 18,
+        "endLine": 89,
+        "endChar": 27
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "122e8c81_934074df",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-10-17T11:11:07Z",
+      "side": 1,
+      "message": "Should this be thrown and caught above?",
+      "range": {
+        "startLine": 108,
+        "startChar": 30,
+        "endLine": 108,
+        "endChar": 31
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
