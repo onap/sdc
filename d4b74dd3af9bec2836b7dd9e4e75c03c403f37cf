@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c302fdb8_68ef1126",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/health/HealthCheckBusinessLogic.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "437e913f_8c27f8f3",
+      "range": {
+        "startLine": 165,
+        "startChar": 178,
+        "endLine": 165,
+        "endChar": 188
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b2e02a9_aeffc1b2",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2022-10-17T11:11:07Z",
       "side": 1,
       "message": "Return type?",
+      "range": {
+        "startLine": 105,
+        "startChar": 13,
+        "endLine": 105,
+        "endChar": 20
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "172fd1b8_6a1de9d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "Oh yes. CambriaErrorResponse.\nShould we rename this to\n - Something more generic than \"Cambria\"\n - More generic than \"Error\", since it\u0027s a response for both success or Error.",
+      "parentUuid": "0b2e02a9_aeffc1b2",
       "range": {
         "startLine": 105,
         "startChar": 13,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1c3333ba_53459549",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eec53281_7b44a503",
+      "range": {
+        "startLine": 108,
+        "startChar": 27,
+        "endLine": 108,
+        "endChar": 32
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f12b0be7_fb315259",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
         "patchSetId": 11
@@ -82,6 +154,30 @@
       "writtenOn": "2022-10-17T11:11:07Z",
       "side": 1,
       "message": "Should this be void and the exception thrown up the call stack?",
+      "range": {
+        "startLine": 87,
+        "startChar": 12,
+        "endLine": 87,
+        "endChar": 17
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "340c7763_035e7dd1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "As in, call it, and if no exception is thrown, \"success\"?\n\nThe IStatus was inserted as return type, as it replicated what was previously done for Cambria interactions.",
+      "parentUuid": "f12b0be7_fb315259",
       "range": {
         "startLine": 87,
         "startChar": 12,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "8c073993_f214252e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "960a9dca_c13a0d71",
+      "range": {
+        "startLine": 89,
+        "startChar": 18,
+        "endLine": 89,
+        "endChar": 27
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "122e8c81_934074df",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
         "patchSetId": 11
@@ -137,6 +257,30 @@
       "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5751712_36b5df62",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/SdcKafkaProducer.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-17T11:54:50Z",
+      "side": 1,
+      "message": "You are correct. There is already a try/catch in the KafaHandler, where flush is called",
+      "parentUuid": "122e8c81_934074df",
+      "range": {
+        "startLine": 108,
+        "startChar": 30,
+        "endLine": 108,
+        "endChar": 31
+      },
+      "revId": "d4b74dd3af9bec2836b7dd9e4e75c03c403f37cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
