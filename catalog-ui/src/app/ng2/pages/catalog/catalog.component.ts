@@ -35,7 +35,7 @@ import {
 } from "app/models";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import {DEFAULT_MODEL_NAME} from "app/utils/constants";
+import {DEFAULT_MODEL_NAME, States} from "app/utils/constants";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
 
 interface Gui {
@@ -361,8 +361,12 @@ export class CatalogComponent {
     }
 
 
-    public goToComponent(component: Component): void {
-        this.$state.go('workspace.general', {id: component.uniqueId, type: component.componentType.toLowerCase()});
+    public goToComponent(component: Component | DataTypeCatalogComponent): void {
+        if (component instanceof DataTypeCatalogComponent) {
+            this.$state.go(States.TYPE_WORKSPACE,  {type: component.getComponentSubType().toLowerCase(), id: component.uniqueId});
+        } else {
+            this.$state.go(States.WORKSPACE_GENERAL, {id: component.uniqueId, type: component.componentType.toLowerCase()});
+        }
     }
 
 
