@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bfa1fdda_6ce9bd77",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-18T16:19:44Z",
+      "side": 1,
+      "message": "Once a KafkaHandler is instantiated, a new SdcKafkaProucer and Consumer is instantiated in it, regardless if another KafkaHandler was created previously.\n\nWhat we can do is create only one of the SdcKafkaProducer or COnsumer, depending on what\u0027s needed when that instance of KafkaHandler is created. That will cut down on logs and unneeded overheads.\n\nMaybe even a check when the \"sendNotification\" etc is called, to see if sdcKafkaProducer is null, and to set it if it is.",
+      "parentUuid": "f7d2696d_fb24bdb2",
+      "range": {
+        "startLine": 71,
+        "startChar": 29,
+        "endLine": 71,
+        "endChar": 36
+      },
+      "revId": "762911f9dfd21f19c889d6219bc3bae5c8ae737d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e10cbc0f_eb5e382e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
         "patchSetId": 14
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "185cf53a_98b92f3b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-18T16:19:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e10cbc0f_eb5e382e",
+      "range": {
+        "startLine": 117,
+        "startChar": 13,
+        "endLine": 117,
+        "endChar": 14
+      },
+      "revId": "762911f9dfd21f19c889d6219bc3bae5c8ae737d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79405e9f_7ecdfeef",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
         "patchSetId": 14
@@ -68,6 +116,30 @@
       "revId": "762911f9dfd21f19c889d6219bc3bae5c8ae737d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "966b73e1_90e24c63",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaHandler.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2022-10-18T16:19:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79405e9f_7ecdfeef",
+      "range": {
+        "startLine": 124,
+        "startChar": 21,
+        "endLine": 124,
+        "endChar": 85
+      },
+      "revId": "762911f9dfd21f19c889d6219bc3bae5c8ae737d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
