@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -180,7 +182,7 @@ class PropertyValueConstraintValidationUtilTest {
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
-		propertyDefinition.setValue("{\"value_specs\":{\"key\":\"slaac\"}}");
+        propertyDefinition.setValue("{\"value_specs\":{\"key\":\"slaac\", \"key2\":\"slaac\"}}");
 
 		Either<Boolean, ResponseFormat> responseEither =
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
@@ -290,6 +292,81 @@ class PropertyValueConstraintValidationUtilTest {
 		assertEquals(value, propertyDefinition.getValue());
 		assertEquals(schemaType, propertyDefinition.getSchemaType());
 	}
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+        "{\"dns_nameservers\": [\"server1\"]}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+        "{\"dns_nameservers\": [\"server1\", \"server2\", \"server3\", \"server4\", \"server5\"]}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"h\"}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"123456\"}]",
+        "{\"value_specs\":{\"key\":\"slaac\"}}"})
+    void listOfComplexWithConstrainedFails(String value) {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+        "{\"dns_nameservers\": [\"server1\", \"server2\", \"server3\", \"server4\"]}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"dns_nameservers\": [\"server1\", \"server1\"]}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"123\"}]",
+        "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"1234\"}]",
+        "[{\"value_specs\":{\"key1\":\"slaac\",\"key2\":\"slaac\"}}]"})
+    void listOfComplexWithConstrainedSuccess(String value) {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isLeft());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
 
 	@Test
 	void listOfComplexSuccessTest1() {

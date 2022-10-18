@@ -128,6 +128,11 @@
         "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.value_specs",
         "type": "map",
         "required": false,
+        "constraints": [
+          {
+            "minLength": 2
+          }
+        ],
         "definition": false,
         "defaultValue": "{}",
         "description": "Extra parameters to include in the request",
@@ -186,6 +191,14 @@
         "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.subnetpool",
         "type": "string",
         "required": false,
+        "constraints": [
+          {
+            "minLength": "2"
+          },
+          {
+            "maxLength": "4"
+          }
+        ],
         "definition": false,
         "description": "The name or ID of the subnet pool",
         "password": false,
@@ -198,6 +211,14 @@
         "uniqueId": "org.openecomp.datatypes.heat.network.neutron.Subnet.datatype.dns_nameservers",
         "type": "list",
         "required": false,
+        "constraints": [
+          {
+            "minLength": "2"
+          },
+          {
+            "maxLength": "4"
+          }
+        ],
         "definition": false,
         "defaultValue": "[]",
         "description": "A specified set of DNS name servers to be used",
