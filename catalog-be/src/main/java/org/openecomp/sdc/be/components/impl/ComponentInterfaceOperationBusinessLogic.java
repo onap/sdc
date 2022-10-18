@@ -406,6 +406,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             for (OperationInputDefinition operationInputDefinition : inputDefinitionList) {
                 PropertyDefinition propertyDefinition = new PropertyDefinition();
                 propertyDefinition.setValue(operationInputDefinition.getValue());
+                propertyDefinition.setUniqueId(operationInputDefinition.getUniqueId());
                 propertyDefinition.setType(operationInputDefinition.getType());
                 propertyDefinition.setName(operationInputDefinition.getName());
                 propertyDefinition.setDefaultValue(operationInputDefinition.getDefaultValue());

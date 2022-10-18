@@ -77,6 +77,6 @@ public class LengthConstraint extends AbstractPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s length must be %s", String.valueOf(length));
+        return getErrorMessage(toscaType, e, propertyName, "%s length must be [%s]", String.valueOf(length));
     }
 }
