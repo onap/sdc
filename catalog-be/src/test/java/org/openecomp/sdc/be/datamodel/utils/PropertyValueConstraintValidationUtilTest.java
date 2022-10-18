@@ -180,7 +180,7 @@ class PropertyValueConstraintValidationUtilTest {
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
-		propertyDefinition.setValue("{\"value_specs\":{\"key\":\"slaac\"}}");
+        propertyDefinition.setValue("{\"value_specs\":{\"key\":\"slaac\", \"key2\":\"slaac\"}}");
 
 		Either<Boolean, ResponseFormat> responseEither =
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
@@ -290,6 +290,292 @@ class PropertyValueConstraintValidationUtilTest {
 		assertEquals(value, propertyDefinition.getValue());
 		assertEquals(schemaType, propertyDefinition.getSchemaType());
 	}
+
+    @Test
+    void listOfComplexWithConstrainedListFailsMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"dns_nameservers\": [\"server1\"]}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedListFailsMaxLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"dns_nameservers\": [\"server1\", \"server2\", \"server3\", \"server4\", \"server5\"]}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedListSuccessMaxLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"dns_nameservers\": [\"server1\", \"server2\", \"server3\", \"server4\"]}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isLeft());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedListSuccessMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"dns_nameservers\": [\"server1\", \"server1\"]}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isLeft());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedStringFailsMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"h\"}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedStringFailsMaxLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"123456\"}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedStringSuccessMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"123\"}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isLeft());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedStringSuccessMaxLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        final String type = "list";
+        propertyDefinition.setType(type);
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+        final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}, " +
+            "{\"subnetpool\": \"1234\"}]";
+        propertyDefinition.setValue(value);
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isLeft());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+        assertEquals(type, propertyDefinition.getType());
+        assertEquals(value, propertyDefinition.getValue());
+        assertEquals(schemaType, propertyDefinition.getSchemaType());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedMapFailsMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
+        propertyDefinition.setValue("{\"value_specs\":{\"key\":\"slaac\"}}");
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+    }
+
+    @Test
+    void listOfComplexWithConstrainedMapSuceessMinLengthTest() {
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final var propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
+        propertyDefinition.setValue("{\"value_specs\":{\"key1\":\"slaac\"}, {\"key2\":\"dhcpv6-stateful\"}}");
+        final String name = "listOfComplex";
+        propertyDefinition.setName(name);
+
+        Either<Boolean, ResponseFormat> responseEither =
+            propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+        assertTrue(responseEither.isRight());
+        //original object values should not be changed
+        assertEquals(name, propertyDefinition.getName());
+    }
 
 	@Test
 	void listOfComplexSuccessTest1() {
