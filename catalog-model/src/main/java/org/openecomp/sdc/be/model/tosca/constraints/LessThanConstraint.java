@@ -59,6 +59,14 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
         }
     }
 
+    public String getLessThan() {
+        return lessThan;
+    }
+
+    public void setLessThan(String lessThan) {
+        this.lessThan = lessThan;
+    }
+
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s value must be less than %s", lessThan);
