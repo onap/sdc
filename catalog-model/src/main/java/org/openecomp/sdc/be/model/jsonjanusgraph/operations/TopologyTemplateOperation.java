@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -1585,9 +1586,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     private void fillPolicyDefinition(GraphVertex componentV, PolicyDefinition policyDefinition, int counter) {
-        String policyName = buildSubComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME),
-            policyDefinition.getPolicyTypeName(), counter);
-        policyDefinition.setName(policyName);
+        String policyName = policyDefinition.getName();
+        if (StringUtils.isBlank(policyName)) {
+            policyName = buildSubComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME),
+                    policyDefinition.getPolicyTypeName(), counter);
+            policyDefinition.setName(policyName);
+        }
         policyDefinition.setInvariantName(policyName);
         policyDefinition.setComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME));
         policyDefinition.setUniqueId(UniqueIdBuilder.buildPolicyUniqueId(componentV.getUniqueId(), policyName));

@@ -91,6 +91,7 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
@@ -367,7 +368,11 @@ public class YamlTemplateParsingHandler {
                 }
                 final UploadPropInfo uploadPropInfo = buildProperty(propertyJson.getKey(), propertyJson.getValue());
                 final PropertyDefinition propertyDefinition = new PropertyDefinition(originalProperty);
-                propertyDefinition.setValue(gson.toJson(uploadPropInfo.getValue()));
+                String propertyValue = gson.toJson(uploadPropInfo.getValue());
+                if (propertyDefinition.isToscaFunction()) {
+                	propertyValue = PropertiesUtils.trimQuotes(propertyValue);
+                }
+                propertyDefinition.setValue(propertyValue);
                 propertyDefinition.setToscaFunction(uploadPropInfo.getToscaFunction());
                 propertyDefinition.setSubPropertyToscaFunctions(uploadPropInfo.getSubPropertyToscaFunctions());
                 propertyDefinition.setGetInputValues(uploadPropInfo.getGet_input());
