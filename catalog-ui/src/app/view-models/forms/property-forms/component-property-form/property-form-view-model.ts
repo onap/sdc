@@ -461,7 +461,13 @@ export class PropertyFormViewModel {
         }
 
         this.$scope.onConstraintChange = (constraints: any[]): void => {
-            console.log(constraints);
+            if (!constraints || constraints.length == 0) {
+                this.$scope.editPropertyModel.property.propertyConstraints = null;
+                this.$scope.editPropertyModel.property.constraints = null;
+                return;
+            }
+            this.$scope.editPropertyModel.property.propertyConstraints = this.serializePropertyConstraints(constraints);
+            this.$scope.editPropertyModel.property.constraints = constraints;
         }
 
         this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
@@ -475,8 +481,18 @@ export class PropertyFormViewModel {
             }
             this.$scope.editPropertyModel.isGetFunctionValid = undefined;
         }
-
     };
+
+    private serializePropertyConstraints(constraints: any[]): string[] {
+        if (constraints) {
+            let stringConstrsints = new Array();
+            constraints.forEach((constraint) => {
+                stringConstrsints.push(JSON.stringify(constraint));
+            })
+            return stringConstrsints;
+        }
+        return null;
+    }
 
     private setEmptyValue() {
         const property1 = this.$scope.editPropertyModel.property;

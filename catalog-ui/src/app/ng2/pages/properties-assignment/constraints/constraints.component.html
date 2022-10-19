@@ -36,7 +36,9 @@
                         hidden selected>
                   {{ConstraintTypesMapping[constraint.type]}}
                 </option>
-                <option *ngFor="let constraintType of constraintTypes" [value]="constraintType">
+                <option *ngFor="let constraintType of constraintTypes"
+                        [value]="constraintType"
+                        [disabled]="disableConstraint(constraintType, constraint.type)">
                   {{ConstraintTypesMapping[constraintType]}}
                 </option>
               </select>
@@ -86,13 +88,15 @@
       <div class="w-sdc-form-column-small">
         <div class="w-sdc-form-columns-wrapper">
             <div class="add-btn add-list-item w-sdc-form-column-small"
-                 [ngClass]="{'disabled': isViewOnly}"
+                 [ngClass]="{'disabled': isViewOnly || disableNewConstraint(newConstraintType)}"
                  (click)="addConstraint()">Add</div>
 
           <div class="w-sdc-form-column">
             <select class="i-sdc-form-select"
                     (change)="changeNewConstraintType($event.target.value)">
-                <option *ngFor="let constraintType of constraintTypes" [value]="constraintType">
+                <option *ngFor="let constraintType of constraintTypes"
+                        [disabled]="disableNewConstraint(constraintType)"
+                        [value]="constraintType">
                   {{ConstraintTypesMapping[constraintType]}}
                 </option>
               </select>

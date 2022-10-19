@@ -2123,6 +2123,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 GreaterThanConstraint greaterThanConstraint = (GreaterThanConstraint) src;
                 jsonArray.add(parser.parse(greaterThanConstraint.getGreaterThan()));
                 result.add("greaterThan", jsonArray);
+            } else if (src instanceof LessThanConstraint) {
+                LessThanConstraint lessThanConstraint = (LessThanConstraint) src;
+                jsonArray.add(JsonParser.parseString(lessThanConstraint.getLessThan()));
+                result.add("lessThan", jsonArray);
             } else if (src instanceof LessOrEqualConstraint) {
                 LessOrEqualConstraint lessOrEqualConstraint = (LessOrEqualConstraint) src;
                 jsonArray.add(parser.parse(lessOrEqualConstraint.getLessOrEqual()));
@@ -2404,8 +2408,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
             return null;
         }
-        
-        
+
     }
 
 }
