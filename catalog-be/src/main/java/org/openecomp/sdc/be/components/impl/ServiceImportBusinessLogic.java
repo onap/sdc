@@ -100,6 +100,7 @@ import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -454,7 +455,8 @@ public class ServiceImportBusinessLogic {
         return interfaceTypesToCreate;
     }
 
-    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result, final Map<String, Map<String, Object>> dataType) {
+    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result,
+                                     final Map<String, Map<String, Object>> dataType) {
         return result.isLeft() && dataType.containsKey("properties") && result.left().value().getProperties() != null
             && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
@@ -509,19 +511,19 @@ public class ServiceImportBusinessLogic {
         return eitherNodeTypes.left().value().entrySet().iterator().next();
     }
 
-    private Map<String, Object> getNewChangesToToscaTemplate(Map<String, Object> newMappedToscaTemplate, 
+    private Map<String, Object> getNewChangesToToscaTemplate(Map<String, Object> newMappedToscaTemplate,
                                                              Map<String, Object> existingMappedToscaTemplate) {
         Map<String, Object> combinedMappedToscaTemplate = new HashMap<>(existingMappedToscaTemplate);
         combinePropertiesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("properties"),
-                (Map<String, Object>) existingMappedToscaTemplate.get("properties"), combinedMappedToscaTemplate);
+            (Map<String, Object>) existingMappedToscaTemplate.get("properties"), combinedMappedToscaTemplate);
         combineAttributesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("attributes"),
-                (Map<String, Object>) existingMappedToscaTemplate.get("attributes"), combinedMappedToscaTemplate);
+            (Map<String, Object>) existingMappedToscaTemplate.get("attributes"), combinedMappedToscaTemplate);
         combineRequirementsIntoToscaTemplate((List<Map<String, Object>>) newMappedToscaTemplate.get("requirements"),
-                (List<Map<String, Object>>) existingMappedToscaTemplate.get("requirements"), combinedMappedToscaTemplate);
+            (List<Map<String, Object>>) existingMappedToscaTemplate.get("requirements"), combinedMappedToscaTemplate);
         combineCapabilitiesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("capabilities"),
-                (Map<String, Object>) existingMappedToscaTemplate.get("capabilities"), combinedMappedToscaTemplate);
+            (Map<String, Object>) existingMappedToscaTemplate.get("capabilities"), combinedMappedToscaTemplate);
         combineInterfacesIntoToscaTemplate((Map<String, Map<String, Object>>) newMappedToscaTemplate.get("interfaces"),
-                (Map<String, Map<String, Object>>) existingMappedToscaTemplate.get("interfaces"), combinedMappedToscaTemplate);
+            (Map<String, Map<String, Object>>) existingMappedToscaTemplate.get("interfaces"), combinedMappedToscaTemplate);
         return combinedMappedToscaTemplate;
     }
 
@@ -530,7 +532,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Map<String, Object>> combinedInterfaces = combineAdditionalInterfaces(existingInterfaces, newInterfaces);
         if ((MapUtils.isEmpty(existingInterfaces) && MapUtils.isNotEmpty(combinedInterfaces))
-                || (MapUtils.isNotEmpty(existingInterfaces) && !existingInterfaces.equals(combinedInterfaces))) {
+            || (MapUtils.isNotEmpty(existingInterfaces) && !existingInterfaces.equals(combinedInterfaces))) {
             combinedMappedToscaTemplate.put("interfaces", combinedInterfaces);
         }
     }
@@ -539,7 +541,7 @@ public class ServiceImportBusinessLogic {
                                                       Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedCapabilities = combineEntries(newCapabilities, existingCapabilities);
         if ((MapUtils.isEmpty(existingCapabilities) && MapUtils.isNotEmpty(combinedCapabilities)) ||
-                ( MapUtils.isNotEmpty(existingCapabilities) && !combinedCapabilities.equals(existingCapabilities))) {
+            (MapUtils.isNotEmpty(existingCapabilities) && !combinedCapabilities.equals(existingCapabilities))) {
             combinedMappedToscaTemplate.put("capabilities", combinedCapabilities);
         }
     }
@@ -548,7 +550,7 @@ public class ServiceImportBusinessLogic {
                                                       Map<String, Object> combinedMappedToscaTemplate) {
         List<Map<String, Object>> combinedRequirements = combineAdditionalRequirements(newRequirements, existingRequirements);
         if ((CollectionUtils.isEmpty(existingRequirements) && CollectionUtils.isNotEmpty(combinedRequirements))
-                || (CollectionUtils.isNotEmpty(existingRequirements) && !combinedRequirements.equals(existingRequirements))) {
+            || (CollectionUtils.isNotEmpty(existingRequirements) && !combinedRequirements.equals(existingRequirements))) {
             combinedMappedToscaTemplate.put("requirements", combinedRequirements);
         }
     }
@@ -557,7 +559,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedAttributes = combineEntries(newAttributes, existingAttributes);
         if ((MapUtils.isEmpty(existingAttributes) && MapUtils.isNotEmpty(combinedAttributes)) ||
-                ( MapUtils.isNotEmpty(existingAttributes) && !combinedAttributes.equals(existingAttributes))) {
+            (MapUtils.isNotEmpty(existingAttributes) && !combinedAttributes.equals(existingAttributes))) {
             combinedMappedToscaTemplate.put("attributes", combinedAttributes);
         }
     }
@@ -566,7 +568,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedProperties = combineEntries(newProperties, existingProperties);
         if ((MapUtils.isEmpty(existingProperties) && MapUtils.isNotEmpty(combinedProperties)) ||
-                (MapUtils.isNotEmpty(existingProperties) && !combinedProperties.equals(existingProperties))) {
+            (MapUtils.isNotEmpty(existingProperties) && !combinedProperties.equals(existingProperties))) {
             combinedMappedToscaTemplate.put("properties", combinedProperties);
         }
     }
@@ -580,20 +582,21 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isEmpty(existingInterfaces)) {
             return combinedEntries;
         }
-         existingInterfaces.entrySet().forEach(interfaceDef -> {
-             combinedEntries.entrySet().stream().filter((interFace) -> interFace.getValue().get("type").equals(( interfaceDef.getValue()).get("type")))
-                    .findFirst().ifPresentOrElse((interFace) -> {
-                        interFace.getValue().putAll(interfaceDef.getValue());
-                    }, () -> {
-                        combinedEntries.put(interfaceDef.getKey(), interfaceDef.getValue());
-                    });
+        existingInterfaces.entrySet().forEach(interfaceDef -> {
+            combinedEntries.entrySet().stream().filter((interFace) -> interFace.getValue().get("type").equals((interfaceDef.getValue()).get("type")))
+                .findFirst().ifPresentOrElse((interFace) -> {
+                    interFace.getValue().putAll(interfaceDef.getValue());
+                }, () -> {
+                    combinedEntries.put(interfaceDef.getKey(), interfaceDef.getValue());
+                });
         });
         return combinedEntries;
     }
 
-    private List<Map<String, Object>> combineAdditionalRequirements(List<Map<String, Object>> newReqs, List<Map<String, Object>> existingResourceReqs) {
-        if (CollectionUtils.isEmpty(newReqs)) {
-            newReqs = new ArrayList<>();
+    private List<Map<String, Object>> combineAdditionalRequirements(List<Map<String, Object>> newReqs,
+                                                                    List<Map<String, Object>> existingResourceReqs) {
+        if (CollectionUtils.isEmpty(existingResourceReqs)) {
+            existingResourceReqs = new ArrayList<>();
         }
         Set<Map<String, Object>> combinedReqs = new TreeSet<>((map1, map2) ->
             map1.keySet().equals(map2.keySet()) ? 0 : map1.keySet().iterator().next().compareTo(map2.keySet().iterator().next()));
@@ -1419,21 +1422,20 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isEmpty(policies)) {
             return Either.left(service);
         }
-        final Map<String, List<AttributeDefinition>> instanceAttributeMap =
-            service.getComponentInstancesAttributes()
+        Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes = service.getComponentInstancesAttributes();
+        final Map<String, List<AttributeDefinition>> instanceAttributeMap = new HashMap<>();
+        if (MapUtils.isNotEmpty(componentInstancesAttributes)) {
+            instanceAttributeMap.putAll(componentInstancesAttributes
                 .entrySet().stream()
-                .collect(
-                    toMap(Entry::getKey,
-                        entry -> entry.getValue().stream().map(AttributeDefinition.class::cast).collect(toList()))
-                );
+                .collect(toMap(Entry::getKey, entry -> entry.getValue().stream().map(AttributeDefinition.class::cast).collect(toList()))));
+        }
         policies.values().stream()
             .map(PolicyDataDefinition::getProperties)
             .flatMap(Collection::stream)
             .filter(PropertyDataDefinition::isToscaFunction)
-            .forEach(policyDefinition ->
-                toscaFunctionService
-                    .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(),
-                        instanceAttributeMap)
+            .forEach(policyDefinition -> toscaFunctionService
+                .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(),
+                    instanceAttributeMap)
             );
         policyBusinessLogic.createPolicies(service, policies);
         return getServiceResponseFormatEither(service);
