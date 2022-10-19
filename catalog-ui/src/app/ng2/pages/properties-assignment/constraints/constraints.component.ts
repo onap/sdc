@@ -39,15 +39,17 @@ export class ConstraintsComponent implements OnInit {
   @Input() isViewOnly: boolean = false;
   @Output() onConstraintChange: EventEmitter<any[]> = new EventEmitter<any[]>();
 
-  constraints: Constraint[];
+  constraints: Constraint[] = new Array();
   constraintTypes: string[];
   ConstraintTypesMapping = ConstraintTypesMapping;
+  disableComparatorConstraints: boolean = false;
   newConstraintType: any = ConstraintTypes.equal;
   newConstraintValue: any = null;
   _property: PropertyBEModel;
 
   ngOnInit() {
     this.constraintTypes = this.toArray(ConstraintTypes);
+    this. disableComparatorConstraints = this.constraintsContainsComparatorConstraint();
   }
 
   private toArray(enumme: typeof ConstraintTypes): string[] {
@@ -177,6 +179,7 @@ export class ConstraintsComponent implements OnInit {
     if ((newType == ConstraintTypes.in_range || newType == ConstraintTypes.valid_values) && !Array.isArray(this.constraints[index].value)) {
       this.constraints[index].value = new Array()
     }
+    this. disableComparatorConstraints = this.constraintsContainsComparatorConstraint();
   }
 
   changeConstraintValue(constraint: Constraint, newValue: any) {
@@ -197,6 +200,7 @@ export class ConstraintsComponent implements OnInit {
     this.constraints.splice(index, 1);
     let test = this.getConstraintsFormat();
     this.onConstraintChange.emit(test);
+    this. disableComparatorConstraints = this.constraintsContainsComparatorConstraint();
 }
 
   addConstraint() {
@@ -208,6 +212,7 @@ export class ConstraintsComponent implements OnInit {
     this.newConstraintValue = null;
     let test = this.getConstraintsFormat();
     this.onConstraintChange.emit(test);
+    this. disableComparatorConstraints = this.constraintsContainsComparatorConstraint();
   }
 
   getInRangeValue(constraint: Constraint, valueIndex: number): string {
@@ -253,6 +258,71 @@ export class ConstraintsComponent implements OnInit {
       this.newConstraintValue = new Array();
     }
     this.newConstraintValue.push("");
+  }
+
+  isComparatorConstraint(constraintType: ConstraintTypes): boolean {
+    if (constraintType == ConstraintTypes.equal || constraintType == ConstraintTypes.greater_or_equal || constraintType == ConstraintTypes.greater_than ||
+        constraintType == ConstraintTypes.less_or_equal || constraintType == ConstraintTypes.less_than || constraintType == ConstraintTypes.in_range || constraintType == ConstraintTypes.valid_values) {
+        return true;
+      }
+      return false;
+  }
+
+  constraintsContainsComparatorConstraint(): boolean {
+    let comparatorConstraint = this.constraints.filter((constraint) => {
+      if (this.isComparatorConstraint(constraint.type)) {
+          return true
+      }
+      return false;
+    });
+    return comparatorConstraint.length == 0 ? false : true
+  }
+
+  constraintsContainsMinOrMaxLengthConstraint(): boolean {
+    let minOrMaxLengthConstraint = this.constraints.filter((constraint) => {
+      if (constraint.type == ConstraintTypes.max_length || constraint.type == ConstraintTypes.min_length) {
+          return true
+      }
+      return false;
+    });
+    return minOrMaxLengthConstraint.length == 0 ? false : true
+  }
+
+  constraintsContainsLengthConstraint(): boolean {
+    let lengthConstraint = this.constraints.filter((constraint) => {
+      if (constraint.type == ConstraintTypes.length) {
+          return true
+      }
+      return false;
+    });
+    return lengthConstraint.length == 0 ? false : true
+  }
+
+  disableNewConstraint(constraintType: ConstraintTypes): boolean {
+    if (this.isComparatorConstraint(constraintType)) {
+      return this.disableComparatorConstraints;
+    }
+    if (constraintType == ConstraintTypes.length) {
+      return this.constraintsContainsMinOrMaxLengthConstraint() ? true : this.getConstraintTypeIfPresent(constraintType) ? true : false;
+    }
+    if (constraintType == ConstraintTypes.max_length || constraintType == ConstraintTypes.min_length) {
+      return this.constraintsContainsLengthConstraint() ? true : this.getConstraintTypeIfPresent(constraintType) ? true : false;
+    }
+    return false;
+  }
+
+  disableConstraint(optionConstraintType: ConstraintTypes, constraintType: ConstraintTypes): boolean {
+    let disable: boolean = this.getConstraintTypeIfPresent(optionConstraintType) ? true : false;
+    if (!this.isComparatorConstraint(constraintType) && this.isComparatorConstraint(optionConstraintType)) {
+      return this.disableComparatorConstraints;
+    }
+     return disable;
+  }
+
+  getConstraintTypeIfPresent(constraintType: ConstraintTypes): Constraint {
+    return this.constraints.find((constraint) => {
+      return constraint.type == constraintType ? true : false;
+    })
   }
 
 }

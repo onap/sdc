@@ -34,6 +34,14 @@ public class LengthConstraint extends AbstractPropertyConstraint {
     @NotNull
     private Integer length;
 
+    public LengthConstraint(Integer length) {
+        this.length = length;
+    }
+
+    public LengthConstraint() {
+        super();
+    }
+
     protected void doValidate(Object propertyValue) throws ConstraintViolationException {
         if (propertyValue instanceof String && String.valueOf(propertyValue).length() != length) {
             throw new ConstraintViolationException("The length of the value is not equals to [" + length + "]");

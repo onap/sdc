@@ -87,11 +87,14 @@ import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
@@ -2118,6 +2121,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 GreaterThanConstraint greaterThanConstraint = (GreaterThanConstraint) src;
                 jsonArray.add(parser.parse(greaterThanConstraint.getGreaterThan()));
                 result.add("greaterThan", jsonArray);
+            } else if (src instanceof LessThanConstraint) {
+                LessThanConstraint lessThanConstraint = (LessThanConstraint) src;
+                jsonArray.add(JsonParser.parseString(lessThanConstraint.getLessThan()));
+                result.add("lessThan", jsonArray);
             } else if (src instanceof LessOrEqualConstraint) {
                 LessOrEqualConstraint lessOrEqualConstraint = (LessOrEqualConstraint) src;
                 jsonArray.add(parser.parse(lessOrEqualConstraint.getLessOrEqual()));
@@ -2169,6 +2176,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 }
                             } else {
                                 log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                            }
+                            break;
+                        case EQUAL:
+                            if (value != null) {
+                                String asString = value.getAsString();
+                                log.debug("Before adding value to EqualConstraint object. value = {}", asString);
+                                propertyConstraint = new EqualConstraint(asString);
+                                break;
+                            } else {
+                                log.warn("The value of EqualConstraint is null");
                             }
                             break;
                         case GREATER_THAN:
@@ -2235,6 +2252,26 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 break;
                             } else {
                                 log.warn("The value of MinLengthConstraint is null");
+                            }
+                            break;
+                        case MAX_LENGTH:
+                            if (value != null) {
+                                int asInt = value.getAsInt();
+                                log.debug("Before adding value to Max Length object. value = {}", asInt);
+                                propertyConstraint = new MaxLengthConstraint(asInt);
+                                break;
+                            } else {
+                                log.warn("The value of MaxLengthConstraint is null");
+                            }
+                            break;
+                        case LENGTH:
+                            if (value != null) {
+                                int asInt = value.getAsInt();
+                                log.debug("Before adding value to Length object. value = {}", asInt);
+                                propertyConstraint = new LengthConstraint(asInt);
+                                break;
+                            } else {
+                                log.warn("The value of LengthConstraint is null");
                             }
                             break;
                         default:
