@@ -147,7 +147,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             }
             // create policyDefinition
             final String policyTypeName = incomingPolicyDefinition.getPolicyTypeName();
-            PolicyDefinition createdPolicyDefinition = createPolicy(policyTypeName, component);
+            PolicyDefinition createdPolicyDefinition = createPolicy(policyName, policyTypeName, component);
             // set isFromCsar
             createdPolicyDefinition.setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, true);
             // link policy to component
@@ -560,15 +560,32 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
         return policyById;
     }
-
+    
     private PolicyDefinition createPolicy(String policyTypeName, Component component) {
         PolicyTypeDefinition policyTypeDefinition = validatePolicyTypeOnCreatePolicy(policyTypeName, component);
         return addPolicyToComponent(policyTypeDefinition, component);
     }
-
+    
+    private PolicyDefinition createPolicy(final String policyName, final String policyTypeName,
+            final Component component) {
+        PolicyTypeDefinition policyTypeDefinition = validatePolicyTypeOnCreatePolicy(policyTypeName, component);
+        return addPolicyToComponent(policyName, policyTypeDefinition, component);
+    }
+    
     private PolicyDefinition addPolicyToComponent(PolicyTypeDefinition policyType, Component component) {
         Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponent = toscaOperationFacade
-            .associatePolicyToComponent(component.getUniqueId(), new PolicyDefinition(policyType), getNextPolicyCounter(component.getPolicies()));
+                .associatePolicyToComponent(component.getUniqueId(), new PolicyDefinition(policyType), getNextPolicyCounter(component.getPolicies()));
+        if (associatePolicyToComponent.isRight()) {
+            throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(associatePolicyToComponent.right().value()));
+        }
+        return associatePolicyToComponent.left().value();
+    }
+
+    private PolicyDefinition addPolicyToComponent(final String policyName, final PolicyTypeDefinition policyType, final Component component) {
+        PolicyDefinition policyDefinition = new PolicyDefinition(policyType);
+        policyDefinition.setName(policyName);
+        Either<PolicyDefinition, StorageOperationStatus> associatePolicyToComponent = toscaOperationFacade
+                .associatePolicyToComponent(component.getUniqueId(), policyDefinition, getNextPolicyCounter(component.getPolicies()));
         if (associatePolicyToComponent.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(associatePolicyToComponent.right().value()));
         }
