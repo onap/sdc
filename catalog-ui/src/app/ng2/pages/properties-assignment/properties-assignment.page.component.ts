@@ -532,6 +532,8 @@ export class PropertiesAssignmentComponent {
     }
 
     private buildCheckedInstanceProperties(): PropertyBEModel[] {
+        console.log("buildCheckedInstanceProperties");
+        console.log(this.instanceFePropertiesMap);
         const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
         const instanceId: string = instancesIds[0];
         return this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
@@ -599,6 +601,8 @@ export class PropertiesAssignmentComponent {
     }
 
     private updateCheckedInstancePropertyFunctionValue(toscaFunction: ToscaFunction) {
+	console.log("updateCheckedInstancePropertyFunctionValue");
+	console.log(toscaFunction);
         const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
         if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
             const propertiesName = (<PropertyDeclareAPIModel>checkedProperty).propertiesName;
@@ -620,6 +624,8 @@ export class PropertiesAssignmentComponent {
             checkedProperty.toscaFunction = toscaFunction;
         }
         if (this.selectedInstanceData instanceof ComponentInstance) {
+	        console.log(this.selectedInstanceData);
+	        console.log(checkedProperty);
             this.updateInstanceProperty(checkedProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
             this.updateGroupInstanceProperty(checkedProperty);

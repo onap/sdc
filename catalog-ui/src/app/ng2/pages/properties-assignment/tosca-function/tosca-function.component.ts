@@ -66,6 +66,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+	     console.log("ngOnInit");
         this.componentMetadata = this.workspaceService.metadata;
         this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
         this.loadToscaFunctions();
@@ -84,6 +85,9 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+		     console.log("ngOnChanges");
+		     console.log(changes);
+
         if (changes.property) {
             this.resetForm();
             this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
@@ -98,6 +102,9 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     private initToscaFunction(): void {
+			     console.log("initToscaFunction");
+			     console.log(this.property);
+
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
             if (propertiesPath.length > 1){
@@ -118,7 +125,10 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         }
         this.toscaFunctionForm.setValue(this.property.toscaFunction);
         this.toscaFunctionTypeForm.setValue(this.property.toscaFunction.type);
-    }
+        			     console.log(this.toscaFunctionForm)
+        			     console.log(this.toscaFunctionTypeForm)
+
+   }
 
     private areEqual(array1: string[], array2: string[]): boolean {
 	    return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
@@ -173,6 +183,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     onConcatFunctionValidityChange(validationEvent: ToscaConcatFunctionValidationEvent): void {
+	console.log("onConcatFunctionValidityChange");
+	console.log(validationEvent);
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.toscaConcatFunction);
         } else {
@@ -181,6 +193,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     onGetFunctionValidityChange(validationEvent: ToscaGetFunctionValidationEvent): void {
+		console.log("onGetFunctionValidityChange");
+	console.log(validationEvent);
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.toscaGetFunction);
         } else {
@@ -202,6 +216,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     private emitValidityChange(): void {
+			console.log("emitValidityChange");
+
         const isValid: boolean = this.validate();
         this.onValidityChange.emit({
             isValid: isValid,
@@ -210,11 +226,17 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     private buildFunctionFromForm(): ToscaFunction {
+	    console.log("buildFunctionFromForm");
+	    console.log(this);
         if (!this.toscaFunctionTypeForm.value) {
             return undefined;
         }
         if (this.isConcatSelected()) {
-            return new ToscaConcatFunction(this.toscaFunctionForm.value);
+	        console.log("buildFunctionFromForm isConcatSelected");
+	        let res = new ToscaConcatFunction(this.toscaFunctionForm.value);
+	        	        console.log(res);
+
+            return res;
         }
         if (this.isGetFunctionSelected()) {
             return new ToscaGetFunction(this.toscaFunctionForm.value);

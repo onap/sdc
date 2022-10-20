@@ -65,6 +65,8 @@ export class PropertiesService {
     }
 
     public getCheckedProperties = (properties: Array<PropertyFEModel>): Array<PropertyBEModel> => {
+        console.log("getCheckedProperties");
+        console.log(properties);
         let selectedProps: Array<PropertyDeclareAPIModel> = [];
         properties.forEach(prop => {
             if (prop.isSelected && !prop.isDeclared && !prop.isDisabled) {
@@ -78,6 +80,7 @@ export class PropertiesService {
                 })
             }
         });
+        console.log(selectedProps);
         return selectedProps;
     }
 
