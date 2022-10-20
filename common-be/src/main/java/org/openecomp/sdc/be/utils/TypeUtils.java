@@ -72,7 +72,7 @@ public class TypeUtils {
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
         VERSION("version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
         //functions
-        GET_INPUT("get_input"),
+        GET_INPUT("get_input"), CONCAT("concat"),
         // Definitions
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), POLICY_TYPES("policy_types"),  IMPORTS("imports"),
         //Operations
