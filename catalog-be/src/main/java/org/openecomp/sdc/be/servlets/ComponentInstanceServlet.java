@@ -585,6 +585,11 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
             if (property.getGetInputValues() != null) {
                 property.getGetInputValues().stream()
                     .forEach(getInputValue -> property.setToscaFunction(createToscaFunction(getInputValue, componentTypeEnum)));
+//						.forEach(getInputValue -> {
+//							if (property.getToscaFunction() == null) {
+//								property.setToscaFunction(createToscaFunction(getInputValue, componentTypeEnum));
+//							}
+//						});
             }
         });
     }
