@@ -674,7 +674,7 @@ public final class ImportUtils {
 
     public static boolean containsGetInput(Object propValue) {
         String value = getPropertyJsonStringValue(propValue, ToscaPropertyType.MAP.getType());
-        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
+        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName()) && !value.contains(TypeUtils.ToscaTagNamesEnum.CONCAT.getElementName());
     }
 
     public static String getPropertyJsonStringValue(Object value, String type) {
