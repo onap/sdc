@@ -2,6 +2,8 @@
 
 ## Introduction
 
+Dummy change
+
 SDC is the ONAP visual modeling and design tool. It creates internal metadata that describes assets used by all ONAP components, both at design time and run time.
 
 The SDC manages the content of a catalog and logical assemblies of selected catalog items to completely define how and when VNFs are realized in a target environment.
