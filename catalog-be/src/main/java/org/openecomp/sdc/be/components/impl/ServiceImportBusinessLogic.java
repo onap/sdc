@@ -2304,7 +2304,7 @@ public class ServiceImportBusinessLogic {
                 interfaceDef.setUniqueId(currentInterfaceDef.getType());
                 interfaceDef.setDescription(uploadInterfaceInfo.getDescription());
                 interfaceDef.setOperations(operationsToAdd);
-                instInterfacesMap.put(interfaceName, interfaceDef);
+                instInterfacesMap.put(currentInterfaceDef.getType(), interfaceDef);
                 currInterfacesMap.remove(interfaceName);
             }
         }
