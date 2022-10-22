@@ -35,6 +35,7 @@ public class VendorSoftwareProductDto {
     private String category;
     private String subCategory;
     private String vendorName;
+    private String tenant;
     private String vendorId;
     private List<String> selectedModelList;
     private String onboardingMethod;

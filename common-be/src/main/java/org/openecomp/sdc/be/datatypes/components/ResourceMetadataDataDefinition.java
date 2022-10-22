@@ -41,6 +41,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
     private String licenseType;
     private String toscaResourceName;
     private String csarVersionId;
+    private String tenant;
 
     public ResourceMetadataDataDefinition() {
         super();
@@ -56,6 +57,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.resourceType = other.getResourceType();
         this.toscaResourceName = other.getToscaResourceName();
         this.csarVersionId = other.getCsarVersionId();
+        this.tenant = other.getTenant();
     }
 
     public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
@@ -67,6 +69,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.resourceType = extractor.getResourceType();
         this.toscaResourceName = extractor.getToscaResourceName();
         this.csarVersionId = extractor.getCsarVersionId();
+        this.tenant = extractor.getTenant();
     }
 
     public Boolean isAbstract() {

@@ -15,6 +15,7 @@
  *  limitations under the License.
  *
  */
+ 
 package org.openecomp.sdc.versioning.types;
 
 import java.util.Date;
@@ -33,12 +34,15 @@ public class Item {
     private String type;
     private String name;
     private String owner;
+    private String tenant;
     private ItemStatus status;
     private String description;
     private Map<String, Object> properties = new HashMap<>();
     private Map<VersionStatus, Integer> versionStatusCounters = new EnumMap<>(VersionStatus.class);
     private Date creationTime;
     private Date modificationTime;
+
+
 
     public void addProperty(String key, Object value) {
         properties.put(key, value);

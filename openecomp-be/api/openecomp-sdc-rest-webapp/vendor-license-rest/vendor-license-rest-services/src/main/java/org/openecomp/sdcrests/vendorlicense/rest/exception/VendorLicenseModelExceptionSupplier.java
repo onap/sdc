@@ -32,6 +32,7 @@ import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBui
 
 import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_CERTIFIED_AND_NOT_ARCHIVED_DELETE_ERROR;
 import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_IN_USE_DELETE_ERROR;
+
 /**
  * Supplies exceptions happened for a Vendor License Model operation .
  */

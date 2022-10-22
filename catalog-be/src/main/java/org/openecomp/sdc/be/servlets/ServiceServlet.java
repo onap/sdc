@@ -57,14 +57,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.keycloak.representations.AccessToken;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -75,13 +73,7 @@ import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.UploadServiceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
@@ -92,9 +84,26 @@ import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -127,7 +136,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
         @ApiResponse(responseCode = "201", description = "Service created"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-        @ApiResponse(responseCode = "409", description = "Service already exist")})
+        @ApiResponse(responseCode = "409", description = "Service already exist"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createService(@Parameter(description = "Service object to be created", required = true) String data,
                                   @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -141,15 +151,36 @@ public class ServiceServlet extends AbstractValidationsServlet {
         if (convertResponse.isRight()) {
             throw new ByResponseFormatComponentException(convertResponse.right().value());
         }
+
+        Multitenancy keyaccess = new Multitenancy();
         Service service = convertResponse.left().value();
-        Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
-        if (actionResponse.isRight()) {
-            log.debug("Failed to create service");
-            throw new ByResponseFormatComponentException(actionResponse.right().value());
+        if (keyaccess.multitenancycheck() == true) {
+            AccessToken.Access realmAccess = keyaccess.getAccessToken(request).getRealmAccess();
+            Set<String> realmroles = realmAccess.getRoles();
+            boolean match = realmroles.contains(service.getTenant());
+            if (match == true) {
+                Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
+                if (actionResponse.isRight()) {
+                    log.debug("Failed to create service");
+                    throw new ByResponseFormatComponentException(actionResponse.right().value());
+                }
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_SERVICE, service.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                        "Service {} has been created by user {} ", service.getName(), userId);
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
+            } else {
+                log.info("Unauthorized Tenant");
+                return Response.status(401, "Unauthorized Tenant").build();
+            }
+        } else {
+            Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);
+            if (actionResponse.isRight()) {
+                log.debug("Failed to create service");
+                throw new ByResponseFormatComponentException(actionResponse.right().value());
+            }
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_SERVICE, service.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                    "Service {} has been created by user {} ", service.getName(), userId);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
         }
-        loggerSupportability.log(LoggerSupportabilityActions.CREATE_SERVICE, service.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-            "Service {} has been created by user {} ", service.getName(), userId);
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
     }
 
     public Either<Service, ResponseFormat> parseToService(String serviceJson, User user) {

@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -40,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
@@ -62,30 +64,31 @@ public interface VendorSoftwareProducts extends VspEntities {
 
     @POST
     @Path("/")
-    @Operation(description = "Create a new vendor software product", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class))))
-    Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    @Operation(description = "Create a new vendor software product", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class)))
+            , @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
+    Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
     @Path("/")
     @Operation(description = "Get list of vendor software products and their description", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = VspDetailsDto.class)))))
     Response listVsps(@Parameter(description = "Filter to return only Vendor Software Products with at"
-        + " least one version at this status. Currently supported values: 'Certified' , 'Draft'") @QueryParam("versionFilter") String versionStatus,
+            + " least one version at this status. Currently supported values: 'Certified' , 'Draft'") @QueryParam("versionFilter") String versionStatus,
                       @Parameter(description = "Filter to only return Vendor Software Products at this status."
-                          + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
-                          + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                              + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
+                              + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
+                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
     @Path("/{vspId}")
     @Parameter(description = "Get details of the latest certified vendor software product")
     Response getLatestVsp(@PathParam("vspId") String vspId,
-                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
     @Path("/{vspId}/versions/{versionId}")
     @Parameter(description = "Get details of a vendor software product")
     Response getVsp(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @PUT
     @Path("/{vspId}/versions/{versionId}")
@@ -102,10 +105,10 @@ public interface VendorSoftwareProducts extends VspEntities {
     @Path("/packages")
     @Operation(description = "Get list of translated CSAR files details", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = PackageInfoDto.class)))))
     Response listPackages(@Parameter(description = "Vendor Software Product status filter. "
-        + "Currently supported values: 'ACTIVE', 'ARCHIVED'") @QueryParam("Status") String status,
+            + "Currently supported values: 'ACTIVE', 'ARCHIVED'") @QueryParam("Status") String status,
                           @Parameter(description = "Category") @QueryParam("category") String category,
                           @Parameter(description = "Sub-category") @QueryParam("subCategory") String subCategory,
-                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user , @Context HttpServletRequest req);
 
     @GET
     @Path("/{vspId}/versions/{versionId}/orchestration-template")
@@ -116,14 +119,14 @@ public interface VendorSoftwareProducts extends VspEntities {
 
     @GET
     @Path("/validation-vsp")
-    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq) throws Exception;
 
     @PUT
     @Path("/{vspId}/versions/{versionId}/actions")
     @Operation(description = "Actions on a vendor software product", summary = "Performs one of the following actions on a vendor software product: |"
-        + "Checkout: Locks it for edits by other users. Only the locking user sees the edited " + "version.|"
-        + "Undo_Checkout: Unlocks it and deletes the edits that were done.|" + "Checkin: Unlocks it and activates the edited version to all users.| "
-        + "Submit: Finalize its active version.|" + "Create_Package: Creates a CSAR zip file.|")
+            + "Checkout: Locks it for edits by other users. Only the locking user sees the edited " + "version.|"
+            + "Undo_Checkout: Unlocks it and deletes the edits that were done.|" + "Checkin: Unlocks it and activates the edited version to all users.| "
+            + "Submit: Finalize its active version.|" + "Create_Package: Creates a CSAR zip file.|")
     Response actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request, @PathParam("vspId") String vspId,
                                         @PathParam("versionId") String versionId,
                                         @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;

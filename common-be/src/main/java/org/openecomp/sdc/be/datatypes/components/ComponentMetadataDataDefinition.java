@@ -49,6 +49,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     private Long creationDate;
     private Long lastUpdateDate;
     private String description;
+    private String tenant;
     private String state;
     private List<String> tags;
     private String conformanceLevel;
@@ -84,6 +85,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.creationDate = other.getCreationDate();
         this.lastUpdateDate = other.getLastUpdateDate();
         this.description = other.getDescription();
+        this.tenant = other.getTenant();
         this.state = other.getState();
         this.tags = new ArrayList<>(other.getTags() != null ? other.getTags() : new LinkedList<>());
         this.icon = other.getIcon();
@@ -114,6 +116,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.creationDate = extractor.getCreationDate();
         this.lastUpdateDate = extractor.getLastUpdateDate();
         this.description = extractor.getDescription();
+        this.tenant = extractor.getTenant();
         this.state = extractor.getState();
         this.tags = extractor.getTags();
         this.icon = extractor.getIcon();

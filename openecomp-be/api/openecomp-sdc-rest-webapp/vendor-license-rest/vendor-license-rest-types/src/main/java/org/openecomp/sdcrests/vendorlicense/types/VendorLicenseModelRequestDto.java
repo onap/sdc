@@ -17,18 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+ 
 package org.openecomp.sdcrests.vendorlicense.types;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+
+
 @Data
 @Schema(description = "VendorLicenseModelRequest")
 public class VendorLicenseModelRequestDto {
-
     @NotNull
     @Size(max = 25)
     private String vendorName;
@@ -37,6 +38,9 @@ public class VendorLicenseModelRequestDto {
     private String description;
     @NotNull
     private String iconRef;
+    @NotNull
+    @Size(max = 25)
+    private String tenant;
 
     public void setVendorName(final String vendorName) {
         this.vendorName = ValidationUtils.sanitizeInputString(vendorName);
@@ -44,5 +48,9 @@ public class VendorLicenseModelRequestDto {
 
     public void setDescription(final String description) {
         this.description = ValidationUtils.sanitizeInputString(description);
+    }
+
+    public void setTenant(final String tenant) {
+            this.tenant = ValidationUtils.sanitizeInputString(tenant);
     }
 }

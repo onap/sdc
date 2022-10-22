@@ -44,6 +44,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
     private List<String> derivedFrom;
     private Map<String, String> categorySpecificMetadata;
     private String csarVersionId;
+    private String tenant;
 
     public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom, ResourceMetadataDataDefinition metadata) {
         super(categories, metadata);
@@ -57,5 +58,6 @@ public class UiResourceMetadata extends UiComponentMetadata {
         this.derivedFrom = derivedFrom;
         this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
         this.csarVersionId = metadata.getCsarVersionId();
+        this.tenant = metadata.getTenant();
     }
 }

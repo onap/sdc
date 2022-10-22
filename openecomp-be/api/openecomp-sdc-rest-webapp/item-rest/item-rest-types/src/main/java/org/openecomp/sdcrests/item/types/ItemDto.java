@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+ 
 package org.openecomp.sdcrests.item.types;
 
 import java.util.Map;
@@ -25,13 +26,13 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 
 @Data
 public class ItemDto {
-
     private String id;
     private String type;
     private String name;
     private String description;
     private String owner;
     private String status;
+    private String tenant;
     private Map<String, Object> properties;
 
     public void setId(final String id) {
@@ -58,4 +59,7 @@ public class ItemDto {
         this.status = ValidationUtils.sanitizeInputString(status);
     }
 
+    public void setTenant(final String tenant) { this.tenant = ValidationUtils.sanitizeInputString(tenant); }
+
 }
+

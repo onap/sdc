@@ -50,6 +50,12 @@ public enum GraphPropertiesDictionary {
     CONSTRAINTS			("constraints",				String.class, 		    	false,		false),
     CONTACT_ID			("contactId",				String.class, 				false,		false),
     VENDOR_NAME			("vendorName",				String.class, 				false,		false),
+
+
+    TENANT		        ("tenant",				    String.class, 				false,		false),
+
+
+
     VENDOR_RELEASE		("vendorRelease",			String.class, 				false,		false),
     MODEL               ("model",                   String.class,               false,      false),
     MODEL_TYPE          ("modelType",               String.class,               false,      false),
