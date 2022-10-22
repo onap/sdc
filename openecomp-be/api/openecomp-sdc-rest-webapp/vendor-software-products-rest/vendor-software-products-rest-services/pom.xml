@@ -164,6 +164,12 @@
       <artifactId>unique-type-rest-types</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.openecomp.sdc.onboarding</groupId>
+          <artifactId>vendor-license-rest-services</artifactId>
+          <version>1.11.1-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
 

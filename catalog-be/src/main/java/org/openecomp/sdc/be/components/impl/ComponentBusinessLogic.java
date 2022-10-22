@@ -39,13 +39,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
+import org.openecomp.sdc.be.components.validation.component.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -109,6 +103,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected ArtifactsBusinessLogic artifactsBusinessLogic;
     protected GenericTypeBusinessLogic genericTypeBusinessLogic;
     protected ComponentDescriptionValidator componentDescriptionValidator;
+    protected ComponentTenantValidator componentTenantValidator;
     protected ComponentProjectCodeValidator componentProjectCodeValidator;
     protected CatalogOperation catalogOperations;
     protected ComponentIconValidator componentIconValidator;
@@ -166,6 +161,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public void setComponentDescriptionValidator(ComponentDescriptionValidator componentDescriptionValidator) {
         this.componentDescriptionValidator = componentDescriptionValidator;
     }
+
+
+    public void setComponentTenantValidator(ComponentTenantValidator componentTenantValidator) {
+        this.componentTenantValidator = componentTenantValidator;
+    }
+
 
     public void setComponentProjectCodeValidator(ComponentProjectCodeValidator componentProjectCodeValidator) {
         this.componentProjectCodeValidator = componentProjectCodeValidator;
@@ -368,12 +369,16 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     protected void validateComponentFieldsBeforeCreate(User user, Component component, AuditingActionEnum actionEnum) {
+
         // validate component name uniqueness
         log.debug("validate component name ");
         componentNameValidator.validateAndCorrectField(user, component, actionEnum);
         // validate description
         log.debug("validate description");
         componentDescriptionValidator.validateAndCorrectField(user, component, actionEnum);
+        // validate tenant
+        log.debug("validate tenant");
+        componentTenantValidator.validateAndCorrectField(user, component, actionEnum);
         // validate tags
         log.debug("validate tags");
         componentTagsValidator.validateAndCorrectField(user, component, actionEnum);

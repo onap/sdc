@@ -136,6 +136,14 @@ public class GraphPropertiesDictionaryExtractor {
         return (String) properties.get(GraphPropertiesDictionary.VENDOR_NAME.getProperty());
     }
 
+
+
+    public String getTenant() {
+        return (String) properties.get(GraphPropertiesDictionary.TENANT.getProperty());
+    }
+
+
+
     public String getVendorRelease() {
         return (String) properties.get(GraphPropertiesDictionary.VENDOR_RELEASE.getProperty());
     }

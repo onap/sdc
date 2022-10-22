@@ -85,6 +85,12 @@ public class ComponentMessage extends CatalogComponent implements IComponentMess
         setIsHighestVersion(component.isHighestVersion()); // isHighestVersion
 
         setDescription(component.getDescription()); // description
+
+
+        setTenant(component.getTenant()); // tenant
+
+
+
         if (component.getTags() != null) {
             setTags(component.getTags()); // tags
         }
@@ -123,7 +129,7 @@ public class ComponentMessage extends CatalogComponent implements IComponentMess
     public String toString() {
         return "ComponentMessage [ getChangeType()=" + getChangeType() + ", getCatalogUpdateTimestamp()=" + getCatalogUpdateTimestamp()
             + ", getIsArchived()=" + getIsArchived() + ", getUuid()=" + getUuid() + ", getInvariantUUID()=" + getInvariantUUID()
-            + ", getSystemName()=" + getSystemName() + ", getDescription()=" + getDescription() + ", getIsHighestVersion()=" + getIsHighestVersion()
+            + ", getSystemName()=" + getSystemName() + ", getDescription()=" + getDescription() + ", getTenant()=" + getTenant() + ", getIsHighestVersion()=" + getIsHighestVersion()
             + ", getCategoryNormalizedName()=" + getCategoryNormalizedName() + ", getSubCategoryNormalizedName()=" + getSubCategoryNormalizedName()
             + ", getResourceType()=" + getResourceType() + ", getName()=" + getName() + ", getLastUpdateDate()=" + getLastUpdateDate()
             + ", getVersion()=" + getVersion() + ", getComponentType()=" + getComponentType() + ", getIcon()=" + getIcon() + ", getUniqueId()="

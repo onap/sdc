@@ -35,6 +35,7 @@ public class VendorSoftwareProduct {
     private String category;
     private String subCategory;
     private String vendorName;
+    private String tenant;
     private String vendorId;
     private List<String> modelList;
     private String onboardingMethod;

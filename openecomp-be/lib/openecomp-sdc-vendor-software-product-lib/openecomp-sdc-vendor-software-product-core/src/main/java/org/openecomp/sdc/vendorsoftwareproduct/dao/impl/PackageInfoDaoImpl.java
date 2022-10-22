@@ -76,8 +76,9 @@ public class PackageInfoDaoImpl extends CassandraBaseDao<PackageInfo> implements
     @Accessor
     interface PackageInfoAccessor {
 
-        @Query("SELECT vsp_id, version, version_id, display_name, vsp_name, vsp_description, vendor_name, category"
+        @Query("SELECT vsp_id, version, version_id, display_name, vsp_name, vsp_description, vendor_name, category,tenant"
             + " , sub_category, vendor_release, package_checksum, package_type, resource_type, models FROM package_details")
         Result<PackageInfo> listInfo();
+
     }
 }

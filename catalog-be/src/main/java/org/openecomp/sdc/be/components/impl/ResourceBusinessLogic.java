@@ -74,13 +74,7 @@ import org.openecomp.sdc.be.components.merge.TopologyComparator;
 import org.openecomp.sdc.be.components.merge.property.PropertyDataValueMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
 import org.openecomp.sdc.be.components.property.PropertyConstraintsUtils;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
+import org.openecomp.sdc.be.components.validation.component.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -90,59 +84,11 @@ import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
-import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Model;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipImpl;
-import org.openecomp.sdc.be.model.RelationshipInfo;
-import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.UploadArtifactInfo;
-import org.openecomp.sdc.be.model.UploadCapInfo;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -150,13 +96,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -1055,6 +995,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 policyTypeBusinessLogic.createPolicyTypeFromYaml(new Yaml().dump(policyTypesToCreate), model, true);
             }
         }
+        
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
             nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
@@ -1411,6 +1352,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
+        resourceMetaData.setTenant(resourceVf.getTenant());
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
         resourceMetaData.setModel(resourceVf.getModel());
         // Setting tag
@@ -1444,6 +1386,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName(resourceVf.getVendorName());
+        cvfc.setTenant(resourceVf.getTenant());
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
         cvfc.setModel(resourceVf.getModel());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
@@ -4420,6 +4363,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         // validate vendor name & release & model number
         log.debug("validate vendor name");
         validateVendorName(user, resource, actionEnum);
+        //Tenant
+        log.debug("validate tenant");
+        validateTenant(user, resource, actionEnum);
+
         log.debug("validate vendor release");
         validateVendorReleaseName(user, resource, actionEnum);
         log.debug("validate resource vendor model number");
@@ -4868,6 +4815,37 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
         }
     }
+
+    private void validateTenant(User user, Resource resource, AuditingActionEnum actionEnum) {
+        String tenant = resource.getTenant();
+        if (!ValidationUtils.validateStringNotEmpty(tenant)) {
+            log.info("tenant is missing.");
+            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_TENANT);
+            componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_TENANT);
+        }
+        validateTenant(tenant, user, resource, actionEnum);
+    }
+
+    private void validateTenant(String tenant, User user, Resource resource, AuditingActionEnum actionEnum) {
+        if (tenant != null) {
+            if (!ValidationUtils.validateTenantNameLength(tenant)) {
+                log.info("tenant name exceds limit.");
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.TENANT_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.TENANT_NAME_MAX_LENGTH);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ByActionStatusComponentException(ActionStatus.TENANT_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.TENANT_NAME_MAX_LENGTH);
+            }
+            if (!ValidationUtils.validateTenantName(tenant)) {
+                log.info("tenant name  is not valid.");
+                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_TENANT_NAME);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_TENANT_NAME, tenant);
+            }
+        }
+    }
+
+
 
     private void validateVendorName(User user, Resource resource, AuditingActionEnum actionEnum) {
         String vendorName = resource.getVendorName();

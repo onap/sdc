@@ -2785,6 +2785,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String artifactName = (String) artifactInfoMap.get(ARTIFACT_PLACEHOLDER_DISPLAY_NAME);
         String artifactType = (String) artifactInfoMap.get(ARTIFACT_PLACEHOLDER_TYPE);
         String artifactDescription = (String) artifactInfoMap.get(ARTIFACT_PLACEHOLDER_DESCRIPTION);
+
         artifactInfo.setArtifactDisplayName(artifactName);
         artifactInfo.setArtifactLabel(logicalName.toLowerCase());
         artifactInfo.setArtifactType(artifactType);

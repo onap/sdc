@@ -15,32 +15,14 @@
  */
 package org.openecomp.sdcrests.item.rest.services;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
@@ -62,6 +44,20 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
 
 @Named
 @Service("items")
@@ -116,15 +112,27 @@ public class ItemsImpl implements Items {
 
     @Override
     public Response list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter, String permissionFilter,
-                         String onboardingMethodFilter, String user) {
+                         String onboardingMethodFilter, String user, HttpServletRequest hreq) {
         Predicate<Item> itemPredicate = createItemPredicate(itemStatusFilter, versionStatusFilter, itemTypeFilter, onboardingMethodFilter,
-            permissionFilter, user);
+                permissionFilter, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
-        getManagersProvider().getItemManager().list(itemPredicate).stream()
-            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-            .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-        return Response.ok(results).build();
+        Multitenancy keyaccess= new Multitenancy();
+        if (keyaccess.multitenancycheck() == true) {
+            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            Set<String> realmroles = realmAccess.getRoles();
+        realmroles.stream().forEach(role ->  getManagersProvider().getItemManager().list(itemPredicate).stream()
+                .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                .filter(item -> item.getTenant().contains(role))
+                .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
+            return Response.ok(results).build();
+        }
+        else{
+            getManagersProvider().getItemManager().list(itemPredicate).stream()
+                    .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
+            return Response.ok(results).build();
+        }
     }
 
     @Override

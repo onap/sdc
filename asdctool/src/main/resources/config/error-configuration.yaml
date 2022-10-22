@@ -1792,3 +1792,11 @@ errors:
     message: "Capability name '%1' is invalid, Only alphanumeric chars, underscore and dot allowed",
     messageId: "SVC4691"
   }
+
+  #---------SVC4692-----------------------------
+  # %1 - tenant name
+  MISSING_TENANT_NAME: {
+    code: 400,
+    message: "Error: Invalid Content. Missing tenant name.",
+    messageId: "SVC4692"
+  }

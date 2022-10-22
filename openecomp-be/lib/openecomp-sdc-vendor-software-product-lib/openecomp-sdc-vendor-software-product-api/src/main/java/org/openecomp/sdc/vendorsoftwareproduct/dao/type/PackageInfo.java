@@ -50,6 +50,8 @@ public class PackageInfo {
     @Column(name = "vendor_name")
     private String vendorName;
     private String category;
+    @Column(name = "tenant")
+    private String tenant;
     @Column(name = "sub_category")
     private String subCategory;
     @Column(name = "vendor_release")
@@ -65,9 +67,74 @@ public class PackageInfo {
     @Column(name = "models")
     private Set<String> models;
 
+
     public PackageInfo(final String packageId, final Version version) {
         this.vspId = packageId;
         this.version = version.getName();
         this.versionId = version.getId();
+    }
+
+    public String getVspId() {
+        return vspId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getVspName() {
+        return vspName;
+    }
+
+    public String getVspDescription() {
+        return vspDescription;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public String getVendorRelease() {
+        return vendorRelease;
+    }
+
+    public String getPackageChecksum() {
+        return packageChecksum;
+    }
+
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public ByteBuffer getTranslatedFile() {
+        return translatedFile;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public Set<String> getModels() {
+        return models;
     }
 }

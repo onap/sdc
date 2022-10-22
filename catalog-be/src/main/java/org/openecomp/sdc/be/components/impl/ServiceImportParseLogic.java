@@ -652,6 +652,13 @@ public class ServiceImportParseLogic {
         // validate vendor name & release & model number
         log.debug("validate vendor name");
         validateVendorName(user, resource, actionEnum);
+
+
+        //Tenant
+        log.debug("validate tenant");
+        validateTenant(user, resource, actionEnum);
+
+
         log.debug("validate vendor release");
         validateVendorReleaseName(user, resource, actionEnum);
         log.debug("validate resource vendor model number");
@@ -903,6 +910,38 @@ public class ServiceImportParseLogic {
         }
     }
 
+
+    protected void validateTenant(User user, Resource resource, AuditingActionEnum actionEnum) {
+        String tenant = resource.getTenant();
+        if (!ValidationUtils.validateStringNotEmpty(tenant)) {
+            log.info("tenant name is missing.");
+            ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_TENANT);
+            componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+            throw new ComponentException(ActionStatus.MISSING_TENANT);
+        }
+        validateTenant(tenant, user, resource, actionEnum);
+    }
+
+    protected void validateTenant(String tenant, User user, Resource resource, AuditingActionEnum actionEnum) {
+        if (tenant != null) {
+            if (!ValidationUtils.validateTenantNameLength(tenant)) {
+                log.info("tenant name exceds limit.");
+                ResponseFormat errorResponse = componentsUtils
+                        .getResponseFormat(ActionStatus.TENANT_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.TENANT_NAME_MAX_LENGTH);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.TENANT_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.TENANT_NAME_MAX_LENGTH);
+            }
+            if (!ValidationUtils.validateTenantName(tenant)) {
+                log.info("tenant name  is not valid.");
+                ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_TENANT_NAME);
+                componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
+                throw new ComponentException(ActionStatus.INVALID_TENANT_NAME);
+            }
+        }
+    }
+
+
+
     private Resource buildComplexVfcMetadata(Resource resourceVf, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
         Resource cvfc = new Resource();
         NodeTypeInfo nodeTypeInfo = nodesInfo.get(nodeName);
@@ -917,6 +956,9 @@ public class ServiceImportParseLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName(resourceVf.getVendorName());
+
+        cvfc.setTenant(resourceVf.getTenant());
+
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
         cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
@@ -982,6 +1024,9 @@ public class ServiceImportParseLogic {
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
+
+        resourceMetaData.setTenant(resourceVf.getTenant());
+
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
         // Setting tag
         List<String> tags = new ArrayList<>();
@@ -1306,6 +1351,9 @@ public class ServiceImportParseLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName("cmri");
+
+        cvfc.setTenant("tenant");
+
         cvfc.setVendorRelease("1.0");
         cvfc.setResourceVendorModelNumber("");
         cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());

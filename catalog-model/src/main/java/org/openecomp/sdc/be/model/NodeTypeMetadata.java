@@ -40,6 +40,7 @@ public class NodeTypeMetadata {
     private String model;
     private String icon;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
     private String resourceVendorModelNumber;
     private String resourceType = ResourceTypeEnum.VFC.getValue();
