@@ -333,6 +333,12 @@ public class ResourceImportManager {
             if (resourceMetaData.getVendorName() != null) {
                 resource.setVendorName(resourceMetaData.getVendorName());
             }
+
+            if (resourceMetaData.getTenant() != null) {
+                resource.setTenant(resourceMetaData.getTenant());
+            }
+
+
             if (resourceMetaData.getVendorRelease() != null) {
                 resource.setVendorRelease(resourceMetaData.getVendorRelease());
             }
@@ -984,7 +990,8 @@ public class ResourceImportManager {
         resource.setLifecycleState(state);
         resource.setHighestVersion(ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
         resource.setVendorName(ImportUtils.Constants.VENDOR_NAME);
-        resource.setVendorRelease(ImportUtils.Constants.VENDOR_RELEASE);
+         resource.setTenant(ImportUtils.Constants.TENANT);
+         resource.setVendorRelease(ImportUtils.Constants.VENDOR_RELEASE);
     }
 
     private void validateOccurrences(List<Object> occurrensesList) {

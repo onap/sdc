@@ -540,6 +540,7 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         } else if (!getDescription().equals(other.getDescription())) {
             return false;
         }
+
         if (getEsId() == null) {
             if (other.getEsId() != null) {
                 return false;

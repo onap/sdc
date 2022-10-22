@@ -67,6 +67,7 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor<VspDetails> {
         vspDetails.setSubCategory(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.SUB_CATEGORY.getValue()));
         vspDetails.setVendorId(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_ID.getValue()));
         vspDetails.setVendorName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_NAME.getValue()));
+        vspDetails.setTenant(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.TENANT.getValue()));
         if (info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue()) != null) {
             vspDetails
                 .setVlmVersion(new Version(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.VENDOR_VERSION.getValue())));

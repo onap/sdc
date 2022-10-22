@@ -39,6 +39,7 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
     private String derivedFromName;
     private String description;
     private String model;
+
     /**
      * Timestamp of data type creation
      */

@@ -54,6 +54,7 @@ public class CatalogComponent {
     private String lastUpdaterUserId;
     private List<CategoryDefinition> categories;
     private String model;
+    private String tenant;
 
     public List<String> getTags() {
         return tags == null ? Collections.emptyList() : ImmutableList.copyOf(tags);

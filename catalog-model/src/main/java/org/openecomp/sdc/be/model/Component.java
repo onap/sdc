@@ -214,6 +214,16 @@ public abstract class Component implements PropertiesOwner {
         componentMetadataDefinition.getMetadataDataDefinition().setDescription(description);
     }
 
+    public String getTenant() {
+        return componentMetadataDefinition.getMetadataDataDefinition().getTenant();
+    }
+
+    public void setTenant(String tenant) {
+        componentMetadataDefinition.getMetadataDataDefinition().setTenant(tenant);
+    }
+
+
+
     public LifecycleStateEnum getLifecycleState() {
         if (componentMetadataDefinition.getMetadataDataDefinition().getState() != null) {
             return LifecycleStateEnum.valueOf(componentMetadataDefinition.getMetadataDataDefinition().getState());

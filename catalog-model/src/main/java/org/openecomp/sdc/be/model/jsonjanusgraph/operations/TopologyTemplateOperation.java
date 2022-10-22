@@ -107,7 +107,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return normalizedComponentName + Constants.GROUP_POLICY_NAME_DELIMETER + typeSuffix + Constants.GROUP_POLICY_NAME_DELIMETER + counter;
     }
 
-    public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {
+    public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {;
         topologyTemplate.generateUUID();
         topologyTemplate = getResourceMetaDataFromResource(topologyTemplate);
         String resourceUniqueId = topologyTemplate.getUniqueId();

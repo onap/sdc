@@ -37,6 +37,13 @@ public class UploadServiceInfoTest {
     }
 
     @Test
+    public void testCtor() {
+        new UploadServiceInfo("mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock", "mock/mock/mock",
+                "mock", "mock", "mock", "mock", "mock", "mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock",
+                "mock", "mock", "mock", "mock", "mock", "mock", "mock", new HashMap<>(), "mock", "mock");
+    }
+
+    @Test
     public void testAddSubCategory() {
         UploadServiceInfo testSubject;
         String category = "";

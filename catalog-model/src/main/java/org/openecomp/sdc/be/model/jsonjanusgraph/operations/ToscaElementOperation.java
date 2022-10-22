@@ -1353,6 +1353,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     private void handleCatalogComponent(Map<String, CatalogComponent> existInCatalog, Vertex vertex, List<ResourceTypeEnum> excludeTypes) {
+
+       log.info("Inside handleCatalogComponent");
+
         VertexProperty<Object> property = vertex.property(GraphPropertiesDictionary.METADATA.getProperty());
         String json = (String) property.value();
         Map<String, Object> metadatObj = JsonParserUtils.toMap(json);
@@ -1372,6 +1375,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
             catalogComponent.setLastUpdateDate((lastUpdateDate != null ? (Long) lastUpdateDate : 0L));
             catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
             catalogComponent.setDescription((String) metadatObj.get(JsonPresentationFields.DESCRIPTION.getPresentation()));
+
+            catalogComponent.setTenant((String) metadatObj.get(JsonPresentationFields.TENANT.getPresentation()));
+
             catalogComponent.setSystemName((String) metadatObj.get(JsonPresentationFields.SYSTEM_NAME.getPresentation()));
             catalogComponent.setUuid((String) metadatObj.get(JsonPresentationFields.UUID.getPresentation()));
             catalogComponent.setInvariantUUID((String) metadatObj.get(JsonPresentationFields.INVARIANT_UUID.getPresentation()));

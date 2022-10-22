@@ -72,6 +72,7 @@ public enum JsonPresentationFields {
     MODEL("model", null),
     NORMATIVE("normative", null),
     DATA_TYPES("data_types", GraphPropertyEnum.DATA_TYPES),
+    TENANT("tenant", null),
 
     ////Inputs
     ANNOTATIONS("annotations", null),

@@ -29,6 +29,8 @@ public class DefinitionOfDataType implements Cloneable {
 
     private String type;
     private String description;
+    private String tenant;
+
     private Object value;
     private Boolean required;
     private Object _default;

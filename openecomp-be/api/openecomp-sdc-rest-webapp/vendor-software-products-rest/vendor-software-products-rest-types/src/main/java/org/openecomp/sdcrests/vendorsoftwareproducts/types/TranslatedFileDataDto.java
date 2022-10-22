@@ -28,6 +28,7 @@ public class TranslatedFileDataDto {
     private String category;
     private String subcategory;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
     private String packageChecksum;
     private String packageType;

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS package_details
     vsp_description   text,
     VENDOR_NAME       text,
     CATEGORY          text,
+    TENANT            text,
     SUB_CATEGORY      text,
     VENDOR_RELEASE    text,
     PACKAGE_CHECKSUM  text,

@@ -31,5 +31,6 @@ public class MapVendorLicenseModelEntityToDto extends MappingBase<VendorLicenseM
         target.setVendorName(source.getVendorName());
         target.setDescription(source.getDescription());
         target.setIconRef(source.getIconRef());
+        target.setTenant(source.getTenant());
     }
 }

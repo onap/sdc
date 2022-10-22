@@ -39,6 +39,9 @@ public class VendorSoftwareProductMapper {
         vendorSoftwareProduct.setCategory(vendorSoftwareProductDto.getCategory());
         vendorSoftwareProduct.setSubCategory(vendorSoftwareProductDto.getSubCategory());
         vendorSoftwareProduct.setVendorName(vendorSoftwareProductDto.getVendorName());
+
+        vendorSoftwareProduct.setTenant(vendorSoftwareProductDto.getTenant());
+
         vendorSoftwareProduct.setVendorId(vendorSoftwareProductDto.getVendorId());
         vendorSoftwareProduct.setModelList(
             vendorSoftwareProductDto.getSelectedModelList() == null ? new ArrayList<>() : vendorSoftwareProductDto.getSelectedModelList());

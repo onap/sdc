@@ -21,38 +21,11 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.handleConsumptionInputMappedToCapabilityProperty;
-import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedValueFromValidType;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
-import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
-import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
-import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
-import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -71,19 +44,8 @@ import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceCategoryValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceFunctionValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceInstantiationTypeValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceRoleValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceTypeValidator;
-import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
+import org.openecomp.sdc.be.components.validation.component.*;
+import org.openecomp.sdc.be.components.validation.service.*;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -92,48 +54,17 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.enums.*;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceInterface;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DistributionStatusEnum;
-import org.openecomp.sdc.be.model.GroupInstance;
-import org.openecomp.sdc.be.model.GroupInstanceProperty;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Model;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.*;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -141,11 +72,7 @@ import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
-import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
+import org.openecomp.sdc.be.resources.data.auditing.*;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
@@ -166,6 +93,24 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.handleConsumptionInputMappedToCapabilityProperty;
+import static org.openecomp.sdc.be.components.utils.ConsumptionUtils.isAssignedValueFromValidType;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationOutputName;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.isOperationInputMappedToOtherOperationOutput;
+import static org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum.UPDATE_SERVICE_METADATA;
+import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.SERVICE_INPUT;
+import static org.openecomp.sdc.be.types.ServiceConsumptionSource.STATIC;
 
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
@@ -1065,6 +1010,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (response.isRight()) {
                 return Either.right(response.right().value());
             }
+
+            response = validateAndUpdateTenant(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
+            if (response.isRight()) {
+                return Either.right(response.right().value());
+            }
+
             response = validateAndUpdateTags(user, currentService, serviceUpdate, UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
                 return Either.right(response.right().value());
@@ -1157,6 +1108,19 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (!descriptionCurrent.equals(descriptionUpdated)) {
             componentDescriptionValidator.validateAndCorrectField(user, serviceUpdate, audatingAction);
             currentService.setDescription(serviceUpdate.getDescription());
+        }
+        return Either.left(true);
+    }
+
+
+
+    private Either<Boolean, ResponseFormat> validateAndUpdateTenant(User user, Service currentService, Service serviceUpdate,
+                                                                         AuditingActionEnum audatingAction) {
+        String tenantUpdated = serviceUpdate.getTenant();
+        String tenantCurrent = currentService.getTenant();
+        if (!tenantCurrent.equals(tenantUpdated)) {
+            componentTenantValidator.validateAndCorrectField(user, serviceUpdate, audatingAction);
+            currentService.setTenant(serviceUpdate.getTenant());
         }
         return Either.left(true);
     }

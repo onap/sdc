@@ -33,6 +33,7 @@ public class TranslatedFileData {
     private String category;
     private String subcategory;
     private String vandorName;
+    private String tenant;
     private String vendorRelease;
     private String packageChecksum;
     private String packageType;

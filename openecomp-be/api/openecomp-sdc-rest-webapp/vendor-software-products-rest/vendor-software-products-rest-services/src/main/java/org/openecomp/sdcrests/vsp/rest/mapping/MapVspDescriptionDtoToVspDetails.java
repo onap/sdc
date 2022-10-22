@@ -37,6 +37,8 @@ public class MapVspDescriptionDtoToVspDetails extends MappingBase<VspDescription
         target.setSubCategory(source.getSubCategory());
         target.setIcon(source.getIcon());
         target.setVendorName(source.getVendorName());
+        target.setTenant(source.getTenant());
+
         target.setVendorId(source.getVendorId());
         if (source.getLicensingVersion() != null && source.getLicenseType() != LicenseType.EXTERNAL) {
             target.setVlmVersion(new Version(source.getLicensingVersion()));

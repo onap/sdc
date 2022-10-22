@@ -33,6 +33,7 @@ public class PackageInfoDto {
     private String category;
     private String subCategory;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
     private String packageChecksum;
     private String packageType;

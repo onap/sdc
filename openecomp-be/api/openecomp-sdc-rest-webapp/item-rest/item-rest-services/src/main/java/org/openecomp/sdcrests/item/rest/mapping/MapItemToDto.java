@@ -34,5 +34,6 @@ public class MapItemToDto extends MappingBase<Item, ItemDto> {
         target.setOwner(source.getOwner());
         target.setStatus(source.getStatus().name());
         target.setProperties(source.getProperties());
+       target.setTenant(source.getTenant());
     }
 }
