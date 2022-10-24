@@ -426,6 +426,18 @@ public class ElementOperation implements IElementOperation {
     private Configuration getConfiguration() {
         return ConfigurationManager.getConfigurationManager().getConfiguration();
     }
+    @Override
+    public String getDefaultBaseType(final String categoryName) {
+        final Map<String, CategoryBaseTypeConfig> categoriesSpecificBaseTypeMap = getConfiguration().getServiceBaseNodeTypes();
+        if (MapUtils.isEmpty(categoriesSpecificBaseTypeMap)) {
+            return null;
+        }
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = categoriesSpecificBaseTypeMap.get(categoryName);
+        if (categoryBaseTypeConfig == null) {
+            return null;
+        }
+        return categoryBaseTypeConfig.getDefaultBaseType();
+    }
 
     @Override
     public boolean isBaseTypeRequired(final String categoryName) {

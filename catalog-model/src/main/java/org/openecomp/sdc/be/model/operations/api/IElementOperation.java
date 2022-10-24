@@ -96,6 +96,8 @@ public interface IElementOperation {
      */
     boolean isBaseTypeRequired(String categoryName);
 
+    String getDefaultBaseType(String categoryName);
+
     Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 
     Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);

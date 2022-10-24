@@ -21,6 +21,7 @@
 interface ListBaseTypesResponse {
   baseTypes: BaseTypeResponse[];
   required: boolean;
+  defaultBaseType: string;
 }
 
 interface BaseTypeResponse {

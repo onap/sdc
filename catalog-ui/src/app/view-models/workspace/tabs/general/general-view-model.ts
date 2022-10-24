@@ -910,13 +910,19 @@ export class GeneralViewModel {
         this.$scope.isBaseTypeRequired = baseTypeResponseList.required;
         this.$scope.baseTypes = [];
         this.$scope.baseTypeVersions = [];
+        let defaultBaseType = baseTypeResponseList.defaultBaseType;
         baseTypeResponseList.baseTypes.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-        if (this.$scope.isBaseTypeRequired) {
-            const baseType = baseTypeResponseList.baseTypes[0];
-            baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            if(!this.$scope.component.derivedFromGenericType) {
-                this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+        if (this.$scope.isBaseTypeRequired || defaultBaseType != null) {
+            let baseType = baseTypeResponseList.baseTypes[0];
+            if(defaultBaseType != null){
+                baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
+                    if(baseTypeObj.toscaResourceName == defaultBaseType) {
+                        baseType = baseTypeObj;
+                    }
+                });
             }
+            baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             this.$scope.showBaseTypeVersions = true;
             return
