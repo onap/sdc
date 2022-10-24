@@ -33,5 +33,6 @@ public class CategoryBaseTypeConfig {
 
     private boolean required;
     private List<String> baseTypes;
+    private String defaultBaseType;
 
 }

@@ -292,4 +292,9 @@ public class ElementOperationMock implements IElementOperation {
         return true;
     }
 
+    @Override
+    public String getDefaultBaseType(String categoryName) {
+        return "";
+    }
+
 }

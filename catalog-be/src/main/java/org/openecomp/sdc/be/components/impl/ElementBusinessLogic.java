@@ -1303,4 +1303,14 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     public boolean isBaseTypeRequired(final String categoryName) {
         return elementOperation.isBaseTypeRequired(categoryName);
     }
+
+    /**
+     * Fetches default baseType from the template.
+     *
+     * @param categoryName the category name
+     * @return defaultBaseType mapped to the corresponding category name.
+     */
+    public String getDefaultBaseType(final String categoryName) {
+        return elementOperation.getDefaultBaseType(categoryName);
+    }
 }
