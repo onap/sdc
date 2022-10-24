@@ -67,7 +67,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <commons-configuration>2.8.0</commons-configuration>
         <apache-poi.version>4.1.0</apache-poi.version>
         <onap.logging.version>1.6.1</onap.logging.version>
-        <apache-commons-text.version>1.9</apache-commons-text.version>
+        <apache-commons-text.version>1.10.0</apache-commons-text.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <io.vavr.version>0.10.3</io.vavr.version>
         <groovy.version>3.0.7</groovy.version>
