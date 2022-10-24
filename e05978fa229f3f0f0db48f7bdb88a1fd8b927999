@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2dd03757_58df2538",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInstanceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-24T10:30:08Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 587,
+        "startChar": 128,
+        "endLine": 592,
+        "endChar": 11
+      },
+      "revId": "e05978fa229f3f0f0db48f7bdb88a1fd8b927999",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
