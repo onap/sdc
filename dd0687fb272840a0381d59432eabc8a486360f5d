@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c31d23a3_56c4828b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-25T09:10:22Z",
+      "side": 1,
+      "message": "this is one method doing two different things.\nI think it would be better to have two separate methods\nvalidateOperationInputConstraints and validateOperationArtifactPropertyConstraints",
+      "range": {
+        "startLine": 205,
+        "startChar": 77,
+        "endLine": 205,
+        "endChar": 99
+      },
+      "revId": "dd0687fb272840a0381d59432eabc8a486360f5d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
