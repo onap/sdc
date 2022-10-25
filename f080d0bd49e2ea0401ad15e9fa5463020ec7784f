@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5747acfc_ee03042b",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T09:50:36Z",
+      "side": 1,
+      "message": "is this working?\nI\u0027m asking because the type-workspace state requires 3 parameters:\ntype-workspace/:type/:id/:subPage\nThe type for now would be only \"datatype\", and the subPage would be \"general\"",
+      "range": {
+        "startLine": 366,
+        "startChar": 12,
+        "endLine": 366,
+        "endChar": 71
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfab6034_41b7c9ca",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T09:50:36Z",
+      "side": 1,
+      "message": "Please, use the constant States.TYPE_WORKSPACE from src/app/utils/constants.ts",
+      "range": {
+        "startLine": 366,
+        "startChar": 27,
+        "endLine": 366,
+        "endChar": 43
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3247daa_67586a83",
+        "filename": "catalog-ui/src/app/utils/menu-handler.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T09:50:36Z",
+      "side": 1,
+      "message": "please, filter for components instances only before the forEach",
+      "range": {
+        "startLine": 139,
+        "startChar": 23,
+        "endLine": 139,
+        "endChar": 30
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
