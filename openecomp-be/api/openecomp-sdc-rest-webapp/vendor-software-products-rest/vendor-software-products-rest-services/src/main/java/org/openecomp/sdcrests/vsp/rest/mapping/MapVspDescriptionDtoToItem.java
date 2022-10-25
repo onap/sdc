@@ -29,6 +29,7 @@ public class MapVspDescriptionDtoToItem extends MappingBase<VspDescriptionDto, I
     @Override
     public void doMapping(VspDescriptionDto source, Item target) {
         target.setName(source.getName());
+        target.setTenant(source.getTenant());
         target.setDescription(source.getDescription());
         target.addProperty(VspItemProperty.VENDOR_ID, source.getVendorId());
         target.addProperty(VspItemProperty.VENDOR_NAME, source.getVendorName());

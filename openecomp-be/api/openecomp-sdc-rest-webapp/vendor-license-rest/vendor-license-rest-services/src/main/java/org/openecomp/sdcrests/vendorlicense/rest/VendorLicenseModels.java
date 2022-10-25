@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 package org.openecomp.sdcrests.vendorlicense.rest;
-
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,26 +24,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.common.RestConstants;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
 import org.springframework.validation.annotation.Validated;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 @Path("/v1.0/vendor-license-models")
 @Produces(MediaType.APPLICATION_JSON)
@@ -61,13 +56,13 @@ public interface VendorLicenseModels {
                                @Parameter(description = "Filter to only return Vendor License Models at this status."
                                    + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
                                    + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
-                               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user , @Context HttpServletRequest req);
 
     @POST
     @Path("/")
-    @Operation(description = "Create vendor license model")
+    @Operation(description = "Create vendor license model", responses = @ApiResponse(responseCode = "401", description = "Unauthorized Tenant"))
     Response createLicenseModel(@Valid VendorLicenseModelRequestDto request,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @DELETE
     @Path("/{vlmId}")
@@ -97,4 +92,5 @@ public interface VendorLicenseModels {
                                @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+
 }

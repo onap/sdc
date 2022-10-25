@@ -760,6 +760,7 @@ public final class ImportUtils {
         public static final String ESCAPED_DOUBLE_QUOTE = "\"";
         public static final String QUOTE = "'";
         public static final String VF_DESCRIPTION = "Nested VF in service";
+        public static final String TENANT = "tenant";
 
         private Constants() {
         }

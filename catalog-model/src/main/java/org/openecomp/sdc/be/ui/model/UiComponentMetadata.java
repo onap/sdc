@@ -33,7 +33,7 @@ public abstract class UiComponentMetadata {
 
     private String uniqueId;
     private String name; // archiveName
-
+    private String tenant;
     private String version; // archiveVersion
     private Boolean isHighestVersion;
     private Long creationDate;
@@ -65,12 +65,15 @@ public abstract class UiComponentMetadata {
     private Boolean isVspArchived;
     private String model;
 
+
+
     public UiComponentMetadata() {
     }
 
     public UiComponentMetadata(List<CategoryDefinition> categories, ComponentMetadataDataDefinition metadata) {
         this.uniqueId = metadata.getUniqueId();
         this.name = metadata.getName(); // archiveName
+        this.tenant = metadata.getTenant();
         this.version = metadata.getVersion();
         this.isHighestVersion = metadata.isHighestVersion();
         this.creationDate = metadata.getCreationDate();
@@ -100,5 +103,6 @@ public abstract class UiComponentMetadata {
         this.archiveTime = metadata.getArchiveTime();
         this.isVspArchived = metadata.isVspArchived();
         this.model = metadata.getModel();
+
     }
 }

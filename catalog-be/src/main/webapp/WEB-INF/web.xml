@@ -163,6 +163,21 @@
         <url-pattern>/sdc/*</url-pattern>
     </filter-mapping>
 
+
+    <filter>
+        <filter-name>MultitenancyFilter</filter-name>
+        <filter-class>org.openecomp.sdc.be.filters.MultitenancyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>MultitenancyFilter</filter-name>
+        <url-pattern>/keycloak/*</url-pattern>
+        <url-pattern>/sdc2/rest/v1/catalog/resources/*</url-pattern>
+        <url-pattern>/sdc2/rest/v1/catalog/services/*</url-pattern>
+        <url-pattern> /sdc2/rest/v1/followed</url-pattern>
+    </filter-mapping>
+
+
+
     <error-page>
         <exception-type>java.lang.RuntimeException</exception-type>
         <location>/sdc2/rest/v1/catalog/handleException/</location>

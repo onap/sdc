@@ -50,6 +50,7 @@ public class VspDetails implements VersionableEntity {
     private List<String> featureGroups;
     private String onboardingMethod;
     private List<String> modelIdList;
+    private String tenant;
 
     public VspDetails(String id, Version version) {
         this.id = id;
@@ -75,7 +76,7 @@ public class VspDetails implements VersionableEntity {
 
     @Override
     public String toString() {
-        return String.format("Vsp id = '%s', Version = '%s', Name = '%s', Category = '%s', Description = '%s', Vendor = '%s', Model = '%s'",
-            this.id, this.version, this.name, this.category, this.description, this.vendorName, this.modelIdList);
+        return String.format("Vsp id = '%s', Version = '%s', Name = '%s', Tenant = '%s', Category = '%s', Description = '%s', Vendor = '%s', Model = '%s'",
+            this.id, this.version, this.name, this.tenant, this.category, this.description, this.vendorName, this.modelIdList);
     }
 }

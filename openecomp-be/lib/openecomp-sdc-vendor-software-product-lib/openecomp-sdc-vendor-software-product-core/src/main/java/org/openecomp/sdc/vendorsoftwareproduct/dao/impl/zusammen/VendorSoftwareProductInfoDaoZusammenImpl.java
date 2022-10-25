@@ -203,6 +203,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         info.addProperty(InfoPropertyName.SUB_CATEGORY.getValue(), vspDetails.getSubCategory());
         info.addProperty(InfoPropertyName.VENDOR_ID.getValue(), vspDetails.getVendorId());
         info.addProperty(InfoPropertyName.VENDOR_NAME.getValue(), vspDetails.getVendorName());
+        info.addProperty(InfoPropertyName.TENANT.getValue(), vspDetails.getTenant());
         if (vspDetails.getVlmVersion() != null) {
             info.addProperty(InfoPropertyName.VENDOR_VERSION.getValue(), vspDetails.getVlmVersion().getId());
         }
@@ -226,6 +227,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         SUB_CATEGORY("subCategory"),
         VENDOR_ID("vendorId"),
         VENDOR_NAME("vendorName"),
+        TENANT("tenant"),
         VENDOR_VERSION("vendorVersion"),
         LICENSE_TYPE("licenseType"),
         LICENSE_AGREEMENT("licenseAgreement"),

@@ -118,6 +118,11 @@ public class ValidationUtils {
     public static final Pattern POLICY_NAME_PATTERN = Pattern.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (POLICY_MAX_LENGTH - 1) + "}$");
     private static final Set<String> CATEGORY_CONJUNCTIONS = new HashSet<>(Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
+    public static final Integer TENANT_NAME_MAX_LENGTH = 60;
+    public static final Pattern TENANT_NAME_PATTERN = Pattern
+            .compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
+
+
     private ValidationUtils() {
     }
 
@@ -364,6 +369,18 @@ public class ValidationUtils {
     public static boolean validateVendorNameLength(String vendorName) {
         return vendorName.length() <= VENDOR_NAME_MAX_LENGTH;
     }
+
+
+
+    public static boolean validateTenantName(String tenant) {
+        return TENANT_NAME_PATTERN.matcher(tenant).matches();
+    }
+
+    public static boolean validateTenantNameLength(String tenant) {
+        return tenant.length() <= TENANT_NAME_MAX_LENGTH;
+    }
+
+
 
     public static boolean validateResourceVendorModelNumberLength(String resourceVendorModelNumber) {
         return resourceVendorModelNumber.length() <= RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH;

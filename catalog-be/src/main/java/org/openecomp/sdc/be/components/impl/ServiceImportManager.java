@@ -20,10 +20,13 @@
 package org.openecomp.sdc.be.components.impl;
 
 import javax.servlet.ServletContext;
+
+import org.openecomp.sdc.be.components.validation.service.ServiceFunctionValidator;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -31,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 //upload Service model by Shiyong1989@hotmail.com
 @Component("ServiceImportManager")
 public class ServiceImportManager {
-
+    private static final Logger log = Logger.getLogger(ServiceImportManager.class.getName());
     private ServletContext servletContext;
     private ResponseFormatManager responseFormatManager;
     @Autowired
@@ -62,6 +65,9 @@ public class ServiceImportManager {
     public void populateServiceMetadata(UploadServiceInfo serviceMetaData, Service service) {
         if (service != null && serviceMetaData != null) {
             service.setDescription(serviceMetaData.getDescription());
+
+            service.setTenant(serviceMetaData.getTenant());
+
             service.setTags(serviceMetaData.getTags());
             service.setCategories(serviceMetaData.getCategories());
             service.setContactId(serviceMetaData.getContactId());
@@ -85,6 +91,11 @@ public class ServiceImportManager {
             if (serviceMetaData.getVendorName() != null) {
                 service.setVendorName(serviceMetaData.getVendorName());
             }
+
+            if (serviceMetaData.getTenant() != null) {
+                service.setTenant(serviceMetaData.getTenant());
+            }
+
             if (serviceMetaData.getVendorRelease() != null) {
                 service.setVendorRelease(serviceMetaData.getVendorRelease());
             }

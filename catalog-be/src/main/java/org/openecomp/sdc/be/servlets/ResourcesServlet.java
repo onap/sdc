@@ -56,6 +56,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
@@ -78,6 +79,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.servlets.ResourceUploadServlet.ResourceAuthorityTypeEnum;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
@@ -88,6 +90,27 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -220,8 +243,8 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResource(@PathParam("resourceId") final String resourceId,
                                    @Parameter(description = "Optional parameter to determine the delete action: " +
-                                       "DELETE, which will permanently delete the Resource from the system or " +
-                                       "MARK_AS_DELETE, which will logically mark the Resource as deleted. Default action is to MARK_AS_DELETE")
+                                           "DELETE, which will permanently delete the Resource from the system or " +
+                                           "MARK_AS_DELETE, which will logically mark the Resource as deleted. Default action is to MARK_AS_DELETE")
                                    @QueryParam("deleteAction") final DeleteActionEnum deleteAction,
                                    @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();

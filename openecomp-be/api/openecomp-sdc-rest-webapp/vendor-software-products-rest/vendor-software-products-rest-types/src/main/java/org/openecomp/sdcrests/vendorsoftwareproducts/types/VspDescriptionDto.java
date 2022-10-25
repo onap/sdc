@@ -52,6 +52,9 @@ public class VspDescriptionDto {
     private LicensingData licensingData;
     private List<String> selectedModelList;
 
+    @NotNull
+    private String tenant;
+
     public void setName(final String name) {
         this.name = ValidationUtils.sanitizeInputString(name);
     }
@@ -62,6 +65,11 @@ public class VspDescriptionDto {
 
     public void setDescription(final String description) {
         this.description = ValidationUtils.sanitizeInputString(description);
+    }
+
+
+    public void setTenant(final String tenant) {
+        this.tenant = ValidationUtils.sanitizeInputString(tenant);
     }
 
     public void setSelectedModelList(final List<String> selectedModelList) {

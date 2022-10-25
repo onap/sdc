@@ -28,26 +28,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
@@ -63,14 +44,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.ArtifactTypesInfo;
-import org.openecomp.sdc.be.model.ArtifactType;
-import org.openecomp.sdc.be.model.BaseType;
-import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
-import org.openecomp.sdc.be.model.Category;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.PropertyScope;
-import org.openecomp.sdc.be.model.Tag;
-import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
@@ -79,8 +53,20 @@ import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/v1/")
 /**
@@ -522,8 +508,23 @@ public class ElementServlet extends BeGenericServlet {
                 log.debug("failed to get followed resources services ");
                 return buildErrorResponse(followedResourcesServices.right().value());
             }
-            Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            Multitenancy keyaccess= new Multitenancy();
+            if (keyaccess.multitenancycheck() == true) {
+                AccessToken.Access realmAccess = keyaccess.getAccessToken(request).getRealmAccess();
+                Set<String> realmroles = realmAccess.getRoles();
+                Map<String, List<? extends Component>> dataResponse = new HashMap<>();
+               followedResourcesServices.left().value().entrySet().stream()
+                        .forEach(component->{component.setValue(component.getValue().stream().filter(cm->realmroles.stream()
+                                .anyMatch(role->cm.getTenant().equals(role))).collect(Collectors.toList()));
+                            dataResponse.put(component.getKey(), component.getValue());
+                        });
+                Object data = RepresentationUtils.toRepresentation(dataResponse);
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            }
+            else{
+                Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Followed Resources / Services Categories");
             log.debug("Getting followed resources/services failed with exception", e);
