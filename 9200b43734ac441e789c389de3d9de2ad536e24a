@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc2cc702_a31f0fbe",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T17:34:09Z",
+      "side": 1,
+      "message": "DataTypeModel does not have the function \"getSubToscaType\", how is this working?\nIf it is instance of DataTypeModel, the type must be \u0027datatype\u0027, so better to force here as string.",
+      "range": {
+        "startLine": 366,
+        "startChar": 58,
+        "endLine": 366,
+        "endChar": 99
+      },
+      "revId": "9200b43734ac441e789c389de3d9de2ad536e24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a60e6ec4_802ab5d8",
+        "filename": "catalog-ui/src/app/utils/menu-handler.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T17:34:09Z",
+      "side": 1,
+      "message": "No need to re-assign, you could do sequencially:\ncomponents\n  .filter((c) \u003d\u003e c instanceof Component)\n  .forEach( ...",
+      "range": {
+        "startLine": 139,
+        "startChar": 12,
+        "endLine": 139,
+        "endChar": 73
+      },
+      "revId": "9200b43734ac441e789c389de3d9de2ad536e24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
