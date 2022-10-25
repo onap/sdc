@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b88d9c07_6b207751",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-25T13:34:03Z",
+      "side": 1,
+      "message": "one of the Getter is redundant",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 11
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89dd261d_e0bc0e34",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-25T13:34:03Z",
+      "side": 1,
+      "message": "redundant, covered by Lombok.Getter",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 5
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1d5c83b_1c6322fb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-25T13:34:03Z",
+      "side": 1,
+      "message": "remove and replace with Lombok.Setter",
+      "range": {
+        "startLine": 66,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 5
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
