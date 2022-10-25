@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "a163f790_58b5d15c",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "858a4ea5_363b036d",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 10
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a54274c7_4b28d6b9",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.html",
         "patchSetId": 1
@@ -375,6 +399,30 @@
       "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1fc4eea_37ea80df",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "I misspelled that, I meant to use here and in the line 139. Please, reuse it in line 139 too.",
+      "parentUuid": "f86bda21_c9e4ca3b",
+      "range": {
+        "startLine": 255,
+        "startChar": 8,
+        "endLine": 255,
+        "endChar": 90
+      },
+      "revId": "895da66dce267315d1d1c96c952307b42acc4f60",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }

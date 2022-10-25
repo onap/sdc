@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6296404f_89922735",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "add space after :",
+      "range": {
+        "startLine": 144,
+        "startChar": 28,
+        "endLine": 144,
+        "endChar": 29
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d571c6af_5165f78d",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 222,
+        "startChar": 8,
+        "endLine": 222,
+        "endChar": 66
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c96d6a92_223b12fd",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "could use const",
+      "range": {
+        "startLine": 230,
+        "startChar": 12,
+        "endLine": 230,
+        "endChar": 15
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a1d8d7d_277a5786",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "please, use the strict quality operator \"\u003d\u003d\u003d\" in place of \"\u003d\u003d\"",
+      "range": {
+        "startLine": 271,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 74
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2708c108_92c1cd99",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T18:23:00Z",
+      "side": 1,
+      "message": "I recommend to work with an empty map as default value, to avoid null pointer and null check",
+      "range": {
+        "startLine": 53,
+        "startChar": 66,
+        "endLine": 53,
+        "endChar": 70
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
