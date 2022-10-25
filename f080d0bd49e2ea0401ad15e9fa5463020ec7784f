@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "e864f8c1_e2c92763",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-10-25T16:16:39Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5747acfc_ee03042b",
+      "range": {
+        "startLine": 366,
+        "startChar": 12,
+        "endLine": 366,
+        "endChar": 71
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9eb1e6dd_bb76ba4d",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-10-25T16:16:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bfab6034_41b7c9ca",
+      "range": {
+        "startLine": 366,
+        "startChar": 27,
+        "endLine": 366,
+        "endChar": 43
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3247daa_67586a83",
         "filename": "catalog-ui/src/app/utils/menu-handler.ts",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2f30249_6c8304b7",
+        "filename": "catalog-ui/src/app/utils/menu-handler.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-10-25T16:16:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3247daa_67586a83",
+      "range": {
+        "startLine": 139,
+        "startChar": 23,
+        "endLine": 139,
+        "endChar": 30
+      },
+      "revId": "f080d0bd49e2ea0401ad15e9fa5463020ec7784f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
