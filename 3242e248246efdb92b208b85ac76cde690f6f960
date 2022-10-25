@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fcc2f4bd_dd6776d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-10-25T09:19:57Z",
+      "side": 1,
+      "message": "Please, describe the issue in the message. The link provided will probably not give any information after the fix. E.g.:\n\nFix malformed \u0027calc\u0027 expressions\n\nFixes malformed \u0027calc\u0027 expressions reported as critical bug by Sonar Cloud",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 111
+      },
+      "revId": "3242e248246efdb92b208b85ac76cde690f6f960",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
