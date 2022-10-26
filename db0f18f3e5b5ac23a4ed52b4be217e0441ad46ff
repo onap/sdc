@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5310ab0_f44cea9f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-26T08:56:51Z",
+      "side": 1,
+      "message": "Please reword to better explain what the issue is, e.g. Fix potential NPE in importing property constraints\n\nsame with the jira ticket.\n\nA bug is not major just because sonar says so - in this case a NPE will be thrown on an invalid input, which isnt great but hardly a major bug",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 14
+      },
+      "revId": "db0f18f3e5b5ac23a4ed52b4be217e0441ad46ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
