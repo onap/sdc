@@ -233,10 +233,12 @@ public class SecurityManager {
     }
 
     private void deleteFile(final Path filePath) {
-        try {
-            Files.delete(filePath);
-        } catch (final IOException e) {
-            LOGGER.warn("Failed to delete '{}' after verifying package signed data", filePath, e);
+        if (Files.exists(filePath)) {
+            try {
+                Files.delete(filePath);
+            } catch (final IOException e) {
+                LOGGER.warn("Failed to delete '{}' after verifying package signed data", filePath, e);
+            }
         }
     }
 
