@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -42,6 +43,7 @@ import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
@@ -206,6 +208,18 @@ public class DataTypeOperation extends AbstractOperation {
         final List<PropertyDefinition> propertyDefinitions = new ArrayList<>(propertyMap.values());
         propertyDefinitions.sort(Comparator.comparing(PropertyDefinition::getName));
         return propertyDefinitions;
+    }
+
+    public Optional<DataTypeDefinition> handleDataTypeDownloadRequestById(final String dataTypeId) {
+        if (StringUtils.isNotEmpty(dataTypeId)) {
+            Optional<DataTypeDataDefinition> dataTypeDataDefinition = getDataTypeByUid(dataTypeId);
+            if (dataTypeDataDefinition.isPresent()) {
+                DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(dataTypeDataDefinition.get());
+                dataTypeDefinition.setProperties(findAllProperties(dataTypeId));
+                return Optional.of(dataTypeDefinition);
+            }
+        }
+        return Optional.empty();
     }
 
     public PropertyDefinitionDto createProperty(final String dataTypeId, final PropertyDefinitionDto propertyDefinitionDto) {

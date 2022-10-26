@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.ArtifactTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
@@ -57,6 +59,8 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -65,6 +69,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -72,7 +77,9 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -92,12 +99,15 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private static final Logger log = Logger.getLogger(TypesFetchServlet.class);
     private static final String FAILED_TO_GET_ALL_NON_ABSTRACT = "failed to get all non abstract {}";
     private static final String START_HANDLE_REQUEST_OF_MODIFIER_ID_IS = "Start handle request of {} | modifier id is {}";
+    private static final String DATATYPE_FILE_TYPE = ".yml";
     private final RelationshipTypeBusinessLogic relationshipTypeBusinessLogic;
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
     private final ArtifactTypeBusinessLogic artifactTypeBusinessLogic;
     private final ModelOperation modelOperation;
+    private final DataTypeOperation dataTypeOperation;
+    private final ToscaExportHandler toscaExportUtils;
 
     @Inject
     public TypesFetchServlet(
@@ -110,7 +120,9 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
         ResourceBusinessLogic resourceBusinessLogic,
         ArtifactTypeBusinessLogic artifactTypeBusinessLogic,
-        ModelOperation modelOperation
+        ModelOperation modelOperation,
+        DataTypeOperation dataTypeOperation,
+        ToscaExportHandler toscaExportUtils
     ) {
         super(
             componentInstanceBL,
@@ -124,6 +136,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         this.resourceBusinessLogic = resourceBusinessLogic;
         this.artifactTypeBusinessLogic = artifactTypeBusinessLogic;
         this.modelOperation = modelOperation;
+        this.dataTypeOperation = dataTypeOperation;
+        this.toscaExportUtils = toscaExportUtils;
     }
 
     @GET
@@ -195,6 +209,35 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             responseWrapper.setInnerElement(okResponse);
         }
         return responseWrapper.getInnerElement();
+    }
+
+    @GET
+    @Path("downloadDataType")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get data types", method = "GET", summary = "Returns all data types from all models", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "allDataTypes"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Data types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response downloadDataType(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                     @Parameter(description = "dataTypeId") @QueryParam("dataTypeId") String dataTypeId) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
+        init();
+        validateUserExist(responseWrapper, userWrapper, userId);
+        Response response;
+        try {
+            String url = request.getMethod() + " " + request.getRequestURI();
+            log.info(START_HANDLE_REQUEST_OF_MODIFIER_ID_IS, url, userId);
+            response = handleDataTypeDownloadRequest(dataTypeId);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadResourceArtifactBase64");
+            log.debug("downloadResourceArtifactBase64 unexpected exception", e);
+            throw e;
+        }
+        return response;
     }
 
     @GET
@@ -421,5 +464,25 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             .collect(Collectors.toMap(
                 component -> ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition())
                     .getToscaResourceName(), component -> component, (component1, component2) -> component1)));
+    }
+
+    private Response handleDataTypeDownloadRequest(final String dataTypeId) {
+        Optional<DataTypeDefinition> dataTypeDefinition = dataTypeOperation.handleDataTypeDownloadRequestById(dataTypeId);
+        Either<byte[], ComponentException> toscaExportDataType = toscaExportUtils.exportDataType(dataTypeDefinition.get()).left()
+            .map(toscaRepresentation -> {
+                log.debug("Tosca yaml exported for Datatype {} ", dataTypeDefinition.get().getUniqueId());
+                return toscaRepresentation.getMainYaml();
+            }).right().map(toscaError -> {
+                log.debug("Failed export tosca yaml for DataType {} error {}", dataTypeDefinition.get().getUniqueId(), toscaError);
+                return new ByActionStatusComponentException(componentsUtils.convertFromToscaError(toscaError));
+            });
+        byte[] file = toscaExportDataType.left().value();
+        String base64Contents = new String(Base64.encodeBase64(file));
+        String artifactName = dataTypeDefinition.get().getName() + DATATYPE_FILE_TYPE;
+        ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+        ArtifactUiDownloadData artifactUiDownloadData = new ArtifactUiDownloadData();
+        artifactUiDownloadData.setArtifactName(artifactName);
+        artifactUiDownloadData.setBase64Contents(base64Contents);
+        return buildOkResponse(responseFormat, artifactUiDownloadData);
     }
 }
