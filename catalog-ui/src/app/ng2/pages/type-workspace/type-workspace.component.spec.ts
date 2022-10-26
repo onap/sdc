@@ -38,6 +38,9 @@ import {States} from "../../../utils/constants";
 import {IUserProperties} from "../../../models/user";
 import {Observable} from "rxjs/Observable";
 import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type-workspace-properties.component";
+import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
+import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
@@ -89,13 +92,15 @@ describe('TypeWorkspaceComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TypeWorkspaceComponent, WorkspaceMenuComponent, TypeWorkspaceGeneralComponent, TypeWorkspacePropertiesComponent ],
+      declarations: [ TypeWorkspaceComponent, WorkspaceMenuComponent, TypeWorkspaceGeneralComponent, TypeWorkspacePropertiesComponent, TypeWorkspaceToscaArtifactPageComponent ],
       imports: [
         ReactiveFormsModule,
         FormsModule,
         TranslateModule,
         UiElementsModule,
-        LayoutModule
+        LayoutModule,
+        NgxDatatableModule,
+        SvgIconModule
       ],
       providers: [
         {provide: DataTypeService, useValue: dataTypeServiceMock},

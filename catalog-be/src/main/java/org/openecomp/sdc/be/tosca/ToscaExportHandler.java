@@ -226,6 +226,10 @@ public class ToscaExportHandler {
         return convertToToscaTemplate(component).left().map(this::createToscaRepresentation);
     }
 
+    public Either<ToscaRepresentation, ToscaError> exportDataType(DataTypeDefinition dataTypeDefinition) {
+        return convertDataTypeToToscaTemplate(dataTypeDefinition).left().map(this::createToscaRepresentation);
+    }
+
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component, final boolean isAssociatedComponent) {
         final List<Map<String, Map<String, String>>> imports = new ArrayList<>(getDefaultToscaImports(component.getModel()));
         if (CollectionUtils.isEmpty(imports)) {
@@ -314,6 +318,39 @@ public class ToscaExportHandler {
             log.trace("convert component as topology template");
             return convertToscaTemplate(component, toscaTemplate);
         }
+    }
+
+    public Either<ToscaTemplate, ToscaError> convertDataTypeToToscaTemplate(final DataTypeDefinition dataTypeDefinition) {
+        final ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
+        return convertDataTypeTosca(dataTypeDefinition, toscaTemplate);
+    }
+
+    private Either<ToscaTemplate, ToscaError> convertDataTypeTosca(final DataTypeDefinition dataTypeDefinition, final ToscaTemplate toscaTemplate) {
+        final var dataTypesEither = applicationDataTypeCache.getAll(dataTypeDefinition.getModel());
+        if (dataTypesEither.isRight()) {
+            log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
+            return Either.right(ToscaError.GENERAL_ERROR);
+        }
+        Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
+        if (!dataTypeDefinition.isEmpty()) {
+            Map<String, ToscaDataType> toscaDataTypeMap = new HashMap<>();
+            ToscaDataType toscaDataType = new ToscaDataType();
+            toscaDataType.setDerived_from(dataTypeDefinition.getDerivedFromName());
+            toscaDataType.setDescription(dataTypeDefinition.getDescription());
+            toscaDataType.setVersion(dataTypeDefinition.getVersion());
+            if (CollectionUtils.isNotEmpty(dataTypeDefinition.getProperties())) {
+                toscaDataType.setProperties(dataTypeDefinition.getProperties().stream()
+                    .collect(Collectors.toMap(
+                        PropertyDataDefinition::getName,
+                        s -> propertyConvertor.convertProperty(dataTypes, s, PropertyType.PROPERTY),
+                        (toscaPropertyTobeValidated, toscaProperty) -> validateToscaProperty((List<DataTypeDefinition>) dataTypeDefinition, toscaPropertyTobeValidated,
+                            toscaProperty)
+                    )));
+            }
+            toscaDataTypeMap.put(dataTypeDefinition.getName(), toscaDataType);
+            toscaTemplate.setData_types(toscaDataTypeMap);
+        }
+        return Either.left(toscaTemplate);
     }
 
     private List<Map<String, Map<String, String>>> getDefaultToscaImports(final String modelId) {

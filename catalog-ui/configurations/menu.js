@@ -303,6 +303,7 @@ const SDC_MENU_CONFIG = {
         "DataType": [
             {"text": "General", "action": "onMenuItemPressed", "state": "general"},
             {"text": "Properties", "action": "onMenuItemPressed", "state": "properties"},
+            {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "tosca_artifacts"}
         ]
     }
 
