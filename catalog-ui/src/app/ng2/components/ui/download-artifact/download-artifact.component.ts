@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import {IFileDownload, Component as TopologyTemplate, ArtifactModel, FullComponentInstance} from "app/models";
+import {IFileDownload, ArtifactModel} from "app/models";
 import {EventListenerService} from "app/services";
 import {CacheService} from "app/services-ng2";
 import {EVENTS} from "app/utils";
@@ -59,8 +59,8 @@ export class DownloadArtifactComponent {
 
     public download = (event) => {
         event.stopPropagation();
-        let onFaild = (response):void => {
-            console.info('onFaild', response);
+        let onFailed = (response):void => {
+            console.info('onFailed', response);
             this.removeDownloadedFileLoader();
         };
 
@@ -72,9 +72,9 @@ export class DownloadArtifactComponent {
         this.setDownloadedFileLoader();
 
         if (this.isInstance) {
-            this.componentInstanceService.downloadInstanceArtifact(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.componentId, this.artifact.uniqueId).subscribe(onSuccess, onFaild);
+            this.componentInstanceService.downloadInstanceArtifact(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.componentId, this.artifact.uniqueId).subscribe(onSuccess, onFailed);
         } else {
-            this.topologyTemplateService.downloadArtifact(this.componentType, this.componentId, this.artifact.uniqueId).subscribe(onSuccess, onFaild);
+            this.topologyTemplateService.downloadArtifact(this.componentType, this.componentId, this.artifact.uniqueId).subscribe(onSuccess, onFailed);
         }
     };
 

@@ -4,12 +4,10 @@ import {SdcUiServices} from "onap-ui-angular";
 import {ArtifactModel} from "../../../../models";
 import {Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../../store/states/workspace.state";
-import * as _ from "lodash";
-import {ArtifactGroupType, COMPONENT_FIELDS} from "../../../../utils";
+import {ArtifactGroupType} from "../../../../utils";
 import {GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
 import {Observable} from "rxjs/index";
 import {ArtifactsState} from "../../../store/states/artifacts.state";
-import {ArtifactType} from "../../../../utils/constants";
 import {map} from "rxjs/operators";
 
 @Component({
