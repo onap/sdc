@@ -31,13 +31,16 @@ import {UpgradeModule} from "@angular/upgrade/static";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../shared/translator/translate.module";
 import {DataTypeService} from "../../services/data-type.service";
-import {TypeWorkspacePropertiesComponent} from './type-workspace-properties/type-workspace-properties.component';
+import { TypeWorkspacePropertiesComponent } from './type-workspace-properties/type-workspace-properties.component';
+import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
 import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
 
 @NgModule({
-    imports: [
+   imports: [
         CommonModule,
         UiElementsModule,
         LayoutModule,
@@ -46,12 +49,15 @@ import {InterfaceOperationHandlerModule} from "../composition/interface-operaton
         TranslateModule,
         FormsModule,
         InterfaceOperationHandlerModule,
+        NgxDatatableModule,
+        SvgIconModule,
     ],
     declarations: [
         TypeWorkspaceComponent,
         WorkspaceMenuComponent,
         TypeWorkspaceGeneralComponent,
         TypeWorkspacePropertiesComponent,
+        TypeWorkspaceToscaArtifactPageComponent,
         AddPropertyComponent,
     ],
     providers: [

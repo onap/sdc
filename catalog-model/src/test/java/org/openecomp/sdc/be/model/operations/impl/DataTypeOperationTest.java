@@ -268,6 +268,34 @@ class DataTypeOperationTest {
         assertArrayEquals(expectedException.getParams(), actualException.getParams());
     }
 
+    @Test
+    void handleDataTypeDownloadRequestById_Success() {
+        final PropertyDefinition property1 = new PropertyDefinition();
+        property1.setName("property1");
+        final PropertyDefinition property2 = new PropertyDefinition();
+        property2.setName("property2");
+
+        when(janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), "test.data.type00099", DataTypeData.class))
+            .thenReturn(Either.left(createDataTypeData("test.data.type99", "test.data.type00099", 888L, 999L, modelName)));
+        when(propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, "test.data.type00099"))
+            .thenReturn(Either.left(Map.of(property1.getName(), property1, property2.getName(), property2)));
+
+        final Optional<DataTypeDefinition> dataType = dataTypeOperation.handleDataTypeDownloadRequestById("test.data.type00099");
+        assertTrue(dataType.isPresent());
+        assertEquals("test.data.type99", dataType.get().getName());
+        assertEquals("test.data.type00099", dataType.get().getUniqueId());
+        assertEquals(modelName, dataType.get().getModel());
+        assertEquals(2, dataType.get().getProperties().size());
+        assertEquals(property1.getName(), dataType.get().getProperties().get(0).getName());
+        assertEquals(property2.getName(), dataType.get().getProperties().get(1).getName());
+    }
+
+    @Test
+    void handleDataTypeDownloadRequestById_Fail() {
+        final Optional<DataTypeDefinition> dataType = dataTypeOperation.handleDataTypeDownloadRequestById("");
+        assertTrue(dataType.isEmpty());
+    }
+
     private void initTestData() {
         model = new Model(modelName, ModelTypeEnum.NORMATIVE);
         final String TEST_DATA_TYPE_001 = "test.data.type001";

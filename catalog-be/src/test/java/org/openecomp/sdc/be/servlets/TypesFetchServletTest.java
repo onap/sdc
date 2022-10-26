@@ -63,9 +63,11 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
 import org.openecomp.sdc.be.servlets.exception.OperationExceptionMapper;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -119,6 +121,10 @@ class TypesFetchServletTest extends JerseyTest {
     private ResponseFormatManager responseFormatManager;
     @Mock
     private ModelOperation modelOperation;
+    @Mock
+    private DataTypeOperation dataTypeOperation;
+    @Mock
+    private ToscaExportHandler toscaExportHandler;
 
     private final Path rootPath = Path.of("/v1/catalog");
     private final Path nodeTypesPath = rootPath.resolve("nodeTypes");
@@ -218,6 +224,8 @@ class TypesFetchServletTest extends JerseyTest {
                     bind(interfaceOperationBusinessLogic).to(InterfaceOperationBusinessLogic.class);
                     bind(artifactTypeBusinessLogic).to(ArtifactTypeBusinessLogic.class);
                     bind(modelOperation).to(ModelOperation.class);
+                    bind(dataTypeOperation).to(DataTypeOperation.class);
+                    bind(toscaExportHandler).to(ToscaExportHandler.class);
                 }
             })
             .register(new OperationExceptionMapper(
@@ -264,6 +272,10 @@ class TypesFetchServletTest extends JerseyTest {
             .thenReturn(artifactTypeBusinessLogic);
         when(webApplicationContext.getBean(ModelOperation.class))
             .thenReturn(modelOperation);
+        when(webApplicationContext.getBean(DataTypeOperation.class))
+            .thenReturn(dataTypeOperation);
+        when(webApplicationContext.getBean(ToscaExportHandler.class))
+            .thenReturn(toscaExportHandler);
     }
 
     void initConfig() {

@@ -1,0 +1,40 @@
+<div class="tosca-artifact-page">
+    <ngx-datatable
+            columnMode="flex"
+            [headerHeight]="40"
+            [rowHeight]="35"
+            [reorderable]="false"
+            [swapColumns]="false"
+            [rows]="toscaArtifacts"
+            [sorts]="[{prop: 'artifactDisplayName', dir: 'desc'}]"
+            #toscaArtifactsTable
+            (activate)="onActivate($event)">
+        <ngx-datatable-column [resizeable]="false" name="Name" [flexGrow]="3"
+                              [prop]="'artifactDisplayName'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class="expand-collapse-cell">
+                    <span>{{row.artifactDisplayName }}</span>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false"name="Type" [flexGrow]="3">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{row.artifactType}}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Version" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                {{ row.artifactVersion }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false"[flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class="download-artifact-button">
+                    <svg-icon [mode]="'primary2'" [disabled]="disabled" [clickable]="!disabled" [name]="iconType"
+                              [testId]="testId" mode="info" clickable="true" size="medium" (click)="download($event)">
+                    </svg-icon>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+</div>
