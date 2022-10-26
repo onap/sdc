@@ -214,7 +214,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             throw new ArtifactStorageException(PACKAGE_REDUCER_NOT_CONFIGURED.getErrorMessage());
         }
 
-        final Path tempArtifactPath;
+        Path tempArtifactPath = null;
         try {
             final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
 
@@ -228,12 +228,14 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             }
             LOGGER.debug("FINISHED -> Transfer to '{}'", tempArtifactPath.toString());
         } catch (final Exception e) {
+            deleteTempFile(tempArtifactPath);
             throw new ArtifactStorageException(UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename));
         }
         final ArtifactInfo artifactInfo;
         try (final InputStream inputStream = new FileInputStream(tempArtifactPath.toFile())) {
             artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
         } catch (final Exception e) {
+            deleteTempFile(tempArtifactPath);
             LOGGER.error("Package Size Reducer not configured", e);
             throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename));
         }
@@ -243,17 +245,24 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             artifactInfo.setBytes(packageSizeReducer.reduce(tempArtifactPath));
             LOGGER.debug("FINISHED -> reducing '{}'", tempArtifactPath);
         } catch (final Exception e) {
+            deleteTempFile(tempArtifactPath);
             LOGGER.debug("ERROR -> reducing '{}'", tempArtifactPath, e);
             throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(filename), e);
         }
 
-        try {
-            Files.delete(tempArtifactPath);
-        } catch (final Exception e) {
-            LOGGER.warn("Could not delete temporary package at '{}'", tempArtifactPath, e);
-        }
+        deleteTempFile(tempArtifactPath);
 
         return artifactInfo;
+    }
+
+    private void deleteTempFile(final Path tempArtifactPath) {
+        if (Files.exists(tempArtifactPath)) {
+            try {
+                Files.delete(tempArtifactPath);
+            } catch (final Exception e) {
+                LOGGER.warn("Could not delete temporary package at '{}'", tempArtifactPath, e);
+            }
+        }
     }
 
     private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,
