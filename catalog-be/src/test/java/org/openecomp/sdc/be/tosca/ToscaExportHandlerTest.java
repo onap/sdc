@@ -291,6 +291,16 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     }
 
     @Test
+    void testExportDataType() {
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setUniqueId("uniqueId");
+        Either<ToscaRepresentation, ToscaError> result;
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
+        result = testSubject.exportDataType(dataTypeDefinition);
+        assertNotNull(result);
+    }
+
+    @Test
     void testConvertInterfaceNodeTypeProperties() {
 
         Resource component = getNewResource();

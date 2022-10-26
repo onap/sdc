@@ -24,7 +24,7 @@ import {
     ComponentInstance,
     DataTypeModel,
     DataTypesMap,
-    IAppConfigurtaion, InputModel,
+    IAppConfigurtaion, IFileDownload, InputModel,
     InputPropertyBase,
     PropertyModel,
     SchemaProperty
@@ -206,4 +206,9 @@ export class DataTypesService implements IDataTypesService {
         }
         return true;
     };
+
+    public downloadDataType = (dataTypeId: string): angular.IHttpPromise<IFileDownload> => {
+        console.log("dataTypeId", dataTypeId);
+        return this.$http.get<IFileDownload>(this.baseUrl + "downloadDataType" + ((dataTypeId) ? '?dataTypeId=' + dataTypeId : ''))
+    }
 }
