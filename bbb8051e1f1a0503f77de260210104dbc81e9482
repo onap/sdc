@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e8838933_15549f0f",
+        "filename": "catalog-ui/src/app/utils/menu-handler.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-10-26T14:38:19Z",
+      "side": 1,
+      "message": "what is this filtering out?",
+      "range": {
+        "startLine": 140,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 50
+      },
+      "revId": "bbb8051e1f1a0503f77de260210104dbc81e9482",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
