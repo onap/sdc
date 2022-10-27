@@ -33,8 +33,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -2127,6 +2129,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 GreaterThanConstraint greaterThanConstraint = (GreaterThanConstraint) src;
                 jsonArray.add(JsonParser.parseString(greaterThanConstraint.getGreaterThan()));
                 result.add("greaterThan", jsonArray);
+            } else if (src instanceof LessThanConstraint) {
+                LessThanConstraint lessThanConstraint = (LessThanConstraint) src;
+                jsonArray.add(JsonParser.parseString(lessThanConstraint.getLessThan()));
+                result.add("lessThan", jsonArray);
             } else if (src instanceof LessOrEqualConstraint) {
                 LessOrEqualConstraint lessOrEqualConstraint = (LessOrEqualConstraint) src;
                 jsonArray.add(JsonParser.parseString(lessOrEqualConstraint.getLessOrEqual()));
@@ -2169,8 +2175,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                             if (value != null) {
                                 if (value instanceof JsonArray) {
                                     JsonArray rangeArray = (JsonArray) value;
-                                    if (rangeArray.size() != 2) {
+                                    if (rangeArray.size() != 2 || rangeArray.contains(new JsonPrimitive(""))) {
                                         log.error("The range constraint content is invalid. value = {}", value);
+                                        throw new JsonSyntaxException("The range constraint content is invalid");
                                     } else {
                                         InRangeConstraint rangeConstraint = new InRangeConstraint();
                                         String minValue = rangeArray.get(0).getAsString();
@@ -2232,8 +2239,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                         case VALID_VALUES:
                             if (value != null) {
                                 JsonArray rangeArray = (JsonArray) value;
-                                if (rangeArray.size() == 0) {
+                                if (rangeArray.size() == 0 || rangeArray.contains(new JsonPrimitive(""))) {
                                     log.error("The valid values constraint content is invalid. value = {}", value);
+                                    throw new JsonSyntaxException("The valid values constraint content is invalid");
                                 } else {
                                     ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
                                     List<String> validValues = new ArrayList<>();
@@ -2409,7 +2417,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
             return null;
         }
-
 
     }
 
