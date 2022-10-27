@@ -37,13 +37,12 @@ export class ConstraintsComponent implements OnInit {
     }
   }
   @Input() isViewOnly: boolean = false;
-  @Output() onConstraintChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+  @Output() onConstraintChange: EventEmitter<any> = new EventEmitter<any>();
 
-  constraints: Constraint[];
+  constraints: Constraint[] = new Array();
   constraintTypes: string[];
   ConstraintTypesMapping = ConstraintTypesMapping;
-  newConstraintType: any = ConstraintTypes.equal;
-  newConstraintValue: any = null;
+  valid: boolean = true;
   _property: PropertyBEModel;
 
   ngOnInit() {
@@ -76,7 +75,7 @@ export class ConstraintsComponent implements OnInit {
     } else if(constraint.lessOrEqual) {
       constraintType = ConstraintTypes.less_or_equal;
       constraintValue = constraint.lessOrEqual;
-    } else if(constraint.rangeMinValue && constraint.rangeMaxValue) {
+    } else if(constraint.rangeMinValue || constraint.rangeMaxValue) {
       constraintType = ConstraintTypes.in_range;
       constraintValue = new Array(constraint.rangeMinValue, constraint.rangeMaxValue);
     } else if(constraint.length) {
@@ -106,7 +105,7 @@ export class ConstraintsComponent implements OnInit {
     return constraintArray;
   }
 
-  private getConstraintFormat(constraint: Constraint) {
+  private getConstraintFormat(constraint: Constraint): any {
     switch (constraint.type) {
       case ConstraintTypes.equal:
         return {
@@ -157,10 +156,29 @@ export class ConstraintsComponent implements OnInit {
     }
   }
 
+  private areConstraintsValid(): void {
+    this.valid = true;
+    this.constraints.forEach((constraint: Constraint) => {
+      if (!constraint.value || constraint.type == ConstraintTypes.null) {
+        this.valid = false;
+      }
+    });
+  }
+
+  private emitOnConstraintChange(): void {
+    this.areConstraintsValid();
+    let newConstraints = this.getConstraintsFormat();
+    this.onConstraintChange.emit({
+      constraints: newConstraints,
+      valid: this.valid
+    });
+  }
+
   removeFromList(constraint: Constraint, value: any){
     let index = this.constraints.indexOf(constraint);
     let valueIndex = this.constraints[index].value.indexOf(value);
     this.constraints[index].value.splice(valueIndex, 1);
+    this.emitOnConstraintChange();
   }
 
   addToList(constraint: Constraint){
@@ -174,14 +192,16 @@ export class ConstraintsComponent implements OnInit {
   changeConstraintType(constraint: Constraint, newType: ConstraintTypes) {
     let index = this.constraints.indexOf(constraint);
     this.constraints[index].type = newType;
-    if ((newType == ConstraintTypes.in_range || newType == ConstraintTypes.valid_values) && !Array.isArray(this.constraints[index].value)) {
+    if (newType == ConstraintTypes.in_range || newType == ConstraintTypes.valid_values) {
       this.constraints[index].value = new Array()
     }
+    this.emitOnConstraintChange();
   }
 
   changeConstraintValue(constraint: Constraint, newValue: any) {
     let index = this.constraints.indexOf(constraint);
     this.constraints[index].value = newValue;
+    this.emitOnConstraintChange();
   }
 
   changeConstrainValueIndex(constraint: Constraint, newValue: any, valueIndex: number) {
@@ -190,24 +210,22 @@ export class ConstraintsComponent implements OnInit {
       this.constraints[index].value = new Array();
     }
     this.constraints[index].value[valueIndex] = newValue;
+    this.emitOnConstraintChange();
   }
 
   removeConstraint(constraint: Constraint) {
     let index = this.constraints.indexOf(constraint);
     this.constraints.splice(index, 1);
-    let test = this.getConstraintsFormat();
-    this.onConstraintChange.emit(test);
+    this.emitOnConstraintChange();
 }
 
   addConstraint() {
     let newConstraint: Constraint = {
-      type:this.newConstraintType,
-      value: this.newConstraintValue
+      type: ConstraintTypes.null,
+      value: ""
     }
     this.constraints.push(newConstraint);
-    this.newConstraintValue = null;
-    let test = this.getConstraintsFormat();
-    this.onConstraintChange.emit(test);
+    this.emitOnConstraintChange();
   }
 
   getInRangeValue(constraint: Constraint, valueIndex: number): string {
@@ -218,46 +236,20 @@ export class ConstraintsComponent implements OnInit {
     return this.constraints[index].value[valueIndex];
   }
 
-  getNewInRangeValue(valueIndex: number) {
-    if(!this.newConstraintValue || !this.newConstraintValue[valueIndex]) {
-      return "";
-    }
-    return this.newConstraintValue[valueIndex];
+  disableConstraint(optionConstraintType: ConstraintTypes, constraintType: ConstraintTypes): boolean {
+    return this.getConstraintTypeIfPresent(optionConstraintType) ? true : false;
   }
 
-  changeNewConstraintInRangeValue(newValue: any, valueIndex: number) {
-    if(!this.newConstraintValue) {
-      this.newConstraintValue = new Array();
-    }
-    this.newConstraintValue[valueIndex] = newValue;
-  }
-
-  changeNewConstraintType(newType: ConstraintTypes) {
-    this.newConstraintType = newType;
-    if ((newType == ConstraintTypes.in_range || newType == ConstraintTypes.valid_values) && !Array.isArray(this.newConstraintValue)) {
-      this.newConstraintValue = new Array()
-    }
-  }
-
-  changeNewConstraintValue(newValue: any) {
-    this.newConstraintValue = newValue;
-  }
-
-  removeFromNewList(value: any){
-    let valueIndex = this.newConstraintValue.indexOf(value);
-    this.newConstraintValue.splice(valueIndex, 1);
-  }
-
-  addToNewList(){
-    if (!this.newConstraintValue) {
-      this.newConstraintValue = new Array();
-    }
-    this.newConstraintValue.push("");
+  getConstraintTypeIfPresent(constraintType: ConstraintTypes): Constraint {
+    return this.constraints.find((constraint) => {
+      return constraint.type == constraintType ? true : false;
+    })
   }
 
 }
 
 export enum ConstraintTypes {
+  null = "",
   equal= "equal",
   greater_than = "greaterThan",
   greater_or_equal = "greaterOrEqual",
