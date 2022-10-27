@@ -36,7 +36,9 @@
                         hidden selected>
                   {{ConstraintTypesMapping[constraint.type]}}
                 </option>
-                <option *ngFor="let constraintType of constraintTypes" [value]="constraintType">
+                <option *ngFor="let constraintType of constraintTypes"
+                        [value]="constraintType"
+                        [disabled]="disableConstraint(constraintType, constraint.type)">
                   {{ConstraintTypesMapping[constraintType]}}
                 </option>
               </select>
@@ -46,14 +48,14 @@
         <div class="w-sdc-form-column">
           <div class="w-sdc-form-columns-wrapper" *ngIf="constraint.type == 'inRange'">
             <div class="w-sdc-form-column">
-              <input type="text" class="i-sdc-form-input myClass"
-                    (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
+              <input type="text" class="i-sdc-form-input"
+                    (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
                     [disabled]="isViewOnly"
                     [value]="getInRangeValue(constraintIndex, 0)"/>
             </div>
             <div class="w-sdc-form-column">
-              <input type="text" class="i-sdc-form-input myClass"
-                    (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
+              <input type="text" class="i-sdc-form-input"
+                    (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
                     [disabled]="isViewOnly"
                     [value]="getInRangeValue(constraintIndex, 1)"/>
             </div>
@@ -64,11 +66,12 @@
                    [ngClass]="{'disabled': isViewOnly}"
                    (click)="addToList(constraintIndex)">Add to List</div>
             </div>
-            <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index">
+            <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index; trackBy:trackByFn">
               <div class="w-sdc-form-column">
-                <input type="text" class="i-sdc-form-input" [value]="value"
+                <input type="text" class="i-sdc-form-input" 
+                       (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"
                        [disabled]="isViewOnly"
-                       (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+                       [value]="value"/>
               </div>
               <div class="w-sdc-form-column">
                 <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
@@ -76,16 +79,15 @@
             </div>
           </div>
           <div class="w-sdc-form-column" *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
-            <input type="text" class="i-sdc-form-input myClass"
-                  (change)="onChangeConstraintValue(constraintIndex, $event.target.value)"
+            <input type="text" class="i-sdc-form-input"
+                  (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
                   [value]="constraint.value"/>
           </div>
         </div>
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-      <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-      (click)="addConstraint()"> Add Constraint </div>
-  </div>
-
+        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        (click)="addConstraint()"> Add Constraint </div>
+    </div>
   </form>
 </div>
