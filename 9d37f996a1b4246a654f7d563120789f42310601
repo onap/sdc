@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "acd07c19_5325806d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-27T13:29:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b88d9c07_6b207751",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 11
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89dd261d_e0bc0e34",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "bfe00c26_85e85286",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-27T13:29:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89dd261d_e0bc0e34",
+      "range": {
+        "startLine": 62,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 5
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a1d5c83b_1c6322fb",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "9d37f996a1b4246a654f7d563120789f42310601",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7baaa963_94b1d25c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-10-27T13:29:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1d5c83b_1c6322fb",
+      "range": {
+        "startLine": 66,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 5
+      },
+      "revId": "9d37f996a1b4246a654f7d563120789f42310601",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
