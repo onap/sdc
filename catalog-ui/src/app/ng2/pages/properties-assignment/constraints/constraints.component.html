@@ -21,7 +21,7 @@
 
 <div class="app-constraints">
   <form novalidate class="w-sdc-form two-columns">
-    <div class="w-sdc-form-columns-wrapper" *ngFor="let constraint of constraints; let constraintIndex = index">
+    <div class="w-sdc-form-columns-wrapper" *ngFor="let constraint of constraints; let constraintIndex = index; trackBy:trackByFn">
         <div class="w-sdc-form-column-small">
             <select class="i-sdc-form-select"
                     data-tests-id="constraints"
@@ -31,7 +31,9 @@
                       hidden selected>
                 {{ConstraintTypesMapping[constraint.type]}}
               </option>
-              <option *ngFor="let constraintType of constraintTypes" [value]="constraintType">
+              <option *ngFor="let constraintType of constraintTypes"
+                      [value]="constraintType"
+                      [disabled]="disableConstraint(constraintType, constraint.type)">
                 {{ConstraintTypesMapping[constraintType]}}
               </option>
             </select>
@@ -44,13 +46,13 @@
             <div class="w-sdc-form-columns-wrapper" *ngIf="constraint.type == 'inRange'">
               <div class="w-sdc-form-column">
                 <input type="text" class="i-sdc-form-input myClass"
-                      (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
+                      (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
                       [disabled]="isViewOnly"
                       [value]="getInRangeValue(constraintIndex, 0)"/>
               </div>
               <div class="w-sdc-form-column">
                 <input type="text" class="i-sdc-form-input myClass"
-                      (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
+                      (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
                       [disabled]="isViewOnly"
                       [value]="getInRangeValue(constraintIndex, 1)"/>
               </div>
@@ -62,11 +64,11 @@
                     [ngClass]="{'disabled': isViewOnly}"
                     (click)="addToList(constraintIndex)">Add to List</div>
               </div>
-              <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index">
+              <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index; trackBy:trackByFn">
                 <div class="w-sdc-form-column">
                   <input type="text" class="i-sdc-form-input" [value]="value"
                         [disabled]="isViewOnly"
-                        (change)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+                        (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
                 </div>
                 <div class="w-sdc-form-column">
                   <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
@@ -76,7 +78,7 @@
 
             <div *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
               <input type="text" class="i-sdc-form-input myClass"
-                    (change)="onChangeConstraintValue(constraintIndex, $event.target.value)"
+                    (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
                     [value]="constraint.value"/>
             </div>
           </div>
@@ -89,9 +91,8 @@
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-      <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-      (click)="addConstraint()"> Add Constraint </div>
-  </div>
-
+        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        (click)="addConstraint()"> Add Constraint </div>
+    </div>
   </form>
 </div>

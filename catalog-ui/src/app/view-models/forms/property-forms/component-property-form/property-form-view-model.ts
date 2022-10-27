@@ -69,6 +69,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     constraints:string[];
     modelNameFilter:string;
     isGetFunctionValueType: boolean;
+    invalidMandatoryFields: boolean;
 
     validateJson(json:string):boolean;
     save(doNotCloseModal?:boolean):void;
@@ -404,17 +405,21 @@ export class PropertyFormViewModel {
 
         this.$scope.$watch("forms.editForm.$invalid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
+                this.$scope.invalidMandatoryFields = !newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
             } else {
-                this.$scope.footerButtons[0].disabled = newVal || this.isViewOnly;
+                this.$scope.invalidMandatoryFields = !newVal || this.isViewOnly;
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
             }
         });
 
         this.$scope.$watch("forms.editForm.$valid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
+                this.$scope.invalidMandatoryFields = !newVal || !this.$scope.editPropertyModel.property.toscaFunction || this.isViewOnly;
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
             } else {
-                this.$scope.footerButtons[0].disabled = !newVal || this.isViewOnly;
+                this.$scope.invalidMandatoryFields = !newVal || this.isViewOnly;
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
             }
         });
 
@@ -460,6 +465,21 @@ export class PropertyFormViewModel {
             }
         }
 
+        this.$scope.onConstraintChange = (constraints: any): void => {
+            if (!this.$scope.invalidMandatoryFields) {
+                this.$scope.footerButtons[0].disabled = !constraints.valid;
+            } else {
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
+            }
+            if (!constraints.constraints || constraints.constraints.length == 0) {
+                this.$scope.editPropertyModel.property.propertyConstraints = null;
+                this.$scope.editPropertyModel.property.constraints = null;
+                return;
+            }
+            this.$scope.editPropertyModel.property.propertyConstraints = this.serializePropertyConstraints(constraints.constraints);
+            this.$scope.editPropertyModel.property.constraints = constraints.constraints;
+        }
+
         this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
@@ -471,8 +491,18 @@ export class PropertyFormViewModel {
             }
             this.$scope.editPropertyModel.isGetFunctionValid = undefined;
         }
-
     };
+
+    private serializePropertyConstraints(constraints: any[]): string[] {
+        if (constraints) {
+            let stringConstrsints = new Array();
+            constraints.forEach((constraint) => {
+                stringConstrsints.push(JSON.stringify(constraint));
+            })
+            return stringConstrsints;
+        }
+        return null;
+    }
 
     private setEmptyValue() {
         const property1 = this.$scope.editPropertyModel.property;

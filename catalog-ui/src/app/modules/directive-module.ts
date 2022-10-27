@@ -327,7 +327,7 @@ directiveModule.directive('toscaFunction', downgradeComponent({
 
 directiveModule.directive('appConstraints', downgradeComponent({
   component: ConstraintsComponent,
-  inputs: ['property', 'isViewOnly'],
+  inputs: ['propertyConstraints', 'isViewOnly', 'propertyType'],
   outputs: ['onConstraintChange']
 }) as angular.IDirectiveFactory);
 
