@@ -35,7 +35,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    @Getter
     private String lessThan;
 
     @Override

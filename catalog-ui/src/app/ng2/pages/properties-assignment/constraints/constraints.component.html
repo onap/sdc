@@ -36,7 +36,9 @@
                         hidden selected>
                   {{ConstraintTypesMapping[constraint.type]}}
                 </option>
-                <option *ngFor="let constraintType of constraintTypes" [value]="constraintType">
+                <option *ngFor="let constraintType of constraintTypes"
+                        [value]="constraintType"
+                        [disabled]="disableConstraint(constraintType, constraint.type)">
                   {{ConstraintTypesMapping[constraintType]}}
                 </option>
               </select>
@@ -77,15 +79,14 @@
           </div>
           <div class="w-sdc-form-column" *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
             <input type="text" class="i-sdc-form-input myClass"
-                  (change)="onChangeConstraintValue(constraintIndex, $event.target.value)"
+                  (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
                   [value]="constraint.value"/>
           </div>
         </div>
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-      <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
-      (click)="addConstraint()"> Add Constraint </div>
-  </div>
-
+        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        (click)="addConstraint()"> Add Constraint </div>
+    </div>
   </form>
 </div>
