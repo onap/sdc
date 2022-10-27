@@ -15,7 +15,7 @@
   -->
  
  
-<div>
+<div class="type-map">
     <div data-ng-repeat="i in getNumber(mapKeys.length) track by $index" class="map-item" data-ng-class="{'primitive-value-map':!isSchemaTypeDataType}">
         <div class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapKey'+fieldsPrefixName+$index].$dirty && parentFormObj['mapKey'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Key</label>
