@@ -61,6 +61,7 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     uniqueId:string;
     name:string;
     constraints:Array<Object>;
+    propertyConstraints:Array<string>;
     defaultValue:string;
     description:string;
     password:boolean;
