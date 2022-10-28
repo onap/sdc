@@ -193,7 +193,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 if (propertyDefinition == null) {
                     log.trace("The property {} was not found under data type . Parse as map", propName);
                     if (elementValue.isJsonPrimitive()) {
-                        convValue = elementValue.getAsString();
+                        convValue = elementValue.getAsJsonPrimitive();
                     } else {
                         convValue = handleComplexJsonValue(elementValue);
                     }
