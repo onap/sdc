@@ -5,6 +5,111 @@
 Release Notes
 =============
 
+Version: 1.12.0
+==============
+
+:Release Date: 2022-10-28
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.0
+   
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC London early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4207 <https://jira.onap.org/browse/SDC-4207>`_ - Constraint validation - Node Template Interfaces
+*  `SDC-4229 <https://jira.onap.org/browse/SDC-4229>`_ - Default Substitution Mapping
+*  `DMAAP-1787 <https://jira.onap.org/browse/DMAAP-1787>`_ - [SDC] Migrate SDC to use kafka native messaging
+*  `SDC-4216 <https://jira.onap.org/browse/SDC-4216>`_ - Support import of VFCs with property constraints
+*  `SDC-4209 <https://jira.onap.org/browse/SDC-4209>`_ - Constraint validation - Instance Attributes in a Service
+*  `SDC-4210 <https://jira.onap.org/browse/SDC-4210>`_ - VFC properties - Increase character limit to 100 and allow use of @ character
+*  `SDC-4214 <https://jira.onap.org/browse/SDC-4214>`_ - View Data type properties in UI
+*  `SDC-4142 <https://jira.onap.org/browse/SDC-4142>`_ - Service import - Import updated node types with new attributes
+*  `SDC-4208 <https://jira.onap.org/browse/SDC-4208>`_ - Enable viewing of VFC property details when checked in
+*  `SDC-4190 <https://jira.onap.org/browse/SDC-4190>`_ - Constraint validation - Instance Properties in a Service
+*  `SDC-4193 <https://jira.onap.org/browse/SDC-4193>`_ - View data type in UI
+*  `SDC-4184 <https://jira.onap.org/browse/SDC-4184>`_ - API for fetching single data type
+*  `DMAAP-1744 <https://jira.onap.org/browse/DMAAP-1744>`_ - Move SDC and clients to use Strimzi Kafka
+
+
+**Bug Fixes**
+
+*  `SDC-4224 <https://jira.onap.org/browse/SDC-4224>`_ - Import service with policy error
+*  `SDC-4225 <https://jira.onap.org/browse/SDC-4225>`_ - Import of service with concat property value issue
+*  `SDC-4227 <https://jira.onap.org/browse/SDC-4227>`_ - Error importing service with instance interfaces
+*  `SDC-4189 <https://jira.onap.org/browse/SDC-4189>`_ - security risk: Improper Input Validation
+*  `SDC-4217 <https://jira.onap.org/browse/SDC-4217>`_ - Setting value on interface operation property with constraint throws exception
+*  `SDC-4218 <https://jira.onap.org/browse/SDC-4218>`_ - Fix cant set properties on an instance in the composition view
+*  `SDC-4211 <https://jira.onap.org/browse/SDC-4211>`_ - Fetch data type endpoint is returning Optional instead of the requested Data Type
+*  `SDC-4213 <https://jira.onap.org/browse/SDC-4213>`_ - Onboard-ui build started to fail with problems in ./node_modules/react-show-more-text/lib/ShowMoreText.css
+*  `SDC-4196 <https://jira.onap.org/browse/SDC-4196>`_ - Empty interface operation definitions throw exception
+*  `SDC-4192 <https://jira.onap.org/browse/SDC-4192>`_ - X-Frame-Options not configured: Lack of clickjacking protection
+*  `SDC-4185 <https://jira.onap.org/browse/SDC-4185>`_ - Composition Window doesnot allow to update new version of VFC
+
+
+**Tasks**
+
+*  `SDC-4204 <https://jira.onap.org/browse/SDC-4204>`_ - Finalize Documentation
+*  `SDC-4232 <https://jira.onap.org/browse/SDC-4232>`_ - Remove temp file if Minio-upload failed
+*  `SDC-4231 <https://jira.onap.org/browse/SDC-4231>`_ - Fix potential NPE in importing property constraints
+*  `SDC-4230 <https://jira.onap.org/browse/SDC-4230>`_ - Fix Critical bug reported by Sonar
+*  `SDC-4228 <https://jira.onap.org/browse/SDC-4228>`_ - Update Vulnerable 3PP commons-text-1.9
+*  `SDC-4205 <https://jira.onap.org/browse/SDC-4205>`_ - Remove unused code
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.9
 ==============
 
