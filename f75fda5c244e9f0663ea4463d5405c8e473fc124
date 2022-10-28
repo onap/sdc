@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "433edaff_4e81cbee",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-28T16:06:56Z",
+      "side": 1,
+      "message": "in this case remove L62 bcz duplicated with L59",
+      "parentUuid": "468e1491_519bce44",
+      "range": {
+        "startLine": 62,
+        "startChar": 57,
+        "endLine": 62,
+        "endChar": 97
+      },
+      "revId": "f75fda5c244e9f0663ea4463d5405c8e473fc124",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "638a2f43_f69c410c",
         "filename": "docs/release-notes.rst",
         "patchSetId": 1
