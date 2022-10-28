@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac633a32_020e36d6",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-28T15:00:53Z",
+      "side": 1,
+      "message": "Move DefaultExceptionMapper to be used widely",
+      "range": {
+        "startLine": 62,
+        "startChar": 57,
+        "endLine": 62,
+        "endChar": 97
+      },
+      "revId": "f75fda5c244e9f0663ea4463d5405c8e473fc124",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "638a2f43_f69c410c",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-28T15:00:53Z",
+      "side": 1,
+      "message": "missing \nSDC-4189 - Align \u0027org.eclipse.jetty\u0027-version (9.4.49.v20220914)",
+      "revId": "f75fda5c244e9f0663ea4463d5405c8e473fc124",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4b21ac5_19509d07",
+        "filename": "docs/release-notes.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-10-28T15:00:53Z",
+      "side": 1,
+      "message": "missing \nSDC-4202 - Update link to architecture description",
+      "range": {
+        "startLine": 70,
+        "startChar": 2,
+        "endLine": 70,
+        "endChar": 7
+      },
+      "revId": "f75fda5c244e9f0663ea4463d5405c8e473fc124",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
