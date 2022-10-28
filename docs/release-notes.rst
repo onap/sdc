@@ -5,6 +5,165 @@
 Release Notes
 =============
 
+Version: 1.12.1
+===============
+
+:Release Date: 2023-01-27
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.0
+   
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC London early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4346 <https://jira.onap.org/browse/SDC-4346>`_ - Property Constraints on Service inputs
+*  `SDC-4279 <https://jira.onap.org/browse/SDC-4279>`_ - Import data type in UI
+*  `SDC-4344 <https://jira.onap.org/browse/SDC-4344>`_ - Implement hiding mechanism
+*  `SDC-4341 <https://jira.onap.org/browse/SDC-4341>`_ - Disable editing of normative data types
+*  `SDC-4330 <https://jira.onap.org/browse/SDC-4330>`_ - Improve composition view filtering
+*  `SDC-4333 <https://jira.onap.org/browse/SDC-4333>`_ - Support TOSCA functions of primitive list entries in composition view
+*  `SDC-4332 <https://jira.onap.org/browse/SDC-4332>`_ - Download data type from UI
+*  `SDC-4320 <https://jira.onap.org/browse/SDC-4320>`_ - Constraint validation - Policy Properties in a Service
+*  `SDC-4319 <https://jira.onap.org/browse/SDC-4319>`_ - Support TOSCA functions of primitive map entries in composition view
+*  `SDC-4311 <https://jira.onap.org/browse/SDC-4311>`_ - Update needed to allow assignment of TOSCA functions to List/Map/Custom datatypes
+*  `SDC-4305 <https://jira.onap.org/browse/SDC-4305>`_ - Add support for comparable type constraints for scalar values
+*  `SDC-4288 <https://jira.onap.org/browse/SDC-4288>`_ - Support TOSCA functions in list entries
+*  `SDC-4299 <https://jira.onap.org/browse/SDC-4299>`_ - Add support for comparable type constraints for strings
+*  `SDC-4283 <https://jira.onap.org/browse/SDC-4283>`_ - Node filter/Substitution filter: type validation just works during edit
+*  `SDC-4264 <https://jira.onap.org/browse/SDC-4264>`_ - Support TOSCA functions for map values
+*  `DMAAP-1787 <https://jira.onap.org/browse/DMAAP-1787>`_ - [SDC] Migrate SDC to use kafka native messaging
+*  `SDC-4221 <https://jira.onap.org/browse/SDC-4221>`_ - Open Data type from Catalog
+*  `SDC-4260 <https://jira.onap.org/browse/SDC-4260>`_ - Update UI Constraints component to support addition of pattern constraints
+*  `SDC-4220 <https://jira.onap.org/browse/SDC-4220>`_ - View data types in UI catalog
+*  `SDC-4223 <https://jira.onap.org/browse/SDC-4223>`_ - Update UI Constraints component to support addition of scalar type constraints
+*  `SDC-4258 <https://jira.onap.org/browse/SDC-4258>`_ - Addition of Properties to a Data type in UI
+*  `SDC-4219 <https://jira.onap.org/browse/SDC-4219>`_ - Create UI Component for viewing property constraints
+*  `SDC-4170 <https://jira.onap.org/browse/SDC-4170>`_ - Support TOSCA functions in operation implementation properties
+
+
+**Bug Fixes**
+
+*  `SDC-4318 <https://jira.onap.org/browse/SDC-4318>`_ - Fix constraints saving as strings
+*  `SDC-4351 <https://jira.onap.org/browse/SDC-4351>`_ - Error importing data type in the UI
+*  `SDC-4352 <https://jira.onap.org/browse/SDC-4352>`_ - Unable to set values on properties of VFC instances in a service
+*  `SDC-4349 <https://jira.onap.org/browse/SDC-4349>`_ - Added datatype property not include in model definitions
+*  `SDC-4343 <https://jira.onap.org/browse/SDC-4343>`_ - Invalid property values provided: Unsupported value provided for is_default property supported value type is boolean.
+*  `SDC-4348 <https://jira.onap.org/browse/SDC-4348>`_ - Frontend cache causing data types not found
+*  `SDC-4345 <https://jira.onap.org/browse/SDC-4345>`_ - Property Constraint error when uprading VFC instance version in service
+*  `SDC-4334 <https://jira.onap.org/browse/SDC-4334>`_ - Error creating in_range constraint for non integer properties
+*  `SDC-4339 <https://jira.onap.org/browse/SDC-4339>`_ - Possible to add property to data type with type belonging to other model
+*  `SDC-4342 <https://jira.onap.org/browse/SDC-4342>`_ - Constraint not added when creating property
+*  `SDC-3505 <https://jira.onap.org/browse/SDC-3505>`_ - SDC be API returns HTTP 200 response code on error
+*  `SDC-4338 <https://jira.onap.org/browse/SDC-4338>`_ - Primitive types should not be shown under data types in catalog
+*  `SDC-4337 <https://jira.onap.org/browse/SDC-4337>`_ - Data type cache not updated when data type updated
+*  `SDC-4335 <https://jira.onap.org/browse/SDC-4335>`_ - Datatype workspace opens up from wrong menuItem
+*  `SDC-4290 <https://jira.onap.org/browse/SDC-4290>`_ - Resource property constraint values mutable in Service design
+*  `SDC-4315 <https://jira.onap.org/browse/SDC-4315>`_ - Not possible to add value to list of map property
+*  `SDC-4312 <https://jira.onap.org/browse/SDC-4312>`_ - NPE thrown in editing constraints
+*  `SDC-3216 <https://jira.onap.org/browse/SDC-3216>`_ - Artifact type "CONTROLLER_BLUEPRINT_ARCHIVE" is not recognized based on its type.
+*  `SDC-2851 <https://jira.onap.org/browse/SDC-2851>`_ - Tosca List Entry Schema failed to be recoginized with creating VSP
+*  `SDC-4310 <https://jira.onap.org/browse/SDC-4310>`_ - Adding property to VF/Service throws js-exception
+*  `SDC-4292 <https://jira.onap.org/browse/SDC-4292>`_ - Swagger UI fails to load
+*  `SDC-4307 <https://jira.onap.org/browse/SDC-4307>`_ - Not possible to set value on a VFC property with constraint
+*  `SDC-4294 <https://jira.onap.org/browse/SDC-4294>`_ - Pattern constraint validation failure
+*  `SDC-4306 <https://jira.onap.org/browse/SDC-4306>`_ - Some default responses in the generated openapi files are missing descriptions
+*  `SDC-4302 <https://jira.onap.org/browse/SDC-4302>`_ - Fix docker build issue
+*  `SDC-4291 <https://jira.onap.org/browse/SDC-4291>`_ - Import VFC with constraint PATTERN ignores constraint
+*  `SDC-4303 <https://jira.onap.org/browse/SDC-4303>`_ - NPE thrown when checking out Service
+*  `SDC-4293 <https://jira.onap.org/browse/SDC-4293>`_ - in_range constraint validation gives unhelpful error message
+*  `SDC-4286 <https://jira.onap.org/browse/SDC-4286>`_ - Constraint not displayed when cycling through properties
+*  `SDC-4274 <https://jira.onap.org/browse/SDC-4274>`_ - Numeric constraint values generated as strings
+*  `SDC-4281 <https://jira.onap.org/browse/SDC-4281>`_ - Empty interfaces and operations in generated tosca
+*  `SDC-4271 <https://jira.onap.org/browse/SDC-4271>`_ - SDC-simulator not logging to STDOUT
+*  `SDC-3536 <https://jira.onap.org/browse/SDC-3536>`_ - SDC-ONBOARDING-BE log does not use stdout
+*  `SDC-4266 <https://jira.onap.org/browse/SDC-4266>`_ - Error while importing a Service: icon cannot be changed once the resource is certified
+*  `SDC-4267 <https://jira.onap.org/browse/SDC-4267>`_ - EcompIntImpl - And null test before using nullable value
+*  `SDC-4253 <https://jira.onap.org/browse/SDC-4253>`_ - Changing property in a node filter causes several issues
+*  `SDC-4222 <https://jira.onap.org/browse/SDC-4222>`_ - Fix behaviour when validation of property constraints
+*  `SDC-4269 <https://jira.onap.org/browse/SDC-4269>`_ - ExternalTestingManagerImpl - Add null test before using nullable value
+*  `SDC-3535 <https://jira.onap.org/browse/SDC-3535>`_ - SDC-FE log does not use STDOUT
+*  `SDC-3534 <https://jira.onap.org/browse/SDC-3534>`_ - SDC-BE log does not use STDOUT
+*  `SDC-4268 <https://jira.onap.org/browse/SDC-4268>`_ - Model for "SOL001" shows incorrectly in GUI
+*  `SDC-4265 <https://jira.onap.org/browse/SDC-4265>`_ - DefaultPropertyDeclarator - Add null test before using nullable value
+*  `SDC-4259 <https://jira.onap.org/browse/SDC-4259>`_ - Interfaces in VNFD in ETSI NSD
+*  `SDC-4242 <https://jira.onap.org/browse/SDC-4242>`_ - fix doc config files in master and kohn branch
+*  `SDC-4255 <https://jira.onap.org/browse/SDC-4255>`_ - Interface is formatted using extended notation when no implementation added at VFC level
+*  `SDC-4237 <https://jira.onap.org/browse/SDC-4237>`_ - Tosca Export: a boolean, from a default complex type value, is being exported as string
+
+
+**Tasks**
+
+*  `SDC-4347 <https://jira.onap.org/browse/SDC-4347>`_ - Improve test coverage for Constraints
+*  `SDC-4317 <https://jira.onap.org/browse/SDC-4317>`_ - Improve test coverage
+*  `SDC-4308 <https://jira.onap.org/browse/SDC-4308>`_ - Update openapi files in the docs
+*  `SDC-4313 <https://jira.onap.org/browse/SDC-4313>`_ - Upgrade testing frameworks to latest not-vulnerable versions
+*  `SDC-4314 <https://jira.onap.org/browse/SDC-4314>`_ - Fix broken build
+*  `SDC-4215 <https://jira.onap.org/browse/SDC-4215>`_ - Multitenancy feature in SDC
+*  `SDC-4304 <https://jira.onap.org/browse/SDC-4304>`_ - Update INFO.yaml
+*  `SDC-4300 <https://jira.onap.org/browse/SDC-4300>`_ - Add missing 'scalar-unit.bitrate' data type
+*  `SDC-4289 <https://jira.onap.org/browse/SDC-4289>`_ - Fix broken build
+*  `SDC-4275 <https://jira.onap.org/browse/SDC-4275>`_ - Add SonarCloud badges to README
+*  `DOC-798 <https://jira.onap.org/browse/DOC-798>`_ - Create docs for 'Kohn' main release
+*  `SDC-4243 <https://jira.onap.org/browse/SDC-4243>`_ - Issues with 'range' data type detected
+*  `SDC-4261 <https://jira.onap.org/browse/SDC-4261>`_ - Fix Readme formatting for Catalog-UI
+*  `SDC-4254 <https://jira.onap.org/browse/SDC-4254>`_ - Remove 'Powered by Jetty' from default jetty response
+*  `SDC-4256 <https://jira.onap.org/browse/SDC-4256>`_ - Improve error reporting when onboarding a VSP and storage is full
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.12.0
 ===============
 
