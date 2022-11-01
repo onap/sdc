@@ -85,7 +85,7 @@ export class InputListItemComponent implements OnInit {
     if (this.valueObjRef[property.name] == undefined) {
       if (this.isTypeComplex(property.type) || this.isTypeMap(property.type)) {
         this.valueObjRef[property.name] = {};
-      } else if (this.isTypeList(property.type)) {
+      } else if (this.isTypeList(property.type) || this.isTypeRange(property.type)) {
         this.valueObjRef[property.name] = [];
       } else {
         this.valueObjRef[property.name] = null;
@@ -100,13 +100,48 @@ export class InputListItemComponent implements OnInit {
       return DerivedPropertyType.LIST;
     } else if (typeName === PROPERTY_TYPES.MAP) {
       return DerivedPropertyType.MAP;
+    } else if (typeName === PROPERTY_TYPES.RANGE) {
+      return DerivedPropertyType.RANGE;
     } else {
       return DerivedPropertyType.COMPLEX;
     }
   }
 
+  isTypeWithoutProperties(typeName: string): boolean {
+      if (this.dataTypeMap.get(typeName) === undefined) {
+          return true;
+      }
+      return this.dataTypeMap.get(typeName).properties === undefined ||
+          this.dataTypeMap.get(typeName).properties.length == 0;
+  }
+
+  isTypeDerivedFromSimple(typeName: string): boolean {
+      if (this.dataTypeMap.get(typeName) === undefined) {
+          return true;
+      }
+      if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.dataTypeMap.get(typeName).derivedFromName) > -1) {
+          return true;
+      } else {
+          while (this.dataTypeMap.get(typeName).derivedFromName != PROPERTY_DATA.ROOT_DATA_TYPE) {
+              if (this.isTypeDerivedFromSimple(this.dataTypeMap.get(typeName).derivedFromName)) {
+                  return true;
+              }
+          }
+      }
+  }
+
   isTypeSimple(typeName: string): boolean {
+    if (typeName === undefined) {
+        return false;
+    }
+    if (this.isTypeDerivedFromSimple(typeName) && (this.isTypeWithoutProperties(typeName))) {
+        return true;
+    }
     return this.getType(typeName) == DerivedPropertyType.SIMPLE;
+  }
+
+  isTypeRange(typeName: string): boolean {
+      return !this.isTypeSimple(typeName) && this.getType(typeName) == DerivedPropertyType.RANGE;
   }
 
   isTypeList(typeName: string): boolean {
@@ -118,7 +153,7 @@ export class InputListItemComponent implements OnInit {
   }
 
   isTypeComplex(typeName: string): boolean {
-    return !this.isTypeSimple(typeName) && !this.isTypeList(typeName) && !this.isTypeMap(typeName);
+    return !this.isTypeSimple(typeName) && !this.isTypeList(typeName) && !this.isTypeMap(typeName) && !this.isTypeRange(typeName);
   }
 
   expandAndCollapse() {
