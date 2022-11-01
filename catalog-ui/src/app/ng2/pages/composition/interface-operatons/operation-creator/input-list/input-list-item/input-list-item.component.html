@@ -39,6 +39,33 @@
       </li>
     </ul>
   </ng-container>
+  <ng-container *ngIf="isTypeRange(type.name)">
+    <ul *ngIf="isExpanded">
+      <ng-container *ngFor="let value1 of [0, 1]; index as i">
+        <li class="input-value" *ngIf="isTypeSimple(schema.property.type)">
+            <ng-container *ngIf="isViewOnly">
+                {{valueObjRef[i]}}
+            </ng-container>
+            <input type="text" *ngIf="!isViewOnly"
+                   [(ngModel)]="valueObjRef[i]" (ngModelChange)="onListValueChange()" />
+        </li>
+        <app-input-list-item *ngIf="!isTypeSimple(schema.property.type)"
+           [name]="i+''"
+           [type]="getDataType(schema.property.type)"
+           [dataTypeMap]="dataTypeMap"
+           [valueObjRef]="valueObjRef[i]"
+           [schema]="schema"
+           [nestingLevel]="nestingLevel + 1"
+           [listIndex]="i"
+           [isListChild]="true"
+           [isViewOnly]="isViewOnly"
+           [allowDeletion]="allowDeletion"
+           (onValueChange)="onPropertyValueChange($event)"
+           (onChildListItemDelete)="onListItemDelete($event)">
+        </app-input-list-item>
+      </ng-container>
+    </ul>
+  </ng-container>
   <ng-container *ngIf="isTypeComplex(type.name)" >
       <ul *ngIf="isExpanded">
         <ng-container *ngFor="let property of this.type.properties">
