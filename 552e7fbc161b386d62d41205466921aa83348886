@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c4ff4554_088592f7",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-01T15:08:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6296404f_89922735",
+      "range": {
+        "startLine": 144,
+        "startChar": 28,
+        "endLine": 144,
+        "endChar": 29
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d571c6af_5165f78d",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "552e7fbc161b386d62d41205466921aa83348886",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19d7874d_7a5a426d",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-01T15:08:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d571c6af_5165f78d",
+      "range": {
+        "startLine": 222,
+        "startChar": 8,
+        "endLine": 222,
+        "endChar": 66
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "6e950233_74a62e0b",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-01T15:08:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c96d6a92_223b12fd",
+      "range": {
+        "startLine": 230,
+        "startChar": 12,
+        "endLine": 230,
+        "endChar": 15
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a1d8d7d_277a5786",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9f03f053_9062ed41",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-01T15:08:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a1d8d7d_277a5786",
+      "range": {
+        "startLine": 271,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 74
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2708c108_92c1cd99",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list.component.ts",
         "patchSetId": 3
@@ -114,6 +210,30 @@
       "revId": "552e7fbc161b386d62d41205466921aa83348886",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "484a8f13_b54082f0",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-01T15:08:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2708c108_92c1cd99",
+      "range": {
+        "startLine": 53,
+        "startChar": 66,
+        "endLine": 53,
+        "endChar": 70
+      },
+      "revId": "552e7fbc161b386d62d41205466921aa83348886",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
