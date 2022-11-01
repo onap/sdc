@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6dba3a13_fad7117a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Boxed \"Boolean\" should be avoided in boolean expressions",
+      "range": {
+        "startLine": 190,
+        "startChar": 24,
+        "endLine": 190,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2015279b_cd5a78df",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Boxed \"Boolean\" should be avoided in boolean expressions",
+      "range": {
+        "startLine": 197,
+        "startChar": 24,
+        "endLine": 197,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcf5b4e1_cfdd9594",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Boxed \"Boolean\" should be avoided in boolean expressions",
+      "range": {
+        "startLine": 204,
+        "startChar": 24,
+        "endLine": 204,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adc7a217_47be7f4c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "looks like redundant check\nCollectionUtils.isNotEmpty(list) should be enough",
+      "range": {
+        "startLine": 227,
+        "startChar": 27,
+        "endLine": 228,
+        "endChar": 37
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c056d656_095728fd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "always TRUE, what is the purpose of this check?",
+      "range": {
+        "startLine": 229,
+        "startChar": 24,
+        "endLine": 229,
+        "endChar": 45
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28e996f7_0be1830e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 234,
+        "startChar": 23,
+        "endLine": 235,
+        "endChar": 35
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67b311c6_346de55e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 236,
+        "startChar": 19,
+        "endLine": 236,
+        "endChar": 45
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8f12b3c_dddb499b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Boxed \"Boolean\" should be avoided in boolean expressions",
+      "range": {
+        "startLine": 246,
+        "startChar": 16,
+        "endLine": 246,
+        "endChar": 36
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63d29804_aa5b8c48",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Similar tests should be grouped in a single Parameterized test\nL295 - listOfComplexWithConstrainedListFailsMinLengthTest\nL326 - listOfComplexWithConstrainedListFailsMaxLengthTest\nL419 - listOfComplexWithConstrainedStringFailsMinLengthTest\nL450 - listOfComplexWithConstrainedStringFailsMaxLengthTest",
+      "range": {
+        "startLine": 295,
+        "startChar": 0,
+        "endLine": 295,
+        "endChar": 4
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20887c14_55bcd67f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-01T11:19:28Z",
+      "side": 1,
+      "message": "Similar tests should be grouped in a single Parameterized test\nL357 - listOfComplexWithConstrainedListSuccessMaxLengthTest\nL388 - listOfComplexWithConstrainedListSuccessMinLengthTest\nL481 - listOfComplexWithConstrainedStringSuccessMinLengthTest\nL512 - listOfComplexWithConstrainedStringSuccessMaxLengthTest",
+      "range": {
+        "startLine": 357,
+        "startChar": 0,
+        "endLine": 357,
+        "endChar": 4
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
