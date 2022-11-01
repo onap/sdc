@@ -76,6 +76,19 @@
         </li>
       </ul>
     </ng-container>
+    <ng-container *ngIf="isTypeRange(type.name)">
+        <ul *ngIf="isExpanded">
+            <ng-container *ngFor="let value1 of [0, 1]; index as i">
+                <li class="input-value">
+                    <ng-container *ngIf="isViewOnly">
+                        {{valueObjRef[i]}}
+                    </ng-container>
+                    <input type="text" *ngIf="!isViewOnly"
+                    [(ngModel)]="valueObjRef[i]" (ngModelChange)="onListValueChange()" />
+                </li>
+            </ng-container>
+        </ul>
+    </ng-container>
     <ng-container *ngIf="isTypeComplex(type.name)" >
         <ul *ngIf="isExpanded">
           <ng-container *ngFor="let property of this.type.properties">
