@@ -33,7 +33,8 @@ export enum DerivedPropertyType {
     SIMPLE,
     LIST,
     MAP,
-    COMPLEX
+    COMPLEX,
+    RANGE
 }
 export class PropertyPolicyDetail {
     policyId: string;
@@ -139,6 +140,9 @@ export class PropertyBEModel {
         }
         if (this.type === PROPERTY_TYPES.LIST) {
             return DerivedPropertyType.LIST;
+        }
+        if (this.type === PROPERTY_TYPES.RANGE) {
+            return DerivedPropertyType.RANGE;
         }
         if (this.type === PROPERTY_TYPES.MAP) {
             return DerivedPropertyType.MAP;
