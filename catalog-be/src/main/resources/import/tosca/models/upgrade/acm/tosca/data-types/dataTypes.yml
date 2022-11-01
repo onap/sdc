@@ -10,6 +10,8 @@ boolean:
   derived_from: tosca.datatypes.Root
 float:
   derived_from: tosca.datatypes.Root
+range:
+  derived_from: tosca.datatypes.Root
 list:
   derived_from: tosca.datatypes.Root
 map:
