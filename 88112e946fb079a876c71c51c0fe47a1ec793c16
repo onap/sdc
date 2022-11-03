@@ -1,0 +1,372 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c782803_79247acb",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "you could declare the index variable to pass into methods that needs the index",
+      "range": {
+        "startLine": 24,
+        "startChar": 44,
+        "endLine": 24,
+        "endChar": 82
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e2d23a8_2b3c86b3",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "I believe you could send the $event itself and it would be the value",
+      "range": {
+        "startLine": 34,
+        "startChar": 65,
+        "endLine": 34,
+        "endChar": 84
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e93a2df3_bfa56af8",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "for example, you could passe the constraint index and the value index. This applies for the others usages",
+      "range": {
+        "startLine": 74,
+        "startChar": 98,
+        "endLine": 74,
+        "endChar": 131
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0cb219a_c4d2c48e",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "I would suggest that, for events, you add the word \"on\" as prefix, e.g.: onChangeNew...\nThat applies also for other similar events",
+      "range": {
+        "startLine": 123,
+        "startChar": 31,
+        "endLine": 123,
+        "endChar": 62
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "026ae3fe_cae0136e",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "this method only accepts one parameter",
+      "range": {
+        "startLine": 126,
+        "startChar": 59,
+        "endLine": 126,
+        "endChar": 95
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e267793_10f5f950",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.less",
+        "patchSetId": 9
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 1
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09c6f23d_17bf4a19",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "I would suggest to do this logic on the line 50, instead of creating a method for that.",
+      "range": {
+        "startLine": 53,
+        "startChar": 10,
+        "endLine": 53,
+        "endChar": 17
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c20cef1c_27265044",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "Please, use ConstraintTypes",
+      "range": {
+        "startLine": 113,
+        "startChar": 10,
+        "endLine": 113,
+        "endChar": 17
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9070f08b_c1bfce84",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "I believe you could simplify by passing the constraint index and value index",
+      "range": {
+        "startLine": 160,
+        "startChar": 2,
+        "endLine": 160,
+        "endChar": 16
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc368bea_bd2ecb53",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "pleas use const. This comment applies for many other variables that should be constants.",
+      "range": {
+        "startLine": 196,
+        "startChar": 4,
+        "endLine": 196,
+        "endChar": 7
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5018356a_22493ca9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "simplify to this.onConstraintChange.emit(this.getConstraintsFormat())",
+      "range": {
+        "startLine": 198,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 39
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01777815_19e58290",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "pleas use const",
+      "range": {
+        "startLine": 203,
+        "startChar": 4,
+        "endLine": 203,
+        "endChar": 7
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e42ac1b_5740a1e7",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "simplify to this.onConstraintChange.emit(this.getConstraintsFormat())",
+      "range": {
+        "startLine": 209,
+        "startChar": 4,
+        "endLine": 210,
+        "endChar": 39
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de1d7723_cdb87564",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/base-property-form/property-form-base.less",
+        "patchSetId": 9
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "add space",
+      "range": {
+        "startLine": 58,
+        "startChar": 48,
+        "endLine": 58,
+        "endChar": 49
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "694068bf_77194849",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "please, remove this debug method",
+      "range": {
+        "startLine": 463,
+        "startChar": 8,
+        "endLine": 465,
+        "endChar": 9
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba3e857f_fb812dce",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-03T12:40:48Z",
+      "side": 1,
+      "message": "I didn\u0027t get this condition. Why not always show the constraints if there are constraints?\nI think you should only check \"editPropertyModel.property.constraints\"",
+      "range": {
+        "startLine": 264,
+        "startChar": 65,
+        "endLine": 264,
+        "endChar": 131
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
