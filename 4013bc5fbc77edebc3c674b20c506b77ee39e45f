@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8a12735a_4cc6acbb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6dba3a13_fad7117a",
+      "range": {
+        "startLine": 190,
+        "startChar": 24,
+        "endLine": 190,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2015279b_cd5a78df",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e90e19f8_317df70a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2015279b_cd5a78df",
+      "range": {
+        "startLine": 197,
+        "startChar": 24,
+        "endLine": 197,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "06021ade_9e26180c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bcf5b4e1_cfdd9594",
+      "range": {
+        "startLine": 204,
+        "startChar": 24,
+        "endLine": 204,
+        "endChar": 44
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "adc7a217_47be7f4c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e2bb469_5f56c740",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "adc7a217_47be7f4c",
+      "range": {
+        "startLine": 227,
+        "startChar": 27,
+        "endLine": 228,
+        "endChar": 37
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "5cb3e88d_f9de8941",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c056d656_095728fd",
+      "range": {
+        "startLine": 229,
+        "startChar": 24,
+        "endLine": 229,
+        "endChar": 45
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28e996f7_0be1830e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b957e798_a4c21167",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28e996f7_0be1830e",
+      "range": {
+        "startLine": 234,
+        "startChar": 23,
+        "endLine": 235,
+        "endChar": 35
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "21d14600_fc21c117",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67b311c6_346de55e",
+      "range": {
+        "startLine": 236,
+        "startChar": 19,
+        "endLine": 236,
+        "endChar": 45
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b8f12b3c_dddb499b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
         "patchSetId": 3
@@ -183,6 +351,30 @@
       "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18982a5d_a89b9dda",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8f12b3c_dddb499b",
+      "range": {
+        "startLine": 246,
+        "startChar": 16,
+        "endLine": 246,
+        "endChar": 36
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "60b029f3_197ecf2b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63d29804_aa5b8c48",
+      "range": {
+        "startLine": 295,
+        "startChar": 0,
+        "endLine": 295,
+        "endChar": 4
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20887c14_55bcd67f",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtilTest.java",
         "patchSetId": 3
@@ -229,6 +445,30 @@
       "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b751de61_8f1335f8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtilTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-03T12:22:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20887c14_55bcd67f",
+      "range": {
+        "startLine": 357,
+        "startChar": 0,
+        "endLine": 357,
+        "endChar": 4
+      },
+      "revId": "4013bc5fbc77edebc3c674b20c506b77ee39e45f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
