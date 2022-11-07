@@ -172,8 +172,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     void setUpMock() {
         MockitoAnnotations.openMocks(this);
         doReturn(new ToscaProperty()).when(propertyConvertor).convertProperty(any(), any(), eq(PROPERTY));
-        doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter)
-            .getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean(), anyBoolean());
+        doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter).getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean());
     }
 
     private Resource getNewResource() {
