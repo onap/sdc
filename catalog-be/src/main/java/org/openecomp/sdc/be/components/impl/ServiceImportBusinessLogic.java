@@ -2289,16 +2289,18 @@ public class ServiceImportBusinessLogic {
                 Map<String, OperationDataDefinition> operations = uploadInterfaceInfo.getOperations();
                 for (Map.Entry<String, OperationDataDefinition> operation : operations.entrySet()) {
                     OperationDataDefinition templateOperation = currentInterfaceDef.getOperationsMap().get(operation.getKey());
-                    OperationDataDefinition instanceOperation = operation.getValue();
-                    //Inputs
-                    ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
-                    mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
-                    templateOperation.setInputs(instanceInputs);
-                    //Implementation
-                    templateOperation.setImplementation(instanceOperation.getImplementation());
-                    //Description
-                    templateOperation.setDescription(instanceOperation.getDescription());
-                    operationsToAdd.put(operation.getKey(), templateOperation);
+                    if (templateOperation != null) {
+                        OperationDataDefinition instanceOperation = operation.getValue();
+                        //Inputs
+                        ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
+                        mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
+                        templateOperation.setInputs(instanceInputs);
+                        //Implementation
+                        templateOperation.setImplementation(instanceOperation.getImplementation());
+                        //Description
+                        templateOperation.setDescription(instanceOperation.getDescription());
+                        operationsToAdd.put(operation.getKey(), templateOperation);
+                    }
                 }
                 InterfaceDefinition interfaceDef = new InterfaceDefinition();
                 interfaceDef.setModel(component.getModel());
