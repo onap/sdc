@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5a6cde2_48ba5bad",
+        "filename": "catalog-ui/src/app/models/properties.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T15:25:13Z",
+      "side": 1,
+      "message": "why do you need both propertyConstraints and constraints?",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 23
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec70fe90_981e14e5",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T15:25:13Z",
+      "side": 1,
+      "message": "I would suggest to change validateConstraints as it does not return anything",
+      "range": {
+        "startLine": 154,
+        "startChar": 10,
+        "endLine": 154,
+        "endChar": 29
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f519f5f_d528d320",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T15:25:13Z",
+      "side": 1,
+      "message": "could use every:\nthis.valid \u003d this.constraints.every((constraint: Constraint) \u003d\u003e constraint.value \u0026\u0026 constraint.type !\u003d ConstraintTypes.null);",
+      "range": {
+        "startLine": 155,
+        "startChar": 17,
+        "endLine": 160,
+        "endChar": 7
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b5a586d_433db69f",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T15:25:13Z",
+      "side": 1,
+      "message": "const",
+      "range": {
+        "startLine": 165,
+        "startChar": 4,
+        "endLine": 165,
+        "endChar": 7
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
