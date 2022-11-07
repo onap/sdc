@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "40df140b_50506600",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "I suggest to change to:\n\nFix property constraints validation\n\nFix property constraints validation behaviour when [... explain here what is being fixed]",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 53
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb59d931_c0626316",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "this is only used inside the \"if (ToscaType.isPrimitiveType(prop.getType())) {\", please, move there.",
+      "range": {
+        "startLine": 187,
+        "startChar": 12,
+        "endLine": 187,
+        "endChar": 131
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "281b9e76_eb215199",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "if you are assigning a new StringBuilder() to \"completePropertyName\", will not break the logic here? The property name will be \"_\u003cname\u003e\".",
+      "range": {
+        "startLine": 205,
+        "startChar": 24,
+        "endLine": 206,
+        "endChar": 68
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0396f52a_02662e5b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "please adjust format and put in the same line",
+      "range": {
+        "startLine": 217,
+        "startChar": 4,
+        "endLine": 218,
+        "endChar": 63
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21b595a2_f163fb6c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "Adjust the format \"} else {\".\nFor better reading, I suggest to remove the redundant else or use \n} else if (ToscaType.LIST \u003d\u003d ToscaType.isValidType(propertyDefinition.getType())) {\n[...]\n} else {\n[...]\n}",
+      "range": {
+        "startLine": 223,
+        "startChar": 13,
+        "endLine": 224,
+        "endChar": 18
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9449be98_a15d8c59",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "adjust format, no space here",
+      "range": {
+        "startLine": 256,
+        "startChar": 46,
+        "endLine": 256,
+        "endChar": 47
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89a6539c_0ec620b4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "for better reading, I suggest to change to:\n\nList\u003cPropertyConstraint\u003e constraintsList \u003d propertyDefinition.getConstraints();\n        if (CollectionUtils.isEmpty(constraintsList)) {\n            return;\n        }\n        ToscaType toscaPropertyType1;\n        if (null \u003d\u003d toscaPropertyType) {\n            toscaPropertyType1 \u003d ToscaType.isValidType(propertyDefinition.getType());\n        } else {\n            toscaPropertyType1 \u003d toscaPropertyType;\n        }\n        constraintsList.stream()\n            .filter(this::isACollectionConstraint)\n            .forEach(propertyConstraint -\u003e {\n                try {\n                    if (ToscaType.LIST \u003d\u003d toscaPropertyType1) {\n                        Collection\u003cObject\u003e list \u003d ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference\u003c\u003e() {});\n                        propertyConstraint.validate(list);\n                    } else if (ToscaType.MAP \u003d\u003d toscaPropertyType1) {\n                        final Map\u003cString, Object\u003e map \u003d ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference\u003c\u003e() {});\n                        propertyConstraint.validate(map);\n                    }\n                } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {\n                    errorMessages.add(\"\\n\" + propertyConstraint.getErrorMessage(toscaPropertyType1, exception,\n                        getCompletePropertyName(propertyDefinition)));\n                }\n            });",
+      "range": {
+        "startLine": 257,
+        "startChar": 8,
+        "endLine": 278,
+        "endChar": 9
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff94202a_3b58df76",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:22:12Z",
+      "side": 1,
+      "message": "why change to uniqueId when the purpose is to get the property name?",
+      "range": {
+        "startLine": 364,
+        "startChar": 89,
+        "endLine": 364,
+        "endChar": 100
+      },
+      "revId": "dcf033c49f42ea2feaa8cfb4aba2c609889fcb63",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
