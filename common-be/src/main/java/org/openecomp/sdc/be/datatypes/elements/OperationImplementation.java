@@ -16,46 +16,13 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import lombok.Data;
 
+@Data
 public class OperationImplementation {
 
     private String primary;
     private List<String> dependencies;
 
-    public String getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(String primary) {
-        this.primary = primary;
-    }
-
-    public List<String> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(List<String> dependencies) {
-        this.dependencies = dependencies;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof OperationImplementation)) {
-            return false;
-        }
-        OperationImplementation that = (OperationImplementation) o;
-        return Objects.equals(primary, that.primary)
-                && Objects.equals(new HashSet<>(dependencies), new HashSet<>(that.dependencies));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(primary, dependencies);
-    }
 }

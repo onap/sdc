@@ -1071,28 +1071,22 @@ public class ToscaExportHandler {
         return intValue == null ? value : intValue;
     }
 
-    private void handleInstanceInterfaces(
-        Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces,
-        ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes, ToscaNodeTemplate nodeTemplate,
-        String instanceUniqueId,
-        Component parentComponent) {
+    private void handleInstanceInterfaces(Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces,
+                                          ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes,
+                                          ToscaNodeTemplate nodeTemplate, String instanceUniqueId, Component parentComponent) {
 
-        if (MapUtils.isEmpty(componentInstanceInterfaces)
-            || !componentInstanceInterfaces.containsKey(instanceUniqueId)) {
+        if (MapUtils.isEmpty(componentInstanceInterfaces) || !componentInstanceInterfaces.containsKey(instanceUniqueId)) {
             nodeTemplate.setInterfaces(null);
             return;
         }
 
-        final List<ComponentInstanceInterface> currServiceInterfaces =
-            componentInstanceInterfaces.get(instanceUniqueId);
+        final List<ComponentInstanceInterface> currServiceInterfaces = componentInstanceInterfaces.get(instanceUniqueId);
 
         final Map<String, InterfaceDefinition> tmpInterfaces = new HashMap<>();
-        currServiceInterfaces.forEach(instInterface -> tmpInterfaces.put(instInterface
-            .getUniqueId(), instInterface));
+        currServiceInterfaces.forEach(instInterface -> tmpInterfaces.put(instInterface.getUniqueId(), instInterface));
 
         final Map<String, Object> interfaceMap = interfacesOperationsConverter
-            .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, isComponentOfTypeServiceProxy(componentInstance),
-                isComponentOfTypeServiceProxy(componentInstance));
+            .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, isComponentOfTypeServiceProxy(componentInstance));
 
         interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
         nodeTemplate.setInterfaces(MapUtils.isEmpty(interfaceMap) ? null : interfaceMap);
@@ -1342,8 +1336,7 @@ public class ToscaExportHandler {
                 interfaceMap = proxyInterfaces.get();
             }
         } else {
-            interfaceMap = interfacesOperationsConverter
-                .getInterfacesMapFromComponentInstance(proxyComponent, componentInstance, dataTypes, false, false);
+            interfaceMap = interfacesOperationsConverter.getInterfacesMapFromComponentInstance(proxyComponent, componentInstance, dataTypes, false);
 
         }
         interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
@@ -1775,8 +1768,7 @@ public class ToscaExportHandler {
 
         // always available in the proxy node template
         removeOperationImplementationForProxyNodeType(proxyComponentInterfaces);
-        return Optional
-            .ofNullable(interfacesOperationsConverter.getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false, false));
+        return Optional.ofNullable(interfacesOperationsConverter.getInterfacesMap(proxyComponent, null, proxyComponentInterfaces, dataTypes, false));
     }
 
     private static class CustomRepresenter extends Representer {
