@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "48508428_d19aa6c1",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T10:50:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1add75b0_b0061bdf",
+      "range": {
+        "startLine": 34,
+        "startChar": 65,
+        "endLine": 34,
+        "endChar": 84
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e93a2df3_bfa56af8",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
         "patchSetId": 9
@@ -751,6 +775,30 @@
       "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28861956_bed90654",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T10:50:21Z",
+      "side": 1,
+      "message": "Ok, I see now, you want to show the add logic when there are no constraints and it is not viewOnly.",
+      "parentUuid": "934664e7_fc396082",
+      "range": {
+        "startLine": 264,
+        "startChar": 65,
+        "endLine": 264,
+        "endChar": 131
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
