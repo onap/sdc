@@ -208,7 +208,7 @@ class InterfacesOperationsConverterTest {
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
-        final var interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
+        final var interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), null, false);
         assertNotNull(interfacesMap);
         assertEquals(1, interfacesMap.size());
         assertTrue(interfacesMap.containsKey("resourceName"));
@@ -385,8 +385,7 @@ class InterfacesOperationsConverterTest {
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceName, interfaceDefinition);
         //when
-        Map<String, Object> interfacesMap = interfacesOperationsConverter
-            .getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
+        Map<String, Object> interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), null, false);
         //then
         assertTrue(interfacesMap.containsKey(interfaceName));
         final Map<String, Object> actualInterfaceMap = (Map<String, Object>) interfacesMap.get(interfaceName);
@@ -679,8 +678,7 @@ class InterfacesOperationsConverterTest {
         service.setInterfaces(Collections.singletonMap("NotLocal", new InterfaceDefinition("NotLocal", null,
             new HashMap<>())));
 
-        Map<String, Object> resultMap = interfacesOperationsConverter.getInterfacesMap(service, null,
-            service.getInterfaces(), null, false, false);
+        Map<String, Object> resultMap = interfacesOperationsConverter.getInterfacesMap(service, null, service.getInterfaces(), null, false);
 
         assertTrue(MapUtils.isNotEmpty(resultMap)
             && resultMap.containsKey("NotLocal"));

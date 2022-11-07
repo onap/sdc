@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.be.tosca;
 
+import static org.openecomp.sdc.be.dao.api.ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION;
+import static org.openecomp.sdc.be.dao.api.ActionStatus.ERROR_DURING_CSAR_CREATION;
 import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
 import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
 
@@ -116,9 +118,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
 
-/**
- * @author tg851x
- */
 @org.springframework.stereotype.Component("csar-utils")
 public class CsarUtils {
 
@@ -194,7 +193,6 @@ public class CsarUtils {
         matcher.find();
         return matcher.group(0);
     }
-
 
     private static <L, R> F<L, Either<L, R>> iff(Predicate<L> p, Function<L, Either<L, R>> ifTrue) {
         return l -> p.test(l) ? ifTrue.apply(l) : Either.left(l);
@@ -635,7 +633,7 @@ public class CsarUtils {
                 String cassandraId = d.getMiddle();
                 Component childComponent = d.getRight();
                 Either<byte[], ResponseFormat> entryData = getEntryData(cassandraId, childComponent).right()
-                    .map(x -> componentsUtils.getResponseFormat(x));
+                    .map(componentsUtils::getResponseFormat);
                 if (entryData.isRight()) {
                     return Either.right(entryData.right().value());
                 }
@@ -835,7 +833,7 @@ public class CsarUtils {
     }
 
     private Either<byte[], ResponseFormat> getLatestSchemaFilesFromCassandra() {
-        String fto = getVersionFirstThreeOctets();
+        String fto = versionFirstThreeOctets;
         return sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(fto, CONFORMANCE_LEVEL).right().map(schemaFilesFetchDBError(fto)).left()
             .bind(iff(List::isEmpty, () -> schemaFileFetchError(fto), s -> Either.left(s.iterator().next().getPayloadAsArray())));
     }
@@ -880,9 +878,9 @@ public class CsarUtils {
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, firstThreeOctets, CONFORMANCE_LEVEL));
     }
 
-    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {        
+    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
         return artifactCassandraDao.getArtifact(cassandraId).right().map(operationstatus -> {
-            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);        
+            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);
             StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(operationstatus);
             return componentsUtils.convertFromStorageResponse(storageStatus);
         }).left().map(DAOArtifactData::getDataAsArray);
@@ -900,7 +898,6 @@ public class CsarUtils {
     private String createNsMfBlock0(String serviceName, String createdBy, String serviceVersion, String releaseTime, String serviceType,
                                     String description, String serviceTemplate, String hash) {
         final String block0template = "metadata??\n" + "ns_product_name: %s\n" + "ns_provider_id: %s\n" + "ns_package_version: %s\n" +
-            //"ns_create_date_time: %s\n" +
             "ns_release_data_time: %s\n" + "ns_type: %s\n" + "ns_package_description: %s\n\n" + "Source: %s\n" + "Algorithm: MD5\n" + "Hash: %s\n\n";
         return String.format(block0template, serviceName, createdBy, serviceVersion, releaseTime, serviceType, description, serviceTemplate, hash);
     }
@@ -921,9 +918,8 @@ public class CsarUtils {
             return Either.right(writeComponentArtifactsToSpecifiedPath.right().value());
         }
         Map<String, ArtifactsInfo> componentInstancesArtifacts = mainTypeAndCIArtifacts.getComponentInstancesArtifacts();
-        Set<String> keySet = componentInstancesArtifacts.keySet();
         String currentPath = ARTIFACTS_PATH + RESOURCES_PATH;
-        for (String keyAssetName : keySet) {
+        for (String keyAssetName : componentInstancesArtifacts.keySet()) {
             ArtifactsInfo artifactsInfo = componentInstancesArtifacts.get(keyAssetName);
             String pathWithAssetName = currentPath + keyAssetName + PATH_DELIMITER;
             writeComponentArtifactsToSpecifiedPath = writeArtifactsInfoToSpecifiedPath(mainComponent, artifactsInfo, zipstream, pathWithAssetName,
@@ -943,8 +939,7 @@ public class CsarUtils {
         if (checkComponentBeforeOperation(component)) {
             return Either.left(zipstream);
         }
-        final Map<String, InterfaceDefinition> interfaces = ((Resource) component).getInterfaces();
-        for (Map.Entry<String, InterfaceDefinition> interfaceEntry : interfaces.entrySet()) {
+        for (Map.Entry<String, InterfaceDefinition> interfaceEntry : ((Resource) component).getInterfaces().entrySet()) {
             for (OperationDataDefinition operation : interfaceEntry.getValue().getOperations().values()) {
                 try {
                     if (checkComponentBeforeWrite(component, interfaceEntry, operation)) {
@@ -959,19 +954,16 @@ public class CsarUtils {
                     if (artifactFromCassandra.isRight()) {
                         log.error(ARTIFACT_NAME_UNIQUE_ID, artifactName, artifactUUID);
                         log.error("Failed to get {} payload from DB reason: {}", artifactName, artifactFromCassandra.right().value());
-                        return Either.right(componentsUtils
-                            .getResponseFormat(ActionStatus.ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource", component.getUniqueId(),
-                                artifactName, artifactUUID));
+                        return Either.right(componentsUtils.getResponseFormat(
+                            ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION, "Resource", component.getUniqueId(), artifactName, artifactUUID));
                     }
-                    final byte[] payloadData = artifactFromCassandra.left().value();
                     zipstream.putNextEntry(new ZipEntry(OperationArtifactUtil.createOperationArtifactPath(component, null, operation, true)));
-                    zipstream.write(payloadData);
+                    zipstream.write(artifactFromCassandra.left().value());
                 } catch (IOException e) {
                     log.error("Component Name {},  Interface Name {}, Operation Name {}", component.getNormalizedName(), interfaceEntry.getKey(),
                         operation.getName());
-                    log.error("Error while writing the operation's artifacts to the CSAR " + "{}", e);
-                    return Either
-                        .right(componentsUtils.getResponseFormat(ActionStatus.ERROR_DURING_CSAR_CREATION, "Resource", component.getUniqueId()));
+                    log.error("Error while writing the operation's artifacts to the CSAR", e);
+                    return Either.right(componentsUtils.getResponseFormat(ERROR_DURING_CSAR_CREATION, "Resource", component.getUniqueId()));
                 }
             }
         }
@@ -1191,9 +1183,7 @@ public class CsarUtils {
         return result.toString();
     }
 
-    private ComponentTypeArtifacts collectComponentTypeArtifacts(
-        Component fetchedComponent
-    ) {
+    private ComponentTypeArtifacts collectComponentTypeArtifacts(Component fetchedComponent) {
         ArtifactsInfo componentArtifacts = collectComponentArtifacts(fetchedComponent);
         ComponentTypeArtifacts componentArtifactsInfo = new ComponentTypeArtifacts();
         if (componentArtifacts.isNotEmpty()) {
@@ -1269,10 +1259,6 @@ public class CsarUtils {
         return Either.left(true);
     }
 
-    public String getVersionFirstThreeOctets() {
-        return versionFirstThreeOctets;
-    }
-
     private Map<String, List<ArtifactDefinition>> getComponentInstanceSpecificArtifacts(Map<String, ArtifactDefinition> componentArtifacts,
                                                                                         Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> componentTypeArtifacts,
                                                                                         ArtifactGroupTypeEnum artifactGroupTypeEnum) {
@@ -1306,10 +1292,6 @@ public class CsarUtils {
         Map<String, List<ArtifactDefinition>> informationalArtifactsByType = collectGroupArtifacts(informationalArtifacts);
         Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
         Map<String, List<ArtifactDefinition>> deploymentArtifactsByType = collectGroupArtifacts(deploymentArtifacts);
-        Map<String, ArtifactDefinition> interfaceOperationArtifacts =
-            OperationArtifactUtil.getDistinctInterfaceOperationArtifactsByName(component);
-        Map<String, List<ArtifactDefinition>> interfaceOperationArtifactsByType = collectGroupArtifacts(
-            interfaceOperationArtifacts);
         ArtifactsInfo artifactsInfo = new ArtifactsInfo();
         if (!informationalArtifactsByType.isEmpty()) {
             artifactsInfo.addArtifactsToGroup(ArtifactGroupTypeEnum.INFORMATIONAL, informationalArtifactsByType);
