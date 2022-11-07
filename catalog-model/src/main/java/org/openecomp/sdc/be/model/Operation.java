@@ -38,8 +38,6 @@ public class Operation extends OperationDataDefinition implements IOperationPara
      * <p>
      * Jackson DeSerialization workaround constructor to create an operation with no arguments.
      * </p>
-     *
-     * @param emptyString The empty string provided by jackson.
      */
     public Operation() {
         super();
