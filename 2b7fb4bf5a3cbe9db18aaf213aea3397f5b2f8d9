@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b57696d6_cf0fc4b2",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:36:54Z",
+      "side": 1,
+      "message": "you should add this to all the other models, and make sure it is included in the upgrade path too.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 36
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73a9bb50_8cec4da3",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:36:54Z",
+      "side": 1,
+      "message": "you could remove this unnecessary else",
+      "range": {
+        "startLine": 124,
+        "startChar": 8,
+        "endLine": 124,
+        "endChar": 12
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "986a64eb_65e355d0",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-07T17:36:54Z",
+      "side": 1,
+      "message": "this should not be a while, the condition result is always the same. Maybe you wanted an if here?!?\nAlso, not all paths are covered, nothing returns false.",
+      "range": {
+        "startLine": 125,
+        "startChar": 10,
+        "endLine": 125,
+        "endChar": 98
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
