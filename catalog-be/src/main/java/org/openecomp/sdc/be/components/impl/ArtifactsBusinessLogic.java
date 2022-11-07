@@ -704,11 +704,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             new ArtifactOperationInfo(false, false, ArtifactOperationEnum.DOWNLOAD), artifactId, null, null, null, null, null, parentId,
             containerComponentType);
         ArtifactDefinition artifactDefinition;
-        Either<ArtifactDefinition, Operation> insideValue = result;
-        if (insideValue.isLeft()) {
-            artifactDefinition = insideValue.left().value();
+        if (result.isLeft()) {
+            artifactDefinition = result.left().value();
         } else {
-            artifactDefinition = insideValue.right().value().getImplementationArtifact();
+            artifactDefinition = result.right().value().getImplementationArtifact();
         }
         // for tosca artifacts and heat env on VF level generated on download without saving
         if (artifactDefinition.getPayloadData() != null) {
