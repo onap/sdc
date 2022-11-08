@@ -70,6 +70,30 @@
       "revId": "ac826b806ec565a1aa456558adff9d2974d6419f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8f0e220_e18ce8e7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-08T14:06:15Z",
+      "side": 1,
+      "message": "The if statement is checking if an artifact type is present.\nThe artifact type will only be present when the extended multi line grammer is used (3.6.16.2.3), when the single line short notation (3.6.16.2.1) is used artifact type will not be present",
+      "parentUuid": "1b879629_43020385",
+      "range": {
+        "startLine": 324,
+        "startChar": 0,
+        "endLine": 324,
+        "endChar": 13
+      },
+      "revId": "ac826b806ec565a1aa456558adff9d2974d6419f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
