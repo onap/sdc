@@ -16,9 +16,6 @@ chef-solo -c solo.rb -E ${ENVNAME}
 
 # Execute Jetty
 cd $JETTY_HOME
+echo "jetty.httpConfig.sendServerVersion=false" >> $JETTY_HOME/start.d/start.ini
 
 java $JAVA_OPTIONS -jar "$JETTY_HOME/start.jar"
-
-
-
-
