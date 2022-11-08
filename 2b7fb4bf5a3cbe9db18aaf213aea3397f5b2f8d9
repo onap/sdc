@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c761c9a1_e6bf67b6",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-08T17:45:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b57696d6_cf0fc4b2",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 36
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "73a9bb50_8cec4da3",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4accd43f_dbded59e",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-08T17:45:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73a9bb50_8cec4da3",
+      "range": {
+        "startLine": 124,
+        "startChar": 8,
+        "endLine": 124,
+        "endChar": 12
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "986a64eb_65e355d0",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
         "patchSetId": 4
@@ -68,6 +116,30 @@
       "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64139374_f0498508",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list-item/input-list-item.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-11-08T17:45:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "986a64eb_65e355d0",
+      "range": {
+        "startLine": 125,
+        "startChar": 10,
+        "endLine": 125,
+        "endChar": 98
+      },
+      "revId": "2b7fb4bf5a3cbe9db18aaf213aea3397f5b2f8d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
