@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d040ba27_69d8ebd6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-08T12:04:03Z",
+      "side": 1,
+      "message": "this change results in \ndescription: \u0027\u0027 \nbeing generated when there is no description\n\nThe previous code worked fine, setting to null when operationEntry.getValue().getDescription() was null and no description was generated",
+      "range": {
+        "startLine": 280,
+        "startChar": 0,
+        "endLine": 280,
+        "endChar": 114
+      },
+      "revId": "0ce487ba7b5e7eff7d446b9503c7b7fc35957505",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
