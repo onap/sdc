@@ -46,6 +46,30 @@
       "revId": "ac826b806ec565a1aa456558adff9d2974d6419f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b879629_43020385",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-08T13:55:50Z",
+      "side": 1,
+      "message": "means no need to set string \u0027null\u0027",
+      "parentUuid": "1217bc29_232cac70",
+      "range": {
+        "startLine": 324,
+        "startChar": 0,
+        "endLine": 324,
+        "endChar": 13
+      },
+      "revId": "ac826b806ec565a1aa456558adff9d2974d6419f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
