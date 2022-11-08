@@ -5,8 +5,116 @@
 Release Notes
 =============
 
+<<<<<<< HEAD   (39ccad Update link to architecture description)
+=======
+Version: 1.12.0
+===============
+
+:Release Date: 2022-10-28
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.0
+   
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC London early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4207 <https://jira.onap.org/browse/SDC-4207>`_ - Constraint validation - Node Template Interfaces
+*  `SDC-4229 <https://jira.onap.org/browse/SDC-4229>`_ - Default Substitution Mapping
+*  `DMAAP-1787 <https://jira.onap.org/browse/DMAAP-1787>`_ - [SDC] Migrate SDC to use kafka native messaging
+*  `SDC-4216 <https://jira.onap.org/browse/SDC-4216>`_ - Support import of VFCs with property constraints
+*  `SDC-4209 <https://jira.onap.org/browse/SDC-4209>`_ - Constraint validation - Instance Attributes in a Service
+*  `SDC-4210 <https://jira.onap.org/browse/SDC-4210>`_ - VFC properties - Increase character limit to 100 and allow use of @ character
+*  `SDC-4214 <https://jira.onap.org/browse/SDC-4214>`_ - View Data type properties in UI
+*  `SDC-4142 <https://jira.onap.org/browse/SDC-4142>`_ - Service import - Import updated node types with new attributes
+*  `SDC-4208 <https://jira.onap.org/browse/SDC-4208>`_ - Enable viewing of VFC property details when checked in
+*  `SDC-4190 <https://jira.onap.org/browse/SDC-4190>`_ - Constraint validation - Instance Properties in a Service
+*  `SDC-4193 <https://jira.onap.org/browse/SDC-4193>`_ - View data type in UI
+*  `SDC-4184 <https://jira.onap.org/browse/SDC-4184>`_ - API for fetching single data type
+*  `DMAAP-1744 <https://jira.onap.org/browse/DMAAP-1744>`_ - Move SDC and clients to use Strimzi Kafka
+
+
+**Bug Fixes**
+
+*  `SDC-4224 <https://jira.onap.org/browse/SDC-4224>`_ - Import service with policy error
+*  `SDC-4225 <https://jira.onap.org/browse/SDC-4225>`_ - Import of service with concat property value issue
+*  `SDC-4227 <https://jira.onap.org/browse/SDC-4227>`_ - Error importing service with instance interfaces
+*  `SDC-4189 <https://jira.onap.org/browse/SDC-4189>`_ - security risk: Improper Input Validation
+*  `SDC-4217 <https://jira.onap.org/browse/SDC-4217>`_ - Setting value on interface operation property with constraint throws exception
+*  `SDC-4218 <https://jira.onap.org/browse/SDC-4218>`_ - Fix cant set properties on an instance in the composition view
+*  `SDC-4211 <https://jira.onap.org/browse/SDC-4211>`_ - Fetch data type endpoint is returning Optional instead of the requested Data Type
+*  `SDC-4213 <https://jira.onap.org/browse/SDC-4213>`_ - Onboard-ui build started to fail with problems in ./node_modules/react-show-more-text/lib/ShowMoreText.css
+*  `SDC-4196 <https://jira.onap.org/browse/SDC-4196>`_ - Empty interface operation definitions throw exception
+*  `SDC-4192 <https://jira.onap.org/browse/SDC-4192>`_ - X-Frame-Options not configured: Lack of clickjacking protection
+*  `SDC-4185 <https://jira.onap.org/browse/SDC-4185>`_ - Composition Window doesnot allow to update new version of VFC
+
+
+**Tasks**
+
+*  `SDC-4204 <https://jira.onap.org/browse/SDC-4204>`_ - Finalize Documentation
+*  `SDC-4232 <https://jira.onap.org/browse/SDC-4232>`_ - Remove temp file if Minio-upload failed
+*  `SDC-4231 <https://jira.onap.org/browse/SDC-4231>`_ - Fix potential NPE in importing property constraints
+*  `SDC-4230 <https://jira.onap.org/browse/SDC-4230>`_ - Fix Critical bug reported by Sonar
+*  `SDC-4228 <https://jira.onap.org/browse/SDC-4228>`_ - Update Vulnerable 3PP commons-text-1.9
+*  `SDC-4205 <https://jira.onap.org/browse/SDC-4205>`_ - Remove unused code
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+>>>>>>> CHANGE (cc5438 Fix doc configuration on master branch)
 Version: 1.11.9
-==============
+===============
 
 :Release Date: 2022-09-28
 
@@ -96,7 +204,7 @@ Quick Links:
     N/A
 
 Version: 1.11.8
-==============
+===============
 
 :Release Date: 2022-09-09
 
@@ -196,7 +304,7 @@ Quick Links:
     N/A
 
 Version: 1.11.7
-==============
+===============
 
 :Release Date: 2022-08-15
 
@@ -291,7 +399,7 @@ Quick Links:
     N/A
 
 Version: 1.11.6
-==============
+===============
 
 :Release Date: 2022-07-21
 
@@ -382,7 +490,7 @@ Quick Links:
     N/A
 
 Version: 1.11.5
-==============
+===============
 
 :Release Date: 2022-06-24
 
@@ -472,7 +580,7 @@ Quick Links:
     N/A
 
 Version: 1.11.4
-==============
+===============
 
 :Release Date: 2022-06-09
 
@@ -563,7 +671,7 @@ Quick Links:
     N/A
 
 Version: 1.11.3
-==============
+===============
 
 :Release Date: 2022-05-17
 
@@ -646,7 +754,7 @@ Quick Links:
     N/A
 
 Version: 1.11.2
-==============
+===============
 
 :Release Date: 2022-04-23
 
@@ -735,7 +843,7 @@ Quick Links:
     N/A
 
 Version: 1.11.1
-==============
+===============
 
 :Release Date: 2022-04-08
 
@@ -806,7 +914,7 @@ Quick Links:
     N/A
 
 Version: 1.11.0
-==============
+===============
 
 :Release Date: 2022-04-05
 
@@ -889,7 +997,7 @@ Quick Links:
 
 
 Version: 1.10.3
-==============
+===============
 
 :Release Date: 2022-03-22
 
@@ -962,7 +1070,7 @@ Quick Links:
     N/A
 
 Version: 1.10.2
-==============
+===============
 
 :Release Date: 2022-03-15
 
@@ -991,10 +1099,10 @@ SDC Jakarta
 *  `SDC-3861 <https://jira.onap.org/browse/SDC-3861>`_ - Support for multiple directives
 *  `SDC-3898 <https://jira.onap.org/browse/SDC-3898>`_ - Support properties of type List<Map<String, String>>
 *  `SDC-3891 <https://jira.onap.org/browse/SDC-3891>`_ - Update SDC for rename of TOSCA CL to ACM
-*  `SDC-3891 <https://jira.onap.org/browse/SDC-3882>`_ - Support occurrences on node templates
-*  `SDC-3891 <https://jira.onap.org/browse/SDC-3897>`_ - Support complex types in interface operation inputs
-*  `SDC-3891 <https://jira.onap.org/browse/SDC-3899>`_ - Support complex types for artifact properties in interface operation implementation
-*  `SDC-3891 <https://jira.onap.org/browse/SDC-3887>`_ - Support instance count on node template
+*  `SDC-3882 <https://jira.onap.org/browse/SDC-3882>`_ - Support occurrences on node templates
+*  `SDC-3897 <https://jira.onap.org/browse/SDC-3897>`_ - Support complex types in interface operation inputs
+*  `SDC-3899 <https://jira.onap.org/browse/SDC-3899>`_ - Support complex types for artifact properties in interface operation implementation
+*  `SDC-3887 <https://jira.onap.org/browse/SDC-3887>`_ - Support instance count on node template
 
 **Bug Fixes**
 
@@ -1003,9 +1111,9 @@ SDC Jakarta
 *  `SDC-3889 <https://jira.onap.org/browse/SDC-3889>`_ - Error when no derived from exists
 *  `SDC-3888 <https://jira.onap.org/browse/SDC-3888>`_ - VSP upload with large files can handle the upload status incorrectly
 *  `SDC-3901 <https://jira.onap.org/browse/SDC-3901>`_ - Cannot create node filter capability if capability has different type properties
-*  `SDC-3901 <https://jira.onap.org/browse/SDC-3907>`_ - Exception when mouse over and out the node pallet in the composition screen
-*  `SDC-3901 <https://jira.onap.org/browse/SDC-3905>`_ - Error updating node filter capability
-*  `SDC-3901 <https://jira.onap.org/browse/SDC-3904>`_ - Error creating node filter capability using get_property
+*  `SDC-3907 <https://jira.onap.org/browse/SDC-3907>`_ - Exception when mouse over and out the node pallet in the composition screen
+*  `SDC-3905 <https://jira.onap.org/browse/SDC-3905>`_ - Error updating node filter capability
+*  `SDC-3904 <https://jira.onap.org/browse/SDC-3904>`_ - Error creating node filter capability using get_property
 
 **Tasks**
 
@@ -1049,7 +1157,7 @@ Quick Links:
     N/A
 
 Version: 1.10.1
-==============
+===============
 
 :Release Date: 2022-02-02
 
@@ -1095,7 +1203,7 @@ SDC Jakarta
 *  `SDC-3851 <https://jira.onap.org/browse/SDC-3851>`_ - Decrypt errors in sdc-be logs
 *  `SDC-3852 <https://jira.onap.org/browse/SDC-3852>`_ - Cassandra init dockers not working with latest version of cqlsh
 *  `SDC-2902 <https://jira.onap.org/browse/SDC-2902>`_ - Make sure Optionals values are defined before calling their `get` method
-*  `SDC-3837 <https://jira.onap.org/browse/SDC-3840>`_ - Remove test-jar generation
+*  `SDC-3840 <https://jira.onap.org/browse/SDC-3840>`_ - Remove test-jar generation
 
 
 **Tasks**
@@ -1139,7 +1247,7 @@ Quick Links:
 
 
 Version: 1.10.0
-==============
+===============
 
 :Release Date: 2022-01-07
 
@@ -1287,7 +1395,7 @@ SDC Istanbul Release
 
 **Stories**
 
-The full list of implemented stories is available on `JIRA ISTANBUL TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22Istanbul%20Release%22>`_
+The full list of implemented stories is available on `JIRA ISTANBUL STORIES <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22Istanbul%20Release%22>`_
 
 **Tasks**
 
@@ -2157,7 +2265,7 @@ The main goal of the Beijing release was to:
     - improve code coverage of the SDC code.
     - SDC introduced two new experimental projects the DCAE-D and WorkFlow which enhance the modeling capabilities of SDC.
 
-DCAE-D information is available here: `DCAE-DS <https://wiki.onap.org/display/DW/SDC-DCAE-D>`_
+DCAE-D information is available here: `DCAE-DS <https://wiki.onap.org/pages/viewpage.action?pageId=16005787>`_
 Workflow information is available in readthedocs
 
 **Epics**
