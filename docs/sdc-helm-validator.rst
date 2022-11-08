@@ -20,10 +20,7 @@ More information could be found in project repository, see :ref:`sdc_helm_valida
 Offered API
 -----------
 
-.. Latest Open API model: :download:`OpenAPI.yaml <https://gerrit.onap.org/r/gitweb?p=sdc/sdc-helm-validator.git;a=blob_plain;f=OpenAPI.yaml;hb=refs/heads/master>`
-
-
-Latest Open API model: |sdc-helm-validator-open-api|_
+Latest Open API model: :download:`OpenAPI.yaml <https://gerrit.onap.org/r/gitweb?p=sdc/sdc-helm-validator.git;a=blob_plain;f=OpenAPI.yaml;hb=refs/heads/master>` 
 
 
 Validation

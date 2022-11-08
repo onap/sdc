@@ -16,9 +16,7 @@ SDC supports the following packages types
 - ETSI SOL004 Tosca CSAR Package
 - Basic Helm package support for CNF
 
-For an extensive guide on how to perform onboarding, please refer to the ONAP User guide:
-* :ref:`User Guides <onap-doc:doc_guide_user_des>`
-
+For an extensive guide on how to perform onboarding, please refer to the ONAP User guide
 
 Heat Package
 ^^^^^^^^^^^^
@@ -168,7 +166,7 @@ SDC supports the signature in Cryptographic Message Syntax (CMS) format.
 
 .. note::
    For SDC to validate the authenticity and integrity of the onboarding package, the root certificate of the trusted CA
-   needs to be pre-installed in SDC before onboarding is started. The details of this procedure are described :ref:`here <doc_guide_user_des_res-onb_pre-install_root_certificate>`.
+   needs to be pre-installed in SDC before onboarding is started.
 
 .. _ETSI NFV-SOL 004v2.6.1: https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20004v2.6.1%20-%20GS%20-%20VNF%20Package%20Stage%203%20-%20spec.pdf
 .. _ETSI NFV-SOL 004v2.5.1: https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20004v2.5.1%20-%20GS%20-%20VNF%20Package%20Stage%203%20spec.pdf
