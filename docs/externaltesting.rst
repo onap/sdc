@@ -36,10 +36,10 @@ in this package:
   
   package: api/openecomp-sdc-rest-webapp/externaltesting-rest/externaltesting-rest-services
   
-Code to hold data types for the VTP API and the implemation of the interface to VTP is contained
+Code to hold data types for the VTP API and the implementation of the interface to VTP is contained
 in these packages:
 
-Provide the API and serialization classes for the REST API to VTP
+Provide the API and serialisation classes for the REST API to VTP
 
   package: lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-api
   
