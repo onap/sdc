@@ -236,7 +236,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
         } catch (final Exception e) {
             deleteTempFile(tempArtifactPath);
-            LOGGER.error("Package Size Reducer not configured", e);
+            LOGGER.error("Failed to upload artifact", e);
             throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename));
         }
 

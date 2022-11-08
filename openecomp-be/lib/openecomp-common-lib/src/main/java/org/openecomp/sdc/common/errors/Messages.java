@@ -212,7 +212,7 @@ public enum Messages {
     FAILED_TO_UPDATE_LAST_SEEN_NOTIFICATION("Failed to update last seen notification for user %s"),
     FAILED_TO_VERIFY_SIGNATURE("Could not verify signature of signed package."),
     EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING("externalCsarStore configuration failure, missing '%s'"),
-    ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT("An error has occurred while persisting the artifact: %s"),
+    ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT("Write '%s' to object storage failed, check object store logs for details, possibly due to insufficient storage capacity"),
     ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE("An error has occurred while reducing the artifact's size: %s"),
     UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING("An unexpected problem happened while getting '%s'"),
     PACKAGE_REDUCER_NOT_CONFIGURED("Could not process the package. Package reducer is not configured");
