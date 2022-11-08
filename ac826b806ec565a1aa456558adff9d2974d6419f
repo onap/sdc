@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "659a4390_cf607642",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-08T13:35:14Z",
+      "side": 1,
+      "message": "wont removing the else mean the one line syntax wont work, e.g.:\nimplementation: myImpl",
+      "range": {
+        "startLine": 324,
+        "startChar": 0,
+        "endLine": 324,
+        "endChar": 13
+      },
+      "revId": "ac826b806ec565a1aa456558adff9d2974d6419f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
