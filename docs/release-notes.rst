@@ -6,7 +6,7 @@ Release Notes
 =============
 
 Version: 1.12.0
-==============
+===============
 
 :Release Date: 2022-10-28
 
@@ -111,7 +111,7 @@ Quick Links:
     N/A
 
 Version: 1.11.9
-==============
+===============
 
 :Release Date: 2022-09-28
 
@@ -201,7 +201,7 @@ Quick Links:
     N/A
 
 Version: 1.11.8
-==============
+===============
 
 :Release Date: 2022-09-09
 
@@ -301,7 +301,7 @@ Quick Links:
     N/A
 
 Version: 1.11.7
-==============
+===============
 
 :Release Date: 2022-08-15
 
@@ -396,7 +396,7 @@ Quick Links:
     N/A
 
 Version: 1.11.6
-==============
+===============
 
 :Release Date: 2022-07-21
 
@@ -487,7 +487,7 @@ Quick Links:
     N/A
 
 Version: 1.11.5
-==============
+===============
 
 :Release Date: 2022-06-24
 
@@ -577,7 +577,7 @@ Quick Links:
     N/A
 
 Version: 1.11.4
-==============
+===============
 
 :Release Date: 2022-06-09
 
@@ -668,7 +668,7 @@ Quick Links:
     N/A
 
 Version: 1.11.3
-==============
+===============
 
 :Release Date: 2022-05-17
 
@@ -751,7 +751,7 @@ Quick Links:
     N/A
 
 Version: 1.11.2
-==============
+===============
 
 :Release Date: 2022-04-23
 
@@ -840,7 +840,7 @@ Quick Links:
     N/A
 
 Version: 1.11.1
-==============
+===============
 
 :Release Date: 2022-04-08
 
@@ -911,7 +911,7 @@ Quick Links:
     N/A
 
 Version: 1.11.0
-==============
+===============
 
 :Release Date: 2022-04-05
 
