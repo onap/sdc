@@ -46,6 +46,30 @@
       "revId": "0ce487ba7b5e7eff7d446b9503c7b7fc35957505",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "de5fc1d2_6c9f8acc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-08T12:44:17Z",
+      "side": 1,
+      "message": "I believe {} is valid for an empty dict or could change to empty value, i.e. \npreConfigure:\n\nbut dont think we should add empty strings to avoid having empty dict",
+      "parentUuid": "5a3c5726_34f2c117",
+      "range": {
+        "startLine": 280,
+        "startChar": 0,
+        "endLine": 280,
+        "endChar": 114
+      },
+      "revId": "0ce487ba7b5e7eff7d446b9503c7b7fc35957505",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
