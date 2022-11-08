@@ -16,9 +16,7 @@ SDC supports the following packages types
 - ETSI SOL004 Tosca CSAR Package
 - Basic Helm package support for CNF
 
-For an extensive guide on how to perform onboarding, please refer to the ONAP User guide:
-* :ref:`User Guides <onap-doc:doc_guide_user_des>`
-
+For an extensive guide on how to perform onboarding, please refer to the ONAP User guide
 
 Heat Package
 ^^^^^^^^^^^^
@@ -29,7 +27,7 @@ There must be at least one heat template yaml file in the package whose name sta
 templates in the package can have any name. All  environment files that are included in the package must have the same
 name as its corresponding yaml file with a .env file extension.
 
-An example of a simple heat package stucture is a zip archive containing the following 3 files
+An example of a simple heat package structure is a zip archive containing the following 3 files
 
 - base_vFW.yaml   (heat template)
 - base_vFW.env    (corresponding environment file)
@@ -63,7 +61,7 @@ The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001
 If the package is onboarded using the ETSI SOL001 v2.5.1 model, the structure of the supported CSAR package
 is as described in `ETSI NFV-SOL 004v2.5.1`_ csar structure option 1 i.e. CSAR containing a TOSCA-Metadata directory.
 
-The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001v2.5.1`_. The tosca types defined in this version of the ETSI NFV-SOL 001 are used in the created VF (rather than the types defined in the SDC AID model).
+The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001v2.5.1`_. The TOSCA types defined in this version of the ETSI NFV-SOL 001 are used in the created VF (rather than the types defined in the SDC AID model).
 
 Note in relation to model selection:
 
@@ -137,7 +135,7 @@ If the package extension is *.csar* and the following is true
 
 - CSAR package contains TOSCA-Metadata directory
 - The TOSCA.meta file exists within the TOSCA-Metadata directory
-- The TOSCA.meta file contains the following keynames in block_0
+- The TOSCA.meta file contains the following key names in block_0
 
    - Entry-Definitions
    - ETSI-Entry-Manifest
@@ -168,7 +166,7 @@ SDC supports the signature in Cryptographic Message Syntax (CMS) format.
 
 .. note::
    For SDC to validate the authenticity and integrity of the onboarding package, the root certificate of the trusted CA
-   needs to be pre-installed in SDC before onboarding is started. The details of this procedure are described :ref:`here <doc_guide_user_des_res-onb_pre-install_root_certificate>`.
+   needs to be pre-installed in SDC before onboarding is started.
 
 .. _ETSI NFV-SOL 004v2.6.1: https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20004v2.6.1%20-%20GS%20-%20VNF%20Package%20Stage%203%20-%20spec.pdf
 .. _ETSI NFV-SOL 004v2.5.1: https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20004v2.5.1%20-%20GS%20-%20VNF%20Package%20Stage%203%20spec.pdf
