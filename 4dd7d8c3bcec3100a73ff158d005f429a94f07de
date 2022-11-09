@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "491f86a6_41cbc282",
+        "filename": "catalog-ui/src/app/models/properties.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-09T12:10:31Z",
+      "side": 1,
+      "message": "If I remember correctly propertyConstraints is a list of strings in json format that gets added to the DB while constraints doesn\u0027t. constraints is a list of PropertyConstraints that is then used to populate the frontend. When sending the request to the backend only propertyConstraints needs to be set",
+      "parentUuid": "b5a6cde2_48ba5bad",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 23
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ec70fe90_981e14e5",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed4fd4c3_316fb37f",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-09T12:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec70fe90_981e14e5",
+      "range": {
+        "startLine": 154,
+        "startChar": 10,
+        "endLine": 154,
+        "endChar": 29
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "4c0c9a7b_7a749b6f",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-09T12:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f519f5f_d528d320",
+      "range": {
+        "startLine": 155,
+        "startChar": 17,
+        "endLine": 160,
+        "endChar": 7
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b5a586d_433db69f",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 7
@@ -91,6 +163,30 @@
       "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ede39354_1deb5d9f",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-09T12:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b5a586d_433db69f",
+      "range": {
+        "startLine": 165,
+        "startChar": 4,
+        "endLine": 165,
+        "endChar": 7
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
