@@ -23,11 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
@@ -43,22 +46,26 @@ class VnfDescriptorGeneratorImplTest {
 
     @Test
     void testGenerate() throws IOException, VnfDescriptorException {
-        final byte[] onboardedPackage = getResourceAsByteArray("VnfPackage_AMF_v2.csar");
+        final byte[] onboardedPackage = getResourceAsByteArray("TestVnf.csar");
         final ArtifactDefinition artifactDefinition = new ArtifactDefinition();
         artifactDefinition.setPayload(onboardedPackage);
         artifactDefinition.setArtifactName("vnf-onboarded-csar.csar");
         final String vnfDescriptorName = "vnf-onboarded-csar";
         final VnfDescriptor vnfDescriptor = vnfDescriptorGenerator.generate(vnfDescriptorName, artifactDefinition).orElse(null);
-        final String expectedNodeType = "com.ericsson.resource.abstract.Ericsson.AMF";
-        final String expectedVnfdFileName = "vnfd_amf.yaml";
+        final String expectedNodeType = "org.onap.resource.testVnf";
+        final String expectedVnfdFileName = "test_vnfd.yaml";
         assertThat("Vnf Descriptor should be present", vnfDescriptor, is(notNullValue()));
         assertThat("Vnf Descriptor should have the expected name", vnfDescriptor.getName(), is(vnfDescriptorName));
         assertThat("Vnf Descriptor should have the expected node type", vnfDescriptor.getNodeType(), is(expectedNodeType));
         assertThat("Vnf Descriptor should have the expected vnfd file name", vnfDescriptor.getVnfdFileName(), is(expectedVnfdFileName));
         assertThat("Vnf Descriptor should contain the expected definition files count", vnfDescriptor.getDefinitionFiles().size(), is(2));
-        assertThat("Vnf Descriptor should contain the expected definition entries", vnfDescriptor.getDefinitionFiles().keySet(),
-            contains("Definitions/vnfd_amf.yaml", "Definitions/etsi_nfv_sol001_vnfd_2_5_1_types.yaml"));
+        assertTrue("Vnf Descriptor should contain the expected definition entries", vnfDescriptor.getDefinitionFiles().keySet().contains("Definitions/test_vnfd.yaml"));
+        assertTrue("Vnf Descriptor should contain the expected definition entries", vnfDescriptor.getDefinitionFiles().keySet().contains("Definitions/etsi_nfv_sol001_vnfd_2_5_1_types.yaml"));
+        
+        final String vnfdContents = new String(vnfDescriptor.getDefinitionFiles().get("Definitions/test_vnfd.yaml"), StandardCharsets.UTF_8);
+        assertFalse(vnfdContents.contains("interfaces:"));
     }
+    
 
     private byte[] getResourceAsByteArray(final String filename) throws IOException {
         try (final InputStream inputStream = readFileAsStream(filename)) {
