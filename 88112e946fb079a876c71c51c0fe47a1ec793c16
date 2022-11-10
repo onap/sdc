@@ -49,6 +49,29 @@
     },
     {
       "key": {
+        "uuid": "8f5d61a1_d0e2cb01",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-10T17:31:09Z",
+      "side": 1,
+      "message": "it would seem more consistent with other components to have the delete button at the end rather than the start",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 133
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4e2d23a8_2b3c86b3",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
         "patchSetId": 9
@@ -258,6 +281,29 @@
       "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7f8508e_6df427f1",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-10T17:31:09Z",
+      "side": 1,
+      "message": "the field seems enable even when the VFC is checked in. This seems to be an existing more general issue (e.g. Type, Description seem to be also editable when checked in, though the save button is disabled.\nAs this is an existing issue can be handled as a separate bug instead of in this commit",
+      "range": {
+        "startLine": 131,
+        "startChar": 9,
+        "endLine": 132,
+        "endChar": 75
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
