@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "725dc295_ec58e544",
+        "filename": "catalog-ui/src/app/models/properties.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:38:35Z",
+      "side": 1,
+      "message": "I believe you are correct, the array of object is converted to an array of strings by serializing the object to a JSON string if I\u0027m not wrong.\nBut I thought the endpoint would receive the array of object and when persisting it would serialize.\nAnyways, it would be good to receive and send as JSON Object instead of string, but if that how it is now, no problem.",
+      "parentUuid": "491f86a6_41cbc282",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 23
+      },
+      "revId": "4dd7d8c3bcec3100a73ff158d005f429a94f07de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ec70fe90_981e14e5",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 7
