@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58f4b15e_b1438020",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:34:45Z",
+      "side": 1,
+      "message": "please revert the wildcard import",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 25
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60bf1eba_09d609d1",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:34:45Z",
+      "side": 1,
+      "message": "why introduce a property type when the type could come from the other input \"@Input() set property(property: PropertyBEModel)\"?\nI think you want to detect changes in the type, as changing the type in the property object itself is not triggering the input change detection, am I right?\nFrom the property, it seems you just need the constraints and the type, so you could simplify and not use the property at all, just receive the constraints array and the type.",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 3
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d9a52e6_3674a857",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:34:45Z",
+      "side": 1,
+      "message": "not used",
+      "range": {
+        "startLine": 243,
+        "startChar": 57,
+        "endLine": 243,
+        "endChar": 90
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d1bd595_2a3f9efe",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:34:45Z",
+      "side": 1,
+      "message": "maybe you could put this as a list in PROPERTY_DATA from the catalog-ui/src/app/utils/constants.ts class",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 308,
+        "endChar": 1
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0fb567d_3a8ef75c",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-10T17:34:45Z",
+      "side": 1,
+      "message": "please, use PROPERTY_TYPES from the catalog-ui/src/app/utils/constants.ts class",
+      "range": {
+        "startLine": 310,
+        "startChar": 12,
+        "endLine": 310,
+        "endChar": 25
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
