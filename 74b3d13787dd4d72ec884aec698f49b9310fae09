@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9e0350b8_f895fddd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T16:55:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58f4b15e_b1438020",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 25
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "60bf1eba_09d609d1",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6403752_3913d595",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T16:55:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "60bf1eba_09d609d1",
+      "range": {
+        "startLine": 40,
+        "startChar": 2,
+        "endLine": 46,
+        "endChar": 3
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "68c58bee_160dd5ad",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T16:55:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d9a52e6_3674a857",
+      "range": {
+        "startLine": 243,
+        "startChar": 57,
+        "endLine": 243,
+        "endChar": 90
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d1bd595_2a3f9efe",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 8
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "df3cc8b2_51b9e79d",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T16:55:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d1bd595_2a3f9efe",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 308,
+        "endChar": 1
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0fb567d_3a8ef75c",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 8
@@ -114,6 +210,30 @@
       "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0630daaa_3f95fa29",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 8
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T16:55:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c0fb567d_3a8ef75c",
+      "range": {
+        "startLine": 310,
+        "startChar": 12,
+        "endLine": 310,
+        "endChar": 25
+      },
+      "revId": "74b3d13787dd4d72ec884aec698f49b9310fae09",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
