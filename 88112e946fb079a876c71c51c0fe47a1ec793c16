@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9d6dc9d9_97b456bc",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T13:09:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f5d61a1_d0e2cb01",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 133
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e2d23a8_2b3c86b3",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
         "patchSetId": 9
@@ -304,6 +328,30 @@
       "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c95933bf_dfb85397",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 9
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-11T13:09:32Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c7f8508e_6df427f1",
+      "range": {
+        "startLine": 131,
+        "startChar": 9,
+        "endLine": 132,
+        "endChar": 75
+      },
+      "revId": "88112e946fb079a876c71c51c0fe47a1ec793c16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
