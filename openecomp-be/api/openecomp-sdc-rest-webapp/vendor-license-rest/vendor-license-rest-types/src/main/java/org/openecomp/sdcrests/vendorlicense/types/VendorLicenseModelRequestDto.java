@@ -38,11 +38,21 @@ public class VendorLicenseModelRequestDto {
     @NotNull
     private String iconRef;
 
+    @Size(max = 25)
+    private String tenant;
+
     public void setVendorName(final String vendorName) {
         this.vendorName = ValidationUtils.sanitizeInputString(vendorName);
     }
 
     public void setDescription(final String description) {
         this.description = ValidationUtils.sanitizeInputString(description);
+    }
+
+    public void setTenant(final String tenant) {
+        if(tenant != null){
+            this.tenant = ValidationUtils.sanitizeInputString(tenant);
+        }
+        else this.tenant=tenant;
     }
 }

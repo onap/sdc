@@ -20,7 +20,11 @@
 package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Schema(description = "VendorLicenseModelEntity")
 public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
 
@@ -33,4 +37,6 @@ public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
     public void setId(String id) {
         this.id = id;
     }
+
+    private String tenant;
 }

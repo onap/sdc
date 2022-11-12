@@ -1988,6 +1988,13 @@ errors:
     messageId: "SVC4691"
   }
 
+  #---------SVC4950-----------------------------
+  MISSING_TENANT_NAME: {
+    code: 400,
+    message: "Error: Missing Tenant name.",
+    messageId: "SVC4950"
+  }
+
   #---------POL4692------------------------------
   MISSING_OLD_COMPONENT_INSTANCE: {
     code: 400  ,

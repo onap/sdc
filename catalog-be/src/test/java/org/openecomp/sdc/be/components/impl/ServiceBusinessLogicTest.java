@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +46,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.hamcrest.MatcherAssert;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -83,6 +89,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
     private final static String DEFAULT_ICON = "defaulticon";
     private static final String ALREADY_EXIST = "alreadyExist";
+    private static final boolean MULTITENANCY_ENABLED = true;
+    private static final String TEST_TENANT = "test_tenant";
 
     @Test
     void testGetComponentAuditRecordsCertifiedVersion() {
@@ -1069,4 +1077,39 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         return propertyList;
     }
 
+
+    @Test
+    void testCreateService_withMultitenancyValidTenant_Success() {
+        Assert.assertTrue(MULTITENANCY_ENABLED);
+        Service service = createServiceObject(false);
+        service.setTenant(TEST_TENANT);
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+
+        if (createResponse.isRight()) {
+            assertEquals(new Integer(200), createResponse.right().value().getStatus());
+        }
+        MatcherAssert.assertThat("Unauthorized Tenant", getTestRoles().contains(service.getTenant()));
+        assertEquals(TEST_TENANT, service.getTenant());
+        assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
+    }
+
+
+    @Test
+   void testCreateService_withMultitenancyInvalidTenant_Failure() {
+        Service service = createServiceObject(false);
+        service.setTenant("invalid_tenant");
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
+        Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+        MatcherAssert.assertThat("Unauthorized Tenant", !getTestRoles().contains(service.getTenant()));
+        assertNotEquals(TEST_TENANT, service.getTenant());
+        assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
+    }
+
+    private Set<String> getTestRoles(){
+        Set<String> roles = new HashSet<>();
+        roles.add("test_admin");
+        roles.add("test_tenant");
+        return roles;
+    }
 }
