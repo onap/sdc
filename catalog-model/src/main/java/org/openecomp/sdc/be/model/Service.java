@@ -197,6 +197,10 @@ public class Service extends Component {
         getMetadataDefinition().setVendorName(vendorName);
     }
 
+    public void setTenant(String tenant) {
+        getMetadataDefinition().setTenant(tenant);
+    }
+
     public void setVendorRelease(String vendorRelease) {
         getMetadataDefinition().setVendorRelease(vendorRelease);
     }

@@ -814,6 +814,7 @@ public class ModelConverter {
         component.setConformanceLevel((String) toscaElement.getMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL));
         component.setIcon((String) toscaElement.getMetadataValue(JsonPresentationFields.ICON));
         component.setDescription((String) toscaElement.getMetadataValue(JsonPresentationFields.DESCRIPTION));
+        component.setTenant((String) toscaElement.getMetadataValue(JsonPresentationFields.TENANT));
         component.setTags((List<String>) toscaElement.getMetadataValue(JsonPresentationFields.TAGS));
         component.setInvariantUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.INVARIANT_UUID));
         component.setContactId((String) toscaElement.getMetadataValue(JsonPresentationFields.CONTACT_ID));
@@ -1381,6 +1382,7 @@ public class ModelConverter {
         toscaElement.setMetadataValue(JsonPresentationFields.IS_DELETED, component.getIsDeleted());
         toscaElement.setMetadataValue(JsonPresentationFields.ICON, component.getIcon());
         toscaElement.setMetadataValue(JsonPresentationFields.DESCRIPTION, component.getDescription());
+        toscaElement.setMetadataValue(JsonPresentationFields.TENANT, component.getTenant());
         toscaElement.setMetadataValue(JsonPresentationFields.TAGS, component.getTags());
         toscaElement.setMetadataValue(JsonPresentationFields.INVARIANT_UUID, component.getInvariantUUID());
         toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());

@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -40,6 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
@@ -62,8 +64,9 @@ public interface VendorSoftwareProducts extends VspEntities {
 
     @POST
     @Path("/")
-    @Operation(description = "Create a new vendor software product", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class))))
-    Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    @Operation(description = "Create a new vendor software product", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class)))
+            , @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
+    Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
     @Path("/")
@@ -71,9 +74,9 @@ public interface VendorSoftwareProducts extends VspEntities {
     Response listVsps(@Parameter(description = "Filter to return only Vendor Software Products with at"
         + " least one version at this status. Currently supported values: 'Certified' , 'Draft'") @QueryParam("versionFilter") String versionStatus,
                       @Parameter(description = "Filter to only return Vendor Software Products at this status."
-                          + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
-                          + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                              + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
+                              + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
+                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
 
     @GET
     @Path("/{vspId}")
@@ -116,7 +119,7 @@ public interface VendorSoftwareProducts extends VspEntities {
 
     @GET
     @Path("/validation-vsp")
-    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq) throws Exception;
 
     @PUT
     @Path("/{vspId}/versions/{versionId}/actions")

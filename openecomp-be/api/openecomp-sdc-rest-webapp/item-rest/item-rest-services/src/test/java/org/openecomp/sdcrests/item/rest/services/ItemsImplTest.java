@@ -22,6 +22,7 @@ package org.openecomp.sdcrests.item.rest.services;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -39,7 +40,11 @@ import io.minio.MinioClient;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import javax.ws.rs.core.Response;
+
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,6 +63,7 @@ import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +77,8 @@ class ItemsImplTest {
     private static final String CREDENTIALS = "credentials";
     private static final String TEMP_PATH = "tempPath";
     private static final String UPLOAD_PARTSIZE = "uploadPartSize";
+    private static final boolean MULTITENANCY_ENABLED = true;
+    private static final String TEST_TENANT = "test_tenant";
 
     @Mock
     private ManagersProvider managersProvider;
@@ -190,7 +198,7 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER);
+        Response response = items.list(null, null, null, null, null, USER, null);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 
@@ -200,5 +208,79 @@ class ItemsImplTest {
         versions.add(new Version("2"));
         versions.add(new Version("3"));
         return versions;
+    }
+
+    @Test
+    void getItemList_withMultitenancyValidTenant_ReturnSuccessList() {
+        Assert.assertTrue(MULTITENANCY_ENABLED);
+        Assert.assertNotNull(getTestRoles());
+        items.initActionSideAffectsMap();
+        items.setManagersProvider(managersProvider);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        Response response = items.list(null, null, null, null, null, USER, null);
+        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        List<Item> expectedItems=new ArrayList<>();
+        List<Item> actualItems=getAllItems();
+        getTestRoles().stream().forEach(role -> getAllItems().stream()
+                .filter(item -> item.getTenant()!=null)
+                .filter(item -> item.getTenant().contains(role))
+                .forEach(item -> expectedItems.add(item)));
+        assertNotSame(expectedItems.size(), actualItems.size());
+    }
+
+
+    @Test
+    void getItemList_withMultitenancyInvalidTenant_ReturnsEmptylList() {
+        Assert.assertTrue(MULTITENANCY_ENABLED);
+
+        Assert.assertNotNull(getTestRoles());
+        String tenant= "invalid tenant";
+        items.initActionSideAffectsMap();
+        items.setManagersProvider(managersProvider);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        Response response = items.list(null, null, null, null, null, USER, null);
+        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        List<Item> expectedItems=new ArrayList<>();
+        List<Item> actualItems=getAllItems();
+        assertNotNull(tenant);
+        getTestRoles().stream().forEach(role -> getAllItems().stream()
+                .filter(item -> item.getTenant()!=null)
+                .filter(item -> item.getTenant().contains(tenant))
+                .forEach(item -> expectedItems.add(item)));
+        Assert.assertEquals(expectedItems.size(), 0);
+        Assert.assertNotEquals(expectedItems.containsAll(actualItems), actualItems.containsAll(expectedItems));
+    }
+
+
+    private List<Item> getAllItems(){
+        List<Item> items=new ArrayList<>();
+
+        Item itemOne = new Item();
+        itemOne.setType(ItemType.vlm.name());
+        itemOne.setOwner(USER);
+        itemOne.setStatus(ItemStatus.ACTIVE);
+        itemOne.setName("TEST_VENDOR_ONE");
+        itemOne.setDescription("TEST_DESCRIPTION");
+        itemOne.setTenant(TEST_TENANT);
+
+        Item itemTwo = new Item();
+        itemTwo.setType(ItemType.vsp.name());
+        itemTwo.setOwner(USER);
+        itemTwo.setStatus(ItemStatus.ACTIVE);
+        itemTwo.setName("TEST_VSP_ONE");
+        itemTwo.setDescription("TEST_DESCRIPTION");
+        itemTwo.setTenant("admin_tenant");
+
+        items.add(itemOne);
+        items.add(itemTwo);
+        return items;
+    }
+
+
+    private Set<String> getTestRoles(){
+        Set<String> roles = new HashSet<>();
+        roles.add("test_admin");
+        roles.add("test_tenant");
+        return roles;
     }
 }
