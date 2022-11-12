@@ -85,6 +85,9 @@ public class ComponentMessage extends CatalogComponent implements IComponentMess
         setIsHighestVersion(component.isHighestVersion()); // isHighestVersion
 
         setDescription(component.getDescription()); // description
+
+        setTenant(component.getTenant()); // tenant
+
         if (component.getTags() != null) {
             setTags(component.getTags()); // tags
         }
