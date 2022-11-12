@@ -102,6 +102,9 @@ public class ItemZusammenDaoImpl implements ItemDao {
             case ITEM_OWNER:
                 item.setOwner((String) propertyValue);
                 break;
+            case TENANT:
+                item.setTenant((String) propertyValue);
+                break;
             case ITEM_STATUS:
                 item.setStatus(ItemStatus.valueOf((String) propertyValue));
                 break;
@@ -121,6 +124,9 @@ public class ItemZusammenDaoImpl implements ItemDao {
         info.setDescription(item.getDescription());
         info.addProperty(ItemInfoProperty.ITEM_TYPE.getName(), item.getType());
         info.addProperty(ItemInfoProperty.ITEM_OWNER.getName(), item.getOwner());
+        if (item.getTenant() != null) {
+            info.addProperty(ItemInfoProperty.TENANT.getName(), item.getTenant());
+        }
         if (item.getStatus() != null) {
             info.addProperty(ItemInfoProperty.ITEM_STATUS.getName(), item.getStatus());
         }
@@ -135,7 +141,8 @@ public class ItemZusammenDaoImpl implements ItemDao {
         ITEM_TYPE("item_type"),
         ITEM_VERSIONS_STATUSES("item_versions_statuses"),
         ITEM_OWNER("Owner"),
-        ITEM_STATUS("status");
+        ITEM_STATUS("status"),
+        TENANT("Tenant");
 
         private final String name;
 

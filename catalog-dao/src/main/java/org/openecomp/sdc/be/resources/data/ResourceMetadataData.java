@@ -47,6 +47,7 @@ public class ResourceMetadataData extends ComponentMetadataData {
         resourceMetadataDataDefinition.setLicenseType(extractor.getLicenseType());
         resourceMetadataDataDefinition.setToscaResourceName(extractor.getToscaResourceName());
         resourceMetadataDataDefinition.setCsarVersionId(extractor.getCsarVersionId());
+        resourceMetadataDataDefinition.setTenant(extractor.getTenant());
     }
 
     @Override
@@ -61,6 +62,7 @@ public class ResourceMetadataData extends ComponentMetadataData {
         addIfExists(graphMap, GraphPropertiesDictionary.LICENSE_TYPE, resourceMetadataDataDefinition.getLicenseType());
         addIfExists(graphMap, GraphPropertiesDictionary.TOSCA_RESOURCE_NAME, resourceMetadataDataDefinition.getToscaResourceName());
         addIfExists(graphMap, GraphPropertiesDictionary.CSAR_VERSION_ID, resourceMetadataDataDefinition.getCsarVersionId());
+        addIfExists(graphMap, GraphPropertiesDictionary.TENANT, resourceMetadataDataDefinition.getTenant());
         return graphMap;
     }
 }

@@ -42,6 +42,7 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
     private ResourceTypeEnum importServiceType = ResourceTypeEnum.SERVICE;
     private String toscaServiceName;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
 
     public ServiceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {

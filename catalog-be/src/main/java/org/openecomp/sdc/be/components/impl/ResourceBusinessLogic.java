@@ -1411,6 +1411,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
+        resourceMetaData.setTenant(resourceVf.getTenant());
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
         resourceMetaData.setModel(resourceVf.getModel());
         // Setting tag
@@ -1444,6 +1445,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName(resourceVf.getVendorName());
+        cvfc.setTenant(resourceVf.getTenant());
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
         cvfc.setModel(resourceVf.getModel());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());

@@ -58,6 +58,7 @@ public class UploadServiceInfo {
     private String serviceIconPath;
     private String icon;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
     private String serviceVendorModelNumber;
     private String serviceType = "";

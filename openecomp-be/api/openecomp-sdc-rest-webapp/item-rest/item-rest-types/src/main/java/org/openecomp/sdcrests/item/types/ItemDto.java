@@ -32,6 +32,7 @@ public class ItemDto {
     private String description;
     private String owner;
     private String status;
+    private String tenant;
     private Map<String, Object> properties;
 
     public void setId(final String id) {
@@ -56,6 +57,13 @@ public class ItemDto {
 
     public void setStatus(final String status) {
         this.status = ValidationUtils.sanitizeInputString(status);
+    }
+
+    public void setTenant(final String tenant) {
+        if(tenant != null) {
+            this.tenant = ValidationUtils.sanitizeInputString(tenant);
+        }
+        else this.tenant=tenant;
     }
 
 }

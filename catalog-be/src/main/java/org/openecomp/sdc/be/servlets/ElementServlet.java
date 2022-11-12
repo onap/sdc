@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -79,9 +81,10 @@ import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
+import org.keycloak.representations.AccessToken;
 @Path("/v1/")
 /**
  *
@@ -522,8 +525,23 @@ public class ElementServlet extends BeGenericServlet {
                 log.debug("failed to get followed resources services ");
                 return buildErrorResponse(followedResourcesServices.right().value());
             }
-            Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            Multitenancy keyaccess= new Multitenancy();
+            if (keyaccess.multitenancycheck() == true) {
+                AccessToken.Access realmAccess = keyaccess.getAccessToken(request).getRealmAccess();
+                Set<String> realmroles = realmAccess.getRoles();
+                Map<String, List<? extends Component>> dataResponse = new HashMap<>();
+               followedResourcesServices.left().value().entrySet().stream()
+                        .forEach(component->{component.setValue(component.getValue().stream().filter(cm->realmroles.stream()
+                                .anyMatch(role->cm.getTenant().equals(role))).collect(Collectors.toList()));
+                            dataResponse.put(component.getKey(), component.getValue());
+                        });
+                Object data = RepresentationUtils.toRepresentation(dataResponse);
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            }
+            else{
+                Object data = RepresentationUtils.toRepresentation(followedResourcesServices.left().value());
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), data);
+            }
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Followed Resources / Services Categories");
             log.debug("Getting followed resources/services failed with exception", e);

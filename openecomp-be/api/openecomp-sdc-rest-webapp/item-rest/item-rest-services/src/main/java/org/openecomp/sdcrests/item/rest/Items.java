@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.versioning.types.Item;
@@ -61,7 +63,7 @@ public interface Items {
                   @QueryParam("permission") String permissionFilter,
                   @Parameter(description = "Filter by onboarding method", schema = @Schema(type = "string", allowableValues = {"NetworkPackage", "manual"}))
                   @QueryParam("onboardingMethod") String onboardingMethodFilter,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq);
 
     @GET
     @Path("/{itemId}")

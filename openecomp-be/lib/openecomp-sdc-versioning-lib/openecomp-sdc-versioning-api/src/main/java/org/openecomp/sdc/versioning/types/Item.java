@@ -33,6 +33,7 @@ public class Item {
     private String type;
     private String name;
     private String owner;
+    private String tenant;
     private ItemStatus status;
     private String description;
     private Map<String, Object> properties = new HashMap<>();

@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +57,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
@@ -63,6 +65,7 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -87,6 +90,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
@@ -115,11 +119,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Resource", method = "POST", summary = "Returns created resource", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
-        @ApiResponse(responseCode = "201", description = "Resource created"),
-        @ApiResponse(responseCode = "403", description = "Restricted operation"),
-        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-        @ApiResponse(responseCode = "409", description = "Resource already exist")})
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
+            @ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "409", description = "Resource already exist"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResource(@Parameter(description = "Resource object to be created", required = true) String data,
                                    @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
@@ -148,14 +153,33 @@ public class ResourcesServlet extends AbstractValidationsServlet {
                     response = buildErrorResponse(convertResponse.right().value());
                     return response;
                 }
+                Multitenancy keyaccess = new Multitenancy();
                 Resource resource = convertResponse.left().value();
-                Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
-                Object representation = RepresentationUtils.toRepresentation(createdResource);
-                response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
-                responseWrapper.setInnerElement(response);
-                loggerSupportability
-                    .log(LoggerSupportabilityActions.CREATE_RESOURCE, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-                        "Resource successfully created user {}", userId);
+                if (keyaccess.multitenancycheck() == true)
+                {
+                        AccessToken.Access realmAccess = keyaccess.getAccessToken(request).getRealmAccess();
+                        Set<String> realmroles = realmAccess.getRoles();
+                        boolean match = realmroles.contains(resource.getTenant());
+                        if (match == true) {
+                            Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
+                            Object representation = RepresentationUtils.toRepresentation(createdResource);
+                            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
+                            responseWrapper.setInnerElement(response);
+                            loggerSupportability
+                                    .log(LoggerSupportabilityActions.CREATE_RESOURCE, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                                            "Resource successfully created user {}", userId);
+                        } else {
+                            return Response.status(401, "Unauthorized Tenant").build();
+                        }
+                } else {
+                    Resource createdResource = resourceBusinessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
+                    Object representation = RepresentationUtils.toRepresentation(createdResource);
+                    response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
+                    responseWrapper.setInnerElement(response);
+                    loggerSupportability
+                            .log(LoggerSupportabilityActions.CREATE_RESOURCE, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                                    "Resource successfully created user {}", userId);
+                }
             }
             return responseWrapper.getInnerElement();
         } catch (final IOException | ZipException e) {

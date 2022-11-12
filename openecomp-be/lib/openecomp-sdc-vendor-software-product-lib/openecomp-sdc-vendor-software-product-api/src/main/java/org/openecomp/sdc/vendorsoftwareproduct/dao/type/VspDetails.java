@@ -50,6 +50,7 @@ public class VspDetails implements VersionableEntity {
     private List<String> featureGroups;
     private String onboardingMethod;
     private List<String> modelIdList;
+    private String tenant;
 
     public VspDetails(String id, Version version) {
         this.id = id;

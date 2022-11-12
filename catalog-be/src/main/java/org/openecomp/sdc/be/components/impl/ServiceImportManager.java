@@ -62,6 +62,7 @@ public class ServiceImportManager {
     public void populateServiceMetadata(UploadServiceInfo serviceMetaData, Service service) {
         if (service != null && serviceMetaData != null) {
             service.setDescription(serviceMetaData.getDescription());
+            service.setTenant(serviceMetaData.getTenant());
             service.setTags(serviceMetaData.getTags());
             service.setCategories(serviceMetaData.getCategories());
             service.setContactId(serviceMetaData.getContactId());
@@ -84,6 +85,9 @@ public class ServiceImportManager {
             service.setModel(serviceMetaData.getModel());
             if (serviceMetaData.getVendorName() != null) {
                 service.setVendorName(serviceMetaData.getVendorName());
+            }
+            if (serviceMetaData.getTenant() != null) {
+                service.setTenant(serviceMetaData.getTenant());
             }
             if (serviceMetaData.getVendorRelease() != null) {
                 service.setVendorRelease(serviceMetaData.getVendorRelease());

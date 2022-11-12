@@ -2822,6 +2822,14 @@ errors:
         message: "Capability '%1' not found in '%2' '%3'."
         messageId: "SVC4186"
 
+    #---------SVC4750-----------------------------
+    MISSING_TENANT_NAME: {
+        code: 400,
+        message: "Error: Missing Tenant name.",
+        messageId: "SVC4750"
+    }
+
+
     #---------SVC4001------------------------------
     NOT_PERMITTED_SPECIAL_CHARS: {
         code: 406,

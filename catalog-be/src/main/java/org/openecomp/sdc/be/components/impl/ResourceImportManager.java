@@ -330,6 +330,7 @@ public class ResourceImportManager {
             resource.setIcon(resourceMetaData.getResourceIconPath());
             resource.setResourceVendorModelNumber(resourceMetaData.getResourceVendorModelNumber());
             resource.setResourceType(ResourceTypeEnum.valueOf(resourceMetaData.getResourceType()));
+            resource.setTenant(resourceMetaData.getTenant());
             if (resourceMetaData.getVendorName() != null) {
                 resource.setVendorName(resourceMetaData.getVendorName());
             }

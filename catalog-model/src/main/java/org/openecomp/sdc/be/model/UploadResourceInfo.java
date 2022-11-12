@@ -42,6 +42,7 @@ public class UploadResourceInfo {
     private String resourceIconPath;
     private String icon;
     private String vendorName;
+    private String tenant;
     private String vendorRelease;
     private String resourceVendorModelNumber;
     private String resourceType = "VFC";
