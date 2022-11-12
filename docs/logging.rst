@@ -3764,3 +3764,14 @@ Response Types
       message: "Error: Interface operation input  parameter name should not be empty",
       messageId: "SVC46703"
     }
+
+---------SVC4750-----------------------------
+==============================================
+
+::
+
+    MISSING_TENANT_NAME: {
+      code: 400,
+      message: "Error: Missing Tenant name.",
+      messageId: "SVC4750"
+    }

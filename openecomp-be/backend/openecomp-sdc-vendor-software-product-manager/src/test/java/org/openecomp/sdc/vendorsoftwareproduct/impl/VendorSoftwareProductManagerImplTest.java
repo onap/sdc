@@ -44,9 +44,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +69,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.api.HealingManager;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
@@ -91,6 +95,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTempl
 import org.openecomp.sdc.versioning.ActionVersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
@@ -101,6 +107,8 @@ class VendorSoftwareProductManagerImplTest {
     private static final Version VERSION10 = new Version("1, 0");
     private static final String USER1 = "vspTestUser1";
     private static final String USER2 = "vspTestUser2";
+    private static final boolean MULTITENANCY_ENABLED = true;
+    private static final String TEST_TENANT = "test_tenant";
 
     @Mock
     private ActionVersioningManager versioningManagerMock;
@@ -553,4 +561,100 @@ class VendorSoftwareProductManagerImplTest {
         assertEquals(actual.getFeatureGroups(), expected.getFeatureGroups());
     }
 
+    @Test
+    void createVSP_withMultitenancy_Success() {
+        assertEquals(MULTITENANCY_ENABLED, true);
+        assertNotNull(getTestRoles());
+        doReturn("{}")
+                .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(nullable(SchemaTemplateInput.class));
+        VspDetails vspToCreate =
+                createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                        "category", "subCategory", "123", null);
+        vspToCreate.setTenant(TEST_TENANT);
+        assertThat("Unauthorized Tenant", getTestRoles().contains(vspToCreate.getTenant()));
+        VspDetails vsp = vendorSoftwareProductManager.createVsp(vspToCreate);
+
+        assertNotNull(vsp);
+        vspToCreate.setId(vsp.getId());
+        vspToCreate.setVersion(VERSION01);
+        assertVspsEquals(vsp, vspToCreate);
+        assertEquals(vsp.getTenant(), vspToCreate.getTenant());
+    }
+
+    @Test
+    void createVSP_withMultitenancy_Failure() {
+        assertEquals(MULTITENANCY_ENABLED, true);
+        assertNotNull(getTestRoles());
+        doReturn("{}")
+                .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(nullable(SchemaTemplateInput.class));
+        VspDetails vspToCreate =
+                createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                        "category", "subCategory", "123", null);
+        vspToCreate.setTenant("invalid_tenant");
+        VspDetails vsp = vendorSoftwareProductManager.createVsp(vspToCreate);
+
+        assertEquals(vsp.getTenant(), vspToCreate.getTenant());
+        assertThat("Unauthorized Tenant", !getTestRoles().contains(vsp.getTenant()));
+    }
+
+    private Set<String> getTestRoles(){
+        Set<String> roles = new HashSet<>();
+        roles.add("test_admin");
+        roles.add("test_tenant");
+        return roles;
+    }
+
+    @Test
+    public void testListVSP_multitenancyWithTenant_FilterList() {
+        Assert.assertEquals(MULTITENANCY_ENABLED,true);
+        Assert.assertNotNull(getTestRoles());
+        assertThat("Unauthorized Tenant", getTestRoles().contains(TEST_TENANT));
+        List<Item> expectedItems=new ArrayList<>();
+        getTestRoles().stream().forEach(role -> getVSPItems().stream()
+                .filter(item -> item.getTenant()!=null)
+                .filter(item -> item.getTenant().contains(role))
+                .forEach(item -> expectedItems.add(item)));
+        Assert.assertEquals(expectedItems.size(), 1);
+    }
+
+    @Test
+    public void testListVSP_multitenancyWithInvalidTenant_ReturnEmptylist() {
+        Assert.assertEquals(MULTITENANCY_ENABLED,true);
+        Assert.assertNotNull(getTestRoles());
+        String tenant= "invalid_tenant";
+        List<Item> expectedItems=new ArrayList<>();
+        List<Item> actualItems=getVSPItems();
+        Assert.assertNotNull(tenant);
+        getTestRoles().stream().forEach(role -> getVSPItems().stream()
+                .filter(item -> item.getTenant()!=null)
+                .filter(item -> item.getTenant().contains(tenant))
+                .forEach(item -> expectedItems.add(item)));
+
+        Assert.assertEquals(expectedItems.size(), 0);
+        Assert.assertNotEquals(expectedItems.containsAll(actualItems), actualItems.containsAll(expectedItems));
+    }
+
+    private List<Item> getVSPItems(){
+        List<Item> items=new ArrayList<>();
+
+        Item itemOne = new Item();
+        itemOne.setType(ItemType.vsp.name());
+        itemOne.setOwner(USER1);
+        itemOne.setStatus(ItemStatus.ACTIVE);
+        itemOne.setName("TEST_VSP_ONE");
+        itemOne.setDescription("TEST_DESCRIPTION");
+        itemOne.setTenant(TEST_TENANT);
+
+        Item itemTwo = new Item();
+        itemTwo.setType(ItemType.vsp.name());
+        itemTwo.setOwner(USER1);
+        itemTwo.setStatus(ItemStatus.ACTIVE);
+        itemTwo.setName("TEST_VSP_TWO");
+        itemTwo.setDescription("TEST_DESCRIPTION");
+        itemTwo.setTenant("admin_tenant");
+
+        items.add(itemOne);
+        items.add(itemTwo);
+        return items;
+    }
 }
