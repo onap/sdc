@@ -113,6 +113,14 @@ public class Resource extends Component implements Serializable {
         getResourceMetadataDataDefinition().setVendorName(vendorName);
     }
 
+    public String getTenant() {
+        return getResourceMetadataDataDefinition().getTenant();
+    }
+
+    public void setTenant(String tenant) {
+        getResourceMetadataDataDefinition().setTenant(tenant);
+    }
+
     public String getVendorRelease() {
         return getResourceMetadataDataDefinition().getVendorRelease();
     }

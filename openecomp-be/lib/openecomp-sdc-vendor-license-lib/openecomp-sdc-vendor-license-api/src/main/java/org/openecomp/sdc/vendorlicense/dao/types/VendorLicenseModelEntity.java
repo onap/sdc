@@ -25,9 +25,13 @@ import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+@Getter
+@Setter
 @Table(keyspace = "dox", name = "vendor_license_model")
 public class VendorLicenseModelEntity implements VersionableEntity {
 
@@ -42,6 +46,7 @@ public class VendorLicenseModelEntity implements VersionableEntity {
     private String vendorName;
     private String description;
     private String oldVersion;
+    private String tenant;
     @Column(name = "icon")
     private String iconRef;
     @Computed("writetime(vendor_name)")
@@ -123,7 +128,7 @@ public class VendorLicenseModelEntity implements VersionableEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, version, vendorName, description, iconRef);
+        return Objects.hash(id, version, vendorName, description, iconRef, tenant);
     }
 
     @Override
@@ -136,6 +141,6 @@ public class VendorLicenseModelEntity implements VersionableEntity {
         }
         VendorLicenseModelEntity that = (VendorLicenseModelEntity) obj;
         return Objects.equals(id, that.id) && Objects.equals(version, that.version) && Objects.equals(vendorName, that.vendorName) && Objects
-            .equals(description, that.description) && Objects.equals(iconRef, that.iconRef);
+                .equals(description, that.description) && Objects.equals(iconRef, that.iconRef) && Objects.equals(tenant, that.tenant);
     }
 }

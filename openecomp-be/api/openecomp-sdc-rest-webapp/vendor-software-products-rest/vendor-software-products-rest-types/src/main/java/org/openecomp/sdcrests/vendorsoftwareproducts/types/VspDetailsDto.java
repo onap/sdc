@@ -38,4 +38,5 @@ public class VspDetailsDto extends VspRequestDto {
     private String networkPackageName;
     private String owner;
     private String status;
+    private String tenant;
 }

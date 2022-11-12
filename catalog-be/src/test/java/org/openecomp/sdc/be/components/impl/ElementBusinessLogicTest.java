@@ -38,6 +38,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -68,6 +71,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 
+    private static final boolean MULTITENANCY_ENABLED = true;
+    private static final String TEST_TENANT = "test_tenant";
     private User user;
 
     @Mock
@@ -317,6 +322,85 @@ class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     void testGetBaseTypes_givenUserValidationFails_thenReturnsException() {
         when(userValidations.validateUserExistsActionStatus(user.getUserId())).thenReturn(ActionStatus.RESTRICTED_OPERATION);
         assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId(), null).isRight());
+    }
+
+
+    @Test
+    void testGetFollowed_withMultitenancyValidTenant_thenReturnsSuccess() {
+        Assert.assertTrue(MULTITENANCY_ENABLED);
+        user.setUserId("admin1");
+        user.setRole(Role.ADMIN.name());
+        Set<Component> resources = new HashSet<>();
+        Set<Component> services = new HashSet<>();
+       Resource resource = new Resource();
+        Service service = new Service();
+        service.setTenant(TEST_TENANT);
+        resource.setTenant(TEST_TENANT);
+        Assert.assertNotNull(service.getTenant());
+        Assert.assertNotNull(resource.getTenant());
+        resources.add(resource);
+        services.add(service);
+        Assert.assertNotNull(getTestRoles());
+        Assert.assertTrue(getTestRoles().contains(TEST_TENANT));
+
+        when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(Either.left(resources));
+        when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.SERVICE)))
+                .thenReturn(Either.left(services));
+        Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
+        Set<String> realmroles =getTestRoles();
+        Map<String, List<? extends Component>> dataResponse = new HashMap<>();
+        result.entrySet().stream()
+                .forEach(component->{component.setValue(component.getValue().stream().filter(cm->realmroles.stream()
+                        .anyMatch(role->cm.getTenant().equals(role))).collect(Collectors.toList()));
+                    dataResponse.put(component.getKey(), component.getValue());
+                });
+        assertEquals(result.size(), dataResponse.values().size());
+        assertEquals(1, dataResponse.get("services").size());
+        assertEquals(1, dataResponse.get("resources").size());
+    }
+
+    @Test
+        void testGetFollowed_withMultitenancyInValidTenant_thenReturnsEmptyList() {
+        String INVALID_TENANT="invalid_tenant";
+        Assert.assertTrue(MULTITENANCY_ENABLED);
+        user.setUserId("admin1");
+        user.setRole(Role.ADMIN.name());
+        Set<Component> resources = new HashSet<>();
+        Set<Component> services = new HashSet<>();
+        Resource resource = new Resource();
+        Service service = new Service();
+        service.setTenant(INVALID_TENANT);
+        resource.setTenant(INVALID_TENANT);
+        Assert.assertNotNull(service.getTenant());
+        Assert.assertNotNull(resource.getTenant());
+        resources.add(resource);
+        services.add(service);
+        Assert.assertNotNull(getTestRoles());
+
+        when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.RESOURCE)))
+                .thenReturn(Either.left(resources));
+        when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.SERVICE)))
+                .thenReturn(Either.left(services));
+        Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
+        Set<String> realmroles =getTestRoles();
+        Map<String, List<? extends Component>> dataResponse = new HashMap<>();
+        result.entrySet().stream()
+                .forEach(component->{component.setValue(component.getValue().stream().filter(cm->realmroles.stream()
+                        .anyMatch(role->cm.getTenant().equals(role))).collect(Collectors.toList()));
+                    dataResponse.put(component.getKey(), component.getValue());
+                });
+
+        assertEquals(result.size(), dataResponse.values().size(),"No Data available for "+INVALID_TENANT);
+        assertEquals(0, dataResponse.get("services").size());
+        assertEquals(0, dataResponse.get("resources").size());
+    }
+
+    private Set<String> getTestRoles(){
+        Set<String> roles = new HashSet<>();
+        roles.add("test_admin");
+        roles.add("test_tenant");
+        return roles;
     }
 
 }

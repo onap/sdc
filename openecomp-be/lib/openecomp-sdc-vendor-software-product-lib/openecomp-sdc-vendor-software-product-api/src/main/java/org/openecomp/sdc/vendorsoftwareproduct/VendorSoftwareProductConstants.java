@@ -30,6 +30,7 @@ public final class VendorSoftwareProductConstants {
     public final class UniqueValues {
 
         public static final String VENDOR_SOFTWARE_PRODUCT_NAME = "Vendor Software Product name";
+        public static final String TENANT = "tenant";
         public static final String PROCESS_NAME = "Process name";
         public static final String NETWORK_NAME = "Network name";
         public static final String COMPONENT_NAME = "ComponentData name";

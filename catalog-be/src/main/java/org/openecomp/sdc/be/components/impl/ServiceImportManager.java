@@ -62,6 +62,7 @@ public class ServiceImportManager {
     public void populateServiceMetadata(UploadServiceInfo serviceMetaData, Service service) {
         if (service != null && serviceMetaData != null) {
             service.setDescription(serviceMetaData.getDescription());
+            service.setTenant(serviceMetaData.getTenant());
             service.setTags(serviceMetaData.getTags());
             service.setCategories(serviceMetaData.getCategories());
             service.setContactId(serviceMetaData.getContactId());
