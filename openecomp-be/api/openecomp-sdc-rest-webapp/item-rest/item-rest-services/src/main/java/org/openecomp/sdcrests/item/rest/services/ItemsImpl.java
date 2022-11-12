@@ -35,12 +35,15 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
@@ -116,15 +119,27 @@ public class ItemsImpl implements Items {
 
     @Override
     public Response list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter, String permissionFilter,
-                         String onboardingMethodFilter, String user) {
+                         String onboardingMethodFilter, String user, HttpServletRequest hreq) {
         Predicate<Item> itemPredicate = createItemPredicate(itemStatusFilter, versionStatusFilter, itemTypeFilter, onboardingMethodFilter,
             permissionFilter, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
-        getManagersProvider().getItemManager().list(itemPredicate).stream()
-            .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-            .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-        return Response.ok(results).build();
+        Multitenancy keyaccess= new Multitenancy();
+        if (keyaccess.multitenancycheck() == true) {
+            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            Set<String> realmroles = realmAccess.getRoles();
+        realmroles.stream().forEach(role ->  getManagersProvider().getItemManager().list(itemPredicate).stream()
+                .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                .filter(item -> item.getTenant().contains(role))
+                .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
+            return Response.ok(results).build();
+        }
+        else{
+            getManagersProvider().getItemManager().list(itemPredicate).stream()
+                    .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
+            return Response.ok(results).build();
+        }
     }
 
     @Override

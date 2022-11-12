@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
@@ -55,6 +56,7 @@ import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
@@ -116,6 +118,7 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.keycloak.representations.AccessToken;
 
 @Named
 @Service("vendorSoftwareProducts")
@@ -139,6 +142,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private final UniqueValueUtil uniqueValueUtil;
     private final StorageFactory storageFactory;
     private final CatalogVspClient catalogVspClient;
+    boolean match;
 
     public VendorSoftwareProductsImpl() {
         this.itemManager = AsdcItemManagerFactory.getInstance().createInterface();
@@ -173,12 +177,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response createVsp(VspRequestDto vspRequestDto, String user) {
-        ItemCreationDto vspCreationDto = createVspItem(vspRequestDto, user);
-        return Response.ok(vspCreationDto).build();
-    }
+    public Response createVsp(VspRequestDto vspRequestDto, String user, HttpServletRequest hreq) {
+        ItemCreationDto vspCreationDto = createVspItem(vspRequestDto, user, hreq);
+        if (vspCreationDto != null) {
+            return Response.ok(vspCreationDto).build();
+        }
+        else return Response.status(401, "Unauthorized Tenant").build();
+        }
 
-    private ItemCreationDto createVspItem(VspRequestDto vspRequestDto, String user) {
+    private ItemCreationDto createVspItem(VspRequestDto vspRequestDto, String user, HttpServletRequest hreq) {
         OnboardingMethod onboardingMethod = null;
         try {
             onboardingMethod = OnboardingMethod.valueOf(vspRequestDto.getOnboardingMethod());
@@ -188,34 +195,69 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
         ItemCreationDto itemCreationDto = null;
         if (onboardingMethod == NetworkPackage || onboardingMethod == OnboardingMethod.Manual) {
-            itemCreationDto = createItem(vspRequestDto, user, onboardingMethod);
+            itemCreationDto = createItem(vspRequestDto, user, onboardingMethod, hreq);
         } else {
             throwUnknownOnboardingMethodException(new IllegalArgumentException("Wrong parameter Onboarding Method"));
         }
         return itemCreationDto;
     }
 
-    private ItemCreationDto createItem(VspRequestDto vspRequestDto, String user, OnboardingMethod onboardingMethod) {
-        Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
-        item.setType(ItemType.vsp.name());
-        item.setOwner(user);
-        item.setStatus(ItemStatus.ACTIVE);
-        item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
-        uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
-        item = itemManager.create(item);
-        uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
-        Version version = versioningManager.create(item.getId(), new Version(), null);
-        VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().applyMapping(vspRequestDto, VspDetails.class);
-        vspDetails.setId(item.getId());
-        vspDetails.setVersion(version);
-        vspDetails.setOnboardingMethod(vspRequestDto.getOnboardingMethod());
-        vendorSoftwareProductManager.createVsp(vspDetails);
-        versioningManager.publish(item.getId(), version, "Initial vsp:" + vspDetails.getName());
-        ItemCreationDto itemCreationDto = new ItemCreationDto();
-        itemCreationDto.setItemId(item.getId());
-        itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
-        activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version, ActivityType.Create, user, true, "", ""));
-        return itemCreationDto;
+    private ItemCreationDto createItem(VspRequestDto vspRequestDto, String user, OnboardingMethod onboardingMethod , HttpServletRequest hreq) {
+        Multitenancy keyaccess= new Multitenancy();
+        if (keyaccess.multitenancycheck() == true) {
+           AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            Set<String> realmroles = realmAccess.getRoles();
+            match = realmroles.contains(vspRequestDto.getTenant());
+            if (match == true) {
+                Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
+                item.setType(ItemType.vsp.name());
+                item.setOwner(user);
+                item.setTenant(item.getTenant());
+                item.setStatus(ItemStatus.ACTIVE);
+                item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
+                uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+                item = itemManager.create(item);
+                uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+                Version version = versioningManager.create(item.getId(), new Version(), null);
+                VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().applyMapping(vspRequestDto, VspDetails.class);
+                vspDetails.setId(item.getId());
+                vspDetails.setVersion(version);
+                vspDetails.setOnboardingMethod(vspRequestDto.getOnboardingMethod());
+                vendorSoftwareProductManager.createVsp(vspDetails);
+                versioningManager.publish(item.getId(), version, "Initial vsp:" + vspDetails.getName());
+                ItemCreationDto itemCreationDto = new ItemCreationDto();
+                itemCreationDto.setItemId(item.getId());
+                itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
+                activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version, ActivityType.Create, user, true, "", ""));
+                return itemCreationDto;
+            }
+            else {
+                LOGGER.error("Unauthorized tenant");
+                return null;
+            }
+        }
+        else {
+            Item item = new MapVspDescriptionDtoToItem().applyMapping(vspRequestDto, Item.class);
+            item.setType(ItemType.vsp.name());
+            item.setOwner(user);
+            item.setStatus(ItemStatus.ACTIVE);
+            item.addProperty(VspItemProperty.ONBOARDING_METHOD, onboardingMethod.name());
+            uniqueValueUtil.validateUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+            item = itemManager.create(item);
+            uniqueValueUtil.createUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, item.getName());
+            Version version = versioningManager.create(item.getId(), new Version(), null);
+            VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().applyMapping(vspRequestDto, VspDetails.class);
+            vspDetails.setId(item.getId());
+            vspDetails.setVersion(version);
+            vspDetails.setOnboardingMethod(vspRequestDto.getOnboardingMethod());
+            vendorSoftwareProductManager.createVsp(vspDetails);
+            versioningManager.publish(item.getId(), version, "Initial vsp:" + vspDetails.getName());
+            ItemCreationDto itemCreationDto = new ItemCreationDto();
+            itemCreationDto.setItemId(item.getId());
+            itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
+            activityLogManager.logActivity(new ActivityLogEntity(vspDetails.getId(), version, ActivityType.Create, user, true, "", ""));
+            return itemCreationDto;
+        }
     }
 
     private void throwUnknownOnboardingMethodException(IllegalArgumentException e) {
@@ -224,11 +266,25 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response listVsps(String versionStatus, String itemStatus, String user) {
-        GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
-        MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
-        getVspList(versionStatus, itemStatus, user).forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
-        return Response.ok(results).build();
+    public Response listVsps(String versionStatus, String itemStatus, String user, HttpServletRequest hreq ) {
+        Multitenancy keyaccess = new Multitenancy();
+        if (keyaccess.multitenancycheck() == true) {
+           AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            Set<String> realmroles = realmAccess.getRoles();
+            Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
+            GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
+            MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
+            realmroles.stream().forEach(role -> itemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                    .filter(vspItem -> vspItem.getTenant().contains(role))
+                    .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class))));
+            return Response.ok(results).build();
+        }
+        else {
+            GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
+            MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
+            getVspList(versionStatus, itemStatus, user).forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
+            return Response.ok(results).build();
+        }
     }
 
     @Override
@@ -427,12 +483,12 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response getValidationVsp(String user) {
-        ItemCreationDto validationVsp = retrieveValidationVsp();
+    public Response getValidationVsp(String user, HttpServletRequest hreq) {
+        ItemCreationDto validationVsp = retrieveValidationVsp(hreq);
         return Response.ok(validationVsp).build();
     }
 
-    private ItemCreationDto retrieveValidationVsp() {
+    private ItemCreationDto retrieveValidationVsp(HttpServletRequest req) {
         synchronized (VALIDATION_VSP_CACHE_LOCK) {
             if (cachedValidationVsp != null) {
                 return cachedValidationVsp;
@@ -441,7 +497,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             validationVspRequest.setOnboardingMethod(NetworkPackage.toString());
             validationVspRequest.setName(VALIDATION_VSP_NAME);
             try {
-                cachedValidationVsp = createVspItem(validationVspRequest, VALIDATION_VSP_USER);
+                cachedValidationVsp = createVspItem(validationVspRequest, VALIDATION_VSP_USER, req);
                 return cachedValidationVsp;
             } catch (CoreException vspCreateException) {
                 LOGGER.debug("Failed to create validation VSP", vspCreateException);

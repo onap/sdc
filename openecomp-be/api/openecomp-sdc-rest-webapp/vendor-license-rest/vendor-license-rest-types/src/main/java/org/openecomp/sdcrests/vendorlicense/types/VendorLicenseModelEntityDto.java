@@ -33,4 +33,16 @@ public class VendorLicenseModelEntityDto extends VendorLicenseModelRequestDto {
     public void setId(String id) {
         this.id = id;
     }
+
+    private String tenant;
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
+
+
 }

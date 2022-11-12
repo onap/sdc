@@ -1372,6 +1372,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             catalogComponent.setLastUpdateDate((lastUpdateDate != null ? (Long) lastUpdateDate : 0L));
             catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
             catalogComponent.setDescription((String) metadatObj.get(JsonPresentationFields.DESCRIPTION.getPresentation()));
+            catalogComponent.setTenant((String) metadatObj.get(JsonPresentationFields.TENANT.getPresentation()));
             catalogComponent.setSystemName((String) metadatObj.get(JsonPresentationFields.SYSTEM_NAME.getPresentation()));
             catalogComponent.setUuid((String) metadatObj.get(JsonPresentationFields.UUID.getPresentation()));
             catalogComponent.setInvariantUUID((String) metadatObj.get(JsonPresentationFields.INVARIANT_UUID.getPresentation()));

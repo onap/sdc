@@ -24,6 +24,22 @@
         <listener-class>org.openecomp.server.listeners.OnboardingAppStartupListener</listener-class>
     </listener>
 
+    <!--KEYCLOAK FILTER -->
+    <filter>
+        <filter-name>Keycloak Filter</filter-name>
+        <filter-class>org.openecomp.server.filters.MultitenancyKeycloakFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Keycloak Filter</filter-name>
+        <url-pattern>/keycloak/*</url-pattern>
+        <url-pattern>/v1.0/vendor-license-models/*</url-pattern>
+        <url-pattern>/v1.0/vendor-software-products</url-pattern>
+        <url-pattern>*/orchestration-template-candidate/*</url-pattern>
+        <url-pattern>/v1.0/vendor-software-products/packages</url-pattern>
+        <url-pattern>*/actions</url-pattern>
+        <url-pattern>/v1.0/items/*</url-pattern>
+    </filter-mapping>
+
     <filter>
         <filter-name>dataValidatorFilter</filter-name>
         <filter-class>org.openecomp.sdc.common.filters.DataValidatorFilter</filter-class>

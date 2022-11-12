@@ -190,7 +190,7 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER);
+        Response response = items.list(null, null, null, null, null, USER, null);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 

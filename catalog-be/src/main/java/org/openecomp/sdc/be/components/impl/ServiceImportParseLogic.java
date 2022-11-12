@@ -917,6 +917,7 @@ public class ServiceImportParseLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName(resourceVf.getVendorName());
+        cvfc.setTenant(resourceVf.getTenant());
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
         cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
@@ -982,6 +983,7 @@ public class ServiceImportParseLogic {
         resourceMetaData.setIcon(ImportUtils.Constants.DEFAULT_ICON);
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
+        resourceMetaData.setTenant(resourceVf.getTenant());
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
         // Setting tag
         List<String> tags = new ArrayList<>();
@@ -1306,6 +1308,7 @@ public class ServiceImportParseLogic {
         cvfc.setContactId(csarInfo.getModifier().getUserId());
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName("cmri");
+        cvfc.setTenant("tenant");
         cvfc.setVendorRelease("1.0");
         cvfc.setResourceVendorModelNumber("");
         cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
