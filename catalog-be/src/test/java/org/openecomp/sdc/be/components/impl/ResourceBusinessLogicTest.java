@@ -47,12 +47,16 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.hamcrest.MatcherAssert;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -171,6 +175,8 @@ class ResourceBusinessLogicTest {
     private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
     private static final String GENERIC_CR_NAME = "org.openecomp.resource.abstract.nodes.CR";
     private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
+    private static final boolean MULTITENANCY_ENABLED = true;
+    private static final String TEST_TENANT = "test_tenant";
 
     private final ServletContext servletContext = Mockito.mock(ServletContext.class);
     private IElementOperation mockElementDao;
@@ -2556,4 +2562,55 @@ class ResourceBusinessLogicTest {
         assertEquals(ActionStatus.COMPONENT_IN_USE_BY_ANOTHER_COMPONENT, actualOperationException.getActionStatus());
         assertEquals("resource_name", actualOperationException.getParams()[0]);
     }
+
+
+    @Test
+    void testCreateResource_withMultitenancyWithTenant_Success() {
+        Assert.assertEquals(MULTITENANCY_ENABLED,true);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        Resource resource = createResourceObject(false);
+        resource.setTenant(TEST_TENANT);
+        Resource createdResource = null;
+        try {
+            when(toscaOperationFacade
+                    .validateComponentNameAndModelExists(resource.getName(), null, ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+                    .thenReturn(Either.left(false));
+            createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+            assertThat(createResourceObject(true)).isEqualTo(createdResource);
+            MatcherAssert.assertThat("Unauthorized Tenant", getTestRoles().contains(resource.getTenant()));
+        } catch (ComponentException e) {
+            assertThat(Integer.valueOf(200)).isEqualTo(e.getResponseFormat()
+                    .getStatus());
+        }
+    }
+
+    @Test
+    void testCreateResource_withMultitenancyWithInvalidTenant_Failure() {
+        Assert.assertEquals(MULTITENANCY_ENABLED,true);
+        validateUserRoles(Role.ADMIN, Role.DESIGNER);
+        Resource resource = createResourceObject(false);
+        resource.setTenant("invalid_tenant");
+        Resource createdResource = null;
+        try {
+            MatcherAssert.assertThat("Unauthorized Tenant", !getTestRoles().contains(resource.getTenant()));
+            when(toscaOperationFacade
+                    .validateComponentNameAndModelExists(resource.getName(), null, ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+                    .thenReturn(Either.left(false));
+            createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+
+            assertThat(createResourceObject(true)).isEqualTo(createdResource);
+            MatcherAssert.assertThat("Unauthorized Tenant", !getTestRoles().contains(resource.getTenant()));
+        } catch (ComponentException e) {
+            assertThat(new Integer(200)).isEqualTo(e.getResponseFormat()
+                    .getStatus());
+        }
+    }
+
+    private Set<String> getTestRoles(){
+        Set<String> roles = new HashSet<>();
+        roles.add("test_admin");
+        roles.add("test_tenant");
+        return roles;
+    }
+
 }

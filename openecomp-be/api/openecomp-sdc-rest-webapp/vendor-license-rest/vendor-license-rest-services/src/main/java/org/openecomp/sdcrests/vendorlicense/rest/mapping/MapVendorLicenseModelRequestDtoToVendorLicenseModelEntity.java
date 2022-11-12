@@ -30,5 +30,6 @@ public class MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity extends M
         target.setVendorName(source.getVendorName());
         target.setDescription(source.getDescription());
         target.setIconRef(source.getIconRef());
+        target.setTenant(source.getTenant());
     }
 }
