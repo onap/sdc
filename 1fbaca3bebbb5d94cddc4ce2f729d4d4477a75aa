@@ -1,0 +1,820 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d67ec43_22e1bb48",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "remove one of them and reuse \nsuggestion:\nimport org.openecomp.sdc.logging.api.Logger;\nimport org.openecomp.sdc.logging.api.LoggerFactory;",
+      "range": {
+        "startLine": 50,
+        "startChar": 3,
+        "endLine": 52,
+        "endChar": 0
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb510a66_aff1d109",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "replace deprecated method",
+      "range": {
+        "startLine": 124,
+        "startChar": 143,
+        "endLine": 124,
+        "endChar": 158
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33fcd5dd_c38e1759",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 173,
+        "startChar": 21,
+        "endLine": 173,
+        "endChar": 29
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a8c61ab_6b34f551",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 194,
+        "startChar": 0,
+        "endLine": 194,
+        "endChar": 88
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "349d3af4_f2f11460",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 266,
+        "startChar": 0,
+        "endLine": 266,
+        "endChar": 72
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa910eec_725777e1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "use build-in formatting instead of concatenation",
+      "range": {
+        "startLine": 268,
+        "startChar": 26,
+        "endLine": 268,
+        "endChar": 54
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d41af78a_331050bd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ElementServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 529,
+        "startChar": 46,
+        "endLine": 529,
+        "endChar": 53
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "590f42ff_dab862d1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ElementServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TC to cover new code",
+      "range": {
+        "startLine": 530,
+        "startChar": 8,
+        "endLine": 544,
+        "endChar": 13
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bee760f_94793e30",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 158,
+        "startChar": 50,
+        "endLine": 158,
+        "endChar": 57
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c3afb83_6c3ee02b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 163,
+        "startChar": 37,
+        "endLine": 163,
+        "endChar": 41
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b19ba145_6086be24",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TC to cover new code",
+      "range": {
+        "startLine": 171,
+        "startChar": 13,
+        "endLine": 182,
+        "endChar": 17
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bc62be4_e38912ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 149,
+        "startChar": 42,
+        "endLine": 149,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13a08fb4_9426066b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant",
+      "range": {
+        "startLine": 153,
+        "startChar": 25,
+        "endLine": 153,
+        "endChar": 29
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f10c889_68bb42d5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "deprecated, please replace",
+      "range": {
+        "startLine": 163,
+        "startChar": 20,
+        "endLine": 163,
+        "endChar": 25
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7736cbbf_16793313",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TC to cover new code",
+      "range": {
+        "startLine": 147,
+        "startChar": 7,
+        "endLine": 175,
+        "endChar": 9
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c63702a_98ebd535",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/Multitenancy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "use camelCase",
+      "range": {
+        "startLine": 49,
+        "startChar": 19,
+        "endLine": 49,
+        "endChar": 36
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "585290a9_a9cd8ee4",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/Multitenancy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "remove \n       Multitenancy mt \u003d new Multitenancy();\nand replace \n       mt.getClass()\nwith\n       Multitenancy.class",
+      "range": {
+        "startLine": 51,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 48
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18b53a14_4d308c31",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/Multitenancy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "simplify to\n\n        try (InputStream ioStream \u003d Multitenancy.class.getResourceAsStream(\"/multitenancy.json\");\n            BufferedReader br \u003d new BufferedReader(new InputStreamReader(ioStream, StandardCharsets.UTF_8))) {\n            keycloak \u003d (boolean) ((JSONObject) new JSONParser().parse(br)).get(\"multitenancy\");\n        } catch (Exception e) {\n            log.debug(\"Multitenancy Exception\", e);\n        }",
+      "range": {
+        "startLine": 53,
+        "startChar": 11,
+        "endLine": 64,
+        "endChar": 13
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f4740ce_8e8c93d9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 128,
+        "startChar": 45,
+        "endLine": 128,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f0551f3_a3e2e57a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TC to cover new code",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 136,
+        "endChar": 9
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f3405c6_c8a7968b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/MultitenancyKeycloakFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "fix all similar comments \nsee \nhttps://gerrit.onap.org/r/c/sdc/+/132171/1/catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 3
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ab40d9f_a66ab265",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TCs to cover all new code",
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2f30ce0_2709d7a5",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 163,
+        "startChar": 45,
+        "endLine": 163,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "001ee5bf_70eb0894",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 182,
+        "startChar": 45,
+        "endLine": 182,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ce7328f_1ad70882",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 186,
+        "startChar": 25,
+        "endLine": 186,
+        "endChar": 29
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04b18290_fd63f911",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-types/src/main/java/org/openecomp/sdcrests/vendorlicense/types/VendorLicenseModelEntityDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "replace with \nlombok.Getter\nlombok.Setter",
+      "range": {
+        "startLine": 29,
+        "startChar": 3,
+        "endLine": 35,
+        "endChar": 5
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a61d3a7_dc646eab",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-types/src/main/java/org/openecomp/sdcrests/vendorlicense/types/VendorLicenseModelEntityDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "replace with \nlombok.Getter\nlombok.Setter",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 0
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc22e109_eb9ca27e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "please add TCs to cover new code",
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84fa9d42_a983f6d9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "should be local\nL210-L211",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 18
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31a58bc6_79d60c2b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 207,
+        "startChar": 45,
+        "endLine": 207,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5aec01bd_779e6343",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 211,
+        "startChar": 25,
+        "endLine": 211,
+        "endChar": 29
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3615b6b_30df2d7c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "redundant, remove it",
+      "range": {
+        "startLine": 271,
+        "startChar": 45,
+        "endLine": 271,
+        "endChar": 49
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b7b4768_93cb1ff2",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-license-lib/openecomp-sdc-vendor-license-api/src/main/java/org/openecomp/sdc/vendorlicense/dao/types/VendorLicenseModelEntity.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "could be replaced with Lombok",
+      "range": {
+        "startLine": 117,
+        "startChar": 4,
+        "endLine": 123,
+        "endChar": 5
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f18788f1_cf503323",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "what is the reason to use different version from above?",
+      "range": {
+        "startLine": 350,
+        "startChar": 21,
+        "endLine": 350,
+        "endChar": 27
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dba531c4_c3d87c5f",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "reuse\n\u003cservlet-api.version\u003e",
+      "range": {
+        "startLine": 360,
+        "startChar": 21,
+        "endLine": 360,
+        "endChar": 29
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87b815f7_5ed8b655",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-13T14:37:07Z",
+      "side": 1,
+      "message": "extract as pom-property and reuse here and in\ncommon-app-api/pom.xml (L343)",
+      "range": {
+        "startLine": 371,
+        "startChar": 20,
+        "endLine": 371,
+        "endChar": 27
+      },
+      "revId": "1fbaca3bebbb5d94cddc4ce2f729d4d4477a75aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
