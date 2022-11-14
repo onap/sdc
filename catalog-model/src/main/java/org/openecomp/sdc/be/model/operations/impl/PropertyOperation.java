@@ -100,6 +100,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
@@ -2284,6 +2285,16 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 log.warn("The value of max length constraint is null");
                             }
                             break;
+                        case PATTERN:
+                            if (value != null) {
+                                String asString = value.getAsString();
+                                log.debug("Before adding value to PatternConstraint object. value = {}", asString);
+                                propertyConstraint = new PatternConstraint(asString);
+                                break;
+                            } else {
+                                log.warn("The value of pattern constraint is null");
+                            }
+                            break;
                         default:
                             log.warn("Key {} is not supported. Ignored.", key);
                     }
@@ -2343,6 +2354,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 break;
                             case MAX_LENGTH:
                                 propertyConstraint = deserializeConstraintWithIntegerOperand(value, MaxLengthConstraint.class);
+                                break;
+                            case PATTERN:
+                                propertyConstraint = deserializeConstraintWithIntegerOperand(value, PatternConstraint.class);
                                 break;
                             default:
                                 log.warn("Key {} is not supported. Ignored.", field.getKey());
