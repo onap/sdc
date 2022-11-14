@@ -22,6 +22,30 @@
       "revId": "b716e6c76690ff7db2af76c3bdea299c8500726b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aca124a4_64f1792a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-14T11:29:07Z",
+      "side": 1,
+      "message": "Have this solved using a different solution now",
+      "parentUuid": "66c27614_fbbb6f8d",
+      "range": {
+        "startLine": 30,
+        "startChar": 2,
+        "endLine": 37,
+        "endChar": 3
+      },
+      "revId": "b716e6c76690ff7db2af76c3bdea299c8500726b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
