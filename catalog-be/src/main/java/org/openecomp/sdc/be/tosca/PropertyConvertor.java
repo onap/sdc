@@ -52,6 +52,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
@@ -69,6 +70,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessOrEqual;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessThan;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMaxLength;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMinLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintPattern;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -172,6 +174,9 @@ public class PropertyConvertor {
             }
             if (constraint instanceof MaxLengthConstraint) {
                 convertedConstraints.add(new ToscaPropertyConstraintMaxLength(((MaxLengthConstraint) constraint).getMaxLength()));
+            }
+            if (constraint instanceof PatternConstraint) {
+                convertedConstraints.add(new ToscaPropertyConstraintPattern(((PatternConstraint) constraint).getPattern()));
             }
         }
         return convertedConstraints;
