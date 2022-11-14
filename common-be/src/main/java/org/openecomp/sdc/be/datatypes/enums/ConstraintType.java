@@ -39,6 +39,7 @@ public enum ConstraintType {
     MAX_LENGTH("max_length", "maxLength"),
     VALID_VALUES("valid_values", "validValues"),
     LESS_THAN("less_than", "lessThan"),
+    PATTERN("pattern"),
     SCHEMA("schema");
 
     private static final Set<ConstraintType> comparableConstraints = Set.of(ConstraintType.GREATER_THAN, ConstraintType.LESS_THAN);
