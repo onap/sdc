@@ -36,6 +36,15 @@ public class PatternConstraint extends AbstractStringPropertyConstraint {
     private String pattern;
     private Pattern compiledPattern;
 
+    public PatternConstraint() {
+        super();
+    }
+
+    public PatternConstraint(String pattern) {
+        super();
+        this.pattern = pattern;
+    }
+
     public void setPattern(String pattern) {
         this.pattern = pattern;
         this.compiledPattern = Pattern.compile(this.pattern);
