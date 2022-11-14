@@ -22,6 +22,30 @@
       "revId": "bbb8051e1f1a0503f77de260210104dbc81e9482",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37ffa593_cc014926",
+        "filename": "catalog-ui/src/app/utils/menu-handler.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-11-14T11:55:22Z",
+      "side": 1,
+      "message": "Test cases were failing, so added this filter. But now seems all is fine. Removing the filter.",
+      "parentUuid": "e8838933_15549f0f",
+      "range": {
+        "startLine": 140,
+        "startChar": 0,
+        "endLine": 140,
+        "endChar": 50
+      },
+      "revId": "bbb8051e1f1a0503f77de260210104dbc81e9482",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
