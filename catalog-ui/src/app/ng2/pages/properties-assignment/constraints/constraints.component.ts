@@ -170,6 +170,14 @@ export class ConstraintsComponent implements OnInit {
       if (Array.isArray(constraint.value)) {
         return !(constraint.value.length == 0 || this.doesArrayContaintEmptyValues(constraint.value));
       }
+      if (constraint.type == ConstraintTypes.pattern) {
+        try {
+          new RegExp(constraint.value);
+          this.valid = true;
+        } catch(e) {
+          this.valid = false;
+        }
+      }
       return constraint.value && constraint.type != ConstraintTypes.null
     });
   }
