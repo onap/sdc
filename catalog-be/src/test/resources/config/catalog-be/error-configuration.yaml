@@ -2821,3 +2821,10 @@ errors:
         code: 400
         message: "Capability '%1' not found in '%2' '%3'."
         messageId: "SVC4186"
+
+    # %1 - The capability name
+    # %2 - The model
+    CAPABILITY_NOT_FOUND:
+        code: 404
+        message: "Capability '%1' was not found for model '%2'."
+        messageId: "SVC4014"

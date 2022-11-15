@@ -661,7 +661,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         log.debug(START_HANDLE_REQUEST_OF, url);
         log.debug(MODIFIER_ID_IS, userId);
         try {
-            final Wrapper<Response> responseWrapper = performUIImport(data, request, userId, null);
+            final Wrapper<Response> responseWrapper = performUIImport(data, request, userId);
             return responseWrapper.getInnerElement();
         } catch (IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Service");
@@ -670,8 +670,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         }
     }
 
-    private Wrapper<Response> performUIImport(String data, final HttpServletRequest request, String userId,
-                                              String serviceUniqueId) throws FileNotFoundException, ZipException {
+    private Wrapper<Response> performUIImport(String data, final HttpServletRequest request,
+                                              String userId) throws FileNotFoundException, ZipException {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();

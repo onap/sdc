@@ -192,8 +192,12 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         String resourceUniqueId = "extcp_resource";
         resource.setUniqueId(resourceUniqueId);
         resource.setToscaArtifacts(toscaArtifacts);
+        resource.getComponentMetadataDefinition().getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
+        resource.setResourceType(ResourceTypeEnum.VF);
+
         ImmutablePair<String, byte[]> resourceTemplate = getNodeType();
         String updatedNodeType = "org.openecomp.resource.cp.extCP";
+        resource.setToscaResourceName(updatedNodeType);
 
         newService.setComponentInstancesProperties(
             Collections.singletonMap(COMPONENT_ID + "." + "zxjTestImportServiceAb", Collections.singletonList(componentInstanceProperty)));
@@ -218,7 +222,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(serviceImportParseLogic.getNodeTypesFromTemplate(anyMap())).thenReturn(getNodeTypes());
         when(serviceImportParseLogic.createNodeTypeResourceFromYaml(anyString(), any(Map.Entry.class), any(User.class), anyMap(), any(Service.class),
             anyBoolean(), any(), anyList(), anyBoolean(), any(CsarInfo.class), anyBoolean())).thenReturn(
-            new ImmutablePair<>(new Resource(), ActionStatus.OK));
+            new ImmutablePair<>(resource, ActionStatus.OK));
         when(serviceImportParseLogic.getComponentWithInstancesFilter()).thenReturn(new ComponentParametersView());
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class))).thenReturn(Either.left(newService));
         when(serviceImportParseLogic.getComponentFilterAfterCreateRelations()).thenReturn(new ComponentParametersView());
@@ -270,7 +274,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains(updatedNodeType), isNull())).thenReturn(Either.left(resource));
+        when(toscaOperationFacade.getLatestByToscaResourceName(updatedNodeType, null)).thenReturn(Either.left(resource));
         when(artifactsBusinessLogic.handleDownloadRequestById(resourceUniqueId, artifactUniqueId, user.getUserId(), ComponentTypeEnum.RESOURCE, null, null))
                 .thenReturn(resourceTemplate);
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
@@ -1796,12 +1800,11 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         originResource.setComponentType(ComponentTypeEnum.RESOURCE);
         originResource.setToscaResourceName("toscaResourceName");
         originResource.setResourceType(ResourceTypeEnum.VF);
-        originResource.setResourceType(ResourceTypeEnum.VF);
         Map<String, Resource> nodeNamespaceMap = new HashMap<>();
         nodeNamespaceMap.put("resources", originResource);
-        when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(originResource));
+        when(toscaOperationFacade.getLatestByToscaResourceName(RESOURCE_TOSCA_NAME, null)).thenReturn(Either.left(originResource));
         Assertions.assertNotNull(
-            sIBL.validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo, nodeNamespaceMap));
+            sIBL.validateResourceInstanceBeforeCreate(yamlName, null, uploadComponentInstanceInfo, nodeNamespaceMap));
     }
 
     @Test
@@ -2497,7 +2500,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
 
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false);
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }

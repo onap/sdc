@@ -30,10 +30,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
@@ -68,7 +66,6 @@ import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractResourceInfo;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractTemplateInfo;
@@ -118,15 +115,10 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
     protected static final String SERVICE_CATEGORY = "Mobility";
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
-    protected static final String CERTIFIED_VERSION = "1.0";
-    protected static final String UNCERTIFIED_VERSION = "0.2";
     protected static final String COMPONENT_ID = "myUniqueId";
     protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-    protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
-    protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
-    protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
-    private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
+    protected static final String RESOURCE_TOSCA_NAME = "org.openecomp.resource.cp.extCP";
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
@@ -374,74 +366,8 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
     protected UploadComponentInstanceInfo getUploadComponentInstanceInfo() {
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
-        uploadComponentInstanceInfo.setType("My-Resource_Tosca_Name");
-        Collection<String> directives = new Collection<String>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-
-            @Override
-            public Iterator<String> iterator() {
-                return null;
-            }
-
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-
-            @Override
-            public <T> T[] toArray(T[] ts) {
-                return null;
-            }
-
-            @Override
-            public boolean add(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-
-            @Override
-            public boolean containsAll(Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean addAll(Collection<? extends String> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean removeAll(Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean retainAll(Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public void clear() {
-
-            }
-        };
-        uploadComponentInstanceInfo.setDirectives(directives);
+        uploadComponentInstanceInfo.setType(RESOURCE_TOSCA_NAME);
+        uploadComponentInstanceInfo.setDirectives(new ArrayList<>());
         UploadNodeFilterInfo uploadNodeFilterInfo = new UploadNodeFilterInfo();
         Map<String, List<UploadReqInfo>> requirements = new HashMap<>();
         List<UploadReqInfo> uploadReqInfoList = new ArrayList<>();

@@ -296,10 +296,9 @@ public class ServiceImportBusinessLogic {
             final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(service.getModel(), csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
-                dataTypesToCreate.entrySet().stream().forEach(createdOrUpdatedDataType -> {
-                    applicationDataTypeCache.reload(service.getModel(),
-                        UniqueIdBuilder.buildDataTypeUid(service.getModel(), createdOrUpdatedDataType.getKey()));
-                });
+                dataTypesToCreate.keySet().forEach(key ->
+                    applicationDataTypeCache.reload(service.getModel(), UniqueIdBuilder.buildDataTypeUid(service.getModel(), key))
+                );
             }
 
             final Map<String, Object> artifactTypesToCreate = getArtifactTypesToCreate(service.getModel(), csarInfo);
@@ -465,7 +464,7 @@ public class ServiceImportBusinessLogic {
         NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
         List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
         final Map<String, Object> allTypesToCreate = new HashMap<>();
-        nodeTypesToCreate.stream().forEach(nodeType -> {
+        nodeTypesToCreate.forEach(nodeType -> {
             allTypesToCreate.put(nodeType.getMappedNodeType().getKey(), nodeType.getMappedNodeType().getValue());
             nodeTypeMetadataList.add(nodeType.getNodeTypeMetadata());
         });
@@ -2675,7 +2674,8 @@ public class ServiceImportBusinessLogic {
             if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
                 uploadComponentInstanceInfo.setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
             }
-            Resource refResource = validateResourceInstanceBeforeCreate(yamlName, uploadComponentInstanceInfo, existingnodeTypeMap);
+            Resource refResource =
+                validateResourceInstanceBeforeCreate(yamlName, component.getModel(), uploadComponentInstanceInfo, existingnodeTypeMap);
             ComponentInstance componentInstance = new ComponentInstance();
             componentInstance.setComponentUid(refResource.getUniqueId());
             Collection<String> directives = uploadComponentInstanceInfo.getDirectives();
@@ -2707,26 +2707,28 @@ public class ServiceImportBusinessLogic {
             componentInstance.setName(uploadComponentInstanceInfo.getName());
             componentInstance.setIcon(origResource.getIcon());
             resourcesInstancesMap.put(componentInstance, origResource);
-        } catch (Exception e) {
+        } catch (final ComponentException e) {
+            throw e;
+        } catch (final Exception e) {
             throw new ComponentException(ActionStatus.GENERAL_ERROR, e.getMessage());
         }
     }
 
-    protected Resource validateResourceInstanceBeforeCreate(String yamlName, UploadComponentInstanceInfo uploadComponentInstanceInfo,
+    protected Resource validateResourceInstanceBeforeCreate(String yamlName, String model, UploadComponentInstanceInfo uploadComponentInstanceInfo,
                                                             Map<String, Resource> nodeNamespaceMap) {
         Resource refResource;
         try {
             if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
                 refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
             } else {
-                Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade
-                    .getLatestResourceByToscaResourceName(uploadComponentInstanceInfo.getType());
-                if (findResourceEither.isRight()) {
+                final Either<Component, StorageOperationStatus> resourceEither =
+                    toscaOperationFacade.getLatestByToscaResourceName(uploadComponentInstanceInfo.getType(), model);
+                if (resourceEither.isRight()) {
                     ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(findResourceEither.right().value()));
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(resourceEither.right().value()));
                     throw new ComponentException(responseFormat);
                 }
-                refResource = findResourceEither.left().value();
+                refResource = (Resource) resourceEither.left().value();
                 nodeNamespaceMap.put(refResource.getToscaResourceName(), refResource);
             }
             String componentState = refResource.getComponentMetadataDefinition().getMetadataDataDefinition().getState();
@@ -2744,7 +2746,9 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(responseFormat);
             }
             return refResource;
-        } catch (Exception e) {
+        } catch (final ComponentException e) {
+            throw e;
+        } catch (final Exception e) {
             throw new ComponentException(ActionStatus.GENERAL_ERROR, e.getMessage());
         }
     }

@@ -770,7 +770,7 @@ class ResourceImportManagerTest {
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
 
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false);
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }

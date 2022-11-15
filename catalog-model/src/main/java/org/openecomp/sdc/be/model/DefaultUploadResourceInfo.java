@@ -25,7 +25,7 @@ import java.util.List;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 
-public class DefaultUploadResourceInfo extends UploadResourceInfo{
+public class DefaultUploadResourceInfo extends UploadResourceInfo {
 
     public DefaultUploadResourceInfo(String toscaName){
         SubCategoryDefinition subCategory = new SubCategoryDefinition();

@@ -62,8 +62,7 @@ class ServiceCsarInfoTest {
         final File csarFile = new File(ServiceCsarInfoTest.class.getClassLoader().getResource(csarFileName).toURI());
         final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
         String mainTemplateContent = new String(payload.get(mainTemplateName));
-
-return new ServiceCsarInfo(user, CSAR_UUID, payload, SERVICE_NAME, mainTemplateName, mainTemplateContent, true);
+        return new ServiceCsarInfo(user, CSAR_UUID, payload, SERVICE_NAME, null, mainTemplateName, mainTemplateContent, true);
     }
 
     @SuppressWarnings("unchecked")

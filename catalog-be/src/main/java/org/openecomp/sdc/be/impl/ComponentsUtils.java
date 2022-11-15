@@ -800,6 +800,9 @@ public class ComponentsUtils {
             case SCHEMA_VIOLATION:
                 responseEnum = ActionStatus.CAPABILITY_TYPE_ALREADY_EXIST;
                 break;
+            case NOT_FOUND:
+                responseEnum = ActionStatus.CAPABILITY_NOT_FOUND;
+                break;
             default:
                 responseEnum = ActionStatus.GENERAL_ERROR;
                 break;
