@@ -47,6 +47,7 @@ export class PropertiesTableComponent implements OnChanges {
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareOption
     @Output() updateCheckedChildPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();//only for hasDeclareListOption
+    @Output() togggleToscaBtn: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() deleteProperty: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     private selectedPropertyToDelete: PropertyFEModel;
 
@@ -107,6 +108,10 @@ export class PropertiesTableComponent implements OnChanges {
             this.updateCheckedChildPropertyCount.emit(isCount);
         }
     }
+
+    toggleToscaFunction = (prop: DerivedFEProperty) => {
+        this.togggleToscaBtn.emit(prop.isSelected);
+    };
 
     onDeleteProperty = () => {
         this.deleteProperty.emit(this.selectedPropertyToDelete);

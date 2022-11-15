@@ -36,6 +36,7 @@
                             (selectChildProperty)="selectChildProperty($event)"
                             (updateCheckedPropertyCount)="updateCheckedPropertyCount($event)"
                             (updateCheckedChildPropertyCount)="updateCheckedChildPropertyCount($event)"
+                            (togggleToscaBtn)="togggleToscaBtn($event)"
                             (selectInstanceRow)="selectInstanceRow($event)"
                             (deleteProperty)="deleteProperty($event)">
                         </properties-table>
@@ -77,7 +78,7 @@
                 </div>
                 <button (click)="selectToscaFunctionAndValues()"
                         *ngIf="isPropertiesTabSelected && !isSelf()"
-                        [disabled]="checkedPropertiesCount != 1 || isReadonly || hasChangedData"
+                        [disabled]="(checkedPropertiesCount != 1 || isReadonly || hasChangedData) && !enableToscaFunction"
                         class="tlv-btn blue declare-button"
                         data-tests-id="declare-button select-tosca-function">{{'TOSCA_FUNCTION_LABEL' | translate}}</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button declare-input">Declare Input</button>
