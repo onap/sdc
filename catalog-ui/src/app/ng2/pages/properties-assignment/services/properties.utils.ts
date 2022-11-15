@@ -202,7 +202,7 @@ export class PropertiesUtils {
                 } else if (prop.derivedDataType == DerivedPropertyType.LIST) {
                     prop.valueObj = (prop.valueObj === null || typeof prop.valueObj != 'object') ? JSON.parse(prop.valueObj || '[]') : prop.valueObj;
                 } else if (prop.derivedDataType == DerivedPropertyType.MAP) {
-                    if (!prop.isChildOfListOrMap || !prop.schema.property.isSimpleType) {
+                    if (!prop.isChildOfListOrMap) {
                         prop.valueObj = (prop.valueObj === null || typeof prop.valueObj != 'object') ? JSON.parse(prop.valueObj || '{}') : prop.valueObj;
                     }
                 }

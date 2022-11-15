@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AttributeBEModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel, PropertyDeclareAPIModel} from 'app/models';
+import {AttributeBEModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel, PropertyDeclareAPIModel, DerivedFEProperty} from 'app/models';
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import {PropertiesService} from "../../../../services/properties.service";
@@ -261,7 +261,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private propertyTypeToString() {
-	    if (this.isSubProperty()){
+	    if (this.isSubProperty() && this.property.type != PROPERTY_TYPES.MAP){
 	        return this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
         }
         if (this.property.schemaType) {
@@ -367,6 +367,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
         if (this.typeHasSchema(this.property.type)) {
+            if(this.property.type === PROPERTY_TYPES.MAP && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty){
+                return property.type === this.property.schema.property.type;
+            }
             if (!property.schema || !property.schema.property) {
                 return false;
             }

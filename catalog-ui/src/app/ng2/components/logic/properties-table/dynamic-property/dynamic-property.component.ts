@@ -27,6 +27,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import {PropertiesUtils} from "../../../../pages/properties-assignment/services/properties.utils";
 import {IUiElementChangeEvent} from "../../../ui/form-components/ui-element-base.component";
 import {DynamicElementComponent} from "../../../ui/dynamic-element/dynamic-element.component";
+import {SubPropertyToscaFunction} from "app/models/sub-property-tosca-function";
 
 @Component({
     selector: 'dynamic-property',
@@ -57,6 +58,7 @@ export class DynamicPropertyComponent {
     @Output('propertyChanged') emitter: EventEmitter<void> = new EventEmitter<void>();
     @Output() expandChild: EventEmitter<string> = new EventEmitter<string>();
     @Output() checkProperty: EventEmitter<string> = new EventEmitter<string>();
+    @Output() toggleTosca: EventEmitter<DerivedFEProperty> = new EventEmitter<DerivedFEProperty>();
     @Output() deleteItem: EventEmitter<string> = new EventEmitter<string>();
     @Output() clickOnPropertyRow: EventEmitter<PropertyFEModel | DerivedFEProperty> = new EventEmitter<PropertyFEModel | DerivedFEProperty>();
     @Output() mapKeyChanged: EventEmitter<string> = new EventEmitter<string>();
@@ -129,6 +131,10 @@ export class DynamicPropertyComponent {
 
     checkedChange = (propName: string) => {
         this.checkProperty.emit(propName);
+    }
+
+    toggleToscaFunction = (prop: DerivedFEProperty) => {
+        this.toggleTosca.emit(prop);
     }
 
     getHasChildren = (property:DerivedFEProperty): boolean => {// enter to this function only from base property (PropertyFEModel) and check for child property if it has children
@@ -222,6 +228,15 @@ export class DynamicPropertyComponent {
                     delete itemParent.valueObjValidation[oldKey];
                     itemParent.valueObjIsValid = itemParent.calculateValueObjIsValid();
                 }
+                if (this.property.subPropertyToscaFunctions !== null) {
+                    let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
+                    this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction, index) => {
+                        if(item.subPropertyPath[0] != oldKey){
+                            tempSubToscaFunction.push(item);
+                        }
+                    });
+                    this.property.subPropertyToscaFunctions = tempSubToscaFunction;
+                }
                 this.property.childPropMapKeyUpdated(item, null);  // remove map key
             } else {
                 const itemIndex: number = this.property.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName);
@@ -241,7 +256,15 @@ export class DynamicPropertyComponent {
 
     updateChildKeyInParent(childProp: DerivedFEProperty, newMapKey: string) {
         if (this.property instanceof PropertyFEModel) {
+            let oldKey = childProp.getActualMapKey();
             this.property.childPropMapKeyUpdated(childProp, newMapKey);
+            if (this.property.subPropertyToscaFunctions != null) {
+                this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
+                    if(item.subPropertyPath[0] === oldKey){
+                        item.subPropertyPath = [newMapKey];
+                    }
+                });
+            }
             this.emitter.emit();
         }
     }
