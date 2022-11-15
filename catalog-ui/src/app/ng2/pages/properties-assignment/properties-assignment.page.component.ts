@@ -578,15 +578,22 @@ export class PropertiesAssignmentComponent {
 
     private clearCheckedInstancePropertyValue() {
         const checkedInstanceProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
+        let currentValue = checkedInstanceProperty.value;
         checkedInstanceProperty.getInputValues = null;
         checkedInstanceProperty.value = null;
         checkedInstanceProperty.toscaFunction = null;
         if (checkedInstanceProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName){
             const propertiesNameArray = (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName;
             const parts = propertiesNameArray.split("#");
+            const currentKey = checkedInstanceProperty.type === PROPERTY_TYPES.MAP ? (<DerivedFEProperty>checkedInstanceProperty.input).mapKey : null;
             if (propertiesNameArray.length > 1){
-                const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, parts.slice(1)));
+                const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey != null ? [currentKey] : parts.slice(1)));
                 checkedInstanceProperty.subPropertyToscaFunctions.splice(index, 1);
+            }
+            if(currentValue !== null && currentKey !== null){
+                let valueJson = JSON.parse(currentValue);
+                delete valueJson[currentKey];
+                checkedInstanceProperty.value = JSON.stringify(valueJson);
             }
         }
         if (this.selectedInstanceData instanceof ComponentInstance) {
@@ -603,18 +610,18 @@ export class PropertiesAssignmentComponent {
         if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
             const propertiesName = (<PropertyDeclareAPIModel>checkedProperty).propertiesName;
             const parts = propertiesName.split("#");
-
+            const currentKey = checkedProperty.type === PROPERTY_TYPES.MAP ? (<DerivedFEProperty>checkedProperty.input).mapKey : null;
             if (checkedProperty.subPropertyToscaFunctions == null){
                 checkedProperty.subPropertyToscaFunctions = [];
             }
-            let subPropertyToscaFunction = checkedProperty.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, parts.slice(1)));
+            let subPropertyToscaFunction = checkedProperty.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey != null ? [currentKey] : parts.slice(1)));
             if (!subPropertyToscaFunction){
                  subPropertyToscaFunction = new SubPropertyToscaFunction();
                  checkedProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
             }
             subPropertyToscaFunction.toscaFunction = toscaFunction;
-            subPropertyToscaFunction.subPropertyPath = parts.slice(1);
-
+            subPropertyToscaFunction.subPropertyPath = currentKey != null ? [currentKey] : parts.slice(1);
+   
         } else {
             checkedProperty.subPropertyToscaFunctions = null;
             checkedProperty.toscaFunction = toscaFunction;

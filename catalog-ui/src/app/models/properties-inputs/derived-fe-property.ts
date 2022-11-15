@@ -21,6 +21,8 @@
 import * as _ from "lodash";
 import { SchemaPropertyGroupModel, SchemaProperty } from '../schema-property';
 import { DerivedPropertyType, PropertyBEModel, PropertyFEModel } from '../../models';
+import {SubPropertyToscaFunction} from "../sub-property-tosca-function";
+import {ToscaFunction} from "../tosca-function";
 import { PROPERTY_TYPES } from 'app/utils';
 import { UUID } from "angular2-uuid";
 
@@ -33,6 +35,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     parentName: string;
     propertiesName: string; //"network_assignments#ipv4_subnet#use_ipv4 =  parentPath + name
     derivedDataType: DerivedPropertyType;
+    toscaFunction: ToscaFunction;
     isDeclared: boolean;
     isSelected: boolean;
     isDisabled: boolean;
@@ -51,6 +54,13 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.canBeDeclared = true; //defaults to true
         } else { //creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
             super(null);
+            if(property.type === PROPERTY_TYPES.MAP && property.subPropertyToscaFunctions != null){
+                property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
+                    if(item.subPropertyPath[0] === key){
+                        this.toscaFunction = item.toscaFunction;
+                    }
+                });
+            }
             this.isChildOfListOrMap = true;
             this.canBeDeclared = false;
             this.name = UUID.UUID();
@@ -87,7 +97,7 @@ export class DerivedFEProperty extends PropertyBEModel {
                 }
 	
             }
-            this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
+            this.valueObj = ((this.type == PROPERTY_TYPES.JSON || this.type == PROPERTY_TYPES.MAP) && typeof value == 'object') ? JSON.stringify(value) : value;
             this.updateValueObjOrig();
         }
         // this.constraints = property ? property.constraints : null;

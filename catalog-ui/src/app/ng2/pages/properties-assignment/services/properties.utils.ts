@@ -107,7 +107,7 @@ export class PropertiesUtils {
         let parentProp = new DerivedFEProperty(property, property.propertiesName, true, key, valueObj);
         newProps.push(parentProp);
 
-        if (!property.schema.property.isSimpleType) {
+        if (!property.schema.property.isSimpleType && property.type != PROPERTY_TYPES.MAP) {
             let additionalChildren:Array<DerivedFEProperty> = this.createFlattenedChildren(property.schema.property.type, parentProp.propertiesName);
             this.assignFlattenedChildrenValues(parentProp.valueObj, additionalChildren, parentProp.propertiesName);
             additionalChildren.forEach(prop => prop.canBeDeclared = false);
@@ -202,7 +202,7 @@ export class PropertiesUtils {
                 } else if (prop.derivedDataType == DerivedPropertyType.LIST) {
                     prop.valueObj = (prop.valueObj === null || typeof prop.valueObj != 'object') ? JSON.parse(prop.valueObj || '[]') : prop.valueObj;
                 } else if (prop.derivedDataType == DerivedPropertyType.MAP) {
-                    if (!prop.isChildOfListOrMap || !prop.schema.property.isSimpleType) {
+                    if (!prop.isChildOfListOrMap) {
                         prop.valueObj = (prop.valueObj === null || typeof prop.valueObj != 'object') ? JSON.parse(prop.valueObj || '{}') : prop.valueObj;
                     }
                 }
