@@ -43,9 +43,10 @@
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
     <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || property.isToscaFunction() || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
         <div class="table-cell">
+            <checkbox class="inline-checkBox" *ngIf="(nestedLevel == 1 && property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == ''" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
-                [value]="property.isDeclared || property.isToscaFunction() ? property.value : property.valueObj"
+                [value]="(property.isDeclared || property.isToscaFunction()) ? property.value : property.valueObj"
                 [type]="property.isDeclared || property.isToscaFunction() ? 'string' : property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
@@ -65,7 +66,7 @@
         <div class="table-cell empty"></div>
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
-    <ng-container *ngIf="!property.isDeclared && !property.isToscaFunction()">
+    <ng-container *ngIf="(!property.isDeclared && !property.isToscaFunction()) || (property.isToscaFunction() && property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
             <a *ngIf="(propType == derivedPropertyTypes.LIST) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</a>
             <a *ngIf="(propType == derivedPropertyTypes.MAP) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to map</a>
             <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId"></span>
@@ -93,6 +94,7 @@
             (clickOnPropertyRow)="onClickPropertyRow($event)"
             (checkProperty)="checkedChange($event)"
             (addChildPropsToParent)="addChildProps($event, prop.propertiesName)"
+            (toggleTosca)="toggleToscaFunction($event)"
             >
         </dynamic-property>
     </ng-container>
