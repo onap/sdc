@@ -302,6 +302,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         String[] parsedPropNames = propInput.getParsedPropNames();
         InputDefinition input;
         boolean complexProperty = false;
+
         if (propertiesName != null && !propertiesName.isEmpty() && selectedProp != null) {
             complexProperty = true;
             input = new InputDefinition(selectedProp);
@@ -310,21 +311,26 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             input = new InputDefinition(prop);
             input.setDefaultValue(prop.getValue());
         }
+
         input.setName(inputName);
         input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, input.getName()));
         input.setInputPath(propertiesName);
         input.setInstanceUniqueId(propertiesOwner.getUniqueId());
         input.setPropertyId(propInput.getUniqueId());
-        if (Objects.isNull(input.getSubPropertyInputPath()) || (Objects.nonNull(propertiesName) && input.getSubPropertyInputPath()
+
+        if (Objects.isNull(input.getSubPropertyInputPath()) || (propertiesName != null && input.getSubPropertyInputPath()
             .substring(input.getSubPropertyInputPath().lastIndexOf('#')).equals(propertiesName.substring(propertiesName.lastIndexOf('#'))))) {
             input.setParentPropertyType(propInput.getType());
             input.setSubPropertyInputPath(propertiesName);
         }
+
         changePropertyValueToGetInputValue(inputName, parsedPropNames, input, prop, complexProperty);
+
         if (prop instanceof IComponentInstanceConnectedElement) {
             ((IComponentInstanceConnectedElement) prop).setComponentInstanceId(propertiesOwner.getUniqueId());
             ((IComponentInstanceConnectedElement) prop).setComponentInstanceName(propertiesOwner.getName());
         }
+
         return input;
     }
 
