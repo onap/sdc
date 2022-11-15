@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ComponentMetadata, PropertyBEModel, PropertyDeclareAPIModel} from 'app/models';
+import {ComponentMetadata, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEProperty} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {ToscaGetFunctionType} from "../../../../models/tosca-get-function-type";
@@ -101,8 +101,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
             if (propertiesPath.length > 1){
-	            propertiesPath = propertiesPath.slice(1);
-                let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, propertiesPath));
+	            let keyToFind = this.property.type === PROPERTY_TYPES.MAP ? [(<DerivedFEProperty>this.property.input).mapKey] : propertiesPath.slice(1);
+                let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind !== null ? keyToFind : propertiesPath.slice(1)));
 
                 if (subPropertyToscaFunction){
 	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
