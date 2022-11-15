@@ -536,15 +536,16 @@ export class GeneralViewModel {
                 return;
             }
 
-            if (!this.$scope.isCreateMode() && this.$scope.isVspImport()){
+            if (!this.$scope.isCreateMode() && this.$scope.isVspImport()) {
                 this.modelService.getModels().subscribe((modelsFound: Model[]) => {
                     modelsFound.sort().forEach(model => {
                         if (this.$scope.component.model != undefined) {
                             if (model.modelType == "NORMATIVE_EXTENSION") {
-                                this.$scope.component.model = model.derivedFrom;
+                                if (this.$scope.component.model === model.name) {
+                                    this.$scope.component.model = model.derivedFrom;
+                                }
                                 this.$scope.models.push(model.derivedFrom)
                             } else {
-                                this.$scope.component.model = model.name;
                                 this.$scope.models.push(model.name)
                             }
                         }
@@ -552,7 +553,9 @@ export class GeneralViewModel {
                 });
             } else {
                 this.modelService.getModelsOfType("normative").subscribe((modelsFound: Model[]) => {
-                    modelsFound.sort().forEach(model => {this.$scope.models.push(model.name)});
+                    modelsFound.sort().forEach(model => {
+                        this.$scope.models.push(model.name)
+                    });
                 });
             }
         };
