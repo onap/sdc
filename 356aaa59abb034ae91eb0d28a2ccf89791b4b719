@@ -22,6 +22,30 @@
       "revId": "356aaa59abb034ae91eb0d28a2ccf89791b4b719",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ae67c96_c82bb7a0",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-16T22:50:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67d0f24d_6df5ff29",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "356aaa59abb034ae91eb0d28a2ccf89791b4b719",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
