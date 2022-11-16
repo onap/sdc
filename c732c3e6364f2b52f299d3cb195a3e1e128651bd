@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f75fc89_fcff8d10",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-16T15:22:06Z",
+      "side": 1,
+      "message": "you should not throw a NullPointerException, that is what Java already does to you automatically. You should handle the situation where the information you need/want is null, which can vary depending on what you want to do. \nIf that is something really necessary for the runtime system, as it seems to be here, a custom runtime or checked exception could be thrown here, for example PortalAPIException.\nThat could also be thrown in the method getUserBusinessLogic(), as it is returning a dependency of this class. This dependency in fact could be injected during the creation of the class, being something mandatory for the class to work/be instanciated.\nThe same comment applies to the others NullPointerException thrown.",
+      "range": {
+        "startLine": 97,
+        "startChar": 16,
+        "endLine": 97,
+        "endChar": 76
+      },
+      "revId": "c732c3e6364f2b52f299d3cb195a3e1e128651bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
