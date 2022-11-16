@@ -22,6 +22,29 @@
       "revId": "c732c3e6364f2b52f299d3cb195a3e1e128651bd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b8b3854_6ed0ab65",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-16T15:23:16Z",
+      "side": 1,
+      "message": "extract as const and reuse",
+      "range": {
+        "startLine": 97,
+        "startChar": 47,
+        "endLine": 97,
+        "endChar": 74
+      },
+      "revId": "c732c3e6364f2b52f299d3cb195a3e1e128651bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
