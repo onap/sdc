@@ -22,6 +22,29 @@
       "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92ef8a71_f70f136e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-17T11:05:55Z",
+      "side": 1,
+      "message": "one cleaner way to write this, in my opinion, is to check first for the negative condition and return, e.g.:\n        if (ctx \u003d\u003d null) {\n            throw new PortalAPIException(\"Failed to get Bean userBusinessLogic, \nCurrentWebApplicationContext is null.\");\n        }\n        return (UserBusinessLogic) ctx.getBean(\"userBusinessLogic\");",
+      "range": {
+        "startLine": 316,
+        "startChar": 8,
+        "endLine": 321,
+        "endChar": 9
+      },
+      "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
