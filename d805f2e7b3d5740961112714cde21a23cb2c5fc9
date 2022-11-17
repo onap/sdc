@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6908434e_1c5d9683",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-11-17T15:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0461b72_a7381597",
+      "range": {
+        "startLine": 243,
+        "startChar": 16,
+        "endLine": 243,
+        "endChar": 33
+      },
+      "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "92ef8a71_f70f136e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fa1a3fe_ca749579",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-11-17T15:10:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92ef8a71_f70f136e",
+      "range": {
+        "startLine": 316,
+        "startChar": 8,
+        "endLine": 321,
+        "endChar": 9
+      },
+      "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
