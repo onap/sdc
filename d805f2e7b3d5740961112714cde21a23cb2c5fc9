@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0461b72_a7381597",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-17T11:02:46Z",
+      "side": 1,
+      "message": "same nullpointer problem can happen here if ctx.getBean(\"userBusinessLogicExt\") (line 317) returns null.\nYou should handle there, as you did to check the ctx.\nSame for the method getUserBusinessLogicExt",
+      "range": {
+        "startLine": 243,
+        "startChar": 16,
+        "endLine": 243,
+        "endChar": 33
+      },
+      "revId": "d805f2e7b3d5740961112714cde21a23cb2c5fc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
