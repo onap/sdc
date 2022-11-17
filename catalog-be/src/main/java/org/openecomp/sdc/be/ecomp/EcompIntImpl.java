@@ -229,15 +229,17 @@ public class EcompIntImpl implements IPortalRestAPIService {
         log.debug("Start handle request of ECOMP pushUserRole");
         final String modifierAttId = JH0003;
         log.debug("modifier id is {}", modifierAttId);
-        UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
         String updatedRole;
+
         if (roles == null) {
             throw new PortalAPIException("Error: Received null for roles");
         } else if (roles.iterator().hasNext()) {
             EcompRole ecompRole = roles.iterator().next();
             updatedRole = EcompRoleConverter.convertEcompRoleToRole(ecompRole);
             log.debug("pushing role: {} to user: {}", updatedRole, loginId);
+
             try {
+                UserBusinessLogic userBusinessLogic = getUserBusinessLogic();
                 userBusinessLogic.updateUserRole(modifierAttId, loginId, updatedRole);
             } catch (Exception e) {
                 log.debug("Error: Failed to update role");
@@ -247,7 +249,8 @@ public class EcompIntImpl implements IPortalRestAPIService {
         } else {
             log.debug("Error: No roles in List");
             BeEcompErrorManager.getInstance().logInvalidInputError(PUSH_USER_ROLE, FAILED_TO_FETCH_ROLES, ErrorSeverity.INFO);
-            //in this cases we want to deactivate the user
+
+            //in these cases we want to deactivate the user
             try {
                 getUserBusinessLogicExt().deActivateUser(modifierAttId, loginId);
             } catch (Exception e) {
@@ -307,14 +310,26 @@ public class EcompIntImpl implements IPortalRestAPIService {
         return false;
     }
 
-    private UserBusinessLogic getUserBusinessLogic() {
+    private UserBusinessLogic getUserBusinessLogic() throws PortalAPIException {
         ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-        return (UserBusinessLogic) ctx.getBean("userBusinessLogic");
+
+        if (ctx != null) {
+            return (UserBusinessLogic) ctx.getBean("userBusinessLogic");
+        } else {
+            throw new PortalAPIException("CurrentWebApplicationContext is null. "
+                + "Failed to get Bean userBusinessLogic");
+        }
     }
 
-    private UserBusinessLogicExt getUserBusinessLogicExt() {
+    private UserBusinessLogicExt getUserBusinessLogicExt() throws PortalAPIException {
         ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-        return (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
+
+        if (ctx != null) {
+            return (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
+        } else {
+            throw new PortalAPIException("CurrentWebApplicationContext is null. "
+                + "Failed to get Bean userBusinessLogicExt");
+        }
     }
 
     /**
