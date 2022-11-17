@@ -87,6 +87,36 @@
                 </encoder>
         </appender>
 
+        <appender name="ERROR_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+                <!-- Audit messages filter - deny audit messages -->
+                <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                        <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                                <marker>AUDIT_MARKER</marker>
+                        </evaluator>
+                        <onMismatch>NEUTRAL</onMismatch>
+                        <onMatch>DENY</onMatch>
+                </filter>
+
+                <!-- Transaction messages filter - deny Transaction messages -->
+                <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                        <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                                <marker>TRANSACTION_MARKER</marker>
+                        </evaluator>
+                        <onMismatch>NEUTRAL</onMismatch>
+                        <onMatch>DENY</onMatch>
+                </filter>
+
+                <!-- deny all events with a level below INFO, that is TRACE and DEBUG -->
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                        <level>INFO</level>
+                </filter>
+
+                <encoder>
+                        <pattern>${default-log-pattern}</pattern>
+                </encoder>
+        </appender>
+
         <!-- Debug log -->
         <appender name="DEBUG_ROLLING"
                 class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -125,6 +155,34 @@
                         class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
                         <maxFileSize>20MB</maxFileSize>
                 </triggeringPolicy>
+                <encoder>
+                        <pattern>${default-log-pattern}</pattern>
+                </encoder>
+        </appender>
+
+        <appender name="DEBUG_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+                <!-- No need to deny audit messages - they are INFO only, will be denied
+                        anyway -->
+                <!-- Transaction messages filter - deny Transaction messages, there are
+                        some DEBUG level messages among them -->
+                <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                        <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                                <marker>TRANSACTION_MARKER</marker>
+                        </evaluator>
+                        <onMismatch>NEUTRAL</onMismatch>
+                        <onMatch>DENY</onMatch>
+                </filter>
+
+                <!-- accept DEBUG and TRACE level -->
+                <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                        <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
+                                <expression>return level &lt;= DEBUG;</expression>
+                        </evaluator>
+                        <OnMismatch>DENY</OnMismatch>
+                        <OnMatch>NEUTRAL</OnMatch>
+                </filter>
+
                 <encoder>
                         <pattern>${default-log-pattern}</pattern>
                 </encoder>
