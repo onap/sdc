@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab8bc35f_eb14ec21",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T12:50:14Z",
+      "side": 1,
+      "message": "no harm in keeping it, but it is not necessary as it is default/implicit in Java to call the super constructor (if available) without parameters as the first thing in the constructor.",
+      "range": {
+        "startLine": 40,
+        "startChar": 8,
+        "endLine": 40,
+        "endChar": 16
+      },
+      "revId": "d0318d3b600181d6c568a987d8f3635648b8cff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9aad113f_5fa3e095",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T12:50:14Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 16
+      },
+      "revId": "d0318d3b600181d6c568a987d8f3635648b8cff7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
