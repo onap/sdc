@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "8a991c00_331f65d7",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T14:37:23Z",
+      "side": 1,
+      "message": "to simplify the error handling and reduce the complexity, I suggest to handle the negative case first, throwing the exception:\nif (httpHeaders \u003d\u003d null) {\n    throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, \"Failed to get HTTP Response Headers\", ex);\n}\n\nsame could be done for the next if:\n\nif (responseHeadersContentType \u003d\u003d null ||\n            (!responseHeadersContentType.isCompatibleWith(MediaType.APPLICATION_JSON) \u0026\u0026\n                !responseHeadersContentType.isCompatibleWith(MediaType.parseMediaType(\"application/problem+json\")))) {\n            throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(), ex.getResponseBodyAsString(), ex);\n        }",
+      "range": {
+        "startLine": 635,
+        "startChar": 12,
+        "endLine": 635,
+        "endChar": 38
+      },
+      "revId": "7c2bce39a369421f06f6ee131d761350c8a32368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0d27c4c8_65801b41",
         "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
         "patchSetId": 1
