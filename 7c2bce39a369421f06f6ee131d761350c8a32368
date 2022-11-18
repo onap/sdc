@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d27c4c8_65801b41",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-18T14:15:48Z",
+      "side": 1,
+      "message": "reuse responseHeadersContentType",
+      "range": {
+        "startLine": 638,
+        "startChar": 21,
+        "endLine": 638,
+        "endChar": 57
+      },
+      "revId": "7c2bce39a369421f06f6ee131d761350c8a32368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
