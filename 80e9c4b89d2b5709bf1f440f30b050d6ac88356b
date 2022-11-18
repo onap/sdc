@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7e291ae_89a474e3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T14:26:53Z",
+      "side": 1,
+      "message": "unnecessary comment, the method signature already says that it throws this exception.\nAlso, if the try catch exclusively for the getUserBusinessLogicExt it should be surrounding only that method.\nBut please, check my other comments in relation to the introduced catches.",
+      "range": {
+        "startLine": 304,
+        "startChar": 16,
+        "endLine": 304,
+        "endChar": 62
+      },
+      "revId": "80e9c4b89d2b5709bf1f440f30b050d6ac88356b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2810a136_16b62de2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T14:26:53Z",
+      "side": 1,
+      "message": "this catch will catch all the PortalAPIException also being thrown on line 330, 326, and rewriting it, I would remove it. There is already a generic exception catch in the end anyway.\nI would say similar logic applies for the other introduced catches.",
+      "range": {
+        "startLine": 333,
+        "startChar": 10,
+        "endLine": 338,
+        "endChar": 9
+      },
+      "revId": "80e9c4b89d2b5709bf1f440f30b050d6ac88356b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4963985c_3e5e9170",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/EcompIntImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-11-18T14:26:53Z",
+      "side": 1,
+      "message": "my idea was to simply handle the null pointer exception here.\nThe handling you did will not get the nullpointer exception.\nThis method can still return null, and then you will have a nullpointer at line 302, for example.\n\nWhat I suggest is to check for the null here:\n\nUserBusinessLogicExt userBusinessLogic \u003d (UserBusinessLogicExt) ctx.getBean(\"userBusinessLogicExt\");\nif (userBusinessLogic \u003d\u003d null) {\n    //add the logs you want and then throw the exception\n    throw new PortalAPIException([...]\n}\n\nreturn userBusinessLogic;",
+      "range": {
+        "startLine": 389,
+        "startChar": 8,
+        "endLine": 389,
+        "endChar": 74
+      },
+      "revId": "80e9c4b89d2b5709bf1f440f30b050d6ac88356b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
