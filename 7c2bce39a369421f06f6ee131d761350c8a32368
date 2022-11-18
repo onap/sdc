@@ -45,6 +45,30 @@
       "revId": "7c2bce39a369421f06f6ee131d761350c8a32368",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9508ed2e_49cb03a5",
+        "filename": "openecomp-be/lib/openecomp-sdc-externaltesting-lib/openecomp-sdc-externaltesting-impl/src/main/java/org/openecomp/core/externaltesting/impl/ExternalTestingManagerImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-11-18T15:06:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d27c4c8_65801b41",
+      "range": {
+        "startLine": 638,
+        "startChar": 21,
+        "endLine": 638,
+        "endChar": 57
+      },
+      "revId": "7c2bce39a369421f06f6ee131d761350c8a32368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
