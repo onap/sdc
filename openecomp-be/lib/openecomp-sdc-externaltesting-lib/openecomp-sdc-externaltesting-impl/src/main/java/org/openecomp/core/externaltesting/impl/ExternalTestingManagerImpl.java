@@ -612,12 +612,15 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
         } else {
             logger.debug("GET request to {} for {}", url, responseType.getType().getTypeName());
         }
+
         SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
+        ResponseEntity<T> re;
+
         if (rf != null) {
             rf.setReadTimeout(10000);
             rf.setConnectTimeout(10000);
         }
-        ResponseEntity<T> re;
+
         try {
             if (request != null) {
                 re = restTemplate.exchange(url, HttpMethod.POST, request, responseType);
@@ -626,30 +629,40 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
             }
         } catch (HttpStatusCodeException ex) {
             // make my own exception out of this.
+            HttpHeaders httpHeaders = ex.getResponseHeaders();
             logger.warn("Unexpected HTTP Status from endpoint {}", ex.getRawStatusCode());
-            if ((ex.getResponseHeaders().getContentType() != null) && (
-                (ex.getResponseHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_JSON))
-                    || (ex.getResponseHeaders().getContentType()
-                    .isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
-                String s = ex.getResponseBodyAsString();
-                logger.warn("endpoint body content is {}", s);
-                try {
-                    JsonObject o = new GsonBuilder().create().fromJson(s, JsonObject.class);
-                    throw buildTestingException(ex.getRawStatusCode(), o);
-                } catch (JsonParseException e) {
-                    logger.warn("unexpected JSON response", e);
-                    throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
-                        ex.getResponseBodyAsString(), ex);
+
+            if (httpHeaders != null) {
+                MediaType responseHeadersContentType = httpHeaders.getContentType();
+
+                if ((httpHeaders.getContentType() != null) && (responseHeadersContentType != null
+                    && (responseHeadersContentType.isCompatibleWith(MediaType.APPLICATION_JSON))
+                        || (responseHeadersContentType != null
+                            && responseHeadersContentType.isCompatibleWith(MediaType.parseMediaType("application/problem+json"))))) {
+
+                    String s = ex.getResponseBodyAsString();
+                    logger.warn("endpoint body content is {}", s);
+
+                    try {
+                        JsonObject o = new GsonBuilder().create().fromJson(s, JsonObject.class);
+                        throw buildTestingException(ex.getRawStatusCode(), o);
+                    } catch (JsonParseException e) {
+                        logger.warn("unexpected JSON response", e);
+                        throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
+                            ex.getResponseBodyAsString(), ex);
+                    }
+                } else {
+                    throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(), ex.getResponseBodyAsString(), ex);
                 }
             } else {
-                throw new ExternalTestingException(ENDPOINT_ERROR_CODE, ex.getStatusCode().value(),
-                    ex.getResponseBodyAsString(), ex);
+                throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, "Failed to get HTTP Response Headers", ex);
             }
         } catch (ResourceAccessException ex) {
             throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, ex.getMessage(), ex);
         } catch (Exception ex) {
             throw new ExternalTestingException(ENDPOINT_ERROR_CODE, 500, "Generic Exception " + ex.getMessage(), ex);
         }
+
         if (re != null) {
             logger.debug("http status of {} from external testing entity {}", re.getStatusCodeValue(), url);
             return re.getBody();
