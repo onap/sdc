@@ -6,7 +6,7 @@ else
 end
 
 execute "create-jetty-modules" do
-  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,console-capture,setuid"
+  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,setuid"
   cwd "#{ENV['JETTY_BASE']}"
   action :run
 end
