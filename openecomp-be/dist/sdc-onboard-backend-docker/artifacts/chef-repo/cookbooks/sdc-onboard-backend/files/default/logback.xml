@@ -6,26 +6,26 @@
     <property file="${config.home}/catalog-be/configuration.yaml"/>
     <property scope="context" name="enable-all-log" value="false"/>
     <property name="p_msg"
-              value="%replace(%replace(%replace(%replace(%msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
+        value="%replace(%replace(%replace(%replace(%msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
     <property name="p_ex"
-              value="%replace(%replace(%replace(%replace(%exception{full}){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
+        value="%replace(%replace(%replace(%replace(%exception{full}){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
     <property name="p_debugInfo"
-              value="%replace(%replace(%replace(%replace(%thread # %level # %logger{35} # %msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
+        value="%replace(%replace(%replace(%replace(%thread # %level # %logger{35} # %msg){'\t','\\\\t'}){'\n', '\\\\n'}){'\r','\\\\r'}){'\\\|','-'}"/>
 
     <property name="all-log-pattern"
-              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|${ServerFQDN}|%X{ClientIPAddress}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
+        value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|${ServerFQDN}|%X{ClientIPAddress}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
 
     <property name="debug-log-pattern"
-              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|${p_debugInfo} ${p_ex}|^\n %n%nopex"/>
+        value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|${p_debugInfo} ${p_ex}|^\n %n%nopex"/>
 
     <property name="error-log-pattern"
-              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|500|${p_msg} ${p_ex}|%n%nopex"/>
+        value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%.-5level|500|${p_msg} ${p_ex}|%n%nopex"/>
 
     <property name="audit-log-pattern"
-              value="%X{EntryTimestamp}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIPAddress}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%marker|InvocationID=%X{InvocationID}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
+        value="%X{EntryTimestamp}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIPAddress}|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%marker|InvocationID=%X{InvocationID}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
 
     <property name="metric-log-pattern"
-              value="%X{InvokeTimestamp}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIPAddress }|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{TargetVirtualEntity}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
+        value="%X{InvokeTimestamp}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIpAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIPAddress }|%X{ClassName}|%X{Unused}|%X{ProcessKey}|%X{TargetVirtualEntity}|%X{CustomField1}|%X{CustomField2}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
 
     <!-- All log -->
     <if condition='property("enable-all-log").equalsIgnoreCase("true")'>
@@ -34,7 +34,8 @@
                 <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
 
                 <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-                    <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
+                    <fileNamePattern>
+                        ${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
                     </fileNamePattern>
                     <minIndex>1</minIndex>
                     <maxIndex>10</maxIndex>
@@ -50,7 +51,6 @@
             </appender>
         </then>
     </if>
-
 
     <!-- Debug log -->
     <appender name="DEBUG_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -76,7 +76,8 @@
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log.%i
+            <fileNamePattern>
+                ${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log.%i
             </fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>10</maxIndex>
@@ -91,7 +92,6 @@
         </encoder>
     </appender>
 
-
     <!-- Error log -->
     <appender name="ERROR_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/error.log</file>
@@ -102,7 +102,8 @@
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/error.log.%i
+            <fileNamePattern>
+                ${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/error.log.%i
             </fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>10</maxIndex>
@@ -116,7 +117,6 @@
             <pattern>${error-log-pattern}</pattern>
         </encoder>
     </appender>
-
 
     <!-- Audit log -->
     <appender name="AUDIT_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -133,7 +133,8 @@
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/audit.log.%i
+            <fileNamePattern>
+                ${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/audit.log.%i
             </fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>10</maxIndex>
@@ -148,10 +149,9 @@
         </encoder>
     </appender>
 
-
     <!-- Metrics log -->
     <appender name="METRICS_ROLLING"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
 
         <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/metrics.log
         </file>
@@ -166,7 +166,8 @@
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/metrics.log.%i
+            <fileNamePattern>
+                ${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/metrics.log.%i
             </fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>10</maxIndex>
@@ -181,7 +182,6 @@
         </encoder>
     </appender>
 
-
     <!-- Asynchronicity Configurations -->
     <appender name="ASYNC_DEBUG" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="DEBUG_ROLLING"/>
@@ -195,12 +195,37 @@
         <appender-ref ref="ALL_ROLLING"/>
     </appender>
 
+    <appender name="DEBUG_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
+                <expression>return level &lt;= INFO;</expression>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
+
+        <encoder>
+            <pattern>${debug-log-pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+
+        <encoder>
+            <pattern>${error-log-pattern}</pattern>
+        </encoder>
+    </appender>
 
     <root level="INFO">
         <appender-ref ref="ASYNC_ERROR"/>
         <appender-ref ref="ASYNC_DEBUG"/>
         <appender-ref ref="AUDIT_ROLLING"/>
         <appender-ref ref="METRICS_ROLLING"/>
+        <appender-ref ref="DEBUG_STDOUT"/>
+        <appender-ref ref="ERROR_STDOUT"/>
         <if condition='property("enable-all-log").equalsIgnoreCase("true")'>
             <then>
                 <appender-ref ref="ASYNC_ALL"/>
