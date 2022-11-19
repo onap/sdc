@@ -6,8 +6,7 @@ JAVA_OPTIONS=" $JAVA_OPTIONS \
   -Dlog.home=$JETTY_BASE/logs \
   -Dlogback.configurationFile=$JETTY_BASE/config/sdc-simulator/logback.xml \
   -Djavax.net.ssl.trustStore=$JETTY_BASE/etc/org.onap.sdc.trust.jks \
-  -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0 \
-  -Djetty.console-capture.dir=$JETTY_BASE/logs"
+  -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0"
 
 cd $JETTY_BASE/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
