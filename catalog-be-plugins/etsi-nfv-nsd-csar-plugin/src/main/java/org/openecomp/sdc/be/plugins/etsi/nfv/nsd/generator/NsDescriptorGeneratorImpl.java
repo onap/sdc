@@ -151,12 +151,12 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             return returnValueOnError;
         }
         final ToscaPropertyConstraintValidValues validValuesConstraint = (ToscaPropertyConstraintValidValues) toscaPropertyConstraint;
-        final List<String> validValues = validValuesConstraint.getValidValues();
+        final List<Object> validValues = validValuesConstraint.getValidValues();
         if (CollectionUtils.isEmpty(validValues)) {
             LOGGER.error(errorMsg);
             return returnValueOnError;
         }
-        return validValues.get(0);
+        return String.valueOf(validValues.get(0));
     }
 
     private ToscaTemplate createNetworkServiceDescriptor(final Component component, final List<VnfDescriptor> vnfDescriptorList) throws NsdException {
