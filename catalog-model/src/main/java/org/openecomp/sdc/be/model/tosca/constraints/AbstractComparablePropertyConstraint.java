@@ -50,12 +50,20 @@ public abstract class AbstractComparablePropertyConstraint extends AbstractPrope
 
     protected abstract void doValidate(Object propertyValue) throws ConstraintViolationException;
 
+    public abstract boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
+
+    public abstract String getConstraintValueAsString();
+
+    public abstract void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
+
     @Override
     public void validate(Object propertyValue) throws ConstraintViolationException {
         if (propertyValue == null) {
             throw new ConstraintViolationException("Value to check is null");
         }
-        if (!(comparable.getClass().isAssignableFrom(propertyValue.getClass()))) {
+        Class<? extends Comparable> test = comparable.getClass();
+        Class<?> test2 = propertyValue.getClass();
+        if (!(test.isAssignableFrom(test2))) {
             throw new ConstraintViolationException(
                 "Value to check is not comparable to reference type, value type [" + propertyValue.getClass() + "], reference type [" + comparable
                     .getClass() + "]");

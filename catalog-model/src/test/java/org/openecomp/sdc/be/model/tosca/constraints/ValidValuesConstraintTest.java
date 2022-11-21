@@ -24,34 +24,26 @@ import java.util.List;
 
 import org.junit.Test;
 
-
 public class ValidValuesConstraintTest {
 
 	private ValidValuesConstraint createTestSubject() {
 		return new ValidValuesConstraint(null);
 	}
 
-	
-
-	
-
-
-	
 	@Test
 	public void testGetValidValues() throws Exception {
 		ValidValuesConstraint testSubject;
-		List<String> result;
+		List<Object> result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getValidValues();
 	}
 
-	
 	@Test
 	public void testSetValidValues() throws Exception {
 		ValidValuesConstraint testSubject;
-		List<String> validValues = null;
+		List<Object> validValues = null;
 
 		// default test
 		testSubject = createTestSubject();

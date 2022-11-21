@@ -29,10 +29,6 @@ public class InRangeConstraintTest {
 		return new InRangeConstraint(null);
 	}
 
-	
-
-
-	
 	@Test
 	public void testGetRangeMinValue() throws Exception {
 		InRangeConstraint testSubject;
@@ -40,10 +36,9 @@ public class InRangeConstraintTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getRangeMinValue();
+		result = String.valueOf(testSubject.getRangeMinValue());
 	}
 
-	
 	@Test
 	public void testSetRangeMinValue() throws Exception {
 		InRangeConstraint testSubject;
@@ -54,7 +49,6 @@ public class InRangeConstraintTest {
 		testSubject.setRangeMinValue(minValue);
 	}
 
-	
 	@Test
 	public void testGetRangeMaxValue() throws Exception {
 		InRangeConstraint testSubject;
@@ -62,10 +56,9 @@ public class InRangeConstraintTest {
 
 		// default test
 		testSubject = createTestSubject();
-		result = testSubject.getRangeMaxValue();
+		result = String.valueOf(testSubject.getRangeMaxValue());
 	}
 
-	
 	@Test
 	public void testSetRangeMaxValue() throws Exception {
 		InRangeConstraint testSubject;

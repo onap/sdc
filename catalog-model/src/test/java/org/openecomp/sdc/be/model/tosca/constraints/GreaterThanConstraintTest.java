@@ -28,22 +28,16 @@ public class GreaterThanConstraintTest {
 		return new GreaterThanConstraint("");
 	}
 
-
-
-	
-
-	
 	@Test
 	public void testGetGreaterThan() throws Exception {
 		GreaterThanConstraint testSubject;
-		String result;
+		Object result;
 
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getGreaterThan();
 	}
 
-	
 	@Test
 	public void testSetGreaterThan() throws Exception {
 		GreaterThanConstraint testSubject;

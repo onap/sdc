@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintEqual implements ToscaPropertyConstraint {
 
-    private String equal;
+    private Object equal;
     private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.EQUAL;
 
     @Override

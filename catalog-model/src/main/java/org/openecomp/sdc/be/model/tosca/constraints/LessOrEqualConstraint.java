@@ -20,6 +20,9 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -28,18 +31,17 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
-public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint {
+@Getter
+@Setter
+@AllArgsConstructor
+public class LessOrEqualConstraint<T> extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private String lessOrEqual;
-
-    public LessOrEqualConstraint(String lessOrEqual) {
-        this.lessOrEqual = lessOrEqual;
-    }
+    private T lessOrEqual;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        initialize(lessOrEqual, propertyType);
+        initialize(String.valueOf(lessOrEqual), propertyType);
     }
 
     @Override
@@ -58,16 +60,38 @@ public class LessOrEqualConstraint extends AbstractComparablePropertyConstraint 
         }
     }
 
-    public String getLessOrEqual() {
-        return lessOrEqual;
-    }
-
-    public void setLessOrEqual(String lessOrEqual) {
-        this.lessOrEqual = lessOrEqual;
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be less than or equal to %s", String.valueOf(lessOrEqual));
     }
 
     @Override
-    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be less than or equal to %s", lessOrEqual);
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "lessOrEqual constraint has invalid values <" + lessOrEqual.toString() + "> property type is <" + propertyType + ">");
+        }
+        if (lessOrEqual == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "lessOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        return toscaType.isValueTypeValid(lessOrEqual);
+    }
+
+    @Override
+    public String getConstraintValueAsString() {
+        return String.valueOf(lessOrEqual);
+    }
+
+    @Override
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            lessOrEqual = (T) toscaType.convert(String.valueOf(lessOrEqual));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "lessThan constraint has invalid values <" + lessOrEqual.toString() + "> property type is <" + propertyType + ">");
+        }
     }
 }

@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -31,15 +32,16 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private String lessThan;
+    private Object lessThan;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        initialize(lessThan, propertyType);
+        initialize(String.valueOf(lessThan), propertyType);
     }
 
     @Override
@@ -60,6 +62,36 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s value must be less than %s", lessThan);
+        return getErrorMessage(toscaType, e, propertyName, "%s value must be less than %s", String.valueOf(lessThan));
+    }
+
+    @Override
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "lessThan constraint has invalid values <" + lessThan.toString() + "> property type is <" + propertyType + ">");
+        }
+        if (lessThan == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "lessThan constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        return toscaType.isValueTypeValid(lessThan);
+    }
+
+    @Override
+    public String getConstraintValueAsString() {
+        return String.valueOf(lessThan);
+    }
+
+    @Override
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            lessThan = toscaType.convert(String.valueOf(lessThan));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "lessThan constraint has invalid values <" + lessThan.toString() + "> property type is <" + propertyType + ">");
+        }
     }
 }
