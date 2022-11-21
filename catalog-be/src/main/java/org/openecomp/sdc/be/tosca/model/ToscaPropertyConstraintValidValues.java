@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintValidValues implements ToscaPropertyConstraint {
 
-    private List<String> validValues;
+    private List<Object> validValues;
 
     @Override
     public String getEntryToscaName(final String attributeName) {

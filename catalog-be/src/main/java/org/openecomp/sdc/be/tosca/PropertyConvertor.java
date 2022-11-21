@@ -158,16 +158,17 @@ public class PropertyConvertor {
             }
             if (constraint instanceof InRangeConstraint) {
                 InRangeConstraint inRangeConstraint = (InRangeConstraint) constraint;
-                List<String> range = new ArrayList<>();
+                List<Object> range = new ArrayList<>();
                 range.add(inRangeConstraint.getRangeMinValue());
                 range.add(inRangeConstraint.getRangeMaxValue());
                 convertedConstraints.add(new ToscaPropertyConstraintInRange(range));
             }
             if (constraint instanceof ValidValuesConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintValidValues(((ValidValuesConstraint) constraint).getValidValues()));
+                List validValues = ((ValidValuesConstraint) constraint).getValidValues();
+                convertedConstraints.add(new ToscaPropertyConstraintValidValues(validValues));
             }
             if (constraint instanceof LengthConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintLength(((LengthConstraint) constraint).getLength().toString()));
+                convertedConstraints.add(new ToscaPropertyConstraintLength(((LengthConstraint) constraint).getLength()));
             }
             if (constraint instanceof MinLengthConstraint) {
                 convertedConstraints.add(new ToscaPropertyConstraintMinLength(((MinLengthConstraint) constraint).getMinLength()));

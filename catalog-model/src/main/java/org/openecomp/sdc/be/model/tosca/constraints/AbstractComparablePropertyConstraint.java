@@ -50,6 +50,12 @@ public abstract class AbstractComparablePropertyConstraint extends AbstractPrope
 
     protected abstract void doValidate(Object propertyValue) throws ConstraintViolationException;
 
+    public abstract boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
+
+    public abstract String getConstraintValueAsString();
+
+    public abstract void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
+
     @Override
     public void validate(Object propertyValue) throws ConstraintViolationException {
         if (propertyValue == null) {
