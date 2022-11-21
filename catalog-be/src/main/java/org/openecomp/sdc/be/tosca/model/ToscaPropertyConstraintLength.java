@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintLength implements ToscaPropertyConstraint {
 
-    private String length;
+    private Integer length;
     private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.LENGTH;
 
     @Override

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,41 +20,114 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
 
 public class ValidValuesConstraintTest {
 
-	private ValidValuesConstraint createTestSubject() {
-		return new ValidValuesConstraint(null);
-	}
+    private ValidValuesConstraint createStringTestSubject() {
+        List<Object> validValues = new ArrayList<>();
+        validValues.add("test1");
+        validValues.add("test2");
+        validValues.add("test3");
+        validValues.add("test4");
+        return new ValidValuesConstraint(validValues);
+    }
 
-	
+    private ValidValuesConstraint createIntegerTestSubject() {
+        List<Object> validValues = new ArrayList<>();
+        validValues.add(1);
+        validValues.add(2);
+        validValues.add(3);
+        validValues.add(4);
+        return new ValidValuesConstraint(validValues);
+    }
 
-	
+    @Test
+    public void testGetValidValues() {
+        ValidValuesConstraint testSubject = createStringTestSubject();
+        List<Object> result = testSubject.getValidValues();
 
+        assertFalse(result.isEmpty());
+        assertEquals("test1", result.get(0));
+        assertEquals("test4", result.get(3));
+    }
 
-	
-	@Test
-	public void testGetValidValues() throws Exception {
-		ValidValuesConstraint testSubject;
-		List<String> result;
+    @Test
+    public void testSetValidValues() {
+        ValidValuesConstraint testSubject = createStringTestSubject();
+        List<Object> validValues = new ArrayList<>();
+        validValues.add("test5");
+        validValues.add("test6");
+        validValues.add("test7");
+        validValues.add("test8");
+        testSubject.setValidValues(validValues);
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getValidValues();
-	}
+        List<Object> result = testSubject.getValidValues();
 
-	
-	@Test
-	public void testSetValidValues() throws Exception {
-		ValidValuesConstraint testSubject;
-		List<String> validValues = null;
+        assertEquals(4, result.size());
+        assertEquals("test5", result.get(0));
+        assertEquals("test8", result.get(3));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setValidValues(validValues);
-	}
+    @Test
+    public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        ValidValuesConstraint testSubject = createStringTestSubject();
+        Boolean validTypes = testSubject.validateValueType("string");
+        assertTrue(validTypes);
+    }
+
+    @Test
+    public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+        ValidValuesConstraint testSubject = createStringTestSubject();
+        Boolean validTypes = testSubject.validateValueType("integer");
+        assertFalse(validTypes);
+    }
+
+    @Test
+    public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        ValidValuesConstraint testSubject = createIntegerTestSubject();
+        Boolean validTypes = testSubject.validateValueType("integer");
+        assertTrue(validTypes);
+    }
+
+    @Test
+    public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+        ValidValuesConstraint testSubject = createIntegerTestSubject();
+        Boolean validTypes = testSubject.validateValueType("string");
+        assertFalse(validTypes);
+    }
+
+    @Test
+    public void testChangeStringConstraintValueTypeToIntegerThrow() {
+        String propertyType = "integer";
+        ValidValuesConstraint testSubject = createStringTestSubject();
+        Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
+            testSubject.changeConstraintValueTypeTo(propertyType);
+        });
+
+        String expectedMessage =
+            "validValues constraint has invalid values <" + testSubject.getValidValues() + "> property type is <" + propertyType + ">";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
+        ValidValuesConstraint testSubject = createIntegerTestSubject();
+
+        testSubject.changeConstraintValueTypeTo("string");
+        List<Object> result = testSubject.getValidValues();
+
+        result.forEach(value -> assertTrue(value instanceof String));
+    }
 }

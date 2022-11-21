@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintLessOrEqual implements ToscaPropertyConstraint {
 
-    private String lessOrEqual;
+    private Object lessOrEqual;
     private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.LESS_OR_EQUAL;
 
     @Override
