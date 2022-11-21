@@ -22,6 +22,30 @@
       "revId": "a74f91ab322b6b99264b4acf89baa703fce1f20b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74ac3f97_187a119f",
+        "filename": "catalog-ui/src/app/ng2/pipes/entity-filter.pipe.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-11-21T16:29:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c090adbc_9819dd4e",
+      "range": {
+        "startLine": 178,
+        "startChar": 12,
+        "endLine": 180,
+        "endChar": 13
+      },
+      "revId": "a74f91ab322b6b99264b4acf89baa703fce1f20b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
