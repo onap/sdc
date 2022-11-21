@@ -20,6 +20,9 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -28,18 +31,17 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
-public class GreaterThanConstraint extends AbstractComparablePropertyConstraint {
+@Getter
+@Setter
+@AllArgsConstructor
+public class GreaterThanConstraint<T> extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private String greaterThan;
-
-    public GreaterThanConstraint(String greaterThan) {
-        this.greaterThan = greaterThan;
-    }
+    private T greaterThan;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        initialize(greaterThan, propertyType);
+        initialize(String.valueOf(greaterThan), propertyType);
     }
 
     @Override
@@ -58,16 +60,38 @@ public class GreaterThanConstraint extends AbstractComparablePropertyConstraint 
         }
     }
 
-    public String getGreaterThan() {
-        return greaterThan;
-    }
-
-    public void setGreaterThan(String greaterThan) {
-        this.greaterThan = greaterThan;
+    @Override
+    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than %s", String.valueOf(greaterThan));
     }
 
     @Override
-    public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than %s", greaterThan);
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "greaterThan constraint has invalid values <" + greaterThan.toString() + "> property type is <" + propertyType + ">");
+        }
+        if (greaterThan == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "greaterThan constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        return toscaType.isValueTypeValid(greaterThan);
+    }
+
+    @Override
+    public String getConstraintValueAsString() {
+        return String.valueOf(greaterThan);
+    }
+
+    @Override
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            greaterThan = (T) toscaType.convert(String.valueOf(greaterThan));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "greaterThan constraint has invalid values <" + greaterThan.toString() + "> property type is <" + propertyType + ">");
+        }
     }
 }

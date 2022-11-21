@@ -37,11 +37,11 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private String greaterOrEqual;
+    private Object greaterOrEqual;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        initialize(greaterOrEqual, propertyType);
+        initialize(String.valueOf(greaterOrEqual), propertyType);
     }
 
     @Override
@@ -62,6 +62,36 @@ public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstrai
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than or equal to %s", greaterOrEqual);
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than or equal to %s", String.valueOf(greaterOrEqual));
+    }
+
+    @Override
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "greaterOrEqual constraint has invalid values <" + greaterOrEqual.toString() + "> property type is <" + propertyType + ">");
+        }
+        if (greaterOrEqual == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "greaterOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        return toscaType.isValueTypeValid(greaterOrEqual);
+    }
+
+    @Override
+    public String getConstraintValueAsString() {
+        return String.valueOf(greaterOrEqual);
+    }
+
+    @Override
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            greaterOrEqual = toscaType.convert(String.valueOf(greaterOrEqual));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "greaterOrEqual constraint has invalid values <" + greaterOrEqual.toString() + "> property type is <" + propertyType + ">");
+        }
     }
 }

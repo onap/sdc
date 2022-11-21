@@ -329,7 +329,7 @@ public class ImportUtilsTest {
         assertTrue(property.getConstraints() != null && property.getConstraints().size() == 1);
         assertTrue(property.getConstraints().get(0) instanceof ValidValuesConstraint);
         assertNotNull(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues());
-        List<String> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
+        List<Object> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
         assertTrue(validValues.containsAll(Lists.newArrayList("firewall", "analyzer", "source-nat", "loadbalancer")));
 
         assertTrue(properties.containsKey("service_interface_type_list"));
