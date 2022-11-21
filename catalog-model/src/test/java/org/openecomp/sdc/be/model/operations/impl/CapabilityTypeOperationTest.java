@@ -523,7 +523,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         property2.setDescription("Number of (actual or virtual) CPUs associated with the Compute node.");
         property2.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints3 = new ArrayList<>();
-        List<String> range = new ArrayList<>();
+        List<Object> range = new ArrayList<>();
         range.add("1");
         range.add("4");
 

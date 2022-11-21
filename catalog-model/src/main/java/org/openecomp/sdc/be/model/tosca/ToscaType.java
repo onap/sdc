@@ -49,6 +49,7 @@ public enum ToscaType {
 	VERSION("version"),
 	LIST("list"),
 	MAP("map"),
+    RANGE("range"),
 	SCALAR_UNIT("scalar-unit"),
 	SCALAR_UNIT_SIZE("scalar-unit.size"),
 	SCALAR_UNIT_TIME("scalar-unit.time"),
@@ -91,6 +92,32 @@ public enum ToscaType {
 
     public static boolean isCollectionType(String type) {
         return ToscaPropertyType.MAP.getType().equals(type) || ToscaPropertyType.LIST.getType().equals(type);
+    }
+
+    public Boolean isValueTypeValid(Object value) {
+        switch (this) {
+            case BOOLEAN:
+                return value.equals(true) || value.equals(false);
+            case FLOAT:
+                return value instanceof Float;
+            case INTEGER:
+            case RANGE:
+                return value instanceof Integer;
+            case STRING:
+            case SCALAR_UNIT:
+            case SCALAR_UNIT_SIZE:
+            case SCALAR_UNIT_TIME:
+            case SCALAR_UNIT_FREQUENCY:
+            case TIMESTAMP:
+            case VERSION:
+                return value instanceof String;
+            case LIST:
+                return value instanceof List;
+            case MAP:
+                return value instanceof Map;
+            default:
+                return false;
+        }
     }
 
     public boolean isValidValue(String value) {
@@ -172,6 +199,7 @@ public enum ToscaType {
                 return Boolean.valueOf(value);
             case FLOAT:
                 return Float.valueOf(value);
+            case RANGE:
             case INTEGER:
                 return Long.valueOf(value);
             case TIMESTAMP:

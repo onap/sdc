@@ -63,6 +63,9 @@ import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.model.tosca.constraints.AbstractComparablePropertyConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -315,11 +318,45 @@ public final class ImportUtils {
         if (propertyConstraint instanceof ValidValuesConstraint) {
             try {
                 ((ValidValuesConstraint) propertyConstraint).validateType(propertyType);
+                boolean valid = ((ValidValuesConstraint) propertyConstraint).validateValueType(propertyType);
+                if (!valid) {
+                    ((ValidValuesConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
+                }
             } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
                 BeEcompErrorManager.getInstance()
                     .logInternalFlowError("GetInitializedPropertyConstraint", e.getMessage(), BeEcompErrorManager.ErrorSeverity.ERROR);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.VALID_VALUES.name(),
                     ((ValidValuesConstraint) propertyConstraint).getValidValues().toString(), propertyType);
+            }
+        } else if (propertyConstraint instanceof AbstractComparablePropertyConstraint) {
+            try {
+                boolean valid = ((AbstractComparablePropertyConstraint) propertyConstraint).validateValueType(propertyType);
+                if (!valid) {
+                    ((AbstractComparablePropertyConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
+                }
+            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, propertyConstraint.getConstraintType().name(),
+                        ((AbstractComparablePropertyConstraint) propertyConstraint).getConstraintValueAsString(), propertyType);
+            }
+        } else if (propertyConstraint instanceof EqualConstraint) {
+            try {
+                boolean valid = ((EqualConstraint) propertyConstraint).validateValueType(propertyType);
+                if (!valid) {
+                    ((EqualConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
+                }
+            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.EQUAL.name(),
+                        String.valueOf(((EqualConstraint) propertyConstraint).getEqual()), propertyType);
+            }
+        } else if (propertyConstraint instanceof InRangeConstraint) {
+            try {
+                boolean valid = ((InRangeConstraint) propertyConstraint).validateValueType(propertyType);
+                if (!valid) {
+                    ((InRangeConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
+                }
+            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.IN_RANGE.name(),
+                        String.valueOf(((InRangeConstraint) propertyConstraint).getInRange()), propertyType);
             }
         }
         return propertyConstraint;

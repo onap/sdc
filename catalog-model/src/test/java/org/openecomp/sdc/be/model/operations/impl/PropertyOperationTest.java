@@ -166,17 +166,17 @@ public class PropertyOperationTest extends ModelTestBase {
         constraints.add(propertyConstraint10);
         return constraints;
     }
-    
+
     private InRangeConstraint buildInRangeConstraint() {
-        List<String> range = new ArrayList<>();
+        List<Object> range = new ArrayList<>();
         range.add("23");
         range.add("67");
         InRangeConstraint inRangeConstraint = new InRangeConstraint(range);
         return inRangeConstraint;
     }
-    
+
     private ValidValuesConstraint buildValidValuesConstraint() {
-        List<String> validValues = new ArrayList<>();
+        List<Object> validValues = new ArrayList<>();
         validValues.add("abc");
         validValues.add("def");
         validValues.add("fhi");

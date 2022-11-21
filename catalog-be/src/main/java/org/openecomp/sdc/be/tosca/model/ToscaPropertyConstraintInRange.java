@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintInRange implements ToscaPropertyConstraint {
 
-    private List<String> inRange;
+    private List<Object> inRange;
     private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.IN_RANGE;
 
     @Override
@@ -40,7 +40,6 @@ public class ToscaPropertyConstraintInRange implements ToscaPropertyConstraint {
         if ("inRange".equals(attributeName)) {
             return CONSTRAINT_TYPE.getType();
         }
-        
         return attributeName;
     }
 
