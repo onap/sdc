@@ -21,6 +21,8 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
+import lombok.Setter;
+import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -28,25 +30,25 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunction
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
-import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
 
-    @NotNull
     @Getter
-    private String equal;
+    @Setter
+    @NotNull
+    private Object equal;
     private Object typed;
 
-    public EqualConstraint(String equal) {
+    public EqualConstraint(Object equal) {
         super();
         this.equal = equal;
     }
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        if (propertyType.isValidValue(equal)) {
-            typed = propertyType.convert(equal);
+        if (propertyType.isValidValue(String.valueOf(equal))) {
+            typed = propertyType.convert(String.valueOf(equal));
         } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "constraintValue constraint has invalid value <" + equal + "> property type is <" + propertyType.toString() + ">");
@@ -82,6 +84,29 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", equal);
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", String.valueOf(equal));
+    }
+
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
+        }
+        if (equal == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "equal constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        return toscaType.isValueTypeValid(equal);
+    }
+
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            equal = toscaType.convert(String.valueOf(equal));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
+        }
     }
 }

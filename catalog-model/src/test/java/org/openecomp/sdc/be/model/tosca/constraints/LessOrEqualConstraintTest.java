@@ -20,39 +20,91 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
 public class LessOrEqualConstraintTest {
 
-	private LessOrEqualConstraint createTestSubject() {
-		return new LessOrEqualConstraint("");
+	private LessOrEqualConstraint createStringTestSubject() {
+		return new LessOrEqualConstraint("test");
 	}
 
-	
-
-	
-
-
-	
-	@Test
-	public void testGetLessOrEqual() throws Exception {
-		LessOrEqualConstraint testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLessOrEqual();
+	private LessOrEqualConstraint createIntegerTestSubject() {
+		return new LessOrEqualConstraint(418);
 	}
 
-	
 	@Test
-	public void testSetLessOrEqual() throws Exception {
-		LessOrEqualConstraint testSubject;
-		String lessOrEqual = "";
+	public void testGetLessOrEqualThan() {
+		LessOrEqualConstraint testSubject = createStringTestSubject();
+		Object result = testSubject.getLessOrEqual();
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setLessOrEqual(lessOrEqual);
+		assertEquals("test", result);
+	}
+
+	@Test
+	public void testSetLessOrEqual() {
+		LessOrEqualConstraint testSubject = createStringTestSubject();
+		testSubject.setLessOrEqual("test2");
+		Object result = testSubject.getLessOrEqual();
+
+		assertEquals("test2", result);
+	}
+
+	@Test
+	public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+		LessOrEqualConstraint testSubject = createStringTestSubject();
+		Boolean validTypes = testSubject.validateValueType("string");
+		assertTrue(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+		LessOrEqualConstraint testSubject = createStringTestSubject();
+		Boolean validTypes = testSubject.validateValueType("integer");
+		assertFalse(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+		LessOrEqualConstraint testSubject = createIntegerTestSubject();
+		Boolean validTypes = testSubject.validateValueType("integer");
+		assertTrue(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+		LessOrEqualConstraint testSubject = createIntegerTestSubject();
+		Boolean validTypes = testSubject.validateValueType("string");
+		assertFalse(validTypes);
+	}
+
+	@Test
+	public void testChangeStringConstraintValueTypeToIntegerThrow() {
+		String propertyType = "integer";
+		LessOrEqualConstraint testSubject = createStringTestSubject();
+		Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
+			testSubject.changeConstraintValueTypeTo(propertyType);
+		});
+
+		String expectedMessage =
+				"lessOrEqual constraint has invalid values <" + testSubject.getLessOrEqual() + "> property type is <" + propertyType + ">";
+		String actualMessage = exception.getMessage();
+
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
+
+	@Test
+	public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
+		LessOrEqualConstraint testSubject = createIntegerTestSubject();
+
+		testSubject.changeConstraintValueTypeTo("string");
+		Object result = testSubject.getLessOrEqual();
+
+		assertTrue(result instanceof String);
 	}
 }

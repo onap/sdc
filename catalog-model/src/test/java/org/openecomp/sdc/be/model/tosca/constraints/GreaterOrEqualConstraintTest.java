@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,88 +20,62 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ValidValuesConstraintTest {
+public class GreaterOrEqualConstraintTest {
 
-	private ValidValuesConstraint createStringTestSubject() {
-		List<Object> validValues = new ArrayList<>();
-		validValues.add("test1");
-		validValues.add("test2");
-		validValues.add("test3");
-		validValues.add("test4");
-		return new ValidValuesConstraint(validValues);
+	private GreaterOrEqualConstraint createStringTestSubject() {
+		return new GreaterOrEqualConstraint("test");
 	}
 
-	private ValidValuesConstraint createIntegerTestSubject() {
-		List<Object> validValues = new ArrayList<>();
-		validValues.add(1);
-		validValues.add(2);
-		validValues.add(3);
-		validValues.add(4);
-		return new ValidValuesConstraint(validValues);
+	private GreaterOrEqualConstraint createIntegerTestSubject() {
+		return new GreaterOrEqualConstraint(418);
 	}
 
 	@Test
-	public void testGetValidValues() {
-		ValidValuesConstraint testSubject = createStringTestSubject();
-		List<Object> result = testSubject.getValidValues();
+	public void testGetGreaterOrEqualThan() {
+		GreaterOrEqualConstraint testSubject = createStringTestSubject();
+		Object result = testSubject.getGreaterOrEqual();
 
-		assertFalse(result.isEmpty());
-		assertEquals("test1", result.get(0));
-		assertEquals("test4", result.get(3));
+		assertEquals("test", result);
 	}
 
 	@Test
-	public void testSetValidValues() {
-		ValidValuesConstraint testSubject = createStringTestSubject();
-		List<Object> validValues = new ArrayList<>();
-		validValues.add("test5");
-		validValues.add("test6");
-		validValues.add("test7");
-		validValues.add("test8");
-		testSubject.setValidValues(validValues);
+	public void testSetGreaterOrEqual() {
+		GreaterOrEqualConstraint testSubject = createStringTestSubject();
+		testSubject.setGreaterOrEqual("test2");
+		Object result = testSubject.getGreaterOrEqual();
 
-		List<Object> result = testSubject.getValidValues();
-
-		assertEquals(4, result.size());
-		assertEquals("test5", result.get(0));
-		assertEquals("test8", result.get(3));
+		assertEquals("test2", result);
 	}
 
 	@Test
 	public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
-		ValidValuesConstraint testSubject = createStringTestSubject();
+		GreaterOrEqualConstraint testSubject = createStringTestSubject();
 		Boolean validTypes = testSubject.validateValueType("string");
 		assertTrue(validTypes);
 	}
 
 	@Test
 	public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
-		ValidValuesConstraint testSubject = createStringTestSubject();
+		GreaterOrEqualConstraint testSubject = createStringTestSubject();
 		Boolean validTypes = testSubject.validateValueType("integer");
 		assertFalse(validTypes);
 	}
 
 	@Test
 	public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
-		ValidValuesConstraint testSubject = createIntegerTestSubject();
+		GreaterOrEqualConstraint testSubject = createIntegerTestSubject();
 		Boolean validTypes = testSubject.validateValueType("integer");
 		assertTrue(validTypes);
 	}
 
 	@Test
 	public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
-		ValidValuesConstraint testSubject = createIntegerTestSubject();
+		GreaterOrEqualConstraint testSubject = createIntegerTestSubject();
 		Boolean validTypes = testSubject.validateValueType("string");
 		assertFalse(validTypes);
 	}
@@ -109,13 +83,13 @@ public class ValidValuesConstraintTest {
 	@Test
 	public void testChangeStringConstraintValueTypeToIntegerThrow() {
 		String propertyType = "integer";
-		ValidValuesConstraint testSubject = createStringTestSubject();
+		GreaterOrEqualConstraint testSubject = createStringTestSubject();
 		Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
 			testSubject.changeConstraintValueTypeTo(propertyType);
 		});
 
 		String expectedMessage =
-				"validValues constraint has invalid values <" + testSubject.getValidValues() + "> property type is <" + propertyType + ">";
+				"greaterOrEqual constraint has invalid values <" + testSubject.getGreaterOrEqual() + "> property type is <" + propertyType + ">";
 		String actualMessage = exception.getMessage();
 
 		assertTrue(actualMessage.contains(expectedMessage));
@@ -123,11 +97,11 @@ public class ValidValuesConstraintTest {
 
 	@Test
 	public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
-		ValidValuesConstraint testSubject = createIntegerTestSubject();
+		GreaterOrEqualConstraint testSubject = createIntegerTestSubject();
 
 		testSubject.changeConstraintValueTypeTo("string");
-		List<Object> result = testSubject.getValidValues();
+		Object result = testSubject.getGreaterOrEqual();
 
-		result.forEach(value -> assertTrue(value instanceof String));
+		assertTrue(result instanceof String);
 	}
 }

@@ -22,6 +22,10 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import com.google.common.collect.Lists;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -30,17 +34,18 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class InRangeConstraint extends AbstractPropertyConstraint {
 
-    private List<String> inRange;
+    @NonNull
+    private List<Object> inRange;
     private Comparable min;
     private Comparable max;
 
-    public InRangeConstraint(List<String> inRange) {
+    public InRangeConstraint(List<Object> inRange) {
         this.inRange = inRange;
-    }
-
-    public InRangeConstraint() {
     }
 
     @Override
@@ -52,8 +57,8 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         if (inRange == null || inRange.size() != 2) {
             throw new ConstraintValueDoNotMatchPropertyTypeException("In range constraint must have two elements.");
         }
-        String minRawText = inRange.get(0);
-        String maxRawText = inRange.get(1);
+        String minRawText = String.valueOf(inRange.get(0));
+        String maxRawText = String.valueOf(inRange.get(1));
         if (!propertyType.isValidValue(minRawText)) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "Invalid min value for in range constraint [" + minRawText + "] as it does not follow the property type [" + propertyType + "]");
@@ -90,7 +95,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
     }
 
     @NotNull
-    public String getRangeMinValue() {
+    public Object getRangeMinValue() {
         if (inRange != null) {
             return inRange.get(0);
         } else {
@@ -98,16 +103,16 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         }
     }
 
-    public void setRangeMinValue(String minValue) {
+    public void setRangeMinValue(Object minValue) {
         if (inRange == null) {
-            inRange = Lists.newArrayList(minValue, "");
+            inRange = Lists.newArrayList(minValue, null);
         } else {
             inRange.set(0, minValue);
         }
     }
 
     @NotNull
-    public String getRangeMaxValue() {
+    public Object getRangeMaxValue() {
         if (inRange != null) {
             return inRange.get(1);
         } else {
@@ -115,9 +120,9 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         }
     }
 
-    public void setRangeMaxValue(String maxValue) {
+    public void setRangeMaxValue(Object maxValue) {
         if (inRange == null) {
-            inRange = Lists.newArrayList("", maxValue);
+            inRange = Lists.newArrayList(null, maxValue);
         } else {
             inRange.set(1, maxValue);
         }
@@ -127,5 +132,33 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s property value must be between >= [%s] and <= [%s]", String.valueOf(min),
             String.valueOf(max));
+    }
+
+    public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        if (toscaType == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");
+        }
+        if (inRange == null) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                "inRange constraint has invalid value <> property type is <" + propertyType + ">");
+        }
+        for (Object value : inRange) {
+            if (!toscaType.isValueTypeValid(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+        try {
+            inRange.replaceAll(obj -> toscaType.convert(String.valueOf(obj)));
+        } catch (Exception e) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException(
+                    "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");
+        }
     }
 }

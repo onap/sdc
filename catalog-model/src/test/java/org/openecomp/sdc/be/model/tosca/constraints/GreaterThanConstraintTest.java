@@ -20,37 +20,91 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
 public class GreaterThanConstraintTest {
 
-	private GreaterThanConstraint createTestSubject() {
-		return new GreaterThanConstraint("");
+	private GreaterThanConstraint createStringTestSubject() {
+		return new GreaterThanConstraint("test");
 	}
 
-
-
-	
-
-	
-	@Test
-	public void testGetGreaterThan() throws Exception {
-		GreaterThanConstraint testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getGreaterThan();
+	private GreaterThanConstraint createIntegerTestSubject() {
+		return new GreaterThanConstraint(418);
 	}
 
-	
 	@Test
-	public void testSetGreaterThan() throws Exception {
-		GreaterThanConstraint testSubject;
-		String greaterThan = "";
+	public void testGetGreaterThan() {
+		GreaterThanConstraint testSubject = createStringTestSubject();
+		Object result = testSubject.getGreaterThan();
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setGreaterThan(greaterThan);
+		assertEquals("test", result);
+	}
+
+	@Test
+	public void testSetGreaterThan() {
+		GreaterThanConstraint testSubject = createStringTestSubject();
+		testSubject.setGreaterThan("test2");
+		Object result = testSubject.getGreaterThan();
+
+		assertEquals("test2", result);
+	}
+
+	@Test
+	public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+		GreaterThanConstraint testSubject = createStringTestSubject();
+		Boolean validTypes = testSubject.validateValueType("string");
+		assertTrue(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+		GreaterThanConstraint testSubject = createStringTestSubject();
+		Boolean validTypes = testSubject.validateValueType("integer");
+		assertFalse(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+		GreaterThanConstraint testSubject = createIntegerTestSubject();
+		Boolean validTypes = testSubject.validateValueType("integer");
+		assertTrue(validTypes);
+	}
+
+	@Test
+	public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+		GreaterThanConstraint testSubject = createIntegerTestSubject();
+		Boolean validTypes = testSubject.validateValueType("string");
+		assertFalse(validTypes);
+	}
+
+	@Test
+	public void testChangeStringConstraintValueTypeToIntegerThrow() {
+		String propertyType = "integer";
+		GreaterThanConstraint testSubject = createStringTestSubject();
+		Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
+			testSubject.changeConstraintValueTypeTo(propertyType);
+		});
+
+		String expectedMessage =
+				"greaterThan constraint has invalid values <" + testSubject.getGreaterThan() + "> property type is <" + propertyType + ">";
+		String actualMessage = exception.getMessage();
+
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
+
+	@Test
+	public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
+		GreaterThanConstraint testSubject = createIntegerTestSubject();
+
+		testSubject.changeConstraintValueTypeTo("string");
+		Object result = testSubject.getGreaterThan();
+
+		assertTrue(result instanceof String);
 	}
 }
