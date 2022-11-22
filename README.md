@@ -1,5 +1,17 @@
 # ONAP SDC
 
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=bugs)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=coverage)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=onap_sdc&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=onap_sdc)
+
 ## Introduction
 
 SDC is the ONAP visual modeling and design tool. It creates internal metadata that describes assets used by all ONAP components, both at design time and run time.
