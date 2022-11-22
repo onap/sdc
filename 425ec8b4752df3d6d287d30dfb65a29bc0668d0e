@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5452675_623700fa",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-22T17:45:38Z",
+      "side": 1,
+      "message": "avoid introducing uncovered code, replace with Lombok.@NoArgsConstructor",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "425ec8b4752df3d6d287d30dfb65a29bc0668d0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7dcbcc1b_866e3a7d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-11-22T17:45:38Z",
+      "side": 1,
+      "message": "remove implicit call",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 16
+      },
+      "revId": "425ec8b4752df3d6d287d30dfb65a29bc0668d0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
