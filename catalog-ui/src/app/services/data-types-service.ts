@@ -134,6 +134,21 @@ export class DataTypesService implements IDataTypesService {
         });
     }
 
+    public findAllDataTypesByModelIncludingRoot = (modelName: string): Promise<Map<string, DataTypeModel>> => {
+        return new Promise<Map<string, DataTypeModel>>((resolve, reject) => {
+            this.fetchDataTypesByModel(modelName).then(response => {
+                const dataTypes = response.data;
+                const dataTypeMap = new Map<string, DataTypeModel>();
+                for(const dataTypeKey of Object.keys(dataTypes)) {
+                    dataTypeMap.set(dataTypeKey, new DataTypeModel(dataTypes[dataTypeKey]))
+                }
+                resolve(dataTypeMap);
+            }).catch(reason => {
+                reject(reason);
+            });
+        });
+    }
+
     public getAllDataTypes = ():DataTypesMap => {
         return this.dataTypes;
     };
