@@ -77,6 +77,17 @@ public class DataTypeImportManager {
         return elementTypes;
     }
 
+    public Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> createDataType(final DataTypeDefinition dataType, final String modelName,
+                                                                                             final boolean includeToModelDefaultImports) {
+        final Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> elementType = commonImportManager.createElementType(
+            dataType,
+            dataTypeFromJson -> createDataType(dataType, modelName),
+            this::createDataTypeByDao,
+            ElementTypeEnum.DATA_TYPE);
+
+        return elementType;
+    }
+
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
         final Either<List<DataTypeDefinition>, ActionStatus> dataTypesEither = commonImportManager.createElementTypesFromYml(dataTypesYml,
             this::createDataType);
@@ -107,6 +118,19 @@ public class DataTypeImportManager {
             sortedDataTypeDefinitions.stream().forEach(dt -> log.trace(dt.getName()));
         }
         return Either.left(sortedDataTypeDefinitions);
+    }
+
+    private Either<DataTypeDefinition, ActionStatus> createDataType(final DataTypeDefinition dataType, String modelName) {
+
+        if (StringUtils.isNotEmpty(modelName)) {
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                dataType.setModel(modelName);
+            } else {
+                return Either.right(ActionStatus.INVALID_MODEL);
+            }
+        }
+        return Either.left(dataType);
     }
     
     private List<DataTypeDefinition> sortDataTypesByDependencyOrder(final List<DataTypeDefinition> dataTypes) {
@@ -145,6 +169,15 @@ public class DataTypeImportManager {
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(
         List<DataTypeDefinition> dataTypesToCreate) {
         return commonImportManager.createElementTypesByDao(dataTypesToCreate, this::validateDataType,
+            dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
+            dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true),
+            dataType -> propertyOperation.addDataType(dataType),
+            (newDataType, oldDataType) -> propertyOperation.updateDataType(newDataType, oldDataType));
+    }
+
+    private Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> createDataTypeByDao(
+        DataTypeDefinition dataTypeToCreate) {
+        return commonImportManager.createElementTypeByDao(dataTypeToCreate, this::validateDataType,
             dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
             dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true),
             dataType -> propertyOperation.addDataType(dataType),
