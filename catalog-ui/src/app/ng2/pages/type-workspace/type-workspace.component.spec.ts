@@ -41,6 +41,10 @@ import {TypeWorkspacePropertiesComponent} from "./type-workspace-properties/type
 import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-artifacts/type-workspace-tosca-artifact-page.component";
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {SvgIconModule} from "onap-ui-angular/dist/svg-icon/svg-icon.module";
+import {NO_ERRORS_SCHEMA} from "@angular/core";
+import {IScope} from "angular";
+import {IWorkspaceViewModelScope} from "../../../view-models/workspace/workspace-view-model";
+import {ModelService} from "../../services/model.service";
 
 describe('TypeWorkspaceComponent', () => {
   let component: TypeWorkspaceComponent;
@@ -50,6 +54,7 @@ describe('TypeWorkspaceComponent', () => {
     'translate': jest.fn()
   };
   let dataTypeServiceMock: Partial<DataTypeService>;
+  let notificationMock: Partial<any>;
   let cacheService: Partial<CacheService> = {
     'get': jest.fn(param => {
       if (param === 'version') {
@@ -65,7 +70,7 @@ describe('TypeWorkspaceComponent', () => {
       'name': States.TYPE_WORKSPACE
     }
   };
-  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {};
+
   let injectorMock: Partial<ng.auto.IInjectorService> = {
     'get': jest.fn(param => {
       if (param === '$state') {
@@ -89,6 +94,21 @@ describe('TypeWorkspaceComponent', () => {
       return user;
     })
   };
+  let importedFileMock: File = null;
+  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+      'importedFile': importedFileMock
+  };
+  let resolveMock = {"$stateParams": stateParamsMock};
+  let parentScopeMock: Partial<IScope> = {
+      '$resolve': resolveMock
+  };
+  let scopeMock_: Partial<IWorkspaceViewModelScope> = {
+      '$parent': parentScopeMock,
+      'current': {
+          'name': States.TYPE_WORKSPACE
+      }
+  }
+  let modelServiceMock: Partial<ModelService>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -102,10 +122,14 @@ describe('TypeWorkspaceComponent', () => {
         NgxDatatableModule,
         SvgIconModule
       ],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {provide: DataTypeService, useValue: dataTypeServiceMock},
         {provide: TranslateService, useValue: translateServiceMock},
         {provide: CacheService, useValue: cacheService},
+        {provide: "Notification", useValue: notificationMock },
+        {provide: ModelService, useValue: modelServiceMock},
+        {provide: "$scope", useValue: scopeMock_ },
         {provide: '$state', useValue: stateMock},
         {provide: '$stateParams', useValue: stateParamsMock},
         {provide: '$injector', useValue: injectorMock},

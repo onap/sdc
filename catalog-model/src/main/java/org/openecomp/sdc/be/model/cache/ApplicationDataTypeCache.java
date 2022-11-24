@@ -165,6 +165,13 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         return propertyOperation.getAllDataTypes();
     }
 
+    public Map<String, List<String>> geModelsForType(final String dataTypeId) {
+        Map<String, List<String>> allDataTypes = dataTypeOperation.getAllUniqueDataTypeUidsToModels();
+        final Map<String, List<String>> modelsFound = new HashMap<>();
+        modelsFound.put(dataTypeId + ".datatype", allDataTypes.get(dataTypeId));
+        return allDataTypes;
+    }
+
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll(final String model) {
         try {
             readWriteLock.readLock().lock();

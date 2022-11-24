@@ -124,6 +124,33 @@ public class DataTypeOperation extends AbstractOperation {
         return dataTypesFound;
     }
 
+    public Map<String, List<String>> getAllUniqueDataTypeUidsToModels() {
+        final Map<String, List<String>> dataTypesFound = new HashMap<>();
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
+            janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
+
+        final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
+
+        for (DataTypeData dataType : dataTypesValidated) {
+            if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
+                dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
+            }
+            dataTypesFound.get(dataType.getUniqueId()).add(null);
+        }
+
+        modelOperation.findAllModels()
+            .forEach(model -> {
+                for (DataTypeData dataType : getAllDataTypesWithModel(model.getName())) {
+                    String key = dataType.getUniqueId().replace(model.getName() + ".", "");
+                    if (!dataTypesFound.containsKey(key)) {
+                        dataTypesFound.put(key, new ArrayList<>());
+                    }
+                    dataTypesFound.get(key).add(model.getName());
+                }
+            });
+        return dataTypesFound;
+    }
+
     private List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesByModel = janusGraphGenericDao
             .getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class);

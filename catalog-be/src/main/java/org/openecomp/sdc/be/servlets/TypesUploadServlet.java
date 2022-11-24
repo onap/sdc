@@ -31,7 +31,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +51,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.jetbrains.annotations.NotNull;
 import org.openecomp.sdc.be.components.impl.ArtifactTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
@@ -218,7 +221,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/datatypes")
-    @Operation(description = "Create Categories from yaml", method = "POST", summary = "Returns created data types", responses = {
+    @Operation(description = "Create Data Types from zip", method = "POST", summary = "Returns created data types", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Data types created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
@@ -230,6 +233,23 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
                                     @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {        
         return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
+            includeToModelDefaultImports);
+    }
+
+    @POST
+    @Path("/datatypesyaml")
+    @Operation(description = "Create Data Types from yaml", method = "POST", summary = "Returns created data types", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Data types created"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Data types already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response uploadDataTypesYaml(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesYaml") File file,
+                                    @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                    @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        return uploadElementTypeServletLogicYaml(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
     }
 
@@ -321,6 +341,42 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+    }
+
+    private Response uploadElementTypeServletLogicYaml(final ConsumerFourParam<Wrapper<Response>, String, String, Boolean> createElementsMethod,
+                                                   final File file, final HttpServletRequest request, final String creator,
+                                                   final String elementTypeName, final String modelName, final boolean includeToModelDefaultImports) {
+        init();
+        final String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
+        try {
+            final Wrapper<String> yamlStringWrapper = new Wrapper<>();
+            final String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug(START_HANDLE_REQUEST_OF, url);
+            final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
+            if (responseWrapper.isEmpty()) {
+                final String yamlAsString = getFileAsString(file);
+                log.debug("received yaml: {}", yamlAsString);
+                yamlStringWrapper.setInnerElement(yamlAsString);
+            }
+            if (responseWrapper.isEmpty()) {
+                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName, includeToModelDefaultImports);
+            }
+            return responseWrapper.getInnerElement();
+        } catch (final Exception e) {
+            log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    @NotNull
+    private String getFileAsString(File file) throws IOException {
+        FileInputStream fl = new FileInputStream(file);
+        byte[] arr = new byte[(int) file.length()];
+        fl.read(arr);
+        fl.close();
+        final String yamlAsString = new String(arr, StandardCharsets.UTF_8);
+        return yamlAsString;
     }
 
     private Wrapper<Response> doUploadTypeValidations(final HttpServletRequest request, String userId, File file) {
@@ -444,6 +500,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
         }
     }
+
 
     // relationship types
     private void createRelationshipTypes(final Wrapper<Response> responseWrapper,

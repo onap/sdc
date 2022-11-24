@@ -107,6 +107,21 @@ public class FunctionalInterfaces {
         void accept(T1 t1, T2 t2, T3 t3, T4 t4);
     }
 
+    @FunctionalInterface
+    public interface ConsumerFiveParam<T1, T2, T3, T4, T5> {
+
+        /**
+         * Same Accept method, but takes four parameters
+         *
+         * @param t1
+         * @param t2
+         * @param t3
+         * @param t4
+         * @param t5
+         */
+        void accept(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5);
+    }
+
     /**
      * @param <T1>
      * @param <T2>
