@@ -1554,6 +1554,10 @@ public class ComponentsUtils {
         return allDataTypes.left().value();
     }
 
+    public Map<String, List<String>> geModelsForType(final ApplicationDataTypeCache applicationDataTypeCache, final String dataTypeId) {
+        return applicationDataTypeCache.geModelsForType(dataTypeId);
+    }
+
     public ActionStatus convertFromStorageResponseForArtifactType(final StorageOperationStatus storageResponse) {
         ActionStatus responseEnum;
         switch (storageResponse) {

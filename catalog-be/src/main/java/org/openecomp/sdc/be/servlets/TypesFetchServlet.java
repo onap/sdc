@@ -170,6 +170,35 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     }
 
     @GET
+    @Path("dataTypeModels")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get models for type", method = "GET", summary = "Returns list of models for type", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "dataTypeModels"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "404", description = "Data type not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getDataTypeModelsServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                           @Parameter(description = "dataType") @QueryParam("type") String dataTypeId) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
+        init();
+        validateUserExist(responseWrapper, userWrapper, userId);
+        if (responseWrapper.isEmpty()) {
+            String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug("Start handle request of {} - modifier id is {}", url, userId);
+            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
+            final Map<String, List<String>> dataTypeModels = resourceBusinessLogic.getComponentsUtils()
+                .geModelsForType(resourceBusinessLogic.getApplicationDataTypeCache(), dataTypeId + ".datatype");
+            String dataTypeModelsJson = gson.toJson(dataTypeModels);
+            Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeModelsJson);
+            responseWrapper.setInnerElement(okResponse);
+        }
+        return responseWrapper.getInnerElement();
+    }
+
+    @GET
     @Path("allDataTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

@@ -38,6 +38,7 @@ import {ComponentFactory} from "./utils/component-factory";
 import {Component} from "./models/components/component";
 import {IUserProperties} from "./models/user";
 import {WorkspaceService} from "./ng2/pages/workspace/workspace.service";
+import {TypeWorkspaceGeneralComponent} from "./ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
 
 let moduleName: string = 'sdcApp';
 let viewModelsModuleName: string = 'Sdc.ViewModels';
@@ -213,8 +214,11 @@ ng1appModule.config([
     $stateProvider.state(
         States.TYPE_WORKSPACE, {
           url: '/:previousState/type-workspace/:type/:id/:subPage',
-          template: '<app-type-workspace></app-type-workspace>',
-      }
+          params: {
+              'importedFile': null
+          },
+          template: '<app-type-workspace></app-type-workspace>'
+        }
     );
 
     $stateProvider.state(

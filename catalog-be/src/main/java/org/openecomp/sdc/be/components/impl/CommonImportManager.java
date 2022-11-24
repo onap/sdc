@@ -276,11 +276,9 @@ public class CommonImportManager {
                 eitherResult = handleType(elementType, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader)
                     .left()
                     .map(elem -> append(createdElementTypes, elem));
-
                 if (eitherResult.isRight()) {
                     break;
                 }
-
                 if (!elementTypeItr.hasNext()) {
                     log.info("all {} were created successfully!!!", elementType);
                 }
@@ -295,7 +293,6 @@ public class CommonImportManager {
                 propertyOperation.getJanusGraphGenericDao().rollback();
             }
         }
-
         return eitherResult;
     }
 
