@@ -31,6 +31,10 @@ import {DataTypeModel} from "../../../../models/data-types";
 import {Component, ViewChild} from "@angular/core";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
 import {ModalService} from "../../../services/modal.service";
+import {IScope} from "../../../../../typings/angularjs/angular";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {States} from "../../../../utils/constants";
+import {SdcUiServices} from "onap-ui-angular/dist";
 
 describe('TypeWorkspacePropertiesComponent', () => {
     const messages = require("../../../../../assets/languages/en_US.json");
@@ -54,6 +58,28 @@ describe('TypeWorkspacePropertiesComponent', () => {
             return messages[translateKey];
         })
     };
+    let importedFileMock: File = null;
+    let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+        'importedFile': importedFileMock
+    };
+    let resolveMock = {"$stateParams": stateParamsMock};
+    let parentScopeMock: Partial<IScope> = {
+        '$resolve': resolveMock
+    };
+    let scopeMock_: Partial<IWorkspaceViewModelScope> = {
+        '$parent': parentScopeMock,
+        'current': {
+            'name': States.TYPE_WORKSPACE
+        }
+    }
+    let stateMock: Partial<ng.ui.IStateService> = {
+        'current': {
+            'name': States.TYPE_WORKSPACE
+        }
+    };
+
+    let modalServiceSdcUIMock: Partial<SdcUiServices.ModalService>;
+    let modalServiceMock: Partial<ModalService>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -65,6 +91,10 @@ describe('TypeWorkspacePropertiesComponent', () => {
             providers: [
                 {provide: DataTypeService, useValue: dataTypeServiceMock},
                 {provide: TranslateService, useValue: translateServiceMock},
+                {provide: SdcUiServices.ModalService, useValue: modalServiceSdcUIMock},
+                {provide: ModalService, useValue: modalServiceMock},
+                {provide: "$scope", useValue: scopeMock_},
+                {provide: '$state', useValue: stateMock},
                 {provide: ModalService, useValue: modalService}
             ]
         })
