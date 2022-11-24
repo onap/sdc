@@ -25,6 +25,9 @@ import {TypeWorkspaceGeneralComponent} from './type-workspace-general.component'
 import {ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../../shared/translator/translate.module";
 import {TranslateService} from "../../../shared/translator/translate.service";
+import {SdcUiComponentsModule} from "onap-ui-angular/dist";
+import {Observable} from "rxjs/Observable";
+import {DataTypesMap} from "../../../../models/data-types-map";
 
 describe('TypeWorkspaceGeneralComponent', () => {
   let component: TypeWorkspaceGeneralComponent;
@@ -38,6 +41,7 @@ describe('TypeWorkspaceGeneralComponent', () => {
       declarations: [ TypeWorkspaceGeneralComponent ],
       imports: [
         ReactiveFormsModule,
+        SdcUiComponentsModule,
         TranslateModule
       ],
       providers: [
@@ -50,6 +54,7 @@ describe('TypeWorkspaceGeneralComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TypeWorkspaceGeneralComponent);
     component = fixture.componentInstance;
+    component.dataTypeMap$ = new Observable<DataTypesMap>();
     fixture.detectChanges();
   });
 

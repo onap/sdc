@@ -299,6 +299,39 @@ public class CommonImportManager {
         return eitherResult;
     }
 
+    protected <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> createElementTypeByDao(T elementTypeToCreate,
+                                                                                                  Function<T, Either<ActionStatus, ResponseFormat>> validator,
+                                                                                                  Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+                                                                                                  Function<String, Either<T, StorageOperationStatus>> elementFetcher,
+                                                                                                  Function<T, Either<T, StorageOperationStatus>> elementAdder,
+                                                                                                  BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader) {
+
+        ImmutablePair<T, Boolean> createdElementType = new ImmutablePair<>(elementTypeToCreate, true);
+
+        Either<ImmutablePair<T, Boolean>, ResponseFormat> eitherResult = Either.left(createdElementType);
+
+        try {
+
+
+                eitherResult = handleType(elementTypeToCreate, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+
+                log.info("element {} was created successfully!!!", elementTypeToCreate);
+
+
+        } catch (Exception e) {
+            eitherResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
+        } finally {
+            if (eitherResult.isLeft()) {
+                propertyOperation.getJanusGraphGenericDao().commit();
+            } else {
+                propertyOperation.getJanusGraphGenericDao().rollback();
+            }
+        }
+
+        return eitherResult;
+    }
+
     private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> handleType(T elementType,
                                                                              Function<T, Either<ActionStatus, ResponseFormat>> validator,
                                                                              Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
@@ -531,6 +564,21 @@ public class CommonImportManager {
             return Either.right(responseFormat);
         }
         return elementTypeDaoCreater.apply(elementTypes.left().value());
+
+    }
+
+    public <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> createElementType(DataTypeDefinition elementTypeIn,
+                                                                                   Function<DataTypeDefinition, Either<T, ActionStatus>> elementTypeFromJsonCreator,
+                                                                                   Function<T, Either<ImmutablePair<T, Boolean>, ResponseFormat>> elementTypeDaoCreator,
+                                                                                   ElementTypeEnum elementTypeEnum) {
+
+        Either<T, ActionStatus> elementType = elementTypeFromJsonCreator.apply(elementTypeIn);
+        if (elementType.isRight()) {
+            ActionStatus status = elementType.right().value();
+            ResponseFormat responseFormat = getResponseFormatForElementType(status, elementTypeEnum, null);
+            return Either.right(responseFormat);
+        }
+        return elementTypeDaoCreator.apply(elementType.left().value());
 
     }
 
