@@ -163,4 +163,19 @@ public class DataTypeServlet extends BeGenericServlet {
         return Response.status(Status.CREATED).entity(property).build();
     }
 
+    @GET
+    @Path("{dataTypeName}/models")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Get models for type", method = "GET", summary = "Returns list of models for type", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "dataTypeModels"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Data type not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getDataTypeModels(@PathParam("dataTypeName") String dataTypeName) {
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+            gson.toJson(dataTypeOperation.getAllDataTypeModels(dataTypeName)));
+    }
 }

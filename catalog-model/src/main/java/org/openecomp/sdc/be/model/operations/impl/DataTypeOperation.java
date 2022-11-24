@@ -29,6 +29,7 @@ import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -37,6 +38,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.QueryType;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
@@ -121,6 +123,23 @@ public class DataTypeOperation extends AbstractOperation {
                     dataTypesFound.get(dataType.getUniqueId()).add(model.getName());
                 }
             });
+        return dataTypesFound;
+    }
+
+    public Map<String, List<String>> getAllDataTypeModels(final String dataTypeName) {
+        final Map<String, List<String>> dataTypesFound = new HashMap<>();
+        ImmutableTriple<QueryType, String, Object> criteria =
+            new ImmutableTriple<>(QueryType.HAS, GraphPropertiesDictionary.NAME.getProperty(), dataTypeName);
+
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesForModel =
+            janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, DataTypeData.class, List.of(criteria));
+        final var dataTypesValidated = validateDataType(getAllDataTypesForModel, null);
+        for (DataTypeData dataType : dataTypesValidated) {
+            if (!dataTypesFound.containsKey(dataTypeName)) {
+                dataTypesFound.put(dataTypeName, new ArrayList<>());
+            }
+            dataTypesFound.get(dataTypeName).add(dataType.getDataTypeDataDefinition().getModel());
+        }
         return dataTypesFound;
     }
 

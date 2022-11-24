@@ -26,6 +26,8 @@ import {CacheService} from "../../../services/cache.service";
 import {States} from "../../../../utils/constants";
 import {IAppMenu} from "../../../../models/app-config";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
+import {IScope} from "../../../../../typings/angularjs/angular";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
 
 describe('WorkspaceMenuComponent', () => {
   let component: WorkspaceMenuComponent;
@@ -59,6 +61,20 @@ describe('WorkspaceMenuComponent', () => {
       }
     })
   };
+  let importedFileMock: File = null;
+  let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+      'importedFile': importedFileMock
+  };
+  let resolveMock = {"$stateParams": stateParamsMock};
+  let parentScopeMock: Partial<IScope> = {
+      '$resolve': resolveMock
+  };
+  let scopeMock_: Partial<IWorkspaceViewModelScope> = {
+      '$parent': parentScopeMock,
+      'current': {
+          'name': States.TYPE_WORKSPACE
+      }
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -66,6 +82,7 @@ describe('WorkspaceMenuComponent', () => {
       providers: [
         {provide: CacheService, useValue: cacheService},
         {provide: '$injector', useValue: injectorMock},
+        {provide: "$scope", useValue: scopeMock_ },
         {provide: SdcMenuToken, useValue: sdcMenuMock}
       ]
     })
