@@ -32,6 +32,8 @@
         <div class="progress-container">
         </div>
         <div class="sdc-workspace-top-bar-buttons">
+          <button *ngIf="!isViewOnly" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || unsavedChanges" (click)="createImportType()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
+          <span *ngIf="!isViewOnly" class="delimiter"></span>
           <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" sdc-smart-tooltip="Close" [title]="'CLOSE_LABEL' | translate"></span>
         </div>
       </div>
@@ -43,7 +45,7 @@
           </div>
         </div>
         <div class="w-sdc-main-container-body-content" *ngIf="dataType">
-          <app-type-workspace-general *ngIf="currentMenu.state === 'general'" [dataType]="dataType"></app-type-workspace-general>
+          <app-type-workspace-general *ngIf="currentMenu.state === 'general'" [dataType]="dataType" (onImportedType)="onImportedType($event)"></app-type-workspace-general>
           <app-type-workspace-properties *ngIf="currentMenu.state === 'properties'" [dataType]="dataType" [isViewOnly]="dataType.normative"></app-type-workspace-properties>
           <app-type-workspace-tosca-artifact *ngIf="currentMenu.state === 'tosca_artifacts'" [dataType]="dataType"></app-type-workspace-tosca-artifact>
         </div>

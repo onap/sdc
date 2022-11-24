@@ -296,7 +296,7 @@ public class ModelOperation {
             rebuiltModelImportList = new ArrayList<>(modelImportList);
         }
 
-        final Map<String, Object> typesYamlMap = new Yaml().load(typesYaml);
+        final Map<String, Object> typesYamlMap = new Yaml().loadAs(typesYaml, Map.class);
         removeExistingTypesFromDefaultImports(elementTypeEnum, typesYamlMap, rebuiltModelImportList);
 
         final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
