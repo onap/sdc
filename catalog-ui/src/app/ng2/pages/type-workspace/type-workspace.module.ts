@@ -38,6 +38,7 @@ import {TypeWorkspaceToscaArtifactPageComponent} from "./type-workspace-tosca-ar
 import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
 import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
+import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete.module";
 
 @NgModule({
    imports: [
@@ -51,6 +52,7 @@ import {InterfaceOperationHandlerModule} from "../composition/interface-operaton
         InterfaceOperationHandlerModule,
         NgxDatatableModule,
         SvgIconModule,
+        AutoCompleteModule
     ],
     declarations: [
         TypeWorkspaceComponent,
@@ -64,7 +66,8 @@ import {InterfaceOperationHandlerModule} from "../composition/interface-operaton
         CacheService,
         WorkspaceMenuComponent,
         DataTypeService,
-        ModalService
+        ModalService,
+        FileReader
     ],
     entryComponents: [TypeWorkspaceComponent, AddPropertyComponent],
     exports: [TypeWorkspaceComponent]

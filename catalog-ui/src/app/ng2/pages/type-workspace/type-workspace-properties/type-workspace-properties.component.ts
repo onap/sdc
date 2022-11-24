@@ -19,7 +19,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {DataTypeModel} from "../../../../models/data-types";
 import {DataTypeService} from "../../../services/data-type.service";
 import {PropertyBEModel} from "../../../../models/properties-inputs/property-be-model";
@@ -30,6 +30,8 @@ import {ModalModel} from "../../../../models/modal";
 import {ButtonModel} from "../../../../models/button";
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-property.component";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {SdcUiServices} from "onap-ui-angular/dist";
 
 @Component({
     selector: 'app-type-workspace-properties',
@@ -40,6 +42,8 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     @Input() isViewOnly = true;
     @Input() dataType: DataTypeModel = new DataTypeModel();
 
+    importedFile: File;
+    derivedFromName: string;
     properties: Array<PropertyBEModel> = [];
     filteredProperties: Array<PropertyBEModel> = [];
     tableHeadersList: Array<TableHeader> = [];
@@ -48,7 +52,12 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     tableFilterTerm: string = undefined;
     tableSearchTermUpdate = new Subject<string>();
 
-    constructor(private dataTypeService: DataTypeService, private modalService: ModalService, private translateService: TranslateService) {
+    constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
+                @Inject('$state') private $state: ng.ui.IStateService,
+                protected dataTypeService: DataTypeService,
+                private modalServiceSdcUI: SdcUiServices.ModalService,
+                private modalService: ModalService,
+                private translateService: TranslateService) {
     }
 
     ngOnInit(): void {
@@ -70,22 +79,12 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
             {title: 'Required', property: 'required'},
             {title: 'Description', property: 'description'},
         ];
-
         this.tableSortBy = this.tableHeadersList[0].property;
     }
 
     private initProperties(): void {
         this.dataTypeService.findAllProperties(this.dataType.uniqueId).subscribe(properties => {
-            this.properties = properties.map(value => {
-                const property = new PropertyBEModel(value);
-                if (property.defaultValue) {
-                    property.defaultValue = JSON.parse(property.defaultValue);
-                }
-
-                return property;
-            });
-            this.filteredProperties = Array.from(this.properties);
-            this.sort();
+            this.showPropertiesMap(properties);
         });
     }
 
@@ -187,6 +186,19 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
 
     onRowClick(property: PropertyBEModel) {
         this.openAddPropertyModal(property, true);
+    }
+
+    private showPropertiesMap(properties: Array<PropertyBEModel>): void {
+        this.properties = properties.map(value => {
+            const property = new PropertyBEModel(value);
+            if (property.defaultValue) {
+                property.defaultValue = JSON.parse(property.defaultValue);
+            }
+
+            return property;
+        });
+        this.filteredProperties = Array.from(this.properties);
+        this.sort();
     }
 }
 

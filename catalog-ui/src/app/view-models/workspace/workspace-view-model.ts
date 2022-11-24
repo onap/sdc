@@ -23,7 +23,7 @@
  */
 'use strict';
 import * as _ from 'lodash';
-import {Component, IAppMenu, IUserProperties, Plugin, PluginsConfiguration, Resource, Service} from 'app/models';
+import {Component, DataTypeModel, IAppMenu, IUserProperties, Plugin, PluginsConfiguration, Resource, Service} from 'app/models';
 import {
     CHANGE_COMPONENT_CSAR_VERSION_FLAG,
     ChangeLifecycleStateHandler,
@@ -57,6 +57,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     isLoading: boolean;
     isCreateProgress: boolean;
     component: Component;
+    dataType: DataTypeModel;
     originComponent: Component;
     componentType: string;
     importFile: any;

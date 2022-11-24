@@ -19,10 +19,20 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {DataTypeModel} from "../../../../models/data-types";
-import { DEFAULT_MODEL_NAME } from "app/utils/constants";
+import {DEFAULT_MODEL_NAME} from "app/utils/constants";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {ServiceDataTypeReader} from "../../../../utils/service-data-type-reader";
+import {TranslateService} from "../../../shared/translator/translate.service";
+import {SdcUiServices} from "onap-ui-angular/dist";
+import {ModelService} from "../../../services/model.service";
+import {Model} from "../../../../models/model";
+import {DataTypesMap} from "../../../../models/data-types-map";
+import {DataTypeService} from "../../../services/data-type.service";
+import {Observable} from "rxjs/Observable";
+import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 
 @Component({
   selector: 'app-type-workspace-general',
@@ -30,9 +40,18 @@ import { DEFAULT_MODEL_NAME } from "app/utils/constants";
   styleUrls: ['./type-workspace-general.component.less']
 })
 export class TypeWorkspaceGeneralComponent implements OnInit {
+
   @Input() isViewOnly = true;
   @Input() dataType: DataTypeModel = new DataTypeModel();
-
+  @Output() onImportedType = new EventEmitter<any>();
+  importedFile: File;
+  models: Array<Model>;
+  selectedModelName: string;
+  dataTypes: DataTypesMap;
+  derivedFromName: string;
+  dataTypeMap$: Observable<Map<string, DataTypeModel>>;
+  dataTypeMap: Map<string, DataTypeModel>;
+  typeOptions: Array<IDropDownOption>;
   DEFAULT_MODEL_NAME = DEFAULT_MODEL_NAME;
 
   type: FormControl = new FormControl(undefined, [Validators.required, Validators.minLength(1), Validators.maxLength(300)]);
@@ -46,8 +65,83 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
     'derivedFrom': this.derivedFrom
   });
 
+  constructor(@Inject('$scope') private $scope: IWorkspaceViewModelScope,
+              @Inject('$state') private $state: ng.ui.IStateService,
+              protected dataTypeService: DataTypeService,
+              private modalServiceSdcUI: SdcUiServices.ModalService,
+              private modelService: ModelService,
+              private translateService: TranslateService) {
+      this.typeOptions = [];
+  }
+
   ngOnInit(): void {
+      this.getImportedFile();
+      if (!this.isViewOnly) {
+          console.log("file size: " + this.importedFile.size);
+          console.log("file type: " + this.importedFile.type);
+          console.log("file lastModifiedDate: " + this.importedFile.lastModifiedDate);
+
+          new ServiceDataTypeReader().read(this.importedFile).then(
+              (serviceType) => {
+                  this.dataType = serviceType;
+                  this.dataType.modificationTime = this.importedFile.lastModifiedDate;
+                  this.dataType.creationTime = this.importedFile.lastModifiedDate;
+                  this.derivedFromName = serviceType.derivedFromName;
+                  this.dataType.uniqueId = this.dataType.model ? this.dataType.model + "." + this.dataType.name : this.dataType.name + ".datatype";
+                  this.$scope.dataType = this.dataType;
+                  this.onImportedType.emit(this.dataType);
+
+                  this.models = [];
+                  this.modelService.getDataTypeModels(this.derivedFromName).subscribe((modelsFound: any) => {
+                      modelsFound.sort().forEach(modelName => {
+                          let model:Model;
+                          if (modelName === null || "" === modelName) {
+                              model = new Model({"name": DEFAULT_MODEL_NAME, "derivedFrom": "", "modelType": "normative"});
+                          }
+                          else {
+                              model = new Model({"name": modelName, "derivedFrom": "", "modelType": "normative"});
+                          }
+                          this.models.push(model);
+                      });
+                      this.onModelChange();
+                      this.$scope.dataType = this.dataType;
+                  });
+
+              },
+              (error) => {
+                  const errorMsg = this.translateService.translate('IMPORT_DATA_TYPE_FAILURE_MESSAGE_TEXT');
+                  console.error(errorMsg, error);
+                  const errorDetails = {
+                      'Error': error.reason,
+                      'Details': error.message
+                  };
+                  console.error(error.reason);
+                  this.modalServiceSdcUI.openErrorDetailModal('Error', errorMsg,
+                      'error-modal', errorDetails);
+                  this.$state.go('dashboard');
+              });
+      }
     this.initForm();
+  }
+
+  onModelChange(): void {
+    this.selectedModelName = this.models.filter(x => x.name == this.model.value).pop().name;
+    console.log("selected model: " + this.selectedModelName);
+    this.dataType.model = new Model({"name": this.selectedModelName, "derivedFrom": "", "modelType": "normative"});
+    this.dataType.uniqueId = this.dataType.model.name === DEFAULT_MODEL_NAME ?
+        this.dataType.name + ".datatype" : this.dataType.model.name + "." + this.dataType.name + ".datatype";
+    this.$scope.dataType.derivedFromName = this.derivedFromName;
+    this.$scope.dataType = this.dataType;
+    this.$scope.dataType.model = this.dataType.model;
+  }
+
+  private getImportedFile(): void {
+      let importedFile = this.$scope["$parent"]["$resolve"]["$stateParams"]["importedFile"];
+      this.importedFile = <File>importedFile;
+      this.$scope.importFile = this.importedFile;
+      if (this.importedFile) {
+          this.isViewOnly = false;
+      }
   }
 
   private initForm(): void {
@@ -56,7 +150,7 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
     }
     this.type.setValue(this.dataType.name);
     this.description.setValue(this.dataType.description);
-    this.model.setValue(this.dataType.model);
-    this.derivedFrom.setValue(this.dataType.derivedFrom);
+    this.model.setValue(this.dataType.model ? this.dataType.model : this.$scope.dataType && this.$scope.dataType.model ? this.$scope.dataType.model : DEFAULT_MODEL_NAME);
+    this.derivedFrom.setValue(this.dataType.derivedFromName);
   }
 }

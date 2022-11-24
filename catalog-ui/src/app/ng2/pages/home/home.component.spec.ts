@@ -7,7 +7,7 @@ import {HomeComponent} from "./home.component";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {TranslateService} from "../../shared/translator/translate.service";
-import {AuthenticationService, CacheService, HomeService, ImportVSPService, ResourceServiceNg2} from '../../../../app/services-ng2';
+import {AuthenticationService, CacheService, HomeService, ImportVSPService, ModalService, ResourceServiceNg2} from '../../../../app/services-ng2';
 import {ModalsHandler} from "../../../../app/utils";
 import {SdcUiServices} from "onap-ui-angular";
 import {ComponentType, ResourceType} from "../../../utils/constants";
@@ -23,6 +23,7 @@ describe('home component', () => {
     let importVspService: Partial<ImportVSPService>;
     let mockStateService;
     let modalServiceMock :Partial<SdcUiServices.ModalService>;
+    let modalServiceMock_ :Partial<ModalService>;
     let translateServiceMock : Partial<TranslateService>;
     let foldersItemsMenuMock;
     let homeFilterMock :Partial<HomeFilter>;
@@ -79,6 +80,7 @@ describe('home component', () => {
                         {provide: TranslateService, useValue: translateServiceMock},
                         {provide: ModalsHandler, useValue: {}},
                         {provide: SdcUiServices.ModalService, useValue: modalServiceMock},
+                        {provide: ModalService, useValue: modalServiceMock_},
                         {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock},
                         {provide: ImportVSPService, useValue: {}},
                         {provide: ResourceServiceNg2, useValue: resourceServiceNg2Mock}
