@@ -7,6 +7,7 @@ import { GlobalPipesModule } from "../../pipes/global-pipes.module";
 import { TranslateModule } from "../../shared/translator/translate.module";
 import { SdcUiComponentsModule } from "onap-ui-angular";
 import { ResourceServiceNg2 } from "../../services/component-services/resource.service";
+import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
 
 @NgModule({
     declarations: [
@@ -19,12 +20,14 @@ import { ResourceServiceNg2 } from "../../services/component-services/resource.s
         UiElementsModule,
         GlobalPipesModule,
         TranslateModule
+
     ],
     exports: [
         HomeComponent
     ],
     entryComponents: [
-        HomeComponent
+        HomeComponent,
+        ModalImportTypeComponent
     ],
     providers: [ResourceServiceNg2]
 })
