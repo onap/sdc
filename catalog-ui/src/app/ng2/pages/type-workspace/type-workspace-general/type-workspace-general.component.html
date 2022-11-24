@@ -33,8 +33,13 @@
 
               <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'MODEL_LABEL' | translate}}:</label>
-                <span>{{dataType.model ? dataType.model : DEFAULT_MODEL_NAME}}</span>
+                <span *ngIf="isViewOnly">{{dataType.model ? dataType.model : DEFAULT_MODEL_NAME}}</span>
+                <select *ngIf="!isViewOnly" formControlName="model" (change)="onModelChange()">
+                  <option *ngFor="let model of models"
+                          [value]="model.name">{{model.name}}</option>
+                </select>
               </div>
+
 
               <div class="i-sdc-form-item">
                 <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'DERIVED_FROM_LABEL' | translate}}:</label>
@@ -44,12 +49,12 @@
           </div>
 
           <div class="i-sdc-form-item description-field">
-            <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'DESCRIPTION_LABEL' | translate}}:</label>
-            <textarea class="description"
+            <label class="i-sdc-form-label">{{'DESCRIPTION_LABEL' | translate}}:</label>
+            <textarea class="description" #description
                       formControlName="description"
-                      [ngClass]="{'view-mode': isViewOnly}"
-                      [required]="true"
+                      [ngClass]="{'view-mode': true}"
                       [attr.test-id]="description"
+                      [(ngModel)]="dataType.description"
                       [value]="dataType.description"></textarea>
           </div>
         </div>

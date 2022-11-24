@@ -19,10 +19,20 @@
  */
 'use strict';
 import {Component as NgComponent, Inject, OnInit} from '@angular/core';
-import {Component, ComponentMetadata, IConfigRoles, IUserProperties, Resource, Service} from 'app/models';
+import {
+    ButtonModel,
+    Component,
+    ComponentMetadata,
+    IConfigRoles,
+    IUserProperties,
+    ModalModel,
+    Resource,
+    Service
+} from 'app/models';
+import {ModalService} from "../../services/modal.service";
 import {HomeFilter} from 'app/models/home-filter';
 import {AuthenticationService, CacheService, HomeService, ResourceServiceNg2} from 'app/services-ng2';
-import {ComponentState, ModalsHandler} from 'app/utils';
+import {ComponentState, ModalsHandler, States} from 'app/utils';
 import {SdcUiServices} from 'onap-ui-angular';
 import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType} from '../../../utils/constants';
 import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';
@@ -33,6 +43,7 @@ import {TranslateService} from '../../shared/translator/translate.service';
 import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
 import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
 import {DataTypeCatalogComponent} from "../../../models/data-type-catalog-component";
+import {ModalImportTypeComponent} from "../../components/ui/modal-import-type/modal-import-type.component";
 
 @NgComponent({
     selector: 'home-page',
@@ -64,6 +75,7 @@ export class HomeComponent implements OnInit {
         private translateService: TranslateService,
         private modalsHandler: ModalsHandler,
         private modalService: SdcUiServices.ModalService,
+        private modalServiceSdc: ModalService,
         private loaderService: SdcUiServices.LoaderService,
         private importVSPService: ImportVSPService,
         private resourceService: ResourceServiceNg2
@@ -398,4 +410,41 @@ export class HomeComponent implements OnInit {
         this.notificationIconCallback = this.notificationIconCallback.bind(this);
     }
 
+    openModalImportType = () => {
+        let modalTitle = 'Import Type';
+        let modal = this.modalServiceSdc.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            [
+                new ButtonModel('Import', 'blue', () =>
+                { this.uploadDataTypeFile(modal.instance.dynamicContent.instance.file); modal.instance.close();}, () => false),
+                new ButtonModel('Cancel', 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null
+        ));
+        this.modalServiceSdc.addDynamicContentToModal(modal, ModalImportTypeComponent, {});
+        modal.instance.open();
+    }
+
+    private uploadDataTypeFile(file: any): void {
+        if (file && file.name) {
+            // Check that the file has valid extension.
+            const fileExtension: string = file.name.split('.').pop();
+            if (this.sdcConfig.toscaFileExtension.indexOf(fileExtension.toLowerCase()) !== -1) {
+                this.$state.go(States.TYPE_WORKSPACE, {
+                    type: "datatype",
+                    subPage: "general",
+                    id: "import",
+                    importedFile: file
+                });
+            } else {
+                const title: string = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS_TITLE');
+                const message: string = this.translateService.translate('NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS', {extensions: this.sdcConfig.toscaFileExtension});
+                this.modalService.openWarningModal(title, message, 'error-invalid-tosca-ext');
+            }
+        }
+    }
 }

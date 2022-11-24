@@ -58,6 +58,7 @@
                                 (fileUpload)="onImportService($event)"
                                 [convertToBase64]="true"
                             ></sdc-button-file-opener>
+                            <sdc-button *ngIf="roles[user.role].dashboard.showCreateNew" testId="importTypebutton" size="medium" type="secondary" text="Import Type" (click)="openModalImportType()"></sdc-button>
                         </div>
                     </div>
                 </div>

@@ -25,6 +25,7 @@ import {CacheService} from "../../../services/cache.service";
 import {IAppMenu} from "../../../../models/app-config";
 import {IUserProperties} from "../../../../models/user";
 import {SdcMenuToken} from "../../../config/sdc-menu.config";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
 
 @Component({
     selector: 'app-workspace-menu',
@@ -44,7 +45,10 @@ export class WorkspaceMenuComponent implements OnInit {
 
     leftBarTabs: MenuItemGroup = new MenuItemGroup();
 
-    constructor(private cacheService: CacheService, @Inject(SdcMenuToken) private sdcMenu: IAppMenu, @Inject('$injector') $injector) {
+    constructor(private cacheService: CacheService,
+                @Inject('$scope') private $scope: IWorkspaceViewModelScope,
+                @Inject(SdcMenuToken) private sdcMenu: IAppMenu,
+                @Inject('$injector') $injector) {
         this.$state = $injector.get('$state');
         this.$q = $injector.get('$q');
     }
@@ -70,6 +74,7 @@ export class WorkspaceMenuComponent implements OnInit {
             return menuItem;
         });
         this.updateSelectedMenuItem();
+        this.$scope.leftBarTabs = this.leftBarTabs;
         this.onMenuUpdate.emit(this.leftBarTabs);
     }
 

@@ -127,7 +127,10 @@ public class CommonImportManager {
     private Map<String, Object> convertToFieldMap(String elementTypesYml) {
         Map<String, Object> toscaJson = null;
         try {
-            toscaJson = (Map<String, Object>) new Yaml().load(elementTypesYml);
+            toscaJson = new Yaml().load(elementTypesYml);
+            if (toscaJson.containsKey("data_types")){
+                toscaJson = (Map<String, Object>) toscaJson.get("data_types");
+            }
         } catch (Exception e) {
             log.debug("Failed to yaml file {}", elementTypesYml, e);
         }
@@ -276,11 +279,9 @@ public class CommonImportManager {
                 eitherResult = handleType(elementType, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader)
                     .left()
                     .map(elem -> append(createdElementTypes, elem));
-
                 if (eitherResult.isRight()) {
                     break;
                 }
-
                 if (!elementTypeItr.hasNext()) {
                     log.info("all {} were created successfully!!!", elementType);
                 }
@@ -295,7 +296,6 @@ public class CommonImportManager {
                 propertyOperation.getJanusGraphGenericDao().rollback();
             }
         }
-
         return eitherResult;
     }
 
