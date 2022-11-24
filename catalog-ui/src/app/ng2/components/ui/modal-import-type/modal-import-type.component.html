@@ -1,0 +1,31 @@
+<div class="import-type-container">
+
+    <form novalidate class="w-sdc-form" name="importForm" validation-on-load form-to-validate="importForm">
+
+        <div class="w-sdc-form-section-container">
+
+                <div class="i-sdc-form-item">
+                    <label class="i-sdc-form-label required">Type</label>
+                    <select class="i-sdc-form-select"
+                            data-ng-class="{'view-mode': true}"
+                            data-ng-disabled="false"
+
+                            data-tests-id="selectType"
+                            data-ng-required="true"
+
+                            >
+                        <option value="" selected>Data Type</option>
+                    </select>
+                </div>
+
+                <div class="i-sdc-form-item">
+                  <label class="i-sdc-form-label required">Select File to Import
+                    <input (change)="onFileChange($event)" type="file" class="i-sdc-dashboard-item-upload-input"/>
+                  </label>
+                </div>
+
+            </div>
+
+    </form>
+
+</div>

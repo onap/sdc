@@ -276,11 +276,9 @@ public class CommonImportManager {
                 eitherResult = handleType(elementType, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader)
                     .left()
                     .map(elem -> append(createdElementTypes, elem));
-
                 if (eitherResult.isRight()) {
                     break;
                 }
-
                 if (!elementTypeItr.hasNext()) {
                     log.info("all {} were created successfully!!!", elementType);
                 }
@@ -295,7 +293,33 @@ public class CommonImportManager {
                 propertyOperation.getJanusGraphGenericDao().rollback();
             }
         }
+        return eitherResult;
+    }
 
+    protected <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> createElementTypeByDao(T elementTypeToCreate,
+                                                                                                  Function<T, Either<ActionStatus, ResponseFormat>> validator,
+                                                                                                  Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+                                                                                                  Function<String, Either<T, StorageOperationStatus>> elementFetcher,
+                                                                                                  Function<T, Either<T, StorageOperationStatus>> elementAdder,
+                                                                                                  BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader) {
+
+        ImmutablePair<T, Boolean> createdElementType = new ImmutablePair<>(elementTypeToCreate, true);
+
+        Either<ImmutablePair<T, Boolean>, ResponseFormat> eitherResult = Either.left(createdElementType);
+
+        try {
+                eitherResult = handleType(elementTypeToCreate, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader);
+                log.info("element {} was created successfully!!!", elementTypeToCreate);
+        } catch (Exception e) {
+            eitherResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
+        } finally {
+            if (eitherResult.isLeft()) {
+                propertyOperation.getJanusGraphGenericDao().commit();
+            } else {
+                propertyOperation.getJanusGraphGenericDao().rollback();
+            }
+        }
         return eitherResult;
     }
 

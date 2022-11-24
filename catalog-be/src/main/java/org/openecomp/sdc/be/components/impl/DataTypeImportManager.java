@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
 @Component("dataTypeImportManager")
 public class DataTypeImportManager {
@@ -75,6 +76,24 @@ public class DataTypeImportManager {
             commonImportManager.updateTypesInAdditionalTypesImport(ElementTypeEnum.DATA_TYPE, dataTypeYml, modelName);
         }
         return elementTypes;
+    }
+
+    public Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> createDataType(final DataTypeDefinition dataType, final String modelName,
+                                                                                             final boolean includeToModelDefaultImports) {
+        final Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> elementType = commonImportManager.createElementTypes(
+            "",
+            dataTypeFromJson -> Either.left(List.of(dataType)),
+            this::createDataTypesByDao,
+            ElementTypeEnum.DATA_TYPE).leftMap(entry -> entry.get(0));
+
+        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, new Yaml().dump(dataType), modelName);
+        }
+        if (!includeToModelDefaultImports && StringUtils.isNotEmpty(modelName) && elementType.isLeft()) {
+            commonImportManager.updateTypesInAdditionalTypesImport(ElementTypeEnum.DATA_TYPE, new Yaml().dump(dataType), modelName);
+        }
+
+        return elementType;
     }
 
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
@@ -107,6 +126,19 @@ public class DataTypeImportManager {
             sortedDataTypeDefinitions.stream().forEach(dt -> log.trace(dt.getName()));
         }
         return Either.left(sortedDataTypeDefinitions);
+    }
+
+    private Either<DataTypeDefinition, ActionStatus> createDataType(final DataTypeDefinition dataType, String modelName) {
+
+        if (StringUtils.isNotEmpty(modelName)) {
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                dataType.setModel(modelName);
+            } else {
+                return Either.right(ActionStatus.INVALID_MODEL);
+            }
+        }
+        return Either.left(dataType);
     }
     
     private List<DataTypeDefinition> sortDataTypesByDependencyOrder(final List<DataTypeDefinition> dataTypes) {
@@ -145,6 +177,15 @@ public class DataTypeImportManager {
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(
         List<DataTypeDefinition> dataTypesToCreate) {
         return commonImportManager.createElementTypesByDao(dataTypesToCreate, this::validateDataType,
+            dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
+            dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true),
+            dataType -> propertyOperation.addDataType(dataType),
+            (newDataType, oldDataType) -> propertyOperation.updateDataType(newDataType, oldDataType));
+    }
+
+    private Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat> createDataTypeByDao(
+        DataTypeDefinition dataTypeToCreate) {
+        return commonImportManager.createElementTypeByDao(dataTypeToCreate, this::validateDataType,
             dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
             dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true),
             dataType -> propertyOperation.addDataType(dataType),
