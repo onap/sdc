@@ -25,22 +25,53 @@ import {TypeWorkspaceGeneralComponent} from './type-workspace-general.component'
 import {ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../../shared/translator/translate.module";
 import {TranslateService} from "../../../shared/translator/translate.service";
+import {SdcUiComponentsModule} from "onap-ui-angular/dist";
+import {Observable} from "rxjs/Observable";
+import {DataTypeModel} from "../../../../models/data-types";
+import {DataTypeService} from "../../../services/data-type.service";
+import {ModelService} from "../../../services/model.service";
+import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
+import {IScope} from "angular";
+import {States} from "../../../../utils/constants";
 
 describe('TypeWorkspaceGeneralComponent', () => {
   let component: TypeWorkspaceGeneralComponent;
   let fixture: ComponentFixture<TypeWorkspaceGeneralComponent>;
+  let dataTypeServiceMock: Partial<DataTypeService>;
+  let modelServiceMock: Partial<ModelService>;
   let translateServiceMock: Partial<TranslateService> = {
     'translate': jest.fn()
   };
+
+    let importedFileMock: File = null;
+    let stateParamsMock: Partial<ng.ui.IStateParamsService> = {
+        'importedFile': importedFileMock
+    };
+  let resolveMock = {"$stateParams": stateParamsMock};
+    let parentScopeMock: Partial<IScope> = {
+        '$resolve': resolveMock
+    };
+    let scopeMock_: Partial<IWorkspaceViewModelScope> = {
+        '$parent': parentScopeMock,
+        'current': {
+            'name': States.TYPE_WORKSPACE
+        }
+    }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ TypeWorkspaceGeneralComponent ],
       imports: [
         ReactiveFormsModule,
+        SdcUiComponentsModule,
         TranslateModule
       ],
       providers: [
+        {provide: TranslateService, useValue: translateServiceMock},
+        {provide: "$scope", useValue: scopeMock_ },
+        {provide: "$state", useValue: {}},
+        {provide: DataTypeService, useValue: dataTypeServiceMock},
+        {provide: ModelService, useValue: modelServiceMock},
         {provide: TranslateService, useValue: translateServiceMock}
       ]
     })
@@ -50,6 +81,7 @@ describe('TypeWorkspaceGeneralComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TypeWorkspaceGeneralComponent);
     component = fixture.componentInstance;
+    component.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>();
     fixture.detectChanges();
   });
 

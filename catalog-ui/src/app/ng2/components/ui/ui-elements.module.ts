@@ -44,6 +44,7 @@ import {FileOpenerComponent} from "./file-opener/file-opener.component";
 import {DownloadArtifactComponent} from "app/ng2/components/ui/download-artifact/download-artifact.component";
 import {SdcElementIconComponent} from "./sdc-element-icon/sdc-element-icon.component";
 import {PanelWrapperComponent} from "./panel-wrapper/panel-wrapper.component";
+import { ModalImportTypeComponent } from './modal-import-type/modal-import-type.component';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,8 @@ import {PanelWrapperComponent} from "./panel-wrapper/panel-wrapper.component";
         FileOpenerComponent,
         SdcElementIconComponent,
         DownloadArtifactComponent,
-        PanelWrapperComponent
+        PanelWrapperComponent,
+        ModalImportTypeComponent
     ],
 
     imports: [
@@ -97,7 +99,8 @@ import {PanelWrapperComponent} from "./panel-wrapper/panel-wrapper.component";
         SdcElementIconComponent,
         FileOpenerComponent,
         DownloadArtifactComponent,
-        PanelWrapperComponent
+        PanelWrapperComponent,
+        ModalImportTypeComponent
     ],
     entryComponents: [SearchWithAutoCompleteComponent, SdcElementIconComponent, PaletteAnimationComponent]
 })
