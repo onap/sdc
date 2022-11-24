@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,6 +65,7 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -73,6 +75,8 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.dto.DataTypeDefinitionDto;
+import org.openecomp.sdc.be.model.mapper.DataTypeDefinitionDtoMapper;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerFourParam;
@@ -95,6 +99,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
     private static final String CREATE_FAILED_WITH_EXCEPTION = "create {} failed with exception:";
     private static final Logger log = Logger.getLogger(TypesUploadServlet.class);
+    private static final String DATA_TYPE_CONTENT_IS_INVALID = "Data type content is invalid - {}";
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
     private final CategoriesImportManager categoriesImportManager;
@@ -234,6 +239,28 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/uploaddatatype")
+    @Operation(description = "Upload data type", method = "POST", summary = "Returns created data type", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Data type created"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Data type already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response uploadDataType(
+        @RequestBody(description = "Data type to import", required = true) final DataTypeDefinitionDto dataTypeDefinitionDto,
+        @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+
+        return uploadDataTypeServletLogic(this::createDataType, dataTypeDefinitionDto, request, creator,
+            NodeTypeEnum.DataType.getName(),
+            null == dataTypeDefinitionDto.getModel() ||
+                dataTypeDefinitionDto.getModel().getName().equals("SDC AID") ? "" : dataTypeDefinitionDto.getModel().getName(),
+            true);
+    }
+
+    @POST
     @Path("/grouptypes")
     @Operation(description = "Create GroupTypes from yaml", method = "POST", summary = "Returns created group types", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
@@ -323,6 +350,31 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         }
     }
 
+    private Response uploadDataTypeServletLogic(final ConsumerFourParam<Wrapper<Response>, DataTypeDefinitionDto, String, Boolean> createElementsMethod,
+                                                final DataTypeDefinitionDto dataType, final HttpServletRequest request, final String creator,
+                                                final String elementTypeName, final String modelName, final boolean includeToModelDefaultImports) {
+        init();
+        final String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
+        try {
+            final Wrapper<DataTypeDefinitionDto> yamlStringWrapper = new Wrapper<>();
+            final String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug(START_HANDLE_REQUEST_OF, url);
+            final Wrapper<Response> responseWrapper = doUploadDataTypeValidations(request, userId, dataType);
+            if (responseWrapper.isEmpty()) {
+                log.debug("received data type dto: {}", dataType);
+                yamlStringWrapper.setInnerElement(dataType);
+            }
+            if (responseWrapper.isEmpty()) {
+                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName, includeToModelDefaultImports);
+            }
+            return responseWrapper.getInnerElement();
+        } catch (final Exception e) {
+            log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
     private Wrapper<Response> doUploadTypeValidations(final HttpServletRequest request, String userId, File file) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
@@ -334,6 +386,21 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         }
         if (responseWrapper.isEmpty()) {
             validateDataNotNull(responseWrapper, file);
+        }
+        return responseWrapper;
+    }
+
+    private Wrapper<Response> doUploadDataTypeValidations(final HttpServletRequest request, String userId, DataTypeDefinitionDto dataType) {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        validateUserExist(responseWrapper, userWrapper, userId);
+        if (responseWrapper.isEmpty()) {
+            validateUserRole(responseWrapper, userWrapper.getInnerElement());
+        }
+        if (responseWrapper.isEmpty()) {
+            validateDataNotNull(responseWrapper, dataType);
         }
         return responseWrapper;
     }
@@ -384,6 +451,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             dataTypeImportManager.createDataTypes(dataTypesYml, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.DATA_TYPE_ALREADY_EXIST,
             NodeTypeEnum.DataType.name());
+    }
+
+    private void createDataType(Wrapper<Response> responseWrapper, DataTypeDefinitionDto dataType, final String modelName,
+                                final boolean includeToModelDefaultImports) {
+        final Supplier<Either<ImmutablePair<DataTypeDefinition, Boolean>, ResponseFormat>> generateElementTypeFromYml = () ->
+            dataTypeImportManager.createDataType(DataTypeDefinitionDtoMapper.mapTo(dataType), modelName, includeToModelDefaultImports);
+        buildStatusForUniqueElementTypeCreate(responseWrapper, generateElementTypeFromYml, NodeTypeEnum.DataType.name());
     }
 
     // group types
@@ -437,6 +511,38 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                 }
                 final Object representation = RepresentationUtils.toRepresentation(eitherResult.left().value());
                 responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(status), representation));
+            } catch (IOException e) {
+                BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
+                log.debug("failed to convert {} to json", elementTypeName, e);
+                responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+            }
+        }
+    }
+
+    private <T extends ToscaDataDefinition> void buildStatusForUniqueElementTypeCreate(
+        Wrapper<Response> responseWrapper,
+        Supplier<Either<ImmutablePair<T, Boolean>, ResponseFormat>> generateElementTypeFromYml,
+        String elementTypeName) {
+
+        Either<ImmutablePair<T, Boolean>, ResponseFormat> eitherResult = generateElementTypeFromYml.get();
+        if (eitherResult.isRight()) {
+            responseWrapper.setInnerElement(buildErrorResponse(eitherResult.right().value()));
+        } else {
+
+            try {
+                final ImmutablePair<T, Boolean> createdDataType = eitherResult.left().value();
+                if (createdDataType != null) {
+                    if (Boolean.TRUE.equals(createdDataType.right)) {
+                        final Object representation = RepresentationUtils.toRepresentation(
+                            DataTypeDefinitionDtoMapper.mapFrom((DataTypeDataDefinition)createdDataType.left));
+                        responseWrapper.setInnerElement(buildOkResponse(
+                            getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation));
+                    }
+                    else {
+                        responseWrapper.setInnerElement(buildErrorResponse(
+                            getComponentsUtils().getResponseFormat(ActionStatus.DATA_TYPE_ALREADY_EXIST)));
+                    }
+                }
             } catch (IOException e) {
                 BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
                 log.debug("failed to convert {} to json", elementTypeName, e);
