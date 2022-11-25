@@ -3710,6 +3710,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (newResource.getContactId() == null) {
             newResource.setContactId(oldResource.getContactId());
         }
+        newResource.setIcon(oldResource.getIcon());
         newResource.setCategories(oldResource.getCategories());
         if (newResource.getVendorName() == null) {
             newResource.setVendorName(oldResource.getVendorName());

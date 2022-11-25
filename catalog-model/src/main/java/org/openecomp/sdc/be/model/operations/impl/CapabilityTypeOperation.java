@@ -85,7 +85,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             if (validationRes.isRight()) {
                 log.error("#addCapabilityType - One or all properties of capability type {} not valid. status is {}", capabilityTypeDefinition,
                     validationRes.right().value());
-                return result;
+                return validationRes;
             }
             Either<CapabilityTypeData, StorageOperationStatus> eitherStatus = addCapabilityTypeToGraph(capabilityTypeDefinition);
             result = eitherStatus.left().map(CapabilityTypeData::getUniqueId).left().bind(uniqueId -> getCapabilityType(uniqueId, inTransaction));

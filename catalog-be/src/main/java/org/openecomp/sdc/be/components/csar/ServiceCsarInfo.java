@@ -62,11 +62,13 @@ public class ServiceCsarInfo extends CsarInfo {
     private static final Logger log = Logger.getLogger(ServiceCsarInfo.class);
     private final Map<String, Map<String, Object>> mainTemplateImports;
     private List<NodeTypeDefinition> nodeTypeDefinitions;
+    private final String model;
 
-    public ServiceCsarInfo(final User modifier, final String csarUUID, final Map<String, byte[]> csar, final String vfResourceName,
+    public ServiceCsarInfo(final User modifier, final String csarUUID, final Map<String, byte[]> csar,
+                           final String vfResourceName, final String model,
                            final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
         super(modifier, csarUUID, csar, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
-
+        this.model = model;
         final Path mainTemplateDir = Paths.get(getMainTemplateName().substring(0, getMainTemplateName().lastIndexOf('/') + 1));
         final Collection<Path> filesHandled = new HashSet<>();
         filesHandled.add(Paths.get(mainTemplateName));
@@ -105,9 +107,12 @@ public class ServiceCsarInfo extends CsarInfo {
             if (CollectionUtils.isNotEmpty(importsList)) {
                 if (importsList.get(0) instanceof String) {
                     List<Path> importPaths = new ArrayList<>();
-                    importsList.stream()
-                        .forEach(importPath -> importPaths.add(fileParentDir == null ? Paths.get((String) importPath)
-                            : fileParentDir.resolve(Paths.get((String) importPath)).normalize()));
+                    importsList.forEach(
+                        importPath -> {
+                            final Path path = fileParentDir == null ?
+                                Paths.get((String) importPath) : fileParentDir.resolve(Paths.get((String) importPath)).normalize();
+                            importPaths.add(path);
+                        });
                     return importPaths;
                 } else if (importsList.get(0) instanceof Map) {
                     return getTemplateImportFilePathsMultiLineGrammar(importsList, fileParentDir);
@@ -162,14 +167,14 @@ public class ServiceCsarInfo extends CsarInfo {
 
     private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
         final Map<String, Object> types = new HashMap<>();
-        mainTemplateImports.entrySet().stream().forEach(entry -> types.putAll(getTypesFromTemplate(entry.getValue(), toscaTag)));
+        mainTemplateImports.entrySet().forEach(entry -> types.putAll(getTypesFromTemplate(entry.getValue(), toscaTag)));
         types.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), toscaTag));
         return types;
     }
 
     public Map<String, Object> getArtifactTypes() {
         final Map<String, Object> artifactsTypes = new HashMap<>();
-        mainTemplateImports.entrySet().stream()
+        mainTemplateImports.entrySet()
             .forEach(entry -> artifactsTypes.putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES)));
         artifactsTypes.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
         return artifactsTypes;
@@ -199,7 +204,7 @@ public class ServiceCsarInfo extends CsarInfo {
             for (final String dependencyName : getDependencyTypes(nodeType, nodeTypes)) {
                 final NodeTypeDefinition dependency = nodeTypeDefinitionsMap.get(dependencyName);
                 final int indexOfDependency = sortedNodeTypeDefinitions.lastIndexOf(dependency);
-                highestDependencyIndex = indexOfDependency > highestDependencyIndex ? indexOfDependency : highestDependencyIndex;
+                highestDependencyIndex = Math.max(indexOfDependency, highestDependencyIndex);
             }
             sortedNodeTypeDefinitions.add(highestDependencyIndex + 1, nodeType);
             nodeTypeDefinitionsMap.put(nodeType.getMappedNodeType().getKey(), nodeType);
@@ -221,11 +226,10 @@ public class ServiceCsarInfo extends CsarInfo {
     }
 
     private Set<NodeTypeDefinition> getNodeTypeDefinitions(final Set<String> nodeTypesToGet) {
-        final Set<NodeTypeDefinition> nodeTypesToReturn = new HashSet<>();
         final Set<NodeTypeDefinition> foundNodeTypes = getTypes(nodeTypesToGet);
-        nodeTypesToReturn.addAll(foundNodeTypes);
+        final Set<NodeTypeDefinition> nodeTypesToReturn = new HashSet<>(foundNodeTypes);
         final Set<String> recursiveNodeTypesToGet = new HashSet<>();
-        foundNodeTypes.stream().forEach(nodeTypeDef -> {
+        foundNodeTypes.forEach(nodeTypeDef -> {
             Either<Object, ResultStatusEnum> derivedFromTypeEither =
                 findToscaElement((Map<String, Object>) nodeTypeDef.getMappedNodeType().getValue(), TypeUtils.ToscaTagNamesEnum.DERIVED_FROM,
                     ToscaElementTypeEnum.STRING);
@@ -243,12 +247,12 @@ public class ServiceCsarInfo extends CsarInfo {
 
     private Set<NodeTypeDefinition> getTypes(final Set<String> nodeTypes) {
         Set<NodeTypeDefinition> nodeTypeDefinitionsLocal = new HashSet<>();
-        mainTemplateImports.entrySet().forEach(entry -> {
-            final Map<String, Object> types = getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.NODE_TYPES, nodeTypes);
+        mainTemplateImports.values().forEach(template -> {
+            final Map<String, Object> types = getTypesFromTemplate(template, ToscaTagNamesEnum.NODE_TYPES, nodeTypes);
             if (MapUtils.isNotEmpty(types)) {
-                types.entrySet().stream().forEach(typesEntry -> {
+                types.entrySet().forEach(typesEntry -> {
                     final NodeTypeMetadata metadata =
-                        getMetaDataFromTemplate(entry.getValue(), typesEntry.getKey());
+                        getMetaDataFromTemplate(template, typesEntry.getKey());
                     nodeTypeDefinitionsLocal.add(new NodeTypeDefinition(typesEntry, metadata));
                 });
             }
@@ -306,13 +310,14 @@ public class ServiceCsarInfo extends CsarInfo {
         nodeTypeMetadata.setResourceType((String) metadata.get("type"));
         nodeTypeMetadata.setVendorName((String) metadata.get("resourceVendor"));
         nodeTypeMetadata.setVendorRelease(String.valueOf(metadata.get("resourceVendorRelease")));
-        nodeTypeMetadata.setModel((String) metadata.get("model"));
+        nodeTypeMetadata.setModel(model);
         nodeTypeMetadata.setNormative(false);
     }
 
     private NullNodeTypeMetadata createDefaultMetadata(String nodeTemplateType) {
         NullNodeTypeMetadata nodeTypeMetadata = new NullNodeTypeMetadata();
         nodeTypeMetadata.setToscaName(nodeTemplateType);
+        nodeTypeMetadata.setModel(model);
         return nodeTypeMetadata;
     }
 }

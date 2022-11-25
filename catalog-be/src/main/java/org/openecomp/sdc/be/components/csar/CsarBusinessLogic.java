@@ -157,7 +157,8 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
                 csarUUID, oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().getImportedToscaChecksum(), checksum);
             oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().setImportedToscaChecksum(checksum);
         }
-        return new ServiceCsarInfo(user, csarUUID, csar, service.getName(), toscaYamlCsarStatus.getKey(), toscaYamlCsarStatus.getValue(), true);
+        return new ServiceCsarInfo(user, csarUUID, csar, service.getName(), service.getModel(), toscaYamlCsarStatus.getKey(),
+            toscaYamlCsarStatus.getValue(), true);
     }
 
     public ParsedToscaYamlInfo getParsedToscaYamlInfo(String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
