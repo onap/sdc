@@ -273,12 +273,16 @@ public class InterfacesOperationsConverter {
         final Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
         final Map<String, Object> toscaOperationMap = new HashMap<>();
         for (final Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
-            final ToscaLifecycleOperationDefinition toscaLifecycleOperationDefinition = new ToscaLifecycleOperationDefinition();
-            handleInterfaceOperationImplementation(component, componentInstance, isAssociatedComponent, operationEntry.getValue(),
-                toscaLifecycleOperationDefinition, dataTypes);
-            toscaLifecycleOperationDefinition.setDescription(operationEntry.getValue().getDescription());
-            fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition);
-            toscaOperationMap.put(operationEntry.getValue().getName(), toscaLifecycleOperationDefinition);
+            if (operationHasAnImplementation(operationEntry.getValue())) {
+                final ToscaLifecycleOperationDefinition toscaLifecycleOperationDefinition = new ToscaLifecycleOperationDefinition();
+                handleInterfaceOperationImplementation(component, componentInstance, isAssociatedComponent, operationEntry.getValue(),
+                    toscaLifecycleOperationDefinition, dataTypes);
+                if (StringUtils.isNotEmpty(operationEntry.getValue().getDescription())) {
+                    toscaLifecycleOperationDefinition.setDescription(operationEntry.getValue().getDescription());
+                }
+                fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition);
+                toscaOperationMap.put(operationEntry.getValue().getName(), toscaLifecycleOperationDefinition);
+            }
         }
         toscaInterfaceDefinition.setOperations(toscaOperationMap);
         final Map<String, Object> interfaceInputMap = createInterfaceInputMap(interfaceDefinition, dataTypes);
@@ -293,6 +297,10 @@ public class InterfacesOperationsConverter {
         handleOperationInputValue(operationsMap, interfaceType);
         interfaceDefinitionAsMap.putAll(operationsMap);
         toscaInterfaceDefinitions.put(getLastPartOfName(interfaceType), interfaceDefinitionAsMap);
+    }
+    
+    private boolean operationHasAnImplementation(OperationDataDefinition operation) {
+        return operation.getImplementation() != null && StringUtils.isNotEmpty(operation.getImplementation().getArtifactName()) && !operation.getImplementation().getArtifactName().equals("''");
     }
 
     private void handleInterfaceOperationImplementation(final Component component, final ComponentInstance componentInstance,
