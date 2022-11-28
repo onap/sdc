@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "323ae5df_496ed2f3",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-11-28T16:29:44Z",
+      "side": 1,
+      "message": "can this be line coverage instead. Code coverage targets are set based on line coverage, showing coverage instead could be source of confusion",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 148
+      },
+      "revId": "852820c6e624bb0aa4b237325221ec12e4fb1c40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
