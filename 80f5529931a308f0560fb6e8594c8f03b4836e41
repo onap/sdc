@@ -22,6 +22,30 @@
       "revId": "80f5529931a308f0560fb6e8594c8f03b4836e41",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dd8b834_96c178a0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T13:35:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e16a79a_34aa3218",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 31
+      },
+      "revId": "80f5529931a308f0560fb6e8594c8f03b4836e41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
