@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "85365616_30d60bb1",
+        "filename": "catalog-ui/src/app/ng2/components/ui/tile/tile.component.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-11-29T16:15:54Z",
+      "side": 1,
+      "message": "Rectified it.",
+      "parentUuid": "effd37ea_d23d65f1",
+      "range": {
+        "startLine": 19,
+        "startChar": 55,
+        "endLine": 19,
+        "endChar": 104
+      },
+      "revId": "8f5233b0167f65d3cbeebe130902806a7706a5d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "36923f6b_680bd55d",
         "filename": "catalog-ui/src/app/ng2/components/ui/tile/tile.component.ts",
         "patchSetId": 4
@@ -39,6 +63,24 @@
       "revId": "8f5233b0167f65d3cbeebe130902806a7706a5d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7eee0350_0fb209bc",
+        "filename": "catalog-ui/src/app/ng2/components/ui/tile/tile.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-11-29T16:15:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36923f6b_680bd55d",
+      "revId": "8f5233b0167f65d3cbeebe130902806a7706a5d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -62,6 +104,30 @@
       "revId": "8f5233b0167f65d3cbeebe130902806a7706a5d3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7856e8c_543ab9fe",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-11-29T16:15:54Z",
+      "side": 1,
+      "message": "I tried using constant here, constant values doesnt work when it is passed as key in {}. So kept it as is.",
+      "parentUuid": "1ffff69d_7b8d8b0d",
+      "range": {
+        "startLine": 533,
+        "startChar": 30,
+        "endLine": 533,
+        "endChar": 42
+      },
+      "revId": "8f5233b0167f65d3cbeebe130902806a7706a5d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
