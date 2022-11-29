@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "82d99956_e83ab6d3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/AbstractComparablePropertyConstraint.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "524a63a8_6232fb81",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c983cdd9_43d88eb9",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/InRangeConstraint.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2022-11-29T11:21:22Z",
       "side": 1,
       "message": "Shouldn this class implement AbstractComparablePropertyConstraint and override these methods instead of AbstractPropertyConstraint directly?",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e8b709a_e1740e2d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/InRangeConstraint.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "This class doesn\u0027t use the getConstraintValueAsString method from AbstractComparablePropertyConstraint so I didn\u0027t see the need to implement",
+      "parentUuid": "c983cdd9_43d88eb9",
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "bb13eb0a_701d9a8c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "This class doesn\u0027t use the getConstraintValueAsString method from AbstractComparablePropertyConstraint so I didn\u0027t see the need to implement",
+      "parentUuid": "fabd4044_be6d72aa",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "809778fe_92f23b92",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/EqualConstraintTest.java",
         "patchSetId": 4
@@ -67,6 +121,24 @@
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f48ac2b4_7bc921c6",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/EqualConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "809778fe_92f23b92",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "e9ebb70c_87687d64",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterOrEqualConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "746646e4_26c8097a",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81d8a69b_496a0840",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterOrEqualConstraintTest.java",
         "patchSetId": 4
@@ -101,6 +191,24 @@
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23d3a833_6680798f",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterOrEqualConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81d8a69b_496a0840",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "8ed6bea1_95ef723a",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterThanConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a151db1_4dab14a6",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdf9ace2_db62eb27",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/InRangeConstraintTest.java",
         "patchSetId": 4
@@ -135,6 +261,24 @@
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b0e34a6_b59589bb",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/InRangeConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fdf9ace2_db62eb27",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "1f347f58_d4580bbb",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/LessOrEqualConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba4d766d_560c494d",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e614481_aa3f6a4e",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraintTest.java",
         "patchSetId": 4
@@ -169,6 +331,24 @@
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c1657e6_fc337445",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e614481_aa3f6a4e",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "5c9a6c6c_06323328",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc88cc1e_cab0ec26",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "626cbe77_bb29be19",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraintTest.java",
         "patchSetId": 4
@@ -203,6 +401,24 @@
       "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a367339a_6f901182",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraintTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-11-29T14:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "626cbe77_bb29be19",
+      "revId": "9692215b87dd37f90e0dc5063de7254b1c8a1290",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
