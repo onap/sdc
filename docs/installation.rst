@@ -18,3 +18,9 @@ Collection of commands used in deploying and monitoring sdc in OOM
 SDC troubleshooting:
 
 - `troubleshooting guide and logging info <https://wiki.onap.org/display/DW/SDC+Troubleshooting>`_
+
+Kafka
+===================
+As of London release, SDC distribution can be configured to use Kakfa as an alternative to DMaaP message Router (MR) for publishing and consuming distribution events. This is controlled via the global SDC helm chart value:
+ kafka:
+    useKafka: true/false
