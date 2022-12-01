@@ -216,12 +216,12 @@ capability_types:
       publish_ports:
         type: list
         entry_schema:
-          type: PortSpec
+          type: tosca.datatypes.network.PortSpec
         required: false
       expose_ports:
         type: list
         entry_schema:
-          type: PortSpec
+          type: tosca.datatypes.network.PortSpec
         required: false
       volumes:
         type: list

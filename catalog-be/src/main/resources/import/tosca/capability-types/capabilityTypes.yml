@@ -39,7 +39,7 @@ tosca.capabilities.Endpoint:
       type: string
       default: tcp
     port:
-      type: PortDef
+      type: tosca.datatypes.network.PortDef
       required: false
     secure:
       type: boolean
@@ -65,7 +65,7 @@ tosca.capabilities.Endpoint:
       constraints:
         - min_length: 1
       entry_schema:
-        type: PortSpec
+        type: tosca.datatypes.network.PortSpec
   attributes:
     ip_address:
       type: string
