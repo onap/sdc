@@ -172,7 +172,6 @@ export class ServiceDependenciesEditorComponent implements OnInit {
   }
 
   onPropertyChange(): void {
-    this.currentRule.sourceName = undefined;
     this.currentRule.value = undefined;
     this.onValueChange(false);
     this.updateSelectedProperty();
