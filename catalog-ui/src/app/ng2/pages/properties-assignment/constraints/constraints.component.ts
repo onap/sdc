@@ -27,23 +27,8 @@ import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils/constants"
 })
 export class ConstraintsComponent implements OnInit {
 
-  @Input() set propertyConstraints(propertyConstraints: any[]) {
-    this.constraints = new Array();
-    if(propertyConstraints) {
-      propertyConstraints.forEach((constraint: any) => {
-        this.constraints.push(this.getConstraintFromPropertyBEModel(constraint));
-      });
-    }
-  }
-  @Input() set propertyType(propertyType: string) {
-    if (!this._propertyType || propertyType == this._propertyType) {
-      this._propertyType = propertyType;
-      return;
-    }
-    this.constraints = new Array();
-    this._propertyType = propertyType;
-    this.emitOnConstraintChange();
-  }
+  @Input() propertyConstraints: any[];
+  @Input() propertyType: string;
   @Input() isViewOnly: boolean = false;
   @Output() onConstraintChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -51,10 +36,27 @@ export class ConstraintsComponent implements OnInit {
   constraintTypes: string[];
   ConstraintTypesMapping = ConstraintTypesMapping;
   valid: boolean = true;
-  _propertyType: string;
 
   ngOnInit() {
     this.constraintTypes = Object.keys(ConstraintTypes).map(key => ConstraintTypes[key]);
+  }
+
+  ngOnChanges(changes): void {
+    if (changes.propertyType) {
+      if (!this.propertyType || changes.propertyType.currentValue == this.propertyType) {
+        this.propertyType = changes.propertyType.currentValue;
+      } else {
+        this.constraints = new Array();
+        this.propertyType = changes.propertyType;
+        this.emitOnConstraintChange();
+      }
+    }
+    this.constraints = new Array();
+    if(changes.propertyConstraints.currentValue) {
+      changes.propertyConstraints.currentValue.forEach((constraint: any) => {
+        this.constraints.push(this.getConstraintFromPropertyBEModel(constraint));
+      });
+    }
   }
 
   private getConstraintFromPropertyBEModel(constraint: any):Constraint {
@@ -265,19 +267,19 @@ export class ConstraintsComponent implements OnInit {
       case ConstraintTypes.greater_or_equal:
       case ConstraintTypes.greater_than:
       case ConstraintTypes.in_range:
-        if (this.isComparable(this._propertyType)){
+        if (this.isComparable(this.propertyType)){
           return false;
         }
         break;
       case ConstraintTypes.length:
       case ConstraintTypes.max_length:
       case ConstraintTypes.min_length:
-        if (this._propertyType == PROPERTY_TYPES.STRING || this._propertyType == PROPERTY_TYPES.MAP || this._propertyType == PROPERTY_TYPES.LIST){
+        if (this.propertyType == PROPERTY_TYPES.STRING || this.propertyType == PROPERTY_TYPES.MAP || this.propertyType == PROPERTY_TYPES.LIST){
           return false;
         }
         break;
       case ConstraintTypes.pattern:
-        if (this._propertyType == PROPERTY_TYPES.STRING){
+        if (this.propertyType == PROPERTY_TYPES.STRING){
           return false;
         }
         break;
