@@ -101,7 +101,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
             if (propertiesPath.length > 1){
-	            let keyToFind = this.property.type === PROPERTY_TYPES.MAP ? [(<DerivedFEProperty>this.property.input).mapKey] : propertiesPath.slice(1);
+                let keyToFind = (this.property.type == PROPERTY_TYPES.MAP || this.property.type == PROPERTY_TYPES.LIST) ? [(<DerivedFEProperty>this.property.input).mapKey] : propertiesPath.slice(1);
                 let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind !== null ? keyToFind : propertiesPath.slice(1)));
 
                 if (subPropertyToscaFunction){

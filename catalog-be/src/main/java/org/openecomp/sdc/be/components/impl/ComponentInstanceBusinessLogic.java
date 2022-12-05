@@ -43,6 +43,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -1979,13 +1980,20 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     toscaFunctionValidator.validate(property, containerComponent);
                     property.setValue(property.getToscaFunction().getValue());
                 }
-
-                if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())){
-                    final JSONObject jObject  = property.getValue() == null ? new JSONObject() : new JSONObject(property.getValue());
-                    property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
-                        setJsonObjectForSubProperty(jObject, subToscaFunction.getSubPropertyPath(), subToscaFunction.getToscaFunction().getValue());
-                    });
-                    property.setValue(jObject.toString());
+                if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())) {
+                    if (StringUtils.isNumeric(property.getSubPropertyToscaFunctions().iterator().next().getSubPropertyPath().get(0))) {
+                        final JSONArray jsonArray = property.getValue() == null ? new JSONArray() : new JSONArray(property.getValue());
+                        property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
+                            addE(jsonArray, subToscaFunction.getSubPropertyPath(), subToscaFunction.getToscaFunction().getValue());
+                        });
+                        property.setValue(jsonArray.toString());
+                    } else {
+                        final JSONObject jObject = property.getValue() == null ? new JSONObject() : new JSONObject(property.getValue());
+                        property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
+                            addE(jObject, subToscaFunction.getSubPropertyPath(), subToscaFunction.getToscaFunction().getValue());
+                        });
+                        property.setValue(jObject.toString());
+                    }
                 }
                 Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, containerComponent.getModel());
                 if (updatedPropertyValue.isRight()) {
@@ -2031,7 +2039,60 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
         }
     }
-    
+
+    private void addE(JSONArray jsonArray, List<String> path, String value) {
+        Object objectForPath = jsonArray.opt(Integer.parseInt(path.get(0)));
+        if (objectForPath == null) {
+            if (path.size() > 1) {
+                if (StringUtils.isNumeric(path.get(1))) {
+                    objectForPath = new JSONArray();
+                } else {
+                    objectForPath = new JSONObject();
+                }
+                jsonArray.put(Integer.parseInt(path.get(0)), objectForPath);
+            }
+        }
+
+        if (path.size() == 1) {
+            Object valueAsObject = new Yaml().loadAs(value, Object.class);
+            jsonArray.put(Integer.parseInt(path.get(0)), valueAsObject);
+        } else {
+            if (objectForPath instanceof JSONObject) {
+                addE((JSONObject)objectForPath, path.subList(1, path.size()), value);
+            } else {
+                addE((JSONArray)objectForPath, path.subList(1, path.size()), value);
+            }
+        }
+    }
+
+    private void addE(JSONObject jsonObject, List<String> path, String value) {
+
+        Object objectForPath = null;
+        if (jsonObject.has(path.get(0))) {
+            objectForPath =  jsonObject.get(path.get(0));
+        } else {
+            if (path.size() > 1) {
+                if (StringUtils.isNumeric(path.get(1))) {
+                    objectForPath = new JSONArray();
+                } else {
+                    objectForPath = new JSONObject();
+                }
+                jsonObject.put(path.get(0), objectForPath);
+            }
+        }
+
+        if (path.size() == 1) {
+            Object valueAsObject = new Yaml().loadAs(value, Object.class);
+            jsonObject.put(path.get(0), valueAsObject);
+        } else {
+            if (objectForPath instanceof JSONObject) {
+                addE((JSONObject)objectForPath, path.subList(1, path.size()), value);
+            } else {
+                addE((JSONArray)objectForPath, path.subList(1, path.size()), value);
+            }
+        }
+    }
+
     private void setJsonObjectForSubProperty(final JSONObject jObject, final List<String> path, String value) {
         if (path.size() == 1) {
             Object valueAsObject = new Yaml().loadAs(value, Object.class);

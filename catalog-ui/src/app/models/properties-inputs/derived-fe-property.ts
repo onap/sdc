@@ -55,7 +55,7 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.canBeDeclared = true; //defaults to true
         } else { //creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
             super(null);
-            if(property.type === PROPERTY_TYPES.MAP && property.subPropertyToscaFunctions != null){
+            if(property.subPropertyToscaFunctions != null){
                 property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
                     if(item.subPropertyPath[0] === key){
                         this.toscaFunction = item.toscaFunction;
@@ -69,7 +69,17 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.propertiesName = parentName + '#' + this.name;
             
             if (property.type == PROPERTY_TYPES.LIST) {
-                this.mapKey = property.schema.property.type.split('.').pop();
+                if(property.value != null) {
+                    const valueJson = JSON.parse(property.value);
+                    if(property instanceof PropertyFEModel && property.expandedChildPropertyId != null){
+                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                        this.mapKey = indexNumber.toString();
+                    }else{
+                        this.mapKey = Object.keys(valueJson).sort().reverse()[0];
+                    }
+                }else {
+                    this.mapKey = "0";
+                }
                 this.mapKeyError = null;
                 this.type = property.schema.property.type;
                 if (this.type == PROPERTY_TYPES.MAP){
