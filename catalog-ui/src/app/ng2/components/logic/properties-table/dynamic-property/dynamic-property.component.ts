@@ -171,7 +171,6 @@ export class DynamicPropertyComponent {
             this.expandChildById(newProps[0].propertiesName);
 
             this.updateMapKeyValueOnMainParent(newProps);
-            this.emitter.emit();
         }
     }
 
@@ -219,22 +218,21 @@ export class DynamicPropertyComponent {
             if (!itemParent) {
                 return;
             }
-
+            const oldKey = item.getActualMapKey();
+            if (this.property.subPropertyToscaFunctions !== null) {
+                let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
+                this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction, index) => {
+                    if(item.subPropertyPath[0] != oldKey){
+                        tempSubToscaFunction.push(item);
+                    }
+                });
+                this.property.subPropertyToscaFunctions = tempSubToscaFunction;
+            }
             if (item.derivedDataType == DerivedPropertyType.MAP && !item.mapInlist) {
-                const oldKey = item.getActualMapKey();
                 delete itemParent.valueObj[oldKey];
                 if (itemParent instanceof PropertyFEModel) {
                     delete itemParent.valueObjValidation[oldKey];
                     itemParent.valueObjIsValid = itemParent.calculateValueObjIsValid();
-                }
-                if (this.property.subPropertyToscaFunctions !== null) {
-                    let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
-                    this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction, index) => {
-                        if(item.subPropertyPath[0] != oldKey){
-                            tempSubToscaFunction.push(item);
-                        }
-                    });
-                    this.property.subPropertyToscaFunctions = tempSubToscaFunction;
                 }
                 this.property.childPropMapKeyUpdated(item, null);  // remove map key
             } else {
