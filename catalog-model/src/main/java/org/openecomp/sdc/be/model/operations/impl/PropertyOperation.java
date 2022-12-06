@@ -2168,136 +2168,138 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         @Override
         public PropertyConstraint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             PropertyConstraint propertyConstraint = null;
-            Set<Entry<String, JsonElement>> set = json.getAsJsonObject().entrySet();
-            if (set.size() == 1) {
-                Entry<String, JsonElement> element = set.iterator().next();
-                String key = element.getKey();
-                JsonElement value = element.getValue();
-                Object typedValue = getTypedValue(element.getValue());
-                ConstraintType constraintType = ConstraintType.findByType(key).orElse(null);
+            final Set<Entry<String, JsonElement>> set = json.getAsJsonObject().entrySet();
+            if (!set.isEmpty()) {
+                final Entry<String, JsonElement> element = set.iterator().next();
+                final String key = element.getKey();
+                final ConstraintType constraintType = ConstraintType.findByType(key).orElse(null);
                 if (constraintType == null) {
                     log.warn("ConstraintType was not found for constraint name:{}", key);
                 } else {
-                    switch (constraintType) {
-                        case EQUAL:
-                            if ( typedValue != null) {
-                                log.debug("Before adding value to EqualConstraint object. value = {}", typedValue);
-                                propertyConstraint = new EqualConstraint(typedValue);
+                    if (set.size() == 1 || (set.size() == 2 && ConstraintType.PATTERN == constraintType)) {
+                        final JsonElement value = element.getValue();
+                        final Object typedValue = getTypedValue(value);
+                        switch (constraintType) {
+                            case EQUAL:
+                                if (typedValue != null) {
+                                    log.debug("Before adding value to EqualConstraint object. value = {}", typedValue);
+                                    propertyConstraint = new EqualConstraint(typedValue);
+                                    break;
+                                } else {
+                                    log.warn("The value of equal constraint is null");
+                                }
                                 break;
-                            } else {
-                                log.warn("The value of equal constraint is null");
-                            }
-                            break;
-                        case IN_RANGE:
-                            if (typedValue != null) {
-                                if (typedValue instanceof ArrayList) {
-                                    ArrayList rangeArray = (ArrayList) typedValue;
-                                    if (rangeArray.size() != 2 || rangeArray.contains("")) {
-                                        log.error("The range constraint content is invalid. value = {}", typedValue);
-                                        throw new JsonSyntaxException("The range constraint content is invalid");
+                            case IN_RANGE:
+                                if (typedValue != null) {
+                                    if (typedValue instanceof ArrayList) {
+                                        ArrayList rangeArray = (ArrayList) typedValue;
+                                        if (rangeArray.size() != 2 || rangeArray.contains("")) {
+                                            log.error("The range constraint content is invalid. value = {}", typedValue);
+                                            throw new JsonSyntaxException("The range constraint content is invalid");
+                                        } else {
+                                            InRangeConstraint rangeConstraint = new InRangeConstraint();
+                                            Object minValue = rangeArray.get(0);
+                                            Object maxValue = rangeArray.get(1);
+                                            rangeConstraint.setRangeMinValue(minValue);
+                                            rangeConstraint.setRangeMaxValue(maxValue);
+                                            propertyConstraint = rangeConstraint;
+                                        }
+                                    }
+                                } else {
+                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                }
+                                break;
+                            case GREATER_THAN:
+                                if (typedValue != null) {
+                                    log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
+                                    propertyConstraint = new GreaterThanConstraint(typedValue);
+                                    break;
+                                } else {
+                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                }
+                                break;
+                            case LESS_THAN:
+                                if (typedValue != null) {
+                                    log.debug("Before adding value to LessThanConstraint object. value = {}", typedValue);
+                                    propertyConstraint = new LessThanConstraint(typedValue);
+                                    break;
+                                } else {
+                                    log.warn("The value of LessThanConstraint is null");
+                                }
+                                break;
+                            case GREATER_OR_EQUAL:
+                                if (typedValue != null) {
+                                    log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
+                                    propertyConstraint = new GreaterOrEqualConstraint(typedValue);
+                                    break;
+                                } else {
+                                    log.warn("The value of GreaterOrEqualConstraint is null");
+                                }
+                                break;
+                            case LESS_OR_EQUAL:
+                                if (typedValue != null) {
+                                    log.debug("Before adding value to LessOrEqualConstraint object. value = {}", typedValue);
+                                    propertyConstraint = new LessOrEqualConstraint(typedValue);
+                                } else {
+                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                }
+                                break;
+                            case VALID_VALUES:
+                                if (typedValue != null) {
+                                    ArrayList validValuesArray = (ArrayList) typedValue;
+                                    if (validValuesArray.size() == 0 || validValuesArray.contains("")) {
+                                        log.error("The valid values constraint content is invalid. value = {}", typedValue);
+                                        throw new JsonSyntaxException("The valid values constraint content is invalid");
                                     } else {
-                                        InRangeConstraint rangeConstraint = new InRangeConstraint();
-                                        Object minValue = rangeArray.get(0);
-                                        Object maxValue = rangeArray.get(1);
-                                        rangeConstraint.setRangeMinValue(minValue);
-                                        rangeConstraint.setRangeMaxValue(maxValue);
-                                        propertyConstraint = rangeConstraint;
+                                        ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
+                                        vvConstraint.setValidValues(validValuesArray);
+                                        propertyConstraint = vvConstraint;
                                     }
                                 }
-                            } else {
-                                log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
-                            }
-                            break;
-                        case GREATER_THAN:
-                            if (typedValue != null) {
-                                log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
-                                propertyConstraint = new GreaterThanConstraint(typedValue);
                                 break;
-                            } else {
-                                log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
-                            }
-                            break;
-                        case LESS_THAN:
-                            if (typedValue != null) {
-                                log.debug("Before adding value to LessThanConstraint object. value = {}", typedValue);
-                                propertyConstraint = new LessThanConstraint(typedValue);
-                                break;
-                            } else {
-                                log.warn("The value of LessThanConstraint is null");
-                            }
-                            break;
-                        case GREATER_OR_EQUAL:
-                            if (typedValue != null) {
-                                log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
-                                propertyConstraint = new GreaterOrEqualConstraint(typedValue);
-                                break;
-                            } else {
-                                log.warn("The value of GreaterOrEqualConstraint is null");
-                            }
-                            break;
-                        case LESS_OR_EQUAL:
-                            if (typedValue != null) {
-                                log.debug("Before adding value to LessOrEqualConstraint object. value = {}", typedValue);
-                                propertyConstraint = new LessOrEqualConstraint(typedValue);
-                            } else {
-                                log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
-                            }
-                            break;
-                        case VALID_VALUES:
-                            if (typedValue != null) {
-                                ArrayList validValuesArray = (ArrayList)typedValue;
-                                if (validValuesArray.size() == 0 || validValuesArray.contains("")) {
-                                    log.error("The valid values constraint content is invalid. value = {}", typedValue);
-                                    throw new JsonSyntaxException("The valid values constraint content is invalid");
+                            case LENGTH:
+                                if (value != null) {
+                                    int asInt = value.getAsInt();
+                                    log.debug("Before adding value to length constraint. value = {}", asInt);
+                                    propertyConstraint = new LengthConstraint(asInt);
+                                    break;
                                 } else {
-                                    ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
-                                    vvConstraint.setValidValues(validValuesArray);
-                                    propertyConstraint = vvConstraint;
+                                    log.warn("The value of length constraint is null");
                                 }
-                            }
-                            break;
-                        case LENGTH:
-                            if (value != null) {
-                                int asInt = value.getAsInt();
-                                log.debug("Before adding value to length constraint. value = {}", asInt);
-                                propertyConstraint = new LengthConstraint(asInt);
                                 break;
-                            } else {
-                                log.warn("The value of length constraint is null");
-                            }
-                            break;
-                        case MIN_LENGTH:
-                            if (value != null) {
-                                int asInt = value.getAsInt();
-                                log.debug("Before adding value to Min Length object. value = {}", asInt);
-                                propertyConstraint = new MinLengthConstraint(asInt);
+                            case MIN_LENGTH:
+                                if (value != null) {
+                                    int asInt = value.getAsInt();
+                                    log.debug("Before adding value to Min Length object. value = {}", asInt);
+                                    propertyConstraint = new MinLengthConstraint(asInt);
+                                    break;
+                                } else {
+                                    log.warn("The value of MinLengthConstraint is null");
+                                }
                                 break;
-                            } else {
-                                log.warn("The value of MinLengthConstraint is null");
-                            }
-                            break;
-                        case MAX_LENGTH:
-                            if (value != null) {
-                                int asInt = value.getAsInt();
-                                log.debug("Before adding value to max length constraint. value = {}", asInt);
-                                propertyConstraint = new MaxLengthConstraint(asInt);
+                            case MAX_LENGTH:
+                                if (value != null) {
+                                    int asInt = value.getAsInt();
+                                    log.debug("Before adding value to max length constraint. value = {}", asInt);
+                                    propertyConstraint = new MaxLengthConstraint(asInt);
+                                    break;
+                                } else {
+                                    log.warn("The value of max length constraint is null");
+                                }
                                 break;
-                            } else {
-                                log.warn("The value of max length constraint is null");
-                            }
-                            break;
-                        case PATTERN:
-                            if (value != null) {
-                                String asString = value.getAsString();
-                                log.debug("Before adding value to PatternConstraint object. value = {}", asString);
-                                propertyConstraint = new PatternConstraint(asString);
+                            case PATTERN:
+                                if (value != null) {
+                                    String asString = value.getAsString();
+                                    log.debug("Before adding value to PatternConstraint object. value = {}", asString);
+                                    propertyConstraint = new PatternConstraint(asString);
+                                    break;
+                                } else {
+                                    log.warn("The value of pattern constraint is null");
+                                }
                                 break;
-                            } else {
-                                log.warn("The value of pattern constraint is null");
-                            }
-                            break;
-                        default:
-                            log.warn("Key {} is not supported. Ignored.", key);
+                            default:
+                                log.warn("Key {} is not supported. Ignored.", key);
+                        }
                     }
                 }
             }
@@ -2305,8 +2307,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
 
         private Object getTypedValue(JsonElement je) {
-            if (je.isJsonNull())
+            if (je == null || je.isJsonNull()) {
                 return null;
+            }
             if (je.isJsonPrimitive()) {
                 return getJsonPrimitive(je.getAsJsonPrimitive());
             }

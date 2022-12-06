@@ -888,7 +888,7 @@ public class ModelConverter {
         List<PropertyDefinition> properties = resource.getProperties();
         if (properties != null && !properties.isEmpty()) {
             Map<String, PropertyDataDefinition> propertiesMap = properties.stream()
-                .collect(Collectors.toMap(PropertyDefinition::getName, PropertyDataDefinition::new));
+                .collect(Collectors.toMap(PropertyDefinition::getName, PropertyDefinition::new));
             nodeType.setProperties(propertiesMap);
         }
     }
