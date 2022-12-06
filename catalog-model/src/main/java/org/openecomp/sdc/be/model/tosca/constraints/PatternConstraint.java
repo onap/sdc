@@ -21,6 +21,8 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
+
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -30,6 +32,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 import lombok.Getter;
 
+@EqualsAndHashCode
 @NoArgsConstructor
 public class PatternConstraint extends AbstractStringPropertyConstraint {
 

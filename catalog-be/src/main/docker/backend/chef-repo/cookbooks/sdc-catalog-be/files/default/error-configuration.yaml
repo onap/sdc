@@ -2855,3 +2855,10 @@ errors:
         code: 404
         message: "Capability '%1' was not found for model '%2'."
         messageId: "SVC4014"
+
+    #---------SVC4015-----------------------------
+    CANNOT_CHANGE_CONSTRAINTS: {
+        code: 400,
+        message: "Cannot change this properties constraints as the resource is an instance.",
+        messageId: "SVC4015"
+    }

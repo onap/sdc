@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -29,6 +30,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunction
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
+@EqualsAndHashCode
 public class MaxLengthConstraint extends AbstractPropertyConstraint {
 
     @NotNull
