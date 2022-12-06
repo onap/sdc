@@ -1,0 +1,349 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48240a5b_5155b1b5",
+        "filename": "asdctool/src/main/resources/config/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "should be unique (L2784)",
+      "range": {
+        "startLine": 2777,
+        "startChar": 16,
+        "endLine": 2777,
+        "endChar": 23
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f806e47_4c8d24a0",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "should be unique (L2784)",
+      "range": {
+        "startLine": 2777,
+        "startChar": 20,
+        "endLine": 2777,
+        "endChar": 27
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c52d33d3_7f0cbdba",
+        "filename": "catalog-be/src/main/resources/config/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "should be unique (L2784)",
+      "range": {
+        "startLine": 2777,
+        "startChar": 20,
+        "endLine": 2777,
+        "endChar": 27
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e6b2d93_3c14101a",
+        "filename": "catalog-be/src/test/resources/config/catalog-be/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "should be unique (L2784)",
+      "range": {
+        "startLine": 2777,
+        "startChar": 20,
+        "endLine": 2777,
+        "endChar": 27
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "835fb547_b339551f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/EqualConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 36,
+        "startChar": 18,
+        "endLine": 36,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0efe7a4_87d4a512",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterOrEqualConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 38,
+        "startChar": 18,
+        "endLine": 38,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9ca4677_2fbe7ba5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/GreaterThanConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 38,
+        "startChar": 18,
+        "endLine": 38,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad447f4c_a90b5664",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/InRangeConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 41,
+        "startChar": 18,
+        "endLine": 41,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c91d486e_6bed0f8d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LengthConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 37,
+        "startChar": 18,
+        "endLine": 37,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82169e14_44fc2df5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessOrEqualConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 38,
+        "startChar": 18,
+        "endLine": 38,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6134e016_d4a6fef8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/LessThanConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 38,
+        "startChar": 18,
+        "endLine": 38,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e5ffa7e_59b92cb4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/MaxLengthConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 33,
+        "startChar": 18,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9a2f443_a11f8b27",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/MinLengthConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 33,
+        "startChar": 18,
+        "endLine": 33,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9ff54d3_6c08c4f9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 35,
+        "startChar": 18,
+        "endLine": 35,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9778b4cf_941f9bcf",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-06T23:34:48Z",
+      "side": 1,
+      "message": "redundant, default is false, remove it",
+      "range": {
+        "startLine": 42,
+        "startChar": 18,
+        "endLine": 42,
+        "endChar": 37
+      },
+      "revId": "d80b77821e0c588c60e9c414d53c280a62a08298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
