@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -36,9 +37,11 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @NonNull
+    @EqualsAndHashCode.Include
     private List<Object> inRange;
     @JsonIgnore
     private Comparable min;

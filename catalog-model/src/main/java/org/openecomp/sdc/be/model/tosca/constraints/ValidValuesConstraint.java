@@ -25,9 +25,9 @@ import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -39,12 +39,14 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ValidValuesConstraint extends AbstractPropertyConstraint {
 
     private static final String PROPERTY_TYPE_IS = "> property type is <";
     @Getter
     @Setter
     @NotNull
+    @EqualsAndHashCode.Include
     private List<Object> validValues;
     private Set<Object> validValuesTyped;
 

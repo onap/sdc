@@ -104,6 +104,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -1975,6 +1976,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 validateMandatoryFields(property);
                 validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
+                validatePropertyConstraintsNotChanged(properties, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isToscaFunction()) {
                     toscaFunctionValidator.validate(property, containerComponent);
@@ -3990,6 +3992,22 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         } catch (ComponentException e) {
             log.error("Failed to deleteComponentInstance with instanceId[{}]", componentInstanceId);
             return Either.right(new ResponseFormat());
+        }
+    }
+
+    private void validatePropertyConstraintsNotChanged(List<ComponentInstanceProperty> newProperties, ComponentInstance originalResourceInstance) {
+        for (ComponentInstanceProperty newProperty : newProperties) {
+            Optional<PropertyDefinition> originalProperty = originalResourceInstance.getProperties().stream()
+                    .filter(prop -> prop.getUniqueId().equals(newProperty.getUniqueId())).findAny();
+            if (originalProperty.isPresent()) {
+                List<PropertyConstraint> originalConstraints = originalProperty.get().getConstraints();
+                List<PropertyConstraint> newConstraints = newProperty.getConstraints();
+                if (!Objects.equals(originalConstraints, newConstraints)) {
+                    throw new ByActionStatusComponentException(ActionStatus.CANNOT_CHANGE_CONSTRAINTS);
+                }
+            } else {
+                throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, newProperty.getUniqueId());
+            }
         }
     }
 

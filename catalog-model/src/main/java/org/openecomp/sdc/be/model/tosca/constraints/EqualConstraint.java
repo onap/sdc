@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -31,11 +32,13 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 @SuppressWarnings("serial")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EqualConstraint extends AbstractComparablePropertyConstraint {
 
     @Getter
     @Setter
     @NotNull
+    @EqualsAndHashCode.Include
     private Object equal;
     private Object typed;
 
