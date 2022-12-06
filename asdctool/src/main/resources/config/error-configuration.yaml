@@ -2770,6 +2770,13 @@ errors:
     messageId: "SVC4177"
   }
 
+  #---------SVC4178-----------------------------
+  CANNOT_CHANGE_CONSTRAINTS: {
+    code: 400,
+    message: "Cannot change this properties constraints as the resource is an instance.",
+    messageId: "SVC4178"
+  }
+
   #%1 - the component id
   SUBSTITUTION_FILTER_NOT_FOUND: {
     code: 404,

@@ -78,8 +78,9 @@
 
             <div *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
               <input type="text" class="i-sdc-form-input myClass"
-                    (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
-                    [value]="constraint.value"/>
+                     [disabled]="isViewOnly"
+                     (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
+                     [value]="constraint.value"/>
             </div>
           </div>
 

@@ -319,6 +319,7 @@ class ComponentInstanceBusinessLogicTest {
         property.setName("property");
         property.setValue("newVal");
         property.setType("string");
+        property.setUniqueId("propId");
         properties.add(property);
 
         List<ComponentInstanceProperty> origProperties = new ArrayList<>();
@@ -327,6 +328,14 @@ class ComponentInstanceBusinessLogicTest {
         origProperty.setValue("value");
         origProperty.setType("string");
         origProperties.add(origProperty);
+
+        List<PropertyDefinition> ciProperties = new ArrayList<>();
+        PropertyDefinition ciProperty = new ComponentInstanceProperty();
+        ciProperty.setName("property");
+        ciProperty.setValue("value");
+        ciProperty.setType("string");
+        ciProperty.setUniqueId("propId");
+        ciProperties.add(ciProperty);
 
         Map<String, DataTypeDefinition> types = new HashMap<>();
         DataTypeDefinition dataTypeDef = new DataTypeDefinition();
@@ -340,6 +349,7 @@ class ComponentInstanceBusinessLogicTest {
         component.setComponentInstancesProperties(componentInstanceProps);
         ComponentInstance ci = createComponentInstance("ci1");
         ci.setUniqueId("resourceId");
+        ci.setProperties(ciProperties);
         component.setComponentInstances(Arrays.asList(ci, createComponentInstance("ci2"),
             createComponentInstance(componentInstanceID)));
 

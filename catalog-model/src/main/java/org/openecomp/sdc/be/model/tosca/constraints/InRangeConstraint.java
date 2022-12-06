@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import com.google.common.collect.Lists;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -37,6 +38,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @NonNull

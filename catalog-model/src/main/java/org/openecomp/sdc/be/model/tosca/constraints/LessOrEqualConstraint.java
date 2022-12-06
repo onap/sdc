@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -34,6 +35,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class LessOrEqualConstraint<T> extends AbstractComparablePropertyConstraint {
 
     @NotNull

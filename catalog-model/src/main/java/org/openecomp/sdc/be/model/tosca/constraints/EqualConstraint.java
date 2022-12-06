@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 @SuppressWarnings("serial")
+@EqualsAndHashCode(callSuper = false)
 public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
 
     @Getter
