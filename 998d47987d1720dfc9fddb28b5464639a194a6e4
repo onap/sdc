@@ -22,6 +22,30 @@
       "revId": "998d47987d1720dfc9fddb28b5464639a194a6e4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd0b9747_f28a92d6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-07T15:11:39Z",
+      "side": 1,
+      "message": "agree, PATTERN is string, \nhowever same call PropertyOperation.PropertyConstraintJacksonDeserializer#deserializeConstraintWithStringOperand used for other constraints type,\nso, instead of creating \u0027specific\u0027 for PATTERN, decided to use generalized approach, \nif you see more advantage in \u0027specific\u0027 call, I can change",
+      "parentUuid": "605fb101_76d30988",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 27
+      },
+      "revId": "998d47987d1720dfc9fddb28b5464639a194a6e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
