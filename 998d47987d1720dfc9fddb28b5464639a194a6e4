@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "605fb101_76d30988",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-07T14:06:24Z",
+      "side": 1,
+      "message": "Not sure it makes sense to change this to an Object as a pattern must be a String, better to change the code calling the constructor to look for a String constructor",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 27
+      },
+      "revId": "998d47987d1720dfc9fddb28b5464639a194a6e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
