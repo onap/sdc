@@ -33,9 +33,7 @@ public abstract class AbstractComparablePropertyConstraint extends AbstractPrope
     }
 
     protected void initialize(String rawTextValue, ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        // Perform verification that the property type is supported for
-
-        // comparison
+        // Perform verification that the property type is supported for comparison
         ConstraintUtil.checkComparableType(propertyType);
         // Check if the text value is valid for the property type
         if (propertyType.isValidValue(rawTextValue)) {
