@@ -31,32 +31,32 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 import lombok.Getter;
 
 @NoArgsConstructor
-public class PatternConstraint extends AbstractStringPropertyConstraint {
+public class PatternConstraint extends AbstractPropertyConstraint {
 
     @NotNull
     @Getter
-    private String pattern;
+    private Object pattern;
     private Pattern compiledPattern;
 
-    public PatternConstraint(String pattern) {
+    public PatternConstraint(Object pattern) {
         setPattern(pattern);
     }
 
-    public void setPattern(String pattern) {
+    public void setPattern(Object pattern) {
         this.pattern = pattern;
-        this.compiledPattern = Pattern.compile(this.pattern);
+        this.compiledPattern = Pattern.compile((String) this.pattern);
     }
 
     @Override
-    protected void doValidate(String propertyValue) throws ConstraintViolationException {
-        if (!compiledPattern.matcher(propertyValue).matches()) {
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (!compiledPattern.matcher((CharSequence) propertyValue).matches()) {
             throw new ConstraintViolationException("The value do not match pattern " + pattern);
         }
     }
 
     @Override
     public ConstraintType getConstraintType() {
-        return null;
+        return ConstraintType.PATTERN;
     }
 
     @Override
@@ -65,6 +65,6 @@ public class PatternConstraint extends AbstractStringPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must match the regular expression %s", pattern);
+        return getErrorMessage(toscaType, e, propertyName, "%s property value must match the regular expression %s", (String) pattern);
     }
 }

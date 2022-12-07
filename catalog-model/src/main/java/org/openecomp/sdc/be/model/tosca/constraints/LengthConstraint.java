@@ -68,7 +68,7 @@ public class LengthConstraint extends AbstractPropertyConstraint {
 
     @Override
     public ConstraintType getConstraintType() {
-        return null;
+        return ConstraintType.LENGTH;
     }
 
     @Override
