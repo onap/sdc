@@ -22,6 +22,30 @@
       "revId": "c20f7a8e2186426f4dfdf5fb2e8e9b4479c7d1a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4082dc01_c0cb6478",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-07T15:03:06Z",
+      "side": 1,
+      "message": "parent (PropertyDataDefinition) does not have constraints (present only in child PropertyDefinition)",
+      "parentUuid": "aeb3a4b9_a4c641d2",
+      "range": {
+        "startLine": 891,
+        "startChar": 71,
+        "endLine": 891,
+        "endChar": 89
+      },
+      "revId": "c20f7a8e2186426f4dfdf5fb2e8e9b4479c7d1a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
