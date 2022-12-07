@@ -60,20 +60,15 @@ public final class ConstraintUtil {
      * @throws ConstraintValueDoNotMatchPropertyTypeException if the property type cannot be compared
      */
     public static void checkComparableType(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        // The validity of the value is already assured by us with our
-
-        // ToscaType.convert() method
-
-        // here we just want to check that the constraint is not used on
-
-        // unsupported type as boolean
+        // The validity of the value is already assured by us with our ToscaType.convert() method
+        // here we just want to check that the constraint is not used on unsupported type as boolean
         switch (propertyType) {
             case FLOAT:
             case INTEGER:
             case TIMESTAMP:
             case VERSION:
-                break;
             case STRING:
+                break;
             case BOOLEAN:
                 throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.toString() + ">");
             default:
