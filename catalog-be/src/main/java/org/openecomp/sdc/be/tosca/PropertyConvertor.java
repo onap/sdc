@@ -177,7 +177,7 @@ public class PropertyConvertor {
                 convertedConstraints.add(new ToscaPropertyConstraintMaxLength(((MaxLengthConstraint) constraint).getMaxLength()));
             }
             if (constraint instanceof PatternConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintPattern(((PatternConstraint) constraint).getPattern()));
+                convertedConstraints.add(new ToscaPropertyConstraintPattern((String) ((PatternConstraint) constraint).getPattern()));
             }
         }
         return convertedConstraints;

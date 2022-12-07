@@ -70,7 +70,7 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
 
     @Override
     public ConstraintType getConstraintType() {
-        return null;
+        return ConstraintType.EQUAL;
     }
 
     @Override
