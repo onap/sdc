@@ -34,17 +34,19 @@ scalar-unit.time:
 scalar-unit.frequency:
   derived_from: scalar-unit
 
-  
-tosca.datatypes.Credential: 
+scalar-unit.bitrate:
+  derived_from: scalar-unit
+
+tosca.datatypes.Credential:
   derived_from: tosca.datatypes.Root
-  properties: 
-    protocol: 
+  properties:
+    protocol:
       type: string
       required: false
-    token_type: 
+    token_type:
       type: string
       default: password
-    token: 
+    token:
       type: string
     keys:
       type: map

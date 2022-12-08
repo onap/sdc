@@ -32,6 +32,8 @@ data_types:
     derived_from: tosca.datatypes.Root
   scalar-unit.time:
     derived_from: tosca.datatypes.Root
+  scalar-unit.bitrate:
+    derived_from: tosca.datatypes.Root
   tosca.datatypes.network.NetworkInfo:
     derived_from: tosca.datatypes.Root
     description: The Network type is a complex TOSCA data type used to describe logical network information.
