@@ -40,6 +40,9 @@ scalar-unit.time:
 scalar-unit.frequency:
   derived_from: scalar-unit
 
+scalar-unit.bitrate:
+  derived_from: scalar-unit
+
 tosca.datatypes.nfv.L2AddressData:
   derived_from: tosca.datatypes.Root
   description: Describes the information on the MAC addresses to be assigned to a connection point.

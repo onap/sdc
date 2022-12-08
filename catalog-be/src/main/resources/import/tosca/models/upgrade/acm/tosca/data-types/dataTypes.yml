@@ -26,6 +26,8 @@ scalar-unit.time:
   derived_from: scalar-unit
 scalar-unit.frequency:
   derived_from: scalar-unit
+scalar-unit.bitrate:
+  derived_from: scalar-unit
 onap.datatypes.ToscaConceptIdentifier:
   derived_from: tosca.datatypes.Root
   properties:

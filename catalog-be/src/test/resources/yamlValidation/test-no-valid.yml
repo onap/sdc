@@ -34,7 +34,9 @@ scalar-unit.time:
 scalar-unit.frequency:
   derived_from: scalar-unit
 
-  
+scalar-unit.bitrate:
+  derived_from: scalar-unit
+
 tosca.datatypes.Credential: 
   derived_from: tosca.datatypes.Root
   properties: 
