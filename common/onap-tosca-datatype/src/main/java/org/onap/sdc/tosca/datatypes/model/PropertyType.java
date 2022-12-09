@@ -35,6 +35,7 @@ public enum PropertyType {
     NULL("null"),
     MAP("map"),
     LIST("list"),
+    SCALAR_UNIT_BITRATE("scalar-unit.bitrate"),
     SCALAR_UNIT_SIZE("scalar-unit.size"),
     SCALAR_UNIT_TIME("scalar-unit.time"),
     SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
@@ -45,7 +46,7 @@ public enum PropertyType {
     private final String displayName;
 
     /**
-     * Initilize property type display name mapping.
+     * Initialize property type display name mapping.
      *
      * @return Map
      */
@@ -77,6 +78,7 @@ public enum PropertyType {
         simplePropertyTypes.add(TIMESTAMP.getDisplayName().toLowerCase());
         simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
         simplePropertyTypes.add(BOOLEAN.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(SCALAR_UNIT_BITRATE.getDisplayName().toLowerCase());
         simplePropertyTypes.add(SCALAR_UNIT_SIZE.getDisplayName().toLowerCase());
         simplePropertyTypes.add(SCALAR_UNIT_TIME.getDisplayName().toLowerCase());
         simplePropertyTypes.add(SCALAR_UNIT_FREQUENCY.getDisplayName().toLowerCase());
