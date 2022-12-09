@@ -113,7 +113,8 @@ export class DynamicPropertyComponent {
     ngOnChanges() {
         this.propType = this.property.derivedDataType;
         this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
-        this.propertyTestsId = this.getPropertyTestsId(); 
+        this.rootProperty = (this.rootProperty) ? this.rootProperty : <PropertyFEModel>this.property;
+        this.propertyTestsId = this.getPropertyTestsId();
     }
 
 

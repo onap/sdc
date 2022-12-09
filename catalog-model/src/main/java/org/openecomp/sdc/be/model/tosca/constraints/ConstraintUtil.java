@@ -26,6 +26,9 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.slf4j.Logger;
@@ -34,12 +37,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class to validate constraints types.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConstraintUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ConstraintUtil.class);
-
-    private ConstraintUtil() {
-    }
 
     /**
      * Validates that the {@link ToscaType} specified is a {@link ToscaType#STRING}.
@@ -59,20 +60,26 @@ public final class ConstraintUtil {
      * @param propertyType the tosca type to check
      * @throws ConstraintValueDoNotMatchPropertyTypeException if the property type cannot be compared
      */
-    public static void checkComparableType(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+    public static void checkComparableType(final ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         // The validity of the value is already assured by us with our ToscaType.convert() method
         // here we just want to check that the constraint is not used on unsupported type as boolean
-        switch (propertyType) {
+        final ToscaType toscaType = ToscaType.getToscaType(propertyType.getType());
+        switch (toscaType) {
             case FLOAT:
             case INTEGER:
             case TIMESTAMP:
             case VERSION:
             case STRING:
+            case SCALAR_UNIT_SIZE:
+            case SCALAR_UNIT_TIME:
+            case SCALAR_UNIT_BITRATE:
+            case SCALAR_UNIT_FREQUENCY:
                 break;
             case BOOLEAN:
-                throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.toString() + ">");
+            case SCALAR_UNIT:
+                throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.getType() + ">");
             default:
-                throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid property type <" + propertyType.toString() + ">");
+                throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid property type <" + propertyType.getType() + ">");
         }
     }
 
@@ -86,7 +93,7 @@ public final class ConstraintUtil {
      */
     @SuppressWarnings("rawtypes")
     public static Comparable convertToComparable(ToscaType propertyType, String value) {
-        Object comparableObj = propertyType.convert(value);
+        final Object comparableObj = propertyType.convert(value);
         if (!(comparableObj instanceof Comparable)) {
             throw new IllegalArgumentException("Try to convert a value of a type which is not comparable [" + propertyType + "] to Comparable");
         } else {
@@ -95,9 +102,8 @@ public final class ConstraintUtil {
     }
 
     public static ConstraintInformation getConstraintInformation(Object constraint) throws IntrospectionException {
-        PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(constraint.getClass()).getPropertyDescriptors();
         PropertyDescriptor firstDescriptor = null;
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+        for (final PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(constraint.getClass()).getPropertyDescriptors()) {
             if (propertyDescriptor.getReadMethod() != null && propertyDescriptor.getWriteMethod() != null) {
                 firstDescriptor = propertyDescriptor;
                 break;
@@ -125,18 +131,12 @@ public final class ConstraintUtil {
         return objectMap;
     }
 
+    @AllArgsConstructor
     public static class ConstraintInformation {
 
-        private String name;
-        private Object reference;
-        private String value;
-        private String type;
-
-        public ConstraintInformation(String name, Object reference, String value, String type) {
-            this.name = name;
-            this.reference = reference;
-            this.value = value;
-            this.type = type;
-        }
+        private final String name;
+        private final Object reference;
+        private final String value;
+        private final String type;
     }
 }

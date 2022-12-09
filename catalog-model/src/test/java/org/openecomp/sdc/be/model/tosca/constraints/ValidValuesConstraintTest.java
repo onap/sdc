@@ -30,8 +30,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
-
-public class ValidValuesConstraintTest {
+class ValidValuesConstraintTest {
 
     private ValidValuesConstraint createStringTestSubject() {
         List<Object> validValues = new ArrayList<>();
@@ -52,7 +51,7 @@ public class ValidValuesConstraintTest {
     }
 
     @Test
-    public void testGetValidValues() {
+    void testGetValidValues() {
         ValidValuesConstraint testSubject = createStringTestSubject();
         List<Object> result = testSubject.getValidValues();
 
@@ -62,7 +61,7 @@ public class ValidValuesConstraintTest {
     }
 
     @Test
-    public void testSetValidValues() {
+    void testSetValidValues() {
         ValidValuesConstraint testSubject = createStringTestSubject();
         List<Object> validValues = new ArrayList<>();
         validValues.add("test5");
@@ -79,35 +78,31 @@ public class ValidValuesConstraintTest {
     }
 
     @Test
-    public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
         ValidValuesConstraint testSubject = createStringTestSubject();
-        Boolean validTypes = testSubject.validateValueType("string");
-        assertTrue(validTypes);
+        assertTrue(testSubject.validateValueType("string"));
     }
 
     @Test
-    public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
         ValidValuesConstraint testSubject = createStringTestSubject();
-        Boolean validTypes = testSubject.validateValueType("integer");
-        assertFalse(validTypes);
+        assertFalse(testSubject.validateValueType("integer"));
     }
 
     @Test
-    public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
         ValidValuesConstraint testSubject = createIntegerTestSubject();
-        Boolean validTypes = testSubject.validateValueType("integer");
-        assertTrue(validTypes);
+        assertTrue(testSubject.validateValueType("integer"));
     }
 
     @Test
-    public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
         ValidValuesConstraint testSubject = createIntegerTestSubject();
-        Boolean validTypes = testSubject.validateValueType("string");
-        assertFalse(validTypes);
+        assertFalse(testSubject.validateValueType("string"));
     }
 
     @Test
-    public void testChangeStringConstraintValueTypeToIntegerThrow() {
+    void testChangeStringConstraintValueTypeToIntegerThrow() {
         String propertyType = "integer";
         ValidValuesConstraint testSubject = createStringTestSubject();
         Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
@@ -122,7 +117,7 @@ public class ValidValuesConstraintTest {
     }
 
     @Test
-    public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
         ValidValuesConstraint testSubject = createIntegerTestSubject();
 
         testSubject.changeConstraintValueTypeTo("string");

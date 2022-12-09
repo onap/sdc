@@ -27,6 +27,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ToscaScalarUnitTypes {
-    SCALAR_UNIT_SIZE("scalar-unit.size"), SCALAR_UNIT_TIME("scalar-unit.time"), SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
-    private String type;
+    SCALAR_UNIT_BITRATE("scalar-unit.bitrate"),
+    SCALAR_UNIT_SIZE("scalar-unit.size"),
+    SCALAR_UNIT_TIME("scalar-unit.time"),
+    SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
+    private final String type;
 }

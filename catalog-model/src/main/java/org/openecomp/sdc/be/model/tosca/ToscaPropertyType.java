@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.model.tosca;
 
+import lombok.Getter;
 import org.openecomp.sdc.be.model.tosca.converters.BooleanConverter;
 import org.openecomp.sdc.be.model.tosca.converters.DefaultConverter;
 import org.openecomp.sdc.be.model.tosca.converters.FloatConverter;
@@ -51,6 +52,7 @@ import org.openecomp.sdc.be.model.tosca.validators.StringValidator;
  *
  * @author esofer
  */
+@Getter
 public enum ToscaPropertyType {
     // @formatter:off
     ROOT("tosca.datatypes.Root", null, null, null, true),
@@ -62,6 +64,7 @@ public enum ToscaPropertyType {
     SCALAR_UNIT_SIZE("scalar-unit.size", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
     SCALAR_UNIT_TIME("scalar-unit.time", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
     SCALAR_UNIT_FREQUENCY("scalar-unit.frequency", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
+    SCALAR_UNIT_BITRATE("scalar-unit.bitrate", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
     RANGE("range", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
     TIMESTAMP("timestamp", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
     MAP("map", MapValidator.getInstance(), MapConverter.getInstance(), ToscaMapValueConverter.getInstance()),
@@ -123,24 +126,8 @@ public enum ToscaPropertyType {
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public PropertyTypeValidator getValidator() {
-        return validator;
-    }
-
-    public PropertyValueConverter getConverter() {
-        return converter;
-    }
-
     public boolean isAbstract() {
         return isAbstract;
-    }
-
-    public ToscaValueConverter getValueConverter() {
-        return valueConverter;
     }
 
     @Override
