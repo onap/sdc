@@ -46,6 +46,30 @@
       "revId": "c20f7a8e2186426f4dfdf5fb2e8e9b4479c7d1a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd3e49c2_20f85660",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-09T16:26:46Z",
+      "side": 1,
+      "message": "the parent does have the constraints in the propertyConstraints field. I think this patch fixes the issue without changing this here",
+      "parentUuid": "4082dc01_c0cb6478",
+      "range": {
+        "startLine": 891,
+        "startChar": 71,
+        "endLine": 891,
+        "endChar": 89
+      },
+      "revId": "c20f7a8e2186426f4dfdf5fb2e8e9b4479c7d1a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
