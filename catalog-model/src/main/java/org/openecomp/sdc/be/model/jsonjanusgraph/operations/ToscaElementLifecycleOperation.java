@@ -784,7 +784,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                         List<String> artifactsId = new ArrayList<>();
                         if (instDeplArtifMap != null) {
                             for (ArtifactDataDefinition artifact : instDeplArtifMap.values()) {
-                                Optional<String> op = group.getArtifacts().stream().filter(p -> p.equals(artifact.getGeneratedFromId())).findAny();
+                                Optional<String> op = group.getArtifacts() == null ? Optional.empty() : group.getArtifacts().stream().filter(p -> p.equals(artifact.getGeneratedFromId())).findAny();
                                 if (op.isPresent()) {
                                     artifactsUid.add(artifact.getArtifactUUID());
                                     artifactsId.add(artifact.getUniqueId());
