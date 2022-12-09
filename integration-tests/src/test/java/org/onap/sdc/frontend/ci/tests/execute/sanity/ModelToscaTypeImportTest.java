@@ -135,7 +135,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
 
         final Map<String, String> propertyMap = new HashMap<>();
         propertyMap.put("AdditionalServiceData", ADDITIONAL_SERVICE_DATA);
-        resourceCreatePage = addProperty(serviceComponentPage, propertyMap, vf.getName());
+        resourceCreatePage = addProperty(serviceComponentPage, propertyMap);
 
         final var downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.setWaitBeforeGetTheFile(5L);
@@ -158,7 +158,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         assertTrue(csarFiles.values().stream().filter(bytes -> new String(bytes).contains(ADDITIONAL_SERVICE_DATA)).findAny().isPresent());
     }
 
-    private ComponentPage addProperty(ComponentPage serviceComponentPage, final Map<String, String> propertyMap, String name) {
+    private ComponentPage addProperty(ComponentPage serviceComponentPage, final Map<String, String> propertyMap) {
         final AddComponentPropertyFlow addComponentPropertyFlow = new AddComponentPropertyFlow(webDriver, propertyMap);
         serviceComponentPage.isLoaded();
         final ComponentPage resourcePropertiesAssignmentPage = serviceComponentPage.goToPropertiesAssignment();
