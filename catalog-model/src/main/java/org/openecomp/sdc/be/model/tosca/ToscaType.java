@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
@@ -53,9 +55,14 @@ public enum ToscaType {
 	SCALAR_UNIT("scalar-unit"),
 	SCALAR_UNIT_SIZE("scalar-unit.size"),
 	SCALAR_UNIT_TIME("scalar-unit.time"),
+	SCALAR_UNIT_BITRATE("scalar-unit.bitrate"),
 	SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
     // @formatter:on
 
+    private static final String SCALAR_UNIT_BITRATE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([TtGgMmKk]?i?[Bb]ps)$";
+    private static final String SCALAR_UNIT_TIME_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([mun]?[dhms])$";
+    private static final String SCALAR_UNIT_SIZE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([TtGgMmKk]?i?[Bb])$";
+    private static final String SCALAR_UNIT_FREQUENCY_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([kMG]?Hz)$";
     @Getter
     private final String type;
 
@@ -94,7 +101,7 @@ public enum ToscaType {
         return ToscaPropertyType.MAP.getType().equals(type) || ToscaPropertyType.LIST.getType().equals(type);
     }
 
-    public Boolean isValueTypeValid(Object value) {
+    public boolean isValueTypeValid(Object value) {
         switch (this) {
             case BOOLEAN:
                 return value.equals(true) || value.equals(false);
@@ -104,9 +111,9 @@ public enum ToscaType {
             case RANGE:
                 return value instanceof Integer;
             case STRING:
-            case SCALAR_UNIT:
             case SCALAR_UNIT_SIZE:
             case SCALAR_UNIT_TIME:
+            case SCALAR_UNIT_BITRATE:
             case SCALAR_UNIT_FREQUENCY:
             case TIMESTAMP:
             case VERSION:
@@ -114,6 +121,7 @@ public enum ToscaType {
             case LIST:
             case MAP:
                 return true;
+            case SCALAR_UNIT:
             default:
                 return false;
         }
@@ -127,11 +135,15 @@ public enum ToscaType {
                 return isFloat(value);
             case INTEGER:
                 return isInteger(value);
-            case STRING:
-            case SCALAR_UNIT:
             case SCALAR_UNIT_SIZE:
+                return isScalarUnitSize(value);
             case SCALAR_UNIT_TIME:
+                return isScalarUnitTime(value);
+            case SCALAR_UNIT_BITRATE:
+                return isScalarUnitBitrate(value);
             case SCALAR_UNIT_FREQUENCY:
+                return isScalarUnitFrequency(value);
+            case STRING:
                 return true;
             case TIMESTAMP:
                 return TimestampValidator.getInstance().isValid(value, null);
@@ -141,6 +153,7 @@ public enum ToscaType {
                 return isList(value);
             case MAP:
                 return isMap(value);
+            case SCALAR_UNIT:
             default:
                 return false;
         }
@@ -189,11 +202,15 @@ public enum ToscaType {
     public Object convert(String value) {
         switch (this) {
             case STRING:
-            case SCALAR_UNIT:
-            case SCALAR_UNIT_SIZE:
-            case SCALAR_UNIT_TIME:
-            case SCALAR_UNIT_FREQUENCY:
                 return value;
+            case SCALAR_UNIT_TIME:
+                return convertScalarUnitTime(value);
+            case SCALAR_UNIT_BITRATE:
+                return convertScalarUnitBitrate(value);
+            case SCALAR_UNIT_SIZE:
+                return convertScalarUnitSize(value);
+            case SCALAR_UNIT_FREQUENCY:
+                return convertScalarUnitFrequency(value);
             case BOOLEAN:
                 return Boolean.valueOf(value);
             case FLOAT:
@@ -223,13 +240,150 @@ public enum ToscaType {
                 } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
                     throw new IllegalArgumentException("Value must be a valid Map", e);
                 }
+            case SCALAR_UNIT:
             default:
                 return null;
         }
     }
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
+    private Long convertScalarUnitSize(final String value) {
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim());
+        if (matcher.find()) {
+            switch (matcher.group(2)) {
+                case "TiB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1099511627776L);
+                case "TB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000000000L);
+                case "GiB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1073741824L);
+                case "GB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000000L);
+                case "MiB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1048576L);
+                case "MB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000L);
+                case "KiB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1024L);
+                case "kB":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000L);
+                case "B":
+                    return (long) (Double.parseDouble(matcher.group(1)));
+                default:
+                    throw new IllegalArgumentException("Value must be a valid scalar-unit.size");
+            }
+        } else {
+            throw new IllegalArgumentException("Value must be a valid scalar-unit.size");
+        }
     }
+
+    private Long convertScalarUnitTime(final String value) {
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim());
+        if (matcher.find()) {
+            switch (matcher.group(2)) {
+                case "d":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 86_400_000_000_000L);
+                case "h":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 3_600_000_000_000L);
+                case "m":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 60_000_000_000L);
+                case "s":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000_000_000L);
+                case "ms":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000_000L);
+                case "us":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000L);
+                case "ns":
+                    return (long) (Double.parseDouble(matcher.group(1)));
+                default:
+                    throw new IllegalArgumentException("Value must be a valid scalar-unit.time");
+            }
+        } else {
+            throw new IllegalArgumentException("Value must be a valid scalar-unit.time");
+        }
+    }
+
+    private Long convertScalarUnitFrequency(final String value) {
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim());
+        if (matcher.find()) {
+            switch (matcher.group(2)) {
+                case "GHz":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000_000_000L);
+                case "MHz":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000_000L);
+                case "kHz":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1_000L);
+                case "Hz":
+                    return (long) (Double.parseDouble(matcher.group(1)));
+                default:
+                    throw new IllegalArgumentException("Value must be a valid scalar-unit.frequency");
+            }
+        } else {
+            throw new IllegalArgumentException("Value must be a valid scalar-unit.frequency");
+        }
+    }
+
+    private Long convertScalarUnitBitrate(final String value) {
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim());
+        if (matcher.find()) {
+            switch (matcher.group(2)) {
+                case "TiBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1099511627776L);
+                case "TBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1000000000000L);
+                case "GiBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1073741824L);
+                case "GBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1000000000L);
+                case "MiBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1048576L);
+                case "MBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1000000L);
+                case "KiBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1024L);
+                case "KBps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8 * 1000L);
+                case "Bps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 8);
+                case "Tibps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1099511627776L);
+                case "Tbps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000000000L);
+                case "Gibps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1073741824L);
+                case "Gbps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000000L);
+                case "Mibps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1048576L);
+                case "Mbps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000000L);
+                case "Kibps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1024L);
+                case "Kbps":
+                    return (long) (Double.parseDouble(matcher.group(1)) * 1000L);
+                case "bps":
+                    return (long) (Double.parseDouble(matcher.group(1)));
+                default:
+                    throw new IllegalArgumentException("Value must be a valid scalar-unit.bitrate");
+            }
+        } else {
+            throw new IllegalArgumentException("Value must be a valid scalar-unit.bitrate");
+        }
+    }
+
+    private boolean isScalarUnitBitrate(final String value) {
+        return Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim()).find();
+    }
+
+    private boolean isScalarUnitSize(final String value) {
+        return Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim()).find();
+    }
+
+    private boolean isScalarUnitTime(final String value) {
+        return Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim()).find();
+    }
+
+    private boolean isScalarUnitFrequency(final String value) {
+        return Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim()).find();
+    }
+
 }
