@@ -139,7 +139,7 @@ public class PropertyValueConstraintValidationUtil {
                     propertyConstraint.initialize(toscaType);
                     propertyConstraint.validate(toscaType, propertyDefinition.getValue());
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
-                    errorMessages.add("\n" + propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
+                    errorMessages.add(propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
                 }
             }
         } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType()) && !toscaType

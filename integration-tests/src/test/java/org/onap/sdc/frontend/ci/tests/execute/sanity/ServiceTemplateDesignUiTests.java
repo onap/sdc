@@ -867,7 +867,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         stringMap.put("PropMapKey2", "PropMapValue2");
         stringMap.put("PropMapKey3", "PropMapValue3");
         propertyMap.put("property5", stringMap);
-        propertyMap.put("property6", 500);
+        propertyMap.put("property6", "500 GB");
         return propertyMap;
     }
 
