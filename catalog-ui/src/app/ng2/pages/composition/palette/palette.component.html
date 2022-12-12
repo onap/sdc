@@ -8,7 +8,7 @@
     <div class="palette-elements-list">
         <sdc-loader [global]="false" name="palette-loader" testId="palette-loader" [active]="this.isPaletteLoading" [class.inactive]="!this.isPaletteLoading"></sdc-loader>
         <div *ngIf="numberOfElements === 0 && searchText" class="no-elements-found">No Elements Found</div>
-        <sdc-accordion *ngFor="let mapByCategory of paletteElements | keyValue; let first = first" [attr.data-tests-id]="'leftPalette.category.'+mapByCategory.key" [title]="mapByCategory.key" [css-class]="'palette-category'">
+        <sdc-accordion *ngFor="let mapByCategory of paletteElements | keyValue; let first = first" [open]="this.openAccordion" [attr.data-tests-id]="'leftPalette.category.'+mapByCategory.key" [title]="mapByCategory.key" [css-class]="'palette-category'">
             <div *ngFor="let mapBySubCategory of mapByCategory.value | keyValue">
                 <div class="palette-subcategory">{{mapBySubCategory.key}}</div>
                 <ng-container *ngIf="!(isViewOnly$ | async)">
