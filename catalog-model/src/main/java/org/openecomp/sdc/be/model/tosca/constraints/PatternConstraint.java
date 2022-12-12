@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -28,7 +29,6 @@ import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
-import lombok.Getter;
 
 @NoArgsConstructor
 public class PatternConstraint extends AbstractStringPropertyConstraint {
@@ -56,11 +56,12 @@ public class PatternConstraint extends AbstractStringPropertyConstraint {
 
     @Override
     public ConstraintType getConstraintType() {
-        return null;
+        return ConstraintType.PATTERN;
     }
 
     @Override
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
+        // no need for implementation
     }
 
     @Override

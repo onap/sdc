@@ -2324,11 +2324,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
 
         private Object getJsonPrimitive(JsonPrimitive je) {
-            if (je.isBoolean())
+            if (je.isBoolean()) {
                 return je.getAsBoolean();
-            if (je.isString())
+            }
+            if (je.isString()) {
                 return je.getAsString();
-            if (je.isNumber()){
+            }
+            if (je.isNumber()) {
                 double number = je.getAsNumber().floatValue();
                 if ((number % 1) == 0) {
                     return je.getAsNumber().intValue();
@@ -2391,7 +2393,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 propertyConstraint = deserializeConstraintWithIntegerOperand(value, MaxLengthConstraint.class);
                                 break;
                             case PATTERN:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, PatternConstraint.class);
+                                propertyConstraint = deserializeConstraintWithStringPatternOperand(value, PatternConstraint.class);
                                 break;
                             default:
                                 log.warn("Key {} is not supported. Ignored.", field.getKey());
@@ -2408,6 +2410,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             log.debug("Before adding value to {} object. value = {}", constraintClass, asString);
             try {
                 return constraintClass.getConstructor(Object.class).newInstance(asString);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                     | SecurityException exception) {
+                log.error("Error deserializing constraint", exception);
+                return null;
+            }
+        }
+
+        private PropertyConstraint deserializeConstraintWithStringPatternOperand(JsonNode value,
+                                                                                 Class<? extends PropertyConstraint> constraintClass) {
+            String asString = value.asText();
+            log.debug("Before adding value to {} object. value = {}", constraintClass, asString);
+            try {
+                return constraintClass.getConstructor(String.class).newInstance(asString);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                      | SecurityException exception) {
                 log.error("Error deserializing constraint", exception);

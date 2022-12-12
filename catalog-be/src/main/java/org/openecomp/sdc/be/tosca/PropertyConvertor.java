@@ -92,9 +92,9 @@ public class PropertyConvertor {
             if (props != null) {
                 Map<String, ToscaProperty> properties = new HashMap<>();
                 // take only the properties of this resource
-                props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
-                    properties.put(property.getName(), convertProperty(dataTypes, property, PropertyType.PROPERTY));
-                });
+                props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property ->
+                    properties.put(property.getName(), convertProperty(dataTypes, property, PropertyType.PROPERTY))
+                );
                 if (!properties.isEmpty()) {
                     toscaNodeType.setProperties(properties);
                 }
@@ -129,18 +129,16 @@ public class PropertyConvertor {
             prop.setStatus(property.getStatus());
         }
         prop.setMetadata(property.getMetadata());
-        
-        List<ToscaPropertyConstraint> constraints = new ArrayList<>();
+
         if (CollectionUtils.isNotEmpty(property.getConstraints())) {
-            constraints = convertConstraints(property.getConstraints());
-            prop.setConstraints(constraints);
+            prop.setConstraints(convertConstraints(property.getConstraints()));
         }
         return prop;
     }
-    
+
     private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints) {
         List<ToscaPropertyConstraint> convertedConstraints = new ArrayList<>();
-        for (PropertyConstraint constraint: constraints){
+        for (PropertyConstraint constraint : constraints) {
             if (constraint instanceof EqualConstraint) {
                 convertedConstraints.add(new ToscaPropertyConstraintEqual(((EqualConstraint) constraint).getEqual()));
             }
@@ -260,10 +258,10 @@ public class PropertyConvertor {
                     .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
             }
             return convertedValue;
-        
+
         } catch (JsonParseException e) {
             log.trace("{} not parsable as JSON. Convert as YAML instead", value);
-            return  new Yaml().load(value);
+            return new Yaml().load(value);
         } catch (Exception e) {
             log.debug("convertToToscaValue failed to parse json value :", e);
             return null;

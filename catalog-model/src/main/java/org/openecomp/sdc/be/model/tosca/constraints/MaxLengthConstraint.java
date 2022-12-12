@@ -62,7 +62,7 @@ public class MaxLengthConstraint extends AbstractPropertyConstraint {
 
     @Override
     public ConstraintType getConstraintType() {
-        return null;
+        return ConstraintType.MAX_LENGTH;
     }
 
     @Override
