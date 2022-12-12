@@ -535,7 +535,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "deletes an artifact of a resource or service", method = "DELETE", summary = "deletes an artifact of a resource or service", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "Artifact deleted", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -619,7 +619,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "deletes an artifact of a resource insatnce", method = "DELETE", summary = "deletes an artifact of a resource insatnce", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "Artifact deleted", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ArtifactDefinition.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -772,7 +772,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download resource instance artifact", method = "GET", summary = "Returns downloaded artifact", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "Artifact downloaded", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),

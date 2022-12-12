@@ -1260,7 +1260,7 @@
                             <contextId>sdce-2-sdce-5</contextId>
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-2-sdce-5</outputFileName>
-                            <outputFormat>JSON</outputFormat>
+                            <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-2-sdce-5.yaml
                             </configurationFilePath>
@@ -1277,7 +1277,7 @@
                             <contextId>sdce-4</contextId>
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-4</outputFileName>
-                            <outputFormat>JSON</outputFormat>
+                            <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-4.yaml
                             </configurationFilePath>
@@ -1294,7 +1294,7 @@
                             <contextId>sdce-6</contextId>
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-6</outputFileName>
-                            <outputFormat>JSON</outputFormat>
+                            <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-6.yaml
                             </configurationFilePath>
@@ -1311,7 +1311,7 @@
                             <contextId>sdce-7</contextId>
                             <outputPath>${project.build.directory}/generated/swagger</outputPath>
                             <outputFileName>swagger-sdce-7</outputFileName>
-                            <outputFormat>JSON</outputFormat>
+                            <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-7.yaml
                             </configurationFilePath>

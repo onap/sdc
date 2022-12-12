@@ -106,7 +106,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download service artifact", method = "GET", summary = "Returns downloaded artifact", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -173,7 +173,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download resource artifact", method = "GET", summary = "Returns downloaded artifact", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
@@ -234,7 +234,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Download resource instance artifact", method = "GET", summary = "Returns downloaded artifact", responses = {
-        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "200", description = "The artifact is found and streamed.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
         @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
