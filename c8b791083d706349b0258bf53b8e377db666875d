@@ -1,0 +1,372 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b500b2c_4b642b2e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "duplicate with L65",
+      "range": {
+        "startLine": 90,
+        "startChar": 16,
+        "endLine": 90,
+        "endChar": 63
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd7e9b72_c7fcde21",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "remove unused import",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 88
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ced5f3e3_b94fec89",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a9085a0_d5a54161",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 368,
+        "startChar": 0,
+        "endLine": 368,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15266a12_d312e2d1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2569,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 2569,
+        "startChar": 0,
+        "endLine": 2569,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc2704c2_9f888f7f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2589,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 2589,
+        "startChar": 0,
+        "endLine": 2589,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a9e2532_29b31ab8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1082,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 1082,
+        "startChar": 0,
+        "endLine": 1082,
+        "endChar": 46
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d199e75_d55e8dd2",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/util/Multitenancy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "should be private",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 21
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "164d27d6_6baa758f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/main/java/org/openecomp/sdcrests/item/rest/services/ItemsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "not covered by any TC, please add",
+      "range": {
+        "startLine": 128,
+        "startChar": 8,
+        "endLine": 136,
+        "endChar": 9
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ece39a3_f56f8e95",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/test/java/org/openecomp/sdcrests/item/rest/services/ItemsImplTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 215,
+        "startChar": 0,
+        "endLine": 215,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90e682c4_98c5a5f3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/item-rest/item-rest-services/src/test/java/org/openecomp/sdcrests/item/rest/services/ItemsImplTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "simplify with assertTrue",
+      "range": {
+        "startLine": 234,
+        "startChar": 0,
+        "endLine": 234,
+        "endChar": 55
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a92999d_580bf6fa",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/MultitenancyKeycloakFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "Modifiers should be declared in the correct order",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 24
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30ee7b6c_e010a56e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/MultitenancyKeycloakFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "avoid using @Deprecated method, please replace it",
+      "range": {
+        "startLine": 138,
+        "startChar": 144,
+        "endLine": 138,
+        "endChar": 155
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd7b4667_71e4db2a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/MultitenancyKeycloakFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "Generic exceptions should never be thrown",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 54
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08d6aece_04cb5e04",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/src/main/java/org/openecomp/server/filters/MultitenancyKeycloakFilter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "use build-in formatting, instead of concatenations",
+      "range": {
+        "startLine": 280,
+        "startChar": 43,
+        "endLine": 280,
+        "endChar": 53
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8cd0b72_04837ec3",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-12-12T17:47:04Z",
+      "side": 1,
+      "message": "could be the same as above 18.0.0 ? or exists any particular reason to be different?",
+      "range": {
+        "startLine": 362,
+        "startChar": 21,
+        "endLine": 362,
+        "endChar": 27
+      },
+      "revId": "c8b791083d706349b0258bf53b8e377db666875d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
