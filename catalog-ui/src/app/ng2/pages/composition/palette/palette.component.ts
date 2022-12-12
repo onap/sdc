@@ -49,6 +49,7 @@ export class PaletteComponent {
     public isPaletteLoading: boolean;
     private paletteDraggedElement: LeftPaletteComponent;
     public position: Point = new Point();
+    private openAccordion: boolean = false;
 
     ngOnInit() {
         this.isPaletteLoading = true;
@@ -66,6 +67,7 @@ export class PaletteComponent {
     public buildPaletteByCategories = (searchText?: string) => { // create nested by category & subcategory, filtered by search parans
         // Flat the object and run on its leaves
         if (searchText) {
+            this.openAccordion = true;
             searchText = searchText.toLowerCase();
             const paletteElementsAfterSearch = {};
             this.paletteElements = this.compositionPaletteService.getLeftPaletteElements();
@@ -83,6 +85,7 @@ export class PaletteComponent {
             }
             this.paletteElements = paletteElementsAfterSearch;
         } else {
+            this.openAccordion = false;
             this.paletteElements = this.compositionPaletteService.getLeftPaletteElements();
         }
         this.numberOfElements = this.countLeftPalleteElements(this.paletteElements);

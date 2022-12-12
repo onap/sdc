@@ -10,6 +10,7 @@ exports[`palette component should match current snapshot of palette component 1`
   onDraggableMoved={[Function Function]}
   onDrop={[Function Function]}
   onSearchChanged={[Function Function]}
+  openAccordion="false"
   position={[Function Point]}
 >
   <div
