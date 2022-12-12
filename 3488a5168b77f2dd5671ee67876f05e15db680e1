@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bc8ef10_1cab946b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3947,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-12T14:11:57Z",
+      "side": 1,
+      "message": "Im seeing this thrown when I try to set a value of a VFC instance property with constraint in the Properties Assignment page of a service when the provided value is valid",
+      "revId": "3488a5168b77f2dd5671ee67876f05e15db680e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
