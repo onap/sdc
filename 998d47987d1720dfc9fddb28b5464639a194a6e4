@@ -46,6 +46,30 @@
       "revId": "998d47987d1720dfc9fddb28b5464639a194a6e4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fcde7bc6_99b3bfff",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/PatternConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-12T12:45:28Z",
+      "side": 1,
+      "message": "I would prefer to create specific case for pattern than represent it as object when it should be string",
+      "parentUuid": "bd0b9747_f28a92d6",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 27
+      },
+      "revId": "998d47987d1720dfc9fddb28b5464639a194a6e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
