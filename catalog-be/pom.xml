@@ -1258,8 +1258,8 @@
                         </goals>
                         <configuration>
                             <contextId>sdce-2-sdce-5</contextId>
-                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
-                            <outputFileName>swagger-sdce-2-sdce-5</outputFileName>
+                            <outputPath>${project.build.directory}/generated/openapi</outputPath>
+                            <outputFileName>openapi-sdce-2-sdce-5</outputFileName>
                             <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-2-sdce-5.yaml
@@ -1275,8 +1275,8 @@
                         </goals>
                         <configuration>
                             <contextId>sdce-4</contextId>
-                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
-                            <outputFileName>swagger-sdce-4</outputFileName>
+                            <outputPath>${project.build.directory}/generated/openapi</outputPath>
+                            <outputFileName>openapi-sdce-4</outputFileName>
                             <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-4.yaml
@@ -1292,8 +1292,8 @@
                         </goals>
                         <configuration>
                             <contextId>sdce-6</contextId>
-                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
-                            <outputFileName>swagger-sdce-6</outputFileName>
+                            <outputPath>${project.build.directory}/generated/openapi</outputPath>
+                            <outputFileName>openapi-sdce-6</outputFileName>
                             <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-6.yaml
@@ -1309,8 +1309,8 @@
                         </goals>
                         <configuration>
                             <contextId>sdce-7</contextId>
-                            <outputPath>${project.build.directory}/generated/swagger</outputPath>
-                            <outputFileName>swagger-sdce-7</outputFileName>
+                            <outputPath>${project.build.directory}/generated/openapi</outputPath>
+                            <outputFileName>openapi-sdce-7</outputFileName>
                             <outputFormat>JSONANDYAML</outputFormat>
                             <configurationFilePath>
                                 ${project.basedir}/src/main/resources/swagger-config/sdce-7.yaml
