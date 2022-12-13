@@ -296,7 +296,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -412,7 +413,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -535,7 +537,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -1347,7 +1350,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -2642,7 +2646,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -3014,7 +3019,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -3253,7 +3259,8 @@
                   }
                 }
               }
-            }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -3397,6 +3404,79 @@
           "variables" : { }
         } ],
         "tags" : [ "SDCE-7 APIs" ]
+      }
+    },
+    "/v1/distributionKafkaData" : {
+      "get" : {
+        "description" : "Kafka data",
+        "operationId" : "getKafkaData",
+        "parameters" : [ {
+          "description" : "X-ECOMP-RequestID header",
+          "in" : "header",
+          "name" : "X-ECOMP-RequestID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "X-ECOMP-InstanceID header",
+          "in" : "header",
+          "name" : "X-ECOMP-InstanceID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Determines the format of the body of the response",
+          "in" : "header",
+          "name" : "Accept",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The username and password",
+          "in" : "header",
+          "name" : "Authorization",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/KafkaDataResponse"
+                  }
+                }
+              }
+            },
+            "description" : "ECOMP component is authenticated and kafka endpoint and topic list is returned"
+          },
+          "400" : {
+            "description" : "Missing 'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          },
+          "401" : {
+            "description" : "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"
+          },
+          "403" : {
+            "description" : "ECOMP component is not authorized - POL5003"
+          },
+          "405" : {
+            "description" : "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
+          },
+          "500" : {
+            "description" : "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc",
+          "variables" : { }
+        } ],
+        "summary" : "return the kafka cluster and topic list",
+        "tags" : [ "SDCE-6 APIs" ]
       }
     }
   },
@@ -3636,6 +3716,12 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyDataDefinition"
+            }
+          },
           "requiredArtifacts" : {
             "type" : "array",
             "items" : {
@@ -3792,6 +3878,12 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyDataDefinition"
+            }
+          },
           "requiredArtifacts" : {
             "type" : "array",
             "items" : {
@@ -3866,6 +3958,9 @@
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
           },
+          "getOutputAttribute" : {
+            "type" : "boolean"
+          },
           "getOutputValues" : {
             "type" : "array",
             "items" : {
@@ -3902,6 +3997,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -3943,7 +4041,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "tosca_id" : {
             "type" : "object"
@@ -4148,6 +4246,9 @@
       "CategoryDefinition" : {
         "type" : "object",
         "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
           "empty" : {
             "type" : "boolean"
           },
@@ -4161,6 +4262,12 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/MetadataKeyDataDefinition"
+            }
+          },
+          "models" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
             }
           },
           "name" : {
@@ -4293,6 +4400,9 @@
               "$ref" : "#/components/schemas/InputDefinition"
             }
           },
+          "instanceCount" : {
+            "type" : "string"
+          },
           "interfaces" : {
             "type" : "object",
             "additionalProperties" : {
@@ -4304,6 +4414,12 @@
           },
           "isProxy" : {
             "type" : "boolean"
+          },
+          "maxOccurrences" : {
+            "type" : "string"
+          },
+          "minOccurrences" : {
+            "type" : "string"
           },
           "modificationTime" : {
             "type" : "integer",
@@ -4419,6 +4535,9 @@
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
           },
+          "getOutputAttribute" : {
+            "type" : "boolean"
+          },
           "getOutputValues" : {
             "type" : "array",
             "items" : {
@@ -4467,6 +4586,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -4640,6 +4762,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -4649,6 +4783,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -4721,6 +4858,9 @@
           "uniqueId" : {
             "type" : "string"
           },
+          "userCreated" : {
+            "type" : "boolean"
+          },
           "version" : {
             "type" : "string"
           }
@@ -4729,14 +4869,11 @@
       "ComponentInstanceOutput" : {
         "type" : "object",
         "properties" : {
+          "attribute" : {
+            "$ref" : "#/components/schemas/ComponentInstanceAttribute"
+          },
           "attributeId" : {
             "type" : "string"
-          },
-          "attributes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ComponentInstanceAttribute"
-            }
           },
           "componentInstanceId" : {
             "type" : "string"
@@ -4758,6 +4895,9 @@
           },
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
+          },
+          "getOutputAttribute" : {
+            "type" : "boolean"
           },
           "getOutputValues" : {
             "type" : "array",
@@ -4807,6 +4947,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -4967,6 +5110,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -4976,6 +5131,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -5627,6 +5785,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -5636,6 +5806,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -5785,6 +5958,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -5794,6 +5979,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -5857,6 +6045,9 @@
           "uniqueId" : {
             "type" : "string"
           },
+          "userCreated" : {
+            "type" : "boolean"
+          },
           "version" : {
             "type" : "string"
           }
@@ -5891,6 +6082,20 @@
             "type" : "string"
           },
           "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "KafkaDataResponse" : {
+        "type" : "object",
+        "properties" : {
+          "distrNotificationTopicName" : {
+            "type" : "string"
+          },
+          "distrStatusTopicName" : {
+            "type" : "string"
+          },
+          "kafkaBootStrapServer" : {
             "type" : "string"
           }
         }
@@ -5949,7 +6154,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementNodeFilterCapabilityDataDefinition" : {
+      "ListDataDefinitionPropertyFilterDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -5958,7 +6163,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementNodeFilterCapabilityDataDefinition"
+              "$ref" : "#/components/schemas/PropertyFilterDataDefinition"
             }
           },
           "ownerId" : {
@@ -5976,7 +6181,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementNodeFilterPropertyDataDefinition" : {
+      "ListDataDefinitionRequirementNodeFilterCapabilityDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -5985,7 +6190,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementNodeFilterPropertyDataDefinition"
+              "$ref" : "#/components/schemas/RequirementNodeFilterCapabilityDataDefinition"
             }
           },
           "ownerId" : {
@@ -6030,7 +6235,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementSubstitutionFilterPropertyDataDefinition" : {
+      "ListDataDefinitionSubstitutionFilterPropertyDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -6039,7 +6244,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementSubstitutionFilterPropertyDataDefinition"
+              "$ref" : "#/components/schemas/SubstitutionFilterPropertyDataDefinition"
             }
           },
           "ownerId" : {
@@ -6061,6 +6266,9 @@
         "type" : "object",
         "properties" : {
           "defaultValue" : {
+            "type" : "string"
+          },
+          "displayName" : {
             "type" : "string"
           },
           "empty" : {
@@ -6290,8 +6498,20 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
           "toscaDefaultValue" : {
             "type" : "string"
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
           },
           "toscaGetFunctionType" : {
             "type" : "string",
@@ -6302,6 +6522,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -6440,6 +6663,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -6449,6 +6684,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -6462,7 +6700,7 @@
         "type" : "object",
         "properties" : {
           "implementation" : {
-            "type" : "string"
+            "type" : "object"
           },
           "inputs" : {
             "type" : "array",
@@ -6481,14 +6719,11 @@
       "OutputDefinition" : {
         "type" : "object",
         "properties" : {
+          "attribute" : {
+            "$ref" : "#/components/schemas/ComponentInstanceAttribute"
+          },
           "attributeId" : {
             "type" : "string"
-          },
-          "attributes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ComponentInstanceAttribute"
-            }
           },
           "defaultValue" : {
             "type" : "string"
@@ -6504,6 +6739,9 @@
           },
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
+          },
+          "getOutputAttribute" : {
+            "type" : "boolean"
           },
           "getOutputValues" : {
             "type" : "array",
@@ -6541,6 +6779,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -6707,6 +6948,12 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
           "targets" : {
             "type" : "object",
             "additionalProperties" : {
@@ -6715,6 +6962,12 @@
                 "type" : "string"
               }
             }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
           },
           "toscaGetFunctionType" : {
             "type" : "string",
@@ -6725,6 +6978,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -6866,6 +7122,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -6875,6 +7143,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -7005,6 +7276,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -7015,7 +7298,66 @@
           "uniqueId" : {
             "type" : "string"
           },
+          "userCreated" : {
+            "type" : "boolean"
+          },
           "value" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PropertyFilterConstraintDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "capabilityName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "EQUAL", "IN_RANGE", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_OR_EQUAL", "LENGTH", "MIN_LENGTH", "MAX_LENGTH", "VALID_VALUES", "LESS_THAN", "PATTERN", "SCHEMA" ]
+          },
+          "propertyName" : {
+            "type" : "string"
+          },
+          "targetType" : {
+            "type" : "string",
+            "enum" : [ "CAPABILITY", "PROPERTY" ]
+          },
+          "value" : {
+            "type" : "object"
+          },
+          "valueType" : {
+            "type" : "string",
+            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CONCAT" ]
+          }
+        }
+      },
+      "PropertyFilterDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyFilterConstraintDataDefinition"
+            }
+          },
+          "empty" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "ownerId" : {
+            "type" : "string"
+          },
+          "ownerIdIfEmpty" : {
+            "type" : "string",
+            "writeOnly" : true
+          },
+          "type" : {
             "type" : "string"
           },
           "version" : {
@@ -7271,37 +7613,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "version" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RequirementNodeFilterPropertyDataDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "constraints" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "ownerId" : {
-            "type" : "string"
-          },
-          "ownerIdIfEmpty" : {
-            "type" : "string",
-            "writeOnly" : true
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "type" : {
             "type" : "string"
@@ -7328,37 +7640,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "version" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RequirementSubstitutionFilterPropertyDataDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "constraints" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "ownerId" : {
-            "type" : "string"
-          },
-          "ownerIdIfEmpty" : {
-            "type" : "string",
-            "writeOnly" : true
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "type" : {
             "type" : "string"
@@ -7826,6 +8108,20 @@
           }
         }
       },
+      "SubPropertyToscaFunction" : {
+        "type" : "object",
+        "properties" : {
+          "subPropertyPath" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          }
+        }
+      },
       "SubstitutionFilterDataDefinition" : {
         "type" : "object",
         "properties" : {
@@ -7849,10 +8145,40 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementSubstitutionFilterPropertyDataDefinition"
+            "$ref" : "#/components/schemas/ListDataDefinitionSubstitutionFilterPropertyDataDefinition"
           },
           "tosca_id" : {
             "type" : "object"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SubstitutionFilterPropertyDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyFilterConstraintDataDefinition"
+            }
+          },
+          "empty" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "ownerId" : {
+            "type" : "string"
+          },
+          "ownerIdIfEmpty" : {
+            "type" : "string",
+            "writeOnly" : true
           },
           "type" : {
             "type" : "string"
@@ -7868,8 +8194,64 @@
           "file" : {
             "type" : "string"
           },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          },
           "type" : {
             "type" : "string"
+          }
+        }
+      },
+      "ToscaFunction" : {
+        "type" : "object",
+        "properties" : {
+          "jsonObjectValue" : {
+            "type" : "object"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ToscaGetFunctionDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "functionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
+          "propertyName" : {
+            "type" : "string"
+          },
+          "propertyPathFromSource" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "propertySource" : {
+            "type" : "string",
+            "enum" : [ "SELF", "INSTANCE" ]
+          },
+          "propertyUniqueId" : {
+            "type" : "string"
+          },
+          "sourceName" : {
+            "type" : "string"
+          },
+          "sourceUniqueId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
           }
         }
       }
