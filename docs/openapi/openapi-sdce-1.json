@@ -54,6 +54,34 @@
         }
       }
     },
+    "/v1.0/actuator/prometheus" : {
+      "get" : {
+        "description" : "Gets the prometheus micrometer application metrics",
+        "operationId" : "prometheusMetrics",
+        "parameters" : [ {
+          "description" : "The Accept header to determine the output content type",
+          "in" : "header",
+          "name" : "Accept",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "summary" : "Prometheus Micrometer Metrics",
+        "tags" : [ "SDCE-1 APIs" ]
+      }
+    },
     "/v1.0/application-configuration" : {
       "post" : {
         "description" : "Insert JSON schema into application config table",
@@ -3382,6 +3410,33 @@
     "/v1.0/vendor-software-products/{vspId}" : {
       "delete" : {
         "operationId" : "deleteVsp",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "vspId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "application/json" : { }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "SDCE-1 APIs", "Vendor Software Products" ]
+      },
+      "get" : {
+        "operationId" : "getLatestVsp",
         "parameters" : [ {
           "in" : "path",
           "name" : "vspId",
@@ -6967,6 +7022,80 @@
         "tags" : [ "SDCE-1 APIs", "Orchestration Template Candidate" ]
       }
     },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate/upload" : {
+      "get" : {
+        "operationId" : "getLatestStatus",
+        "parameters" : [ {
+          "description" : "Vendor Software Product id",
+          "in" : "path",
+          "name" : "vspId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Vendor Software Product version id",
+          "in" : "path",
+          "name" : "versionId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "application/json" : { }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "SDCE-1 APIs", "Package Upload Manager" ]
+      },
+      "post" : {
+        "operationId" : "createUploadLock",
+        "parameters" : [ {
+          "description" : "Vendor Software Product id",
+          "in" : "path",
+          "name" : "vspId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Vendor Software Product version id",
+          "in" : "path",
+          "name" : "versionId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "application/json" : { }
+            },
+            "description" : "default response"
+          }
+        },
+        "tags" : [ "SDCE-1 APIs", "Package Upload Manager" ]
+      }
+    },
     "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes" : {
       "delete" : {
         "description" : "Delete vendor software product processes",
@@ -8634,9 +8763,6 @@
           "expiryDate" : {
             "type" : "string"
           },
-          "getversionUUID" : {
-            "type" : "string"
-          },
           "id" : {
             "type" : "string"
           },
@@ -8679,6 +8805,9 @@
           "type" : {
             "type" : "string",
             "enum" : [ "Universal", "Unique", "One_Time" ]
+          },
+          "versionUUID" : {
+            "type" : "string"
           }
         },
         "required" : [ "manufacturerReferenceNumber", "name", "type" ]
@@ -9800,6 +9929,13 @@
           "displayName" : {
             "type" : "string"
           },
+          "models" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "uniqueItems" : true
+          },
           "packageChecksum" : {
             "type" : "string"
           },
@@ -9822,6 +9958,9 @@
             "type" : "string"
           },
           "version" : {
+            "type" : "string"
+          },
+          "versionId" : {
             "type" : "string"
           },
           "vspName" : {
@@ -10153,6 +10292,12 @@
           "name" : {
             "type" : "string"
           },
+          "selectedModelList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "subCategory" : {
             "type" : "string"
           },
@@ -10209,6 +10354,12 @@
           "owner" : {
             "type" : "string"
           },
+          "selectedModelList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "status" : {
             "type" : "string"
           },
@@ -10257,6 +10408,12 @@
           },
           "onboardingMethod" : {
             "type" : "string"
+          },
+          "selectedModelList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           },
           "subCategory" : {
             "type" : "string"

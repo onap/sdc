@@ -310,8 +310,8 @@
                 <version>${swagger-core-mvn-plugin.version}</version>
                 <configuration>
                     <outputPath>${project.build.directory}/generated/swagger-ui</outputPath>
-                    <outputFileName>swagger-sdce-1</outputFileName>
-                    <outputFormat>JSON</outputFormat>
+                    <outputFileName>openapi-sdce-1</outputFileName>
+                    <outputFormat>JSONANDYAML</outputFormat>
                     <configurationFilePath>
                         ${project.basedir}/src/main/resources/swagger-config.yaml
                     </configurationFilePath>

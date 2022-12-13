@@ -19,6 +19,38 @@
     "url" : "/sdc"
   } ],
   "paths" : {
+    "/actuator/prometheus" : {
+      "get" : {
+        "description" : "Gets the prometheus micrometer application metrics",
+        "operationId" : "prometheus",
+        "parameters" : [ {
+          "description" : "The Accept header to determine the output content type",
+          "in" : "header",
+          "name" : "Accept",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "default response"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Prometheus Micrometer Metrics",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/config/get" : {
       "get" : {
         "description" : "Retrieve configuration",
@@ -261,6 +293,297 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/allDataTypes" : {
+      "get" : {
+        "description" : "Get data types",
+        "operationId" : "getAllDataTypesFromAllModels",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "allDataTypes"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data types not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns all data types from all models",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/archive" : {
       "get" : {
         "description" : "Get all Archived Components",
@@ -303,6 +626,304 @@
           "variables" : { }
         } ],
         "summary" : "Get all Archived Components",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/artifactTypes" : {
+      "get" : {
+        "description" : "Get Tosca ArtifactTypes",
+        "operationId" : "getAllToscaArtifactTypes",
+        "parameters" : [ {
+          "description" : "Model name",
+          "in" : "query",
+          "name" : "model",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Listing successful"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Tosca Artifact Types not found"
+          },
+          "default" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns tosca artifact types",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -900,6 +1521,155 @@
           "variables" : { }
         } ],
         "summary" : "Returns capability types",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/data-types/{dataTypeUid}" : {
+      "get" : {
+        "description" : "Get data types",
+        "operationId" : "fetchDataType",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "dataTypeUid",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Data type found"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data types not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataTypeDataDefinition"
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns data types",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/data-types/{id}/properties" : {
+      "get" : {
+        "description" : "Get a data type properties",
+        "operationId" : "fetchProperties",
+        "parameters" : [ {
+          "description" : "The data type id",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Data type found, properties may be empty"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data type not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PropertyDefinition"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns the data type properties",
+        "tags" : [ "SDCE-2 APIs" ]
+      },
+      "post" : {
+        "description" : "Create a property in the given data type",
+        "operationId" : "createProperty",
+        "parameters" : [ {
+          "description" : "The data type id",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyDefinitionDto"
+              }
+            }
+          },
+          "description" : "Property to add",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Property created in the data type"
+          },
+          "400" : {
+            "description" : "Invalid payload"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data type not found"
+          },
+          "409" : {
+            "description" : "Property already exists in the data type"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyDefinitionDto"
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Create a property in the given data type",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -3118,6 +3888,13 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -4243,6 +5020,302 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/resources/{componentId}/interfaceOperation" : {
+      "put" : {
+        "description" : "Update Interface Operation",
+        "operationId" : "updateResourceInterfaceOperation",
+        "parameters" : [ {
+          "description" : "Component Id",
+          "in" : "path",
+          "name" : "componentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Update Interface Operation"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Update Interface Operation on ComponentInstance",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/resources/{componentId}/restore" : {
       "post" : {
         "description" : "Restore Resource",
@@ -4307,6 +5380,14 @@
           "required" : true,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "description" : "Optional parameter to determine the delete action: DELETE, which will permanently delete the Resource from the system or MARK_AS_DELETE, which will logically mark the Resource as deleted. Default action is to MARK_AS_DELETE",
+          "in" : "query",
+          "name" : "deleteAction",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "MARK_AS_DELETE", "DELETE" ]
           }
         } ],
         "responses" : {
@@ -13102,6 +14183,14 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "description" : "Optional parameter to determine the delete action: DELETE, which will permanently delete theService from the system or MARK_AS_DELETE, which will logically mark the service as deleted. Default action is to MARK_AS_DELETE",
+          "in" : "query",
+          "name" : "deleteAction",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "DELETE", "MARK_AS_DELETE" ]
+          }
         } ],
         "responses" : {
           "204" : {
@@ -21726,6 +22815,321 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/upload/resource/import" : {
+      "post" : {
+        "description" : "Import node types from a TOSCA yaml, along with the types metadata",
+        "operationId" : "bulkImport",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "createNewVersion" : {
+                    "type" : "boolean",
+                    "default" : true,
+                    "description" : "The model name to associate the node types to"
+                  },
+                  "nodeTypeMetadataJson" : {
+                    "$ref" : "#/components/schemas/NodeTypesMetadataList"
+                  },
+                  "nodeTypesYaml" : {
+                    "type" : "object",
+                    "description" : "The node types TOSCA definition yaml"
+                  }
+                },
+                "required" : [ "nodeTypeMetadataJson", "nodeTypesYaml" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Resources created"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "409" : {
+            "description" : "One of the resources already exists"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Creates node types from a TOSCA yaml file",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/upload/{resourceAuthority}" : {
       "post" : {
         "description" : "Create Resource from yaml",
@@ -22355,6 +23759,321 @@
           "variables" : { }
         } ],
         "summary" : "Returns created annotation types",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/uploadType/artifactTypes" : {
+      "post" : {
+        "description" : "Create Tosca Artifact types from yaml",
+        "operationId" : "uploadArtifactTypes",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "artifactsZip" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "description" : "Zip file containing a yaml with the TOSCA artifact types definition"
+                  },
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "A flag to add types to the default imports"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Tosca Artifact types created"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "409" : {
+            "description" : "Tosca Artifact Type already exist"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns created Tosca artifact types",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -25476,6 +27195,10 @@
             }
           }
         },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
         "summary" : "Update Interface Operation on ComponentInstance",
         "tags" : [ "SDCE-2 APIs" ]
       }
@@ -28035,6 +29758,311 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/{componentType}/{componentId}/resource/interfaceOperation" : {
+      "post" : {
+        "description" : "Create Interface Operation",
+        "operationId" : "createInterfaceOperationInResource",
+        "parameters" : [ {
+          "description" : "valid values: resources",
+          "in" : "path",
+          "name" : "componentType",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "resources" ]
+          }
+        }, {
+          "description" : "Component Id",
+          "in" : "path",
+          "name" : "componentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Create Interface Operation"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Create Interface Operation on ComponentInstance",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/{componentType}/{componentId}/substitutionFilter/{constraintType}" : {
       "post" : {
         "description" : "Add Component Substitution Filter Constraint",
@@ -28357,7 +30385,7 @@
       },
       "put" : {
         "description" : "Update Component Substitution Filter Constraint",
-        "operationId" : "updateSubstitutionFilter",
+        "operationId" : "updateSubstitutionFilters",
         "parameters" : [ {
           "description" : "Component Id",
           "in" : "path",
@@ -28991,6 +31019,334 @@
           }
         },
         "summary" : "Delete Component Substitution Filter Constraint",
+        "tags" : [ "SDCE-2 APIs" ]
+      },
+      "put" : {
+        "description" : "Update Component Substitution Filter Constraint",
+        "operationId" : "updateSubstitutionFilter",
+        "parameters" : [ {
+          "description" : "Constraint Index",
+          "in" : "path",
+          "name" : "constraintIndex",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Component Id",
+          "in" : "path",
+          "name" : "componentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The component type",
+          "in" : "path",
+          "name" : "componentType",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "services", "resources" ]
+          }
+        }, {
+          "description" : "Constraint type. Valid values: properties / capabilities",
+          "in" : "path",
+          "name" : "constraintType",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "properties", "capabilities" ]
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UIConstraint"
+              }
+            }
+          },
+          "description" : "Filter constraint information",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Update Substitution Filter Constraint"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Update Component Substitution Filter Constraint",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -45759,6 +48115,12 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyDataDefinition"
+            }
+          },
           "requiredArtifacts" : {
             "type" : "array",
             "items" : {
@@ -45915,6 +48277,12 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyDataDefinition"
+            }
+          },
           "requiredArtifacts" : {
             "type" : "array",
             "items" : {
@@ -45969,6 +48337,9 @@
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
           },
+          "getOutputAttribute" : {
+            "type" : "boolean"
+          },
           "getOutputValues" : {
             "type" : "array",
             "items" : {
@@ -46005,6 +48376,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -46078,7 +48452,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "tosca_id" : {
             "type" : "object"
@@ -46469,9 +48843,29 @@
           }
         }
       },
+      "CategoryBaseTypeConfig" : {
+        "type" : "object",
+        "properties" : {
+          "baseTypes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "defaultBaseType" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "CategoryDefinition" : {
         "type" : "object",
         "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
           "empty" : {
             "type" : "boolean"
           },
@@ -46485,6 +48879,12 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/MetadataKeyDataDefinition"
+            }
+          },
+          "models" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
             }
           },
           "name" : {
@@ -46632,6 +49032,9 @@
               "$ref" : "#/components/schemas/InputDefinition"
             }
           },
+          "instanceCount" : {
+            "type" : "string"
+          },
           "interfaces" : {
             "type" : "object",
             "additionalProperties" : {
@@ -46643,6 +49046,12 @@
           },
           "isProxy" : {
             "type" : "boolean"
+          },
+          "maxOccurrences" : {
+            "type" : "string"
+          },
+          "minOccurrences" : {
+            "type" : "string"
           },
           "modificationTime" : {
             "type" : "integer",
@@ -46758,6 +49167,9 @@
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
           },
+          "getOutputAttribute" : {
+            "type" : "boolean"
+          },
           "getOutputValues" : {
             "type" : "array",
             "items" : {
@@ -46806,6 +49218,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -47013,6 +49428,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -47022,6 +49449,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -47094,6 +49524,9 @@
           "uniqueId" : {
             "type" : "string"
           },
+          "userCreated" : {
+            "type" : "boolean"
+          },
           "version" : {
             "type" : "string"
           }
@@ -47102,14 +49535,11 @@
       "ComponentInstanceOutput" : {
         "type" : "object",
         "properties" : {
+          "attribute" : {
+            "$ref" : "#/components/schemas/ComponentInstanceAttribute"
+          },
           "attributeId" : {
             "type" : "string"
-          },
-          "attributes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ComponentInstanceAttribute"
-            }
           },
           "componentInstanceId" : {
             "type" : "string"
@@ -47131,6 +49561,9 @@
           },
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
+          },
+          "getOutputAttribute" : {
+            "type" : "boolean"
           },
           "getOutputValues" : {
             "type" : "array",
@@ -47180,6 +49613,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -47340,6 +49776,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -47349,6 +49797,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -47442,8 +49893,17 @@
               }
             }
           },
+          "componentInstanceCounterDelimiter" : {
+            "type" : "string"
+          },
           "consumerBusinessLogic" : {
             "type" : "boolean"
+          },
+          "csarFormat" : {
+            "$ref" : "#/components/schemas/CsarFormat"
+          },
+          "dataValidatorFilterExcludedUrls" : {
+            "type" : "string"
           },
           "defaultImports" : {
             "type" : "array",
@@ -47544,6 +50004,9 @@
               "uniqueItems" : true
             }
           },
+          "externalCsarStore" : {
+            "$ref" : "#/components/schemas/ExternalCsarStore"
+          },
           "gabConfig" : {
             "type" : "array",
             "items" : {
@@ -47641,6 +50104,9 @@
           "onboarding" : {
             "$ref" : "#/components/schemas/OnboardingConfig"
           },
+          "permittedAncestors" : {
+            "type" : "string"
+          },
           "protocols" : {
             "type" : "array",
             "items" : {
@@ -47681,10 +50147,10 @@
               "type" : "object"
             }
           },
-          "serviceNodeTypes" : {
+          "serviceBaseNodeTypes" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/CategoryBaseTypeConfig"
             }
           },
           "skipUpgradeFailedVfs" : {
@@ -47897,6 +50363,75 @@
             "type" : "string"
           },
           "username" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Credentials" : {
+        "type" : "object",
+        "properties" : {
+          "accessKey" : {
+            "type" : "string"
+          },
+          "secretKey" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CsarFormat" : {
+        "type" : "object",
+        "properties" : {
+          "defaultFormat" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DataTypeDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "creationTime" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "derivedFromName" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "empty" : {
+            "type" : "boolean"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "modificationTime" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "ownerId" : {
+            "type" : "string"
+          },
+          "ownerIdIfEmpty" : {
+            "type" : "string",
+            "writeOnly" : true
+          },
+          "propertiesData" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyDataDefinition"
+            }
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "uniqueId" : {
+            "type" : "string"
+          },
+          "version" : {
             "type" : "string"
           }
         }
@@ -48242,6 +50777,21 @@
           }
         }
       },
+      "Endpoint" : {
+        "type" : "object",
+        "properties" : {
+          "host" : {
+            "type" : "string"
+          },
+          "port" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "secure" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "EntrySchema" : {
         "type" : "object",
         "properties" : {
@@ -48270,6 +50820,27 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "ExternalCsarStore" : {
+        "type" : "object",
+        "properties" : {
+          "credentials" : {
+            "$ref" : "#/components/schemas/Credentials"
+          },
+          "endpoint" : {
+            "$ref" : "#/components/schemas/Endpoint"
+          },
+          "storageType" : {
+            "type" : "string"
+          },
+          "tempPath" : {
+            "type" : "string"
+          },
+          "uploadPartSize" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -48839,6 +51410,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -48848,6 +51431,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -49168,6 +51754,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -49177,6 +51775,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -49326,6 +51927,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -49335,6 +51948,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -49397,6 +52013,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "version" : {
             "type" : "string"
@@ -49534,7 +52153,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementNodeFilterCapabilityDataDefinition" : {
+      "ListDataDefinitionPropertyFilterDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -49543,7 +52162,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementNodeFilterCapabilityDataDefinition"
+              "$ref" : "#/components/schemas/PropertyFilterDataDefinition"
             }
           },
           "ownerId" : {
@@ -49561,7 +52180,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementNodeFilterPropertyDataDefinition" : {
+      "ListDataDefinitionRequirementNodeFilterCapabilityDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -49570,7 +52189,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementNodeFilterPropertyDataDefinition"
+              "$ref" : "#/components/schemas/RequirementNodeFilterCapabilityDataDefinition"
             }
           },
           "ownerId" : {
@@ -49615,7 +52234,7 @@
           }
         }
       },
-      "ListDataDefinitionRequirementSubstitutionFilterPropertyDataDefinition" : {
+      "ListDataDefinitionSubstitutionFilterPropertyDataDefinition" : {
         "type" : "object",
         "properties" : {
           "empty" : {
@@ -49624,7 +52243,7 @@
           "listToscaDataDefinition" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/RequirementSubstitutionFilterPropertyDataDefinition"
+              "$ref" : "#/components/schemas/SubstitutionFilterPropertyDataDefinition"
             }
           },
           "ownerId" : {
@@ -49646,6 +52265,9 @@
         "type" : "object",
         "properties" : {
           "defaultValue" : {
+            "type" : "string"
+          },
+          "displayName" : {
             "type" : "string"
           },
           "empty" : {
@@ -49709,7 +52331,7 @@
             "minLength" : 2
           }
         },
-        "required" : [ "name" ]
+        "required" : [ "modelType", "name" ]
       },
       "NameIdPair" : {
         "type" : "object",
@@ -49785,10 +52407,77 @@
           }
         }
       },
+      "NodeTypeMetadata" : {
+        "type" : "object",
+        "properties" : {
+          "categories" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CategoryDefinition"
+            }
+          },
+          "contactId" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "icon" : {
+            "type" : "string"
+          },
+          "model" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "normative" : {
+            "type" : "boolean"
+          },
+          "resourceIconPath" : {
+            "type" : "string"
+          },
+          "resourceType" : {
+            "type" : "string"
+          },
+          "resourceVendorModelNumber" : {
+            "type" : "string"
+          },
+          "tags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "toscaName" : {
+            "type" : "string"
+          },
+          "vendorName" : {
+            "type" : "string"
+          },
+          "vendorRelease" : {
+            "type" : "string"
+          }
+        }
+      },
+      "NodeTypesMetadataList" : {
+        "type" : "object",
+        "properties" : {
+          "nodeMetadataList" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/NodeTypeMetadata"
+            }
+          }
+        }
+      },
       "OnboardingConfig" : {
         "type" : "object",
         "properties" : {
           "getLatestVspPackageUri" : {
+            "type" : "string"
+          },
+          "getLatestVspUri" : {
             "type" : "string"
           },
           "getVspPackageUri" : {
@@ -50009,8 +52698,20 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
           "toscaDefaultValue" : {
             "type" : "string"
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
           },
           "toscaGetFunctionType" : {
             "type" : "string",
@@ -50021,6 +52722,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -50159,6 +52863,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -50168,6 +52884,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -50181,7 +52900,7 @@
         "type" : "object",
         "properties" : {
           "implementation" : {
-            "type" : "string"
+            "type" : "object"
           },
           "inputs" : {
             "type" : "array",
@@ -50200,14 +52919,11 @@
       "OutputDefinition" : {
         "type" : "object",
         "properties" : {
+          "attribute" : {
+            "$ref" : "#/components/schemas/ComponentInstanceAttribute"
+          },
           "attributeId" : {
             "type" : "string"
-          },
-          "attributes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ComponentInstanceAttribute"
-            }
           },
           "defaultValue" : {
             "type" : "string"
@@ -50223,6 +52939,9 @@
           },
           "entry_schema" : {
             "$ref" : "#/components/schemas/EntrySchema"
+          },
+          "getOutputAttribute" : {
+            "type" : "boolean"
           },
           "getOutputValues" : {
             "type" : "array",
@@ -50260,6 +52979,9 @@
           },
           "schema" : {
             "$ref" : "#/components/schemas/SchemaDefinition"
+          },
+          "schemaType" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string"
@@ -50440,6 +53162,12 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
           "targets" : {
             "type" : "object",
             "additionalProperties" : {
@@ -50448,6 +53176,12 @@
                 "type" : "string"
               }
             }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
           },
           "toscaGetFunctionType" : {
             "type" : "string",
@@ -50458,6 +53192,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -50681,6 +53418,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -50690,6 +53439,9 @@
           },
           "uniqueId" : {
             "type" : "string"
+          },
+          "userCreated" : {
+            "type" : "boolean"
           },
           "value" : {
             "type" : "string"
@@ -50820,6 +53572,18 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "subPropertyToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubPropertyToscaFunction"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          },
+          "toscaGetFunction" : {
+            "$ref" : "#/components/schemas/ToscaGetFunctionDataDefinition"
+          },
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
@@ -50830,7 +53594,101 @@
           "uniqueId" : {
             "type" : "string"
           },
+          "userCreated" : {
+            "type" : "boolean"
+          },
           "value" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PropertyDefinitionDto" : {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyConstraint"
+            }
+          },
+          "defaultValue" : {
+            "type" : "object"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
+          },
+          "schemaType" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "uniqueId" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "object"
+          }
+        }
+      },
+      "PropertyFilterConstraintDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "capabilityName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "EQUAL", "IN_RANGE", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_OR_EQUAL", "LENGTH", "MIN_LENGTH", "MAX_LENGTH", "VALID_VALUES", "LESS_THAN", "PATTERN", "SCHEMA" ]
+          },
+          "propertyName" : {
+            "type" : "string"
+          },
+          "targetType" : {
+            "type" : "string",
+            "enum" : [ "CAPABILITY", "PROPERTY" ]
+          },
+          "value" : {
+            "type" : "object"
+          },
+          "valueType" : {
+            "type" : "string",
+            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CONCAT" ]
+          }
+        }
+      },
+      "PropertyFilterDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyFilterConstraintDataDefinition"
+            }
+          },
+          "empty" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "ownerId" : {
+            "type" : "string"
+          },
+          "ownerIdIfEmpty" : {
+            "type" : "string",
+            "writeOnly" : true
+          },
+          "type" : {
             "type" : "string"
           },
           "version" : {
@@ -51117,37 +53975,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "version" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RequirementNodeFilterPropertyDataDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "constraints" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "ownerId" : {
-            "type" : "string"
-          },
-          "ownerIdIfEmpty" : {
-            "type" : "string",
-            "writeOnly" : true
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "type" : {
             "type" : "string"
@@ -51174,37 +54002,7 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementNodeFilterPropertyDataDefinition"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "version" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RequirementSubstitutionFilterPropertyDataDefinition" : {
-        "type" : "object",
-        "properties" : {
-          "constraints" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "empty" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "ownerId" : {
-            "type" : "string"
-          },
-          "ownerIdIfEmpty" : {
-            "type" : "string",
-            "writeOnly" : true
+            "$ref" : "#/components/schemas/ListDataDefinitionPropertyFilterDataDefinition"
           },
           "type" : {
             "type" : "string"
@@ -51953,6 +54751,9 @@
             "enum" : [ "CERTIFIED", "NOT_CERTIFIED_CHECKIN", "NOT_CERTIFIED_CHECKOUT" ],
             "writeOnly" : true
           },
+          "substituteCandidate" : {
+            "type" : "boolean"
+          },
           "substitutionFilter" : {
             "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
           },
@@ -52068,6 +54869,20 @@
           }
         }
       },
+      "SubPropertyToscaFunction" : {
+        "type" : "object",
+        "properties" : {
+          "subPropertyPath" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "toscaFunction" : {
+            "$ref" : "#/components/schemas/ToscaFunction"
+          }
+        }
+      },
       "SubstitutionFilterDataDefinition" : {
         "type" : "object",
         "properties" : {
@@ -52091,10 +54906,40 @@
             "writeOnly" : true
           },
           "properties" : {
-            "$ref" : "#/components/schemas/ListDataDefinitionRequirementSubstitutionFilterPropertyDataDefinition"
+            "$ref" : "#/components/schemas/ListDataDefinitionSubstitutionFilterPropertyDataDefinition"
           },
           "tosca_id" : {
             "type" : "object"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SubstitutionFilterPropertyDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyFilterConstraintDataDefinition"
+            }
+          },
+          "empty" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "ownerId" : {
+            "type" : "string"
+          },
+          "ownerIdIfEmpty" : {
+            "type" : "string",
+            "writeOnly" : true
           },
           "type" : {
             "type" : "string"
@@ -52160,8 +55005,64 @@
           "file" : {
             "type" : "string"
           },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object"
+            }
+          },
           "type" : {
             "type" : "string"
+          }
+        }
+      },
+      "ToscaFunction" : {
+        "type" : "object",
+        "properties" : {
+          "jsonObjectValue" : {
+            "type" : "object"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ToscaGetFunctionDataDefinition" : {
+        "type" : "object",
+        "properties" : {
+          "functionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
+          "propertyName" : {
+            "type" : "string"
+          },
+          "propertyPathFromSource" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "propertySource" : {
+            "type" : "string",
+            "enum" : [ "SELF", "INSTANCE" ]
+          },
+          "propertyUniqueId" : {
+            "type" : "string"
+          },
+          "sourceName" : {
+            "type" : "string"
+          },
+          "sourceUniqueId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
           }
         }
       },
@@ -52171,6 +55072,29 @@
           "stringMaxLength" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "UIConstraint" : {
+        "type" : "object",
+        "properties" : {
+          "capabilityName" : {
+            "type" : "string"
+          },
+          "constraintOperator" : {
+            "type" : "string"
+          },
+          "servicePropertyName" : {
+            "type" : "string"
+          },
+          "sourceName" : {
+            "type" : "string"
+          },
+          "sourceType" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "object"
           }
         }
       },
