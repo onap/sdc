@@ -201,30 +201,11 @@
                                      data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid), 'input-group' : editPropertyModel.property.addOn}">
                                     <span ng-if="editPropertyModel.property.addOn"
                                           class="input-group-addon">{{editPropertyModel.property.addOn}}</span>
-                                    <!-- Has Constraints -->
-                                    <select class="i-sdc-form-select"
-                                            data-tests-id="constraints"
-                                            ng-if="(editPropertyModel.property.constraints)"
-                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
 
-                                            data-ng-change="onValueChange()"
-                                            data-ng-model="editPropertyModel.property.value">
-                                        <!-- Get the default value in case exist -->
-                                        <option value="{{editPropertyModel.property.value}}" name="{{editPropertyModel.property.value}}" hidden
-                                                selected>
-                                            {{editPropertyModel.property.value}}
-                                        </option>
-                                        <!-- add all constratint to Select list -->
-                                        <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
-                                            {{value}}
-                                        </option>
-                                    </select>
-
-
-                                    <!-- No Constraints -->
+                                    <!-- Constraints any NOT Boolean -->
                                     <input class="i-sdc-form-input"
                                            data-tests-id="defaultvalue"
-                                           ng-if="!(editPropertyModel.property.constraints) && !((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
+                                           ng-if="!((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
                                            data-ng-maxlength="maxLength"
                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                            maxlength="{{maxLength}}"
@@ -235,7 +216,6 @@
                                            data-ng-model-options="{ debounce: 200 }"
                                            data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
                                                         ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value)) || onValueChange()))"
-                                           data-ng-change=""
                                            autofocus/>
                                     <!-- Boolean -->
                                     <select class="i-sdc-form-select"
