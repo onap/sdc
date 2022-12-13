@@ -89,11 +89,13 @@
                                 <copy todir="${basedir}/target/${plugin.name}/">
                                     <fileset dir="${rest.api.dir}/target/generated/swagger-ui/">
                                         <include name="*.json"/>
+                                        <include name="*.yaml"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${basedir}/target/${plugin.name}/">
-                                    <fileset dir="${catalog-be.api.dir}/target/generated/swagger/">
+                                    <fileset dir="${catalog-be.api.dir}/target/generated/openapi/">
                                         <include name="*.json"/>
+                                        <include name="*.yaml"/>
                                     </fileset>
                                 </copy>
                             </target>
