@@ -83,7 +83,11 @@ More flags to use in the build process are:
 ## Accessing SDC
 
 After having started SDC with the command `mvn clean install -P start-sdc`, you can access it by accessing this URL: `http://<ip_address>:8285/login`
+
+[Swagger UI](http://localhost:8080/swagger-ui/index.html) lists some endpoints available from catalog-BE. `http://<IP_ADDRESS>:8080/swagger-ui/index.html`
+
 As ONAP AAF is not present, the url provided uses the 8285 simulator ports, just click on the user you want to use for accessing SDC (i.e. Carlos Santana)
+
 For more information regarding using the webseal_simulator please refer to the following guide: [SDC Simulator](https://wiki.onap.org/display/DW/SDC+Simulator)
 
 ### SDC Containers
@@ -108,9 +112,9 @@ For further information and an image explaining the containers dependency map pl
 
 To access the logs, there are different options:
 * Connect to the docker container you want to inspect by doing `docker exec -it -u root sdc-XXXXXXXX-1 sh` 
-    Then look at the logs generally in /var/lib/jetty/logs or /var/log/onap (that may differ !)
+    * Then look at the logs generally in /var/lib/jetty/logs or /var/log/onap (that may differ !)
 * A volume is shared between the BE, onboard-BE and FE containers, this volume is mapped to `/tmp/sdc-integration-tests`,
-    In that folder you can obtain the logs of the different containers 
+    * In that folder you can obtain the logs of the different containers 
 
 ### Debugging SDC
 
@@ -124,6 +128,7 @@ It's therefore possible to connect your IDE to those debug ports remotely to wal
 
 ### Integration tests
 The integration are composed of 2 parts, one to test the BE Apis and another one to test the FE with selenium.
+
 The selenium tests make use of the selenium/standalone-firefox:2.53.1 container.
 
 About BE APIs tests, onboarding E2E flow :
