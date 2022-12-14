@@ -6,7 +6,7 @@ else
 end
 
 execute "create-jetty-modules" do
-  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,setuid"
+  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,setuid,rewrite"
   cwd "#{ENV['JETTY_BASE']}"
   action :run
 end
@@ -21,7 +21,15 @@ template "http-ini" do
     :http_option => http_option ,
     :http_port => "#{node['BE'][:http_port]}"
   })
-   
+
+end
+
+template "jetty-rewrite" do
+  path "#{ENV['JETTY_BASE']}/etc/rewrite-root-to-swagger-ui.xml"
+  source "BE-jetty-rewrite.yaml.erb"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
+  mode "0644"
 end
 
 
