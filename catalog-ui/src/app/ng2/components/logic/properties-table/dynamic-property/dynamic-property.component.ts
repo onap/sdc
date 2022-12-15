@@ -113,16 +113,15 @@ export class DynamicPropertyComponent {
     ngOnChanges() {
         this.propType = this.property.derivedDataType;
         this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
-        this.propertyTestsId = this.getPropertyTestsId(); 
+        this.rootProperty = (this.rootProperty) ? this.rootProperty : <PropertyFEModel>this.property;
+        this.propertyTestsId = this.getPropertyTestsId();
     }
-
 
     onClickPropertyRow = (property, event) => {
         // Because DynamicPropertyComponent is recrusive second time the event is fire event.stopPropagation = undefined
         event && event.stopPropagation && event.stopPropagation();
         this.clickOnPropertyRow.emit(property);
     }
-
 
     expandChildById = (id: string) => {
         this.expandedChildId = id;
