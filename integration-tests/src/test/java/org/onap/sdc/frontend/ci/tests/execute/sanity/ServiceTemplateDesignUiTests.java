@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
@@ -65,8 +65,8 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateDirectiveNodeFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateSubstitutionFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
-import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaTemplateFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
+import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaTemplateFlow;
 import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -78,9 +78,9 @@ import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal.InterfaceOperationsData.InputData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.RelationshipWizardInterfaceOperation.InterfaceOperationsData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
@@ -93,8 +93,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
-
-import com.aventstack.extentreports.Status;
 
 public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
@@ -142,7 +140,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     @Test(dependsOnMethods = "importAndCertifyVfc")
     public void createBaseService() {
         final CreateVfFlow createVfFlow = createVF();
-       resourceCreatePage = createVfFlow.getLandedPage()
+        resourceCreatePage = createVfFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
         resourceCreatePage.isLoaded();
     }
@@ -291,7 +289,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, String> propertyNamesAndTypes = vfcPropertiesPage.getPropertyNamesAndTypes();
         final List<String> propertyNames = propertyNamesAndTypes.keySet().stream().collect(Collectors.toList());
         final ServiceDependencyProperty serviceDependencyProperty =
-                new ServiceDependencyProperty(propertyNames.get(0), propertyNamesAndTypes.get(propertyNames.get(0)), value, operator);
+            new ServiceDependencyProperty(propertyNames.get(0), propertyNamesAndTypes.get(propertyNames.get(0)), value, operator);
 
         homePage.getTopNavComponent().clickOnHome();
         homePage.isLoaded();
@@ -303,7 +301,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         compositionPage.selectNode(vfcNameInComposition);
 
         final CreateDirectiveNodeFilterFlow createDirectiveNodeFilterFlow =
-                new CreateDirectiveNodeFilterFlow(webDriver, 2, serviceDependencyProperty);
+            new CreateDirectiveNodeFilterFlow(webDriver, 2, serviceDependencyProperty);
         createDirectiveNodeFilterFlow.run(componentPage);
 
         verifyAvailableDirectiveTypes(createDirectiveNodeFilterFlow.getDirectiveOptions());
@@ -373,12 +371,14 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Updates an Interface operation from a selected Node (VFC)
-     * @param compositionPage the composition page
+     *
+     * @param compositionPage         the composition page
      * @param interfaceOperationsData the interface definition
      * @throws IOException
      */
     private void updateInterfaceOperation(final CompositionPage compositionPage,
-        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) throws IOException {
+                                          final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData)
+        throws IOException {
         final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
         detailSideBar.isLoaded();
         final CompositionInterfaceOperationsTab compositionInterfaceOperationsTab =
@@ -404,7 +404,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Validates if the Updated Interface Operation has the expected values
-     * @param detailSideBar The composition Page
+     *
+     * @param detailSideBar           The composition Page
      * @param interfaceOperationsData The Updated Interface Definition
      */
     private void validateUpdatedInterfaceOperation(final CompositionDetailSideBarComponent detailSideBar,
@@ -431,7 +432,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     private void verifyToscaTemplateHasUpdatedInterfaceOperation(final Map<?, ?> toscaTemplateYaml,
-        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+                                                                 final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
 
         assertNotNull(toscaTemplateYaml, "No contents in TOSCA Template");
         final Map<String, Object> topologyTemplateTosca = getMapEntry((Map<String, Object>) toscaTemplateYaml, "topology_template");
@@ -482,14 +483,14 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         return loadYamlObject(filesFromZip.get(resourceEntryOpt.get()));
     }
 
-    private void declareInputToBaseService(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName){
+    private void declareInputToBaseService(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName) {
         propertiesAssignmentPage.selectProperty(propertyName);
         propertiesAssignmentPage.clickOnDeclareInput();
         propertiesAssignmentPage.clickInputTab(propertyName);
         propertiesAssignmentPage.isInputPresent(vfResourceCreateData.getName() + "_" + propertyName);
     }
 
-    private void declareInputToInstanceProperties(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName){
+    private void declareInputToInstanceProperties(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName) {
         propertiesAssignmentPage.selectPropertiesTab();
         propertiesAssignmentPage.loadCompositionTab();
         propertiesAssignmentPage.loadComponentInstanceProperties(vfcs.get(0).getName().concat(" 0"));
@@ -588,11 +589,12 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Creates a DependsOn relationship between the imported VFCs
-     * @param compositionPage Composition Page
+     *
+     * @param compositionPage           Composition Page
      * @param fromComponentInstanceName VFC - Network Function
-     * @param fromCapability Node Capability
-     * @param toComponentInstanceName  VFC - Network Service
-     * @param toRequirement Node Requirement
+     * @param fromCapability            Node Capability
+     * @param toComponentInstanceName   VFC - Network Service
+     * @param toRequirement             Node Requirement
      */
     private void createRelationship(final CompositionPage compositionPage, final String fromComponentInstanceName,
                                     final String fromCapability, final String toComponentInstanceName, final String toRequirement) {
@@ -608,6 +610,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Adds a property to the base service
+     *
      * @param propertyMap map of properties to be added
      */
     private void addProperty(final Map<String, String> propertyMap) {
@@ -619,6 +622,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Adds a input to the base service
+     *
      * @param inputMap map of inputs to be added
      */
     private void addInput(final Map<String, String> inputMap) {
@@ -630,6 +634,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Edits a property to add a value
+     *
      * @param propertyMap map of properties to be edited
      */
     private ComponentPage addValueToProperty(final Map<String, Object> propertyMap) {
@@ -639,6 +644,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Downloads and verifies the generated tosca templates.
+     *
      * @param componentPage the component page
      * @throws UnzipException
      */
@@ -648,8 +654,9 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Downloads and verifies if the generated Tosca template contains the expected properties.
-     * @throws UnzipException
+     *
      * @param componentPage
+     * @throws UnzipException
      */
     private void downloadAndVerifyCsarPackageAfterAddProperty(final ComponentPage componentPage) throws UnzipException {
         verifyPropertiesOnGeneratedTemplate(downloadCsarPackage(componentPage));
@@ -665,6 +672,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Downloads the generated CSAR package.
+     *
      * @param componentPage the component page
      * @return the Downloaded Tosca CSAR file
      */
@@ -677,6 +685,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Verifies if the generated Tosca template contains the expected properties.
+     *
      * @param downloadedCsarName the downloaded csar file name
      * @throws UnzipException
      */
@@ -867,7 +876,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         stringMap.put("PropMapKey2", "PropMapValue2");
         stringMap.put("PropMapKey3", "PropMapValue3");
         propertyMap.put("property5", stringMap);
-        propertyMap.put("property6", "500 GB");
+        propertyMap.put("property6", "500GB");
         return propertyMap;
     }
 
@@ -912,6 +921,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Downloads Tosca Template file
+     *
      * @return the tosca template yaml file
      * @throws Exception
      */
@@ -954,8 +964,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertNotNull(availableDirectiveTypes, "Expected list of available Directive Types, but recieved null");
         Arrays.asList(DirectiveType.values()).forEach(directiveType -> {
             assertTrue(availableDirectiveTypes.contains(directiveType.getName())
-                    , String.format("Expected directive %s to be availabe in UI options %s"
-                            , directiveType.getName(), availableDirectiveTypes.toString()));
+                , String.format("Expected directive %s to be availabe in UI options %s"
+                    , directiveType.getName(), availableDirectiveTypes.toString()));
         });
         ExtentTestActions.log(Status.PASS, "All expected directive types are available for selection");
     }
@@ -964,26 +974,27 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertEquals(propertyNameOptions.size(), propertyNames.size(), "Mismatch in the number of properties available for selection");
         propertyNames.forEach(name -> {
             assertNotEquals(false, propertyNameOptions.remove(name)
-                    , String.format("Expected property %s not found in UI Select element", name));
+                , String.format("Expected property %s not found in UI Select element", name));
         });
         ExtentTestActions.log(Status.PASS, "All expected properties are available for selection");
     }
 
-    private void verifyToscaTemplateHasDirectiveNodeFilter(final Map<?, ?> yaml, ServiceDependencyProperty nodeFilterProperty, String nodeTemplateName) {
+    private void verifyToscaTemplateHasDirectiveNodeFilter(final Map<?, ?> yaml, ServiceDependencyProperty nodeFilterProperty,
+                                                           String nodeTemplateName) {
         assertNotNull(yaml, "Tosca Template Yaml is not expected to be empty");
         final List<?> nodeFilters = (List<?>) getDirectiveNodeFilterFromYaml(yaml, nodeTemplateName).get("properties");
         final Map<?, ?> nodeFilter = (Map<?, ?>) nodeFilters.stream()
-                    .filter(yamlNodeFilter -> ((Map<?, ?>) yamlNodeFilter).containsKey(nodeFilterProperty.getName())).findAny().get();
+            .filter(yamlNodeFilter -> ((Map<?, ?>) yamlNodeFilter).containsKey(nodeFilterProperty.getName())).findAny().get();
         assertNotNull(nodeFilter, "Added directive node filter not found in TOSCA Template");
 
         final Map<?, ?> nodeFilterValue = (Map<?, ?>) ((List<?>) nodeFilter.get(nodeFilterProperty.getName())).get(0);
         assertTrue(nodeFilterValue.containsValue(nodeFilterProperty.getValue())
-                , "Invalid value for added directive node filter found in TOSCA Template");
+            , "Invalid value for added directive node filter found in TOSCA Template");
         assertTrue(nodeFilterValue.containsKey(nodeFilterProperty.getLogicalOperator().getName())
-                , "Invalid logical operator for added directive node filter found in TOSCA Template");
+            , "Invalid logical operator for added directive node filter found in TOSCA Template");
     }
 
-    private Map<?,?> getDirectiveNodeFilterFromYaml(final Map<?,?> yaml, String nodeTemplateName) {
+    private Map<?, ?> getDirectiveNodeFilterFromYaml(final Map<?, ?> yaml, String nodeTemplateName) {
         final Map<?, ?> topology = (Map<?, ?>) yaml.get("topology_template");
         final Map<?, ?> nodeTemplates = (Map<?, ?>) topology.get("node_templates");
         final Map<?, ?> resourceNode = (Map<?, ?>) nodeTemplates.get(nodeTemplateName);
