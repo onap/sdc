@@ -88,7 +88,7 @@ public class YamlUtil {
         TypeDescription yamlFileDescription = new TypeDescription(typClass);
         constructor.addTypeDescription(yamlFileDescription);
         T yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), getLoaderOptions()).load(yamlContent);
-        ;
+
         //noinspection ResultOfMethodCallIgnored
         yamlObj.toString();
         return yamlObj;
