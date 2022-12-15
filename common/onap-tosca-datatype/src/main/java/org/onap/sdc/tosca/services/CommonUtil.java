@@ -19,7 +19,6 @@
 package org.onap.sdc.tosca.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -30,13 +29,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
+import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 
 public class CommonUtil {
 
     public static final String DEFAULT = "default";
     public static final String UNDERSCORE_DEFAULT = "_default";
-    private static ImmutableSet<Class<?>> complexClassType = ImmutableSet
-        .of(Map.class, String.class, Integer.class, Float.class, Double.class, Set.class, Object.class, List.class);
+    private static final String ENTRY_SCHEMA = "entry_schema";
+    private static final Set<Class<?>> complexClassType =
+        Set.of(Map.class, String.class, Integer.class, Float.class, Double.class, Set.class, Object.class, List.class);
 
     private CommonUtil() {
         throw new IllegalStateException("Utility class");
@@ -49,8 +50,20 @@ public class CommonUtil {
         Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
         Field[] declaredFields = classToCreate.getDeclaredFields();
         createSubObjectsUsingSetters(objectAsMap, declaredFields);
+        handleEntrySchema(objectAsMap);
         T result = populateBean(objectAsMap, classToCreate);
         return Optional.of(result);
+    }
+
+    private static void handleEntrySchema(final Map<String, Object> objectAsMap) {
+        if (objectAsMap.containsKey(ENTRY_SCHEMA)) {
+            final Object entrySchema = objectAsMap.get(ENTRY_SCHEMA);
+            if (entrySchema instanceof Map) {
+                objectAsMap.remove(ENTRY_SCHEMA);
+                final Map<String, String> map = (Map<String, String>) entrySchema;
+                objectAsMap.put(ENTRY_SCHEMA, new EntrySchema(map.get("type")));
+            }
+        }
     }
 
     public static void createSubObjectsUsingSetters(Map<String, Object> objectAsMap, Field[] declaredFields) throws Exception {
@@ -66,8 +79,8 @@ public class CommonUtil {
     }
 
     public static <T> T populateBean(Map<String, Object> propertiesMap, Class<T> classToCreate)
-        throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        T result = classToCreate.newInstance();
+        throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+        T result = classToCreate.getDeclaredConstructor().newInstance();
         BeanUtils.populate(result, propertiesMap);
         return result;
     }
