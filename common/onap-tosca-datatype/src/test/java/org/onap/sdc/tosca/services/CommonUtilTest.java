@@ -19,13 +19,13 @@
  */
 package org.onap.sdc.tosca.services;
 
-import java.lang.reflect.InvocationTargetException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CommonUtilTest {
+class CommonUtilTest {
 
     private static final String INT_FIELD_KEY = "field1";
     private static final Integer INT_FIELD_VALUE = 1;
@@ -33,13 +33,12 @@ public class CommonUtilTest {
     private static final String STRING_FIELD_VALUE = "abc";
 
     @Test
-    public void testPopulateBeanMethod()
-        throws InstantiationException, IllegalAccessException, InvocationTargetException {
+    void testPopulateBeanMethod() throws Exception {
         Map<String, Object> props = new HashMap<>();
         props.put(INT_FIELD_KEY, INT_FIELD_VALUE);
         props.put(STRING_FIELD_KEY, STRING_FIELD_VALUE);
         TestModel testModel = CommonUtil.populateBean(props, TestModel.class);
-        Assert.assertEquals(testModel.getField1(), INT_FIELD_VALUE);
-        Assert.assertEquals(testModel.getField2(), STRING_FIELD_VALUE);
+        assertEquals(testModel.getField1(), INT_FIELD_VALUE);
+        assertEquals(testModel.getField2(), STRING_FIELD_VALUE);
     }
 }
