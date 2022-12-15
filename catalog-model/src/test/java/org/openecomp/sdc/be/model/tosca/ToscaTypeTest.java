@@ -144,9 +144,4 @@ public class ToscaTypeTest {
 		assertTrue(typeMap.convert("{\"color\":\"yellow\",\"type\":\"renault\"}") instanceof Map);
 	}
 
-	@Test
-	public void testToString() throws Exception {
-		ToscaType testToscaType = ToscaType.SCALAR_UNIT;
-		assertEquals(testToscaType.toString(), "scalar_unit");
-	}
 }
