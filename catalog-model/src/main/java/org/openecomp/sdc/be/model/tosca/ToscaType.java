@@ -24,11 +24,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
@@ -58,11 +60,19 @@ public enum ToscaType {
 	SCALAR_UNIT_BITRATE("scalar-unit.bitrate"),
 	SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
     // @formatter:on
+    @Getter
+    private final String type;
 
-    private static final String SCALAR_UNIT_BITRATE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([TtGgMmKk]?i?[Bb]ps)$";
-    private static final String SCALAR_UNIT_TIME_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([mun]?[dhms])$";
-    private static final String SCALAR_UNIT_SIZE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([TtGgMmKk]?i?[Bb])$";
-    private static final String SCALAR_UNIT_FREQUENCY_PATTERN = "(^[0-9]+\\.?[0-9]*) ?([kMG]?Hz)$";
+    // @formatter:off
+    private static final List<String> SCALAR_UNIT_BITRATE_VALID_UNITS = Arrays.asList("TiBps", "TBps", "GiBps", "GBps", "MiBps", "MBps", "KiBps", "KBps", "Bps", "Tibps", "Tbps", "Gibps", "Gbps", "Mibps", "Mbps", "Kibps", "Kbps", "bps");
+    private static final String SCALAR_UNIT_BITRATE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?(" + SCALAR_UNIT_BITRATE_VALID_UNITS.stream().collect(Collectors.joining("|")) + ")$";
+    private static final List<String> SCALAR_UNIT_TIME_VALID_UNITS = Arrays.asList("d", "h", "m", "s", "ms", "us", "ns");
+    private static final String SCALAR_UNIT_TIME_PATTERN = "(^[0-9]+\\.?[0-9]*) ?(" + SCALAR_UNIT_TIME_VALID_UNITS.stream().collect(Collectors.joining("|")) + ")$";
+    private static final List<String> SCALAR_UNIT_SIZE_VALID_UNITS = Arrays.asList("TiB", "TB", "GiB", "GB", "MiB", "MB", "KiB", "kB", "B");
+    private static final String SCALAR_UNIT_SIZE_PATTERN = "(^[0-9]+\\.?[0-9]*) ?(" + SCALAR_UNIT_SIZE_VALID_UNITS.stream().collect(Collectors.joining("|")) + ")$";
+    private static final List<String> SCALAR_UNIT_FREQUENCY_VALID_UNITS = Arrays.asList("GHz", "MHz", "kHz", "Hz");
+    private static final String SCALAR_UNIT_FREQUENCY_PATTERN = "(^[0-9]+\\.?[0-9]*) ?(" + SCALAR_UNIT_FREQUENCY_VALID_UNITS.stream().collect(Collectors.joining("|")) + ")$";
+    // @formatter:on
     private static final double B_IN_TiB = Math.pow(1024, 4);
     private static final double B_IN_GiB = Math.pow(1024, 3);
     private static final double B_IN_MiB = Math.pow(1024, 2);
@@ -71,9 +81,6 @@ public enum ToscaType {
     private static final double B_IN_GB = Math.pow(1000, 3);
     private static final double B_IN_MB = Math.pow(1000, 2);
     private static final double B_IN_KB = Math.pow(1000, 1);
-
-    @Getter
-    private final String type;
 
     public static ToscaType getToscaType(String typeName) {
         if (typeName == null) {
@@ -208,6 +215,18 @@ public enum ToscaType {
         return true;
     }
 
+    public boolean isScalarUnit() {
+        switch (this) {
+            case SCALAR_UNIT_TIME:
+            case SCALAR_UNIT_SIZE:
+            case SCALAR_UNIT_BITRATE:
+            case SCALAR_UNIT_FREQUENCY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public Object convert(String value) {
         switch (this) {
             case STRING:
@@ -256,8 +275,9 @@ public enum ToscaType {
     }
 
     private Long convertScalarUnitSize(final String value) {
-        final Matcher matcher = Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim());
-        if (matcher.find()) {
+        if (isScalarUnitSize(value)) {
+            final Matcher matcher = Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim());
+            matcher.find();
             switch (matcher.group(2)) {
                 case "TiB":
                     return (long) (Double.parseDouble(matcher.group(1)) * B_IN_TiB);
@@ -281,13 +301,14 @@ public enum ToscaType {
                     throw new IllegalArgumentException("Value must be a valid scalar-unit.size");
             }
         } else {
-            throw new IllegalArgumentException("Value must be a valid scalar-unit.size");
+            throw new IllegalArgumentException("Value must be a valid 'scalar-unit.size': " + SCALAR_UNIT_SIZE_VALID_UNITS);
         }
     }
 
     private Long convertScalarUnitTime(final String value) {
-        final Matcher matcher = Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim());
-        if (matcher.find()) {
+        if (isScalarUnitTime(value)) {
+            final Matcher matcher = Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim());
+            matcher.find();
             switch (matcher.group(2)) {
                 case "d":
                     return (long) (Double.parseDouble(matcher.group(1)) * 24 * 60 * 60 * 1_000_000_000L);   //  24hours * 60minutes * 60seconds
@@ -307,13 +328,14 @@ public enum ToscaType {
                     throw new IllegalArgumentException("Value must be a valid scalar-unit.time");
             }
         } else {
-            throw new IllegalArgumentException("Value must be a valid scalar-unit.time");
+            throw new IllegalArgumentException("Value must be a valid 'scalar-unit.time':" + SCALAR_UNIT_TIME_VALID_UNITS);
         }
     }
 
     private Long convertScalarUnitFrequency(final String value) {
-        final Matcher matcher = Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim());
-        if (matcher.find()) {
+        if (isScalarUnitFrequency(value)) {
+            final Matcher matcher = Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim());
+            matcher.find();
             switch (matcher.group(2)) {
                 case "GHz":
                     return (long) (Double.parseDouble(matcher.group(1)) * 1_000_000_000L);
@@ -327,13 +349,14 @@ public enum ToscaType {
                     throw new IllegalArgumentException("Value must be a valid scalar-unit.frequency");
             }
         } else {
-            throw new IllegalArgumentException("Value must be a valid scalar-unit.frequency");
+            throw new IllegalArgumentException("Value must be a valid 'scalar-unit.frequency':" + SCALAR_UNIT_FREQUENCY_VALID_UNITS);
         }
     }
 
     private Long convertScalarUnitBitrate(final String value) {
-        final Matcher matcher = Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim());
-        if (matcher.find()) {
+        if (isScalarUnitBitrate(value)) {
+            final Matcher matcher = Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim());
+            matcher.find();
             switch (matcher.group(2)) {
                 case "TiBps":
                     return (long) (Double.parseDouble(matcher.group(1)) * 8 * B_IN_TiB);
@@ -375,24 +398,42 @@ public enum ToscaType {
                     throw new IllegalArgumentException("Value must be a valid scalar-unit.bitrate");
             }
         } else {
-            throw new IllegalArgumentException("Value must be a valid scalar-unit.bitrate");
+            throw new IllegalArgumentException("Value must be a valid 'scalar-unit.bitrate':" + SCALAR_UNIT_BITRATE_VALID_UNITS);
         }
     }
 
     private boolean isScalarUnitBitrate(final String value) {
-        return Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim()).find();
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_BITRATE_PATTERN).matcher(value.trim());
+        return matcher.find() && SCALAR_UNIT_BITRATE_VALID_UNITS.contains(matcher.group(2));
     }
 
     private boolean isScalarUnitSize(final String value) {
-        return Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim()).find();
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_SIZE_PATTERN).matcher(value.trim());
+        return matcher.find() && SCALAR_UNIT_SIZE_VALID_UNITS.contains(matcher.group(2));
     }
 
     private boolean isScalarUnitTime(final String value) {
-        return Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim()).find();
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_TIME_PATTERN).matcher(value.trim());
+        return matcher.find() && SCALAR_UNIT_TIME_VALID_UNITS.contains(matcher.group(2));
     }
 
     private boolean isScalarUnitFrequency(final String value) {
-        return Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim()).find();
+        final Matcher matcher = Pattern.compile(SCALAR_UNIT_FREQUENCY_PATTERN).matcher(value.trim());
+        return matcher.find() && SCALAR_UNIT_FREQUENCY_VALID_UNITS.contains(matcher.group(2));
     }
 
+    public String getValidValues() {
+        switch (this) {
+            case SCALAR_UNIT_TIME:
+                return String.valueOf(SCALAR_UNIT_TIME_VALID_UNITS);
+            case SCALAR_UNIT_SIZE:
+                return String.valueOf(SCALAR_UNIT_SIZE_VALID_UNITS);
+            case SCALAR_UNIT_BITRATE:
+                return String.valueOf(SCALAR_UNIT_BITRATE_VALID_UNITS);
+            case SCALAR_UNIT_FREQUENCY:
+                return String.valueOf(SCALAR_UNIT_FREQUENCY_VALID_UNITS);
+            default:
+                return "";
+        }
+    }
 }
