@@ -112,6 +112,7 @@ public class Configuration extends BasicConfiguration {
     private BasicAuthConfig basicAuth;
     private CassandrConfig cassandraConfig;
     private SwitchoverDetectorConfig switchoverDetector;
+    private ServiceCacheConfig serviceCacheConfig;
     private ApplicationL1CacheConfig applicationL1Cache;
     private ApplicationL2CacheConfig applicationL2Cache;
     private ToscaValidatorsConfig toscaValidators;
@@ -427,6 +428,14 @@ public class Configuration extends BasicConfiguration {
         private Boolean enabled;
         private Integer firstRunDelay;
         private Integer pollIntervalInSec;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ServiceCacheConfig {
+        private Integer size = 100;
+        private Integer expirationTime = 10;
     }
 
     @Getter
