@@ -22,7 +22,6 @@ import fj.data.Either;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +90,8 @@ public class PropertyValueConstraintValidationUtil {
     }
 
     private void evaluatePropertyTypeForConstraintValidation(PropertyDefinition propertyDefinition) {
-        if (propertyDefinition == null || propertyDefinition.getType() == null || !dataTypeDefinitionCache.containsKey(propertyDefinition.getType())) {
+        if (propertyDefinition == null || propertyDefinition.getType() == null || !dataTypeDefinitionCache.containsKey(
+            propertyDefinition.getType())) {
             errorMessages.add("\nUnsupported datatype found for property " + getCompletePropertyName(propertyDefinition));
             return;
         }
@@ -140,13 +140,14 @@ public class PropertyValueConstraintValidationUtil {
                     propertyConstraint.validate(toscaType, propertyDefinition.getValue());
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
                     errorMessages.add("\n" + propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
+                } catch (IllegalArgumentException ie) {
+                    errorMessages.add(ie.getMessage());
                 }
             }
         } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType()) && !toscaType
             .isValidValue(propertyDefinition.getValue())) {
-            errorMessages.add(String
-                .format("\nUnsupported value provided for %s property supported value " + "type is %s.", getCompletePropertyName(propertyDefinition),
-                    toscaType.getType()));
+            errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
+                getCompletePropertyName(propertyDefinition), toscaType.getType()));
         }
     }
 
@@ -184,7 +185,7 @@ public class PropertyValueConstraintValidationUtil {
     private void evaluateRegularComplexType(PropertyDefinition propertyDefinition, PropertyDefinition prop, Map<String, Object> valueMap) {
         try {
             PropertyDefinition newPropertyWithValue;
-            if (valueMap.containsKey(prop.getName()) ) {
+            if (valueMap.containsKey(prop.getName())) {
                 if (ToscaType.isPrimitiveType(prop.getType())) {
                     newPropertyWithValue = copyPropertyWithNewValue(prop, String.valueOf(valueMap.get(prop.getName())));
                     if (isPropertyToEvaluate(newPropertyWithValue)) {
@@ -218,7 +219,8 @@ public class PropertyValueConstraintValidationUtil {
                 return StringUtils.isNotEmpty(propertyDefinition.getValue()) &&
                     !"null".equals(propertyDefinition.getValue());
             } else if (ToscaType.LIST == ToscaType.isValidType(propertyDefinition.getType())) {
-                Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                });
                 return CollectionUtils.isNotEmpty(list);
             } else {
                 Map<String, Object> valueMap = MapUtils
@@ -265,10 +267,12 @@ public class PropertyValueConstraintValidationUtil {
             .forEach(propertyConstraint -> {
                 try {
                     if (ToscaType.LIST == toscaPropertyType1) {
-                        Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                        Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                        });
                         propertyConstraint.validate(list);
                     } else if (ToscaType.MAP == toscaPropertyType1) {
-                        final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                        final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                        });
                         propertyConstraint.validate(map);
                     }
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
@@ -279,7 +283,7 @@ public class PropertyValueConstraintValidationUtil {
     }
 
     private boolean isACollectionConstraint(PropertyConstraint constraint) {
-        if (constraint instanceof MaxLengthConstraint){
+        if (constraint instanceof MaxLengthConstraint) {
             return true;
         }
         if (constraint instanceof MinLengthConstraint) {
@@ -293,7 +297,8 @@ public class PropertyValueConstraintValidationUtil {
             if (propertyDefinition.getSchemaType() == null) {
                 propertyDefinition.setSchema(createStringSchema());
             }
-            Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+            Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+            });
             evaluateCollectionType(propertyDefinition, list);
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
@@ -314,7 +319,8 @@ public class PropertyValueConstraintValidationUtil {
             if (propertyDefinition.getSchemaType() == null) {
                 propertyDefinition.setSchema(createStringSchema());
             }
-            final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+            final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+            });
             evaluateCollectionType(propertyDefinition, map.values());
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
@@ -336,7 +342,8 @@ public class PropertyValueConstraintValidationUtil {
         final String schemaType = propertyDefinition.getSchemaType();
         for (final Object value : valueList) {
             try {
-                final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition, objectMapper.writeValueAsString(value));
+                final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition,
+                    objectMapper.writeValueAsString(value));
                 if (ToscaType.isPrimitiveType(schemaType)) {
                     evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
                 } else if (ToscaType.isCollectionType(schemaType)) {
