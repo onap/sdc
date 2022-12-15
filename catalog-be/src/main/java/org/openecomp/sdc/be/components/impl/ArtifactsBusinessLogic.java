@@ -24,6 +24,9 @@ package org.openecomp.sdc.be.components.impl;
 import static org.openecomp.sdc.be.dao.api.ActionStatus.MISMATCH_BETWEEN_ARTIFACT_TYPE_AND_COMPONENT_TYPE;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
@@ -40,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -53,6 +57,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
@@ -189,6 +194,17 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private UserBusinessLogic userBusinessLogic;
     private ArtifactsResolver artifactsResolver;
     private NodeTemplateOperation nodeTemplateOperation;
+
+    private LoadingCache<Pair<String, String>, Either<List<Service>, StorageOperationStatus>> serviceCache =
+            CacheBuilder.newBuilder()
+                    .maximumSize(ConfigurationManager.getConfigurationManager().getConfiguration().getServiceCacheConfig().getSize())
+                    .expireAfterWrite(ConfigurationManager.getConfigurationManager().getConfiguration().getServiceCacheConfig().getExpirationTime(), TimeUnit.MINUTES)
+                    .build(new CacheLoader<Pair<String, String>, Either<List<Service>, StorageOperationStatus>>() {
+                        @Override
+                        public Either<List<Service>, StorageOperationStatus> load(Pair<String, String> s) {
+                            return toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, s.getLeft());
+                        }
+                    });
 
     @Autowired
     public ArtifactsBusinessLogic(ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportUtils, CsarUtils csarUtils,
@@ -2513,8 +2529,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Service validateServiceNameAndVersion(String serviceName, String serviceVersion) {
-        Either<List<Service>, StorageOperationStatus> serviceListBySystemName = toscaOperationFacade
-            .getBySystemName(ComponentTypeEnum.SERVICE, serviceName);
+        Either<List<Service>, StorageOperationStatus> serviceListBySystemName =
+                serviceCache.getUnchecked(Pair.of(serviceName, serviceVersion));
+
         if (serviceListBySystemName.isRight()) {
             log.debug("Couldn't fetch any service with name {}", serviceName);
             throw new ByActionStatusComponentException(

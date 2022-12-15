@@ -1160,3 +1160,7 @@ artifacts:
     componentTypes:
     resourceTypes:
     acceptedTypes:
+
+serviceCacheConfig:
+  size: 100
+  expirationTime: 10
