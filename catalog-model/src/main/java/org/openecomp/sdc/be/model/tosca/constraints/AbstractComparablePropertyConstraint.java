@@ -42,7 +42,8 @@ public abstract class AbstractComparablePropertyConstraint extends AbstractPrope
         } else {
             // Invalid value throw exception
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                "The value [" + rawTextValue + "] is not valid for the type [" + propertyType + "]");
+                "The value [" + rawTextValue + "] is not valid for the type [" + propertyType + "]."
+                    + (propertyType.isScalarUnit() ? " Valid values are " + propertyType.getValidValues() : ""));
         }
     }
 
