@@ -35,7 +35,7 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
     public void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {
         try {
             validate(toscaType.convert(propertyTextValue));
-        } catch (IllegalArgumentException | ApplicationVersionException e) {
+        } catch (ApplicationVersionException e) {
             throw new ConstraintViolationException("String value [" + propertyTextValue + "] is not valid for type [" + toscaType + "]", e);
         }
     }
@@ -44,6 +44,9 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
                                   String... propertyValue) {
         if (e instanceof ConstraintViolationException) {
             return String.format(errorMessage, propertyName, propertyValue.length == 1 ? propertyValue[0] : Arrays.toString(propertyValue));
+        }
+        if (e instanceof ConstraintValueDoNotMatchPropertyTypeException) {
+            return e.getMessage();
         }
         return String.format(INVALID_VALUE_ERROR_MESSAGE, propertyName, toscaType.getType());
     }
