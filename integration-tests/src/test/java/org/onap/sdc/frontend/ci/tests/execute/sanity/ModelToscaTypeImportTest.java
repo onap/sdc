@@ -57,6 +57,9 @@ import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
+import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
@@ -101,51 +104,44 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
     @Test(dependsOnMethods = "addNodeType")
     public void verifyToscaTypesIncludedInCsar() throws Exception {
 
-        final var vf = new ResourceCreateData();
-        vf.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
-        vf.setCategory(ResourceCategoryEnum.GENERIC_ABSTRACT.getSubCategory());
-        vf.setTagList(Arrays.asList(vf.getName()));
-        vf.setDescription("Test");
-        vf.setVendorName("EST");
-        vf.setVendorRelease("2.5.1");
-        vf.setVendorModelNumber("0001");
-        vf.setModel(ModelName.ETSI_SOL001_v2_5_1.getName());
+        final ResourceCreateData vf = new ResourceCreateData();
+        fillVfMetaData(vf);
 
-        final var createVfFlow = new CreateVfFlow(webDriver, vf);
+        final CreateVfFlow createVfFlow = new CreateVfFlow(webDriver, vf);
         createVfFlow.run(homePage);
-        ComponentPage resourceCreatePage = createVfFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ResourceCreatePage"));
+        ComponentPage resourceCreatePage =
+            createVfFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ResourceCreatePage"));
         resourceCreatePage.isLoaded();
 
-        final var parentComponent = new ComponentData();
+        final ComponentData parentComponent = new ComponentData();
         parentComponent.setName(vf.getName());
         parentComponent.setVersion("0.1");
         parentComponent.setComponentType(ComponentType.RESOURCE);
-        final var addComponent = new ComponentData();
+        final ComponentData addComponent = new ComponentData();
         addComponent.setName("Network");
         addComponent.setVersion("1.0");
         addComponent.setComponentType(ComponentType.RESOURCE);
 
-        final var compositionPage = resourceCreatePage.goToComposition();
+        final CompositionPage compositionPage = resourceCreatePage.goToComposition();
         compositionPage.isLoaded();
-        final var addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, addComponent);
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, addComponent);
         addNodeToCompositionFlow.run(compositionPage);
         compositionPage.isLoaded();
-        final var serviceComponentPage = compositionPage.goToServiceGeneral();
+        final ServiceComponentPage serviceComponentPage = compositionPage.goToServiceGeneral();
 
         final Map<String, String> propertyMap = new HashMap<>();
         propertyMap.put("AdditionalServiceData", ADDITIONAL_SERVICE_DATA);
         resourceCreatePage = addProperty(serviceComponentPage, propertyMap);
 
-        final var downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.setWaitBeforeGetTheFile(5L);
         downloadCsarArtifactFlow.run(resourceCreatePage);
-        final var toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
+        final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertTrue(toscaArtifactsPage.getDownloadedArtifactList().size() > 0, "No artifact download was found");
         toscaArtifactsPage.getDownloadedArtifactList().get(0);
 
-        final var downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
         final Map<String, byte[]> csarFiles = FileHandling.getFilesFromZip(downloadFolderPath, toscaArtifactsPage.getDownloadedArtifactList().get(0));
 
         assertEquals(8, csarFiles.size());
@@ -156,6 +152,17 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(ADDITIONAL_TYPE_DEFINITIONS.concat(".yaml"))).findAny().isPresent());
         assertTrue(csarFiles.values().stream().filter(bytes -> new String(bytes).contains(TOSCA_CAPABILITIES_NETWORK_LINK)).findAny().isPresent());
         assertTrue(csarFiles.values().stream().filter(bytes -> new String(bytes).contains(ADDITIONAL_SERVICE_DATA)).findAny().isPresent());
+    }
+
+    private void fillVfMetaData(final ResourceCreateData vf) {
+        vf.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
+        vf.setCategory(ResourceCategoryEnum.GENERIC_ABSTRACT.getSubCategory());
+        vf.setTagList(Arrays.asList(vf.getName()));
+        vf.setDescription("Test");
+        vf.setVendorName("EST");
+        vf.setVendorRelease("2.5.1");
+        vf.setVendorModelNumber("0001");
+        vf.setModel(ModelName.ETSI_SOL001_v2_5_1.getName());
     }
 
     private ComponentPage addProperty(ComponentPage serviceComponentPage, final Map<String, String> propertyMap) {
