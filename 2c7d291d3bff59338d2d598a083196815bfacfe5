@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "550509df_23097f8b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "order of operation should be static final",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a7bf392_8685a39f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "Should be definedConfigResolver",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e48cb404_325740ad",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "Should be \"Keycloak is not configured\"",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32541909_d36827d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "This should probably throw a more specific exception",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "619c220b_bf0a04d3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "This should be declared at the top of the file",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5648c12_16c210ee",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "Should be \"Keycloak is not configured\"",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02258792_5e37ee01",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/MultitenancyFilter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "This should be !actions.handledRequest() to get rid of the extra if statement",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e9b4634_953355ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "This could be !match and remove the duplicate code block",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76dc1b86_105aec18",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "You don\u0027t need the Assert. here. You can just do assertTrue() and use the Junit5 notation",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cf05e31_b21b3a72",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-16T11:09:03Z",
+      "side": 1,
+      "message": "Data Response",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
