@@ -73,11 +73,10 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         UploadFileResponse uploadFileResponse = new UploadFileResponse();
         Optional<FileContentHandler> fileContent = OrchestrationUtil
             .getFileContentMap(OnboardingTypesEnum.ZIP, uploadFileResponse, candidateData.getContentData().array());
-        if (!fileContent.isPresent()) {
+        if (fileContent.isEmpty()) {
             response.addStructureErrors(uploadFileResponse.getErrors());
             return response;
         }
-        Map<String, List<ErrorMessage>> uploadErrors = uploadFileResponse.getErrors();
         FileContentHandler fileContentMap = fileContent.get();
         try (InputStream zipFileManifest = fileContentMap.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
             addDummyHeatBase(zipFileManifest, fileContentMap);
@@ -90,16 +89,17 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
             return response;
         }
         ManifestContent zipManifestFile = readManifestFromZip(fileContentMap);
-        String manifest = null;
+        String manifest;
         if (zipManifestFile == null) {
             manifest = candidateService.createManifest(vspDetails, structure);
         } else {
             manifest = candidateService.createManifestFromExisting(vspDetails, structure, zipManifestFile);
         }
+        Map<String, List<ErrorMessage>> uploadErrors = uploadFileResponse.getErrors();
         fileContentMap.addFile(SdcCommon.MANIFEST_NAME, manifest.getBytes());
         Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
             .fetchZipFileByteArrayInputStream(vspId, candidateData, manifest, OnboardingTypesEnum.ZIP, uploadErrors);
-        if (!zipByteArrayInputStream.isPresent()) {
+        if (zipByteArrayInputStream.isEmpty()) {
             return response;
         }
         HeatStructureTree tree = createAndValidateHeatTree(response, fileContentMap);
@@ -146,22 +146,21 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         return zipManifestFile;
     }
 
-    private FileContentHandler addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+    private void addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
         ManifestContent manifestContent = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
         for (FileData fileData : manifestContent.getData()) {
-            if (Objects.nonNull(fileData.getType()) && fileData.getType().equals(FileData.Type.HELM) && fileData.getBase()) {
+            if (Objects.nonNull(fileData.getType()) && fileData.getType().equals(FileData.Type.HELM) && Boolean.TRUE.equals(fileData.getBase())) {
                 String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");
-                try (InputStream envStream = new FileInputStream(envFilePath); InputStream baseStream = new FileInputStream(baseFilePath);) {
+                try (InputStream envStream = new FileInputStream(envFilePath); InputStream baseStream = new FileInputStream(baseFilePath)) {
                     fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
                     fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
                 } catch (Exception e) {
-                    LOGGER.error("File not found error {}", e);
+                    LOGGER.error("File not found error ", e);
                 }
             }
         }
-        return fileContentMap;
     }
 
     private Map<String, List<ErrorMessage>> getErrors(OrchestrationTemplateActionResponse orchestrationTemplateActionResponse) {
