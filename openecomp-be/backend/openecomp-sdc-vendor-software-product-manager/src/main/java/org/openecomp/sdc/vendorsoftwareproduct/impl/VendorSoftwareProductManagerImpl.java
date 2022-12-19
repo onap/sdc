@@ -636,27 +636,25 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         return MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, validationErrors)) ? null : validationErrors;
     }
 
-    private FileContentHandler addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+    private void addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
         ManifestContent manifestContent = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
         for (FileData fileData : manifestContent.getData()) {
             if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
                 String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");
-                try (InputStream envStream = new FileInputStream(envFilePath); InputStream baseStream = new FileInputStream(baseFilePath);) {
+                try (InputStream envStream = new FileInputStream(envFilePath); InputStream baseStream = new FileInputStream(baseFilePath)) {
                     fileContentMap.addFile("base_template_dummy_ignore.env", envStream);
                     fileContentMap.addFile("base_template_dummy_ignore.yaml", baseStream);
                 } catch (Exception e) {
-                    LOGGER.error("File not found error {}", e);
+                    LOGGER.error("File not found error ", e);
                 }
             }
         }
-        return fileContentMap;
     }
 
     private QuestionnaireValidationResult validateQuestionnaire(String vspId, Version version, String onboardingMethod) {
         // The apis of CompositionEntityDataManager used here are stateful!
-
         // so, it must be re-created from scratch when it is used!
         CompositionEntityDataManager compositionEntityDataManager = CompositionEntityDataManagerFactory.getInstance().createInterface();
         compositionEntityDataManager.addEntity(vspInfoDao.getQuestionnaire(vspId, version), null);

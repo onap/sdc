@@ -21,20 +21,18 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.filedatastructuremodule;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
-public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNamingConventionImpl {
+class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNamingConventionImpl {
 
     private static final String ARTIFACT_1 = "cloudtech_k8s_charts.zip";
     private static final String ARTIFACT_2 = "cloudtech_azure_day0.zip";
@@ -43,14 +41,13 @@ public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNami
     private static final String ARTIFACT_5 = "cloudtech_openstack_configtemplate.zip";
     private static final String PMDICT_YAML = "pmdict.yaml";
 
-
     @Test
     void testIsCloudSpecificArtifact() {
-        assertTrue(isCloudSpecificArtifact(ARTIFACT_1));
-        assertTrue(isCloudSpecificArtifact(ARTIFACT_2));
-        assertTrue(isCloudSpecificArtifact(ARTIFACT_3));
-        assertFalse(isCloudSpecificArtifact(ARTIFACT_4));
-        assertFalse(isCloudSpecificArtifact(ARTIFACT_5));
+        assertTrue(isCloudSpecificArtifact(ARTIFACT_1, null));
+        assertTrue(isCloudSpecificArtifact(ARTIFACT_2, null));
+        assertTrue(isCloudSpecificArtifact(ARTIFACT_3, null));
+        assertFalse(isCloudSpecificArtifact(ARTIFACT_4, null));
+        assertFalse(isCloudSpecificArtifact(ARTIFACT_5, null));
     }
 
     @Test
@@ -63,15 +60,15 @@ public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNami
 
         // when
         Optional<ManifestContent> newManifest = new ManifestCreatorNamingConventionImpl()
-                .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
+            .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
 
         // then
         assertTrue(newManifest.isPresent());
         assertTrue(newManifest.get()
-                .getData()
-                .stream()
-                .allMatch(fd -> fd.getType().equals(FileData.Type.PM_DICTIONARY) &&
-                        fd.getFile().equals(PMDICT_YAML)));
+            .getData()
+            .stream()
+            .allMatch(fd -> fd.getType().equals(FileData.Type.PM_DICTIONARY) &&
+                fd.getFile().equals(PMDICT_YAML)));
     }
 
     @Test
@@ -84,15 +81,15 @@ public class ManifestCreatorNamingConventionImplTest extends ManifestCreatorNami
 
         // when
         Optional<ManifestContent> newManifest = new ManifestCreatorNamingConventionImpl()
-                .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
+            .createManifestFromExisting(vspDetails, fileDataStructure, existingManifest);
 
         // then
         assertTrue(newManifest.isPresent());
         assertTrue(newManifest.get()
-                .getData()
-                .stream()
-                .allMatch(fd -> fd.getType().equals(FileData.Type.OTHER) &&
-                        fd.getFile().equals(PMDICT_YAML)));
+            .getData()
+            .stream()
+            .allMatch(fd -> fd.getType().equals(FileData.Type.OTHER) &&
+                fd.getFile().equals(PMDICT_YAML)));
     }
 
     private ManifestContent prepareManifestWithPmDictFileWithType(FileData.Type fileType) {
