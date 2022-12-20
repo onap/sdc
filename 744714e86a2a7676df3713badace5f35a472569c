@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50f45916_38c321d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2533,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-20T15:00:56Z",
+      "side": 1,
+      "message": "The Service is not actually being used except to verify if a service with the given name and version exists. Instead of deserialising and caching have you considered just making a call to DB to verify if exists with given name and version and not deserialise at all.\nI havent tested but if just querying rather than fetching and deserialising is performant than I think that would be a better solution than introducing a cache",
+      "range": {
+        "startLine": 2532,
+        "startChar": 8,
+        "endLine": 2533,
+        "endChar": 80
+      },
+      "revId": "744714e86a2a7676df3713badace5f35a472569c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
