@@ -1378,24 +1378,22 @@ public class YamlTemplateParsingHandler {
         for (Object objValue : propValueList) {
             if (objValue instanceof Map) {
                 Map<String, Object> objMap = (Map<String, Object>) objValue;
+                Map<String, Object> propValueMap = new HashMap<String, Object>();
+                propValueMap.put(String.valueOf(index),objValue);
+                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
+                if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
+                    Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = propertyDef.getSubPropertyToscaFunctions();
+                    if (existingSubPropertyToscaFunctions == null) {
+                        propertyDef.setSubPropertyToscaFunctions(subPropertyToscaFunctions);
+                    } else {
+                        propertyDef.getSubPropertyToscaFunctions().addAll(subPropertyToscaFunctions);
+                    }
+                }
                 if (objMap.containsKey(GET_INPUT.getElementName())) {
                     fillInputRecursively(propertyDef.getName(), objMap, propertyDef);
                 } else {
                     Set<String> keys = objMap.keySet();
                     findAndFillInputsListRecursively(propertyDef, objMap, keys);
-                }
-                if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(objValue)) {
-                    Map<String, Object> propValueMap = new HashMap<String, Object>();
-                    propValueMap.put(String.valueOf(index),objValue);
-                    final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
-                    if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
-                        Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = propertyDef.getSubPropertyToscaFunctions();
-                        if (existingSubPropertyToscaFunctions == null) {
-                            propertyDef.setSubPropertyToscaFunctions(subPropertyToscaFunctions);
-                        } else {
-                            propertyDef.getSubPropertyToscaFunctions().addAll(subPropertyToscaFunctions);
-                        }
-                    }
                 }
             } else if (objValue instanceof List) {
                 List<Object> propSubValueList = (List<Object>) objValue;

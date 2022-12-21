@@ -39,6 +39,16 @@ public class PropertyDefinition extends PropertyDataDefinition implements IOpera
         super();
     }
 
+    public String getToscaSubPath() {
+        return toscaSubPath;
+    }
+
+    public void setToscaSubPath(String toscaSubPath) {
+        this.toscaSubPath = toscaSubPath;
+    }
+
+    private String toscaSubPath;
+
     public PropertyDefinition(PropertyDataDefinition p) {
         super(p);
         getConstraints();
