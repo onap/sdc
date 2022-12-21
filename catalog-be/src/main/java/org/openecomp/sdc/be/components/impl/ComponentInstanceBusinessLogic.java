@@ -2071,14 +2071,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (jsonObject.has(path.get(0))) {
             objectForPath =  jsonObject.get(path.get(0));
         } else {
-            if (path.size() > 1) {
-                if (StringUtils.isNumeric(path.get(1))) {
-                    objectForPath = new JSONArray();
-                } else {
-                    objectForPath = new JSONObject();
-                }
-                jsonObject.put(path.get(0), objectForPath);
+            if (StringUtils.isNumeric(path.get(0))) {
+                objectForPath = new JSONArray();
+            } else {
+                objectForPath = new JSONObject();
             }
+            jsonObject.put(path.get(0), objectForPath);
         }
 
         if (path.size() == 1) {
