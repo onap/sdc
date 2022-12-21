@@ -46,7 +46,7 @@ import {ComponentServiceNg2} from "../../services/component-services/component.s
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
 import {KeysPipe} from 'app/ng2/pipes/keys.pipe';
-import {EVENTS, PROPERTY_TYPES, WorkspaceMode} from "../../../utils/constants";
+import {EVENTS, PROPERTY_TYPES, WorkspaceMode, PROPERTY_DATA} from "../../../utils/constants";
 import {EventListenerService} from "app/services/event-listener-service"
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
 import {FilterPropertiesAssignmentComponent} from "../../components/logic/filter-properties-assignment/filter-properties-assignment.component";
@@ -587,21 +587,29 @@ export class PropertiesAssignmentComponent {
         if (checkedInstanceProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName){
             const propertiesNameArray = (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName;
             const parts = propertiesNameArray.split("#");
-            const currentKey = (checkedInstanceProperty.type == PROPERTY_TYPES.MAP || checkedInstanceProperty.type == PROPERTY_TYPES.LIST) ? (<DerivedFEProperty>checkedInstanceProperty.input).mapKey : null;
+            let currentKey = [];
+            if (this.isListOrMap(checkedInstanceProperty.type)) {
+                currentKey.push((<DerivedFEProperty>checkedInstanceProperty.input).mapKey);
+                if (this.isComplexSchemaType(checkedInstanceProperty.schemaType)) {
+                    currentKey.push(parts.reverse()[0]);
+                }
+            }
             if (propertiesNameArray.length > 1){
-                const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey != null ? [currentKey] : parts.slice(1)));
+                const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey.length > 0 ? currentKey : parts.slice(1)));
                 checkedInstanceProperty.subPropertyToscaFunctions.splice(index, 1);
             }
-            if(currentValue !== null && currentKey !== null){
+            if(currentValue !== null && currentKey.length > 0){
                 let valueJson = JSON.parse(currentValue);
-                let tempValue = valueJson[currentKey];
-                delete valueJson[currentKey];
-                if (checkedInstanceProperty.type == PROPERTY_TYPES.LIST) {
-                    let listValue = [];
-                    valueJson.forEach(item => {
-                        if (item != null && item != '' && item != tempValue) {
-                            listValue.push(item);
-                        }
+                if(currentKey.length >1){
+                    let innerObj = valueJson[currentKey[0]];
+                    delete innerObj[currentKey[1]];
+                    valueJson[currentKey[0]] = innerObj;
+                }else{
+                    delete valueJson[currentKey[0]];
+                }
+                if (checkedInstanceProperty.type == PROPERTY_TYPES.LIST && currentKey.length == 1) {
+                    let listValue = valueJson.filter(function (item) {
+                        return item != null && item != '';
                     });
                     checkedInstanceProperty.value = JSON.stringify(listValue);
                 } else {
@@ -623,17 +631,23 @@ export class PropertiesAssignmentComponent {
         if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
             const propertiesName = (<PropertyDeclareAPIModel>checkedProperty).propertiesName;
             const parts = propertiesName.split("#");
-            const currentKey = (checkedProperty.type == PROPERTY_TYPES.MAP || checkedProperty.type == PROPERTY_TYPES.LIST) ? (<DerivedFEProperty>checkedProperty.input).mapKey : null;
+            let currentKey = [];
+            if (this.isListOrMap(checkedProperty.type)) {
+                currentKey.push((<DerivedFEProperty>checkedProperty.input).mapKey);
+                if (this.isComplexSchemaType(checkedProperty.schemaType)) {
+                    currentKey.push(parts.reverse()[0]);
+                }
+            }
             if (checkedProperty.subPropertyToscaFunctions == null){
                 checkedProperty.subPropertyToscaFunctions = [];
             }
-            let subPropertyToscaFunction = checkedProperty.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey != null ? [currentKey] : parts.slice(1)));
+            let subPropertyToscaFunction = checkedProperty.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey.length > 0 ? currentKey : parts.slice(1)));
             if (!subPropertyToscaFunction){
                  subPropertyToscaFunction = new SubPropertyToscaFunction();
                  checkedProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
             }
             subPropertyToscaFunction.toscaFunction = toscaFunction;
-            subPropertyToscaFunction.subPropertyPath = currentKey != null ? [currentKey] : parts.slice(1);
+            subPropertyToscaFunction.subPropertyPath = currentKey.length > 0 ? currentKey : parts.slice(1);
    
         } else {
             checkedProperty.subPropertyToscaFunctions = null;
@@ -646,6 +660,14 @@ export class PropertiesAssignmentComponent {
         } else if (this.selectedInstanceData instanceof PolicyInstance) {
             this.updatePolicyInstanceProperty(checkedProperty);
         }
+    }
+
+    private isComplexSchemaType(propertyType: string): boolean {
+        return PROPERTY_DATA.SIMPLE_TYPES.indexOf(propertyType) === -1;
+    }
+
+    private isListOrMap(propertyType: string): boolean {
+        return PROPERTY_TYPES.MAP === propertyType || PROPERTY_TYPES.LIST === propertyType;
     }
 
     private areEqual(array1: string[], array2: string[]): boolean {

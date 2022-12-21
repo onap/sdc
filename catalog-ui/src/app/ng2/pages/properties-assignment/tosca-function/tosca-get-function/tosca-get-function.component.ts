@@ -261,7 +261,15 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private propertyTypeToString() {
-	    if (this.isSubProperty() && this.property.type != PROPERTY_TYPES.MAP && this.property.type != PROPERTY_TYPES.LIST){
+	    if (this.isSubProperty()){
+            if (this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
+                    (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) {
+                if(this.isComplexType(this.property.schemaType)){
+                    return this.property.input.type;
+                }else{
+                    return this.property.schema.property.type;
+                }
+            }
 	        return this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
         }
         if (this.property.schemaType) {
@@ -367,8 +375,12 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
         if (this.typeHasSchema(this.property.type)) {
-            if ((this.property.type === PROPERTY_TYPES.MAP || this.property.type === PROPERTY_TYPES.LIST) && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) {
-                return property.type === this.property.schema.property.type;
+            if (this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) {
+                if(this.isComplexType(this.property.schemaType)){
+                    return property.type === this.property.input.type;
+                }else{
+                    return property.type === this.property.schema.property.type;
+                }
             }
             if (!property.schema || !property.schema.property) {
                 return false;
