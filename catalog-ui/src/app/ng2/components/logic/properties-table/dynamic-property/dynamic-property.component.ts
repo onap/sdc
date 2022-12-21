@@ -152,8 +152,22 @@ export class DynamicPropertyComponent {
     };
 
     createNewChildProperty = (): void => {
-       
-        let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", null);
+
+        let mapKeyValue = this.property instanceof DerivedFEProperty ? this.property.mapKey : "";
+        if (this.property.type == PROPERTY_TYPES.LIST && mapKeyValue === "") {
+            if(this.property.value != null) {
+                const valueJson = JSON.parse(this.property.value);
+                if(this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null){
+                    let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                    mapKeyValue = indexNumber.toString();
+                }else{
+                    mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
+                }
+            }else {
+                mapKeyValue = "0";
+            }
+        }
+        let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, mapKeyValue, null);
 
         this.propertiesUtils.assignFlattenedChildrenValues(this.property.valueObj, [newProps[0]], this.property.propertiesName);
         if (this.property instanceof PropertyFEModel) {
@@ -255,6 +269,11 @@ export class DynamicPropertyComponent {
         if (this.property instanceof PropertyFEModel) {
             let oldKey = childProp.getActualMapKey();
             this.property.childPropMapKeyUpdated(childProp, newMapKey);
+            this.property.flattenedChildren.forEach(tempDervObj => {
+                if (childProp.propertiesName === tempDervObj.parentName) {
+                    tempDervObj.mapKey = newMapKey;
+                }
+            });
             if (this.property.subPropertyToscaFunctions != null) {
                 this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
                     if(item.subPropertyPath[0] === oldKey){
