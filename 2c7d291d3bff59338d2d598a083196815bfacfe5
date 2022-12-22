@@ -259,6 +259,24 @@
       "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1073d86f_1bed8cb1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2022-12-22T16:58:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8cf05e31_b21b3a72",
+      "revId": "2c7d291d3bff59338d2d598a083196815bfacfe5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
