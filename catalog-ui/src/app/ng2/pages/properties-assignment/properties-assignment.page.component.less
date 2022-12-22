@@ -11,8 +11,10 @@
 @ng2-title-font-size:16px;
 @ng2-text-font-size: 14px;
 
-:host { display:block; height: 100%; }
-/deep/ tabs {display:flex; flex-direction:column; height:100%; }
+:host {
+    display:block;
+    height: 100%;
+}
 
 .properties-assignment-page {
     height: 100%;
@@ -32,6 +34,9 @@
         /deep/ .tabs {
             width:18%;
             text-align:center;
+            display:flex;
+            flex-direction:row;
+            height:100%;
         }
 
         /deep/ .tab {
@@ -99,7 +104,7 @@
             }
 
         }
-        
+
         .clear-filter{
             cursor: pointer;
             color:#009fdb;
