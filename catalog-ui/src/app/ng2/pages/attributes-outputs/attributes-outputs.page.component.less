@@ -17,12 +17,6 @@
   height: 100%;
 }
 
-/deep/ tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
 .attributes-outputs-page {
   height: 100%;
   font-family: @font-opensans-regular;
@@ -39,6 +33,9 @@
     min-width: 930px;
 
     /deep/ .tabs {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
       width: 33%;
       text-align: center;
     }
