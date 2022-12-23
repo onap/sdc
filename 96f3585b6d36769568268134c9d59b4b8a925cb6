@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9997f52b_e53c30e6",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/filedatastructuremodule/ManifestCreatorNamingConventionImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-12-23T17:26:45Z",
+      "side": 1,
+      "message": "Could this cause backwards compatibility issues for any packages relying on the CBA files being identified by the naming convention, i.e. if the file type is not present (but perhaps the file type needs to be present?)",
+      "range": {
+        "startLine": 195,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 5
+      },
+      "revId": "96f3585b6d36769568268134c9d59b4b8a925cb6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
