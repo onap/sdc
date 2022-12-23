@@ -19,12 +19,14 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.convertToComparable;
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -91,6 +93,7 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -2139,8 +2142,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             JsonArray jsonArray = new JsonArray();
             if (src instanceof InRangeConstraint) {
                 InRangeConstraint rangeConstraint = (InRangeConstraint) src;
-                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getRangeMinValue())));
-                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getRangeMaxValue())));
+                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getMin())));
+                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getMax())));
                 result.add("inRange", jsonArray);
             } else if (src instanceof GreaterThanConstraint) {
                 GreaterThanConstraint greaterThanConstraint = (GreaterThanConstraint) src;
@@ -2163,8 +2166,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
     public static class PropertyConstraintDeserialiser implements JsonDeserializer<PropertyConstraint> {
 
-        private static final String THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL = "The value of GreaterThanConstraint is null";
-
         @Override
         public PropertyConstraint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             PropertyConstraint propertyConstraint = null;
@@ -2184,45 +2185,40 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 if (typedValue != null) {
                                     log.debug("Before adding value to EqualConstraint object. value = {}", typedValue);
                                     propertyConstraint = new EqualConstraint(typedValue);
-                                    break;
                                 } else {
-                                    log.warn("The value of equal constraint is null");
+                                    log.warn("The value of EqualConstraint is null");
                                 }
                                 break;
                             case IN_RANGE:
-                                if (typedValue != null) {
-                                    if (typedValue instanceof ArrayList) {
-                                        ArrayList rangeArray = (ArrayList) typedValue;
-                                        if (rangeArray.size() != 2 || rangeArray.contains("")) {
-                                            log.error("The range constraint content is invalid. value = {}", typedValue);
-                                            throw new JsonSyntaxException("The range constraint content is invalid");
-                                        } else {
-                                            InRangeConstraint rangeConstraint = new InRangeConstraint();
-                                            Object minValue = rangeArray.get(0);
-                                            Object maxValue = rangeArray.get(1);
-                                            rangeConstraint.setRangeMinValue(minValue);
-                                            rangeConstraint.setRangeMaxValue(maxValue);
-                                            propertyConstraint = rangeConstraint;
-                                        }
+                                if (typedValue instanceof ArrayList) {
+                                    List<Object> rangeArray = (ArrayList<Object>) typedValue;
+                                    if (rangeArray.size() != 2 || rangeArray.contains("")) {
+                                        log.error("The range constraint content is invalid. value = {}", typedValue);
+                                        throw new JsonSyntaxException("The range constraint content is invalid");
+                                    } else {
+                                        Object minValue = rangeArray.get(0);
+                                        Object maxValue = rangeArray.get(1);
+                                        InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
+                                        rangeConstraint.setMin(convertToComparable(ToscaType.RANGE, String.valueOf(minValue)));
+                                        rangeConstraint.setMax(convertToComparable(ToscaType.RANGE, String.valueOf(maxValue)));
+                                        propertyConstraint = rangeConstraint;
                                     }
                                 } else {
-                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                    log.warn("The value of InRangeConstraint is null");
                                 }
                                 break;
                             case GREATER_THAN:
                                 if (typedValue != null) {
                                     log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
                                     propertyConstraint = new GreaterThanConstraint(typedValue);
-                                    break;
                                 } else {
-                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                    log.warn("The value of GreaterThanConstraint is null");
                                 }
                                 break;
                             case LESS_THAN:
                                 if (typedValue != null) {
                                     log.debug("Before adding value to LessThanConstraint object. value = {}", typedValue);
                                     propertyConstraint = new LessThanConstraint(typedValue);
-                                    break;
                                 } else {
                                     log.warn("The value of LessThanConstraint is null");
                                 }
@@ -2231,7 +2227,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 if (typedValue != null) {
                                     log.debug("Before adding value to GreaterThanConstraint object. value = {}", typedValue);
                                     propertyConstraint = new GreaterOrEqualConstraint(typedValue);
-                                    break;
                                 } else {
                                     log.warn("The value of GreaterOrEqualConstraint is null");
                                 }
@@ -2241,12 +2236,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                     log.debug("Before adding value to LessOrEqualConstraint object. value = {}", typedValue);
                                     propertyConstraint = new LessOrEqualConstraint(typedValue);
                                 } else {
-                                    log.warn(THE_VALUE_OF_GREATER_THAN_CONSTRAINT_IS_NULL);
+                                    log.warn("The value of LessOrEqualConstraint is null");
                                 }
                                 break;
                             case VALID_VALUES:
-                                if (typedValue != null) {
-                                    ArrayList validValuesArray = (ArrayList) typedValue;
+                                if (typedValue instanceof ArrayList) {
+                                    List<Object> validValuesArray = (ArrayList<Object>) typedValue;
                                     if (validValuesArray.size() == 0 || validValuesArray.contains("")) {
                                         log.error("The valid values constraint content is invalid. value = {}", typedValue);
                                         throw new JsonSyntaxException("The valid values constraint content is invalid");
@@ -2255,6 +2250,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                         vvConstraint.setValidValues(validValuesArray);
                                         propertyConstraint = vvConstraint;
                                     }
+                                } else {
+                                    log.warn("The value of ValidValuesConstraint is null");
                                 }
                                 break;
                             case LENGTH:
@@ -2262,9 +2259,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                     int asInt = value.getAsInt();
                                     log.debug("Before adding value to length constraint. value = {}", asInt);
                                     propertyConstraint = new LengthConstraint(asInt);
-                                    break;
                                 } else {
-                                    log.warn("The value of length constraint is null");
+                                    log.warn("The value of LengthConstraint is null");
                                 }
                                 break;
                             case MIN_LENGTH:
@@ -2272,7 +2268,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                     int asInt = value.getAsInt();
                                     log.debug("Before adding value to Min Length object. value = {}", asInt);
                                     propertyConstraint = new MinLengthConstraint(asInt);
-                                    break;
                                 } else {
                                     log.warn("The value of MinLengthConstraint is null");
                                 }
@@ -2282,9 +2277,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                     int asInt = value.getAsInt();
                                     log.debug("Before adding value to max length constraint. value = {}", asInt);
                                     propertyConstraint = new MaxLengthConstraint(asInt);
-                                    break;
                                 } else {
-                                    log.warn("The value of max length constraint is null");
+                                    log.warn("The value of MaxLengthConstraint is null");
                                 }
                                 break;
                             case PATTERN:
@@ -2292,9 +2286,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                     String asString = value.getAsString();
                                     log.debug("Before adding value to PatternConstraint object. value = {}", asString);
                                     propertyConstraint = new PatternConstraint(asString);
-                                    break;
                                 } else {
-                                    log.warn("The value of pattern constraint is null");
+                                    log.warn("The value of PatternConstraint is null");
                                 }
                                 break;
                             default:
@@ -2448,17 +2441,11 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 if (rangeArray.size() != 2) {
                     log.error("The range constraint content is invalid. value = {}", value);
                 } else {
-                    InRangeConstraint rangeConstraint = new InRangeConstraint();
                     String minValue = rangeArray.get(0).asText();
-                    String maxValue;
-                    JsonNode maxElement = rangeArray.get(1);
-                    if (maxElement.isNull()) {
-                        maxValue = null;
-                    } else {
-                        maxValue = maxElement.asText();
-                    }
-                    rangeConstraint.setRangeMinValue(minValue);
-                    rangeConstraint.setRangeMaxValue(maxValue);
+                    String maxValue = rangeArray.get(1).asText();
+                    InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
+                    rangeConstraint.setMin(convertToComparable(ToscaType.RANGE, minValue));
+                    rangeConstraint.setMax(convertToComparable(ToscaType.RANGE, maxValue));
                     return rangeConstraint;
                 }
             }
