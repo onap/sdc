@@ -70,17 +70,17 @@ public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstrai
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "greaterOrEqual constraint has invalid values <" + greaterOrEqual.toString() + "> property type is <" + propertyType + ">");
+                "greaterOrEqual constraint has invalid values <" + greaterOrEqual.toString() + "> property type is <" + propertyType + ">");
         }
         if (greaterOrEqual == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "greaterOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
+                "greaterOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
         }
         return toscaType.isValueTypeValid(greaterOrEqual);
     }
 
     @Override
-    public String getConstraintValueAsString() {
+    public String toString() {
         return String.valueOf(greaterOrEqual);
     }
 

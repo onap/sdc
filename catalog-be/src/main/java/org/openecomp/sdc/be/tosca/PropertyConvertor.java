@@ -157,8 +157,8 @@ public class PropertyConvertor {
             if (constraint instanceof InRangeConstraint) {
                 InRangeConstraint inRangeConstraint = (InRangeConstraint) constraint;
                 List<Object> range = new ArrayList<>();
-                range.add(inRangeConstraint.getRangeMinValue());
-                range.add(inRangeConstraint.getRangeMaxValue());
+                range.add(inRangeConstraint.getMin());
+                range.add(inRangeConstraint.getMax());
                 convertedConstraints.add(new ToscaPropertyConstraintInRange(range));
             }
             if (constraint instanceof ValidValuesConstraint) {

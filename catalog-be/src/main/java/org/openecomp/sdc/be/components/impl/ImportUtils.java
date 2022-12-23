@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.openecomp.sdc.be.components.impl.ResourceImportManager.PROPERTY_NAME_PATTERN_IGNORE_LENGTH;
 import static org.openecomp.sdc.be.datatypes.elements.Annotation.setAnnotationsName;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
@@ -62,9 +64,7 @@ import org.openecomp.sdc.be.model.heat.HeatParameterType;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.AbstractComparablePropertyConstraint;
-import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
@@ -336,17 +336,7 @@ public final class ImportUtils {
                 }
             } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, propertyConstraint.getConstraintType().name(),
-                        ((AbstractComparablePropertyConstraint) propertyConstraint).getConstraintValueAsString(), propertyType);
-            }
-        } else if (propertyConstraint instanceof EqualConstraint) {
-            try {
-                boolean valid = ((EqualConstraint) propertyConstraint).validateValueType(propertyType);
-                if (!valid) {
-                    ((EqualConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
-                }
-            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.EQUAL.name(),
-                        String.valueOf(((EqualConstraint) propertyConstraint).getEqual()), propertyType);
+                    propertyConstraint.toString(), propertyType);
             }
         } else if (propertyConstraint instanceof InRangeConstraint) {
             try {
@@ -356,7 +346,7 @@ public final class ImportUtils {
                 }
             } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS, ConstraintType.IN_RANGE.name(),
-                        String.valueOf(((InRangeConstraint) propertyConstraint).getInRange()), propertyType);
+                    String.valueOf(((InRangeConstraint) propertyConstraint).getInRange()), propertyType);
             }
         }
         return propertyConstraint;
@@ -712,7 +702,8 @@ public final class ImportUtils {
 
     public static boolean containsGetInput(Object propValue) {
         String value = getPropertyJsonStringValue(propValue, ToscaPropertyType.MAP.getType());
-        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName()) && !value.contains(TypeUtils.ToscaTagNamesEnum.CONCAT.getElementName());
+        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName()) && !value.contains(
+            TypeUtils.ToscaTagNamesEnum.CONCAT.getElementName());
     }
 
     public static String getPropertyJsonStringValue(Object value, String type) {

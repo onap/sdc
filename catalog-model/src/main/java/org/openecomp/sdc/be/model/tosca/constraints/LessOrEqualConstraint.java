@@ -70,17 +70,17 @@ public class LessOrEqualConstraint<T> extends AbstractComparablePropertyConstrai
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "lessOrEqual constraint has invalid values <" + lessOrEqual.toString() + "> property type is <" + propertyType + ">");
+                "lessOrEqual constraint has invalid values <" + lessOrEqual.toString() + "> property type is <" + propertyType + ">");
         }
         if (lessOrEqual == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "lessOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
+                "lessOrEqual constraint has invalid value <> property type is <" + propertyType + ">");
         }
         return toscaType.isValueTypeValid(lessOrEqual);
     }
 
     @Override
-    public String getConstraintValueAsString() {
+    public String toString() {
         return String.valueOf(lessOrEqual);
     }
 
