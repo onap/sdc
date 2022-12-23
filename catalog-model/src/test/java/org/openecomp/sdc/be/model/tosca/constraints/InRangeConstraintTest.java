@@ -30,7 +30,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
-public class InRangeConstraintTest {
+class InRangeConstraintTest {
 
     private InRangeConstraint createStringTestSubject() {
         List<Object> validValues = new ArrayList<>();
@@ -47,7 +47,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testGetInRange() {
+    void testGetInRange() {
         InRangeConstraint testSubject = createStringTestSubject();
         List<Object> result = testSubject.getInRange();
 
@@ -57,7 +57,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testSetInRange() {
+    void testSetInRange() {
         InRangeConstraint testSubject = createStringTestSubject();
         List<Object> validValues = new ArrayList<>();
         validValues.add("test21");
@@ -71,43 +71,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testGetRangeMinValue() throws Exception {
-        InRangeConstraint testSubject = createIntegerTestSubject();
-        Object result = testSubject.getRangeMinValue();
-
-        assertEquals(1, result);
-    }
-
-    @Test
-    public void testSetRangeMinValue() throws Exception {
-        InRangeConstraint testSubject = createIntegerTestSubject();
-        testSubject.setRangeMinValue(21);
-
-        Object result = testSubject.getRangeMinValue();
-
-        assertEquals(21, result);
-    }
-
-    @Test
-    public void testGetRangeMaxValue() throws Exception {
-        InRangeConstraint testSubject = createIntegerTestSubject();
-        Object result = testSubject.getRangeMaxValue();
-
-        assertEquals(10, result);
-    }
-
-    @Test
-    public void testSetRangeMaxValue() throws Exception {
-        InRangeConstraint testSubject = createIntegerTestSubject();
-        testSubject.setRangeMaxValue(30);
-
-        Object result = testSubject.getRangeMaxValue();
-
-        assertEquals(30, result);
-    }
-
-    @Test
-    public void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeStringTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
         InRangeConstraint testSubject = createStringTestSubject();
         Boolean validTypes = testSubject.validateValueType("string");
 
@@ -115,7 +79,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeStringFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
         InRangeConstraint testSubject = createStringTestSubject();
         Boolean validTypes = testSubject.validateValueType("integer");
 
@@ -123,7 +87,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeIntegerTrue() throws ConstraintValueDoNotMatchPropertyTypeException {
         InRangeConstraint testSubject = createIntegerTestSubject();
         Boolean validTypes = testSubject.validateValueType("integer");
 
@@ -131,7 +95,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testValidateValueTypeIntegerFalse() throws ConstraintValueDoNotMatchPropertyTypeException {
         InRangeConstraint testSubject = createIntegerTestSubject();
         Boolean validTypes = testSubject.validateValueType("string");
 
@@ -139,7 +103,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testChangeStringConstraintValueTypeToIntegerThrow() {
+    void testChangeStringConstraintValueTypeToIntegerThrow() {
         String propertyType = "integer";
         InRangeConstraint testSubject = createStringTestSubject();
         Exception exception = assertThrows(ConstraintValueDoNotMatchPropertyTypeException.class, () -> {
@@ -153,7 +117,7 @@ public class InRangeConstraintTest {
     }
 
     @Test
-    public void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
+    void testChangeIntegerConstraintValueTypeToString() throws ConstraintValueDoNotMatchPropertyTypeException {
         InRangeConstraint testSubject = createIntegerTestSubject();
         testSubject.changeConstraintValueTypeTo("string");
         List<Object> result = testSubject.getInRange();

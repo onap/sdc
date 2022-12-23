@@ -70,17 +70,17 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "lessThan constraint has invalid values <" + lessThan.toString() + "> property type is <" + propertyType + ">");
+                "lessThan constraint has invalid values <" + lessThan.toString() + "> property type is <" + propertyType + ">");
         }
         if (lessThan == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "lessThan constraint has invalid value <> property type is <" + propertyType + ">");
+                "lessThan constraint has invalid value <> property type is <" + propertyType + ">");
         }
         return toscaType.isValueTypeValid(lessThan);
     }
 
     @Override
-    public String getConstraintValueAsString() {
+    public String toString() {
         return String.valueOf(lessThan);
     }
 

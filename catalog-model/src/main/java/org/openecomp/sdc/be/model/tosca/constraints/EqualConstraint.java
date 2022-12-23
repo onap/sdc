@@ -19,10 +19,9 @@
  */
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import java.io.Serializable;
 import javax.validation.constraints.NotNull;
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -32,7 +31,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 @SuppressWarnings("serial")
-public class EqualConstraint extends AbstractPropertyConstraint implements Serializable {
+public class EqualConstraint extends AbstractComparablePropertyConstraint {
 
     @Getter
     @Setter
@@ -49,22 +48,10 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         if (propertyType.isValidValue(String.valueOf(equal))) {
             typed = propertyType.convert(String.valueOf(equal));
+            initialize(String.valueOf(equal), propertyType);
         } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "constraintValue constraint has invalid value <" + equal + "> property type is <" + propertyType.toString() + ">");
-        }
-    }
-
-    @Override
-    public void validate(Object propertyValue) throws ConstraintViolationException {
-        if (propertyValue == null) {
-            if (typed != null) {
-                fail(null);
-            }
-        } else if (typed == null) {
-            fail(propertyValue);
-        } else if (!typed.equals(propertyValue)) {
-            fail(propertyValue);
         }
     }
 
@@ -87,15 +74,33 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
         return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", String.valueOf(equal));
     }
 
+    @Override
+    protected void doValidate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            if (typed != null) {
+                fail(null);
+            }
+        } else if (typed == null) {
+            fail(propertyValue);
+        } else if (!typed.equals(propertyValue)) {
+            fail(propertyValue);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(equal);
+    }
+
     public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
+                "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
         }
         if (equal == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "equal constraint has invalid value <> property type is <" + propertyType + ">");
+                "equal constraint has invalid value <> property type is <" + propertyType + ">");
         }
         return toscaType.isValueTypeValid(equal);
     }
@@ -106,7 +111,7 @@ public class EqualConstraint extends AbstractPropertyConstraint implements Seria
             equal = toscaType.convert(String.valueOf(equal));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
+                "equal constraint has invalid values <" + equal.toString() + "> property type is <" + propertyType + ">");
         }
     }
 }
