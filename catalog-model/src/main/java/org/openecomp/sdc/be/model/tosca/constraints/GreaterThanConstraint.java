@@ -70,17 +70,17 @@ public class GreaterThanConstraint<T> extends AbstractComparablePropertyConstrai
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "greaterThan constraint has invalid values <" + greaterThan.toString() + "> property type is <" + propertyType + ">");
+                "greaterThan constraint has invalid values <" + greaterThan.toString() + "> property type is <" + propertyType + ">");
         }
         if (greaterThan == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "greaterThan constraint has invalid value <> property type is <" + propertyType + ">");
+                "greaterThan constraint has invalid value <> property type is <" + propertyType + ">");
         }
         return toscaType.isValueTypeValid(greaterThan);
     }
 
     @Override
-    public String getConstraintValueAsString() {
+    public String toString() {
         return String.valueOf(greaterThan);
     }
 

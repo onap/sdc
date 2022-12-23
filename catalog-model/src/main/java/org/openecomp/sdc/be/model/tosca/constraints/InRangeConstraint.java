@@ -19,9 +19,8 @@
  */
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -41,7 +40,9 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @NonNull
     private List<Object> inRange;
+    @JsonIgnore
     private Comparable min;
+    @JsonIgnore
     private Comparable max;
 
     public InRangeConstraint(List<Object> inRange) {
@@ -50,9 +51,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        // Perform verification that the property type is supported for
-
-        // comparison
+        // Perform verification that the property type is supported for comparison
         ConstraintUtil.checkComparableType(propertyType);
         if (inRange == null || inRange.size() != 2) {
             throw new ConstraintValueDoNotMatchPropertyTypeException("In range constraint must have two elements.");
@@ -94,40 +93,6 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
     }
 
-    @NotNull
-    public Object getRangeMinValue() {
-        if (inRange != null) {
-            return inRange.get(0);
-        } else {
-            return null;
-        }
-    }
-
-    public void setRangeMinValue(Object minValue) {
-        if (inRange == null) {
-            inRange = Lists.newArrayList(minValue, null);
-        } else {
-            inRange.set(0, minValue);
-        }
-    }
-
-    @NotNull
-    public Object getRangeMaxValue() {
-        if (inRange != null) {
-            return inRange.get(1);
-        } else {
-            return null;
-        }
-    }
-
-    public void setRangeMaxValue(Object maxValue) {
-        if (inRange == null) {
-            inRange = Lists.newArrayList(null, maxValue);
-        } else {
-            inRange.set(1, maxValue);
-        }
-    }
-
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
         return getErrorMessage(toscaType, e, propertyName, "%s property value must be in a range of %s", String.valueOf(min),
@@ -158,7 +123,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
             inRange.replaceAll(obj -> toscaType.convert(String.valueOf(obj)));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
-                    "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");
+                "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");
         }
     }
 }
