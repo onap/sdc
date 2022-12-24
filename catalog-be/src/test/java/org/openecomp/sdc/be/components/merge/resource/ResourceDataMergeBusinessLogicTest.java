@@ -35,7 +35,7 @@ import org.openecomp.sdc.be.model.Resource;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,7 +70,7 @@ public class ResourceDataMergeBusinessLogicTest {
         when(mergeCommandsFactory.getMergeCommands(oldResource, newResource)).thenReturn(Either.right(ActionStatus.GENERAL_ERROR));
         ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
         assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
-        verifyZeroInteractions(commandA, commandB, commandC);
+        verifyNoInteractions(commandA, commandB, commandC);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ResourceDataMergeBusinessLogicTest {
         ActionStatus actionStatus = testInstance.mergeResourceEntities(oldResource, newResource);
         assertEquals(ActionStatus.GENERAL_ERROR, actionStatus);
         verify(commandA).description();
-        verifyZeroInteractions(commandB, commandC);
+        verifyNoInteractions(commandB, commandC);
     }
 
 }

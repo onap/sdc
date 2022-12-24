@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class GlobalInputsFilteringBusinessLogicTest {
@@ -91,7 +91,7 @@ public class GlobalInputsFilteringBusinessLogicTest {
         Either<List<InputDefinition>, ActionStatus> globalInputsEither = testInstance.filterGlobalInputs(mockResource);
         assertTrue(globalInputsEither.isRight());
         assertEquals(ActionStatus.GENERAL_ERROR, globalInputsEither.right().value());
-        verifyZeroInteractions(genericTypeBusinessLogicMock);
+        verifyNoInteractions(genericTypeBusinessLogicMock);
     }
 
     private void verifyFilteredOnlyGlobalInputs(Either<List<InputDefinition>, ActionStatus> globalInputsEither, String[] genericProperties) {

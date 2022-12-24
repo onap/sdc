@@ -66,7 +66,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -109,18 +108,18 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(StorageOperationStatus.OK);
 
         //CapabilityOperation
-        when(capabilitiesValidation.validateCapabilities(anyCollection(), anyObject(), anyBoolean()))
+        when(capabilitiesValidation.validateCapabilities(anyCollection(), any(), anyBoolean()))
                 .thenReturn(Either.left(true));
-        when(capabilitiesOperation.addCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.addCapabilities(anyString(), any()))
                 .thenReturn(Either.left(createMockCapabilityListToReturn(
                         createCapability("capName", "capDesc", "capType", "source1",
                                 "0", "10"))));
 
-        when(capabilitiesOperation.updateCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.updateCapabilities(anyString(), any()))
                 .thenReturn(Either.left(createMockCapabilityListToReturn(
                         createCapability("capName", "capDesc", "capType", "source1",
                                 "0", "10"))));
-        when(capabilitiesOperation.deleteCapabilities( anyObject(), anyString()))
+        when(capabilitiesOperation.deleteCapabilities( any(), anyString()))
                 .thenReturn(StorageOperationStatus.OK);
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
@@ -182,9 +181,9 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        when(capabilitiesOperation.addCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.addCapabilities(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
-        when(capabilitiesOperation.updateCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.updateCapabilities(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
                 .thenReturn(Either.left(resource));
@@ -278,9 +277,9 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        when(capabilitiesOperation.addCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.addCapabilities(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
-        when(capabilitiesOperation.updateCapabilities(anyString(), anyObject()))
+        when(capabilitiesOperation.updateCapabilities(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
                 .thenReturn(Either.left(resource));
@@ -317,7 +316,7 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(Either.left(resource));
         when(toscaOperationFacade.getParentComponents(anyString()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(capabilitiesOperation.deleteCapabilities(anyObject(), anyString()))
+        when(capabilitiesOperation.deleteCapabilities(any(), anyString()))
                 .thenReturn(StorageOperationStatus.GENERAL_ERROR);
         Either<CapabilityDefinition, ResponseFormat> deleteCapabilityEither
                 = capabilitiesBusinessLogicMock.deleteCapability(componentId, capabilityId, user, true);

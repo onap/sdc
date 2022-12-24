@@ -50,7 +50,7 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @SpringJUnitConfig(locations = "classpath:paths/path-context.xml")
-public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
+class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
 
     private static final String NODE_NAME_1 = "nodeA-name";
     private static final String NODE_NAME_2 = "nodeB-name";
@@ -65,13 +65,13 @@ public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
     private Map<String, Component> originComponents = new HashMap<>();
 
     @BeforeAll
-    private static void setup() {
+    static void setup() {
         configurationManager =
             new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
     @BeforeEach
-    public void setUpForwardingPath() {
+    void setUpForwardingPath() {
         service = initForwardPath();
         List<ComponentInstance> componentInstances = new ArrayList<>();
         componentInstances.add(generateComponentInstance(NODE_NAME_1, NODE_ID_1));
@@ -101,7 +101,7 @@ public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
     }
 
     @Test
-    public void singleElementPath() {
+    void singleElementPath() {
         Assertions.assertDoesNotThrow(() -> {
             createPathSingleElement();
             Map<String, ToscaNodeTemplate> nodeTemplatesRes = new HashMap<>();

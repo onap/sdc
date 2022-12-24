@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +83,7 @@ public class PolicyPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     public void testDeclarePropertiesAsInputs_policyNotExist() {
         Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource, "nonExistingPolicy", Collections.emptyList());
         assertEquals(StorageOperationStatus.NOT_FOUND, declareResult.right().value());
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
@@ -110,14 +110,14 @@ public class PolicyPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
     public void testUnDeclareProperties_whenNoPropertiesFromPolicyMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(createResourceWithPolicy(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
@@ -159,14 +159,14 @@ public class PolicyPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsListInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
     public void testUnDeclarePropertiesAsListInputs_whenNoPropertiesFromPolicyMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsListInputs(createResourceWithPolicy(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test

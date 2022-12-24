@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.model.Resource;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +59,7 @@ public class ComponentInstanceChangeOperationOrchestratorTest {
         when(componentInstanceChangeOperation1.onChangeVersion(CONTAINER, PREV_VERSION, NEW_VERSION)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.doPostChangeVersionOperations(CONTAINER, PREV_VERSION, NEW_VERSION);
         assertThat(actionStatus).isEqualTo(ActionStatus.GENERAL_ERROR);
-        verifyZeroInteractions(componentInstanceChangeOperation2, componentInstanceChangeOperation3);
+        verifyNoInteractions(componentInstanceChangeOperation2, componentInstanceChangeOperation3);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ComponentInstanceChangeOperationOrchestratorTest {
         when(componentInstanceChangeOperation2.onChangeVersion(CONTAINER, PREV_VERSION, NEW_VERSION)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.doPostChangeVersionOperations(CONTAINER, PREV_VERSION, NEW_VERSION);
         assertThat(actionStatus).isEqualTo(ActionStatus.GENERAL_ERROR);
-        verifyZeroInteractions(componentInstanceChangeOperation3);
+        verifyNoInteractions(componentInstanceChangeOperation3);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ComponentInstanceChangeOperationOrchestratorTest {
         when(componentInstanceChangeOperation1.onDelete(CONTAINER, DELETED_INS_ID)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.doOnDeleteInstanceOperations(CONTAINER, DELETED_INS_ID);
         assertThat(actionStatus).isEqualTo(ActionStatus.GENERAL_ERROR);
-        verifyZeroInteractions(componentInstanceChangeOperation2, componentInstanceChangeOperation3);
+        verifyNoInteractions(componentInstanceChangeOperation2, componentInstanceChangeOperation3);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ComponentInstanceChangeOperationOrchestratorTest {
         when(componentInstanceChangeOperation2.onDelete(CONTAINER, DELETED_INS_ID)).thenReturn(ActionStatus.GENERAL_ERROR);
         ActionStatus actionStatus = testInstance.doOnDeleteInstanceOperations(CONTAINER, DELETED_INS_ID);
         assertThat(actionStatus).isEqualTo(ActionStatus.GENERAL_ERROR);
-        verifyZeroInteractions(componentInstanceChangeOperation3);
+        verifyNoInteractions(componentInstanceChangeOperation3);
     }
 
     @Test

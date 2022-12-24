@@ -52,7 +52,7 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,7 +81,7 @@ public class ComponentGroupMergeCommandTest {
 
         actionStatus = testInstance.mergeComponents(prevResource, DONT_CARE);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(groupsOperation);
+        verifyNoInteractions(groupsOperation);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ComponentGroupMergeCommandTest {
         Resource prevResource = createResourceWithGroups(group1, group2);
         ActionStatus actionStatus = testInstance.mergeComponents(prevResource, DONT_CARE);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(groupsOperation);
+        verifyNoInteractions(groupsOperation);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ComponentGroupMergeCommandTest {
         Resource currResource = createResourceWithGroups(group1, group2, group3);
         ActionStatus actionStatus = testInstance.mergeComponents(prevResource, currResource);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(groupsOperation);
+        verifyNoInteractions(groupsOperation);
     }
 
     @Test

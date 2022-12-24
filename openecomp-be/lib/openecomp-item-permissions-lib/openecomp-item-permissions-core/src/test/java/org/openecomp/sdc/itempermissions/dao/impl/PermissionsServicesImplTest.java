@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -127,7 +127,7 @@ public class PermissionsServicesImplTest {
     public void testListItemPermissions() {
         doReturn(Arrays.asList(createPermissionEntity(ITEM1_ID, USER1_ID, PERMISSION),
                 createPermissionEntity(ITEM1_ID, USER2_ID, PERMISSION))).when(permissionsDaoMock)
-                                                                        .listItemPermissions(anyObject());
+                                                                        .listItemPermissions(any());
 
         Collection<ItemPermissionsEntity> actual = permissionsServices.listItemPermissions(ITEM1_ID);
         Assert.assertEquals(2, actual.size());

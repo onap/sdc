@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class LicenseAgreementTest {
@@ -195,8 +195,8 @@ public class LicenseAgreementTest {
     FeatureGroupEntity fg2 = new FeatureGroupEntity(vlm1_id, VERSION01, fg2_id);
     doReturn(fg1).when(featureGroupDaoMcok).get(fg1);
     doReturn(fg2).when(featureGroupDaoMcok).get(fg2);
-    doNothing().when(vendorLicenseManager).updateUniqueName(anyObject(), anyObject(), anyObject(),
-        anyObject(), anyObject());
+    doNothing().when(vendorLicenseManager).updateUniqueName(any(), any(), any(),
+        any(), any());
 
     vendorLicenseManager.updateLicenseAgreement(existingLA, addedFGs, removedFGs);
 
@@ -213,7 +213,7 @@ public class LicenseAgreementTest {
     existingLA.setName("LA");
     existingLA.setFeatureGroupIds(new HashSet<>());
 
-    doReturn(existingLA).when(licenseAgreementDaoMcok).get(anyObject());
+    doReturn(existingLA).when(licenseAgreementDaoMcok).get(any());
 
     doNothing().when(vendorLicenseManager).deleteUniqueName(VendorLicenseConstants.UniqueValues
         .LICENSE_AGREEMENT_NAME, vlm1_id, VERSION01.toString(), existingLA.getName());
