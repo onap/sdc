@@ -16,8 +16,8 @@
 
 package org.openecomp.sdc.versioning.dao.impl.zusammen;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.openecomp.sdc.versioning.dao.impl.zusammen.TestUtil.createZusammenContext;
@@ -130,7 +130,7 @@ public class VersionZusammenDaoImplTest {
     String versionId = "versionId";
     doReturn(new Id(versionId)).when(zusammenAdaptorMock)
         .createVersion(eq(createZusammenContext(USER)), eq(new Id(itemId)),
-            baseId == null ? isNull(Id.class) : eq(new Id(baseId)),
+            baseId == null ? isNull(/*Id.class*/) : eq(new Id(baseId)),
             capturedZusammenVersion.capture());
 
 

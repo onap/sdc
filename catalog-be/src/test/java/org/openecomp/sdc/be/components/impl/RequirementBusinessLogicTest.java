@@ -105,18 +105,18 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(StorageOperationStatus.OK);
 
         //CapabilityOperation
-        when(requirementValidation.validateRequirements(anyCollection(), anyObject(), anyBoolean()))
+        when(requirementValidation.validateRequirements(anyCollection(), any(), anyBoolean()))
                 .thenReturn(Either.left(true));
-        when(requirementOperation.addRequirement(anyString(), anyObject()))
+        when(requirementOperation.addRequirement(anyString(), any()))
                 .thenReturn(Either.left(createMockRequirementListToReturn(createRequirement(
                         "reqName", "capType", "node", "source1",
                         "0", "10"))));
 
-        when(requirementOperation.updateRequirement(anyString(), anyObject()))
+        when(requirementOperation.updateRequirement(anyString(), any()))
                 .thenReturn(Either.left(createMockRequirementListToReturn(createRequirement(
                         "reqName", "capType", "node", "source1",
                 "0", "10"))));
-        when(requirementOperation.deleteRequirements( anyObject(), anyString()))
+        when(requirementOperation.deleteRequirements( any(), anyString()))
                 .thenReturn(StorageOperationStatus.OK);
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
@@ -268,9 +268,9 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
         Resource resource = createComponent(true);
         resource.setComponentType(ComponentTypeEnum.RESOURCE);
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
-        when(requirementOperation.addRequirement(anyString(), anyObject()))
+        when(requirementOperation.addRequirement(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
-        when(requirementOperation.updateRequirement(anyString(), anyObject()))
+        when(requirementOperation.updateRequirement(anyString(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
                 .thenReturn(Either.left(resource));
@@ -291,7 +291,7 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
                 .thenReturn(Either.left(resource));
         when(toscaOperationFacade.getParentComponents(anyString()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(requirementOperation.deleteRequirements(anyObject(), anyString()))
+        when(requirementOperation.deleteRequirements(any(), anyString()))
                 .thenReturn(StorageOperationStatus.GENERAL_ERROR);
         Either<RequirementDefinition, ResponseFormat> deleteRequirementEither
                 = requirementsBusinessLogicMock.deleteRequirement(componentId, requirementId, user, true);

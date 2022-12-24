@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class LicenseKeyGroupTest {
@@ -108,7 +108,7 @@ public class LicenseKeyGroupTest {
           Version version = new Version();
           info.getViewableVersions().add(version);
           info.setActiveVersion(version);
-          doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(),anyObject(),anyObject());
+          doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(),any(),any());
 
           LimitEntity limitEntity = LimitTest.createLimitEntity(LT_NAME,LimitType.Vendor,"string",version,
                   "Core",AggregationFunction.Average,10,"Hour");
@@ -116,10 +116,10 @@ public class LicenseKeyGroupTest {
           ArrayList<LimitEntity> limitEntityList = new ArrayList();
           limitEntityList.add(limitEntity);
 
-          doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(anyObject());
-          doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(anyObject(), anyObject(), anyObject(), anyObject());
-          doReturn(true).when(limitDao).isLimitPresent(anyObject());
-          doReturn(limitEntity).when(limitDao).get(anyObject());
+          doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(any());
+          doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(any(), any(), any(), any());
+          doReturn(true).when(limitDao).isLimitPresent(any());
+          doReturn(limitEntity).when(limitDao).get(any());
           try {
               Field limitField = VendorLicenseManagerImpl.class.getDeclaredField("limitDao");
               limitField.setAccessible(true);
@@ -141,7 +141,7 @@ public class LicenseKeyGroupTest {
 
           vendorLicenseManagerImpl.deleteLicenseKeyGroup(licenseKeyGroup, USER);
 
-          verify(limitDao).delete(anyObject());
+          verify(limitDao).delete(any());
       }
 
       @Test
@@ -160,7 +160,7 @@ public class LicenseKeyGroupTest {
               Version version = new Version();
               info.getViewableVersions().add(version);
               info.setActiveVersion(version);
-              doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(),anyObject(),anyObject());
+              doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(),any(),any());
 
               LimitEntity limitEntity = LimitTest.createLimitEntity(LT_NAME,LimitType.Vendor,"string",version,
                   "Core",AggregationFunction.Average,10,"Hour");
@@ -168,9 +168,9 @@ public class LicenseKeyGroupTest {
               ArrayList<LimitEntity> limitEntityList = new ArrayList();
               limitEntityList.add(limitEntity);
 
-              doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(anyObject());
-              doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(anyObject(), anyObject(), anyObject(), anyObject());
-              doReturn(false).when(limitDao).isLimitPresent(anyObject());
+              doReturn(licenseKeyGroup).when(licenseKeyGroupDao).get(any());
+              doReturn(limitEntityList).when(vendorLicenseFacade).listLimits(any(), any(), any(), any());
+              doReturn(false).when(limitDao).isLimitPresent(any());
 
               try {
                   Field limitField = VendorLicenseManagerImpl.class.getDeclaredField("limitDao");
@@ -411,7 +411,7 @@ public class LicenseKeyGroupTest {
     LicenseKeyGroupEntity lkg = createLicenseKeyGroup(vlm1_id, VERSION01, lkg1_id, LKG1_NAME,
         "LKG1 dec", LicenseKeyType.Universal, multiChoiceOrOther);
 
-    doReturn(lkg).when(licenseKeyGroupDao).get(anyObject());
+    doReturn(lkg).when(licenseKeyGroupDao).get(any());
 
     LicenseKeyGroupEntity lkgRetrived = vendorLicenseManagerImpl.getLicenseKeyGroup(lkg);
     verify(licenseKeyGroupDao).get(lkg);
@@ -438,12 +438,12 @@ public class LicenseKeyGroupTest {
 
     lkg.setReferencingFeatureGroups(new HashSet<>());
 
-    doReturn(lkg).when(licenseKeyGroupDao).get(anyObject());
+    doReturn(lkg).when(licenseKeyGroupDao).get(any());
 
     doNothing().when(vendorLicenseManagerImpl).deleteChildLimits(vlm1_id, VERSION01, lkg1_id);
 
-    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(anyObject(), anyObject(),
-        anyObject(), anyObject());
+    doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(any(), any(),
+        any(), any());
 
     vendorLicenseManagerImpl.deleteLicenseKeyGroup(lkg);
 
