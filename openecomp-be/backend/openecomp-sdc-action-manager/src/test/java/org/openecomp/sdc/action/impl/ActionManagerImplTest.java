@@ -22,11 +22,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.sdc.action.ActionConstants;
 import org.openecomp.sdc.action.dao.ActionArtifactDao;
@@ -55,9 +54,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -113,7 +112,7 @@ public class ActionManagerImplTest {
 
     @Test
     public void testGetFilteredActionsShouldPassForFilterTypeName() {
-        Mockito.when(actionDao.getFilteredActions(Matchers.anyString(), Matchers.anyString()))
+        Mockito.when(actionDao.getFilteredActions(anyString(), anyString()))
                 .thenReturn(mockActionsToReturn());
         List<Action> actions = actionManager.getFilteredActions("NAME", ActionConstants.FILTER_TYPE_NAME );
         Assert.assertEquals(1, actions.size());
@@ -121,37 +120,37 @@ public class ActionManagerImplTest {
 
     @Test(expected = ActionException.class)
     public void testGetFilteredActionsShouldThrowExceptionForFilterTypeNameWhenReturnedActionsOrEmptyOrNull() {
-        Mockito.when(actionDao.getFilteredActions(Matchers.anyString(), Matchers.anyString()))
+        Mockito.when(actionDao.getFilteredActions(anyString(), anyString()))
                 .thenReturn(new ArrayList<>());
         actionManager.getFilteredActions("NAME", ActionConstants.FILTER_TYPE_NAME );
     }
 
     @Test
     public void testGetFilteredActionsByMajorMinorVersionShouldPassWithActiveVersion() {
-        Mockito.when(actionDao.getFilteredActions(Matchers.anyString(), Matchers.anyString()))
+        Mockito.when(actionDao.getFilteredActions(anyString(), anyString()))
                 .thenReturn(mockActionsToReturn());
 
         Map<String, VersionInfo> actionVersionMap = new HashMap<>();
         VersionInfo versionInfo = createVersionInfo();
         actionVersionMap.put("uuid", versionInfo);
 
-        Mockito.when(versioningManager.listEntitiesVersionInfo(Matchers.anyString(),
-                Matchers.anyString(), Matchers.any())).thenReturn(actionVersionMap);
+        Mockito.when(versioningManager.listEntitiesVersionInfo(anyString(),
+                anyString(), any())).thenReturn(actionVersionMap);
         List<Action> actions = actionManager.getFilteredActions("type", ActionConstants.FILTER_TYPE_NAME );
         Assert.assertEquals(1, actions.size());
     }
 
     @Test
     public void testGetFilteredActionsByMajorMinorVersionShouldPassWithLatestFinalVersion() {
-        Mockito.when(actionDao.getFilteredActions(Matchers.anyString(), Matchers.anyString()))
+        Mockito.when(actionDao.getFilteredActions(anyString(), anyString()))
                 .thenReturn(mockActionsToReturn());
 
         Map<String, VersionInfo> actionVersionMap = new HashMap<>();
         VersionInfo versionInfo = createVersionInfo();
         actionVersionMap.put("uuid", versionInfo);
 
-        Mockito.when(versioningManager.listEntitiesVersionInfo(Matchers.anyString(),
-                Matchers.anyString(), Matchers.any())).thenReturn(actionVersionMap);
+        Mockito.when(versioningManager.listEntitiesVersionInfo(anyString(),
+                anyString(), any())).thenReturn(actionVersionMap);
         List<Action> actions = actionManager.getFilteredActions("type", ActionConstants.FILTER_TYPE_NAME );
         Assert.assertEquals(1, actions.size());
     }
@@ -232,7 +231,7 @@ public class ActionManagerImplTest {
         Mockito.when(versioningManager.checkout(anyString(), anyString(),anyString())).thenReturn(createVersion());
         Action action = actionManager.checkout(invariantUuId, "user");
         Assert.assertNotNull(action);
-        Mockito.verify(actionDao, times(1)).update(Matchers.any(ActionEntity.class));
+        Mockito.verify(actionDao, times(1)).update(any(ActionEntity.class));
 
     }
 
@@ -270,16 +269,16 @@ public class ActionManagerImplTest {
 
     @Test
     public void testCheckinShouldPassForHappyScenario() {
-        when(versioningManager.checkin(anyString(), anyString(), anyString(), Matchers.any()))
+        when(versioningManager.checkin(anyString(), anyString(), anyString(), any()))
                 .thenReturn(createVersion());
         when(actionDao.get(any(ActionEntity.class))).thenReturn(createActionEntity());
         Assert.assertNotNull(actionManager.checkin("invariantUuid", "user"));
-        Mockito.verify(actionDao, times(1)).update(Matchers.any(ActionEntity.class));
+        Mockito.verify(actionDao, times(1)).update(any(ActionEntity.class));
     }
 
     @Test(expected = ActionException.class)
     public void testCheckinShouldShouldThrowExceptionInCaseOfAnyException() {
-        when(versioningManager.checkin(anyString(), anyString(), anyString(), Matchers.any()))
+        when(versioningManager.checkin(anyString(), anyString(), anyString(), any()))
                 .thenThrow((new CoreException(new ErrorCode.ErrorCodeBuilder()
                         .withId(VersioningErrorCodes.CHECKIN_ON_UNLOCKED_ENTITY).build())));
         actionManager.checkin("invariantUuid", "user");
@@ -287,18 +286,18 @@ public class ActionManagerImplTest {
 
     @Test
     public void testSubmitShouldPassForHappyScenario() {
-        when(versioningManager.submit(anyString(), anyString(), anyString(), Matchers.any()))
+        when(versioningManager.submit(anyString(), anyString(), anyString(), any()))
                 .thenReturn(createVersion());
         when(actionDao.get(any(ActionEntity.class))).thenReturn(createActionEntity());
 
         Assert.assertNotNull( actionManager.submit("invariantUuid", "user"));
 
-        Mockito.verify(actionDao, times(1)).update(Matchers.any(ActionEntity.class));
+        Mockito.verify(actionDao, times(1)).update(any(ActionEntity.class));
     }
 
     @Test(expected = ActionException.class)
     public void testSubmitShouldThrowExceptionForAnyException() {
-        when(versioningManager.submit(anyString(), anyString(), anyString(), Matchers.any()))
+        when(versioningManager.submit(anyString(), anyString(), anyString(), any()))
                 .thenThrow((new CoreException(new ErrorCode.ErrorCodeBuilder()
                         .withId(VersioningErrorCodes.SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED).build())));
         actionManager.submit("invariantUuid", "user");

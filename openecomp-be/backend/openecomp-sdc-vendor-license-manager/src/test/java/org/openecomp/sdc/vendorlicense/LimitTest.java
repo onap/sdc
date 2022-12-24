@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -102,9 +102,9 @@ public class LimitTest {
     info.getViewableVersions().add(version);
     info.setActiveVersion(version);
 
-    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
-    doReturn(true).when(limitDao).isLimitPresent(anyObject());
-    doReturn(limitEntity1).when(limitDao).get(anyObject());
+    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
+    doReturn(true).when(limitDao).isLimitPresent(any());
+    doReturn(limitEntity1).when(limitDao).get(any());
 
     List<LimitEntity> limitEntityList = new ArrayList<>();
     limitEntityList.add(limitEntity1);
@@ -112,11 +112,11 @@ public class LimitTest {
     limitEntity1.setId("1234");
     limitEntity2.setId("1234");
     doReturn(limitEntityList).when(vendorLicenseFacade)
-        .listLimits(anyObject(), anyObject(), anyObject());
+        .listLimits(any(), any(), any());
 
     vendorLicenseManagerImpl.updateLimit(limitEntity2);
 
-    verify(vendorLicenseFacade).updateLimit(anyObject());
+    verify(vendorLicenseFacade).updateLimit(any());
   }
 
   @Test
@@ -132,8 +132,8 @@ public class LimitTest {
       info.setActiveVersion(version);
 
 /*      doReturn(info).when(vendorLicenseFacade)
-          .getVersionInfo(anyObject(), anyObject(), anyObject());*/
-      doReturn(limitEntity1).when(limitDao).get(anyObject());
+          .getVersionInfo(any(), any(), any());*/
+      doReturn(limitEntity1).when(limitDao).get(any());
 
       List<LimitEntity> limitEntityList = new ArrayList<>();
       limitEntityList.add(limitEntity1);
@@ -141,7 +141,7 @@ public class LimitTest {
       limitEntity1.setId("1234");
       limitEntity2.setId("9632");
       doReturn(limitEntityList).when(vendorLicenseFacade)
-          .listLimits(anyObject(), anyObject(), anyObject());
+          .listLimits(any(), any(), any());
 
       vendorLicenseManagerImpl.updateLimit(limitEntity2);
       Assert.fail();
@@ -160,9 +160,9 @@ public class LimitTest {
     info.getViewableVersions().add(version);
     info.setActiveVersion(version);
 
-    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
-    doReturn(true).when(limitDao).isLimitPresent(anyObject());
-    doReturn(limitEntity).when(limitDao).get(anyObject());
+    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
+    doReturn(true).when(limitDao).isLimitPresent(any());
+    doReturn(limitEntity).when(limitDao).get(any());
 
     List<LimitEntity> limitEntityList = new ArrayList<>();
     limitEntityList.add(limitEntity);
@@ -170,7 +170,7 @@ public class LimitTest {
 
     vendorLicenseManagerImpl.deleteLimit(limitEntity);
 
-    verify(vendorLicenseManagerImpl).deleteLimit(anyObject());
+    verify(vendorLicenseManagerImpl).deleteLimit(any());
   }
 
   @Test
@@ -186,8 +186,8 @@ public class LimitTest {
       info.setActiveVersion(version);
 
 /*      doReturn(info).when(vendorLicenseFacade)
-          .getVersionInfo(anyObject(), anyObject(), anyObject());*/
-      doReturn(null).when(limitDao).get(anyObject());
+          .getVersionInfo(any(), any(), any());*/
+      doReturn(null).when(limitDao).get(any());
 
       vendorLicenseManagerImpl.updateLimit(limitEntity2);
       Assert.fail();
@@ -220,7 +220,7 @@ public class LimitTest {
     info.getViewableVersions().add(VERSION);
     info.setActiveVersion(VERSION);
 
-    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
+    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
 
     vendorLicenseManagerImpl.createLimit(expected);
     verify(vendorLicenseFacade).createLimit(expected);
@@ -238,13 +238,13 @@ public class LimitTest {
     List<LimitEntity> vfcImageList = new ArrayList<LimitEntity>();
     vfcImageList.add(expectedDiffName);
     doReturn(vfcImageList).when(vendorLicenseFacade)
-        .listLimits(anyObject(), anyObject(), anyObject());
+        .listLimits(any(), any(), any());
 
     VersionInfo info = new VersionInfo();
     info.getViewableVersions().add(VERSION);
     info.setActiveVersion(VERSION);
 
-/*    doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
+/*    doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
 
     try {
       vendorLicenseManagerImpl.createLimit(expected);
@@ -262,7 +262,7 @@ public class LimitTest {
     info.getViewableVersions().add(VERSION);
     info.setActiveVersion(VERSION);
 
-    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
+    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
 
     try {
       vendorLicenseManagerImpl.getLimit(limit);
@@ -283,13 +283,13 @@ public class LimitTest {
     expected.setMetric("BWTH");
     expected.setTime("Day");
 
-    doReturn(true).when(limitDao).isLimitPresent(anyObject());
-    doReturn(expected).when(limitDao).get(anyObject());
+    doReturn(true).when(limitDao).isLimitPresent(any());
+    doReturn(expected).when(limitDao).get(any());
     VersionInfo info = new VersionInfo();
     info.getViewableVersions().add(VERSION);
     info.setActiveVersion(VERSION);
 
-    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(anyObject(), anyObject(), anyObject());*/
+    /*doReturn(info).when(vendorLicenseFacade).getVersionInfo(any(), any(), any());*/
 
     LimitEntity actual = createLimit(VLM_ID, VERSION, EPLKG_ID, LIMIT1_ID);
     vendorLicenseManagerImpl.getLimit(actual);

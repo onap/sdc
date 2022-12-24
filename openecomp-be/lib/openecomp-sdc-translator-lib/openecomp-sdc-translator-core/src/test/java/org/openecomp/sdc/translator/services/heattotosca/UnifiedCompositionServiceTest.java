@@ -17,8 +17,8 @@
 package org.openecomp.sdc.translator.services.heattotosca;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -647,7 +647,7 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData);
         Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
                 (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
         unifiedCompositionService
                 .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
@@ -682,7 +682,7 @@ public class UnifiedCompositionServiceTest {
 
         Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
                 (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
 
         unifiedCompositionService
@@ -710,7 +710,7 @@ public class UnifiedCompositionServiceTest {
         unifiedCompositionDataList.add(unifiedCompositionData);
         Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
                 (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
         unifiedCompositionService
                 .updateCompositionConnectivity(inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML),
@@ -746,7 +746,7 @@ public class UnifiedCompositionServiceTest {
 
         Mockito.doNothing().when(unifiedCompositionService).updNodesConnectedOutConnectivity
                 (inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML), unifiedCompositionDataList, context);
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
 
         unifiedCompositionService
@@ -774,7 +774,7 @@ public class UnifiedCompositionServiceTest {
         List<UnifiedCompositionData> unifiedCompositionDataList = new ArrayList<>();
         unifiedCompositionDataList.add(unifiedCompositionData);
 
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
 
         Optional<ServiceTemplate> substitutionServiceTemplate = unifiedCompositionService
@@ -846,7 +846,7 @@ public class UnifiedCompositionServiceTest {
         inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML).getTopology_template().getNode_templates()
                 .put(FSB1, abstractNodeTemplate);
 
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
 
         unifiedCompositionService.
@@ -886,7 +886,7 @@ public class UnifiedCompositionServiceTest {
         inputServiceTemplates.get(MAIN_SERVICE_TEMPLATE_YAML).getTopology_template().getNode_templates()
                 .put(FSB1, abstractNodeTemplate);
 
-        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(anyObject(),
+        Mockito.doReturn(FSB1).when(context).getUnifiedAbstractNodeTemplateId(any(),
                 anyString());
 
         unifiedCompositionService.

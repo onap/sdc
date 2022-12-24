@@ -125,7 +125,7 @@ public class ComponentInstanceOperationTest {
         componentInstance.setUniqueId("INST0.1");
         componentInstance.setComponentUid("RES0.1");
         componentInstance.setGroupInstances(gilist);
-        when(janusGraphGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.right(
+        when(janusGraphGenericDao.updateNode(any(),eq(ComponentInstanceData.class))).thenReturn(Either.right(
             JanusGraphOperationStatus.GENERAL_ERROR));
         Either<ComponentInstanceData, StorageOperationStatus> result = componentInstanceOperation.updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(componentInstance, NodeTypeEnum.Component,234234545L,false);
         assertEquals(StorageOperationStatus.GENERAL_ERROR, result.right().value());
@@ -146,7 +146,7 @@ public class ComponentInstanceOperationTest {
         componentInstance.setComponentUid("RES0.1");
         componentInstance.setGroupInstances(gilist);
         ComponentInstanceData componentInstanceData = new ComponentInstanceData();
-        when(janusGraphGenericDao.updateNode(anyObject(),eq(ComponentInstanceData.class))).thenReturn(Either.left(componentInstanceData));
+        when(janusGraphGenericDao.updateNode(any(),eq(ComponentInstanceData.class))).thenReturn(Either.left(componentInstanceData));
         Either<ComponentInstanceData, StorageOperationStatus> result = componentInstanceOperation.updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(componentInstance, NodeTypeEnum.Component,234234545L,false);
         assertEquals(componentInstanceData, result.left().value());
     }
