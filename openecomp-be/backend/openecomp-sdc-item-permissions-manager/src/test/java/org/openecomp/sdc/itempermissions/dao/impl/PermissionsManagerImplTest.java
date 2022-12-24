@@ -18,6 +18,7 @@ package org.openecomp.sdc.itempermissions.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.ITEM_ID_PROP;
@@ -38,7 +39,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -133,7 +133,7 @@ class PermissionsManagerImplTest {
     }
 
     private void verifyDirectNotificationCallParameters(String affectedUser, boolean permissionGranted) {
-        verify(notifierMock).directNotification(eventArgumentCaptor.capture(), Matchers.eq(affectedUser));
+        verify(notifierMock).directNotification(eventArgumentCaptor.capture(), eq(affectedUser));
         Event event = eventArgumentCaptor.getValue();
         assertTrue(event.getEventType().equals(PERMISSION_CHANGED));
         Map<String, Object> attributes = event.getAttributes();

@@ -31,6 +31,7 @@ import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.PropagationService;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 
@@ -61,7 +62,7 @@ public class NotificationPropagationManagerImplTest {
     public void shouldCallPropagationServiceNotifyWithMulticastDestinationWhenNotifySubscribers()
         throws Exception {
         notificationPropagationManager.notifySubscribers(eventMock);
-        verify(propagationServiceMock).notify(Matchers.eq(eventMock), destinationProviderCaptor
+        verify(propagationServiceMock).notify(eq(eventMock), destinationProviderCaptor
             .capture());
         Assert.assertTrue(destinationProviderCaptor.getValue() instanceof MulticastDestination);
 
@@ -71,7 +72,7 @@ public class NotificationPropagationManagerImplTest {
     public void shouldCallPropagationServiceNotifyWithUnicastDestinationWhenDirectNotification()
         throws Exception {
         notificationPropagationManager.directNotification(eventMock, "aaa");
-        verify(propagationServiceMock).notify(Matchers.eq(eventMock), destinationProviderCaptor
+        verify(propagationServiceMock).notify(eq(eventMock), destinationProviderCaptor
             .capture());
         Assert.assertTrue(destinationProviderCaptor.getValue() instanceof UnicastDestination);
     }

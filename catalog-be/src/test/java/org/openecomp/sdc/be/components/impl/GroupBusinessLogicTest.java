@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -282,7 +281,7 @@ class GroupBusinessLogicTest {
         component.setUniqueId("GRP.01");
         component.setGroups(grpdefList);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
-        when(groupsOperation.deleteGroups(anyObject(), anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
+        when(groupsOperation.deleteGroups(any(), anyList())).thenReturn(Either.right(StorageOperationStatus.ARTIFACT_NOT_FOUND));
 
         when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         assertThrows(ComponentException.class, () -> {
@@ -305,9 +304,9 @@ class GroupBusinessLogicTest {
         List<GroupDefinition> groupDefListCopy = new ArrayList<>();
         groupDefListCopy.add(updatedGroup);
         when(accessValidations.validateUserCanWorkOnComponent("compid", ComponentTypeEnum.SERVICE, "USR01", "DeleteGroup")).thenReturn(component);
-        when(groupsOperation.deleteGroups(anyObject(), anyList())).thenReturn(Either.left(groupDefListCopy));
-        when(groupsOperation.deleteCalculatedCapabilitiesWithProperties(anyString(), anyObject())).thenReturn(StorageOperationStatus.OK);
-        when(policyTargetsUpdateHandler.removePoliciesTargets(anyObject(), anyString(), anyObject())).thenReturn(ActionStatus.OK);
+        when(groupsOperation.deleteGroups(any(), anyList())).thenReturn(Either.left(groupDefListCopy));
+        when(groupsOperation.deleteCalculatedCapabilitiesWithProperties(anyString(), any())).thenReturn(StorageOperationStatus.OK);
+        when(policyTargetsUpdateHandler.removePoliciesTargets(any(), anyString(), any())).thenReturn(ActionStatus.OK);
 
         GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
             "USR01");

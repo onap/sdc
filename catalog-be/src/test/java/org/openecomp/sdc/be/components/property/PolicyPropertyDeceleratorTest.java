@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -86,7 +86,7 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
     public void testDeclarePropertiesAsInputs_policyNotExist() {
         Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource, "nonExistingPolicy", Collections.emptyList());
         assertThat(declareResult.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
@@ -113,14 +113,14 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test
     public void testUnDeclareProperties_whenNoPropertiesFromPolicyMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(createResourceWithPolicy(), input);
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
-        verifyZeroInteractions(policyOperation);
+        verifyNoInteractions(policyOperation);
     }
 
     @Test

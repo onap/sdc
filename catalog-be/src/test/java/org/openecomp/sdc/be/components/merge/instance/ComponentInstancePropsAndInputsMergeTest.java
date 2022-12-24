@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -146,7 +146,7 @@ class ComponentInstancePropsAndInputsMergeTest {
         assertThrows(ComponentException.class, () -> {
             testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
         });
-        verifyZeroInteractions(componentInstanceInputsRedeclareHandler, componentInstancePropertiesMergeBL, toscaOperationFacade);
+        verifyNoInteractions(componentInstanceInputsRedeclareHandler, componentInstancePropertiesMergeBL, toscaOperationFacade);
     }
 
     @Test
@@ -162,7 +162,7 @@ class ComponentInstancePropsAndInputsMergeTest {
         assertThrows(ComponentException.class, () -> {
             testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
         });
-        verifyZeroInteractions(componentInstanceInputsRedeclareHandler, toscaOperationFacade);
+        verifyNoInteractions(componentInstanceInputsRedeclareHandler, toscaOperationFacade);
     }
 
     @Test
@@ -182,7 +182,7 @@ class ComponentInstancePropsAndInputsMergeTest {
         assertThrows(ComponentException.class, () -> {
             testInstance.mergeDataAfterCreate(USER, dataHolder, service, "inst1");
         });
-        verifyZeroInteractions(componentInstanceInputsRedeclareHandler);
+        verifyNoInteractions(componentInstanceInputsRedeclareHandler);
     }
 
     private void assertComponentFilter(ComponentParametersView value) {

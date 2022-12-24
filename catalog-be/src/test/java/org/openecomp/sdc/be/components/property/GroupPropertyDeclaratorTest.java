@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,7 +86,7 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     public void testDeclarePropertiesAsInputs_groupNotExist() {
         Either<List<InputDefinition>, StorageOperationStatus> declareResult = groupPropertyDeclarator.declarePropertiesAsInputs(resource, "nonExistingGroup", Collections.emptyList());
         assertEquals(StorageOperationStatus.NOT_FOUND, declareResult.right().value());
-        verifyZeroInteractions(groupOperation);
+        verifyNoInteractions(groupOperation);
     }
 
     @Test
@@ -113,14 +113,14 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(groupOperation);
+        verifyNoInteractions(groupOperation);
     }
 
     @Test
     public void testUnDeclareProperties_whenNoPropertiesFromGroupMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(createResourceWithGroup(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(groupOperation);
+        verifyNoInteractions(groupOperation);
     }
 
     @Test
@@ -163,14 +163,14 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(groupOperation);
+        verifyNoInteractions(groupOperation);
     }
 
     @Test
     public void testUnDeclarePropertiesAsListInputs_whenNoPropertiesFromGroupMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(createResourceWithGroup(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
-        verifyZeroInteractions(groupOperation);
+        verifyNoInteractions(groupOperation);
     }
 
     @Test
