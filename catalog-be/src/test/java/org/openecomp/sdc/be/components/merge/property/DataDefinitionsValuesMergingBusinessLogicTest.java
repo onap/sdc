@@ -60,7 +60,7 @@ public class DataDefinitionsValuesMergingBusinessLogicTest {
         newProp1.setType("int");
 
         testInstance.mergeInstanceDataDefinitions(Collections.singletonList(oldProp1), Collections.emptyList(), Collections.singletonList(newProp1), Collections.emptyList());
-        Mockito.verifyZeroInteractions(propertyDataValueMergeBusinessLogicMock);
+        Mockito.verifyNoInteractions(propertyDataValueMergeBusinessLogicMock);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class DataDefinitionsValuesMergingBusinessLogicTest {
                 .setValue("val1").build();
 
         testInstance.mergeInstanceDataDefinitions(Collections.singletonList(oldProp1), Collections.emptyList(), Collections.singletonList(newProp1), Collections.emptyList());
-        Mockito.verifyZeroInteractions(propertyDataValueMergeBusinessLogicMock);
+        Mockito.verifyNoInteractions(propertyDataValueMergeBusinessLogicMock);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class DataDefinitionsValuesMergingBusinessLogicTest {
         PropertyDataDefinition oldProp = createPropertyDataDefinition("prop1", "oldVal1");
         PropertyDataDefinition newProp = createPropertyDataDefinition("prop2", null);
         testInstance.mergeInstanceDataDefinitions(Collections.singletonList(oldProp), Collections.emptyList(), Collections.singletonList(newProp), Collections.emptyList());
-        Mockito.verifyZeroInteractions(propertyDataValueMergeBusinessLogicMock);
+        Mockito.verifyNoInteractions(propertyDataValueMergeBusinessLogicMock);
     }
 
     private PropertyDataDefinition createPropertyDataDefinition(String name, String value) {

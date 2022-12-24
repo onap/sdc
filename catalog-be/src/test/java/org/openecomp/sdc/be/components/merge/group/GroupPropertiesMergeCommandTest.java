@@ -49,7 +49,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,14 +98,14 @@ public class GroupPropertiesMergeCommandTest {
     public void whenNewComponentHasNoGroups_returnOk() {
         ActionStatus mergeStatus = testInstance.mergeComponents(prevResource, new Resource());
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(mergeBusinessLogic, groupsOperation);
+        verifyNoInteractions(mergeBusinessLogic, groupsOperation);
     }
 
     @Test
     public void whenOldComponentHasNoGroups_returnOk() {
         ActionStatus mergeStatus = testInstance.mergeComponents(new Resource(), newResource);
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(mergeBusinessLogic, groupsOperation);
+        verifyNoInteractions(mergeBusinessLogic, groupsOperation);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class GroupPropertiesMergeCommandTest {
         Resource newResource = createResourceWithGroups(newGrpWithProps, newGrpNoProps);
         ActionStatus mergeStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(mergeBusinessLogic, groupsOperation);
+        verifyNoInteractions(mergeBusinessLogic, groupsOperation);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class GroupPropertiesMergeCommandTest {
         Resource newResource = createResourceWithGroups(newUserDefinedGrp);
         ActionStatus mergeStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(mergeBusinessLogic, groupsOperation);
+        verifyNoInteractions(mergeBusinessLogic, groupsOperation);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class GroupPropertiesMergeCommandTest {
         Resource newResource = createResourceWithGroups(newGrp);
         ActionStatus mergeStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(mergeStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(mergeBusinessLogic, groupsOperation);
+        verifyNoInteractions(mergeBusinessLogic, groupsOperation);
     }
 
     @Test

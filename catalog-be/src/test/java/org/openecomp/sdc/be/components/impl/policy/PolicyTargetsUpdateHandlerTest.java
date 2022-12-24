@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.utils.TestGenerationUtils.getComponentsUtils;
 
@@ -82,7 +82,7 @@ public class PolicyTargetsUpdateHandlerTest {
     public void onDeleteInstance_whenNoPolicies_returnActionOk() {
         Component container = new Resource();
         testInstance.removePoliciesTargets(container, "groupToDel", PolicyTargetType.GROUPS);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
@@ -90,13 +90,13 @@ public class PolicyTargetsUpdateHandlerTest {
         PolicyDefinition policy = PolicyDefinitionBuilder.create().addComponentInstanceTarget("someInst").build();
         Component container = new ResourceBuilder().addPolicy(policy).build();
         testInstance.removePoliciesTargets(container, "groupToDel", PolicyTargetType.GROUPS);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
     public void onDeleteInstance_whenNoPoliciesWithGivenGroupAsTarget_returnActionOk() {
         testInstance.removePoliciesTargets(container, "groupToDel", PolicyTargetType.GROUPS);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test

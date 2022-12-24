@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.utils.TestGenerationUtils.getComponentsUtils;
 
@@ -86,7 +86,7 @@ public class PolicyTargetsUpdateOperationTest {
         ComponentInstance newVersion = new ComponentInstanceBuilder().setId("newVersion").build();
         ActionStatus operationStatus = policyTargetsUpdateOperation.onChangeVersion(container, prevVersion, newVersion);
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class PolicyTargetsUpdateOperationTest {
         ComponentInstance newVersion = new ComponentInstanceBuilder().setId("newVersion").build();
         ActionStatus operationStatus = policyTargetsUpdateOperation.onChangeVersion(container, prevVersion, newVersion);
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class PolicyTargetsUpdateOperationTest {
         ComponentInstance newVersion = new ComponentInstanceBuilder().setId("newVersion").build();
         ActionStatus operationStatus = policyTargetsUpdateOperation.onChangeVersion(container, prevVersion, newVersion);
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class PolicyTargetsUpdateOperationTest {
         Component container = new Resource();
         ActionStatus operationStatus = policyTargetsUpdateOperation.onDelete(container, "instToDel");
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
@@ -145,14 +145,14 @@ public class PolicyTargetsUpdateOperationTest {
         Component container = new ResourceBuilder().addPolicy(policy).build();
         ActionStatus operationStatus = policyTargetsUpdateOperation.onDelete(container, "instToDel");
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test
     public void onDeleteInstance_whenNoPoliciesWithInstanceAsTarget_returnActionOk() {
         ActionStatus operationStatus = policyTargetsUpdateOperation.onDelete(container, "instToDel");
         assertThat(operationStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test

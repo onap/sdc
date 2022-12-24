@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class FeatureGroupTest {
@@ -137,11 +137,11 @@ public class FeatureGroupTest {
             "partNumber", "MRN", licenseKeyGroupIds, entitlementPoolIds,
             referencingLicenseAgreements);
 
-    doReturn(featureGroupEntity).when(featureGroupDao).get(anyObject());
+    doReturn(featureGroupEntity).when(featureGroupDao).get(any());
 
         /*if(featureGroupEntity.getManufacturerReferenceNumber() != null)
             featureGroupDao.update(featureGroupEntity);
-        verify(featureGroupDao).update(anyObject());*/
+        verify(featureGroupDao).update(any());*/
   }
 
   @Test
@@ -163,11 +163,11 @@ public class FeatureGroupTest {
             "partNumber", null, licenseKeyGroupIds, entitlementPoolIds,
             referencingLicenseAgreements);
 
-    doReturn(featureGroupEntity).when(featureGroupDao).get(anyObject());
+    doReturn(featureGroupEntity).when(featureGroupDao).get(any());
 
         /*if(featureGroupEntity.getManufacturerReferenceNumber() != null)
             featureGroupDao.update(featureGroupEntity);
-        verify(featureGroupDao, never()).update(anyObject());*/
+        verify(featureGroupDao, never()).update(any());*/
   }
 
   @Test
@@ -230,8 +230,8 @@ public class FeatureGroupTest {
     doReturn(lkg1).when(licenseKeyGroupDao).get(lkg1);
     doReturn(lkg2).when(licenseKeyGroupDao).get(lkg2);
 
-    doNothing().when(vendorLicenseManagerImpl).updateUniqueName(anyObject(), anyObject(),
-        anyObject(), anyObject(), anyObject());
+    doNothing().when(vendorLicenseManagerImpl).updateUniqueName(any(), any(),
+        any(), any(), any());
 
     vendorLicenseManagerImpl.updateFeatureGroup(existingFG, addedLKGs, removedLKGs, addedEPs,
         removedEPs);
@@ -255,7 +255,7 @@ public class FeatureGroupTest {
         existingFG.setEntitlementPoolIds(new HashSet<String>());
         existingFG.setLicenseKeyGroupIds(new HashSet<String>());
 
-        doReturn(existingFG).when(featureGroupDao).get(anyObject());
+        doReturn(existingFG).when(featureGroupDao).get(any());
 
         Set<String> removedEPs = new HashSet<>();
         Set<String> addedEPs = new HashSet<>();
@@ -277,8 +277,8 @@ public class FeatureGroupTest {
         doReturn(lkg1).when(licenseKeyGroupDao).get(lkg1);
         doReturn(lkg2).when(licenseKeyGroupDao).get(lkg2);
 
-        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(anyObject(), anyObject(),
-            anyObject(),anyObject(), anyObject());
+        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(any(), any(),
+            any(),any(), any());
 
         FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
 
@@ -306,7 +306,7 @@ public class FeatureGroupTest {
         existingFG.setEntitlementPoolIds(epSet);
         existingFG.setLicenseKeyGroupIds(lkgSet);
 
-        doReturn(existingFG).when(featureGroupDao).get(anyObject());
+        doReturn(existingFG).when(featureGroupDao).get(any());
 
         EntitlementPoolEntity ep1 = new EntitlementPoolEntity(vlm1_id, VERSION01, ep1_id);
         doReturn(ep1).when(entitlementPoolDao).get(ep1);
@@ -319,8 +319,8 @@ public class FeatureGroupTest {
         Set<String> removedLKGs = new HashSet<>();
         Set<String> addedLKGs = new HashSet<>();
 
-        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(anyObject(), anyObject(),
-            anyObject(),anyObject(), anyObject());
+        doNothing().when(vendorLicenseManagerImpl).updateUniqueName(any(), any(),
+            any(),any(), any());
 
         FeatureGroupEntity fg = new FeatureGroupEntity(vlm1_id, VERSION01, fg1_id);
 
@@ -357,7 +357,7 @@ public class FeatureGroupTest {
     existingFG.setEntitlementPoolIds(new HashSet<String>());
     existingFG.setLicenseKeyGroupIds(new HashSet<String>());
 
-    doReturn(existingFG).when(featureGroupDao).get(anyObject());
+    doReturn(existingFG).when(featureGroupDao).get(any());
 
     doNothing().when(vendorLicenseManagerImpl).deleteUniqueName(VendorLicenseConstants
         .UniqueValues.FEATURE_GROUP_NAME, vlm1_id, VERSION01.toString(), existingFG.getName());
