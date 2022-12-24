@@ -44,7 +44,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -87,7 +87,7 @@ public class PolicyOperationTest {
             JanusGraphOperationStatus.NOT_FOUND));
         StorageOperationStatus storageOperationStatus = testInstance.updatePolicyProperties(component, POLICY_ID, Collections.emptyList());
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.NOT_FOUND);
-        verifyZeroInteractions(topologyTemplateOperation);
+        verifyNoInteractions(topologyTemplateOperation);
     }
 
     @Test

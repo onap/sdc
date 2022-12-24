@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 
@@ -131,7 +131,7 @@ public class MonitoringMibEnricherTest {
         "pd_server"));
     returnedComponents.add(getComponentEntity(vspId, version, componentId2,
         "pd_server"));
-    Mockito.when(componentDaoMock.list(anyObject()))
+    Mockito.when(componentDaoMock.list(any()))
         .thenReturn(returnedComponents);
     setMockToEnrichComponent(vspId, version, componentId1);
 
@@ -166,9 +166,9 @@ public class MonitoringMibEnricherTest {
     returnedArtifact.setArtifactName("mib.zip");
     returnedArtifact.setArtifact(getMibByteBuffer("/mock/enrichMib/MIB.zip"));
 
-    Mockito.when(componentArtifactDaoMock.getByType(anyObject()))
+    Mockito.when(componentArtifactDaoMock.getByType(any()))
         .thenReturn(Optional.of(returnedArtifact));
-    Mockito.doNothing().when(enrichedServiceModelDaoMock).storeExternalArtifact(anyObject());
+    Mockito.doNothing().when(enrichedServiceModelDaoMock).storeExternalArtifact(any());
   }
 
   private ComponentEntity getComponentEntity(String vspId,

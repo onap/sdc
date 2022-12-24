@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.common.api.Constants.GET_POLICY;
 
@@ -293,7 +294,7 @@ class PolicyServletTest extends JerseySpringBaseTest {
     void getPolicyProperties_wrongComponentType() {
         Response response = buildGetPropertiesRequest("unknownType").get();
         assertThat(response.getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
-        //verifyZeroInteractions(businessLogic);
+        verifyNoInteractions(businessLogic);
     }
 
     @Test

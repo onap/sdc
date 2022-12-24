@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -387,7 +386,7 @@ class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         resource.setLastUpdaterUserId("USR01");
 
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(Either.left(resource));
-        when(toscaOperationFacade.deletePropertyOfComponent(anyObject(), anyString())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.deletePropertyOfComponent(any(), anyString())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.getParentComponents(anyString())).thenReturn(Either.left(new ArrayList<>()));
 
         assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "PROP", "USR01").isRight());

@@ -60,7 +60,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createCapabilityDefinition;
 import static org.openecomp.sdc.be.components.property.CapabilityTestUtils.createProperties;
@@ -91,7 +91,7 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
         Component cmpt = new Resource();
         Either<List<InputDefinition>, StorageOperationStatus> createdInputs = testInstance.declarePropertiesAsInputs(cmpt, "someCmptInstId", Collections.emptyList());
         assertEquals(StorageOperationStatus.NOT_FOUND, createdInputs.right().value());
-        verifyZeroInteractions(toscaOperationFacade);
+        verifyNoInteractions(toscaOperationFacade);
     }
 
     @Test

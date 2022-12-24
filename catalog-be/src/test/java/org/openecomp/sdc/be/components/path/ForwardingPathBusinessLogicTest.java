@@ -46,7 +46,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
 
     @BeforeAll
-    private static void setup() {
+    static void setup() {
         configurationManager =
             new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
