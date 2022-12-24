@@ -64,7 +64,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -209,7 +209,7 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
         when(toscaOperationFacade.updateComponentCalculatedCapabilitiesProperties(newResource)).thenReturn(StorageOperationStatus.OK);
         ActionStatus actionStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(dataDefinitionsValuesMergingBusinessLogic);
+        verifyNoInteractions(dataDefinitionsValuesMergingBusinessLogic);
     }
 
     @Test
@@ -220,7 +220,7 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
         verifyNoMoreInteractions(toscaOperationFacade);
         ActionStatus actionStatus = testInstance.mergeComponents(prevResource, newResource);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(dataDefinitionsValuesMergingBusinessLogic);
+        verifyNoInteractions(dataDefinitionsValuesMergingBusinessLogic);
     }
 
     @Test
@@ -268,7 +268,7 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
     public void mergeInstanceCapabilityProperties_emptyCapabilitiesList() {
         ActionStatus actionStatus = testInstance.mergeComponentInstanceCapabilities(new Resource(), new Resource(),  "instanceId", Collections.emptyList());
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade, dataDefinitionsValuesMergingBusinessLogic, capabilityResolver);
+        verifyNoInteractions(toscaOperationFacade, dataDefinitionsValuesMergingBusinessLogic, capabilityResolver);
     }
 
     @Test
@@ -291,6 +291,6 @@ public class ComponentInstanceCapabilitiesMergeBLTest {
         when(toscaOperationFacade.updateComponentInstanceCapabilityProperties(container, INSTANCE1)).thenReturn(StorageOperationStatus.OK);
         ActionStatus actionStatus = testInstance.mergeComponentInstanceCapabilities(container, resource, INSTANCE1, prevCapabilities);
         assertThat(actionStatus).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(dataDefinitionsValuesMergingBusinessLogic);
+        verifyNoInteractions(dataDefinitionsValuesMergingBusinessLogic);
     }
 }

@@ -50,7 +50,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class DistributionEngineTest{
@@ -111,7 +111,7 @@ public class DistributionEngineTest{
         when(environmentsEngine.getEnvironments()).thenReturn(envs);
         ActionStatus actionStatus = testInstance.notifyService(DISTRIBUTION_ID, new Service(), new NotificationDataImpl(), "someNonExisitngEnv", modifier);
         assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE, actionStatus);
-        verifyZeroInteractions(distributionNotificationSender);
+        verifyNoInteractions(distributionNotificationSender);
     }
 
     @Test

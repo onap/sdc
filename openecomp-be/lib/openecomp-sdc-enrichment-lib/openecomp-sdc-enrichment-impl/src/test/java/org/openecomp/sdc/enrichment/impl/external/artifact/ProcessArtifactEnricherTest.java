@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
@@ -81,13 +81,13 @@ public class ProcessArtifactEnricherTest {
 
     Collection<ComponentEntity> componentList = new ArrayList<>();
     componentList.add(componentEntity);
-    when(componentDaoMock.list(anyObject())).thenReturn(componentList);
+    when(componentDaoMock.list(any())).thenReturn(componentList);
 
     Collection<ProcessEntity> list = new ArrayList<>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
 
-    when(processDaoMock.getArtifact(anyObject())).thenReturn(processEntity);
+    when(processDaoMock.getArtifact(any())).thenReturn(processEntity);
 
     EnrichmentInfo info = new EnrichmentInfo();
     info.setVersion(version);
@@ -129,13 +129,13 @@ public class ProcessArtifactEnricherTest {
 
     Collection<ComponentEntity> componentList = new ArrayList<>();
     componentList.add(componentEntity);
-    when(componentDaoMock.list(anyObject())).thenReturn(componentList);
+    when(componentDaoMock.list(any())).thenReturn(componentList);
 
     Collection<ProcessEntity> list = new ArrayList<>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
 
-    when(processDaoMock.getArtifact(anyObject())).thenReturn(processEntity);
+    when(processDaoMock.getArtifact(any())).thenReturn(processEntity);
 
     EnrichmentInfo info = new EnrichmentInfo();
     info.setVersion(version);
@@ -171,13 +171,13 @@ public class ProcessArtifactEnricherTest {
 
     Collection<ComponentEntity> componentList = new ArrayList<>();
     componentList.add(componentEntity);
-    when(componentDaoMock.list(anyObject())).thenReturn(componentList);
+    when(componentDaoMock.list(any())).thenReturn(componentList);
 
     Collection<ProcessEntity> list = new ArrayList<>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
 
-    when(processDaoMock.getArtifact(anyObject())).thenReturn(null);
+    when(processDaoMock.getArtifact(any())).thenReturn(null);
 
     EnrichmentInfo info = new EnrichmentInfo();
     info.setVersion(version);
@@ -211,13 +211,13 @@ public class ProcessArtifactEnricherTest {
 
     Collection<ComponentEntity> componentList = new ArrayList<>();
     componentList.add(componentEntity);
-    when(componentDaoMock.list(anyObject())).thenReturn(componentList);
+    when(componentDaoMock.list(any())).thenReturn(componentList);
 
     Collection<ProcessEntity> list = new ArrayList<>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
 
-    when(processDaoMock.getArtifact(anyObject())).thenReturn(processEntity);
+    when(processDaoMock.getArtifact(any())).thenReturn(processEntity);
 
     EnrichmentInfo info = new EnrichmentInfo();
     info.setVersion(version);

@@ -42,7 +42,7 @@ class DistributionEnginePollingTaskTest extends BeConfDependentTest {
 
     // TODO - remove this setup after migration to Junit5 BeConfDependentTest
     @BeforeAll
-    private static void setup() {
+    static void setup() {
         configurationManager =
             new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }

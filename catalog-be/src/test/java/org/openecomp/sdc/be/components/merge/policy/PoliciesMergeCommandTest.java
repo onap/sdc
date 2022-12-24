@@ -52,7 +52,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -149,7 +149,7 @@ public class PoliciesMergeCommandTest {
     public void whenPreviousComponentHasNoPolicies_returnOk() {
         ActionStatus mergeResult = testInstance.mergeComponents(new Resource(), DONT_CARE);
         assertThat(mergeResult).isEqualTo(ActionStatus.OK);
-        verifyZeroInteractions(toscaOperationFacade, componentsUtils);
+        verifyNoInteractions(toscaOperationFacade, componentsUtils);
     }
 
     @Test

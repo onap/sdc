@@ -51,7 +51,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class ServiceDistributionValidationTest {
@@ -106,7 +106,7 @@ public class ServiceDistributionValidationTest {
         } catch(ByResponseFormatComponentException e){
             assertEquals(errResponse, e.getResponseFormat());
         }
-        verifyZeroInteractions(toscaOperationFacade, operationalEnvironmentDao, componentsUtils);
+        verifyNoInteractions(toscaOperationFacade, operationalEnvironmentDao, componentsUtils);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class ServiceDistributionValidationTest {
         when(componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.SERVICE_ID.getValue())).thenReturn(errResponse);
         Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
-        verifyZeroInteractions(operationalEnvironmentDao);
+        verifyNoInteractions(operationalEnvironmentDao);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ServiceDistributionValidationTest {
         when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE))).thenReturn(errResponse);
         Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
-        verifyZeroInteractions(operationalEnvironmentDao);
+        verifyNoInteractions(operationalEnvironmentDao);
     }
 
     @Test
