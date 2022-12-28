@@ -15,7 +15,9 @@ RUN set -ex && \
         libressl-dev && \
     gem install public_suffix -v 4.0.7 --no-document && \
     gem install multipart-post -v 2.2.0 --no-document && \
-    gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
+    gem install etc -v 1.3.0 --no-document && \
+    gem install bundler -v 2.3.26 --no-document && \
+    gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
     gem cleanup && \
     apk update
 
