@@ -69,16 +69,18 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.propertiesName = parentName + '#' + this.name;
             
             if (property.type == PROPERTY_TYPES.LIST) {
-                if(property.value != null) {
-                    const valueJson = JSON.parse(property.value);
-                    if (key != '') {
-                        this.mapKey = key;
-                    }else{
-                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                        this.mapKey = indexNumber.toString();
+                if (property.schemaType != PROPERTY_TYPES.MAP) {
+                    if(property.value != null) {
+                        const valueJson = JSON.parse(property.value);
+                        if (key != '') {
+                            this.mapKey = key;
+                        }else{
+                            let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                            this.mapKey = indexNumber.toString();
+                        }
+                    }else {
+                        this.mapKey = "0";
                     }
-                }else {
-                    this.mapKey = "0";
                 }
                 this.mapKeyError = null;
                 this.type = property.schema.property.type;

@@ -155,16 +155,18 @@ export class DynamicPropertyComponent {
 
         let mapKeyValue = this.property instanceof DerivedFEProperty ? this.property.mapKey : "";
         if (this.property.type == PROPERTY_TYPES.LIST && mapKeyValue === "") {
-            if(this.property.value != null) {
-                const valueJson = JSON.parse(this.property.value);
-                if(this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null){
-                    let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                    mapKeyValue = indexNumber.toString();
-                }else{
-                    mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
+            if (this.property.schemaType != PROPERTY_TYPES.MAP) {
+                if (this.property.value != null) {
+                    const valueJson = JSON.parse(this.property.value);
+                    if (this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null) {
+                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                        mapKeyValue = indexNumber.toString();
+                    }else{
+                        mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
+                    }
+                }else {
+                    mapKeyValue = "0";
                 }
-            }else {
-                mapKeyValue = "0";
             }
         }
         let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, mapKeyValue, null);
@@ -286,7 +288,7 @@ export class DynamicPropertyComponent {
     }
 
     preventInsertItem = (property:DerivedFEProperty):boolean => {
-        if(property.type == PROPERTY_TYPES.MAP && Object.keys(property.valueObj).indexOf('') > -1 ){
+        if(property.type == PROPERTY_TYPES.MAP && property.valueObj != null && Object.keys(property.valueObj).indexOf('') > -1 ){
             return true;
         }
         return false;
