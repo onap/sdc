@@ -71,6 +71,52 @@
     },
     {
       "key": {
+        "uuid": "3f7f7ca0_8132aae5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-05T15:53:55Z",
+      "side": 1,
+      "message": "I think we can re-use the existing method in CommonImportManager as follows, removing the need to add another very similar one:\n\n        final Either\u003cImmutablePair\u003cDataTypeDefinition, Boolean\u003e, ResponseFormat\u003e elementTypes \u003d commonImportManager.createElementTypes(\n                \"\",\n                dataTypeFromJson -\u003e Either.left(List.of(dataType)),\n                this::createDataTypesByDao,\n                ElementTypeEnum.DATA_TYPE).leftMap(entry -\u003e entry.get(0));",
+      "range": {
+        "startLine": 82,
+        "startChar": 95,
+        "endLine": 87,
+        "endChar": 0
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ff92216_b2d8fc2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-05T15:53:55Z",
+      "side": 1,
+      "message": "also need to add the data type definition to the imports (as per line 72 above)",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 5
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ebd82f2f_7ceb31c3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
         "patchSetId": 11
