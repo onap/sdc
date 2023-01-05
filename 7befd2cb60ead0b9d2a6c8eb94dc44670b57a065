@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f010080e_b831c3cf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-05T10:53:15Z",
+      "side": 1,
+      "message": "remove unnecessary spacing",
+      "range": {
+        "startLine": 309,
+        "startChar": 7,
+        "endLine": 321,
+        "endChar": 10
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74708bbb_a06c1944",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-05T10:53:15Z",
+      "side": 1,
+      "message": "remove unused parameter",
+      "range": {
+        "startLine": 81,
+        "startChar": 93,
+        "endLine": 81,
+        "endChar": 135
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1e5e44d_0ae0d30d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-05T10:53:15Z",
+      "side": 1,
+      "message": "return immediately instead of assigning",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 133
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebd82f2f_7ceb31c3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-05T10:53:15Z",
+      "side": 1,
+      "message": "remove this useless assignment, inline status in L537",
+      "range": {
+        "startLine": 532,
+        "startChar": 0,
+        "endLine": 532,
+        "endChar": 54
+      },
+      "revId": "7befd2cb60ead0b9d2a6c8eb94dc44670b57a065",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
