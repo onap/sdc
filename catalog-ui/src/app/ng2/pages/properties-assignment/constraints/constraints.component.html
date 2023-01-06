@@ -20,74 +20,113 @@
   -->
 
 <div class="app-constraints">
-  <form novalidate class="w-sdc-form two-columns">
-    <div class="w-sdc-form-columns-wrapper" *ngFor="let constraint of constraints; let constraintIndex = index; trackBy:trackByFn">
-        <div class="w-sdc-form-column-small">
-            <select class="i-sdc-form-select"
-                    data-tests-id="constraints"
-                    [disabled]="isViewOnly"
-                    (change)="onChangeConstraintType(constraintIndex, $event.target.value)">
-              <option *ngIf="constraint" [value]="constraint.type"
-                      hidden selected>
-                {{ConstraintTypesMapping[constraint.type]}}
-              </option>
-              <option *ngFor="let constraintType of constraintTypes"
-                      [value]="constraintType"
-                      [disabled]="disableConstraint(constraintType, constraint.type)">
-                {{ConstraintTypesMapping[constraintType]}}
-              </option>
-            </select>
-        </div>
+  <form novalidate class="w-sdc-form two-columns" [formGroup]="constraintForm">
+    <div *ngFor="let constraint of constraintsArray.controls; let constraintIndex = index; trackBy:trackByFn">
 
+      <div formArrayName="constraint">
+        <div class="w-sdc-form-columns-wrapper" [formGroupName]="constraintIndex">
+          <div class="w-sdc-form-column-small">
+              <select class="i-sdc-form-select"
+                      data-tests-id="constraints"
+                      formControlName="type"
+                      [value]="constraintsArray.at(constraintIndex).get('type').value"
+                      (change)="onChangeConstraintType(constraintIndex, $event.target.value)">
+                <option *ngIf="constraint" [value]="constraint.value.type"
+                        hidden selected>
+                  {{ConstraintTypesMapping[constraint.value.type]}}
+                </option>
+                <option *ngFor="let constraintType of constraintTypes"
+                        [value]="constraintType"
+                        [disabled]="disableConstraint(constraintType, constraint.value.type)">
+                  {{ConstraintTypesMapping[constraintType]}}
+                </option>
+              </select>
 
-        <div class="w-sdc-form-columns-wrapper">
-
-          <div class="w-sdc-form-column">
-            <div class="w-sdc-form-columns-wrapper" *ngIf="constraint.type == 'inRange'">
-              <div class="w-sdc-form-column">
-                <input type="text" class="i-sdc-form-input myClass"
-                      (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
-                      [disabled]="isViewOnly"
-                      [value]="getInRangeValue(constraintIndex, 0)"/>
-              </div>
-              <div class="w-sdc-form-column">
-                <input type="text" class="i-sdc-form-input myClass"
-                      (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
-                      [disabled]="isViewOnly"
-                      [value]="getInRangeValue(constraintIndex, 1)"/>
-              </div>
-            </div>
-
-            <div *ngIf="constraint.type == 'validValues'">
-              <div class="w-sdc-form-columns-wrapper-block">
-                <div class="add-btn add-list-item w-sdc-form-column-block"
-                    [ngClass]="{'disabled': isViewOnly}"
-                    (click)="addToList(constraintIndex)">Add to List</div>
-              </div>
-              <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index; trackBy:trackByFn">
-                <div class="w-sdc-form-column">
-                  <input type="text" class="i-sdc-form-input" [value]="value"
-                        [disabled]="isViewOnly"
-                        (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+            <div class="validation-errors">
+              <ng-container *ngFor="let validation of validationMessages.type">
+                <div class="input-error" *ngIf="constraintsArray.at(constraintIndex).get('type').hasError(validation.type);">
+                  {{ validation.message }}
                 </div>
-                <div class="w-sdc-form-column">
-                  <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
-                </div>
-              </div>
-            </div>
-
-            <div *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
-              <input type="text" class="i-sdc-form-input myClass"
-                     [disabled]="isViewOnly"
-                     (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
-                     [value]="constraint.value"/>
+              </ng-container>
             </div>
           </div>
 
-          <div class="w-sdc-form-column-vsmall">
-              <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeConstraint(constraintIndex)"></span>
+
+          <div class="w-sdc-form-columns-wrapper">
+
+            <div class="w-sdc-form-column">
+              <div class="w-sdc-form-columns-wrapper" *ngIf="constraint.value.type == 'inRange'">
+                <div class="w-sdc-form-column">
+                  <input type="text" class="i-sdc-form-input myClass" required
+                        (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 0)"
+                        [value]="getInRangeValue(constraintIndex, 0)"/>
+
+                  <ng-container *ngFor="let validation of validationMessages.constraint">
+                    <div class="input-error" *ngIf="constraintValuesArray(constraintIndex).controls[0].hasError(validation.type);">
+                      {{ validation.message }}
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="w-sdc-form-column">
+                  <input type="text" class="i-sdc-form-input myClass" required
+                        (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, 1)"
+                        [value]="getInRangeValue(constraintIndex, 1)"/>
+
+                  <ng-container *ngFor="let validation of validationMessages.constraint">
+                    <div class="input-error" *ngIf="constraintValuesArray(constraintIndex).controls[1].hasError(validation.type);">
+                      {{ validation.message }}
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="constraint.value.type == 'validValues'">
+                <div class="w-sdc-form-columns-wrapper-block">
+                  <div class="add-btn add-list-item w-sdc-form-column-block"
+                      [ngClass]="{'disabled': isViewOnly}"
+                      (click)="addToList(constraintIndex)">Add to List</div>
+                </div>
+                <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraintValuesArray(constraintIndex).controls; let valueIndex = index; trackBy:trackByFn">
+                  <div class="w-sdc-form-column">
+                    <input type="text" class="i-sdc-form-input" required
+                      [value]="value.value"
+                      (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+                  </div>
+
+                  <ng-container *ngFor="let validation of validationMessages.constraint">
+                    <div class="input-error" *ngIf="constraintValuesArray(constraintIndex).controls[valueIndex].hasError(validation.type);">
+                      {{ validation.message }}
+                    </div>
+                  </ng-container>
+
+                  <div class="w-sdc-form-column">
+                    <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="constraint.get('type').value != 'inRange' && constraint.get('type').value != 'validValues'">
+                <input type="text" class="i-sdc-form-input myClass required" required
+                       formControlName="value"
+                       [value]="constraintsArray.at(constraintIndex).get('value').value"
+                       (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"/>
+
+                <div class="validation-errors">
+                  <ng-container *ngFor="let validation of validationMessages.constraint">
+                    <div class="input-error" *ngIf="constraintsArray.at(constraintIndex).get('value').hasError(validation.type);">
+                      {{ validation.message }}
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-sdc-form-column-vsmall" *ngIf="!isViewOnly">
+                <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeConstraint(constraintIndex)"></span>
+            </div>
           </div>
         </div>
+      </div>
 
 
     </div>

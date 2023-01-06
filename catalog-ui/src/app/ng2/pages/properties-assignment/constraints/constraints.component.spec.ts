@@ -19,6 +19,7 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConstraintsComponent } from './constraints.component';
 
 describe('ConstraintsComponent', () => {
@@ -27,7 +28,8 @@ describe('ConstraintsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConstraintsComponent ]
+      declarations: [ ConstraintsComponent ],
+      imports: [FormsModule, ReactiveFormsModule]
     })
     .compileComponents();
   }));
