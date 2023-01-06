@@ -1022,7 +1022,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<CategoryDefinition> categories = new ArrayList<>();
         SubCategoryDefinition subcategory;
         Either<Vertex, JanusGraphOperationStatus> childVertex = janusGraphDao
-            .getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+            .getChildVertex(vertex, EdgeLabelEnum.CATEGORY);
         if (childVertex.isRight()) {
             log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(),
                 childVertex.right().value());
@@ -1042,7 +1042,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             : Collections.emptyList();
         subcategory.setMetadataKeys(metadataKeys);
         Either<Vertex, JanusGraphOperationStatus> parentVertex = janusGraphDao
-            .getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY, JsonParseFlagEnum.NoParse);
+            .getParentVertex(subCategoryV, EdgeLabelEnum.SUB_CATEGORY);
         Vertex categoryV = parentVertex.left().value();
         String categoryNormalizedName = (String) categoryV.property(GraphPropertyEnum.NORMALIZED_NAME.getProperty()).value();
         catalogComponent.setCategoryNormalizedName(categoryNormalizedName);
@@ -1059,7 +1059,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     protected JanusGraphOperationStatus setServiceCategoryFromGraphV(Vertex vertex, CatalogComponent catalogComponent) {
         List<CategoryDefinition> categories = new ArrayList<>();
         Either<Vertex, JanusGraphOperationStatus> childVertex = janusGraphDao
-            .getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse);
+            .getChildVertex(vertex, EdgeLabelEnum.CATEGORY);
         if (childVertex.isRight()) {
             log.debug(FAILED_TO_FETCH_FOR_TOSCA_ELEMENT_WITH_ID_ERROR, EdgeLabelEnum.CATEGORY, catalogComponent.getUniqueId(),
                 childVertex.right().value());

@@ -41,12 +41,9 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class JanusGraphDaoTest extends DAOConfDependentTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(JanusGraphDaoTest.class);
     private final JanusGraphDao dao = new JanusGraphDao(new JanusGraphClient(new DAOJanusGraphStrategy()));
 
     @BeforeEach
@@ -250,7 +247,7 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
 
         // default test
 
-        result = dao.getParentVertices(parentVertex, edgeLabel, parseFlag);
+        result = dao.getParentVertices(parentVertex, edgeLabel);
     }
 
     @Test
@@ -263,7 +260,7 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
 
         // default test
 
-        result = dao.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
+        result = dao.getChildrenVertices(parentVertex, edgeLabel);
     }
 
     @Test
