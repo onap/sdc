@@ -18,7 +18,15 @@
  */
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { PROPERTY_DATA, PROPERTY_TYPES } from "app/utils/constants"
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup, ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils/constants';
 
 @Component({
   selector: 'app-constraints',
@@ -35,13 +43,32 @@ export class ConstraintsComponent implements OnInit {
   constraints: Constraint[] = new Array();
   constraintTypes: string[];
   ConstraintTypesMapping = ConstraintTypesMapping;
-  valid: boolean = true;
+  valid: boolean = false;
+  constraintForm: FormGroup;
+  validationMessages;
+
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
-    this.constraintTypes = Object.keys(ConstraintTypes).map(key => ConstraintTypes[key]);
+    this.constraintTypes = Object.keys(ConstraintTypes).map((key) => ConstraintTypes[key]);
+
+    this.constraintForm = this.formBuilder.group({
+      constraint: new FormControl('', Validators.compose([
+          Validators.required,
+          constraintValidator(this.propertyType)
+      ]))
+    });
+
+    this.validationMessages = {
+      constraint: [
+        { type: 'required', message: 'Constraint is required'},
+        { type: 'constraintInvalid', message: 'Constraint value is invalid'}
+      ]
+    };
   }
 
   ngOnChanges(changes): void {
+    console.log('changes', changes);
     if (changes.propertyType) {
       if (!this.propertyType || changes.propertyType.currentValue == this.propertyType) {
         this.propertyType = changes.propertyType.currentValue;
@@ -52,182 +79,42 @@ export class ConstraintsComponent implements OnInit {
       }
     }
     this.constraints = new Array();
-    if(changes.propertyConstraints.currentValue) {
+    if (changes.propertyConstraints && changes.propertyConstraints.currentValue) {
       changes.propertyConstraints.currentValue.forEach((constraint: any) => {
         this.constraints.push(this.getConstraintFromPropertyBEModel(constraint));
       });
     }
   }
 
-  private getConstraintFromPropertyBEModel(constraint: any):Constraint {
-    let constraintType: ConstraintTypes;
-    let constraintValue: any;
-    if (!constraint) {
-      constraintType = ConstraintTypes.null;
-      constraintValue = "";
-    } else if(constraint.hasOwnProperty(ConstraintTypes.valid_values)){
-      constraintType = ConstraintTypes.valid_values;
-      constraintValue = constraint.validValues;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.equal)) {
-      constraintType = ConstraintTypes.equal;
-      constraintValue = constraint.equal;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.greater_than)) {
-      constraintType = ConstraintTypes.greater_than;
-      constraintValue = constraint.greaterThan;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.greater_or_equal)) {
-      constraintType = ConstraintTypes.greater_or_equal;
-      constraintValue = constraint.greaterOrEqual;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.less_than)) {
-      constraintType = ConstraintTypes.less_than;
-      constraintValue = constraint.lessThan;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.less_or_equal)) {
-      constraintType = ConstraintTypes.less_or_equal;
-      constraintValue = constraint.lessOrEqual;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.in_range)) {
-      constraintType = ConstraintTypes.in_range;
-      constraintValue = new Array(constraint.inRange[0], constraint.inRange[1]);
-    } else if(constraint.rangeMaxValue || constraint.rangeMinValue) {
-      constraintType = ConstraintTypes.in_range;
-      constraintValue = new Array(constraint.rangeMinValue, constraint.rangeMaxValue);
-    } else if(constraint.hasOwnProperty(ConstraintTypes.length)) {
-      constraintType = ConstraintTypes.length;
-      constraintValue = constraint.length;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.min_length)) {
-      constraintType = ConstraintTypes.min_length;
-      constraintValue = constraint.minLength;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.max_length)) {
-      constraintType = ConstraintTypes.max_length;
-      constraintValue = constraint.maxLength;
-    } else if(constraint.hasOwnProperty(ConstraintTypes.pattern)) {
-      constraintType = ConstraintTypes.pattern;
-      constraintValue = constraint.pattern;
-    }
-    return {
-      type:constraintType,
-      value:constraintValue
-    }
-  }
-
-  private getConstraintsFormat(): any[] {
-    let constraintArray = new Array();
-    this.constraints.forEach((constraint: Constraint) => {
-      constraintArray.push(this.getConstraintFormat(constraint))
-    });
-    return constraintArray;
-  }
-
-  private getConstraintFormat(constraint: Constraint): any {
-    switch (constraint.type) {
-      case ConstraintTypes.equal:
-        return {
-          [ConstraintTypes.equal]: constraint.value
-        }
-      case ConstraintTypes.less_or_equal:
-        return {
-          [ConstraintTypes.less_or_equal]: constraint.value
-        }
-      case ConstraintTypes.less_than:
-        return {
-          [ConstraintTypes.less_than]: constraint.value
-        }
-      case ConstraintTypes.greater_or_equal:
-        return {
-          [ConstraintTypes.greater_or_equal]: constraint.value
-        }
-      case ConstraintTypes.greater_than:
-        return {
-          [ConstraintTypes.greater_than]: constraint.value
-        }
-      case ConstraintTypes.in_range:
-        return {
-          [ConstraintTypes.in_range]: constraint.value
-        }
-      case ConstraintTypes.length:
-        return {
-          [ConstraintTypes.length]: constraint.value
-        }
-      case ConstraintTypes.max_length:
-        return {
-          [ConstraintTypes.max_length]: constraint.value
-        }
-      case ConstraintTypes.min_length:
-        return {
-          [ConstraintTypes.min_length]: constraint.value
-        }
-      case ConstraintTypes.pattern:
-        return {
-          [ConstraintTypes.pattern]: constraint.value
-        }
-      case ConstraintTypes.valid_values:
-        return {
-          [ConstraintTypes.valid_values]: constraint.value
-        }
-      default:
-        return;
-    }
-  }
-
-  private validateConstraints(): void {
-    this.valid = this.constraints.every((constraint: Constraint) => {
-      if (Array.isArray(constraint.value)) {
-        return !(constraint.value.length == 0 || this.doesArrayContaintEmptyValues(constraint.value));
-      }
-      if (constraint.type == ConstraintTypes.pattern) {
-        try {
-          new RegExp(constraint.value);
-          this.valid = true;
-        } catch(e) {
-          this.valid = false;
-        }
-      }
-      return constraint.value && constraint.type != ConstraintTypes.null
-    });
-  }
-
-  private doesArrayContaintEmptyValues(arr) {
-    for(const element of arr) {
-      if(element === "") return true;
-    }
-    return false;
-  }
-
-  private emitOnConstraintChange(): void {
-    this.validateConstraints();
-    const newConstraints = this.getConstraintsFormat();
-    this.onConstraintChange.emit({
-      constraints: newConstraints,
-      valid: this.valid
-    });
-  }
-
-  removeFromList(constraintIndex: number, valueIndex: number){
+  removeFromList(constraintIndex: number, valueIndex: number) {
     this.constraints[constraintIndex].value.splice(valueIndex, 1);
-    this.emitOnConstraintChange()
+    this.emitOnConstraintChange();
   }
 
-  addToList(constraintIndex: number){
+  addToList(constraintIndex: number) {
     if (!this.constraints[constraintIndex].value) {
       this.constraints[constraintIndex].value = new Array();
     }
-    this.constraints[constraintIndex].value.push("");
-    this.emitOnConstraintChange()
+    this.constraints[constraintIndex].value.push('');
+    this.emitOnConstraintChange();
   }
 
   onChangeConstraintType(constraintIndex: number, newType: ConstraintTypes) {
     this.constraints[constraintIndex].type = newType;
     if ((newType == ConstraintTypes.in_range || newType == ConstraintTypes.valid_values) && !Array.isArray(this.constraints[constraintIndex].value)) {
-      this.constraints[constraintIndex].value = new Array()
+      this.constraints[constraintIndex].value = new Array();
     }
     this.emitOnConstraintChange();
   }
 
   onChangeConstraintValue(constraintIndex: number, newValue: any) {
+    console.log('onChangeConstraintValue.newValue', newValue);
     this.constraints[constraintIndex].value = newValue;
     this.emitOnConstraintChange();
   }
 
   onChangeConstrainValueIndex(constraintIndex: number, newValue: any, valueIndex: number) {
-    if(!this.constraints[constraintIndex].value) {
+    if (!this.constraints[constraintIndex].value) {
       this.constraints[constraintIndex].value = new Array();
     }
     this.constraints[constraintIndex].value[valueIndex] = newValue;
@@ -240,17 +127,17 @@ export class ConstraintsComponent implements OnInit {
 }
 
   addConstraint() {
-    let newConstraint: Constraint = {
+    const newConstraint: Constraint = {
       type: ConstraintTypes.null,
-      value: ""
-    }
+      value: ''
+    };
     this.constraints.push(newConstraint);
     this.emitOnConstraintChange();
   }
 
   getInRangeValue(constraintIndex: number, valueIndex: number): string {
-    if(!this.constraints[constraintIndex].value || !this.constraints[constraintIndex].value[valueIndex]) {
-      return "";
+    if (!this.constraints[constraintIndex].value || !this.constraints[constraintIndex].value[valueIndex]) {
+      return '';
     }
     return this.constraints[constraintIndex].value[valueIndex];
   }
@@ -267,19 +154,19 @@ export class ConstraintsComponent implements OnInit {
       case ConstraintTypes.greater_or_equal:
       case ConstraintTypes.greater_than:
       case ConstraintTypes.in_range:
-        if (this.isComparable(this.propertyType)){
+        if (this.isComparable(this.propertyType)) {
           return false;
         }
         break;
       case ConstraintTypes.length:
       case ConstraintTypes.max_length:
       case ConstraintTypes.min_length:
-        if (this.propertyType == PROPERTY_TYPES.STRING || this.propertyType == PROPERTY_TYPES.MAP || this.propertyType == PROPERTY_TYPES.LIST){
+        if (this.propertyType == PROPERTY_TYPES.STRING || this.propertyType == PROPERTY_TYPES.MAP || this.propertyType == PROPERTY_TYPES.LIST) {
           return false;
         }
         break;
       case ConstraintTypes.pattern:
-        if (this.propertyType == PROPERTY_TYPES.STRING){
+        if (this.propertyType == PROPERTY_TYPES.STRING) {
           return false;
         }
         break;
@@ -293,7 +180,7 @@ export class ConstraintsComponent implements OnInit {
   getConstraintTypeIfPresent(constraintType: ConstraintTypes): Constraint {
     return this.constraints.find((constraint) => {
       return constraint.type == constraintType ? true : false;
-    })
+    });
   }
 
   trackByFn(index) {
@@ -307,38 +194,256 @@ export class ConstraintsComponent implements OnInit {
     return false;
   }
 
+  private getConstraintFromPropertyBEModel(constraint: any): Constraint {
+    let constraintType: ConstraintTypes;
+    let constraintValue: any;
+    if (!constraint) {
+      constraintType = ConstraintTypes.null;
+      constraintValue = '';
+    } else if (constraint.hasOwnProperty(ConstraintTypes.valid_values)) {
+      constraintType = ConstraintTypes.valid_values;
+      constraintValue = constraint.validValues;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.equal)) {
+      constraintType = ConstraintTypes.equal;
+      constraintValue = constraint.equal;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.greater_than)) {
+      constraintType = ConstraintTypes.greater_than;
+      constraintValue = constraint.greaterThan;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.greater_or_equal)) {
+      constraintType = ConstraintTypes.greater_or_equal;
+      constraintValue = constraint.greaterOrEqual;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.less_than)) {
+      constraintType = ConstraintTypes.less_than;
+      constraintValue = constraint.lessThan;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.less_or_equal)) {
+      constraintType = ConstraintTypes.less_or_equal;
+      constraintValue = constraint.lessOrEqual;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.in_range)) {
+      constraintType = ConstraintTypes.in_range;
+      constraintValue = new Array(constraint.inRange[0], constraint.inRange[1]);
+    } else if (constraint.rangeMaxValue || constraint.rangeMinValue) {
+      constraintType = ConstraintTypes.in_range;
+      constraintValue = new Array(constraint.rangeMinValue, constraint.rangeMaxValue);
+    } else if (constraint.hasOwnProperty(ConstraintTypes.length)) {
+      constraintType = ConstraintTypes.length;
+      constraintValue = constraint.length;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.min_length)) {
+      constraintType = ConstraintTypes.min_length;
+      constraintValue = constraint.minLength;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.max_length)) {
+      constraintType = ConstraintTypes.max_length;
+      constraintValue = constraint.maxLength;
+    } else if (constraint.hasOwnProperty(ConstraintTypes.pattern)) {
+      constraintType = ConstraintTypes.pattern;
+      constraintValue = constraint.pattern;
+    }
+    return {
+      type: constraintType,
+      value: constraintValue
+    };
+  }
+
+  private getConstraintsFormat(): any[] {
+    const constraintArray = new Array();
+    this.constraints.forEach((constraint: Constraint) => {
+      constraintArray.push(this.getConstraintFormat(constraint));
+    });
+    return constraintArray;
+  }
+
+  private getConstraintFormat(constraint: Constraint): any {
+    switch (constraint.type) {
+      case ConstraintTypes.equal:
+        return {
+          [ConstraintTypes.equal]: constraint.value
+        };
+      case ConstraintTypes.less_or_equal:
+        return {
+          [ConstraintTypes.less_or_equal]: constraint.value
+        };
+      case ConstraintTypes.less_than:
+        return {
+          [ConstraintTypes.less_than]: constraint.value
+        };
+      case ConstraintTypes.greater_or_equal:
+        return {
+          [ConstraintTypes.greater_or_equal]: constraint.value
+        };
+      case ConstraintTypes.greater_than:
+        return {
+          [ConstraintTypes.greater_than]: constraint.value
+        };
+      case ConstraintTypes.in_range:
+        return {
+          [ConstraintTypes.in_range]: constraint.value
+        };
+      case ConstraintTypes.length:
+        return {
+          [ConstraintTypes.length]: constraint.value
+        };
+      case ConstraintTypes.max_length:
+        return {
+          [ConstraintTypes.max_length]: constraint.value
+        };
+      case ConstraintTypes.min_length:
+        return {
+          [ConstraintTypes.min_length]: constraint.value
+        };
+      case ConstraintTypes.pattern:
+        return {
+          [ConstraintTypes.pattern]: constraint.value
+        };
+      case ConstraintTypes.valid_values:
+        return {
+          [ConstraintTypes.valid_values]: constraint.value
+        };
+      default:
+        return;
+    }
+  }
+
+  private validateConstraints(): void {
+    this.valid = this.constraints.every((constraint: Constraint) => {
+      if (Array.isArray(constraint.value)) {
+        return !(constraint.value.length == 0 || this.doesArrayContaintEmptyValues(constraint.value));
+      }
+      if (constraint.type == ConstraintTypes.pattern) {
+        try {
+          new RegExp(constraint.value);
+          this.valid = true;
+        } catch (e) {
+          this.valid = false;
+        }
+      } else {
+        console.log('form valid', this.constraintForm.valid);
+        this.valid = this.constraintForm.valid;
+      }
+
+      console.log('validateConstraints.valid', this.valid);
+      return constraint.value && constraint.type != ConstraintTypes.null;
+    });
+  }
+
+  private doesArrayContaintEmptyValues(arr) {
+    for (const element of arr) {
+      if (element === '') { return true; }
+    }
+    return false;
+  }
+
+  private emitOnConstraintChange(): void {
+    this.validateConstraints();
+    const newConstraints = this.getConstraintsFormat();
+
+    this.valid = this.constraintForm.valid;
+    console.log('emitOnConstraintChange.valid', this.valid);
+
+    this.onConstraintChange.emit({
+      constraints: newConstraints,
+      valid: this.valid
+    });
+  }
+
 }
 
 export enum ConstraintTypes {
-  null = "",
-  equal= "equal",
-  greater_than = "greaterThan",
-  greater_or_equal = "greaterOrEqual",
-  less_than = "lessThan",
-  less_or_equal = "lessOrEqual",
-  in_range = "inRange",
-  valid_values = "validValues",
-  length = "length",
-  min_length = "minLength",
-  max_length = "maxLength",
-  pattern = "pattern"
+  null = '',
+  equal= 'equal',
+  greater_than = 'greaterThan',
+  greater_or_equal = 'greaterOrEqual',
+  less_than = 'lessThan',
+  less_or_equal = 'lessOrEqual',
+  in_range = 'inRange',
+  valid_values = 'validValues',
+  length = 'length',
+  min_length = 'minLength',
+  max_length = 'maxLength',
+  pattern = 'pattern'
 }
 
 export const ConstraintTypesMapping = {
-  [ConstraintTypes.equal]: "equal",
-  [ConstraintTypes.greater_than]: "greater_than",
-  [ConstraintTypes.greater_or_equal]: "greater_or_equal",
-  [ConstraintTypes.less_than]: "less_than",
-  [ConstraintTypes.less_or_equal]: "less_or_equal",
-  [ConstraintTypes.in_range]: "in_range",
-  [ConstraintTypes.valid_values]: "valid_values",
-  [ConstraintTypes.length]: "length",
-  [ConstraintTypes.min_length]: "min_length",
-  [ConstraintTypes.max_length]: "max_length",
-  [ConstraintTypes.pattern]: "pattern"
+  [ConstraintTypes.equal]: 'equal',
+  [ConstraintTypes.greater_than]: 'greater_than',
+  [ConstraintTypes.greater_or_equal]: 'greater_or_equal',
+  [ConstraintTypes.less_than]: 'less_than',
+  [ConstraintTypes.less_or_equal]: 'less_or_equal',
+  [ConstraintTypes.in_range]: 'in_range',
+  [ConstraintTypes.valid_values]: 'valid_values',
+  [ConstraintTypes.length]: 'length',
+  [ConstraintTypes.min_length]: 'min_length',
+  [ConstraintTypes.max_length]: 'max_length',
+  [ConstraintTypes.pattern]: 'pattern'
 };
 
 export interface Constraint {
-  type:ConstraintTypes,
-  value:any
+  type: ConstraintTypes;
+  value: any;
+}
+
+export function constraintValidator(propertyType): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    console.group('constraintValidator');
+
+    const value = control.value;
+
+    if (!value || (value && value.empty)) {
+      console.groupEnd();
+      return null;
+    }
+
+    switch (propertyType) {
+      case PROPERTY_TYPES.INTEGER:
+        // Check for full stop which gets ignored by parse check
+        if (value.includes('.')) {
+          console.groupEnd();
+          return {constraintInvalid: true};
+        }
+
+        try {
+          // Check that string is a valid int
+          // tslint:disable-next-line:radix
+          const parsed = parseInt(value);
+          console.log('Parsed', parsed);
+          // tslint:disable-next-line:triple-equals
+          console.log('Parsed', parsed == value);
+
+          console.groupEnd();
+          // tslint:disable-next-line:triple-equals
+          if (parsed != value) {
+            return {constraintInvalid: true};
+          } else {
+            return null;
+          }
+        } catch (e) {
+          console.warn('Failed to parse int', e);
+          console.groupEnd();
+          return {constraintInvalid: true};
+        } finally {
+          console.groupEnd();
+        }
+      case PROPERTY_TYPES.FLOAT:
+        try {
+          const parsed = parseFloat(value);
+          console.log('Parsed', parsed);
+          // tslint:disable-next-line:triple-equals
+          console.log('Parsed', parsed == value);
+
+          console.groupEnd();
+          // tslint:disable-next-line:triple-equals
+          if (parsed != value) {
+            return {constraintInvalid: true};
+          } else {
+            return null;
+          }
+        } catch (e) {
+          console.warn('Failed to parse float', e);
+          console.groupEnd();
+          return {constraintInvalid: true};
+        } finally {
+          console.groupEnd();
+        }
+      default:
+        console.warn('No validation for property type ', propertyType);
+    }
+  };
 }
