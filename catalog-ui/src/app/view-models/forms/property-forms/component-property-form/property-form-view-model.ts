@@ -507,6 +507,8 @@ export class PropertyFormViewModel {
         }
 
         this.$scope.onConstraintChange = (constraints: any): void => {
+            console.log('$scope.onConstraintChange', constraints);
+
             if (!this.$scope.invalidMandatoryFields) {
                 this.$scope.footerButtons[0].disabled = !constraints.valid;
             } else {
