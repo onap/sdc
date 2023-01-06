@@ -300,7 +300,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
         Mockito.when(janusGraphClient.getGraph()).thenReturn(value);
 
         // default test
-        result = testSubject.getChildVertex(parentVertex, edgeLabel, parseFlag);
+        result = testSubject.getChildVertex(parentVertex, edgeLabel);
     }
 
     @Test
@@ -313,7 +313,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
 
         // default test
 
-        result = testSubject.getParentVertex(parentVertex, edgeLabel, parseFlag);
+        result = testSubject.getParentVertex(parentVertex, edgeLabel);
     }
 
     @Test
@@ -326,7 +326,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
 
         // default test
 
-        result = testSubject.getParentVertices(parentVertex, edgeLabel, parseFlag);
+        result = testSubject.getParentVertices(parentVertex, edgeLabel);
     }
 
     @Test
@@ -339,7 +339,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
 
         // default test
 
-        result = testSubject.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
+        result = testSubject.getChildrenVertices(parentVertex, edgeLabel);
     }
 
     @Test

@@ -34,7 +34,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
-import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 
@@ -74,7 +73,7 @@ public class ToscaElementOperationCatalogTest {
     public void setUp() {
         vertexList.add(vertex);
         when(janusGraphDao.getCatalogOrArchiveVerticies(true)).thenReturn(Either.left(vertexList.iterator()));
-        when(janusGraphDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.NoParse))
+        when(janusGraphDao.getChildVertex(vertex, EdgeLabelEnum.CATEGORY))
                 .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(vertex.property(GraphPropertiesDictionary.METADATA.getProperty())).thenReturn(property);
     }

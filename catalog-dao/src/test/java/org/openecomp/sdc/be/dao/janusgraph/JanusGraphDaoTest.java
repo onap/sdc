@@ -250,7 +250,7 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
 
         // default test
 
-        result = dao.getParentVertices(parentVertex, edgeLabel, parseFlag);
+        result = dao.getParentVertices(parentVertex, edgeLabel);
     }
 
     @Test
@@ -263,7 +263,7 @@ class JanusGraphDaoTest extends DAOConfDependentTest {
 
         // default test
 
-        result = dao.getChildrenVertices(parentVertex, edgeLabel, parseFlag);
+        result = dao.getChildrenVertices(parentVertex, edgeLabel);
     }
 
     @Test
