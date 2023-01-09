@@ -22,6 +22,30 @@
       "revId": "0f9c59b4211ba1698314b8b3e83dcdcc58559298",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae7f57a7_a1d9c7c4",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/base-property-form/property-form-base.less",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-01-09T17:19:03Z",
+      "side": 1,
+      "message": "it causes the constraint UI to not render the drop down menu",
+      "parentUuid": "346e5e50_09b6ddc0",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 23
+      },
+      "revId": "0f9c59b4211ba1698314b8b3e83dcdcc58559298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
