@@ -326,11 +326,43 @@ export class ConstraintsComponent implements OnInit {
       } else {
         console.log('form valid', this.constraintForm.valid);
         this.valid = this.constraintForm.valid;
+        this.validateNonStringVal(constraint);
       }
 
       console.log('validateConstraints.valid', this.valid);
       return constraint.value && constraint.type != ConstraintTypes.null;
     });
+  }
+
+  private validateNonStringVal(constraint: Constraint) {
+    if (!this.valid) {
+      return;
+    }
+
+    switch (this.propertyType) {
+      case PROPERTY_TYPES.INTEGER:
+        try {
+          // tslint:disable-next-line:radix
+          const parsed = parseInt(constraint.value);
+          console.log('Parsed', parsed);
+
+          constraint.value = parsed;
+        } catch (e) {
+          console.warn('Failed to parse int', e);
+        }
+        break;
+      case PROPERTY_TYPES.FLOAT:
+        try {
+          // tslint:disable-next-line:radix
+          const parsed = parseFloat(constraint.value);
+          console.log('Parsed', parsed);
+
+          constraint.value = parsed;
+        } catch (e) {
+          console.warn('Failed to parse float', e);
+        }
+        break;
+    }
   }
 
   private doesArrayContaintEmptyValues(arr) {
