@@ -46,6 +46,29 @@
       "revId": "0f9c59b4211ba1698314b8b3e83dcdcc58559298",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0c51252c_7012f5da",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/select-datatype-modal/select-datatype-modal.less",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-10T12:32:24Z",
+      "side": 1,
+      "message": "remove commented code, or uncomment and fix width",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 23
+      },
+      "revId": "0f9c59b4211ba1698314b8b3e83dcdcc58559298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
