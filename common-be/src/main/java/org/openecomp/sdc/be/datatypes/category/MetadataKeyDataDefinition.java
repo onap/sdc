@@ -38,12 +38,6 @@ public class MetadataKeyDataDefinition extends ToscaDataDefinition {
     private List<String> validValues;
     private boolean mandatory;
     private String defaultValue;
+    private List<String> notApplicableMetadataKeys;
 
-    public MetadataKeyDataDefinition(MetadataKeyDataDefinition metadataKeyDataDefinition) {
-        this.name = metadataKeyDataDefinition.name;
-        this.displayName = metadataKeyDataDefinition.displayName;
-        this.validValues = metadataKeyDataDefinition.validValues;
-        this.mandatory = metadataKeyDataDefinition.mandatory;
-        this.defaultValue = metadataKeyDataDefinition.defaultValue;
-    }
 }
