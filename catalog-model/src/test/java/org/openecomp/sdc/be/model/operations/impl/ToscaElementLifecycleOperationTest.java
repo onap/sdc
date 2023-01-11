@@ -616,7 +616,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
     }
 
     private void clearGraph() {
-        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getJanusGraphClient().getGraph();
         JanusGraph graph = graphResult.left().value();
 
         Iterable<JanusGraphVertex> vertices = graph.query().vertices();
