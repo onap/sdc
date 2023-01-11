@@ -24,6 +24,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MetadataKeyEnum {
-    METADATA_KEYS("metadataKeys"), NAME("name"), DISPLAY_NAME("displayName"), MANDATORY("mandatory"), VALID_VALUES("validValues"), DEFAULT("default");
+    METADATA_KEYS("metadataKeys"),
+    NAME("name"),
+    DISPLAY_NAME("displayName"),
+    MANDATORY("mandatory"),
+    VALID_VALUES("validValues"),
+    DEFAULT("default"),
+    NOT_APPLICABLE_METADATA_KEYS("notApplicableMetadataKeys");
+
     private final String name;
 }
