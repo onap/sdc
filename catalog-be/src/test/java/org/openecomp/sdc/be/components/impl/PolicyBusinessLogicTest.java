@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
@@ -234,6 +235,10 @@ class PolicyBusinessLogicTest {
         policy.setProperties(Arrays.asList(properties));
         policies.put(POLICY_NAME, policy);
 
+        Map<String, DataTypeDefinition> types = new HashMap<>();
+        DataTypeDefinition dataTypeDef = new DataTypeDefinition();
+        types.put("string", dataTypeDef);
+
         List<ComponentInstance> instanceList = new ArrayList<>();
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(UNIQUE_ID_EXSISTS);
@@ -251,6 +256,7 @@ class PolicyBusinessLogicTest {
             Either.left(policy));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(newResource), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(newResource), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(types));
 
         Map<String, PolicyDefinition> createdPolicy = businessLogic.createPolicies(newResource, policies);
 
@@ -276,6 +282,10 @@ class PolicyBusinessLogicTest {
         policy.setProperties(Arrays.asList(properties));
         policies.put(POLICY_NAME, policy);
 
+        Map<String, DataTypeDefinition> types = new HashMap<>();
+        DataTypeDefinition dataTypeDef = new DataTypeDefinition();
+        types.put("string", dataTypeDef);
+
         List<ComponentInstance> instanceList = new ArrayList<>();
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(UNIQUE_ID_EXSISTS);
@@ -293,6 +303,7 @@ class PolicyBusinessLogicTest {
             Either.left(policy));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(newService), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(newService), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(types));
 
         Map<String, PolicyDefinition> createdPolicy = businessLogic.createPolicies(newService, policies);
 
@@ -408,12 +419,17 @@ class PolicyBusinessLogicTest {
         String prop1 = "Name";
         String prop2 = "Type";
 
+        Map<String, DataTypeDefinition> types = new HashMap<>();
+        DataTypeDefinition dataTypeDef = new DataTypeDefinition();
+        types.put("string", dataTypeDef);
+
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
             policySuccessEither);
         stubUnlockAndCommit();
         PropertyDataDefinition[] properties = getProperties(prop1, prop2);
         when(propertyOperation.validateAndUpdatePropertyValue(any(Resource.class), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(any(Resource.class), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
+        when(applicationDataTypeCache.getAll(any())).thenReturn(Either.left(types));
         policy.setProperties(Arrays.asList(properties));
         List<PropertyDataDefinition> updatedProperties =
             businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties, USER_ID, true);
@@ -554,9 +570,11 @@ class PolicyBusinessLogicTest {
         PropertyDataDefinition property1 = new PropertyDataDefinition();
         property1.setName(prop1);
         property1.setValue(prop1);
+        property1.setType("string");
         PropertyDataDefinition property2 = new PropertyDataDefinition();
         property2.setName(prop2);
         property2.setValue(prop2);
+        property2.setType("string");
         return new PropertyDataDefinition[]{property1, property2};
     }
 
