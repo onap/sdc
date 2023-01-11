@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.PolicyUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -60,6 +61,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -690,8 +692,25 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             final PropertyDataDefinition currentProperty = oldProperties.get(newProperty.getName());
             currentProperty.setValue(newPropertyValueEither);
             currentProperty.setToscaFunction(newProperty.getToscaFunction());
+            validatePropertyValueWithConstraints(currentProperty, policyOwnerComponent);
         }
         return policy;
+    }
+
+    private void validatePropertyValueWithConstraints(final PropertyDataDefinition property, final Component component) {
+        PropertyDefinition propertyDefinition = new PropertyDefinition(property);
+        if (!propertyDefinition.isToscaFunction()) {
+            List<PropertyDefinition> propertyDefinitionList = new ArrayList<>();
+            propertyDefinitionList.add(propertyDefinition);
+            PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = new PropertyValueConstraintValidationUtil();
+            Either<Boolean, ResponseFormat> isPropertyContraintsValid = propertyValueConstraintValidationUtil
+                .validatePropertyConstraints(propertyDefinitionList, applicationDataTypeCache,
+                    component.getModel());
+            if (isPropertyContraintsValid.isRight()) {
+                throw new ByActionStatusComponentException(ActionStatus.PROPERTY_VALUE_MISMATCHED,
+                    isPropertyContraintsValid.right().value().getFormattedMessage());
+            }
+        }
     }
 
     private <T extends PropertyDataDefinition> String updatePropertyValue(final Component policyOwnerComponent, final T property) {
