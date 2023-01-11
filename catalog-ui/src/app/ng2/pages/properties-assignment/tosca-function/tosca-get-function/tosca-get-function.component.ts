@@ -45,6 +45,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     @Input() toscaGetFunction: ToscaGetFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() functionType: ToscaGetFunctionType;
+    @Input() compositionMap: boolean;
+    @Input() compositionMapKey: string;
     @Output() onValidFunction: EventEmitter<ToscaGetFunction> = new EventEmitter<ToscaGetFunction>();
     @Output() onValidityChange: EventEmitter<ToscaGetFunctionValidationEvent> = new EventEmitter<ToscaGetFunctionValidationEvent>();
 
@@ -262,10 +264,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private propertyTypeToString() {
 	    if (this.isSubProperty()){
-            if (this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
-                    (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) {
-                if(this.isComplexType(this.property.schemaType)){
-                    return this.property.input.type;
+            if ((this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
+                    (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
+                if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
+                    return (<PropertyDeclareAPIModel> this.property).input.type;
                 }else{
                     return this.property.schema.property.type;
                 }
@@ -375,9 +377,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
         if (this.typeHasSchema(this.property.type)) {
-            if (this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) {
-                if(this.isComplexType(this.property.schemaType)){
-                    return property.type === this.property.input.type;
+            if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
+                if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
+                    return property.type === (<PropertyDeclareAPIModel> this.property).input.type;
                 }else{
                     return property.type === this.property.schema.property.type;
                 }

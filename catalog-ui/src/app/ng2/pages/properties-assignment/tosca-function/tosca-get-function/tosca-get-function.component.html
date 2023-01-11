@@ -32,7 +32,7 @@
         <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
       </select>
     </div>
-    <div *ngIf="dropDownErrorMsg">{{dropDownErrorMsg}}</div>
+    <div *ngIf="dropDownErrorMsg" class="tosca-error">{{dropDownErrorMsg}}</div>
   </form>
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
 </div>
