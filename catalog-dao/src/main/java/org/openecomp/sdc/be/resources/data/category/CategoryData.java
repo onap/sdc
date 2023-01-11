@@ -55,6 +55,8 @@ public class CategoryData extends GraphNode {
         final boolean useServiceSubstitutionForNestedServices =
             useServiceSubstitutionForNestedServicesProperty != null && (boolean) useServiceSubstitutionForNestedServicesProperty;
         categoryDataDefinition.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices);
+        final Object hideProperty = properties.get(GraphPropertiesDictionary.HIDE.getProperty());
+        categoryDataDefinition.setHide(hideProperty != null && (boolean) hideProperty);
         Type listType = new TypeToken<List<String>>() {
         }.getType();
         List<String> iconsfromJson = getGson().fromJson((String) properties.get(GraphPropertiesDictionary.ICONS.getProperty()), listType);
@@ -87,6 +89,7 @@ public class CategoryData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.ICONS, categoryDataDefinition.getIcons());
         addIfExists(map, GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES,
             categoryDataDefinition.isUseServiceSubstitutionForNestedServices());
+        addIfExists(map, GraphPropertiesDictionary.HIDE, categoryDataDefinition.isHide());
         addIfExists(map, GraphPropertiesDictionary.METADATA_KEYS, categoryDataDefinition.getMetadataKeys());
         return map;
     }

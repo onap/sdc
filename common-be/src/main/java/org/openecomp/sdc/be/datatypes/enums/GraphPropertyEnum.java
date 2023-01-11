@@ -66,6 +66,7 @@ public enum GraphPropertyEnum {
     //Healing
     HEALING_VERSION(        "healVersion",          Integer.class,  false,  true),
     MODEL(                  "model",                String.class,   false,  false),
+    HIDE(                   "hide",                 Boolean.class,  false,  false),
     MODEL_TYPE(             "modelType",            String.class,   false,  false);
     // @formatter:on
 
