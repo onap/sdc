@@ -2870,3 +2870,10 @@ errors:
         message: "Cannot change this properties constraints as the resource is an instance.",
         messageId: "SVC4015"
     }
+
+
+    # %1 - constraint values
+    PROPERTY_VALUE_MISMATCHED:
+        code: 400
+        message: "Property value mismatched: '%1'."
+        messageId: "SVC4016"
