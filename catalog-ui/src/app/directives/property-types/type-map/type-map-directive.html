@@ -41,9 +41,14 @@
         </div>
         <div data-ng-if="!isSchemaTypeDataType" class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Value</label>
-        
+            <form class="temp-form">
+                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/> 
+                Value
+                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" ng-disabled="mapKeys[$index] == '' || mapKeys[$index] == null"/> 
+                {{'TOSCA_FUNCTION_LABEL' | translate}}
+            </form>
             <input class="i-sdc-form-input"
-                   ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
+                   ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean') && showToscaFunction[$index] == false"
                    data-ng-readonly="readOnly"
                    data-ng-model="valueObjRef[mapKeys[$index]]"
                    type="text"
@@ -58,7 +63,7 @@
                    autofocus />
             <select class="i-sdc-form-select"
                     data-tests-id="mapValue{{fieldsPrefixName}}{{$index}}"
-                    ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean' && showToscaFunction[$index] == false"
                     data-ng-disabled="readOnly"
                     name="mapValue{{fieldsPrefixName}}{{$index}}"
                     data-ng-model="valueObjRef[mapKeys[$index]]"
@@ -66,6 +71,16 @@
                 <option value="true">true</option>
                 <option value="false">false</option>
             </select>
+            <div data-ng-if="showToscaFunction[$index]" class="div-tosca-function">
+                <tosca-function [property]="parentProperty"
+                                [component-instance-map]="componentInstanceMap"
+                                [allow-clear]="false"
+                                [composition-map]="true"
+                                [composition-map-key]="mapKeys[$index]"
+                                (on-valid-function)="onGetToscaFunction($event,mapKeys[$index])"
+                >
+                </tosca-function>
+            </div>
 
 
             <select class="i-sdc-form-select"

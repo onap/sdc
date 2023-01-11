@@ -34,6 +34,8 @@
       <app-tosca-get-function [property]="property" [toscaGetFunction]="toscaFunction"
                               [componentInstanceMap]="componentInstanceMap"
                               [functionType]="toscaFunctionTypeForm.value"
+                              [compositionMap]="compositionMap"
+                              [compositionMapKey]="compositionMapKey"
                               (onValidityChange)="onGetFunctionValidityChange($event)"></app-tosca-get-function>
     </div>
     <div *ngIf="isYamlFunctionSelected()">

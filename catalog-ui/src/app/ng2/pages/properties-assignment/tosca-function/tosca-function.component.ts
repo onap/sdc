@@ -44,6 +44,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     @Input() property: PropertyBEModel;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() allowClear: boolean = true;
+    @Input() compositionMap: boolean = false;
+    @Input() compositionMapKey: string = "";
     @Output() onValidFunction: EventEmitter<ToscaGetFunction> = new EventEmitter<ToscaGetFunction>();
     @Output() onValidityChange: EventEmitter<ToscaFunctionValidationEvent> = new EventEmitter<ToscaFunctionValidationEvent>();
 
@@ -98,6 +100,17 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     private initToscaFunction(): void {
+        if (this.compositionMap && this.property.subPropertyToscaFunctions) {
+            let keyToFind = [this.compositionMapKey];
+            let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind));
+
+                if (subPropertyToscaFunction){
+	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                    this.toscaFunctionForm.setValue(this.toscaFunction);
+                    this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
+                }
+                return;
+        }
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
             if (propertiesPath.length > 1){
