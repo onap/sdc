@@ -81,7 +81,7 @@ public class NodeTemplateOperationGraphTest extends ModelTestBase {
     @BeforeEach
     public void before() {
 
-        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphDao.getGraph();
+        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphDao.getJanusGraphClient().getGraph();
         graphT = graph.left().value();
 
         containerVertex = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
