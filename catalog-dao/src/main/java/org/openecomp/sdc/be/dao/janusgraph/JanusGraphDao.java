@@ -35,7 +35,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.util.Optional;
+import lombok.Getter;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -72,7 +74,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class JanusGraphDao {
 
     private static final Logger logger = Logger.getLogger(JanusGraphDao.class);
-    JanusGraphClient janusGraphClient;
+    private static final String FAILED_TO_GET_BY_CRITERIA_FOR_TYPE_AND_PROPERTIES = "Failed to get by criteria for type '{}' and properties '{}'";
+    @Getter
+    private final JanusGraphClient janusGraphClient;
 
     public JanusGraphDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient) {
         this.janusGraphClient = janusGraphClient;
@@ -87,10 +91,6 @@ public class JanusGraphDao {
     public JanusGraphOperationStatus rollback() {
         logger.debug("#rollback - The operation failed. Doing rollback...");
         return janusGraphClient.rollback();
-    }
-
-    public Either<JanusGraph, JanusGraphOperationStatus> getGraph() {
-        return janusGraphClient.getGraph();
     }
 
     /**
@@ -157,28 +157,22 @@ public class JanusGraphDao {
         if (graph.isLeft()) {
             try {
                 JanusGraph tGraph = graph.left().value();
-                @SuppressWarnings("unchecked") Iterable<JanusGraphVertex> vertecies = tGraph.query().has(name.getProperty(), value)
+                @SuppressWarnings("unchecked") Iterable<JanusGraphVertex> vertices = tGraph.query().has(name.getProperty(), value)
                     .has(GraphPropertyEnum.LABEL.getProperty(), label.getName()).vertices();
-                java.util.Iterator<JanusGraphVertex> iterator = vertecies.iterator();
+                java.util.Iterator<JanusGraphVertex> iterator = vertices.iterator();
                 if (iterator.hasNext()) {
                     JanusGraphVertex vertex = iterator.next();
                     GraphVertex graphVertex = createAndFill(vertex, parseFlag);
                     return Either.left(graphVertex);
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("No vertex in graph for key = {}  and value = {}   label = {}", name, value, label);
-                }
+                logger.debug("No vertex in graph for key = {}  and value = {}   label = {}", name, value, label);
                 return Either.right(JanusGraphOperationStatus.NOT_FOUND);
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to get vertex in graph for key ={} and value = {}  label = {}", name, value, label);
-                }
+                logger.debug("Failed to get vertex in graph for key ={} and value = {}  label = {}", name, value, label);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No vertex in graph for key ={} and value = {}  label = {} error :{}", name, value, label, graph.right().value());
-            }
+            logger.debug("No vertex in graph for key ={} and value = {}  label = {} error :{}", name, value, label, graph.right().value());
             return Either.right(graph.right().value());
         }
     }
@@ -199,37 +193,29 @@ public class JanusGraphDao {
     public Either<GraphVertex, JanusGraphOperationStatus> getVertexById(String id, JsonParseFlagEnum parseFlag) {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (id == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No vertex in graph for id = {} ", id);
-            }
+            logger.debug("No vertex in graph for id = {} ", id);
             return Either.right(JanusGraphOperationStatus.NOT_FOUND);
         }
         if (graph.isLeft()) {
             try {
                 JanusGraph tGraph = graph.left().value();
-                @SuppressWarnings("unchecked") Iterable<JanusGraphVertex> vertecies = tGraph.query()
+                @SuppressWarnings("unchecked") Iterable<JanusGraphVertex> vertices = tGraph.query()
                     .has(GraphPropertyEnum.UNIQUE_ID.getProperty(), id).vertices();
-                java.util.Iterator<JanusGraphVertex> iterator = vertecies.iterator();
+                java.util.Iterator<JanusGraphVertex> iterator = vertices.iterator();
                 if (iterator.hasNext()) {
                     JanusGraphVertex vertex = iterator.next();
                     GraphVertex graphVertex = createAndFill(vertex, parseFlag);
                     return Either.left(graphVertex);
                 } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("No vertex in graph for id = {}", id);
-                    }
+                    logger.debug("No vertex in graph for id = {}", id);
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to get vertex in graph for id {} ", id);
-                }
+                logger.debug("Failed to get vertex in graph for id {} ", id);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No vertex in graph for id {} error : {}", id, graph.right().value());
-            }
+            logger.debug("No vertex in graph for id {} error : {}", id, graph.right().value());
             return Either.right(graph.right().value());
         }
     }
@@ -255,7 +241,7 @@ public class JanusGraphDao {
         }
     }
 
-    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) throws IOException {
+    public void setVertexProperties(Vertex vertex, Map<String, Object> properties) {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             if (entry.getValue() != null) {
                 vertex.property(entry.getKey(), entry.getValue());
@@ -315,11 +301,9 @@ public class JanusGraphDao {
     }
 
     public JanusGraphOperationStatus createEdge(Vertex from, Vertex to, EdgeLabelEnum label, Map<EdgePropertyEnum, Object> properties) {
-        if (logger.isTraceEnabled()) {
-            logger.trace("Try to connect {} with {} label {} properties {}",
-                from == null ? "NULL" : from.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
-                to == null ? "NULL" : to.property(GraphPropertyEnum.UNIQUE_ID.getProperty()), label, properties);
-        }
+        logger.trace("Try to connect {} with {} label {} properties {}",
+            from == null ? "NULL" : from.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
+            to == null ? "NULL" : to.property(GraphPropertyEnum.UNIQUE_ID.getProperty()), label, properties);
         if (from == null || to == null) {
             logger.trace("No JanusGraph vertex for id from {} or id to {}",
                 from == null ? "NULL" : from.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
@@ -340,7 +324,7 @@ public class JanusGraphDao {
 
     public Map<GraphPropertyEnum, Object> getVertexProperties(Element element) {
         Map<GraphPropertyEnum, Object> result = new HashMap<>();
-        if (element != null && element.keys() != null && element.keys().size() > 0) {
+        if (element != null && CollectionUtils.isNotEmpty(element.keys())) {
             Map<String, Property> propertyMap = ElementHelper.propertyMap(element, element.keys().toArray(new String[element.keys().size()]));
             for (Entry<String, Property> entry : propertyMap.entrySet()) {
                 String key = entry.getKey();
@@ -357,7 +341,7 @@ public class JanusGraphDao {
 
     public Map<EdgePropertyEnum, Object> getEdgeProperties(Element element) {
         Map<EdgePropertyEnum, Object> result = new HashMap<>();
-        if (element != null && element.keys() != null && element.keys().size() > 0) {
+        if (element != null && CollectionUtils.isNotEmpty(element.keys())) {
             Map<String, Property> propertyMap = ElementHelper.propertyMap(element, element.keys().toArray(new String[element.keys().size()]));
             for (Entry<String, Property> entry : propertyMap.entrySet()) {
                 String key = entry.getKey();
@@ -421,36 +405,29 @@ public class JanusGraphDao {
                 List<GraphVertex> result = new ArrayList<>();
                 while (iterator.hasNext()) {
                     JanusGraphVertex vertex = iterator.next();
-                    Map<GraphPropertyEnum, Object> newProp = getVertexProperties(vertex);
+                    getVertexProperties(vertex);
                     GraphVertex graphVertex = createAndFill(vertex, parseFlag);
                     result.add(graphVertex);
                 }
-                if (logger.isDebugEnabled()) {
-                    logger
-                        .debug("Number of fetced nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
-                }
+                logger.debug("Number of fetched nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
                 if (result.size() == 0) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
                 return Either.left(result);
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
-                }
+                logger.debug("Failed get by criteria for type = {} and properties = {}", type, props, e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
-            }
+            logger.debug("Failed  get by  criteria for type ={} and properties = {} error : {}", type, props, graph.right().value());
             return Either.right(graph.right().value());
         }
     }
-    
+
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type, final Map<GraphPropertyEnum, Object> props,
-            final Map<GraphPropertyEnum, Object> hasNotProps,
-            final JsonParseFlagEnum parseFlag,
-            final String model) {
+                                                                              final Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                              final JsonParseFlagEnum parseFlag,
+                                                                              final String model) {
         return getByCriteria(type, props, hasNotProps, null, parseFlag, model, false);
     }
 
@@ -461,14 +438,14 @@ public class JanusGraphDao {
                                                                               final boolean includeNormativeExtensionModels) {
         return getByCriteria(type, props, hasNotProps, null, parseFlag, model, includeNormativeExtensionModels);
     }
-    
+
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
-            final Map<GraphPropertyEnum, Object> hasProps,
-            final Map<GraphPropertyEnum, Object> hasNotProps,
-            final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
-            final JsonParseFlagEnum parseFlag,
-            final String model) {
-        return  getByCriteria(type, hasProps, hasNotProps, predicates, parseFlag, model, false);
+                                                                              final Map<GraphPropertyEnum, Object> hasProps,
+                                                                              final Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                              final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
+                                                                              final JsonParseFlagEnum parseFlag,
+                                                                              final String model) {
+        return getByCriteria(type, hasProps, hasNotProps, predicates, parseFlag, model, false);
     }
 
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
@@ -481,137 +458,82 @@ public class JanusGraphDao {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
-                JanusGraph tGraph = graph.left().value();
-                JanusGraphQuery<? extends JanusGraphQuery> query = tGraph.query();
-                
-                if (type != null) {
-                    query = query.has(GraphPropertyEnum.LABEL.getProperty(), type.getName());
+                final JanusGraphQuery<? extends JanusGraphQuery> query = getJanusGraphQuery(type, hasProps, hasNotProps, predicates, graph);
+                if (query == null) {
+                    logger.debug(FAILED_TO_GET_BY_CRITERIA_FOR_TYPE_AND_PROPERTIES, type, hasProps);
+                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
-                if (hasProps != null && !hasProps.isEmpty()) {
-                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasProps.entrySet()) {
-                        query = query.has(entry.getKey().getProperty(), entry.getValue());
-                    }
-                }
-                if (hasNotProps != null && !hasNotProps.isEmpty()) {
-                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
-                        if (entry.getValue() instanceof List) {
-                            buildMultipleNegateQueryFromList(entry, query);
-                        } else {
-                            query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
-                        }
-                    }
-                }
-                if (predicates != null && !predicates.isEmpty()) {
-                    for (Map.Entry<String, Entry<JanusGraphPredicate, Object>> entry : predicates.entrySet()) {
-                        JanusGraphPredicate predicate = entry.getValue().getKey();
-                        Object object = entry.getValue().getValue();
-                        query = query.has(entry.getKey(), predicate, object);
-                    }
-                }
-                Iterable<JanusGraphVertex> vertices = query.vertices();
+                final Iterable<JanusGraphVertex> vertices = query.vertices();
                 if (vertices == null || !vertices.iterator().hasNext()) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
-                List<GraphVertex> result = new ArrayList<>();
 
-                final Predicate<? super JanusGraphVertex> filterPredicate = StringUtils.isEmpty(model) ? this::vertexNotConnectedToAnyModel : vertex -> vertexValidForModel(vertex, model, includeNormativeExtensionModels);
-                final List<JanusGraphVertex> verticesForModel = StreamSupport.stream(vertices.spliterator(), false).filter(filterPredicate).collect(Collectors.toList());
-                if (verticesForModel == null || verticesForModel.size() == 0) {
+                final Predicate<? super JanusGraphVertex> filterPredicate = StringUtils.isEmpty(model) ? this::vertexNotConnectedToAnyModel
+                    : vertex -> vertexValidForModel(vertex, model, includeNormativeExtensionModels);
+                final List<JanusGraphVertex> verticesForModel = StreamSupport.stream(vertices.spliterator(), false).filter(filterPredicate)
+                    .collect(Collectors.toList());
+                if (CollectionUtils.isEmpty(verticesForModel)) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
-                
-                verticesForModel.forEach(vertex ->  result.add(createAndFill(vertex, parseFlag)));
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Number of fetched nodes in graph for criteria : from type '{}' and properties '{}' is '{}'", type, hasProps,
-                        result.size());
-                }
+
+                final List<GraphVertex> result = new ArrayList<>();
+                verticesForModel.forEach(vertex -> result.add(createAndFill(vertex, parseFlag)));
+                logger.debug("Number of fetched nodes in graph for criteria : from type '{}' and properties '{}' is '{}'", type, hasProps,
+                    result.size());
                 return Either.left(result);
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to get by criteria for type '{}' and properties '{}'", type, hasProps, e);
-                }
+                logger.debug(FAILED_TO_GET_BY_CRITERIA_FOR_TYPE_AND_PROPERTIES, type, hasProps, e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failed to get by criteria for type '{}' and properties '{}'. Error : '{}'", type, hasProps, graph.right().value());
-            }
+            logger.debug("Failed to get by criteria for type '{}' and properties '{}'. Error : '{}'", type, hasProps, graph.right().value());
             return Either.right(graph.right().value());
         }
     }
-    
+
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(VertexTypeEnum type,
-            Map<GraphPropertyEnum, Object> props, Map<GraphPropertyEnum, Object> hasNotProps,
-            JsonParseFlagEnum parseFlag) {
+                                                                              Map<GraphPropertyEnum, Object> props,
+                                                                              Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                              JsonParseFlagEnum parseFlag) {
         return getByCriteria(type, props, hasNotProps, null, parseFlag);
     }
 
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
-            final Map<GraphPropertyEnum, Object> hasProps, final Map<GraphPropertyEnum, Object> hasNotProps,
-            final Map<String, Entry<JanusGraphPredicate, Object>> predicates, final JsonParseFlagEnum parseFlag) {
-        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
+                                                                              final Map<GraphPropertyEnum, Object> hasProps,
+                                                                              final Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                              final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
+                                                                              final JsonParseFlagEnum parseFlag) {
+        final Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
-                JanusGraph tGraph = graph.left().value();
-                JanusGraphQuery<? extends JanusGraphQuery> query = tGraph.query();
-
-                if (type != null) {
-                    query = query.has(GraphPropertyEnum.LABEL.getProperty(), type.getName());
-                }
-                if (hasProps != null && !hasProps.isEmpty()) {
-                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasProps.entrySet()) {
-                        query = query.has(entry.getKey().getProperty(), entry.getValue());
-                    }
-                }
-                if (hasNotProps != null && !hasNotProps.isEmpty()) {
-                    for (Map.Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
-                        if (entry.getValue() instanceof List) {
-                            buildMultipleNegateQueryFromList(entry, query);
-                        } else {
-                            query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
-                        }
-                    }
-                }
-                if (predicates != null && !predicates.isEmpty()) {
-                    for (Map.Entry<String, Entry<JanusGraphPredicate, Object>> entry : predicates.entrySet()) {
-                        JanusGraphPredicate predicate = entry.getValue().getKey();
-                        Object object = entry.getValue().getValue();
-                        query = query.has(entry.getKey(), predicate, object);
-                    }
+                JanusGraphQuery<? extends JanusGraphQuery> query = getJanusGraphQuery(type, hasProps, hasNotProps, predicates, graph);
+                if (query == null) {
+                    logger.debug(FAILED_TO_GET_BY_CRITERIA_FOR_TYPE_AND_PROPERTIES, type, hasProps);
+                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
                 Iterable<JanusGraphVertex> vertices = query.vertices();
                 if (vertices == null || !vertices.iterator().hasNext()) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
                 List<GraphVertex> result = new ArrayList<>();
-
                 vertices.forEach(vertex -> result.add(createAndFill(vertex, parseFlag)));
-                if (logger.isDebugEnabled()) {
-                    logger.debug(
-                            "Number of fetched nodes in graph for criteria : from type '{}' and properties '{}' is '{}'",
-                            type, hasProps, result.size());
-                }
+                logger.debug("Number of fetched nodes in graph for criteria : from type '{}' and properties '{}' is '{}'", type, hasProps,
+                    result.size());
                 return Either.left(result);
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to get by criteria for type '{}' and properties '{}'", type, hasProps, e);
-                }
+                logger.debug(FAILED_TO_GET_BY_CRITERIA_FOR_TYPE_AND_PROPERTIES, type, hasProps, e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failed to get by criteria for type '{}' and properties '{}'. Error : '{}'", type,
-                        hasProps, graph.right().value());
-            }
+            logger.debug("Failed to get by criteria for type '{}' and properties '{}'. Error : '{}'", type, hasProps, graph.right().value());
             return Either.right(graph.right().value());
         }
     }
 
-
     /**
      * Finds the vertices that have the given invariant id and any additional property provided.
      *
-     * @param invariantUuid the invariant uuid
+     * @param invariantUuid               the invariant uuid
      * @param additionalPropertiesToMatch any additional property to match along with the {@link GraphPropertyEnum#INVARIANT_UUID}
      * @return the list of vertex that has the given invariant uuid
      * @throws JanusGraphException if the find operation was returned an error status
@@ -624,7 +546,7 @@ public class JanusGraphDao {
         }
         propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUuid);
         final Either<List<GraphVertex>, JanusGraphOperationStatus> vertexEither =
-                getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
+            getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
         if (vertexEither.isRight()) {
             final JanusGraphOperationStatus status = vertexEither.right().value();
             if (status == JanusGraphOperationStatus.NOT_FOUND) {
@@ -641,49 +563,52 @@ public class JanusGraphDao {
     }
 
     private boolean vertexValidForModel(final JanusGraphVertex vertex, final String model, final boolean includeNormativeExtensions) {
-        final String vertexLabel = (String)vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
+        final String vertexLabel = (String) vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
         final VertexTypeEnum vertexType = VertexTypeEnum.getByName(vertexLabel);
-        final GraphEdgeLabels edgeLabel = vertexType.equals(VertexTypeEnum.TOPOLOGY_TEMPLATE) ? GraphEdgeLabels.MODEL : GraphEdgeLabels.MODEL_ELEMENT;
-        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> modelVertices = getParentVerticies(vertex, edgeLabel);
+        final GraphEdgeLabels edgeLabel = VertexTypeEnum.TOPOLOGY_TEMPLATE.equals(vertexType) ? GraphEdgeLabels.MODEL : GraphEdgeLabels.MODEL_ELEMENT;
+        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> modelVertices = getParentVertices(vertex, edgeLabel);
 
-        return modelVertices.isLeft() && modelVertices.left().value().stream().anyMatch(vertexPair -> modelVertexMatchesModel(vertexPair.getLeft(), model, includeNormativeExtensions));
+        return modelVertices.isLeft() && modelVertices.left().value().stream()
+            .anyMatch(vertexPair -> modelVertexMatchesModel(vertexPair.getLeft(), model, includeNormativeExtensions));
     }
-    
+
     private boolean modelVertexMatchesModel(final JanusGraphVertex modelVertex, final String model, final boolean includeNormativeExtensions) {
-        if (model.equals((String)modelVertex.property("name").value())) {
+        if (model.equals((String) modelVertex.property("name").value())) {
             return true;
         }
         final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> derivedModels =
-                        getParentVerticies(modelVertex, GraphEdgeLabels.DERIVED_FROM);
-        if (derivedModels.isLeft() && derivedModels.left().value().stream().anyMatch(derivedModel ->modelVertexMatchesModel(derivedModel.left, model, includeNormativeExtensions))) {
+            getParentVertices(modelVertex, GraphEdgeLabels.DERIVED_FROM);
+        if (derivedModels.isLeft() && derivedModels.left().value().stream()
+            .anyMatch(derivedModel -> modelVertexMatchesModel(derivedModel.left, model, includeNormativeExtensions))) {
             return true;
         }
-        
+
         if (includeNormativeExtensions && isANormativeExtension(modelVertex)) {
-            final Either<List<Vertex>,JanusGraphOperationStatus> derivedFromModels =
-                    getChildrenVertices(modelVertex, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseAll);
-            return derivedFromModels.isLeft() && derivedFromModels.left().value().stream().anyMatch(derivedFromModel -> model.equals((String)derivedFromModel.property("name").value()));
+            final Either<List<Vertex>, JanusGraphOperationStatus> derivedFromModels =
+                getChildrenVertices(modelVertex, EdgeLabelEnum.DERIVED_FROM);
+            return derivedFromModels.isLeft() && derivedFromModels.left().value().stream()
+                .anyMatch(derivedFromModel -> model.equals((String) derivedFromModel.property("name").value()));
         }
         return false;
     }
-    
+
     private boolean isANormativeExtension(final JanusGraphVertex modelVertex) {
-        return ModelTypeEnum.NORMATIVE_EXTENSION.getValue().equals((String)modelVertex.property(GraphPropertyEnum.MODEL_TYPE.getProperty()).value());
+        return ModelTypeEnum.NORMATIVE_EXTENSION.getValue().equals((String) modelVertex.property(GraphPropertyEnum.MODEL_TYPE.getProperty()).value());
     }
-    
-    private Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getParentVerticies(
-            final JanusGraphVertex rootVertex, final GraphEdgeLabels edgeType) {
-        return getEdgeVerticies(rootVertex, Direction.IN, edgeType);
+
+    private Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getParentVertices(
+        final JanusGraphVertex rootVertex, final GraphEdgeLabels edgeType) {
+        return getEdgeVertices(rootVertex, Direction.IN, edgeType);
     }
-    
-    private Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getEdgeVerticies(
-            final JanusGraphVertex rootVertex, final Direction direction, final GraphEdgeLabels edgeType) {
+
+    private Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getEdgeVertices(
+        final JanusGraphVertex rootVertex, final Direction direction, final GraphEdgeLabels edgeType) {
         final List<ImmutablePair<JanusGraphVertex, Edge>> immutablePairs = new ArrayList<>();
         final Iterator<Edge> edgesCreatorIterator = rootVertex.edges(direction, edgeType.getProperty());
         if (edgesCreatorIterator != null) {
             while (edgesCreatorIterator.hasNext()) {
                 Edge edge = edgesCreatorIterator.next();
-                JanusGraphVertex vertex = Direction.OUT.equals(direction)? (JanusGraphVertex) edge.inVertex() : (JanusGraphVertex) edge.outVertex();
+                JanusGraphVertex vertex = Direction.OUT.equals(direction) ? (JanusGraphVertex) edge.inVertex() : (JanusGraphVertex) edge.outVertex();
                 ImmutablePair<JanusGraphVertex, Edge> immutablePair = new ImmutablePair<>(vertex, edge);
                 immutablePairs.add(immutablePair);
             }
@@ -693,15 +618,15 @@ public class JanusGraphDao {
         }
         return Either.left(immutablePairs);
     }
-    
+
     private boolean vertexNotConnectedToAnyModel(final JanusGraphVertex vertex) {
-        String vt = (String)vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
+        String vt = (String) vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
         VertexTypeEnum vertexType = VertexTypeEnum.getByName(vt);
-        EdgeLabelEnum edgeLabel = vertexType.equals(VertexTypeEnum.TOPOLOGY_TEMPLATE) ? EdgeLabelEnum.MODEL : EdgeLabelEnum.MODEL_ELEMENT;
+        EdgeLabelEnum edgeLabel = VertexTypeEnum.TOPOLOGY_TEMPLATE.equals(vertexType) ? EdgeLabelEnum.MODEL : EdgeLabelEnum.MODEL_ELEMENT;
         return !vertex.edges(Direction.IN, edgeLabel.name()).hasNext();
     }
 
-    public Either<Iterator<Vertex>, JanusGraphOperationStatus> getCatalogOrArchiveVerticies(boolean isCatalog) {
+    public Either<Iterator<Vertex>, JanusGraphOperationStatus> getCatalogOrArchiveVertices(boolean isCatalog) {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
@@ -721,22 +646,17 @@ public class JanusGraphDao {
                 Iterator<Vertex> vertices = catalogV.vertices(Direction.OUT, edgeLabel);
                 return Either.left(vertices);
             } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed  get by  criteria: ", e);
-                }
+                logger.debug("Failed  get by  criteria: ", e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failed  get by  criteria : ", graph.right().value());
-            }
+            logger.debug("Failed get by criteria : {}", graph.right().value());
             return Either.right(graph.right().value());
         }
     }
 
     private void buildMultipleNegateQueryFromList(Map.Entry<GraphPropertyEnum, Object> entry, JanusGraphQuery query) {
-        List<Object> negateList = (List<Object>) entry.getValue();
-        for (Object listItem : negateList) {
+        for (Object listItem : (List<Object>) entry.getValue()) {
             query.hasNot(entry.getKey().getProperty(), listItem);
         }
     }
@@ -749,48 +669,47 @@ public class JanusGraphDao {
      */
     public Either<GraphVertex, JanusGraphOperationStatus> getChildVertex(GraphVertex parentVertex, EdgeLabelEnum edgeLabel,
                                                                          JsonParseFlagEnum parseFlag) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertices(parentVertex, edgeLabel, parseFlag);
-        if (childrenVertecies.isRight()) {
-            return Either.right(childrenVertecies.right().value());
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertices = getChildrenVertices(parentVertex, edgeLabel, parseFlag);
+        if (childrenVertices.isRight()) {
+            return Either.right(childrenVertices.right().value());
         }
-        return Either.left(childrenVertecies.left().value().get(0));
+        return Either.left(childrenVertices.left().value().get(0));
     }
 
     /**
      * @param parentVertex
      * @param edgeLabel
-     * @param parseFlag
      * @return
      */
-    public Either<Vertex, JanusGraphOperationStatus> getChildVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getChildrenVertices(parentVertex, edgeLabel, parseFlag);
-        if (childrenVertecies.isRight()) {
-            return Either.right(childrenVertecies.right().value());
+    public Either<Vertex, JanusGraphOperationStatus> getChildVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel) {
+        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertices = getChildrenVertices(parentVertex, edgeLabel);
+        if (childrenVertices.isRight()) {
+            return Either.right(childrenVertices.right().value());
         }
-        return Either.left(childrenVertecies.left().value().get(0));
+        return Either.left(childrenVertices.left().value().get(0));
     }
 
     public Either<GraphVertex, JanusGraphOperationStatus> getParentVertex(GraphVertex parentVertex, EdgeLabelEnum edgeLabel,
                                                                           JsonParseFlagEnum parseFlag) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertices(parentVertex, edgeLabel, parseFlag);
-        if (childrenVertecies.isRight()) {
-            return Either.right(childrenVertecies.right().value());
+        Either<List<GraphVertex>, JanusGraphOperationStatus> childrenVertices = getParentVertices(parentVertex, edgeLabel, parseFlag);
+        if (childrenVertices.isRight()) {
+            return Either.right(childrenVertices.right().value());
         }
-        if (isEmpty(childrenVertecies.left().value())) {
+        if (isEmpty(childrenVertices.left().value())) {
             return Either.right(JanusGraphOperationStatus.NOT_FOUND);
         }
-        return Either.left(childrenVertecies.left().value().get(0));
+        return Either.left(childrenVertices.left().value().get(0));
     }
 
-    public Either<Vertex, JanusGraphOperationStatus> getParentVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel, JsonParseFlagEnum parseFlag) {
-        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertecies = getParentVertices(parentVertex, edgeLabel, parseFlag);
-        if (childrenVertecies.isRight()) {
-            return Either.right(childrenVertecies.right().value());
+    public Either<Vertex, JanusGraphOperationStatus> getParentVertex(Vertex parentVertex, EdgeLabelEnum edgeLabel) {
+        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertices = getParentVertices(parentVertex, edgeLabel);
+        if (childrenVertices.isRight()) {
+            return Either.right(childrenVertices.right().value());
         }
-        if (isEmpty(childrenVertecies.left().value())) {
+        if (isEmpty(childrenVertices.left().value())) {
             return Either.right(JanusGraphOperationStatus.NOT_FOUND);
         }
-        return Either.left(childrenVertecies.left().value().get(0));
+        return Either.left(childrenVertices.left().value().get(0));
     }
 
     /**
@@ -809,13 +728,11 @@ public class JanusGraphDao {
         return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.IN);
     }
 
-    public Either<List<Vertex>, JanusGraphOperationStatus> getParentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel,
-                                                                             JsonParseFlagEnum parseFlag) {
-        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.IN);
+    public Either<List<Vertex>, JanusGraphOperationStatus> getParentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel) {
+        return getAdjacentVertices(parentVertex, edgeLabel, Direction.IN);
     }
 
-    private Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel,
-                                                                                JsonParseFlagEnum parseFlag, Direction direction) {
+    private Either<List<Vertex>, JanusGraphOperationStatus> getAdjacentVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel, Direction direction) {
         List<Vertex> list = new ArrayList<>();
         try {
             Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
@@ -833,7 +750,6 @@ public class JanusGraphDao {
                     } else {
                         vertex = (JanusGraphVertex) edge.inVertex();
                     }
-                    // GraphVertex graphVertex = createAndFill(vertex, parseFlag);
                     list.add(vertex);
                 }
             }
@@ -850,25 +766,21 @@ public class JanusGraphDao {
     /**
      * @param parentVertex
      * @param edgeLabel
-     * @param parseFlag
      * @return
      */
-    public Either<List<Vertex>, JanusGraphOperationStatus> getChildrenVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel,
-                                                                               JsonParseFlagEnum parseFlag) {
-        return getAdjacentVertices(parentVertex, edgeLabel, parseFlag, Direction.OUT);
+    public Either<List<Vertex>, JanusGraphOperationStatus> getChildrenVertices(Vertex parentVertex, EdgeLabelEnum edgeLabel) {
+        return getAdjacentVertices(parentVertex, edgeLabel, Direction.OUT);
     }
 
     private Either<List<GraphVertex>, JanusGraphOperationStatus> getAdjacentVertices(GraphVertex parentVertex, EdgeLabelEnum edgeLabel,
                                                                                      JsonParseFlagEnum parseFlag, Direction direction) {
         List<GraphVertex> list = new ArrayList<>();
-        Either<List<Vertex>, JanusGraphOperationStatus> adjacentVerticies = getAdjacentVertices(parentVertex.getVertex(), edgeLabel, parseFlag,
+        Either<List<Vertex>, JanusGraphOperationStatus> adjacentVertices = getAdjacentVertices(parentVertex.getVertex(), edgeLabel,
             direction);
-        if (adjacentVerticies.isRight()) {
-            return Either.right(adjacentVerticies.right().value());
+        if (adjacentVertices.isRight()) {
+            return Either.right(adjacentVertices.right().value());
         }
-        adjacentVerticies.left().value().stream().forEach(vertex -> {
-            list.add(createAndFill((JanusGraphVertex) vertex, parseFlag));
-        });
+        adjacentVertices.left().value().stream().forEach(vertex -> list.add(createAndFill((JanusGraphVertex) vertex, parseFlag)));
         return Either.left(list);
     }
 
@@ -990,15 +902,15 @@ public class JanusGraphDao {
      * @return
      */
     public Either<Edge, JanusGraphOperationStatus> deleteEdge(GraphVertex fromVertex, GraphVertex toVertex, EdgeLabelEnum label) {
-        return deleteEdge(fromVertex.getVertex(), toVertex.getVertex(), label, fromVertex.getUniqueId(), toVertex.getUniqueId(), false);
+        return deleteEdge(fromVertex.getVertex(), label, fromVertex.getUniqueId(), toVertex.getUniqueId(), false);
     }
 
     public Either<Edge, JanusGraphOperationStatus> deleteAllEdges(GraphVertex fromVertex, GraphVertex toVertex, EdgeLabelEnum label) {
-        return deleteEdge(fromVertex.getVertex(), toVertex.getVertex(), label, fromVertex.getUniqueId(), toVertex.getUniqueId(), true);
+        return deleteEdge(fromVertex.getVertex(), label, fromVertex.getUniqueId(), toVertex.getUniqueId(), true);
     }
 
-    public Either<Edge, JanusGraphOperationStatus> deleteEdge(JanusGraphVertex fromVertex, JanusGraphVertex toVertex, EdgeLabelEnum label,
-                                                              String uniqueIdFrom, String uniqueIdTo, boolean deleteAll) {
+    private Either<Edge, JanusGraphOperationStatus> deleteEdge(JanusGraphVertex fromVertex, EdgeLabelEnum label,
+                                                               String uniqueIdFrom, String uniqueIdTo, boolean deleteAll) {
         Either<Edge, JanusGraphOperationStatus> result = null;
         Vertex problemV = null;
         try {
@@ -1012,16 +924,15 @@ public class JanusGraphDao {
                     currVertexUniqueId = edge.inVertex().value(GraphPropertyEnum.UNIQUE_ID.getProperty());
                 } catch (Exception e) {
                     // AutoHealing procedure
-                    logger.info("Corrupted vertex and edge were found and deleted {}", e);
+                    logger.info("Corrupted vertex and edge were found and deleted ", e);
                     if (problemV != null) {
                         Map<GraphPropertyEnum, Object> props = getVertexProperties(problemV);
                         logger.debug("problematic Vertex properties:");
                         logger.debug("props size: {}", props.size());
                         for (Map.Entry<GraphPropertyEnum, Object> entry : props.entrySet()) {
-                            logger.debug("{}{}", entry.getKey() + ":" + entry.getValue());
+                            logger.debug("{}:{}", entry.getKey(), entry.getValue());
                         }
-                        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertices = getChildrenVertices(problemV, EdgeLabelEnum.VERSION,
-                            JsonParseFlagEnum.NoParse);
+                        Either<List<Vertex>, JanusGraphOperationStatus> childrenVertices = getChildrenVertices(problemV, EdgeLabelEnum.VERSION);
                         if (childrenVertices.isLeft()) {
                             childrenVertices.left().value().size();
                             logger.debug("number of children that problematic Vertex has: {}", props.size());
@@ -1029,12 +940,12 @@ public class JanusGraphDao {
                         try {
                             edge.remove();
                         } catch (Exception e1) {
-                            logger.debug("failed to remove problematic edge. {}", e1);
+                            logger.debug("failed to remove problematic edge.", e1);
                         }
                         try {
                             problemV.remove();
                         } catch (Exception e2) {
-                            logger.debug("failed to remove problematic vertex . {}", e2);
+                            logger.debug("failed to remove problematic vertex.", e2);
                         }
                     }
                     continue;
@@ -1275,7 +1186,7 @@ public class JanusGraphDao {
     public JanusGraphOperationStatus moveEdge(GraphVertex vertexA, GraphVertex vertexB, EdgeLabelEnum label, Direction direction) {
         JanusGraphOperationStatus result = deleteEdgeByDirection(vertexA, direction, label);
         if (result != JanusGraphOperationStatus.OK) {
-            logger.error("Failed to diassociate {} from element {}. error {} ", label, vertexA.getUniqueId(), result);
+            logger.error("Failed to disassociate {} from element {}. error {} ", label, vertexA.getUniqueId(), result);
             return result;
         }
         JanusGraphOperationStatus createRelation;
@@ -1297,5 +1208,41 @@ public class JanusGraphDao {
             return Either.right(getVertexRes.right().value());
         }
         return getBelongingEdgeByCriteria(getVertexRes.left().value(), label, properties);
+    }
+
+    private JanusGraphQuery<? extends JanusGraphQuery> getJanusGraphQuery(final VertexTypeEnum type, final Map<GraphPropertyEnum, Object> hasProps,
+                                                                          final Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                          final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
+                                                                          final Either<JanusGraph, JanusGraphOperationStatus> graph) {
+        try {
+            final JanusGraph tGraph = graph.left().value();
+            JanusGraphQuery<? extends JanusGraphQuery> query = tGraph.query();
+
+            if (type != null) {
+                query = query.has(GraphPropertyEnum.LABEL.getProperty(), type.getName());
+            }
+            if (hasProps != null && !hasProps.isEmpty()) {
+                for (Entry<GraphPropertyEnum, Object> entry : hasProps.entrySet()) {
+                    query = query.has(entry.getKey().getProperty(), entry.getValue());
+                }
+            }
+            if (hasNotProps != null && !hasNotProps.isEmpty()) {
+                for (Entry<GraphPropertyEnum, Object> entry : hasNotProps.entrySet()) {
+                    if (entry.getValue() instanceof List) {
+                        buildMultipleNegateQueryFromList(entry, query);
+                    } else {
+                        query = query.hasNot(entry.getKey().getProperty(), entry.getValue());
+                    }
+                }
+            }
+            if (predicates != null && !predicates.isEmpty()) {
+                for (Entry<String, Entry<JanusGraphPredicate, Object>> entry : predicates.entrySet()) {
+                    query = query.has(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue());
+                }
+            }
+            return query;
+        } catch (final Exception e) {
+            return null;
+        }
     }
 }
