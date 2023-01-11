@@ -102,7 +102,7 @@ public final class GraphTestUtils {
     }
 
     public static void clearGraph(JanusGraphDao janusGraphDao) {
-        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getGraph();
+        Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphDao.getJanusGraphClient().getGraph();
         JanusGraph graph = graphResult.left().value();
 
         Iterable<JanusGraphVertex> vertices = graph.query().vertices();
