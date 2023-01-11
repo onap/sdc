@@ -1074,6 +1074,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
         category.setUseServiceSubstitutionForNestedServices(
             (Boolean) categoryV.property(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty()).orElse(false));
+        category.setHide((Boolean) categoryV.property(GraphPropertyEnum.HIDE.getProperty()).orElse(false));
         Type listTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
         List<MetadataKeyDataDefinition> metadataKeys = categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).isPresent() ? getGson()
