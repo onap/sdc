@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba7b054f_939c5b49",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-12T16:42:34Z",
+      "side": 1,
+      "message": "Please reword to clarify these are sonar cloud bugs. \nThe issues being addressed are not critical in the more general sense",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 19
+      },
+      "revId": "7bd31cdd9b379c59ae5045fcb09e316f9d274887",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
