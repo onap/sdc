@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1c25c76e_54c34661",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-13T11:48:45Z",
+      "side": 1,
+      "message": "We already have validation functions in utils/validation-utils.ts that are used for example in validating the property value\ne.g.:\ndata-ng-pattern\u003d\"getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))\" in property-form-view.html\n\nIs it possible to re-use the existing functions rather than duplicating the logic?",
+      "range": {
+        "startLine": 392,
+        "startChar": 0,
+        "endLine": 457,
+        "endChar": 4
+      },
+      "revId": "0f9c59b4211ba1698314b8b3e83dcdcc58559298",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "346e5e50_09b6ddc0",
         "filename": "catalog-ui/src/app/view-models/forms/property-forms/base-property-form/property-form-base.less",
         "patchSetId": 2
