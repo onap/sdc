@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e980f70b_14f366cf",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-13T12:10:00Z",
+      "side": 1,
+      "message": "It would be good to implment this in a way that is consistent with how the property value is handled, i.e. passed to the backend as a string and converted to correct type during generation of the toscs template (see PropertyConvertor::convertProperty() where is call convertToToscaObject())\n\nYou could argue if this is the best approach or not, but given its what is already there for handling values we should be consistent",
+      "range": {
+        "startLine": 337,
+        "startChar": 1,
+        "endLine": 366,
+        "endChar": 3
+      },
+      "revId": "6a582d11566b97f14c0b9180e984b13967dd5833",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
