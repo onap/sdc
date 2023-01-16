@@ -22,6 +22,30 @@
       "revId": "08d1a43122e6243399376fdac8041c6a929ca518",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "441cf1d4_852153ad",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-01-16T17:00:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ed4f1a3_75dd5cae",
+      "range": {
+        "startLine": 710,
+        "startChar": 26,
+        "endLine": 712,
+        "endChar": 13
+      },
+      "revId": "08d1a43122e6243399376fdac8041c6a929ca518",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
