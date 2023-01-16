@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ed4f1a3_75dd5cae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-16T15:59:46Z",
+      "side": 1,
+      "message": "Instead use: \nByResponseFormatComponentException(isPropertyContraintsValid.right().value())\nso not unnecessarily wrapping the error being received back from PropertyValueConstraintValidationUtil in a new error",
+      "range": {
+        "startLine": 710,
+        "startChar": 26,
+        "endLine": 712,
+        "endChar": 13
+      },
+      "revId": "08d1a43122e6243399376fdac8041c6a929ca518",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
