@@ -22,6 +22,30 @@
       "revId": "dcdf498dfb94beb6ec58c0cc2bd605d27bc9825f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b125668_425db14b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 512,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-16T10:55:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5749499f_25cd13a4",
+      "range": {
+        "startLine": 509,
+        "startChar": 15,
+        "endLine": 512,
+        "endChar": 77
+      },
+      "revId": "dcdf498dfb94beb6ec58c0cc2bd605d27bc9825f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
