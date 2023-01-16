@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ad7ff04_53a3429a",
+        "filename": "catalog-be/src/main/resources/import/tosca/capability-types/capabilityTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-16T15:19:06Z",
+      "side": 1,
+      "message": "The change in type causes upgrade failure with following error:\n2023-01-16T15:17:03.577Z||qtp1472465-27|/v1/catalog/uploadType/capability|jh0003|||ERROR|500|#mergePropertiesAssociatedToNode - Failed due attempt to change type of the property with id tosca.capabilities.Endpoint.port",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 43
+      },
+      "revId": "58c869291d42f3528f2c5897a1b664efb550b603",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
