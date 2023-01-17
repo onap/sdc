@@ -50,6 +50,7 @@ import java.util.UUID;
 import javax.activation.DataHandler;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
@@ -176,12 +177,18 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user);
             response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
             final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
-            if (artifactStorageManager.isEnabled()) {
-                if (entity.getErrors().isEmpty()) {
-                    artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
-                } else {
+            final Map<String, List<ErrorMessage>> errors = entity.getErrors();
+            if (MapUtils.isNotEmpty(errors)) {
+                if (artifactStorageManager.isEnabled()) {
                     artifactStorageManager.delete(artifactInfo);
                 }
+                orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+                return Response.status(NOT_ACCEPTABLE)
+                    .entity(buildUploadResponseWithError(errors.values().stream().flatMap(List::stream).toArray(ErrorMessage[]::new))).build();
+            }
+            if (artifactStorageManager.isEnabled() && MapUtils.isEmpty(errors)) {
+                artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
             }
             orchestrationTemplateCandidateUploadManager
                 .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.SUCCESS, user);
