@@ -13,96 +13,98 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
- 
- 
-<div>
-    <div data-ng-if="!isSchemaTypeDataType">
-        <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}"
-             ng-if="schemaProperty.type !== 'map'">
-            <input class="i-sdc-form-input"
-                   data-tests-id="listNewItem{{fieldsPrefixName}}"
-                   ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
-                   data-ng-disabled="readOnly"
-                   data-ng-model="listNewItem.value"
-                   type="text"
-                   name="listNewItem{{fieldsPrefixName}}"
-                   data-ng-pattern="getValidationPattern((schemaProperty.simpleType||schemaProperty.type))"
-                   data-ng-model-options="{ debounce: 200 }"
-                   placeholder="Type a value and then click ADD"
-                   data-ng-maxlength="maxLength"
-                   maxlength="{{maxLength}}"
-                   sdc-keyboard-events="" key-enter="schemaProperty.type && !parentFormObj['listNewItem'+fieldsPrefixName].$invalid && listNewItem.value && addListItem"
-                   autofocus />
-            <select class="i-sdc-form-select"
+    
+<div class="dt-list">
+    <div data-ng-repeat="i in getNumber(valueObjRef.length) track by $index" class="dt-list-item">
+        <span class="delete-dt-list-item" data-ng-click="deleteListItem($index)"></span>
+        <div data-ng-if="isSchemaTypeDataType">
+            <fields-structure value-obj-ref="valueObjRef[$index]"
+                            type-name="schemaProperty.type"
+                            parent-form-obj="parentFormObj"
+                            fields-prefix-name="fieldsPrefixName+''+$index"
+                            read-only="readOnly"></fields-structure>
+        </div>
+        <div data-ng-if="!isSchemaTypeDataType">
+            <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}"
+                ng-if="schemaProperty.type !== 'map'">
+                <form class="temp-form">
+                    <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/> 
+                    Value
+                    <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" /> 
+                    {{'TOSCA_FUNCTION_LABEL' | translate}}
+                </form>
+                <input class="i-sdc-form-input"
                     data-tests-id="listNewItem{{fieldsPrefixName}}"
-                    ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean') && !showToscaFunction[$index]"
                     data-ng-disabled="readOnly"
+                    data-ng-model="valueObjRef[$index]"
+                    type="text"
                     name="listNewItem{{fieldsPrefixName}}"
-                    data-ng-model="listNewItem.value">
-                <option value="true">true</option>
-                <option value="false">false</option>
-            </select>
+                    data-ng-pattern="getValidationPattern((schemaProperty.simpleType||schemaProperty.type))"
+                    data-ng-change="addValueToList(valueObjRef[$index], $index);$event.stopPropagation();"
+                    data-ng-model-options="{ debounce: 200 }"
+                    data-ng-maxlength="maxLength"
+                    maxlength="{{maxLength}}"
+                    data-required
+                    autofocus />
+                <select class="i-sdc-form-select"
+                        data-tests-id="listNewItem{{fieldsPrefixName}}"
+                        ng-if="!constraints && (schemaProperty.simpleType||schemaProperty.type) == 'boolean' && !showToscaFunction[$index]"
+                        data-ng-disabled="readOnly"
+                        name="listNewItem{{fieldsPrefixName}}"
+                        data-ng-model="valueObjRef[$index]">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
 
-
-            <select class="i-sdc-form-select"
-                data-tests-id="constraints"
-                ng-if="constraints"
-                data-ng-disabled="readOnly"
-                data-ng-model="listNewItem.value">
-                <!-- Get the default value in case exist -->
-                <option value = "{{listNewItem.value}" name = "{{listNewItem.value}}" hidden selected>
-                        {{listNewItem.value}}
-                </option> 
-                <!-- add all constratint to Select list -->
-                <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
-                    {{value}}
-                </option>
-                
-                
-            </select>
-
-            <div class="input-error" data-ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid">
-                <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
-                <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
+                <div data-ng-if="showToscaFunction[$index]" class="div-tosca-function">
+                    <tosca-function [property]="parentProperty"
+                                    [component-instance-map]="componentInstanceMap"
+                                    [allow-clear]="false"
+                                    [composition-map]="true"
+                                    [composition-map-key]="$index+''"
+                                    (on-valid-function)="onGetToscaFunction($event,$index)"
+                    >
+                    </tosca-function>
+                </div>
+    
+                <select class="i-sdc-form-select"
+                    data-tests-id="constraints"
+                    ng-if="constraints"
+                    data-ng-disabled="readOnly"
+                    data-ng-model="valueObjRef[$index]">
+                    <!-- Get the default value in case exist -->
+                    <option value = "{{listNewItem.value}" name = "{{listNewItem.value}}" hidden selected>
+                            {{listNewItem.value}}
+                    </option> 
+                    <!-- add all constratint to Select list -->
+                    <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
+                        {{value}}
+                    </option>
+                    
+                    
+                </select>
+    
+                <div class="input-error" data-ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid">
+                    <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+                    <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
+                </div>
+            </div>
+            <div ng-if="schemaProperty.type === 'map'">
+                <type-map value-obj-ref="value"
+                            schema-property="stringSchema"
+                            parent-form-obj="parentFormObj"
+                            fields-prefix-name="fieldsPrefixName+''+$index"
+                            read-only="readOnly"
+                            default-value="{{undefined}}"
+                            max-length="maxLength"
+                            show-add-btn="true"
+                            constraints="constraints">
+                </type-map>
             </div>
         </div>
-        <div class="add-btn add-list-item" data-tests-id="add-list-item{{fieldsPrefixName}}"
-             data-ng-class="{'disabled': readOnly || !schemaProperty.type || parentFormObj['listNewItem'+fieldsPrefixName].$invalid || (!listNewItem.value && schemaProperty.type !== 'map')}" data-ng-click="addListItem()">Add</div>
-        <div class="list-value-items">
-            <span class="list-value-item" data-ng-repeat="value in valueObjRef track by $index">
-                <span ng-if="!readOnly" class="delete-list-item sprite-new small-x-button" data-ng-click="deleteListItem($index)"
-                      title="{{'PROPERTY_EDIT_LIST_DELETE_ITEM' | translate}}"></span>
-                <div ng-if="schemaProperty.type === 'map'">
-                    <type-map value-obj-ref="value"
-                              schema-property="stringSchema"
-                              parent-form-obj="parentFormObj"
-                              fields-prefix-name="fieldsPrefixName+''+$index"
-                              read-only="readOnly"
-                              default-value="{{undefined}}"
-                              max-length="maxLength"
-                              show-add-btn="true"
-                              constraints="constraints">
-                    </type-map>
-                </div>
-                <div ng-if="schemaProperty.type !== 'map'">
-                    {{value}}
-                </div>
-            </span>
-        </div>
     </div>
-    <div data-ng-if="isSchemaTypeDataType">
-        <div class="dt-list">
-            <div data-ng-repeat="value in valueObjRef track by $index" class="dt-list-item">
-                <span class="delete-dt-list-item" data-ng-click="deleteListItem($index)"></span>
-                <fields-structure value-obj-ref="valueObjRef[$index]"
-                                  type-name="schemaProperty.type"
-                                  parent-form-obj="parentFormObj"
-                                  fields-prefix-name="fieldsPrefixName+''+$index"
-                                  read-only="readOnly"></fields-structure>
-            </div>
-            <div class="add-btn add-list-item" data-tests-id="add-list-item"
-                       data-ng-class="{'disabled': readOnly}" data-ng-click="listNewItem.value='{}';addListItem();">Add</div>
-        </div>
-
-    </div>
+    <div class="add-btn add-list-item" data-tests-id="add-list-item"
+                data-ng-class="{'disabled': readOnly}" data-ng-click="listNewItem.value='';addListItem();">Add</div>
 </div>
+

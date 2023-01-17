@@ -146,7 +146,7 @@
                         <input type="radio" name="hasGetFunctionValue"
                                ng-model="editPropertyModel.hasGetFunctionValue"
                                ng-value="false"
-                               ng-change="onValueTypeChange()"/> Entries
+                               ng-change="onValueTypeChange()"/> {{(editPropertyModel.property.type == 'map' || editPropertyModel.property.type == 'list') ? 'Entries' : 'Value'}}
                         <input type="radio" name="hasGetFunctionValue"
                                ng-model="editPropertyModel.hasGetFunctionValue"
                                ng-value="true"
@@ -190,6 +190,8 @@
                             <div ng-switch-when="list">
                                 <type-list value-obj-ref="myValue"
                                            schema-property="editPropertyModel.property.schema.property"
+                                           parent-property="editPropertyModel.property"
+                                           component-instance-map="componentInstanceMap"
                                            parent-form-obj="forms.editForm"
                                            fields-prefix-name="currentPropertyIndex"
                                            read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
