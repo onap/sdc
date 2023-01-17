@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75b5bede_bc3bddd3",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1238,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-17T10:16:30Z",
+      "side": 1,
+      "message": "why catch just to throw rather than just letting it propogate itself",
+      "range": {
+        "startLine": 1236,
+        "startChar": 7,
+        "endLine": 1238,
+        "endChar": 9
+      },
+      "revId": "389c7029bb15e873ee15c78d5fc5013cb9a8af76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
