@@ -2192,8 +2192,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                         Object minValue = rangeArray.get(0);
                                         Object maxValue = rangeArray.get(1);
                                         InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
-                                        rangeConstraint.setMin(convertToComparable(ToscaType.RANGE, String.valueOf(minValue)));
-                                        rangeConstraint.setMax(convertToComparable(ToscaType.RANGE, String.valueOf(maxValue)));
+                                        rangeConstraint.setMin(String.valueOf(minValue));
+                                        rangeConstraint.setMax(String.valueOf(maxValue));
                                         propertyConstraint = rangeConstraint;
                                     }
                                 } else {
@@ -2313,15 +2313,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             if (je.isBoolean()) {
                 return je.getAsBoolean();
             }
-            if (je.isString()) {
-                return je.getAsString();
-            }
             if (je.isNumber()) {
                 double number = je.getAsNumber().floatValue();
                 if ((number % 1) == 0) {
                     return je.getAsNumber().intValue();
                 }
                 return number;
+            }
+            if (je.isString()) {
+                return je.getAsString();
             }
             return null;
         }
@@ -2437,8 +2437,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     String minValue = rangeArray.get(0).asText();
                     String maxValue = rangeArray.get(1).asText();
                     InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
-                    rangeConstraint.setMin(convertToComparable(ToscaType.RANGE, minValue));
-                    rangeConstraint.setMax(convertToComparable(ToscaType.RANGE, maxValue));
+                    rangeConstraint.setMin(minValue);
+                    rangeConstraint.setMax(maxValue);
                     return rangeConstraint;
                 }
             }
