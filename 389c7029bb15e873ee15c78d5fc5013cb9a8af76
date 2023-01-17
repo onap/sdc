@@ -22,6 +22,30 @@
       "revId": "389c7029bb15e873ee15c78d5fc5013cb9a8af76",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fa2e128_3b2a70c1",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1238,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-17T10:44:15Z",
+      "side": 1,
+      "message": "yes, you are right, \noriginally it had logging also",
+      "parentUuid": "75b5bede_bc3bddd3",
+      "range": {
+        "startLine": 1236,
+        "startChar": 7,
+        "endLine": 1238,
+        "endChar": 9
+      },
+      "revId": "389c7029bb15e873ee15c78d5fc5013cb9a8af76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
