@@ -53,7 +53,6 @@ public enum ToscaType {
 	VERSION("version"),
 	LIST("list"),
 	MAP("map"),
-    RANGE("range"),
 	SCALAR_UNIT("scalar-unit"),
 	SCALAR_UNIT_SIZE("scalar-unit.size"),
 	SCALAR_UNIT_TIME("scalar-unit.time"),
@@ -124,7 +123,6 @@ public enum ToscaType {
             case FLOAT:
                 return value instanceof Float;
             case INTEGER:
-            case RANGE:
                 return value instanceof Integer;
             case STRING:
             case SCALAR_UNIT_SIZE:
@@ -243,7 +241,6 @@ public enum ToscaType {
                 return Boolean.valueOf(value);
             case FLOAT:
                 return Float.valueOf(value);
-            case RANGE:
             case INTEGER:
                 return Long.valueOf(value);
             case TIMESTAMP:
