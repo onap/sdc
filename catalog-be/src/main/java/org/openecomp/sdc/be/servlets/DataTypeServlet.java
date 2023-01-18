@@ -45,6 +45,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -70,11 +71,13 @@ public class DataTypeServlet extends BeGenericServlet {
 
     private static final Logger log = Logger.getLogger(DataTypeServlet.class);
     private final DataTypeOperation dataTypeOperation;
+    private final DataTypeBusinessLogic dataTypeBusinessLogic;
 
     public DataTypeServlet(final ComponentsUtils componentsUtils,
-                           final DataTypeOperation dataTypeOperation) {
+                           final DataTypeOperation dataTypeOperation, DataTypeBusinessLogic dataTypeBusinessLogic) {
         super(componentsUtils);
         this.dataTypeOperation = dataTypeOperation;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
     }
 
     @GET
@@ -139,9 +142,10 @@ public class DataTypeServlet extends BeGenericServlet {
         })
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
-                                       @PathParam("id") final String id,
+                                   @PathParam("id") final String id,
                                    @RequestBody(description = "Property to add", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
+        dataTypeBusinessLogic.updateApplicationDataTypeCache(id);
         return Response.status(Status.CREATED).entity(property).build();
     }
 

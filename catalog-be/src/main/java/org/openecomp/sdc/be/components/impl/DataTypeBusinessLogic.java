@@ -23,6 +23,8 @@ import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -33,6 +35,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -40,15 +43,19 @@ import org.springframework.util.CollectionUtils;
 @org.springframework.stereotype.Component("dataTypeBusinessLogic")
 public class DataTypeBusinessLogic extends BaseBusinessLogic {
 
-    final DataTypeImportManager dataTypeImportManager;
+    private final DataTypeImportManager dataTypeImportManager;
+    private final DataTypeOperation dataTypeOperation;
 
     @Autowired
     public DataTypeBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                  IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
-                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation, DataTypeImportManager dataTypeImportManager) {
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation,
+                                 DataTypeImportManager dataTypeImportManager,
+                                 DataTypeOperation dataTypeOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.dataTypeImportManager = dataTypeImportManager;
+        this.dataTypeOperation = dataTypeOperation;
     }
 
     /**
@@ -154,11 +161,17 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
      *   [...]
      * </pre>
      *
-     * @param dataTypesYaml the data types to create in yaml format. It can contain multiple data types entries.
-     * @param model Model name to associate with data type
+     * @param dataTypesYaml                the data types to create in yaml format. It can contain multiple data types entries.
+     * @param model                        Model name to associate with data type
      * @param includeToModelDefaultImports Add data type entry to default imports for model
      */
     public void createDataTypeFromYaml(final String dataTypesYaml, final String model, final boolean includeToModelDefaultImports) {
         dataTypeImportManager.createDataTypes(dataTypesYaml, model, includeToModelDefaultImports);
+    }
+
+    public void updateApplicationDataTypeCache(final String dataTypeId) {
+        DataTypeDataDefinition dataTypeDataDefinition = dataTypeOperation.getDataTypeByUid(dataTypeId).orElseThrow(
+            DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId));
+        getApplicationDataTypeCache().reload(dataTypeDataDefinition.getModel(), dataTypeId);
     }
 }

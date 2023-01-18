@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -118,6 +119,7 @@ public abstract class BaseBusinessLogic {
     protected JanusGraphGenericDao janusGraphGenericDao;
     protected PropertyOperation propertyOperation;
     protected AttributeOperation attributeOperation;
+    @Getter
     protected ApplicationDataTypeCache applicationDataTypeCache;
     protected ToscaOperationFacade toscaOperationFacade;
     protected IGroupOperation groupOperation;
@@ -126,7 +128,7 @@ public abstract class BaseBusinessLogic {
     protected PolicyTypeOperation policyTypeOperation;
     protected ArtifactsOperations artifactToscaOperation;
     protected UserValidations userValidations;
-    DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
+    private final DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
     protected BaseBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                 IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,

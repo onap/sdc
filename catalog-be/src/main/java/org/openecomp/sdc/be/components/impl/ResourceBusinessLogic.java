@@ -333,10 +333,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.artifactsBusinessLogic = artifactsManager;
     }
 
-    public ApplicationDataTypeCache getApplicationDataTypeCache() {
-        return applicationDataTypeCache;
-    }
-
     @Autowired
     @Override
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
