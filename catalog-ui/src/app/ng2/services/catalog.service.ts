@@ -51,7 +51,7 @@ export class CatalogService {
         let searchParams = new HttpParams();
         searchParams = searchParams.append('excludeTypes', ResourceType.VFCMT).append('excludeTypes', ResourceType.CONFIGURATION);
         const observableComponents = this.http.get<IComponentsArray>(this.baseMicroServiceUrl + this.api.GET_uicache_catalog, {params: searchParams});
-        const observableDataTypes = this.dataTypesService.getDataTypesFromAllModel();
+        const observableDataTypes = this.dataTypesService.getDataTypesFromAllModelExcludePrimitives();
         return zip(observableComponents, observableDataTypes)
         .pipe(map(res => this.processComponentsResponse(res, true)));
     }
