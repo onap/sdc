@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -47,7 +48,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.ListUtils;
 import org.openecomp.sdc.be.components.impl.ArtifactTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -73,6 +73,7 @@ import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -165,24 +166,29 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Data types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllDataTypesFromAllModels(@Context final HttpServletRequest request,
-                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                                 @QueryParam("excludePrimitives") @DefaultValue("false") String excludePrimitives) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         init();
         validateUserExist(responseWrapper, userWrapper, userId);
         if (responseWrapper.isEmpty()) {
+            final boolean exclude = Boolean.parseBoolean(excludePrimitives);
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
             resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
             final List<Map<String, DataTypeDefinition>> dataTypesList = new ArrayList<>();
             List<Model> models = modelOperation.findAllModels();
-            Model defaultModel = new Model();
-            defaultModel.setName(null);
-            models.add(defaultModel);
+            models.add(new Model(null));
             models.forEach(model -> {
                 final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
                     .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), model.getName());
-                dataTypesList.add(dataTypes);
+                if (exclude) {
+                    dataTypesList.add(dataTypes.entrySet().stream().filter(entry -> !ToscaPropertyType.isScalarType(entry.getKey()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                } else {
+                    dataTypesList.add(dataTypes);
+                }
             });
             String dataTypeJson = gson.toJson(dataTypesList);
             Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
@@ -382,7 +388,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     public Response getAllToscaArtifactTypes(@Parameter(description = "Model name") @QueryParam("model") String model,
                                              @Context final HttpServletRequest request, @HeaderParam(Constants.USER_ID_HEADER) String creator) {
         try {
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), artifactTypeBusinessLogic.getAllToscaArtifactTypes(model));
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+                artifactTypeBusinessLogic.getAllToscaArtifactTypes(model));
         } catch (final BusinessException e) {
             throw e;
         } catch (final Exception e) {
