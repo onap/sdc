@@ -1086,10 +1086,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     }
 
     private boolean checkFirstItem(String left, String right) {
-        if (left != null && left.equals(right)) {
-            return true;
-        }
-        return false;
+        return left != null && left.equals(right);
     }
 
     private String buildStringForMatch(List<String> pathOfInstances, int level) {
@@ -1565,10 +1562,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
         if (dataTypeUidstoModels != null) {
             log.trace("Number of data types to load is {}", dataTypeUidstoModels.size());
-            for (Map.Entry<String, List<String>> entry : dataTypeUidstoModels.entrySet()) {
-                log.trace("Going to fetch data type with uid {}", entry.getKey());
-                Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = this
-                    .getAndAddDataTypeByUid(entry.getKey(), allDataTypesFound);
+            for (final Map.Entry<String, List<String>> entry : dataTypeUidstoModels.entrySet()) {
+                final String key = entry.getKey();
+                log.trace("Going to fetch data type with uid {}", key);
+                final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = this.getAndAddDataTypeByUid(key, allDataTypesFound);
                 if (dataTypeByUid.isRight()) {
                     JanusGraphOperationStatus status = dataTypeByUid.right().value();
                     if (status == JanusGraphOperationStatus.NOT_FOUND) {
@@ -1578,13 +1575,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 }
                 for (final String model : entry.getValue()) {
                     if (!dataTypes.containsKey(model)) {
-                        dataTypes.put(model, new HashMap<String, DataTypeDefinition>());
+                        dataTypes.put(model, new HashMap<>());
                     }
                     DataTypeDefinition dataTypeDefinition = allDataTypesFound.get(entry.getKey());
                     dataTypes.get(model).put(dataTypeDefinition.getName(), dataTypeDefinition);
                 }
             }
-
         }
         if (log.isTraceEnabled()) {
             if (result.isRight()) {
@@ -1766,9 +1762,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         return getDerivedResult == StorageOperationStatus.NOT_FOUND;
     }
 
-    /*
-     * @Override public PropertyOperation getPropertyOperation() { return this; }
-     */
     public JanusGraphOperationStatus fillPropertiesList(String uniqueId, NodeTypeEnum nodeType, Consumer<List<PropertyDefinition>> propertySetter) {
         Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesRes = findPropertiesifExist(uniqueId, nodeType);
         if (findPropertiesRes.isRight()) {

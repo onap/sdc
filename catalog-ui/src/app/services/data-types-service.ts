@@ -98,9 +98,9 @@ export class DataTypesService implements IDataTypesService {
         return this.dataTypes;
     }
 
-    public getDataTypesFromAllModel = (): Observable<Array<DataTypeModel>> => {
+    public getDataTypesFromAllModelExcludePrimitives = (): Observable<Array<DataTypeModel>> => {
         return new Observable<Array<DataTypeModel>>(subscriber => {
-            this.$http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes")
+            this.$http.get<List<DataTypesMap>>(this.baseUrl + "allDataTypes?excludePrimitives=true")
             .then(promiseValue => {
                 const allDataTypes = this.getDataTypesItems(promiseValue.data);
                 subscriber.next(allDataTypes);
