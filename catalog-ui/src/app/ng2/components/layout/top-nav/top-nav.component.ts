@@ -88,7 +88,7 @@ export class TopNavComponent implements OnInit, OnChanges {
         //if it's a different state
         if (result === -1) {
             //if in 'workspace' -  checking previous state param
-            if (this.$state.includes('workspace')) {
+            if (this.$state.includes('workspace') || this.$state.includes('type-workspace')) {
                 // if previous state is 'dashboard' or 'catalog', then select it - otherwise, use 'catalog' as default for 'workspace'
                 const selectedStateName = (['dashboard', 'catalog'].indexOf(this.$state.params['previousState']) !== -1)
                     ? this.$state.params['previousState']
