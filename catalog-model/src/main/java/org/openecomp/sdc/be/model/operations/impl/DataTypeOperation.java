@@ -122,7 +122,7 @@ public class DataTypeOperation extends AbstractOperation {
         return dataTypesFound;
     }
 
-    private List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
+    public List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
         final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesByModel = janusGraphGenericDao
             .getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class);
         return validateDataType(getAllDataTypesByModel, modelName);
