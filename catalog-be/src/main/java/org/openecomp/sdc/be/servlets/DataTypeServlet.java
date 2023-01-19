@@ -144,6 +144,20 @@ public class DataTypeServlet extends BeGenericServlet {
     public Response createProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                    @PathParam("id") final String id,
                                    @RequestBody(description = "Property to add", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
+        Optional<DataTypeDataDefinition> dataType = dataTypeOperation.getDataTypeByUid(id);
+        dataType.ifPresentOrElse(dt -> {
+            String model = dt.getModel();
+            Optional<DataTypeDataDefinition> propertyDataType = dataTypeOperation.getDataTypeByNameAndModel(propertyDefinitionDto.getType(), model);
+            if (propertyDataType.isEmpty()) {
+                if (model == null || model.isEmpty()) {
+                    model = "SDC AID";
+                }
+                throw new OperationException(ActionStatus.INVALID_MODEL,
+                        String.format("Property model is not the same as the data type model. Must be be '%s'", model));
+            }
+        }, () -> {
+            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", id));
+        });
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
         dataTypeBusinessLogic.updateApplicationDataTypeCache(id);
         return Response.status(Status.CREATED).entity(property).build();
