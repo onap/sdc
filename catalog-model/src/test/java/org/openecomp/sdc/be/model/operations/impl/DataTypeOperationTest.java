@@ -114,6 +114,39 @@ class DataTypeOperationTest {
     }
 
     @Test
+    void getDataTypeByNameAndModelEtsiTest() {
+        final DataTypeData dataType = dataTypesWithModel.get(0);
+        final String dataTypeName = dataType.getDataTypeDataDefinition().getName();
+        final String dataTypeUid = dataType.getDataTypeDataDefinition().getUniqueId();
+        when(janusGraphGenericDao.getNode("name", dataTypeName, DataTypeData.class, modelName))
+                .thenReturn(Either.left(dataType));
+        final var dataTypeFound = dataTypeOperation.getDataTypeByNameAndModel(dataTypeName, model.getName());
+        assertTrue(dataTypeFound.isPresent());
+        DataTypeDataDefinition foundDataType = dataTypeFound.get();
+        assertEquals(modelName ,foundDataType.getModel());
+        assertEquals(dataTypeUid ,foundDataType.getUniqueId());
+    }
+
+    @Test
+    void getDataTypeByNameAndModelNotFoundTest() {
+        when(janusGraphGenericDao.getNode("name", "notReal", DataTypeData.class, modelName))
+                .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        final var dataTypesFound = dataTypeOperation.getDataTypeByNameAndModel("notReal", modelName);
+        assertTrue(dataTypesFound.isEmpty());
+    }
+
+    @Test
+    void getDataTypeByNameAndModelGeneralErrorTest() {
+        when(janusGraphGenericDao.getNode("name", "notReal", DataTypeData.class, modelName))
+                .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final OperationException actualException =
+                assertThrows(OperationException.class, () -> dataTypeOperation.getDataTypeByNameAndModel("notReal", modelName));
+        final OperationException expectedException =
+                DataTypeOperationExceptionSupplier.unexpectedErrorWhileFetchingProperties("notReal").get();
+        assertEquals(expectedException.getMessage(), actualException.getMessage());
+    }
+
+    @Test
     void getAllDataTypeNodesWithValidationErrorTest() {
         when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class))
             .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
