@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
+import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -141,6 +142,18 @@ public class DataTypeServlet extends BeGenericServlet {
     public Response createProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                        @PathParam("id") final String id,
                                    @RequestBody(description = "Property to add", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
+        Optional<DataTypeDataDefinition> dataType = dataTypeOperation.getDataTypeByUid(id);
+        dataType.ifPresentOrElse(dt -> {
+            List<DataTypeData> allDataTypesWithModel = dataTypeOperation.getAllDataTypesWithModel(dt.getModel());
+            boolean isSameModel = allDataTypesWithModel.stream()
+                .anyMatch(datatype -> datatype.getDataTypeDataDefinition().getName().equals(propertyDefinitionDto.getType()));
+            if (!isSameModel) {
+                throw new OperationException(ActionStatus.INVALID_MODEL,
+                        String.format("Property model is not the same as the data type model. Must be be '%s'", dt.getModel()));
+            }
+        }, () -> {
+            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", id));
+        });
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
         return Response.status(Status.CREATED).entity(property).build();
     }
