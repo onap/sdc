@@ -22,6 +22,30 @@
       "revId": "ce18f98f93675fa7f0c556525730a73153fe037b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9c91dbc_06ee307c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesFetchServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-01-19T13:33:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e6fb036_961dcd68",
+      "range": {
+        "startLine": 479,
+        "startChar": 8,
+        "endLine": 480,
+        "endChar": 24
+      },
+      "revId": "ce18f98f93675fa7f0c556525730a73153fe037b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
