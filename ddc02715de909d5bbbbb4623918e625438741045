@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbec62ac_b87745a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesFetchServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-19T11:43:13Z",
+      "side": 1,
+      "message": "should be final",
+      "range": {
+        "startLine": 109,
+        "startChar": 0,
+        "endLine": 109,
+        "endChar": 48
+      },
+      "revId": "ddc02715de909d5bbbbb4623918e625438741045",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6b7e1e6_5705873b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-19T11:43:13Z",
+      "side": 1,
+      "message": "could be private, used in same class L230",
+      "range": {
+        "startLine": 323,
+        "startChar": 4,
+        "endLine": 323,
+        "endChar": 10
+      },
+      "revId": "ddc02715de909d5bbbbb4623918e625438741045",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
