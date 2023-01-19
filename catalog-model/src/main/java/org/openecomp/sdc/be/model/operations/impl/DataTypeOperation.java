@@ -189,6 +189,22 @@ public class DataTypeOperation extends AbstractOperation {
         return Optional.of(dataTypeEither.left().value().getDataTypeDataDefinition());
     }
 
+    public Optional<DataTypeDataDefinition> getDataTypeByNameAndModel(final String name, String model) {
+        final Either<DataTypeData, JanusGraphOperationStatus> dataTypeEither = janusGraphGenericDao
+            .getNode("name", name, DataTypeData.class, model);
+        if (dataTypeEither.isRight()) {
+            if (JanusGraphOperationStatus.NOT_FOUND.equals(dataTypeEither.right().value())) {
+                return Optional.empty();
+            }
+            final StorageOperationStatus storageOperationStatus
+                = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(dataTypeEither.right().value());
+            LOGGER.warn("Failed to fetch data type '{}' from JanusGraph. Status is: {}", name, storageOperationStatus);
+            throw new OperationException(ActionStatus.GENERAL_ERROR,
+                String.format("Failed to fetch data type '%s' from JanusGraph. Status is: %s", name, storageOperationStatus));
+        }
+        return Optional.of(dataTypeEither.left().value().getDataTypeDataDefinition());
+    }
+
     public List<PropertyDefinition> findAllProperties(final String uniqueId) {
         final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesEither =
             propertyOperation.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
