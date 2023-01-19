@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c523ecb_07d1a38f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/ToscaType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-19T12:03:17Z",
+      "side": 0,
+      "message": "this is type of property, not constraint\u0027s type, \nI think changes in other file are enough to solve the problem",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 23
+      },
+      "revId": "c29a4519545ff509c038c9a19781ef210b2ee14f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1490aaa_d418cbdb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/ToscaType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-19T12:03:17Z",
+      "side": 0,
+      "message": "same here",
+      "range": {
+        "startLine": 246,
+        "startChar": 0,
+        "endLine": 246,
+        "endChar": 23
+      },
+      "revId": "c29a4519545ff509c038c9a19781ef210b2ee14f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
