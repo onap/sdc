@@ -228,7 +228,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
-                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {        
         return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
     }

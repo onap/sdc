@@ -66,7 +66,7 @@ public class DataTypeImportManager {
     public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName,
                                                                                                     final boolean includeToModelDefaultImports) {
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
-            dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
+            dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName, !includeToModelDefaultImports), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
 
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, dataTypeYml, modelName);
@@ -77,7 +77,7 @@ public class DataTypeImportManager {
         return elementTypes;
     }
 
-    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
+    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName, final boolean normative) {
         final Either<List<DataTypeDefinition>, ActionStatus> dataTypesEither = commonImportManager.createElementTypesFromYml(dataTypesYml,
             this::createDataType);
         if (dataTypesEither.isRight()) {
@@ -87,10 +87,12 @@ public class DataTypeImportManager {
         if (StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
-                dataTypes.forEach(dataType -> dataType.setModel(modelName));
+                dataTypes.forEach(dataType -> {dataType.setModel(modelName); dataType.setNormative(normative);});
             } else {
                 return Either.right(ActionStatus.INVALID_MODEL);
             }
+        } else {
+            dataTypes.forEach(dataType -> dataType.setNormative(normative));
         }
         if (log.isTraceEnabled()) {
             log.trace("Unsorted datatypes order:");
