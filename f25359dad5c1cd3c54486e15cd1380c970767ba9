@@ -22,6 +22,30 @@
       "revId": "f25359dad5c1cd3c54486e15cd1380c970767ba9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "585c58bc_bde7ce79",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-01-20T08:50:20Z",
+      "side": 1,
+      "message": "It does yeah, but the propertyDefinitionDto does not contain the model so we still need to check if propertyDefinitionDto is the same model as the DataTypeDefinition retrieved here",
+      "parentUuid": "f0e2f2f5_d6611388",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 91
+      },
+      "revId": "f25359dad5c1cd3c54486e15cd1380c970767ba9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
