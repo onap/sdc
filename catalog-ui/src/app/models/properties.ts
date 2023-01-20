@@ -129,6 +129,7 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
             "defaultValue": this.defaultValue != "" && this.defaultValue != "[]" && this.defaultValue != "{}" ? this.defaultValue : null,
             "description": this.description,
             "constraints": this.constraints,
+            "propertyConstraints": this.propertyConstraints,
             "isPassword": this.password || false,
             "schema": this.schema,
             "name": this.name
