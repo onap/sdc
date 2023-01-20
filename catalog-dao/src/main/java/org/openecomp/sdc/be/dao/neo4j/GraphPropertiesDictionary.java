@@ -160,7 +160,8 @@ public enum GraphPropertiesDictionary {
     CUSTOMIZATION_UUID	("customizationUUID",		String.class,	 			false,		false),
     IS_ARCHIVED			("isArchived",			    Boolean.class, 				false,		true),
     IS_VSP_ARCHIVED		("isVspArchived",		    Boolean.class, 				false,		true),
-    ARCHIVE_TIME		("archiveTime",			    Long.class, 				false,		true);
+    IS_NORMATIVE        ("isNormative",             Boolean.class,              false,      false),
+    ARCHIVE_TIME        ("archiveTime",             Long.class,                 false,      true);
     // @formatter:on
 
     private final String property;

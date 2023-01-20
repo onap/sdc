@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
@@ -66,7 +67,7 @@ public class DataTypeImportManager {
     public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName,
                                                                                                     final boolean includeToModelDefaultImports) {
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
-            dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
+            dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName, !includeToModelDefaultImports), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
 
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, dataTypeYml, modelName);
@@ -77,7 +78,7 @@ public class DataTypeImportManager {
         return elementTypes;
     }
 
-    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
+    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName, final boolean isNormative) {
         final Either<List<DataTypeDefinition>, ActionStatus> dataTypesEither = commonImportManager.createElementTypesFromYml(dataTypesYml,
             this::createDataType);
         if (dataTypesEither.isRight()) {
@@ -87,10 +88,12 @@ public class DataTypeImportManager {
         if (StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
-                dataTypes.forEach(dataType -> dataType.setModel(modelName));
+                dataTypes.forEach(dataType -> {dataType.setModel(modelName); dataType.setNormative(isNormative);});
             } else {
                 return Either.right(ActionStatus.INVALID_MODEL);
             }
+        } else {
+            dataTypes.forEach(dataType -> dataType.setNormative(isNormative));
         }
         if (log.isTraceEnabled()) {
             log.trace("Unsorted datatypes order:");

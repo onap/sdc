@@ -48,6 +48,7 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
      */
     private Long modificationTime;
     private List<PropertyDataDefinition> propertiesData;
+    private boolean isNormative;
 
     public DataTypeDataDefinition(DataTypeDataDefinition p) {
         this.name = p.name;
@@ -57,5 +58,6 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
         this.creationTime = p.creationTime;
         this.modificationTime = p.modificationTime;
         this.model = p.model;
+        this.isNormative = p.isNormative;
     }
 }

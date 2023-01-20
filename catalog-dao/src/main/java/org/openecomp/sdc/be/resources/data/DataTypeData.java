@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public class DataTypeData extends GraphNode {
@@ -50,6 +51,9 @@ public class DataTypeData extends GraphNode {
         dataTypeDataDefinition.setCreationTime((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
         dataTypeDataDefinition.setModificationTime((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
         dataTypeDataDefinition.setModel((String) properties.get(GraphPropertiesDictionary.MODEL.getProperty()));
+        final Object isNormativeProperty = properties.get(GraphPropertiesDictionary.IS_NORMATIVE.getProperty());
+        final boolean isNormative = isNormativeProperty != null && (boolean) isNormativeProperty;
+        dataTypeDataDefinition.setNormative(isNormative);        
     }
 
     @Override
@@ -62,6 +66,7 @@ public class DataTypeData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, dataTypeDataDefinition.getCreationTime());
         addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, dataTypeDataDefinition.getModificationTime());
         addIfExists(map, GraphPropertiesDictionary.MODEL, dataTypeDataDefinition.getModel());
+        addIfExists(map, GraphPropertiesDictionary.IS_NORMATIVE, dataTypeDataDefinition.isNormative());
         return map;
     }
 
