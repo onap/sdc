@@ -27,17 +27,15 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
+@NoArgsConstructor
 public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue, ToscaPropertyData {
 
     private List<PropertyConstraint> constraints;
-
-    public PropertyDefinition() {
-        super();
-    }
 
     public String getToscaSubPath() {
         return toscaSubPath;

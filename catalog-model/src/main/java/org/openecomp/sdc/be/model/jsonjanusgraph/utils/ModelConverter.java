@@ -119,7 +119,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
@@ -767,7 +766,7 @@ public class ModelConverter {
         component.setSystemName((String) toscaElement.getMetadataValue(JsonPresentationFields.SYSTEM_NAME));
         component.setDerivedFromGenericType(toscaElement.getDerivedFromGenericType());
         component.setDerivedFromGenericVersion(toscaElement.getDerivedFromGenericVersion());
-        if(toscaElement.getModel() != null) {
+        if (toscaElement.getModel() != null) {
             component.setModel(toscaElement.getModel());
         }
         Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
@@ -791,7 +790,8 @@ public class ModelConverter {
             } else {
                 resource.setResourceVendorModelNumber("");
             }
-            Boolean isNormative = toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE) == null ? false : (Boolean) toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE);
+            Boolean isNormative = toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE) == null ? false
+                : (Boolean) toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE);
             resource.getComponentMetadataDefinition().getMetadataDataDefinition().setNormative(isNormative);
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             Service service = (Service) component;
@@ -835,7 +835,7 @@ public class ModelConverter {
             component.setCategorySpecificMetadata(categorySpecificMetadata);
         }
     }
-    
+
     private static List<MetadataKeyDataDefinition> getCategorySpecificMetadataKeys(final ToscaElement toscaElement) {
         final List<MetadataKeyDataDefinition> metadataKeys = new ArrayList<>();
         final Optional<CategoryDefinition> category = getCategory(toscaElement);
@@ -959,7 +959,7 @@ public class ModelConverter {
 
     private static void convertSubstitutionFiltersComponents(final TopologyTemplate topologyTemplate, final Component component) {
         final SubstitutionFilterDataDefinition filters = topologyTemplate.getSubstitutionFilters();
-        if (filters == null){
+        if (filters == null) {
             component.setSubstitutionFilter(null);
             return;
         }
@@ -1359,7 +1359,8 @@ public class ModelConverter {
             } else {
                 toscaElement.setMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER, "");
             }
-            toscaElement.setMetadataValue(JsonPresentationFields.NORMATIVE, ((Resource) component).getComponentMetadataDefinition().getMetadataDataDefinition().isNormative());
+            toscaElement.setMetadataValue(JsonPresentationFields.NORMATIVE,
+                ((Resource) component).getComponentMetadataDefinition().getMetadataDataDefinition().isNormative());
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((Service) component).getServiceType() != null) {
@@ -1508,10 +1509,9 @@ public class ModelConverter {
             Map<String, List<ComponentInstanceProperty>> properties = new HashMap<>();
             for (Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstProperties().entrySet()) {
                 if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
-                    String key = entry.getKey();
                     List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream()
-                        .map(e -> new ComponentInstanceProperty(new PropertyDefinition(e.getValue()))).collect(Collectors.toList());
-                    properties.put(key, componentInstanceAttributes);
+                        .map(e -> new ComponentInstanceProperty(new PropertyDataDefinition(e.getValue()))).collect(Collectors.toList());
+                    properties.put(entry.getKey(), componentInstanceAttributes);
                 }
             }
             component.setComponentInstancesProperties(properties);

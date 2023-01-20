@@ -108,7 +108,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setType(propertyDataDefinition.getType());
         this.setName(propertyDataDefinition.getName());
         this.setValue(propertyDataDefinition.getValue());
-        this.setRequired(propertyDataDefinition.isRequired());
         this.setHidden(propertyDataDefinition.isHidden());
         this.setLabel(propertyDataDefinition.getLabel());
         this.setImmutable(propertyDataDefinition.isImmutable());
@@ -142,7 +141,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setUserCreated(propertyDataDefinition.isUserCreated());
     }
 
-    // @Override
     public boolean isDefinition() {
         return true;
     }
