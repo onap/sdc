@@ -39,6 +39,7 @@ export class DataTypeModel {
     properties: Array<PropertyBEModel>;
     attributes: Array<AttributeBEModel>;
     model: Model;
+    normative: boolean;
 
     constructor(dataType?: DataTypeModel) {
         if (!dataType) {
@@ -62,6 +63,7 @@ export class DataTypeModel {
         }
         this.attributes = dataType.attributes;
         this.model = dataType.model;
+        this.normative = dataType.normative;
     }
 
     public toJSON = ():any => {

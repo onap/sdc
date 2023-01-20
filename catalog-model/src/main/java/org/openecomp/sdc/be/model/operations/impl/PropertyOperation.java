@@ -1268,9 +1268,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     return Either.right(operationStatus);
                 }
                 propertiesData.put(propertyName, addPropertyToNodeType.left().value());
-            }
+            }            
             DataTypeData dataTypeData = new DataTypeData();
+            Either<DataTypeDefinition, StorageOperationStatus> existingNode = getDataTypeByUidWithoutDerived(uniqueId, true);
+            if (existingNode.isLeft()) {
+                dataTypeData.getDataTypeDataDefinition().setNormative(existingNode.left().value().isNormative());
+            }
             dataTypeData.getDataTypeDataDefinition().setUniqueId(uniqueId);
+            
             long modificationTime = System.currentTimeMillis();
             dataTypeData.getDataTypeDataDefinition().setModificationTime(modificationTime);
             Either<DataTypeData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao.updateNode(dataTypeData, DataTypeData.class);
