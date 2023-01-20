@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "4897edf1_a83e9833",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-20T11:26:41Z",
+      "side": 1,
+      "message": "ok, but perhaps there is a more efficient way than getting all data types for the model, e.g. propertyOperation.getDataTypeByName()",
+      "parentUuid": "585c58bc_bde7ce79",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 91
+      },
+      "revId": "f25359dad5c1cd3c54486e15cd1380c970767ba9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "84e72935_4ceb32d1",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
         "patchSetId": 2
