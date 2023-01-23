@@ -888,6 +888,10 @@ export class GeneralViewModel {
             }
             return metadatakey != null;
         }
+
+        this.$scope.isNotApplicableMetadataKeys = (key: string): boolean => {
+            return this.$scope.component.categories[0].notApplicableMetadataKeys.some(item => item === key);
+        }
     }
 
     private filterCategoriesByModel(modelName:string) {

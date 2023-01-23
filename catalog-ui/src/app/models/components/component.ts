@@ -573,7 +573,6 @@ export abstract class Component implements IComponent {
         this.derivedList = componentMetadata.derivedList;
         this.normalizedName = componentMetadata.normalizedName;
         this.systemName = componentMetadata.systemName;
-        this.categories = componentMetadata.categories;
         this.isArchived = componentMetadata.isArchived;
         this.vspArchived = componentMetadata.vspArchived;
         this.componentMetadata = componentMetadata;
