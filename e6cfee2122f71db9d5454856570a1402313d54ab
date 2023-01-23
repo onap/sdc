@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "878d8250_66905729",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-23T15:01:37Z",
+      "side": 1,
+      "message": "unused import",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 67
+      },
+      "revId": "e6cfee2122f71db9d5454856570a1402313d54ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cca3e677_10161b76",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/DataTypeData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-23T15:01:37Z",
+      "side": 1,
+      "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 67
+      },
+      "revId": "e6cfee2122f71db9d5454856570a1402313d54ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5f20e6d_5a4188ba",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/DataTypeDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-23T15:01:37Z",
+      "side": 1,
+      "message": "I think would be better:\nname of field \u0027normative\u0027\nname of getter \u0027isNormative\u0027\n\nyou can argue, this is because of GraphPropertiesDictionary.IS_NORMATIVE, but GraphPropertiesDictionary contains other Boolean values, some of them with same prefix , some without,\nprobably, my original comment is not really relevant 😊",
+      "range": {
+        "startLine": 51,
+        "startChar": 20,
+        "endLine": 51,
+        "endChar": 31
+      },
+      "revId": "e6cfee2122f71db9d5454856570a1402313d54ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
