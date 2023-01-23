@@ -57,8 +57,10 @@ public class CategoryData extends GraphNode {
         categoryDataDefinition.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices);
         Type listType = new TypeToken<List<String>>() {
         }.getType();
-        List<String> iconsfromJson = getGson().fromJson((String) properties.get(GraphPropertiesDictionary.ICONS.getProperty()), listType);
-        categoryDataDefinition.setIcons(iconsfromJson);
+        categoryDataDefinition.setNotApplicableMetadataKeys(
+            getGson().fromJson((String) properties.get(GraphPropertiesDictionary.NOT_APPLICABLE_METADATA_KEYS.getProperty()), listType));
+        List<String> iconsFromJson = getGson().fromJson((String) properties.get(GraphPropertiesDictionary.ICONS.getProperty()), listType);
+        categoryDataDefinition.setIcons(iconsFromJson);
         categoryDataDefinition.setModels(getGson().fromJson((String) properties.get(GraphPropertiesDictionary.MODEL.getProperty()), listType));
         final Type metadataKeylistType = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
@@ -87,6 +89,7 @@ public class CategoryData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.ICONS, categoryDataDefinition.getIcons());
         addIfExists(map, GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES,
             categoryDataDefinition.isUseServiceSubstitutionForNestedServices());
+        addIfExists(map, GraphPropertiesDictionary.NOT_APPLICABLE_METADATA_KEYS, categoryDataDefinition.getNotApplicableMetadataKeys());
         addIfExists(map, GraphPropertiesDictionary.METADATA_KEYS, categoryDataDefinition.getMetadataKeys());
         return map;
     }

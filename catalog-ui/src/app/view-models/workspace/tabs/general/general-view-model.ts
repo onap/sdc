@@ -176,9 +176,6 @@ export class GeneralViewModel {
         this.initScope();
     }
 
-
-
-
     private initScopeValidation = ():void => {
         this.$scope.validation = new Validation();
         this.$scope.validation.componentNameValidationPattern = this.ComponentNameValidationPattern;
@@ -689,7 +686,6 @@ export class GeneralViewModel {
             }
         };
 
-
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, (nextState) => {
             if (this.$state.current.data.unsavedChanges && this.$scope.isValidForm) {
                 this.$scope.save().then(() => {
@@ -888,6 +884,10 @@ export class GeneralViewModel {
             }
             return metadatakey != null;
         }
+
+        this.$scope.isNotApplicableMetadataKeys = (key: string): boolean => {
+            return this.$scope.component.categories && this.$scope.component.categories[0].notApplicableMetadataKeys && this.$scope.component.categories[0].notApplicableMetadataKeys.some(item => item === key);
+        }
     }
 
     private filterCategoriesByModel(modelName:string) {
@@ -896,7 +896,6 @@ export class GeneralViewModel {
         this.$scope.categories = this.$scope.categories.filter(category =>
             !modelName ? !category.models || category.models.indexOf(DEFAULT_MODEL_NAME) !== -1 : category.models !== null && category.models.indexOf(modelName) !== -1);
     }
-
 
     private filterBaseTypesByModelAndCategory(modelName:string) {
         let categories = this.$scope.component.categories;
