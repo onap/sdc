@@ -19,6 +19,12 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary.DISPLAY_NAME;
+import static org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary.ICONS;
+import static org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary.NAME;
+import static org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary.NOT_APPLICABLE_METADATA_KEYS;
+import static org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES;
+
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -226,19 +232,20 @@ public class CategoriesImportManager {
         for (Entry<String, Object> entry : categories.entrySet()) {
             CategoryDefinition catDef = new CategoryDefinition();
             Map<String, Object> category = (Map<String, Object>) entry.getValue();
-            catName = (String) category.get("name");
+            catName = (String) category.get(NAME.getProperty());
             catDef.setName(catName);
-            catDef.setDisplayName((String) category.get("displayName"));
-            icons = (List<String>) category.get("icons");
+            catDef.setDisplayName((String) category.get(DISPLAY_NAME.getProperty()));
+            icons = (List<String>) category.get(ICONS.getProperty());
             catDef.setIcons(icons);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);
             catDef.setNormalizedName(normalizedName);
             catDef.setModels((List<String>) category.get("models"));
-            final Object useServiceSubstitutionForNestedServicesProperty = category.get("useServiceSubstitutionForNestedServices");
+            final Object useServiceSubstitutionForNestedServicesProperty = category.get(USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty());
             final boolean useServiceSubstitutionForNestedServices =
                 useServiceSubstitutionForNestedServicesProperty == null ? false : (Boolean) useServiceSubstitutionForNestedServicesProperty;
             catDef.setUseServiceSubstitutionForNestedServices(useServiceSubstitutionForNestedServices);
             catDef.setMetadataKeys(getMetadataKeys(category));
+            catDef.setNotApplicableMetadataKeys((List<String>) category.get(NOT_APPLICABLE_METADATA_KEYS.getProperty()));
             categoriesDef.add(catDef);
         }
         return categoriesDef;
