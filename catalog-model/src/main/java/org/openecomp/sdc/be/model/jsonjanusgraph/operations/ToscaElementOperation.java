@@ -152,7 +152,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     protected GraphVertex getHighestVersionFrom(GraphVertex v) {
         Either<GraphVertex, JanusGraphOperationStatus> childVertexE = janusGraphDao
-                .getChildVertex(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+            .getChildVertex(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
         GraphVertex highestVersionVertex = v;
         while (childVertexE.isLeft()) {
             highestVersionVertex = childVertexE.left().value();
@@ -279,9 +279,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     /**
      * Creates the MODEL in case it exits on the previous version
-     * @param previousToscaElement previous element version
-     * @param nextToscaElement latest element version
-     * @param user user
+     *
+     * @param previousToscaElement      previous element version
+     * @param nextToscaElement          latest element version
+     * @param user                      user
      * @param createdToscaElementVertex created tosca element
      * @param edgeLabelEnum
      * @return
@@ -1079,6 +1080,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<MetadataKeyDataDefinition> metadataKeys = categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).isPresent() ? getGson()
             .fromJson((String) categoryV.property(GraphPropertyEnum.METADATA_KEYS.getProperty()).value(), listTypeCat) : Collections.emptyList();
         category.setMetadataKeys(metadataKeys);
+        VertexProperty<Object> property = categoryV.property(GraphPropertyEnum.NOT_APPLICABLE_METADATA_KEYS.getProperty());
+        category.setNotApplicableMetadataKeys(
+            property.isPresent() ? getGson().fromJson((String) property.value(), new TypeToken<List<String>>() {
+            }.getType()) : Collections.emptyList());
         categories.add(category);
         catalogComponent.setCategories(categories);
         return JanusGraphOperationStatus.OK;
@@ -1241,11 +1246,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     private void generateNewToscaFileName(String componentType, String componentName, ArtifactDataDefinition artifactInfo) {
         Optional<Entry<String, Object>> oConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts()
-                .entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel())).findAny();
+            .entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel())).findAny();
         if (oConfig.isPresent()) {
-            artifactInfo.setArtifactName(componentType + "-" + componentName + ((Map<String, Object>)oConfig.get().getValue()).get("artifactName"));
-        }
-        else {
+            artifactInfo.setArtifactName(componentType + "-" + componentName + ((Map<String, Object>) oConfig.get().getValue()).get("artifactName"));
+        } else {
             artifactInfo.setArtifactName(componentType + "-" + componentName);
         }
     }
