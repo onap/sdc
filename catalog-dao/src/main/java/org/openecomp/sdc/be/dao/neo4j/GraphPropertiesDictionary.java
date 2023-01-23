@@ -134,6 +134,7 @@ public enum GraphPropertiesDictionary {
     ICONS               ("icons",                   String.class,               false,      false),
     METADATA_KEYS       ("metadataKeys",            String.class,               false,      false),
     USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES   ("useServiceSubstitutionForNestedServices",      Boolean.class,                 false,      false),
+    NOT_APPLICABLE_METADATA_KEYS("notApplicableMetadataKeys", String.class,     false,      false),
     //relation
     CAPABILITY_OWNER_ID	("capOwnerId",				String.class, 				false,		false),
     REQUIREMENT_OWNER_ID ("reqOwnerId",				String.class, 				false,		false),
