@@ -145,8 +145,8 @@ public class PropertyValueConstraintValidationUtil {
                     errorMessages.add(ie.getMessage());
                 }
             }
-        } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType()) && !toscaType
-            .isValidValue(propertyDefinition.getValue())) {
+        } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
+                && !toscaType.isValidValue(propertyDefinition.getValue()) && !propertyDefinition.isToscaFunction()) {
             errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
                 getCompletePropertyName(propertyDefinition), toscaType.getType()));
         }
