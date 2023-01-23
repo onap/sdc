@@ -56,6 +56,7 @@ public enum GraphPropertyEnum {
     ICONS(                  "icons",                String.class,   false,  false),
     METADATA_KEYS(          "metadataKeys",         String.class,   false,  false),
     USE_SUBSTITUTION_FOR_NESTED_SERVICES("useServiceSubstitutionForNestedServices",Boolean.class,false,false),
+    NOT_APPLICABLE_METADATA_KEYS("notApplicableMetadataKeys",String.class,false,false),
     DATA_TYPES(             "data_types",           Map.class,      false,  false),
     //Archive/Restore
     IS_ARCHIVED(            "isArchived",           Boolean.class,  false,  true),
