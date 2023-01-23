@@ -1184,14 +1184,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         category.setUniqueId(categoryV.getUniqueId());
         category.setNormalizedName((String) metadataProperties.get(GraphPropertyEnum.NORMALIZED_NAME));
         category.setName((String) metadataProperties.get(GraphPropertyEnum.NAME));
-        final Boolean useServiceSubstitutionForNestedServices = (Boolean) metadataProperties
-            .get(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES);
+        final Object useServiceSubstitutionForNestedServices = metadataProperties.get(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES);
         category.setUseServiceSubstitutionForNestedServices(
-            useServiceSubstitutionForNestedServices == null ? false : useServiceSubstitutionForNestedServices);
+            useServiceSubstitutionForNestedServices != null && (boolean) useServiceSubstitutionForNestedServices);
+        category.setNotApplicableMetadataKeys(
+            (getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.NOT_APPLICABLE_METADATA_KEYS.getProperty()), listTypeCat)));
         Type listTypeCat = new TypeToken<List<String>>() {
         }.getType();
-        List<String> iconsfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
-        category.setIcons(iconsfromJsonCat);
+        List<String> iconsFromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
+        category.setIcons(iconsFromJsonCat);
         category.setModels((getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.MODEL.getProperty()), listTypeCat)));
         final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
@@ -1589,7 +1590,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         String policyName = policyDefinition.getName();
         if (StringUtils.isBlank(policyName)) {
             policyName = buildSubComponentName((String) componentV.getJsonMetadataField(JsonPresentationFields.NAME),
-                    policyDefinition.getPolicyTypeName(), counter);
+                policyDefinition.getPolicyTypeName(), counter);
             policyDefinition.setName(policyName);
         }
         policyDefinition.setInvariantName(policyName);

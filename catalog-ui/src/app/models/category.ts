@@ -20,40 +20,39 @@
 
 'use strict';
 
-
-
 export interface ICategoryBase {
-    //server properties
-    name:string;
-    displayName:string;
-    normalizedName:string;
-    uniqueId:string;
-    models:Array<string>;
-    icons:Array<string>;
+    // server properties
+    name: string;
+    displayName: string;
+    normalizedName: string;
+    uniqueId: string;
+    models: Array<string>;
+    icons: Array<string>;
     metadataKeys: IMetadataKey[];
 
-    //custom properties
-    filterTerms:string;
-    isDisabled:boolean;
-    filteredGroup:Array<IGroup>;
+    // custom properties
+    filterTerms: string;
+    isDisabled: boolean;
+    filteredGroup: Array<IGroup>;
 }
 
 export interface IMainCategory extends ICategoryBase {
-    subcategories:Array<ISubCategory>;
-    useServiceSubstitutionForNestedServices:boolean;
+    subcategories: Array<ISubCategory>;
+    useServiceSubstitutionForNestedServices: boolean;
 }
 
 export interface ISubCategory extends ICategoryBase {
-    groupings:Array<ICategoryBase>;
+    groupings: Array<ICategoryBase>;
 }
 
 export interface IGroup extends ICategoryBase {
 }
 
 export interface IMetadataKey {
-	name:string;
-	displayName:string;
-	mandatory:boolean;
-	validValues: string[];
-	defaultValue: string;
+    name: string;
+    displayName: string;
+    mandatory: boolean;
+    validValues: string[];
+    defaultValue: string;
+    notApplicableMetadataKeys: Array<string>;
 }
