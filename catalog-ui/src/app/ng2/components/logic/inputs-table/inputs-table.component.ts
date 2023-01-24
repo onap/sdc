@@ -23,7 +23,8 @@
  * Created by rc2122 on 5/4/2017.
  */
 import { Component, Input, Output, EventEmitter, ViewChildren, QueryList } from "@angular/core";
-import { InputFEModel } from "app/models";
+import { InputFEModel, PropertyModel, PropertiesGroup, Component as ComponentData } from "app/models";
+import { ModalsHandler } from 'app/utils';
 import { ModalService } from "../../../services/modal.service";
 import { InstanceFeDetails } from "app/models/instance-fe-details";
 import { InstanceFePropertiesMap } from "../../../../models/properties-inputs/property-fe-map";
@@ -48,6 +49,8 @@ export class InputsTableComponent {
     @Output() deleteInput: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
+    @Input() componentInstancePropertyMap: PropertiesGroup;
+    @Input() parentComponent: ComponentData;
 
     @ViewChildren('metadataViewChildren') public metadataViewChildren: QueryList<DynamicElementComponent>;
 
@@ -84,7 +87,7 @@ export class InputsTableComponent {
     };
 
 
-    constructor(private modalService: ModalService, private dataTypeService: DataTypeService){
+    constructor(private modalService: ModalService, private dataTypeService: DataTypeService, private modalsHandler: ModalsHandler){
         var x = 5
     }
 
@@ -173,6 +176,38 @@ export class InputsTableComponent {
             }
         }
         return false;
+    }
+
+    public updateProperty = (inputProperty: InputFEModel): void => {
+        let modelProperty : PropertyModel = this.createPropertyModel(inputProperty);
+        this.modalsHandler.newOpenEditPropertyModal(modelProperty, [],true, 'component', modelProperty.resourceInstanceUniqueId, this.parentComponent, inputProperty);     
+    }
+
+    private createPropertyModel(inputproperty: InputFEModel){
+        let propertyModel = new PropertyModel();
+        propertyModel.constraints = inputproperty.constraints;
+        propertyModel.defaultValue = inputproperty.defaultValue;
+        propertyModel.definition = inputproperty.definition;
+        propertyModel.description = inputproperty.description;
+        propertyModel.name = inputproperty.name;
+        propertyModel.parentUniqueId = inputproperty.parentUniqueId;
+        propertyModel.password = inputproperty.password;
+        propertyModel.required = inputproperty.required;
+        propertyModel.schema = inputproperty.schema;
+        propertyModel.schemaType = inputproperty.schemaType;
+        propertyModel.type = inputproperty.type;
+        propertyModel.uniqueId = inputproperty.uniqueId;
+        propertyModel.value = inputproperty.value;
+        propertyModel.getInputValues = inputproperty.getInputValues;
+        propertyModel.parentPropertyType = inputproperty.parentPropertyType;
+        propertyModel.subPropertyInputPath = inputproperty.subPropertyInputPath;
+        propertyModel.getPolicyValues = inputproperty.getPolicyValues;
+        propertyModel.inputPath = inputproperty.inputPath;
+        propertyModel.metadata = inputproperty.metadata;
+        propertyModel.subPropertyToscaFunctions = inputproperty.subPropertyToscaFunctions;
+        propertyModel.ownerId = inputproperty.ownerId;
+        propertyModel.propertyView = true;
+        return propertyModel;
     }
 
 }
