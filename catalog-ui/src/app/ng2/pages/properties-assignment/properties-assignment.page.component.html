@@ -48,8 +48,10 @@
                             [showDelete]="!isReadOnly && isSelf()"
                             [inputs]="inputs | searchFilter:'name':searchQuery"
                             [instanceNamesMap]="componentInstanceNamesMap"
+                            [componentInstancePropertyMap]="componentInstancePropertyMap"
                             [isLoading]="loadingInputs"
                             [componentType]="component.componentType"
+                            [parentComponent]="component"
                             (deleteInput)="deleteInput($event)"
                             (inputChanged)="dataChanged($event)">
                         </inputs-table>
