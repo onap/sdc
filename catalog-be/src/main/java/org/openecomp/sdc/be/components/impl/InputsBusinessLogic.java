@@ -308,6 +308,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 currInput.setDefaultValue(updateInputObjectValue);
                 currInput.setOwnerId(userId);
                 currInput.setMetadata(newInput.getMetadata());
+                if (newInput.getConstraints() != null) {
+                    currInput.setConstraints(newInput.getConstraints());
+                }
                 if (newInput.isRequired() != null) {
                     currInput.setRequired(newInput.isRequired());
                 }

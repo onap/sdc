@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {  Component, DisplayModule , PropertyModel } from '../models';
+import {  Component, DisplayModule , PropertyModel, InputFEModel } from '../models';
 import { ComponentMetadata } from '../models/component-metadata';
 
 export interface IModalsHandler {
@@ -97,6 +97,9 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 isViewOnly: (): boolean => {
                     return isViewOnly;
+                },
+                inputProperty: (): InputFEModel => {
+                    return null;
                 }
             }
         };
@@ -115,7 +118,7 @@ export class ModalsHandler implements IModalsHandler {
      * @param isPropertyValueOwner - boolean telling if the component is eligible of editing the property
      * @returns {IPromise<T>} - Promise telling if the modal has opened or not
      */
-    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string): ng.IPromise<any> => {
+    newOpenEditPropertyModal = (property: PropertyModel, filteredProperties: PropertyModel[], isPropertyValueOwner: boolean, propertyOwnerType: string, propertyOwnerId: string, component: Component, inputProperty: InputFEModel): ng.IPromise<any> => {
         const deferred = this.$q.defer();
 
         const modalOptions: ng.ui.bootstrap.IModalSettings = {
@@ -142,6 +145,12 @@ export class ModalsHandler implements IModalsHandler {
                 },
                 isViewOnly: (): boolean => {
                     return false;
+                },
+                component: (): Component => {
+                    return component as Component;
+                },
+                inputProperty: (): InputFEModel => {
+                    return inputProperty;
                 }
             }
         };
