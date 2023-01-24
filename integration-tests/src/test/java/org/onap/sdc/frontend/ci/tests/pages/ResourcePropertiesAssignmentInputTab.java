@@ -157,7 +157,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
         PROPERTY_SAVE_MESSAGE("//div[contains(text(), 'Successfully saved')]"),
         INPUT_PROPERTY_NAME("//*[contains(@class, 'property-name')]"),
         INPUT_PROPERTY_TABLE_ROW("//div[contains(@class, 'table-row') and descendant::*[text() = '%s']]"),
-        INPUT_PROPERTY_ADD_METADATA_BUTTON(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//a")),
+        INPUT_PROPERTY_ADD_METADATA_BUTTON(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//a[contains(@class, 'add-item')]")),
         INPUT_PROPERTY_METADATA_KEY_VALUE_PAIR(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//input")),
         INPUT_ADD_BTN("//div[contains(@class,'add-btn')]"),
         MODAL_BACKGROUND("//div[@class='modal-background']");

@@ -22,9 +22,10 @@
 import * as _ from "lodash";
 import {FormState, PROPERTY_DATA, PROPERTY_TYPES, PROPERTY_VALUE_CONSTRAINTS, ValidationUtils} from "app/utils";
 import {DataTypesService} from "app/services";
-import {DataTypesMap, PropertyModel} from "app/models";
+import {DataTypesMap, PropertyModel, InputBEModel, Component, InputFEModel} from "app/models";
 import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
 import {ComponentInstanceServiceNg2} from "app/ng2/services/component-instance-services/component-instance.service";
+import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular";
 import {CompositionService} from "app/ng2/pages/composition/composition.service";
 import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
@@ -99,7 +100,7 @@ export class PropertyFormViewModel {
         'PropertyNameValidationPattern',
         'CommentValidationPattern',
         'ValidationUtils',
-        // 'component',
+        'component',
         '$filter',
         'ModalServiceSdcUI',
         'filteredProperties',
@@ -109,9 +110,11 @@ export class PropertyFormViewModel {
         'propertyOwnerType',
         'propertyOwnerId',
         'ComponentInstanceServiceNg2',
+        'ComponentServiceNg2',
         'TopologyTemplateService',
         'CompositionService',
-        'workspaceService'
+        'workspaceService',
+        'inputProperty'
     ];
 
     private formState:FormState;
@@ -124,7 +127,7 @@ export class PropertyFormViewModel {
                 private PropertyNameValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
-                // private component:Component,
+                private component:Component,
                 private $filter:ng.IFilterService,
                 private modalService:SdcUiServices.ModalService,
                 private filteredProperties:Array<PropertyModel>,
@@ -134,9 +137,11 @@ export class PropertyFormViewModel {
                 private propertyOwnerType:string,
                 private propertyOwnerId:string,
                 private ComponentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private ComponentServiceNg2: ComponentServiceNg2,
                 private topologyTemplateService: TopologyTemplateService,
                 private compositionService: CompositionService,
-                private workspaceService: WorkspaceService) {
+                private workspaceService: WorkspaceService,
+                private inputProperty : InputFEModel) {
 
         this.formState = angular.isDefined(property.name) ? FormState.UPDATE : FormState.CREATE;
         this.initScope();
@@ -322,6 +327,25 @@ export class PropertyFormViewModel {
         //scope methods
         this.$scope.save = (doNotCloseModal?:boolean):void => {
             let property:PropertyModel = this.$scope.editPropertyModel.property;
+            this.$scope.isLoading = true;
+            if (property.propertyView){
+                if (property.constraints.length == 0) {
+                    return;
+                }
+                let input : InputBEModel = this.inputProperty;
+                input.constraints = property.constraints;
+                this.ComponentServiceNg2.updateComponentInputs(this.component, [input]).subscribe(
+                    (response) => {
+                        console.debug("Input property updated");
+                        this.$uibModalInstance.close();
+                    },
+                    (error) => {
+                        console.debug("Failed to update input property");
+                        this.$uibModalInstance.close();
+                    }
+                );
+                return;
+            }
             this.$scope.editPropertyModel.property.description = this.ValidationUtils.stripAndSanitize(this.$scope.editPropertyModel.property.description);
             //if read only - or no changes made - just closes the modal
             //need to check for property.value changes manually to detect if map properties deleted
