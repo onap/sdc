@@ -15,7 +15,7 @@
 -->
 <ng1-modal modal="modalInstanceProperty" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : 'Update' }} Property" show-close-button="true" data-tests-id="sdc-edit-property-container">
     <loader data-display="isLoading" relative="false" size="medium"></loader>
-    <div class="sdc-modal-top-bar" data-ng-if="!isNew">
+    <div class="sdc-modal-top-bar" data-ng-if="!isNew && !editPropertyModel.property.propertyView">
         <div class="sdc-modal-top-bar-buttons">
             <span ng-click="delete(editPropertyModel.property)" data-ng-class="{'disabled' : isPropertyValueOwner || editPropertyModel.property.readonly || propertyOwnerType == 'group' || propertyOwnerType == 'policy'}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
             <span class="delimiter"></span>
@@ -139,7 +139,7 @@
                 </div>
                 <!-- Default value -->
 
-                <div class="default-value-section i-sdc-form-item">
+                <div class="default-value-section i-sdc-form-item" data-ng-if="!editPropertyModel.property.propertyView">
                     <label class="i-sdc-form-label">Default Value</label>
                     <ng-container ng-if="!componentMetadata.isVfc">
                         <input type="hidden" ng-model="editPropertyModel.isGetFunctionValid" required="required"/>
@@ -248,11 +248,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="constraints-section i-sdc-form-item" data-ng-if="editPropertyModel.property.constraints || !(isViewOnly || componentMetadata.isService)">
+                <div class="constraints-section i-sdc-form-item" data-ng-if="editPropertyModel.property.propertyView || editPropertyModel.property.constraints || !(isViewOnly || componentMetadata.isService)">
                     <label class="i-sdc-form-label">Constraints</label>
                     <ng-container>
                         <app-constraints [property-constraints]="editPropertyModel.property.constraints"
-                                         [is-view-only]="isViewOnly || componentMetadata.isService"
+                                         [is-view-only]="editPropertyModel.property.propertyView? !editPropertyModel.property.propertyView :(isViewOnly || componentMetadata.isService)"
                                          [property-type]="editPropertyModel.property.type"
                                          (on-constraint-change)="onConstraintChange($event)">
                         </app-constraints>

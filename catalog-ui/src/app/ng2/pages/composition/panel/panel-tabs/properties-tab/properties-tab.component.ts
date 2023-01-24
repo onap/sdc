@@ -230,7 +230,7 @@ export class PropertiesTabComponent implements OnInit {
             (this.isPropertyOwner() ?
                 this.properties[property.parentUniqueId] :
                 this.properties[property.resourceInstanceUniqueId]) || [],
-            this.isPropertyValueOwner(), 'component', property.resourceInstanceUniqueId).then((updatedProperty: PropertyModel) => {
+            this.isPropertyValueOwner(), 'component', property.resourceInstanceUniqueId, null, null).then((updatedProperty: PropertyModel) => {
                 if (updatedProperty) {
                     const oldProp = _.find(this.properties[updatedProperty.resourceInstanceUniqueId],
                                  (prop: PropertyModel) => prop.uniqueId === updatedProperty.uniqueId);

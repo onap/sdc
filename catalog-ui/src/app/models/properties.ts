@@ -89,12 +89,12 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     filterTerm:string;
     isAlreadySelected:boolean;
     addOn:string;
-
+    propertyView: boolean = false;
 
     constructor(property?:PropertyModel) {
         super(property);
         if (property) {
-            // this.constraints = property.constraints;
+            this.constraints = property.constraints;
             this.source = property.source;
             this.valueUniqueUid = property.valueUniqueUid;
             this.path = property.path;
@@ -105,6 +105,7 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
             this.componentInstanceId = property.componentInstanceId;
             this.parentValue = property.parentValue;
             this.ownerId = property.ownerId;
+            this.propertyView = property.propertyView;
         }
 
         if (!this.schema || !this.schema.property) {
