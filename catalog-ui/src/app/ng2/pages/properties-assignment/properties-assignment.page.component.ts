@@ -39,7 +39,8 @@ import {
     PropertyFEModel,
     Service,
     SimpleFlatProperty,
-    PropertyDeclareAPIModel
+    PropertyDeclareAPIModel,
+    PropertiesGroup
 } from "app/models";
 import {ResourceType} from "app/utils";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
@@ -121,6 +122,7 @@ export class PropertiesAssignmentComponent {
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
+    componentInstancePropertyMap : PropertiesGroup;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -170,6 +172,7 @@ export class PropertiesAssignmentComponent {
                 this.inputsUtils.resetInputDefaultValue(newInput, input.defaultValue);
                 this.inputs.push(newInput); //only push items that were declared via SDC
             });
+            this.componentInstancePropertyMap = response.componentInstancesProperties;
             this.loadingInputs = false;
 
         }, error => {
