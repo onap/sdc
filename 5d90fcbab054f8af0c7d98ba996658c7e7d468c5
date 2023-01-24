@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8813ff3d_29068d66",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-24T12:32:42Z",
+      "side": 1,
+      "message": "I\u0027d recommend to flip comparissions \n\u0026\u0026 !propertyDefinition.isToscaFunction() \u0026\u0026 !toscaType.isValidValue(propertyDefinition.getValue())\nto check isToscaFunction() first and only after isValidValue()",
+      "range": {
+        "startLine": 149,
+        "startChar": 16,
+        "endLine": 149,
+        "endChar": 114
+      },
+      "revId": "5d90fcbab054f8af0c7d98ba996658c7e7d468c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
