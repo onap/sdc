@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.google.common.collect.Lists;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,12 +38,27 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
+import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
 
 class PropertyConvertorTest {
 
@@ -53,7 +69,7 @@ class PropertyConvertorTest {
     private PropertyConvertor propertyConvertor;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         property = new PropertyDefinition();
         property.setName("myProperty");
@@ -64,12 +80,66 @@ class PropertyConvertorTest {
 
     @Test
     void testConvertProperty() {
-    	SchemaDefinition schema = new SchemaDefinition();
-    	schema.setProperty(property);
-    	
-    	property.setSchema(schema);
-    	
-    	propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY);
+        SchemaDefinition schema = new SchemaDefinition();
+        schema.setProperty(property);
+        property.setSchema(schema);
+
+        assertNotNull(propertyConvertor.convertProperty(dataTypes, property, PropertyType.PROPERTY));
+    }
+
+    @Test
+    void testConvertPropertyWithEqualConstraint() {
+        assertTrue(testConstraints(new EqualConstraint(123), ConstraintType.EQUAL, true));
+    }
+
+    @Test
+    void testConvertPropertyWithGreaterOrEqualConstraint() {
+        assertTrue(testConstraints(new GreaterOrEqualConstraint<>(123), ConstraintType.GREATER_OR_EQUAL, true));
+    }
+
+    @Test
+    void testConvertPropertyWithGreaterThanConstraint() {
+        assertTrue(testConstraints(new GreaterThanConstraint<>(123), ConstraintType.GREATER_THAN, true));
+    }
+
+    @Test
+    void testConvertPropertyWithLessOrEqualConstraint() {
+        assertTrue(testConstraints(new LessOrEqualConstraint<>(123), ConstraintType.LESS_OR_EQUAL, true));
+    }
+
+    @Test
+    void testConvertPropertyWithLessThanConstraint() {
+        assertTrue(testConstraints(new LessThanConstraint<>(123), ConstraintType.LESS_THAN, true));
+    }
+
+    @Test
+    void testConvertPropertyWithInRangeConstraint() {
+        assertTrue(testConstraints(new InRangeConstraint(Lists.newArrayList(123, 345)), ConstraintType.IN_RANGE, false));
+    }
+
+    @Test
+    void testConvertPropertyWithValidValuesConstraint() {
+        assertTrue(testConstraints(new ValidValuesConstraint(Lists.newArrayList(123, 345)), ConstraintType.VALID_VALUES, false));
+    }
+
+    @Test
+    void testConvertPropertyWithLengthConstraint() {
+        assertTrue(testConstraints(new LengthConstraint(), ConstraintType.LENGTH, false));
+    }
+
+    @Test
+    void testConvertPropertyWithMaxLengthConstraint() {
+        assertTrue(testConstraints(new MaxLengthConstraint(12), ConstraintType.MAX_LENGTH, false));
+    }
+
+    @Test
+    void testConvertPropertyWithMinLengthConstraint() {
+        assertTrue(testConstraints(new MinLengthConstraint(1), ConstraintType.MIN_LENGTH, false));
+    }
+
+    @Test
+    void testConvertPropertyWithPatternConstraint() {
+        assertTrue(testConstraints(new PatternConstraint("[a-z]"), ConstraintType.PATTERN, false));
     }
 
     @Test
@@ -87,7 +157,7 @@ class PropertyConvertorTest {
         assertNotNull(result);
         assertEquals(Integer.valueOf(def), result.getDefaultp());
     }
-    
+
     @Test
     void convertPropertyWithMetadata() {
         Map<String, String> metadata = new HashMap<>();
@@ -160,7 +230,7 @@ class PropertyConvertorTest {
         for (ToscaProperty prop : result.left().value().getProperties().values()) {
             assertNull(prop.getDefaultp());
         }
-     }
+    }
 
     @Test
     void convertPropertyWhichStartsWithSemiColon() {
@@ -183,7 +253,7 @@ class PropertyConvertorTest {
             propertyConvertor.convertProperty(Collections.emptyMap(), property, PropertyConvertor.PropertyType.PROPERTY);
         assertEquals("/", toscaProperty.getDefaultp());
     }
-    
+
     @Test
     void convertPropertyWithYamlValue() {
         final PropertyDefinition property = new PropertyDataDefinitionBuilder()
@@ -193,8 +263,25 @@ class PropertyConvertorTest {
         final ToscaProperty toscaProperty =
             propertyConvertor.convertProperty(Collections.emptyMap(), property, PropertyConvertor.PropertyType.PROPERTY);
         assertTrue(toscaProperty.getDefaultp() instanceof Map);
-        assertTrue(((Map)toscaProperty.getDefaultp()).get("concat") instanceof List);
-        assertEquals(3, ((List)((Map)toscaProperty.getDefaultp()).get("concat")).size());
+        assertTrue(((Map) toscaProperty.getDefaultp()).get("concat") instanceof List);
+        assertEquals(3, ((List) ((Map) toscaProperty.getDefaultp()).get("concat")).size());
+    }
+
+    private boolean testConstraints(PropertyConstraint propertyConstraint, ConstraintType constraintType, boolean checkComparable) {
+        property.setConstraints(Collections.singletonList(propertyConstraint));
+
+        ToscaProperty toscaProperty = propertyConvertor.convertProperty(dataTypes, property, PropertyType.PROPERTY);
+        assertNotNull(toscaProperty);
+        List<ToscaPropertyConstraint> constraints = toscaProperty.getConstraints();
+        assertNotNull(constraints);
+        ToscaPropertyConstraint constraint = constraints.get(0);
+        assertNotNull(constraint);
+        ConstraintType actualConstraintType = constraint.getConstraintType();
+        assertEquals(constraintType, actualConstraintType);
+        if (checkComparable) {
+            assertTrue(actualConstraintType.isComparable());
+        }
+        return true;
     }
 
 }
