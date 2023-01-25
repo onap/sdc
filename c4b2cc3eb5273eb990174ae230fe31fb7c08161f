@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3247146_b1f2f7ba",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 16
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-25T17:35:30Z",
+      "side": 1,
+      "message": "Add to the other metadata fields as well so the can also be  hidden if desired without the need for code changes",
+      "range": {
+        "startLine": 432,
+        "startChar": 57,
+        "endLine": 432,
+        "endChar": 102
+      },
+      "revId": "c4b2cc3eb5273eb990174ae230fe31fb7c08161f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
