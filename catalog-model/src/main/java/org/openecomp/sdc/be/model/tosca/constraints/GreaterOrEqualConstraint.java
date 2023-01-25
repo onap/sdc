@@ -36,10 +36,10 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstraint {
+public class GreaterOrEqualConstraint<T> extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private Object greaterOrEqual;
+    private T greaterOrEqual;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
@@ -90,7 +90,7 @@ public class GreaterOrEqualConstraint extends AbstractComparablePropertyConstrai
     public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         try {
-            greaterOrEqual = toscaType.convert(String.valueOf(greaterOrEqual));
+            greaterOrEqual = (T) toscaType.convert(String.valueOf(greaterOrEqual));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "greaterOrEqual constraint has invalid values <" + greaterOrEqual.toString() + "> property type is <" + propertyType + ">");
