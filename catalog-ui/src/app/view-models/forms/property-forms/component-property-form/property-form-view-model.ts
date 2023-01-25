@@ -154,10 +154,36 @@ export class PropertyFormViewModel {
         this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaFunction();
         this.$scope.editPropertyModel.isGetFunctionValid = true;
     }
+    
+    private isDataTypeForPropertyType = (property:PropertyModel):boolean=> {
+        property.simpleType = "";
+        if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1) {
+            return false;
+        }
+        let simpleType = this.getTypeForDataTypeDerivedFromSimple(property.type);
+        if (simpleType) {
+            property.simpleType = simpleType;
+            return false;
+        }
+        return true;
+    };
+    
+    private getTypeForDataTypeDerivedFromSimple = (dataTypeName:string):string => {
+        if (!this.$scope.dataTypes[dataTypeName]) {
+            return 'string';
+        }
+        if (this.$scope.dataTypes[dataTypeName].derivedFromName == "tosca.datatypes.Root" || this.$scope.dataTypes[dataTypeName].properties) {
+            return null;
+        }
+        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.$scope.dataTypes[dataTypeName].derivedFromName) > -1) {
+            return this.$scope.dataTypes[dataTypeName].derivedFromName
+        }
+        return this.getTypeForDataTypeDerivedFromSimple(this.$scope.dataTypes[dataTypeName].derivedFromName);
+    };
 
     private initForNotSimpleType = ():void => {
         const property = this.$scope.editPropertyModel.property;
-        this.$scope.isTypeDataType = this.DataTypesService.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
+        this.$scope.isTypeDataType = this.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
         if (property.isToscaFunction()) {
             this.initValueForGetFunction();
             return;
@@ -274,7 +300,6 @@ export class PropertyFormViewModel {
             }
         }
         this.initResource();
-        this.initForNotSimpleType();
         this.initComponentInstanceMap();
 
         this.$scope.validateJson = (json:string):boolean => {
@@ -286,10 +311,11 @@ export class PropertyFormViewModel {
 
         this.DataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then(response => {
             this.$scope.dataTypes = response.data as DataTypesMap;
+
             this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
                 return this.$scope.editPropertyModel.types.indexOf(type) == -1;
             });
-
+            this.initForNotSimpleType();
             this.$scope.isLoading = false;
         });
 

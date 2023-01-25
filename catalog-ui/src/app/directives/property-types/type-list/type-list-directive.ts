@@ -22,8 +22,8 @@
  * Created by rcohen on 9/15/2016.
  */
 'use strict';
-import {SchemaProperty, PropertyModel} from "app/models";
-import {ValidationUtils, PROPERTY_TYPES} from "app/utils";
+import {SchemaProperty, PropertyModel, DataTypesMap} from "app/models";
+import {ValidationUtils, PROPERTY_TYPES, PROPERTY_DATA} from "app/utils";
 import {DataTypesService} from "app/services";
 import {InstanceFeDetails} from "app/models/instance-fe-details";
 import {ToscaGetFunction} from "app/models/tosca-get-function";
@@ -45,6 +45,7 @@ export interface ITypeListScope extends ng.IScope {
     stringSchema: SchemaProperty;
     showToscaFunction: Array<boolean>;
     constraints:string[];
+    types:DataTypesMap;
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -81,13 +82,40 @@ export class TypeListDirective implements ng.IDirective {
         readOnly: '=',//is form read only
         defaultValue: '@',//this list default value
         maxLength: '=',
-        constraints: '='
+        constraints: '=',
+        types: '='
     };
 
     restrict = 'E';
     replace = true;
     template = ():string => {
         return require('./type-list-directive.html');
+    };
+    
+    private isDataTypeForSchemaType = (property:SchemaProperty, types:DataTypesMap):boolean=> {
+        property.simpleType = "";
+        if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1) {
+            return false;
+        }
+        let simpleType = this.getTypeForDataTypeDerivedFromSimple(property.type, types);
+        if (simpleType) {
+            property.simpleType = simpleType;
+            return false;
+        }
+        return true;
+    };
+    
+    private getTypeForDataTypeDerivedFromSimple = (dataTypeName:string, types:DataTypesMap):string => {
+        if (!types[dataTypeName]) {
+            return 'string';
+        }
+        if (types[dataTypeName].derivedFromName == "tosca.datatypes.Root" || types[dataTypeName].properties) {
+            return null;
+        }
+        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(types[dataTypeName].derivedFromName) > -1) {
+            return types[dataTypeName].derivedFromName
+        }
+        return this.getTypeForDataTypeDerivedFromSimple(types[dataTypeName].derivedFromName, types);
     };
 
     link = (scope:ITypeListScope, element:any, $attr:any) => {
@@ -110,7 +138,7 @@ export class TypeListDirective implements ng.IDirective {
         });
         //reset valueObjRef when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
-            scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
+            scope.isSchemaTypeDataType = this.isDataTypeForSchemaType(scope.schemaProperty, scope.types);
         });
 
         //when user brows between properties in "edit property form"
