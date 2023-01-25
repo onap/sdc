@@ -36,10 +36,10 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraint
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class LessThanConstraint extends AbstractComparablePropertyConstraint {
+public class LessThanConstraint<T> extends AbstractComparablePropertyConstraint {
 
     @NotNull
-    private Object lessThan;
+    private T lessThan;
 
     @Override
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
@@ -90,7 +90,7 @@ public class LessThanConstraint extends AbstractComparablePropertyConstraint {
     public void changeConstraintValueTypeTo(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         try {
-            lessThan = toscaType.convert(String.valueOf(lessThan));
+            lessThan = (T) toscaType.convert(String.valueOf(lessThan));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "lessThan constraint has invalid values <" + lessThan.toString() + "> property type is <" + propertyType + ">");
