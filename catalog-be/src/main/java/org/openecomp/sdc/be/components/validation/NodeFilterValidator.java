@@ -61,8 +61,14 @@ public class NodeFilterValidator {
     private static final String TARGET = "Target";
     private static final String INPUT_NOT_FOUND_LOG = "Input '{}' not found in parent component '{}', unique id '{}'";
     private static final Set<String> TYPES_WITH_SCHEMA = Set.of(ToscaPropertyType.MAP.getType(), ToscaPropertyType.LIST.getType());
-    private static final Set<String> COMPARABLE_TYPES = Set
-        .of(ToscaPropertyType.STRING.getType(), ToscaPropertyType.INTEGER.getType(), ToscaPropertyType.FLOAT.getType());
+    private static final Set<String> COMPARABLE_TYPES = Set.of(
+        ToscaPropertyType.SCALAR_UNIT_SIZE.getType(),
+        ToscaPropertyType.SCALAR_UNIT_TIME.getType(),
+        ToscaPropertyType.SCALAR_UNIT_BITRATE.getType(),
+        ToscaPropertyType.SCALAR_UNIT_FREQUENCY.getType(),
+        ToscaPropertyType.STRING.getType(),
+        ToscaPropertyType.INTEGER.getType(),
+        ToscaPropertyType.FLOAT.getType());
     private final ComponentsUtils componentsUtils;
     private final ApplicationDataTypeCache applicationDataTypeCache;
     private final FilterConstraintValidator filterConstraintValidator;
@@ -105,6 +111,7 @@ public class NodeFilterValidator {
         }
         return Either.left(true);
     }
+
     public Either<Boolean, ResponseFormat> validateFilter(final Component parentComponent, final String componentInstanceId,
                                                           final FilterConstraintDto filterConstraint) {
         validateFilterConstraint(filterConstraint);
@@ -239,15 +246,15 @@ public class NodeFilterValidator {
         }
         return findSubProperty(propertyPath.subList(1, propertyPath.size()), propertyDefinition.getType(), modelDataTypes);
     }
-    
+
     private Optional<ComponentInstanceProperty> getInstanceProperties(final Component parentComponent, final String componentInstanceId,
                                                                       final String capabilityName, final String propertyName) {
         if (StringUtils.isEmpty(capabilityName)) {
             return parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
-                    .filter(property -> propertyName.equals(property.getName())).findFirst();
+                .filter(property -> propertyName.equals(property.getName())).findFirst();
         } else {
             final Optional<ComponentInstance> componentInstanceOptional = parentComponent.getComponentInstances().stream()
-                    .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId)).findAny();
+                .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId)).findAny();
             if (componentInstanceOptional.isPresent()) {
                 for (final List<CapabilityDefinition> listOfCaps : componentInstanceOptional.get().getCapabilities().values()) {
                     final Optional<CapabilityDefinition> capDef = listOfCaps.stream().filter(cap -> cap.getName().equals(capabilityName)).findAny();
@@ -410,9 +417,9 @@ public class NodeFilterValidator {
         return isValidValueCheck(componentInstanceProperty.getType(), componentInstanceProperty.getSchemaType(), parentComponent.getModel(),
             filterConstraint.getValue(), filterConstraint.getPropertyName());
     }
-    
-    private Optional<ComponentInstanceProperty> getComponentInstanceProperty(CapabilityDefinition capabilityDefinition, final String propertyName){
-    	return capabilityDefinition.getProperties().stream().filter(property -> property.getName().equals(propertyName)).findAny();
+
+    private Optional<ComponentInstanceProperty> getComponentInstanceProperty(CapabilityDefinition capabilityDefinition, final String propertyName) {
+        return capabilityDefinition.getProperties().stream().filter(property -> property.getName().equals(propertyName)).findAny();
     }
 
     private Either<Boolean, ResponseFormat> isValidValueCheck(final String type, final String schemaType, final String model,
@@ -433,7 +440,8 @@ public class NodeFilterValidator {
             valueAsJsonString = new Gson().toJson(value);
         } catch (final Exception e) {
             LOGGER.debug("Unsupported property filter value", e);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, type, propertyName, String.valueOf(value)));
+            return Either.right(
+                componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, type, propertyName, String.valueOf(value)));
         }
         if (toscaPropertyType != null) {
             if (toscaPropertyType.getValidator().isValid(valueAsJsonString, schemaType, modelDataTypesMap)) {
@@ -448,7 +456,8 @@ public class NodeFilterValidator {
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, type, propertyName, valueAsJsonString));
     }
 
-    public Either<Boolean, ResponseFormat> validateSubstitutionFilter(final Component component, final List<FilterConstraintDto> filterConstraintList) {
+    public Either<Boolean, ResponseFormat> validateSubstitutionFilter(final Component component,
+                                                                      final List<FilterConstraintDto> filterConstraintList) {
         if (CollectionUtils.isEmpty(filterConstraintList)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONSTRAINT_FORMAT_INCORRECT));
         }
