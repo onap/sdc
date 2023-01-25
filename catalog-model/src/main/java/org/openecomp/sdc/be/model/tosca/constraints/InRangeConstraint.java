@@ -124,6 +124,8 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         try {
             inRange.replaceAll(obj -> toscaType.convert(String.valueOf(obj)));
+            min = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(0)));
+            max = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(1)));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");
