@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,12 +67,12 @@ class NodeFilterValidatorTest {
     private static final String INNER_SERVICE = "innerService";
     private static final String PROPERTY_NAME = "Prop1";
     private static final String COMPONENT1_ID = "component1";
-    private static final String PARENTSERVICE_ID = "parentservice";
+    private static final String PARENT_SERVICE_ID = "parentservice";
     private static final String COMPONENT2_ID = "component2";
     private ComponentsUtils componentsUtils;
 
     @Mock
-    ApplicationDataTypeCache applicationDataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private FilterConstraintValidator filterConstraintValidator;
     @InjectMocks
@@ -98,7 +98,7 @@ class NodeFilterValidatorTest {
         final ResponseFormat expectedResponse = new ResponseFormat();
         when(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, "?", INNER_SERVICE)).thenReturn(expectedResponse);
         Either<Boolean, ResponseFormat> either =
-                nodeFilterValidator.validateComponentInstanceExist(null, INNER_SERVICE);
+            nodeFilterValidator.validateComponentInstanceExist(null, INNER_SERVICE);
         assertTrue(either.isRight());
         assertEquals(expectedResponse, either.right().value());
 
@@ -124,7 +124,7 @@ class NodeFilterValidatorTest {
         final FilterConstraintDto filterConstraintDto = buildFilterConstraintDto(PROPERTY_NAME, FilterValueType.STATIC, ConstraintType.EQUAL,
             PropertyFilterTargetType.PROPERTY, "true");
         Either<Boolean, ResponseFormat> either =
-                nodeFilterValidator.validateFilter(service, INNER_SERVICE, filterConstraintDto);
+            nodeFilterValidator.validateFilter(service, INNER_SERVICE, filterConstraintDto);
         assertTrue(either.isRight());
         filterConstraintDto.setTargetType(PropertyFilterTargetType.CAPABILITY);
         either = nodeFilterValidator.validateFilter(service, INNER_SERVICE, filterConstraintDto);
@@ -142,7 +142,7 @@ class NodeFilterValidatorTest {
             createToscaGetFunction("test", PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of("test2"))
         );
         Either<Boolean, ResponseFormat> actualValidationResult =
-                nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint1));
+            nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint1));
         assertTrue(actualValidationResult.isRight());
 
         final var filterConstraint2 = buildFilterConstraintDto(
@@ -150,10 +150,10 @@ class NodeFilterValidatorTest {
             FilterValueType.GET_PROPERTY,
             ConstraintType.EQUAL,
             PropertyFilterTargetType.PROPERTY,
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of("Prop1"))
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of("Prop1"))
         );
         actualValidationResult =
-                nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint2));
+            nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint2));
         assertTrue(actualValidationResult.isLeft());
 
         final var staticFilter1 = buildFilterConstraintDto(
@@ -210,11 +210,11 @@ class NodeFilterValidatorTest {
             "true"
         );
         final ResponseFormat expectedResponse = new ResponseFormat();
-        when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_OPERATOR_PROVIDED, filterConstraintDto.getPropertyName(),
-            filterConstraintDto.getOperator().getType())
+        when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, ToscaPropertyType.BOOLEAN.getType(),
+            filterConstraintDto.getPropertyName(), "\"true\"")
         ).thenReturn(expectedResponse);
         final Either<Boolean, ResponseFormat> validationResult =
-                nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(filterConstraintDto));
+            nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(filterConstraintDto));
         assertTrue(validationResult.isRight());
         assertEquals(expectedResponse, validationResult.right().value());
     }
@@ -225,11 +225,11 @@ class NodeFilterValidatorTest {
         baseFilterConstraintDto.setValue("trues");
 
         final ResponseFormat responseFormat = new ResponseFormat();
-        when(componentsUtils
-            .getResponseFormat(eq(ActionStatus.UNSUPPORTED_VALUE_PROVIDED), eq(ToscaPropertyType.BOOLEAN.getType()), eq(PROPERTY_NAME), any())
+        when(componentsUtils.getResponseFormat
+            (ActionStatus.UNSUPPORTED_VALUE_PROVIDED, ToscaPropertyType.BOOLEAN.getType(), PROPERTY_NAME, "\"trues\"")
         ).thenReturn(responseFormat);
         final Either<Boolean, ResponseFormat> validationResult =
-                nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(baseFilterConstraintDto));
+            nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(baseFilterConstraintDto));
 
         assertTrue(validationResult.isRight());
         assertEquals(responseFormat, validationResult.right().value());
@@ -241,7 +241,7 @@ class NodeFilterValidatorTest {
         baseFilterConstraintDto.setValue("true");
         baseFilterConstraintDto.setOperator(ConstraintType.GREATER_THAN);
         Either<Boolean, ResponseFormat> either =
-                nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(baseFilterConstraintDto));
+            nodeFilterValidator.validateFilter(service, INNER_SERVICE, List.of(baseFilterConstraintDto));
 
         assertTrue(either.isLeft());
     }
@@ -328,7 +328,7 @@ class NodeFilterValidatorTest {
     void testValidatePropertyConstraintParentSuccess() {
         final var service = createService(ToscaPropertyType.STRING.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -374,7 +374,7 @@ class NodeFilterValidatorTest {
         final Service service = createService(ToscaPropertyType.STRING.getType());
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setType(ToscaPropertyType.INTEGER.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -405,7 +405,7 @@ class NodeFilterValidatorTest {
             .thenReturn(expectedResponse);
 
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -425,7 +425,7 @@ class NodeFilterValidatorTest {
         Service service = createService(ToscaPropertyType.STRING.getType());
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setName("Prop2");
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -467,7 +467,7 @@ class NodeFilterValidatorTest {
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setSchema(schemaDefinition);
 
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENTSERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -494,12 +494,12 @@ class NodeFilterValidatorTest {
 
     private Service createService(String type, String schemaType) {
         Service service = new Service();
-        service.setName(PARENTSERVICE_ID);
+        service.setName(PARENT_SERVICE_ID);
 
         PropertyDefinition propertyDefinition = new PropertyDefinition();
         propertyDefinition.setName(PROPERTY_NAME);
         propertyDefinition.setType(type);
-        if (schemaType != null){
+        if (schemaType != null) {
             SchemaDefinition schemaDefinition = new SchemaDefinition();
             PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
             schemaProperty.setType(schemaType);
@@ -518,19 +518,19 @@ class NodeFilterValidatorTest {
 
         service.setComponentInstances(Arrays.asList(componentInstance, componentInstance2));
 
-        ComponentInstanceProperty componentInstanceProperty  = new ComponentInstanceProperty();
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
         componentInstanceProperty.setName(PROPERTY_NAME);
         componentInstanceProperty.setType(type);
 
-        ComponentInstanceProperty componentInstanceProperty2  = new ComponentInstanceProperty();
+        ComponentInstanceProperty componentInstanceProperty2 = new ComponentInstanceProperty();
         componentInstanceProperty2.setName(PROPERTY_NAME);
         componentInstanceProperty2.setType(type);
 
         Map<String, List<ComponentInstanceProperty>> componentInstancePropertyMap = new HashMap<>();
         componentInstancePropertyMap.put(componentInstance.getUniqueId(),
-                Collections.singletonList(componentInstanceProperty));
+            Collections.singletonList(componentInstanceProperty));
         componentInstancePropertyMap.put(componentInstance2.getUniqueId(),
-                Collections.singletonList(componentInstanceProperty2));
+            Collections.singletonList(componentInstanceProperty2));
         componentInstancePropertyMap.put(INNER_SERVICE, Collections.singletonList(componentInstanceProperty));
 
         service.setComponentInstancesProperties(componentInstancePropertyMap);
