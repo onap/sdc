@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2838d16b_6de48b1a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "175f3ec6_fa1008a8",
+      "range": {
+        "startLine": 131,
+        "startChar": 4,
+        "endLine": 142,
+        "endChar": 5
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7452494_a1ad29cf",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
         "patchSetId": 13
@@ -45,6 +69,30 @@
       "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f252111_6b125a0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7452494_a1ad29cf",
+      "range": {
+        "startLine": 186,
+        "startChar": 4,
+        "endLine": 194,
+        "endChar": 0
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "484fc5dd_eb6498ff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3befbde6_b74bc816",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 99
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1203b12e_8a751f35",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/ModelDto.java",
         "patchSetId": 13
@@ -91,6 +163,30 @@
       "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11367701_8f3a7f37",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/ModelDto.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1203b12e_8a751f35",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9cf8351d_d0ef61e3",
+        "filename": "catalog-ui/src/app/ng2/components/ui/modal-import-type/modal-import-type.component.html",
+        "patchSetId": 13
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21ab41c7_461eaa09",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 4
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0dcc131a_8ce81637",
         "filename": "catalog-ui/src/app/ng2/components/ui/modal-import-type/modal-import-type.component.spec.ts",
         "patchSetId": 13
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "25d780f1_7627d289",
+        "filename": "catalog-ui/src/app/ng2/components/ui/modal-import-type/modal-import-type.component.spec.ts",
+        "patchSetId": 13
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0dcc131a_8ce81637",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b01fa5db_7788f60e",
         "filename": "catalog-ui/src/app/ng2/components/ui/modal-import-type/modal-import-type.component.ts",
         "patchSetId": 13
@@ -160,6 +304,30 @@
       "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72c87533_22504304",
+        "filename": "catalog-ui/src/app/ng2/components/ui/modal-import-type/modal-import-type.component.ts",
+        "patchSetId": 13
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-25T13:05:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b01fa5db_7788f60e",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "ac1f505287d9399943841e83863e26c1e8f7e884",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
