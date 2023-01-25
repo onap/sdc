@@ -43,6 +43,7 @@ import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -54,6 +55,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
@@ -130,39 +132,90 @@ public class PropertyConvertor {
         prop.setMetadata(property.getMetadata());
 
         if (CollectionUtils.isNotEmpty(property.getConstraints())) {
-            prop.setConstraints(convertConstraints(property.getConstraints()));
+            try {
+                prop.setConstraints(convertConstraints(property.getConstraints(), property.getType()));
+            } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
+                log.error(e.getMessage());
+            }
         }
         return prop;
     }
 
-    private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints) {
+    private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints, String propertyType)
+        throws ConstraintValueDoNotMatchPropertyTypeException {
         List<ToscaPropertyConstraint> convertedConstraints = new ArrayList<>();
         for (PropertyConstraint constraint : constraints) {
             if (constraint instanceof EqualConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintEqual(((EqualConstraint) constraint).getEqual()));
+                EqualConstraint equalConstraint = ((EqualConstraint) constraint);
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    equalConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
+                ToscaPropertyConstraintEqual prop = new ToscaPropertyConstraintEqual(equalConstraint.getEqual());
+                convertedConstraints.add(prop);
             }
             if (constraint instanceof GreaterThanConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintGreaterThan(((GreaterThanConstraint) constraint).getGreaterThan()));
+                GreaterThanConstraint greaterThanConstraint = ((GreaterThanConstraint) constraint);
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    greaterThanConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
+                ToscaPropertyConstraintGreaterThan prop = new ToscaPropertyConstraintGreaterThan(greaterThanConstraint.getGreaterThan());
+                convertedConstraints.add(prop);
             }
             if (constraint instanceof GreaterOrEqualConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintGreaterOrEqual(((GreaterOrEqualConstraint) constraint).getGreaterOrEqual()));
+                GreaterOrEqualConstraint greaterOrEqualConstraint = ((GreaterOrEqualConstraint) constraint);
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    greaterOrEqualConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
+                ToscaPropertyConstraintGreaterOrEqual prop = new ToscaPropertyConstraintGreaterOrEqual(greaterOrEqualConstraint.getGreaterOrEqual());
+                convertedConstraints.add(prop);
             }
             if (constraint instanceof LessThanConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintLessThan(((LessThanConstraint) constraint).getLessThan()));
+                LessThanConstraint lessThanConstraint = ((LessThanConstraint) constraint);
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    lessThanConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
+                ToscaPropertyConstraintLessThan prop = new ToscaPropertyConstraintLessThan(lessThanConstraint.getLessThan());
+                convertedConstraints.add(prop);
             }
             if (constraint instanceof LessOrEqualConstraint) {
-                convertedConstraints.add(new ToscaPropertyConstraintLessOrEqual(((LessOrEqualConstraint) constraint).getLessOrEqual()));
+                LessOrEqualConstraint lessOrEqualConstraint = ((LessOrEqualConstraint) constraint);
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    lessOrEqualConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
+                ToscaPropertyConstraintLessOrEqual prop = new ToscaPropertyConstraintLessOrEqual(lessOrEqualConstraint.getLessOrEqual());
+                convertedConstraints.add(prop);
             }
             if (constraint instanceof InRangeConstraint) {
                 InRangeConstraint inRangeConstraint = (InRangeConstraint) constraint;
+
+                if (doesPropertyTypeNeedConverted(propertyType)) {
+                    inRangeConstraint.changeConstraintValueTypeTo(propertyType);
+                }
+
                 List<Object> range = new ArrayList<>();
                 range.add(inRangeConstraint.getMin());
                 range.add(inRangeConstraint.getMax());
                 convertedConstraints.add(new ToscaPropertyConstraintInRange(range));
             }
             if (constraint instanceof ValidValuesConstraint) {
-                List validValues = ((ValidValuesConstraint) constraint).getValidValues();
-                convertedConstraints.add(new ToscaPropertyConstraintValidValues(validValues));
+                ValidValuesConstraint validValues = ((ValidValuesConstraint) constraint);
+
+                if (propertyType.equals(ToscaType.INTEGER.toString()) || propertyType.equals(ToscaType.FLOAT.toString())) {
+                    validValues.changeConstraintValueTypeTo(propertyType);
+                }
+
+                List prop = validValues.getValidValues();
+                convertedConstraints.add(new ToscaPropertyConstraintValidValues(prop));
             }
             if (constraint instanceof LengthConstraint) {
                 convertedConstraints.add(new ToscaPropertyConstraintLength(((LengthConstraint) constraint).getLength()));
@@ -178,6 +231,10 @@ public class PropertyConvertor {
             }
         }
         return convertedConstraints;
+    }
+
+    private boolean doesPropertyTypeNeedConverted(String propertyType) {
+        return propertyType.equals(ToscaType.INTEGER.getType()) || propertyType.equals(ToscaType.FLOAT.getType());
     }
 
     public Object convertToToscaObject(PropertyDataDefinition property, String value, Map<String, DataTypeDefinition> dataTypes,
