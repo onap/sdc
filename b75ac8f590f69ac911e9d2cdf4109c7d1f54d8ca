@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "981da190_83882367",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2120,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-25T10:49:56Z",
+      "side": 1,
+      "message": "replace with chained stream\n\n            ListUtils.emptyIfNull(service.getInputs()).stream()\n                .filter(input -\u003e CollectionUtils.isEmpty(input.getConstraints()))\n                .forEach(input -\u003e input.setConstraints(setInputConstraint(input)));",
+      "range": {
+        "startLine": 2116,
+        "startChar": 12,
+        "endLine": 2120,
+        "endChar": 15
+      },
+      "revId": "b75ac8f590f69ac911e9d2cdf4109c7d1f54d8ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
