@@ -42,7 +42,12 @@ public enum ConstraintType {
     PATTERN("pattern"),
     SCHEMA("schema");
 
-    private static final Set<ConstraintType> comparableConstraints = Set.of(ConstraintType.GREATER_THAN, ConstraintType.LESS_THAN);
+    private static final Set<ConstraintType> comparableConstraints = Set.of(
+        ConstraintType.EQUAL,
+        ConstraintType.GREATER_THAN,
+        ConstraintType.GREATER_OR_EQUAL,
+        ConstraintType.LESS_OR_EQUAL,
+        ConstraintType.LESS_THAN);
     private final String type;
     private final List<String> typeAlias;
 
