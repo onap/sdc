@@ -22,9 +22,9 @@
  * Created by rcohen on 9/15/2016.
  */
 'use strict';
-import {ValidationUtils, PROPERTY_TYPES} from "app/utils";
+import {ValidationUtils, PROPERTY_TYPES, PROPERTY_DATA} from "app/utils";
 import {DataTypesService} from "app/services";
-import {SchemaProperty, PropertyModel} from "app/models";
+import {SchemaProperty, PropertyModel, DataTypesMap} from "app/models";
 import {InstanceFeDetails} from "app/models/instance-fe-details";
 import {ToscaGetFunction} from "app/models/tosca-get-function";
 import {SubPropertyToscaFunction} from "app/models/sub-property-tosca-function";
@@ -47,6 +47,7 @@ export interface ITypeMapScope extends ng.IScope {
     constraints:string[];
     showAddBtn: boolean;
     showToscaFunction: Array<boolean>;
+    types:DataTypesMap;
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -80,13 +81,40 @@ export class TypeMapDirective implements ng.IDirective {
         maxLength: '=',
         constraints: '=',
         showAddBtn: '=?',
-        parentProperty: '='
+        parentProperty: '=',
+        types: '='
     };
 
     restrict = 'E';
     replace = true;
     template = (): string => {
         return require('./type-map-directive.html');
+    };
+    
+    private isDataTypeForSchemaType = (property:SchemaProperty, types:DataTypesMap):boolean=> {
+        property.simpleType = "";
+        if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1) {
+            return false;
+        }
+        let simpleType = this.getTypeForDataTypeDerivedFromSimple(property.type, types);
+        if (simpleType) {
+            property.simpleType = simpleType;
+            return false;
+        }
+        return true;
+    };
+    
+    private getTypeForDataTypeDerivedFromSimple = (dataTypeName:string, types:DataTypesMap):string => {
+        if (!types[dataTypeName]) {
+            return 'string';
+        }
+        if (types[dataTypeName].derivedFromName == "tosca.datatypes.Root" || types[dataTypeName].properties) {
+            return null;
+        }
+        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(types[dataTypeName].derivedFromName) > -1) {
+            return types[dataTypeName].derivedFromName
+        }
+        return this.getTypeForDataTypeDerivedFromSimple(types[dataTypeName].derivedFromName, types);
     };
 
     link = (scope:ITypeMapScope, element:any, $attr:any) => {
@@ -110,7 +138,7 @@ export class TypeMapDirective implements ng.IDirective {
 
         //reset valueObjRef and mapKeys when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
-            scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
+            scope.isSchemaTypeDataType = this.isDataTypeForSchemaType(scope.schemaProperty, scope.types);
             if (scope.valueObjRef) {
                 scope.mapKeys = Object.keys(scope.valueObjRef);
                 //keeping another copy of the keys, as the mapKeys gets overridden sometimes

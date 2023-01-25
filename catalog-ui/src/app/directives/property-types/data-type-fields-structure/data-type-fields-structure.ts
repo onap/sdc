@@ -70,9 +70,8 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         fieldsPrefixName: '=',
         readOnly: '=',
         defaultValue: '@',
-        //     types: '=',
-        expandByDefault: '='
-        
+        types: '=',
+        expandByDefault: '='        
     };
 
     restrict = 'E';
@@ -102,7 +101,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
 
     private initDataOnScope = (scope:any, $attr:any):void => {
         scope.dataTypesService = this.DataTypesService;
-        scope.dataTypeProperties = this.DataTypesService.getFirsLevelOfDataTypeProperties(scope.typeName);
+        scope.dataTypeProperties = this.getDataTypeProperties(scope.typeName, scope.types);
         if ($attr.defaultValue) {
             scope.currentTypeDefaultValue = JSON.parse($attr.defaultValue);
         } else {
@@ -122,6 +121,14 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
                 }
             }
         });
+    };
+    
+    private getDataTypeProperties = (dataTypeName:string, typesInModel:DataTypesMap):Array<DataTypePropertyModel> => {
+        let properties = typesInModel[dataTypeName].properties || [];
+        if (typesInModel[dataTypeName].derivedFromName != "tosca.datatypes.Root") {
+            properties = this.getDataTypeProperties(typesInModel[dataTypeName].derivedFromName, typesInModel).concat(properties);
+        }
+        return properties;
     };
 
     private rerender = (scope:any):void => {

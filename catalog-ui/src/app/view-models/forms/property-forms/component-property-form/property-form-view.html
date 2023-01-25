@@ -169,6 +169,7 @@
                                               fields-prefix-name="currentPropertyIndex"
                                               read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                               default-value="{{getDefaultValue()}}"
+                                              types="dataTypes"
                                               expand-by-default="true"></fields-structure>
 
                         </div>
@@ -183,6 +184,7 @@
                                           read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration"
                                           default-value="{{getDefaultValue()}}"
                                           max-length="maxLength"
+                                          types="dataTypes"
                                           constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues">
                                 </type-map>
                             </div>
@@ -197,6 +199,7 @@
                                            read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                            default-value="{{getDefaultValue()}}"
                                            max-length="maxLength"
+                                           types="dataTypes"
                                            constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues"></type-list>
                             </div>
 

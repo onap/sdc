@@ -524,6 +524,11 @@ limitations under the License.
                     <verbose>${verbose}</verbose>
                     <apiVersion>${docker.api.version}</apiVersion>
                     <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+                    <volumes>
+                      <volume>
+                        <name>d02a9927c7097d3cc7e6602e7151f6e2e0f930747459c6dd356ded91ee1af2c6</name>
+                      </volume>
+                    </volumes>
                     <startParallel>true</startParallel>
                     <images>
                         <image>
@@ -542,6 +547,7 @@ limitations under the License.
                                     <bind>
                                         <volume>${it.chef.config}:/root/chef-solo/environments
                                         </volume>
+                                        <volume>d02a9927c7097d3cc7e6602e7151f6e2e0f930747459c6dd356ded91ee1af2c6:/var/lib/cassandra</volume>
                                     </bind>
                                 </volumes>
                                 <ulimits>
