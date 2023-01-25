@@ -78,7 +78,6 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 
-
 @Service
 public class PropertyConvertor {
 
