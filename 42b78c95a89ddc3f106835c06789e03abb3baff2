@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "5b4d5ac1_c5604ac3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesFetchServlet.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-26T11:11:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20478fcb_f0c10f16",
+      "range": {
+        "startLine": 172,
+        "startChar": 1,
+        "endLine": 200,
+        "endChar": 0
+      },
+      "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8c343093_2af298c3",
         "filename": "catalog-ui/src/app/utils/service-data-type-reader.ts",
         "patchSetId": 15
@@ -92,6 +116,30 @@
       "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9caba04f_83ee0e2b",
+        "filename": "catalog-ui/src/app/utils/service-data-type-reader.ts",
+        "patchSetId": 15
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-01-26T11:11:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c343093_2af298c3",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
