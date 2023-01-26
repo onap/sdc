@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02664109_e74236f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-26T00:03:33Z",
+      "side": 1,
+      "message": "Backend part of comment in service-data-type-reader:\n\n\nCan handle here by adding after line 130:\n            \n            if (toscaJson.containsKey(\"data_types\")){\n                toscaJson \u003d (Map\u003cString, Object\u003e) toscaJson.get(\"data_types\");\n            }",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 79
+      },
+      "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20478fcb_f0c10f16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesFetchServlet.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-26T00:03:33Z",
+      "side": 1,
+      "message": "I think this endpoint would fit better in DataTypeServlet and the dataTypeId as a path param rather than query param.\nAlso it would be more accurate to call it the name rather than id (to distinguish from the id which is in form \u003cmodel\u003e.\u003ctype\u003e.datatype\nId suggest path: \"{dataTypeName}/models\"\n\nwhen moved to DataTypeServlet you can also probably easily use dataTypeOperation.getAllUniqueDataTypeUidsToModels() instead of the methods on ResourceBusinessLogic",
+      "range": {
+        "startLine": 172,
+        "startChar": 1,
+        "endLine": 200,
+        "endChar": 0
+      },
+      "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c343093_2af298c3",
+        "filename": "catalog-ui/src/app/utils/service-data-type-reader.ts",
+        "patchSetId": 15
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-26T00:03:33Z",
+      "side": 1,
+      "message": "We can support both files containing the tosca definitions header and \"data_types\" element and file without these using the following to remove when present:\n\n    private getDataType(fileContent:any) {\n        const index \u003d Object.keys(fileContent).indexOf(\"data_types\",0)\n        if (index \u003d\u003d -1){\n            return fileContent;\n        } \n        return fileContent[\"data_types\"];\n    }\n\nand passing the return from this method to readName etc\nWe also need a small change in the backend to support, see comment in CommonImportManager",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "42b78c95a89ddc3f106835c06789e03abb3baff2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
