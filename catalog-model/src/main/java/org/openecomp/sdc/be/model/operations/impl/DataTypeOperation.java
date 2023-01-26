@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.mapper.PropertyDefinitionDtoMapper;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
@@ -277,6 +278,10 @@ public class DataTypeOperation extends AbstractOperation {
         final PropertyDataDefinition propertyDataDefinition = propertyData.getPropertyDataDefinition();
         propertyDataDefinition.setName(propertyName);
         return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
+    }
+
+    public void addPropertyToAdditionalTypeDataType(DataTypeDataDefinition dataTypeDataDefinition, PropertyDefinitionDto property) {
+        modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(), dataTypeDataDefinition.getName());
     }
 
 }

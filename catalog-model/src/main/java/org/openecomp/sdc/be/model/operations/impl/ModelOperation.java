@@ -54,8 +54,8 @@ import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
@@ -424,10 +424,69 @@ public class ModelOperation {
         final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
         return modelImportList.stream().filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
     }
-    
+
     private Map<String, Object> getExistingTypes(final ElementTypeEnum elementTypeEnum, final ToscaImportByModel additionalTypeDefinitionsImport) {
         final Map<String, Object> existingContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
         return  (Map<String, Object>) existingContent.get(elementTypeEnum.getToscaEntryName());
+    }
+
+    public void addPropertyToAdditionalType(final ElementTypeEnum elementTypeEnum, final PropertyDefinitionDto property,
+                                            final String modelName, final String name) {
+        final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
+        final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = modelImportList.stream()
+                .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
+        final ToscaImportByModel additionalTypeDefinitionsImport;
+        final List<ToscaImportByModel> rebuiltModelImportList;
+        if (additionalTypeDefinitionsImportOptional.isEmpty()) {
+            return;
+        }
+        additionalTypeDefinitionsImport = additionalTypeDefinitionsImportOptional.get();
+        rebuiltModelImportList = modelImportList.stream()
+                .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(toscaImportByModel.getFullPath())))
+                .collect(Collectors.toList());
+        final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
+        additionalTypeDefinitionsImport.setContent(buildPropertyAdditionalTypeDefinitionContent(elementTypeEnum, name, property, originalContent));
+        rebuiltModelImportList.add(additionalTypeDefinitionsImport);
+        toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
+    }
+
+    private String buildPropertyAdditionalTypeDefinitionContent(final ElementTypeEnum elementTypeEnum, final String name,
+                                                                final PropertyDefinitionDto property, final Map<String, Object> originalContent) {
+        final Map<String, Object> originalTypeContent = (Map<String, Object>) originalContent.get(elementTypeEnum.getToscaEntryName());
+        Map<String, Object> typeContent = (Map<String, Object>) originalTypeContent.get(name);
+        Map<String, Object> typeProperties = (Map<String, Object>) typeContent.get("properties");
+        if (typeProperties == null) {
+            typeProperties = new HashMap<>();
+        }
+        Map<String, Object> typeProp = constructProperty(property);
+        typeProperties.put(property.getName(), typeProp);
+        typeContent.put("properties", typeProperties);
+        return new YamlUtil().objectToYaml(originalContent);
+    }
+
+    private Map<String, Object> constructProperty(final PropertyDefinitionDto property) {
+        Map<String, Object> typeProp = new HashMap<>();
+        if (property.getType() != null) {
+            typeProp.put("type", property.getType());
+        }
+        if (property.getDescription() != null) {
+            typeProp.put("description", property.getDescription());
+        }
+        Map<String, Object> schema = new HashMap<>();
+        if (property.getSchemaType() != null) {
+            schema.put("type", property.getSchemaType());
+            typeProp.put("entry_schema", schema);
+        }
+        if (property.getDefaultValue() != null) {
+            typeProp.put("default", property.getDefaultValue());
+        }
+        if (property.getRequired() != null) {
+            typeProp.put("required", property.getRequired());
+        }
+        if (property.getConstraints() != null) {
+            typeProp.put("constraints", property.getConstraints());
+        }
+        return typeProp;
     }
 
 }
