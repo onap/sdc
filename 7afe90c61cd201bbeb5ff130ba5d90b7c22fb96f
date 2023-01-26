@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9348c017_155a1f00",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/DataTypeOperation.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-26T11:56:24Z",
+      "side": 1,
+      "message": "We only need the models for the type in question I think?\n\nIf so we can make this simpler, e.g. :\n        ImmutableTriple\u003cQueryType, String, Object\u003e criteria \u003d new ImmutableTriple\u003c\u003e(QueryType.HAS, GraphPropertiesDictionary.TYPE.getProperty(), dataTypeName);\n        getByCriteria(NodeTypeEnum.DataType, DataTypeData.class, List.of(criteria));\nThis will return the DataTypeData instances for all models for the given type and can get the model for each one and just return a set of model names",
+      "range": {
+        "startLine": 128,
+        "startChar": 2,
+        "endLine": 148,
+        "endChar": 30
+      },
+      "revId": "7afe90c61cd201bbeb5ff130ba5d90b7c22fb96f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
