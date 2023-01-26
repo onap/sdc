@@ -172,8 +172,9 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
 
         this.modalService.addDynamicContentToModalAndBindInputs(modal, AddPropertyComponent, {
             'readOnly': readOnly,
-            'property': property,
-            'model': this.dataType.model
+            'property': property
+            // ,
+            // 'model': this.dataType.model
         });
         modal.instance.dynamicContent.instance.onValidityChange.subscribe((validationEvent: PropertyValidationEvent) => {
             disableSaveButtonFlag = !validationEvent.isValid;

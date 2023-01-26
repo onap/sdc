@@ -28,8 +28,10 @@ import org.openecomp.sdc.be.exception.supplier.DataTypeOperationExceptionSupplie
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
@@ -37,6 +39,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -45,17 +48,19 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
 
     private final DataTypeImportManager dataTypeImportManager;
     private final DataTypeOperation dataTypeOperation;
+    private final ModelOperation modelOperation;
 
     @Autowired
     public DataTypeBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                  IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
                                  InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation,
                                  DataTypeImportManager dataTypeImportManager,
-                                 DataTypeOperation dataTypeOperation) {
+                                 DataTypeOperation dataTypeOperation, ModelOperation modelOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.dataTypeImportManager = dataTypeImportManager;
         this.dataTypeOperation = dataTypeOperation;
+        this.modelOperation = modelOperation;
     }
 
     /**
@@ -173,5 +178,9 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         DataTypeDataDefinition dataTypeDataDefinition = dataTypeOperation.getDataTypeByUid(dataTypeId).orElseThrow(
             DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId));
         getApplicationDataTypeCache().reload(dataTypeDataDefinition.getModel(), dataTypeId);
+    }
+
+    public void addPropertyToAdditionalTypeDataType(DataTypeDataDefinition dataTypeDataDefinition, PropertyDefinitionDto property) {
+        modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(), dataTypeDataDefinition.getName());
     }
 }
