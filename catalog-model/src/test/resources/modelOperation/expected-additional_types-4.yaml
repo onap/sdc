@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: Auto-generated file that contains package custom types or types added
+  after system installation.
+data_types:
+  tosca.datatypes.nfv.PreviouslyExistingType1:
+    derived_from: tosca.datatypes.Root
+    description: additional type
+    properties:
+      addedMapProperty:
+        default:
+          k1: v1
+          k2: v2
+        entry_schema:
+          type: string
+        description: This is a description
+        type: map
+        required: true
+  tosca.datatypes.nfv.PreviouslyExistingType2:
+    derived_from: tosca.datatypes.Root
+    description: additional type

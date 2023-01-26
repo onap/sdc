@@ -16,6 +16,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,6 +74,7 @@ import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
@@ -504,26 +507,27 @@ class ModelOperationTest extends ModelTestBase {
         final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
         assertNotNull(actualImport1);
         assertEquals(expectedImport1.getContent(), actualImport1.getContent());
-        
+
         // Update the added additional type
         final var updatedDataTypesPath = testResourcePath.resolve(Path.of("input-data_types-updated.yaml"));
         final var updatedDataTypes = Files.readString(updatedDataTypesPath);
         modelOperation.updateTypesInAdditionalTypesImport(ElementTypeEnum.DATA_TYPE, updatedDataTypes, modelName);
-        
+
         ArgumentCaptor<List<ToscaImportByModel>> updatedImportListArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(toscaModelImportCassandraDao, times(2)).saveAll(eq(modelName), updatedImportListArgumentCaptor.capture());
 
         final List<ToscaImportByModel> updatedActualImportList = updatedImportListArgumentCaptor.getValue();
         assertEquals(2, updatedActualImportList.size());
-        
+
         var expectedUpdatedAdditionalTypesImport = new ToscaImportByModel();
         expectedUpdatedAdditionalTypesImport.setModelId(modelName);
         expectedUpdatedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
-        expectedUpdatedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-2-updated.yaml"))));
+        expectedUpdatedAdditionalTypesImport.setContent(
+            Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-2-updated.yaml"))));
         final ToscaImportByModel actualUpdatedAdditionalTypesImport =
             actualImportList.stream().filter(expectedUpdatedAdditionalTypesImport::equals).findFirst().orElse(null);
         assertNotNull(actualUpdatedAdditionalTypesImport);
-        
+
         assertTrue(actualUpdatedAdditionalTypesImport.getContent().contains("added_property_1"));
         assertTrue(actualUpdatedAdditionalTypesImport.getContent().contains("added_property_2"));
     }
@@ -580,6 +584,50 @@ class ModelOperationTest extends ModelTestBase {
         assertNotNull(actualImport1);
         assertEquals(expectedImport1.getContent(), actualImport1.getContent());
 
+    }
+
+    @Test
+    void addPropertyToExistingAdditionalType() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        var originalAdditionalTypesImport = new ToscaImportByModel();
+        originalAdditionalTypesImport.setModelId(modelName);
+        originalAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        final Path originalAdditionalTypesImportPath = testResourcePath.resolve(Path.of("original-additional_types-1.yaml"));
+        originalAdditionalTypesImport.setContent(Files.readString(originalAdditionalTypesImportPath));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(originalAdditionalTypesImport);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        PropertyDefinitionDto property = new PropertyDefinitionDto();
+        property.setName("addedMapProperty");
+        property.setType("map");
+        property.setSchemaType("string");
+        property.setDescription("This is a description");
+        Map<Object, Object> defaultValue = new HashMap<>();
+        defaultValue.put("k1", "v1");
+        defaultValue.put("k2", "v2");
+        property.setDefaultValue(defaultValue);
+        property.setRequired(true);
+
+        String dataTypeName = "tosca.datatypes.nfv.PreviouslyExistingType1";
+        modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, modelName, dataTypeName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(1, actualImportList.size());
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-4.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+            actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
     }
 
     private ToscaImportByModel createModelImport(final String parentModelName, final String importPath) {
