@@ -1976,7 +1976,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 validateMandatoryFields(property);
                 validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
-                validatePropertyConstraintsNotChanged(properties, foundResourceInstance);
+                // validatePropertyConstraintsNotChanged(properties, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isToscaFunction()) {
                     toscaFunctionValidator.validate(property, containerComponent);
