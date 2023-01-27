@@ -296,7 +296,10 @@ public class ModelOperation {
             rebuiltModelImportList = new ArrayList<>(modelImportList);
         }
 
-        final Map<String, Object> typesYamlMap = new Yaml().loadAs(typesYaml, Map.class);
+        Map<String, Object> typesYamlMap = new Yaml().loadAs(typesYaml, Map.class);
+        if (typesYamlMap.containsKey("data_types")){
+            typesYamlMap = (Map<String, Object>) typesYamlMap.get("data_types");
+        }
         removeExistingTypesFromDefaultImports(elementTypeEnum, typesYamlMap, rebuiltModelImportList);
 
         final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
@@ -395,7 +398,10 @@ public class ModelOperation {
 
             final Map<String, Object> typesToUpate = new HashMap<>();
 
-            final Map<String, Object> newTypesYaml = new Yaml().load(typesYaml);
+            Map<String, Object> newTypesYaml = new Yaml().load(typesYaml);
+            if (newTypesYaml.containsKey("data_types")){
+                newTypesYaml = (Map<String, Object>) newTypesYaml.get("data_types");
+            }
             newTypesYaml.entrySet().stream().filter(entry -> existingTypeNames.contains(entry.getKey())).forEach(newTypeToUpdate -> {
 
                 final Map<String, Object> propertiesInNewDef = (Map<String, Object>) ((Map<String, Object>) newTypeToUpdate.getValue()).get("properties");
