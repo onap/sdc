@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a6e569c4_f35d1b7d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-01-27T11:36:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e886a786_bb750879",
+      "revId": "63a364c86561487f986d91f03f4c1cef9bd0c158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "48f4dc8d_8c605683",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
         "patchSetId": 1
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "7ed2e0cd_dd5422e1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-01-27T11:36:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "48f4dc8d_8c605683",
+      "range": {
+        "startLine": 183,
+        "startChar": 4,
+        "endLine": 185,
+        "endChar": 5
+      },
+      "revId": "63a364c86561487f986d91f03f4c1cef9bd0c158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "25561842_032e6085",
         "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts",
         "patchSetId": 1
@@ -62,6 +104,30 @@
       "revId": "63a364c86561487f986d91f03f4c1cef9bd0c158",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5c0ef34_5a864b26",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-01-27T11:36:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25561842_032e6085",
+      "range": {
+        "startLine": 176,
+        "startChar": 12,
+        "endLine": 177,
+        "endChar": 43
+      },
+      "revId": "63a364c86561487f986d91f03f4c1cef9bd0c158",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
