@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "970432a3_f41d44c9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-27T16:34:03Z",
+      "side": 1,
+      "message": "i\u0027d recommend reuse ToscaType or PropertyType enum\n\nsame for \"float\"",
+      "range": {
+        "startLine": 151,
+        "startChar": 41,
+        "endLine": 151,
+        "endChar": 48
+      },
+      "revId": "98cfb2ab6b3de3390e38b7eb5dc9f33d0eb87b04",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
