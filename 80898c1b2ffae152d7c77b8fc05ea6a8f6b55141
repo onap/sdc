@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4215b4ee_f809153e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-27T12:01:57Z",
+      "side": 1,
+      "message": "sorry, did not spot it before\nplease, reuse ToscaTagNamesEnum\n\napply same to all others (\u0027type\u0027, \u0027description\u0027, \u0027entry_schema\u0027 etc)",
+      "range": {
+        "startLine": 457,
+        "startChar": 84,
+        "endLine": 457,
+        "endChar": 94
+      },
+      "revId": "80898c1b2ffae152d7c77b8fc05ea6a8f6b55141",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
