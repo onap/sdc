@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f8d8f9a_9ff270b0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/PropertyConvertor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-01-27T12:02:56Z",
+      "side": 1,
+      "message": "The conversion causes an issue for the non-numeric and non-string types, i.e. the scalar-unit.xxx types which get converted from the given readable value with unit to a numeric value in the base unit, e.g. \n\n      scalar-unit-time_prop_with_valid_values:\n        type: scalar-unit.time\n        constraints:\n        - valid_values:\n          - 4 s\n          - 7 us\n          - 8 d\n\n\nbecomes:\n\n      scalar-unit-time_prop_with_valid_values:\n        type: scalar-unit.time\n        required: false\n        constraints:\n        - valid_values:\n          - 4000000000\n          - 7000\n          - 691200000000000\n\nSo we dont want this conversion for those types",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 74
+      },
+      "revId": "b687ecd783cdb062f847e5ee27d0dedddc1f808a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
