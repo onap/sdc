@@ -94,7 +94,9 @@ export class PropertiesViewModel {
 
 
         this.$scope.addOrUpdateProperty = (property?:PropertyModel):void => {
-            this.openEditPropertyModal(property ? property : new PropertyModel());
+            let prop = property ? property : new PropertyModel()
+            prop.readonly = this.$scope.isViewMode();
+            this.openEditPropertyModal(prop);
         };
 
         this.$scope.delete = (property:PropertyModel):void => {
