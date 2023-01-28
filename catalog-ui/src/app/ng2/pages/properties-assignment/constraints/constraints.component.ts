@@ -52,7 +52,7 @@ export class ConstraintsComponent implements OnInit {
       }
     }
     this.constraints = new Array();
-    if(changes.propertyConstraints.currentValue) {
+    if (changes.propertyConstraints && changes.propertyConstraints.currentValue) {
       changes.propertyConstraints.currentValue.forEach((constraint: any) => {
         this.constraints.push(this.getConstraintFromPropertyBEModel(constraint));
       });

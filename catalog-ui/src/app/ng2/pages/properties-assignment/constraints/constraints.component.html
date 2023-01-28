@@ -66,9 +66,17 @@
               </div>
               <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index; trackBy:trackByFn">
                 <div class="w-sdc-form-column">
-                  <input type="text" class="i-sdc-form-input" [value]="value"
-                        [disabled]="isViewOnly"
+                  <input type="text" class="i-sdc-form-input" *ngIf="propertyType !== 'boolean'"
+                         [disabled]="isViewOnly"
+                         [value]="value"
                         (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+                  <select class="i-sdc-form-select" *ngIf="propertyType == 'boolean'"
+                          [disabled]="isViewOnly"
+                          [value]="value"
+                          (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)">
+                    <option ngValue="true">true</option>
+                    <option ngValue="false">false</option>
+                  </select>
                 </div>
                 <div class="w-sdc-form-column">
                   <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
