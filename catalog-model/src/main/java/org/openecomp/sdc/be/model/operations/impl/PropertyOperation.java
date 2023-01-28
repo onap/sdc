@@ -45,10 +45,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,6 +96,8 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -2141,8 +2145,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             JsonArray jsonArray = new JsonArray();
             if (src instanceof InRangeConstraint) {
                 InRangeConstraint rangeConstraint = (InRangeConstraint) src;
-                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getMin())));
-                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getMax())));
+                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getInRange().getFirst())));
+                jsonArray.add(JsonParser.parseString(String.valueOf(rangeConstraint.getInRange().getLast())));
                 result.add("inRange", jsonArray);
             } else if (src instanceof GreaterThanConstraint) {
                 GreaterThanConstraint greaterThanConstraint = (GreaterThanConstraint) src;
@@ -2195,12 +2199,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                         log.error("The range constraint content is invalid. value = {}", typedValue);
                                         throw new JsonSyntaxException("The range constraint content is invalid");
                                     } else {
-                                        Object minValue = rangeArray.get(0);
-                                        Object maxValue = rangeArray.get(1);
-                                        InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
-                                        rangeConstraint.setMin(String.valueOf(minValue));
-                                        rangeConstraint.setMax(String.valueOf(maxValue));
-                                        propertyConstraint = rangeConstraint;
+                                        final Object minValue = rangeArray.get(0);
+                                        final Object maxValue = rangeArray.get(1);
+
+                                        final Comparable min = ConstraintUtil.convertToComparable(
+                                            ToscaType.getToscaType(minValue.getClass().getSimpleName().toLowerCase()), String.valueOf(minValue));
+                                        final Comparable max = ConstraintUtil.convertToComparable(
+                                            ToscaType.getToscaType(maxValue.getClass().getSimpleName().toLowerCase()), String.valueOf(maxValue));
+
+                                        propertyConstraint = new InRangeConstraint(new LinkedList<>(Arrays.asList(min, max)));
                                     }
                                 } else {
                                     log.warn("The value of InRangeConstraint is null");
@@ -2358,7 +2365,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                 propertyConstraint = deserializeConstraint(value, EqualConstraint.class);
                                 break;
                             case IN_RANGE:
-                                propertyConstraint = deserializeInRangeConstraintConstraint(value);
+                                propertyConstraint = deserializeInRangeConstraint(value);
                                 break;
                             case GREATER_THAN:
                                 propertyConstraint = deserializeConstraint(value, GreaterThanConstraint.class);
@@ -2448,18 +2455,20 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
         }
 
-        private PropertyConstraint deserializeInRangeConstraintConstraint(JsonNode value) {
+        private PropertyConstraint deserializeInRangeConstraint(JsonNode value) {
             if (value instanceof ArrayNode) {
                 ArrayNode rangeArray = (ArrayNode) value;
                 if (rangeArray.size() != 2) {
                     log.error("The range constraint content is invalid. value = {}", value);
                 } else {
-                    String minValue = rangeArray.get(0).asText();
-                    String maxValue = rangeArray.get(1).asText();
-                    InRangeConstraint rangeConstraint = new InRangeConstraint(Lists.newArrayList(minValue, maxValue));
-                    rangeConstraint.setMin(minValue);
-                    rangeConstraint.setMax(maxValue);
-                    return rangeConstraint;
+                    final String minValue = rangeArray.get(0).asText();
+                    final String maxValue = rangeArray.get(1).asText();
+                    final Comparable min = ConstraintUtil.convertToComparable(
+                        ToscaType.getToscaType(minValue.getClass().getSimpleName().toLowerCase()), String.valueOf(minValue));
+                    final Comparable max = ConstraintUtil.convertToComparable(
+                        ToscaType.getToscaType(maxValue.getClass().getSimpleName().toLowerCase()), String.valueOf(maxValue));
+
+                    return new InRangeConstraint(new LinkedList<>(Arrays.asList(min, max)));
                 }
             }
             return null;

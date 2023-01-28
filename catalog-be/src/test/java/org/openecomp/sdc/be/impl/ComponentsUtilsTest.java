@@ -777,8 +777,8 @@ class ComponentsUtilsTest {
         assertEquals(5, ((GreaterOrEqualConstraint) properties[1].getConstraints().iterator().next()).getGreaterOrEqual());
         assertEquals(7, ((LessThanConstraint) properties[2].getConstraints().iterator().next()).getLessThan());
         assertEquals(9, ((LessOrEqualConstraint) properties[3].getConstraints().iterator().next()).getLessOrEqual());
-        assertEquals("5", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getMin().toString());
-        assertEquals("10", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getMax().toString());
+        assertEquals("5", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getInRange().getFirst().toString());
+        assertEquals("10", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getInRange().getLast().toString());
         assertEquals(3, ((ValidValuesConstraint) properties[5].getConstraints().iterator().next()).getValidValues().size());
         assertEquals(11, ((LengthConstraint) properties[6].getConstraints().iterator().next()).getLength());
         assertEquals(13, ((MinLengthConstraint) properties[7].getConstraints().iterator().next()).getMinLength());

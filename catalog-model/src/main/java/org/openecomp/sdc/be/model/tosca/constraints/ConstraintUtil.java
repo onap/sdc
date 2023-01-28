@@ -66,7 +66,9 @@ public final class ConstraintUtil {
         final ToscaType toscaType = ToscaType.getToscaType(propertyType.getType());
         switch (toscaType) {
             case FLOAT:
+            case DOUBLE:
             case INTEGER:
+            case LONG:
             case TIMESTAMP:
             case VERSION:
             case STRING:
