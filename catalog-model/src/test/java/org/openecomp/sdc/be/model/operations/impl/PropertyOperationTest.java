@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -168,7 +169,7 @@ public class PropertyOperationTest extends ModelTestBase {
     }
 
     private InRangeConstraint buildInRangeConstraint() {
-        List<Object> range = new ArrayList<>();
+        LinkedList<Object> range = new LinkedList<>();
         range.add("23");
         range.add("67");
         InRangeConstraint inRangeConstraint = new InRangeConstraint(range);

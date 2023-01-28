@@ -28,6 +28,7 @@ import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -302,7 +303,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         property2.setDescription("Number of (actual or virtual) CPUs associated with the Compute node.");
         property2.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints3 = new ArrayList<>();
-        List<Object> range = new ArrayList<>();
+        LinkedList<Object> range = new LinkedList<>();
         range.add("4");
         range.add("1");
         InRangeConstraint propertyConstraint3 = new InRangeConstraint(range);
@@ -593,7 +594,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         propertyDefinition.setDescription(PROP + "_" + value);
         propertyDefinition.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints = new ArrayList<>();
-        List<Object> range = new ArrayList<>();
+        LinkedList<Object> range = new LinkedList<>();
         range.add("1");
         range.add("4");
         InRangeConstraint propertyConstraint = new InRangeConstraint(range);

@@ -29,6 +29,7 @@ import fj.data.Either;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -523,13 +524,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         property2.setDescription("Number of (actual or virtual) CPUs associated with the Compute node.");
         property2.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints3 = new ArrayList<>();
-        List<Object> range = new ArrayList<>();
+        LinkedList<Object> range = new LinkedList<>();
         range.add("1");
         range.add("4");
 
         InRangeConstraint propertyConstraint3 = new InRangeConstraint(range);
         constraints3.add(propertyConstraint3);
-        // property2.setConstraints(constraints3);
         property2.setConstraints(constraints3);
         return property2;
     }

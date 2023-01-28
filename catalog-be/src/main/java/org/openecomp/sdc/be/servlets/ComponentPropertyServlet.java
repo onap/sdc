@@ -50,7 +50,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
@@ -262,21 +261,19 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         try {
             Either<Map<String, PropertyDefinition>, ActionStatus> propertyDefinition = getPropertyModel(componentId, data);
             if (propertyDefinition.isRight()) {
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(propertyDefinition.right().value());
-                return buildErrorResponse(responseFormat);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(propertyDefinition.right().value()));
             }
             Map<String, PropertyDefinition> properties = propertyDefinition.left().value();
             if (properties == null || properties.size() != 1) {
                 log.info("Property content is invalid - {}", data);
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-                return buildErrorResponse(responseFormat);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             Map.Entry<String, PropertyDefinition> entry = properties.entrySet().iterator().next();
             PropertyDefinition newPropertyDefinition = entry.getValue();
             newPropertyDefinition.setParentUniqueId(componentId);
             newPropertyDefinition.setUserCreated(true);
-            Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyEither = propertyBusinessLogic
-                .addPropertyToComponent(componentId, newPropertyDefinition, userId);
+            Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyEither =
+                propertyBusinessLogic.addPropertyToComponent(componentId, newPropertyDefinition, userId);
             if (addPropertyEither.isRight()) {
                 return buildErrorResponse(addPropertyEither.right().value());
             }
@@ -285,8 +282,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE_PROPERTY);
             log.debug("create property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
@@ -294,23 +290,18 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.STARTED, "UPDATE_PROPERTIES by user {} ", userId);
-        // get modifier id
-        User modifier = new User();
-        modifier.setUserId(userId);
         log.debug("modifier id is {}", userId);
-//
+
         try {
             // convert json to PropertyDefinition
             Either<Map<String, PropertyDefinition>, ActionStatus> propertiesListEither = getPropertiesListForUpdate(data);
             if (propertiesListEither.isRight()) {
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(propertiesListEither.right().value());
-                return buildErrorResponse(responseFormat);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(propertiesListEither.right().value()));
             }
             Map<String, PropertyDefinition> properties = propertiesListEither.left().value();
             if (properties == null) {
                 log.info("Property content is invalid - {}", data);
-                ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-                return buildErrorResponse(responseFormat);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
             //Validate value and Constraint of property and Fetch all data types from cache
             Either<Boolean, ResponseFormat> constraintValidatorResponse = new PropertyValueConstraintValidationUtil()
@@ -328,18 +319,14 @@ public class ComponentPropertyServlet extends BeGenericServlet {
                     log.info("Failed to update Property. Reason - {}", status.right().value());
                     return buildErrorResponse(status.right().value());
                 }
-                EntryData<String, PropertyDefinition> property = status.left().value();
-                PropertyDefinition updatedPropertyDefinition = property.getValue();
-                log.debug("Property id {} updated successfully ", updatedPropertyDefinition.getUniqueId());
+                log.debug("Property id {} updated successfully ", status.left().value().getValue().getUniqueId());
             }
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
             loggerSupportability.log(LoggerSupportabilityActions.UPDATE_PROPERTIES, StatusCode.COMPLETE, "UPDATE_PROPERTIES by user {} ", userId);
-            return buildOkResponse(responseFormat, properties);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Property");
             log.debug("update property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
@@ -356,8 +343,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE_PROPERTY);
             log.debug("get property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
@@ -373,8 +359,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE_PROPERTY);
             log.debug("get property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
@@ -390,16 +375,12 @@ public class ComponentPropertyServlet extends BeGenericServlet {
                 return buildErrorResponse(status.right().value());
             }
             Map.Entry<String, PropertyDefinition> property = status.left().value();
-            String name = property.getKey();
-            PropertyDefinition propertyDefinition = property.getValue();
-            log.debug("Property {} deleted successfully with id {}", name, propertyDefinition.getUniqueId());
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT);
-            return buildOkResponse(responseFormat, propertyToJson(property));
+            log.debug("Property {} deleted successfully with id {}", property.getKey(), property.getValue().getUniqueId());
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), propertyToJson(property));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Property");
             log.debug("delete property failed with exception", e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return buildErrorResponse(responseFormat);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 }
