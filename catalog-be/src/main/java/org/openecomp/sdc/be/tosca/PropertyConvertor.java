@@ -202,15 +202,12 @@ public class PropertyConvertor {
                     inRangeConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
-                List<Object> range = new ArrayList<>();
-                range.add(inRangeConstraint.getMin());
-                range.add(inRangeConstraint.getMax());
-                convertedConstraints.add(new ToscaPropertyConstraintInRange(range));
+                convertedConstraints.add(new ToscaPropertyConstraintInRange(inRangeConstraint.getInRange()));
             }
             if (constraint instanceof ValidValuesConstraint) {
                 ValidValuesConstraint validValues = ((ValidValuesConstraint) constraint);
 
-                if (propertyType.equals(ToscaType.INTEGER.toString()) || propertyType.equals(ToscaType.FLOAT.toString())) {
+                if (doesPropertyTypeNeedConverted(propertyType)) {
                     validValues.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -234,7 +231,7 @@ public class PropertyConvertor {
     }
 
     private boolean doesPropertyTypeNeedConverted(String propertyType) {
-        return propertyType.equals(ToscaType.INTEGER.getType()) || propertyType.equals(ToscaType.FLOAT.getType());
+        return ToscaType.INTEGER.getType().equals(propertyType) || ToscaType.FLOAT.getType().equals(propertyType);
     }
 
     public Object convertToToscaObject(PropertyDataDefinition property, String value, Map<String, DataTypeDefinition> dataTypes,

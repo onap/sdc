@@ -18,10 +18,10 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.LinkedList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 @AllArgsConstructor
 public class ToscaPropertyConstraintInRange implements ToscaPropertyConstraint {
 
-    private List<Object> inRange;
+    private LinkedList<Object> inRange;
     private static final ConstraintType CONSTRAINT_TYPE = ConstraintType.IN_RANGE;
 
     @Override

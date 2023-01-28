@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,7 +115,7 @@ class PropertyConvertorTest {
 
     @Test
     void testConvertPropertyWithInRangeConstraint() {
-        assertTrue(testConstraints(new InRangeConstraint(Arrays.asList(123, 345)), ConstraintType.IN_RANGE, false));
+        assertTrue(testConstraints(new InRangeConstraint(new LinkedList<>(Arrays.asList(123, 345))), ConstraintType.IN_RANGE, false));
     }
 
     @Test

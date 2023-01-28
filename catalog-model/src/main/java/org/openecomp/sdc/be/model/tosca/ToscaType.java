@@ -47,7 +47,9 @@ public enum ToscaType {
     // @formatter:off
 	STRING("string"),
 	INTEGER("integer"),
+	LONG("long"),
 	FLOAT("float"),
+	DOUBLE("double"),
 	BOOLEAN("boolean"),
 	TIMESTAMP("timestamp"),
 	VERSION("version"),
@@ -87,7 +89,7 @@ public enum ToscaType {
             return null;
         }
         for (ToscaType type : ToscaType.values()) {
-            if (type.getType().equals(typeName)) {
+            if (type.getType().equalsIgnoreCase(typeName)) {
                 return type;
             }
         }
@@ -122,7 +124,9 @@ public enum ToscaType {
             case BOOLEAN:
                 return value.equals(true) || value.equals(false);
             case FLOAT:
+            case DOUBLE:
                 return value instanceof Float;
+            case LONG:
             case INTEGER:
             case RANGE:
                 return value instanceof Integer;
@@ -148,8 +152,10 @@ public enum ToscaType {
             case BOOLEAN:
                 return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
             case FLOAT:
+            case DOUBLE:
                 return isFloat(value);
             case INTEGER:
+            case LONG:
                 return isInteger(value);
             case SCALAR_UNIT_SIZE:
                 return isScalarUnitSize(value);
@@ -242,10 +248,12 @@ public enum ToscaType {
             case BOOLEAN:
                 return Boolean.valueOf(value);
             case FLOAT:
+            case DOUBLE:
                 return Float.valueOf(value);
             case RANGE:
             case INTEGER:
-                return Long.valueOf(value);
+            case LONG:
+                return Integer.valueOf(value);
             case TIMESTAMP:
                 try {
                     return new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US).parse(value);
