@@ -231,7 +231,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
-                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {        
+                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
     }
@@ -246,9 +246,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Data types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypesYaml(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesYaml") File file,
-                                    @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                    @Parameter(description = "model") @FormDataParam("model") String modelName,
-                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+                                        @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                        @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                        @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         return uploadElementTypeServletLogicYaml(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
     }
@@ -344,22 +344,19 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     private Response uploadElementTypeServletLogicYaml(final ConsumerFourParam<Wrapper<Response>, String, String, Boolean> createElementsMethod,
-                                                   final File file, final HttpServletRequest request, final String creator,
-                                                   final String elementTypeName, final String modelName, final boolean includeToModelDefaultImports) {
+                                                       final File file, final HttpServletRequest request, final String creator,
+                                                       final String elementTypeName, final String modelName,
+                                                       final boolean includeToModelDefaultImports) {
         init();
         final String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         try {
-            final Wrapper<String> yamlStringWrapper = new Wrapper<>();
             final String url = request.getMethod() + " " + request.getRequestURI();
             log.debug(START_HANDLE_REQUEST_OF, url);
             final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
             if (responseWrapper.isEmpty()) {
                 final String yamlAsString = getFileAsString(file);
                 log.debug("received yaml: {}", yamlAsString);
-                yamlStringWrapper.setInnerElement(yamlAsString);
-            }
-            if (responseWrapper.isEmpty()) {
-                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName, includeToModelDefaultImports);
+                createElementsMethod.accept(responseWrapper, yamlAsString, modelName, includeToModelDefaultImports);
             }
             return responseWrapper.getInnerElement();
         } catch (final Exception e) {
@@ -371,12 +368,15 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 
     @NotNull
     private String getFileAsString(File file) throws IOException {
-        FileInputStream fl = new FileInputStream(file);
-        byte[] arr = new byte[(int) file.length()];
-        fl.read(arr);
-        fl.close();
-        final String yamlAsString = new String(arr, StandardCharsets.UTF_8);
-        return yamlAsString;
+        try (final FileInputStream fl = new FileInputStream(file)) {
+            byte[] arr = new byte[(int) file.length()];
+            int read = fl.read(arr);
+            if (read > 0) {
+                return new String(arr, StandardCharsets.UTF_8);
+            } else {
+                throw new IOException(String.format("Failed to read bytes from '%s'", file.getName()));
+            }
+        }
     }
 
     private Wrapper<Response> doUploadTypeValidations(final HttpServletRequest request, String userId, File file) {
