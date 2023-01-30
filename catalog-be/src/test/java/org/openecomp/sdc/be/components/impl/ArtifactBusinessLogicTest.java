@@ -466,10 +466,7 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
         DAOArtifactData.setDataAsArray(payload);
         Either<DAOArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(DAOArtifactData);
         when(artifactCassandraDao.getArtifact(esArtifactId)).thenReturn(artifactfromESres);
-        List<org.openecomp.sdc.be.model.Component> serviceList = new ArrayList<>();
-        serviceList.add(service);
-        Either<List<org.openecomp.sdc.be.model.Component>, StorageOperationStatus> getServiceRes = Either.left(serviceList);
-        when(toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, serviceName)).thenReturn(getServiceRes);
+        when(toscaOperationFacade.getBySystemNameAndVersion(ComponentTypeEnum.SERVICE, serviceName,serviceVersion)).thenReturn(Either.left(service));
         byte[] downloadServiceArtifactByNamesRes =
         artifactBL.downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
         assertThat(downloadServiceArtifactByNamesRes !=null &&

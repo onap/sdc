@@ -728,11 +728,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         DAOArtifactData.setDataAsArray(payload);
         Either<DAOArtifactData, CassandraOperationStatus> artifactfromESres = Either.left(DAOArtifactData);
         when(artifactCassandraDao.getArtifact(esArtifactId)).thenReturn(artifactfromESres);
-        List<org.openecomp.sdc.be.model.Component> serviceList = new ArrayList<>();
-        serviceList.add(service);
-        Either<List<org.openecomp.sdc.be.model.Component>, StorageOperationStatus> getServiceRes = Either
-            .left(serviceList);
-        when(toscaOperationFacade.getBySystemName(ComponentTypeEnum.SERVICE, serviceName)).thenReturn(getServiceRes);
+        when(toscaOperationFacade.getBySystemNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion)).thenReturn(Either.left(service));
         byte[] downloadServiceArtifactByNamesRes = artifactBL
             .downloadServiceArtifactByNames(serviceName, serviceVersion, artifactName);
         assertThat(downloadServiceArtifactByNamesRes != null
@@ -2428,19 +2424,15 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         esArtifactData.setDataAsArray("test".getBytes());
 
         artifactDefinition.setArtifactName(artifactName);
-        List<Service> serviceList = new ArrayList<>();
         Map<String, ArtifactDefinition> artifacts = new HashMap<>();
         artifacts.put(artifactName, artifactDefinition);
-
-        serviceList.add(service);
         resource.setDeploymentArtifacts(artifacts);
 
         when(toscaOperationFacade.getComponentByNameAndVersion(eq(ComponentTypeEnum.RESOURCE), eq(resourceName), eq(version),
             eq(JsonParseFlagEnum.ParseMetadata)))
             .thenReturn(Either.left(resource));
-        doReturn(Either.left(serviceList)).when(toscaOperationFacade).getBySystemName(eq(ComponentTypeEnum.SERVICE), eq(serviceName));
-        when(artifactCassandraDao.getArtifact(any()))
-            .thenReturn(Either.left(esArtifactData));
+        doReturn(Either.left(service)).when(toscaOperationFacade).getBySystemNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, version);
+        when(artifactCassandraDao.getArtifact(any())).thenReturn(Either.left(esArtifactData));
 
         byte[] result = artifactBL.downloadRsrcArtifactByNames(serviceName, version, resourceName, version, artifactName);
         Assert.assertEquals(esArtifactData.getDataAsArray(), result);

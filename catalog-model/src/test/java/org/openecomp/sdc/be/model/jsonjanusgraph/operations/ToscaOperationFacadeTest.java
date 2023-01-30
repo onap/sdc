@@ -649,9 +649,10 @@ class ToscaOperationFacadeTest {
     }
 
     @Test
-    void testGetBySystemName() {
-        Either<List<Component>, StorageOperationStatus> result;
+    void testGetBySystemNameAndVersion() {
+        Either<Component, StorageOperationStatus> result;
         String sysName = "sysName";
+        String version = "version";
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
         ToscaElement toscaElement = getToscaElementForTest();
         List<GraphVertex> componentVertices = new ArrayList<>();
@@ -662,6 +663,7 @@ class ToscaOperationFacadeTest {
 
         propertiesToMatch.put(GraphPropertyEnum.SYSTEM_NAME, sysName);
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentTypeEnum.name());
+        propertiesToMatch.put(GraphPropertyEnum.VERSION, version);
 
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
@@ -669,9 +671,9 @@ class ToscaOperationFacadeTest {
             .thenReturn(Either.left(componentVertices));
         when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
             .thenReturn(Either.left(toscaElement));
-        result = testInstance.getBySystemName(componentTypeEnum, sysName);
+        result = testInstance.getBySystemNameAndVersion(componentTypeEnum, sysName, version);
         assertTrue(result.isLeft());
-        assertEquals(1, result.left().value().size());
+        assertNotNull(result.left().value());
     }
 
     @Test
