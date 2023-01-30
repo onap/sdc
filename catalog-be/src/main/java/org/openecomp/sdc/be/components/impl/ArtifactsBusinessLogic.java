@@ -2513,32 +2513,14 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Service validateServiceNameAndVersion(String serviceName, String serviceVersion) {
-        Either<List<Service>, StorageOperationStatus> serviceListBySystemName = toscaOperationFacade
-            .getBySystemName(ComponentTypeEnum.SERVICE, serviceName);
-        if (serviceListBySystemName.isRight()) {
+        final Either<Service, StorageOperationStatus> serviceBySystemNameAndVersion
+            = toscaOperationFacade.getBySystemNameAndVersion(ComponentTypeEnum.SERVICE, serviceName, serviceVersion);
+        if (serviceBySystemNameAndVersion.isRight()) {
             log.debug("Couldn't fetch any service with name {}", serviceName);
             throw new ByActionStatusComponentException(
-                componentsUtils.convertFromStorageResponse(serviceListBySystemName.right().value(), ComponentTypeEnum.SERVICE), serviceName);
+                componentsUtils.convertFromStorageResponse(serviceBySystemNameAndVersion.right().value(), ComponentTypeEnum.SERVICE), serviceName);
         }
-        List<Service> serviceList = serviceListBySystemName.left().value();
-        if (serviceList == null || serviceList.isEmpty()) {
-            log.debug("Couldn't fetch any service with name {}", serviceName);
-            throw new ByActionStatusComponentException(ActionStatus.SERVICE_NOT_FOUND, serviceName);
-        }
-        Service foundService = null;
-        for (Service service : serviceList) {
-            if (service.getVersion().equals(serviceVersion)) {
-                log.trace("Found service with version {}", serviceVersion);
-                foundService = service;
-                break;
-            }
-        }
-        if (foundService == null) {
-            log.debug("Couldn't find version {} for service {}", serviceVersion, serviceName);
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_NOT_FOUND, ComponentTypeEnum.SERVICE.getValue(),
-                serviceVersion);
-        }
-        return foundService;
+        return serviceBySystemNameAndVersion.left().value();
     }
 
     private Resource validateResourceNameAndVersion(String resourceName, String resourceVersion) {
