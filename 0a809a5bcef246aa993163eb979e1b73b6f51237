@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab14140_31de3b18",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-30T18:02:56Z",
+      "side": 1,
+      "message": "intValidator(control: FormControl) {\n    const intRegex \u003d /^[-+]?\\d+$/;\n    if (control.value \u0026\u0026 !intRegex.test(control.value)) {\n      return {intValidator: true};\n    }\n    return null;\n  }",
+      "range": {
+        "startLine": 551,
+        "startChar": 6,
+        "endLine": 579,
+        "endChar": 9
+      },
+      "revId": "0a809a5bcef246aa993163eb979e1b73b6f51237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01548526_8cadf15c",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-30T18:02:56Z",
+      "side": 1,
+      "message": "floatValidator(control: FormControl) {\n    const floatRegex \u003d /^[-+]?\\d+(\\.\\d+)?$/;\n    if (control.value \u0026\u0026 !floatRegex.test(control.value)) {\n      return {floatValidator: true};\n    }\n    return null;\n  }",
+      "range": {
+        "startLine": 581,
+        "startChar": 8,
+        "endLine": 599,
+        "endChar": 16
+      },
+      "revId": "0a809a5bcef246aa993163eb979e1b73b6f51237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
