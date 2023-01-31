@@ -87,6 +87,8 @@ export class TypeWorkspaceGeneralComponent implements OnInit {
                   this.dataType.modificationTime = this.importedFile.lastModifiedDate;
                   this.dataType.creationTime = this.importedFile.lastModifiedDate;
                   this.derivedFromName = serviceType.derivedFromName;
+                  this.dataType.properties.forEach(prop => prop.constraints ?  console.error(prop.constraints.length): console.error("No constraints"));
+                  this.dataType.properties.forEach(prop => prop.constraints ?  prop.constraints.forEach(constr => console.error(<string>constr)): console.error("No constraints"));
                   this.dataType.uniqueId = this.dataType.model ? this.dataType.model + "." + this.dataType.name : this.dataType.name + ".datatype";
                   this.$scope.dataType = this.dataType;
                   this.onImportedType.emit(this.dataType);

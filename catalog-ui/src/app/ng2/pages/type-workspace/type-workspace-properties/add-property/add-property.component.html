@@ -40,7 +40,18 @@
                 [readOnly]="readOnly">
       </textarea>
     </div>
-    <div class="default-value-container i-sdc-form-item" *ngIf="showDefaultValue()">
+      <div class="constraints-section i-sdc-form-item" data-ng-if="editPropertyModel.property.constraints || !(isViewOnly || componentMetadata.isService)">
+          <label class="i-sdc-form-label">Constraints</label>
+          <ng-container>
+              <app-constraints [propertyConstraints]="property ? property.constraints ? property.constraints : null : null"
+                               [isViewOnly]="false"
+                               [propertyType]="property ? property.type : null"
+                               (onConstraintChange)="onConstraintChange($event)">
+              </app-constraints>
+          </ng-container>
+      </div>
+
+      <div class="default-value-container i-sdc-form-item" *ngIf="showDefaultValue()">
       <label class="i-sdc-form-label">{{'PROPERTY_DEFAULT_VALUE_LABEL' | translate}}</label>
       <ng-container *ngIf="!readOnly">
         <input type="checkbox" formControlName="hasDefaultValue" [attr.disabled]="readOnly ? readOnly : null"/> {{'PROPERTY_SET_DEFAULT_VALUE_MSG' | translate}}

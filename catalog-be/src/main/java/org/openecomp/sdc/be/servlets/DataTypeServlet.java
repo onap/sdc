@@ -158,6 +158,9 @@ public class DataTypeServlet extends BeGenericServlet {
             throw new OperationException(ActionStatus.INVALID_MODEL,
                 String.format("Property model is not the same as the data type model. Must be be '%s'", model));
         }
+        if (dataType.getModel() == null || dataType.getModel().isEmpty()) {
+            dataType.setModel("SDC AID");
+        }
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
         dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
         dataTypeBusinessLogic.updateApplicationDataTypeCache(id);

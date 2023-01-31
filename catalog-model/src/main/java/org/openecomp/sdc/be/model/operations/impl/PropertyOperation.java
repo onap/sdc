@@ -23,8 +23,10 @@ import static org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.conver
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -56,6 +58,7 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -2296,6 +2299,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
             return propertyConstraint;
         }
+
+
 
         private Object getTypedValue(JsonElement je) {
             if (je == null || je.isJsonNull()) {

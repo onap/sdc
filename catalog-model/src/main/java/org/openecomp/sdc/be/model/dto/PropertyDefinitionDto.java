@@ -21,9 +21,12 @@
 
 package org.openecomp.sdc.be.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import lombok.Data;
 import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
 @Data
 public class PropertyDefinitionDto {
@@ -36,6 +39,6 @@ public class PropertyDefinitionDto {
     private Boolean required;
     private Object value;
     private Object defaultValue;
-    private List<PropertyConstraint> constraints;
+    private List<Object> constraints;
 
 }
