@@ -94,7 +94,13 @@ export class PropertyModel extends PropertyBEModel implements IPropertyModel {
     constructor(property?:PropertyModel) {
         super(property);
         if (property) {
-            this.constraints = property.constraints;
+            if (property.propertyConstraints) {
+                this.constraints = new Array();
+                property.propertyConstraints.forEach((constraint: any) => {
+                    this.constraints.push(JSON.parse(constraint));
+                });
+            }
+            this.propertyConstraints = property.propertyConstraints;
             this.source = property.source;
             this.valueUniqueUid = property.valueUniqueUid;
             this.path = property.path;

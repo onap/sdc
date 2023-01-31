@@ -252,7 +252,7 @@
                     <label class="i-sdc-form-label">Constraints</label>
                     <ng-container>
                         <app-constraints [property-constraints]="editPropertyModel.property.constraints"
-                                         [is-view-only]="editPropertyModel.property.propertyView? !editPropertyModel.property.propertyView :(isViewOnly || componentMetadata.isService)"
+                                         [is-view-only]="editPropertyModel.property.propertyView? !editPropertyModel.property.propertyView : (isViewOnly || componentMetadata.isService)"
                                          [property-type]="editPropertyModel.property.type"
                                          (on-constraint-change)="onConstraintChange($event)">
                         </app-constraints>
