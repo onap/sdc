@@ -32,6 +32,7 @@ import {TranslateService} from "../../../shared/translator/translate.service";
 import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-property.component";
 import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
 import {SdcUiServices} from "onap-ui-angular/dist";
+import {ToscaTypeHelper} from "../../../../utils/tosca-type-helper";
 
 @Component({
     selector: 'app-type-workspace-properties',
@@ -192,13 +193,46 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         this.properties = properties.map(value => {
             const property = new PropertyBEModel(value);
             if (property.defaultValue) {
-                property.defaultValue = JSON.parse(property.defaultValue);
+                if (!this.isTypeSimple(property.type) && typeof property.defaultValue === 'string') {
+                    property.defaultValue = JSON.parse(property.defaultValue);
+                } else {
+                    property.defaultValue = property.defaultValue;
+                }
             }
-
             return property;
         });
         this.filteredProperties = Array.from(this.properties);
         this.sort();
+    }
+
+    public isTypeSimple(value:any): boolean {
+        return ToscaTypeHelper.isTypeSimple(value);
+    }
+
+    onConstraintChange = (constraints: any): void => {
+        if (!this.$scope.invalidMandatoryFields) {
+            this.$scope.footerButtons[0].disabled = !constraints.valid;
+        } else {
+            this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
+        }
+        if (!constraints.constraints || constraints.constraints.length == 0) {
+            this.$scope.editPropertyModel.property.propertyConstraints = null;
+            this.$scope.editPropertyModel.property.constraints = null;
+            return;
+        }
+        this.$scope.editPropertyModel.property.propertyConstraints = this.serializePropertyConstraints(constraints.constraints);
+        this.$scope.editPropertyModel.property.constraints = constraints.constraints;
+    }
+
+    private serializePropertyConstraints(constraints: any[]): string[] {
+        if (constraints) {
+            let stringConstraints = new Array();
+            constraints.forEach((constraint) => {
+                stringConstraints.push(JSON.stringify(constraint));
+            })
+            return stringConstraints;
+        }
+        return null;
     }
 }
 
