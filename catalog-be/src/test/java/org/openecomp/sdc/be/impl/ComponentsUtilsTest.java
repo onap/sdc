@@ -774,9 +774,9 @@ class ComponentsUtilsTest {
         ComponentInstanceProperty[] properties = response.left().value();
         assertEquals(9, properties.length);
         assertEquals("value", ((EqualConstraint) properties[0].getConstraints().iterator().next()).getEqual());
-        assertEquals("5", ((GreaterOrEqualConstraint) properties[1].getConstraints().iterator().next()).getGreaterOrEqual());
-        assertEquals("7", ((LessThanConstraint) properties[2].getConstraints().iterator().next()).getLessThan());
-        assertEquals("9", ((LessOrEqualConstraint) properties[3].getConstraints().iterator().next()).getLessOrEqual());
+        assertEquals(5, ((GreaterOrEqualConstraint) properties[1].getConstraints().iterator().next()).getGreaterOrEqual());
+        assertEquals(7, ((LessThanConstraint) properties[2].getConstraints().iterator().next()).getLessThan());
+        assertEquals(9, ((LessOrEqualConstraint) properties[3].getConstraints().iterator().next()).getLessOrEqual());
         assertEquals("5", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getMin().toString());
         assertEquals("10", ((InRangeConstraint) properties[4].getConstraints().iterator().next()).getMax().toString());
         assertEquals(3, ((ValidValuesConstraint) properties[5].getConstraints().iterator().next()).getValidValues().size());

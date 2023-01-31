@@ -17,15 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil.convertToComparable;
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
@@ -93,7 +94,6 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -125,7 +125,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS = "Data type {} cannot be found in graph. status is {}";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_GRAPH = "Going to execute commit on graph.";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_GRAPH = "Going to execute rollback on graph.";
-    private static final String FAILED_TO_ASSOCIATE_RESOURCE_TO_PROPERTY_IN_GRAPH_STATUS_IS = "Failed to associate resource {} to property {} in graph. status is {}";
+    private static final String FAILED_TO_ASSOCIATE_RESOURCE_TO_PROPERTY_IN_GRAPH_STATUS_IS =
+        "Failed to associate resource {} to property {} in graph. status is {}";
     private static final String AFTER_ADDING_PROPERTY_TO_GRAPH = "After adding property to graph {}";
     private static final String BEFORE_ADDING_PROPERTY_TO_GRAPH = "Before adding property to graph {}";
     private static final String THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID = "The value {} of property from type {} is invalid";
@@ -1268,14 +1269,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     return Either.right(operationStatus);
                 }
                 propertiesData.put(propertyName, addPropertyToNodeType.left().value());
-            }            
+            }
             DataTypeData dataTypeData = new DataTypeData();
             Either<DataTypeDefinition, StorageOperationStatus> existingNode = getDataTypeByUidWithoutDerived(uniqueId, true);
             if (existingNode.isLeft()) {
                 dataTypeData.getDataTypeDataDefinition().setNormative(existingNode.left().value().isNormative());
             }
             dataTypeData.getDataTypeDataDefinition().setUniqueId(uniqueId);
-            
+
             long modificationTime = System.currentTimeMillis();
             dataTypeData.getDataTypeDataDefinition().setModificationTime(modificationTime);
             Either<DataTypeData, JanusGraphOperationStatus> updateNode = janusGraphGenericDao.updateNode(dataTypeData, DataTypeData.class);
@@ -2319,7 +2320,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 return je.getAsBoolean();
             }
             if (je.isNumber()) {
-                double number = je.getAsNumber().floatValue();
+                float number = je.getAsNumber().floatValue();
                 if ((number % 1) == 0) {
                     return je.getAsNumber().intValue();
                 }
@@ -2354,22 +2355,22 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     } else {
                         switch (constraintType) {
                             case EQUAL:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, EqualConstraint.class);
+                                propertyConstraint = deserializeConstraint(value, EqualConstraint.class);
                                 break;
                             case IN_RANGE:
                                 propertyConstraint = deserializeInRangeConstraintConstraint(value);
                                 break;
                             case GREATER_THAN:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, GreaterThanConstraint.class);
+                                propertyConstraint = deserializeConstraint(value, GreaterThanConstraint.class);
                                 break;
                             case LESS_THAN:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, LessThanConstraint.class);
+                                propertyConstraint = deserializeConstraint(value, LessThanConstraint.class);
                                 break;
                             case GREATER_OR_EQUAL:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, GreaterOrEqualConstraint.class);
+                                propertyConstraint = deserializeConstraint(value, GreaterOrEqualConstraint.class);
                                 break;
                             case LESS_OR_EQUAL:
-                                propertyConstraint = deserializeConstraintWithStringOperand(value, LessOrEqualConstraint.class);
+                                propertyConstraint = deserializeConstraint(value, LessOrEqualConstraint.class);
                                 break;
                             case VALID_VALUES:
                                 propertyConstraint = deserializeValidValuesConstraint(value);
@@ -2396,11 +2397,25 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             return propertyConstraint;
         }
 
-        private PropertyConstraint deserializeConstraintWithStringOperand(JsonNode value, Class<? extends PropertyConstraint> constraintClass) {
-            String asString = value.asText();
-            log.debug("Before adding value to {} object. value = {}", constraintClass, asString);
+        private PropertyConstraint deserializeConstraint(JsonNode value, Class<? extends PropertyConstraint> constraintClass) {
+            JsonNodeType type = value.getNodeType();
+            if (type.equals(JsonNodeType.NUMBER)) {
+                float asFloat = (float) value.asDouble();
+                if ((asFloat % 1) == 0) {
+                    return deserializeConstraintWithObjectOperand(value.asInt(), constraintClass);
+                }
+                return deserializeConstraintWithObjectOperand(asFloat, constraintClass);
+            } else if (type.equals(JsonNodeType.BOOLEAN)) {
+                return deserializeConstraintWithObjectOperand(value.asBoolean(), constraintClass);
+            } else {
+                return deserializeConstraintWithObjectOperand(value.asText(), constraintClass);
+            }
+        }
+
+        private PropertyConstraint deserializeConstraintWithObjectOperand(Object value, Class<? extends PropertyConstraint> constraintClass) {
+            log.debug("Before adding value to {} object. value = {}", constraintClass, value);
             try {
-                return constraintClass.getConstructor(Object.class).newInstance(asString);
+                return constraintClass.getConstructor(Object.class).newInstance(value);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                      | SecurityException exception) {
                 log.error("Error deserializing constraint", exception);

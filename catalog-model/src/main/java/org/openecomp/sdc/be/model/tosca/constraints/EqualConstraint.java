@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.tosca.constraints;
 
 import javax.validation.constraints.NotNull;
@@ -51,6 +52,9 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         if (propertyType.isValidValue(String.valueOf(equal))) {
             typed = propertyType.convert(String.valueOf(equal));
+            if (propertyType.equals(ToscaType.BOOLEAN)) {
+                return;
+            }
             initialize(String.valueOf(equal), propertyType);
         } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
@@ -93,6 +97,17 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
     @Override
     public String toString() {
         return String.valueOf(equal);
+    }
+
+    @Override
+    public void validate(Object propertyValue) throws ConstraintViolationException {
+        if (propertyValue == null) {
+            throw new ConstraintViolationException("Value to check is null");
+        }
+        if (!(propertyValue instanceof Boolean)) {
+            super.validate(propertyValue);
+        }
+        doValidate(propertyValue);
     }
 
     public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {

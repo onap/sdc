@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.attribute.GetOutputUtils.isGetOutputValueForOutput;
@@ -167,7 +168,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private static final String CREATE_OR_UPDATE_PROPERTY_VALUE = "CreateOrUpdatePropertyValue";
     private static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
     private static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
-    private static final String CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE = "Cannot attach resource instances to container resource of type {}";
+    private static final String CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE =
+        "Cannot attach resource instances to container resource of type {}";
     private static final String FAILED_TO_UPDATE_COMPONENT_INSTANCE_CAPABILITY = "Failed to update component instance capability on instance {} in "
         + "container {}";
     private static final String SERVICE_PROXY = "serviceProxy";
@@ -185,12 +187,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private final ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
     private final ForwardingPathOperation forwardingPathOperation;
     private final NodeFilterOperation nodeFilterOperation;
+    private final ToscaFunctionValidator toscaFunctionValidator;
+    private final PropertyBusinessLogic propertyBusinessLogic;
     @Autowired
     private CompositionBusinessLogic compositionBusinessLogic;
     @Autowired
     private ContainerInstanceTypesData containerInstanceTypesData;
-    private final ToscaFunctionValidator toscaFunctionValidator;
-    private final PropertyBusinessLogic propertyBusinessLogic;
 
     @Autowired
     public ComponentInstanceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
@@ -930,7 +932,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                     if (CollectionUtils.isNotEmpty(filteredGroups)) {
                         filteredGroups.stream()
-                            .filter(g -> g.getArtifacts() != null && g.getArtifacts().stream().anyMatch(p -> p.equals(artifactDefinition.getGeneratedFromId()))).findFirst()
+                            .filter(g -> g.getArtifacts() != null &&
+                                g.getArtifacts().stream().anyMatch(p -> p.equals(artifactDefinition.getGeneratedFromId()))).findFirst()
                             .ifPresent(g -> fillInstanceArtifactMap(groupInstancesArtifacts, artifactDefinition, g));
                     }
                 }
@@ -1960,7 +1963,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
 
         // Validate instance property against it's constrains
-        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(properties,componentId);
+        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(properties, componentId);
         if (constraintValidatorResponse.isRight()) {
             log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
             return Either.right(constraintValidatorResponse.right().value());
@@ -1976,7 +1979,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             for (ComponentInstanceProperty property : properties) {
                 validateMandatoryFields(property);
                 validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
-                // validatePropertyConstraintsNotChanged(properties, foundResourceInstance);
+                validatePropertyConstraintsNotChanged(properties, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isToscaFunction()) {
                     toscaFunctionValidator.validate(property, containerComponent);
@@ -2060,9 +2063,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             jsonArray.put(Integer.parseInt(path.get(0)), valueAsObject);
         } else {
             if (objectForPath instanceof JSONObject) {
-                addE((JSONObject)objectForPath, path.subList(1, path.size()), value);
+                addE((JSONObject) objectForPath, path.subList(1, path.size()), value);
             } else {
-                addE((JSONArray)objectForPath, path.subList(1, path.size()), value);
+                addE((JSONArray) objectForPath, path.subList(1, path.size()), value);
             }
         }
     }
@@ -2071,7 +2074,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         Object objectForPath = null;
         if (jsonObject.has(path.get(0))) {
-            objectForPath =  jsonObject.get(path.get(0));
+            objectForPath = jsonObject.get(path.get(0));
         } else {
             if (StringUtils.isNumeric(path.get(0))) {
                 objectForPath = new JSONArray();
@@ -2086,9 +2089,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             jsonObject.put(path.get(0), valueAsObject);
         } else {
             if (objectForPath instanceof JSONObject) {
-                addE((JSONObject)objectForPath, path.subList(1, path.size()), value);
+                addE((JSONObject) objectForPath, path.subList(1, path.size()), value);
             } else {
-                addE((JSONArray)objectForPath, path.subList(1, path.size()), value);
+                addE((JSONArray) objectForPath, path.subList(1, path.size()), value);
             }
         }
     }
@@ -2157,7 +2160,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             propertyDefinition.setUniqueId(componentInstanceAttribute.getUniqueId());
             attributesToValidate.add(propertyDefinition);
         });
-        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(attributesToValidate,componentId);
+        Either<Boolean, ResponseFormat> constraintValidatorResponse = validatePropertyValueConstraint(attributesToValidate, componentId);
         if (constraintValidatorResponse.isRight()) {
             log.error("Failed validation value and constraint of attribute: {}", constraintValidatorResponse.right().value());
             return Either.right(constraintValidatorResponse.right().value());
@@ -2219,7 +2222,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private void validatePropertyExistsOnComponent(ComponentInstanceProperty property, Component containerComponent,
-                                                                        ComponentInstance foundResourceInstance) {
+                                                   ComponentInstance foundResourceInstance) {
         List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties()
             .get(foundResourceInstance.getUniqueId());
         final boolean hasProperty = instanceProperties.stream().anyMatch(p -> p.getName().equals(property.getName()));
@@ -3142,22 +3145,23 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private void maintainNodeFilters(
-            ComponentInstance currentResourceInstance,
-            ComponentInstance newComponentInstance,
-            String containerComponentId) {
+        ComponentInstance currentResourceInstance,
+        ComponentInstance newComponentInstance,
+        String containerComponentId) {
         CINodeFilterDataDefinition filterToMaintain = currentResourceInstance.getNodeFilter();
         if (null != filterToMaintain) {
             nodeFilterOperation.addNodeFilterData(
-                    containerComponentId.toLowerCase(),
-                    newComponentInstance.getUniqueId(),
-                    filterToMaintain);
+                containerComponentId.toLowerCase(),
+                newComponentInstance.getUniqueId(),
+                filterToMaintain);
         }
     }
 
     private void checkForExternalReqAndCapabilities(Component component, ComponentInstance resResourceInfo) {
         if (MapUtils.isNotEmpty(component.getRequirements())) {
             component.getRequirements().entrySet().forEach(requirementsMap -> {
-                if (MapUtils.isNotEmpty(resResourceInfo.getRequirements()) && resResourceInfo.getRequirements().containsKey(requirementsMap.getKey())) {
+                if (MapUtils.isNotEmpty(resResourceInfo.getRequirements()) &&
+                    resResourceInfo.getRequirements().containsKey(requirementsMap.getKey())) {
                     List<RequirementDefinition> resourceReqList = resResourceInfo.getRequirements().get(requirementsMap.getKey());
                     for (RequirementDefinition requirements : requirementsMap.getValue()) {
                         String requirementName = requirements.getName();
@@ -3998,7 +4002,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private void validatePropertyConstraintsNotChanged(List<ComponentInstanceProperty> newProperties, ComponentInstance originalResourceInstance) {
         for (ComponentInstanceProperty newProperty : newProperties) {
             Optional<PropertyDefinition> originalProperty = originalResourceInstance.getProperties().stream()
-                    .filter(prop -> prop.getUniqueId().equals(newProperty.getUniqueId())).findAny();
+                .filter(prop -> prop.getUniqueId().equals(newProperty.getUniqueId())).findAny();
             if (originalProperty.isPresent()) {
                 List<PropertyConstraint> originalConstraints = originalProperty.get().getConstraints();
                 List<PropertyConstraint> newConstraints = newProperty.getConstraints();
