@@ -39,6 +39,7 @@ import {ModalService} from "../../services/modal.service";
 import {AddPropertyComponent} from './type-workspace-properties/add-property/add-property.component';
 import {InterfaceOperationHandlerModule} from "../composition/interface-operatons/operation-creator/interface-operation-handler.module";
 import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete.module";
+import {ConstraintsModule} from "../properties-assignment/constraints/constraints.module";
 
 @NgModule({
    imports: [
@@ -52,7 +53,8 @@ import {AutoCompleteModule} from "onap-ui-angular/dist/autocomplete/autocomplete
         InterfaceOperationHandlerModule,
         NgxDatatableModule,
         SvgIconModule,
-        AutoCompleteModule
+        AutoCompleteModule,
+       ConstraintsModule
     ],
     declarations: [
         TypeWorkspaceComponent,
