@@ -71,6 +71,7 @@ export class PropertyBEModel {
     inputPath: string;
     toscaPresentation: ToscaPresentationData;
     metadata: Metadata;
+    propertyConstraints: any;
     /**
      * @deprecated Use toscaFunction instead
      */
@@ -81,6 +82,7 @@ export class PropertyBEModel {
     constructor(property?: PropertyBEModel) {
         if (property) {
             this.constraints = property.constraints;
+            this.propertyConstraints = property.propertyConstraints;
             this.defaultValue = property.defaultValue;
             this.description = property.description;
             this.fromDerived = property.fromDerived;
