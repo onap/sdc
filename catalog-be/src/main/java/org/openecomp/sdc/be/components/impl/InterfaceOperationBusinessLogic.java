@@ -130,8 +130,9 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 if (validateDeleteOperationContainsNoMappedOutputResponse.isRight()) {
                     return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
                 }
-                String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
-                if (artifactUniqueId != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)) {
+                final ArtifactDataDefinition implementation = storedOperation.getImplementation();
+                if (implementation != null && implementation.getUniqueId() != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, implementation.getUniqueId())) {
+                    final String artifactUniqueId = implementation.getUniqueId();
                     Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
                         .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
                     if (getArtifactEither.isLeft()) {
@@ -142,7 +143,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                             janusGraphDao.rollback();
                             ResponseFormat responseFormatByArtifactId = componentsUtils
                                 .getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
-                                    storedOperation.getImplementation().getArtifactDisplayName());
+                                        implementation.getArtifactDisplayName());
                             return Either.right(responseFormatByArtifactId);
                         }
                         CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
@@ -150,7 +151,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                             janusGraphDao.rollback();
                             ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
                                 componentsUtils.convertFromStorageResponse(componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
-                                storedOperation.getImplementation().getArtifactDisplayName());
+                                implementation.getArtifactDisplayName());
                             return Either.right(responseFormatByArtifactId);
                         }
                     }
