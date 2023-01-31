@@ -277,6 +277,7 @@ public class DataTypeOperation extends AbstractOperation {
         final PropertyData propertyData = resultEither.left().value();
         final PropertyDataDefinition propertyDataDefinition = propertyData.getPropertyDataDefinition();
         propertyDataDefinition.setName(propertyName);
+        propertyDataDefinition.setPropertyConstraints(propertyData.getConstraints());
         return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
 

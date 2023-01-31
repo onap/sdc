@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.model.dto;
 
 import java.util.List;
 import lombok.Data;
-import org.openecomp.sdc.be.model.PropertyConstraint;
 
 @Data
 public class PropertyDefinitionDto {
@@ -36,6 +35,6 @@ public class PropertyDefinitionDto {
     private Boolean required;
     private Object value;
     private Object defaultValue;
-    private List<PropertyConstraint> constraints;
+    private List<Object> constraints;
 
 }

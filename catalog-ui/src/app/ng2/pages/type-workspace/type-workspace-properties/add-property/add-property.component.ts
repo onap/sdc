@@ -55,6 +55,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
     hasDefaultValueForm: FormControl = new FormControl(false, Validators.required);
     defaultValueForm: FormControl = new FormControl(undefined);
+    constraintsForm: FormControl = new FormControl(undefined, Validators.required);
     formGroup: FormGroup = new FormGroup({
         'name': this.nameForm,
         'description': this.descriptionForm,
@@ -63,6 +64,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         'schema': this.schemaForm,
         'defaultValue': this.defaultValueForm,
         'hasDefaultValue': this.hasDefaultValueForm,
+        'constraints': this.constraintsForm,
     });
 
     isLoading: boolean = false;
@@ -116,6 +118,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         this.showSchema = this.typeNeedsSchema();
         this.requiredForm.setValue(this.property.required);
         this.schemaForm.setValue(this.property.schemaType);
+        this.constraintsForm.setValue(this.property.constraints);
         this.initDefaultValueForm();
     }
 
@@ -165,6 +168,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         const property = new PropertyBEModel();
         property.name = this.nameForm.value;
         property.type = this.typeForm.value;
+        property.constraints = this.constraintsForm.value;
         if (this.schemaForm.value) {
             property.schemaType = this.schemaForm.value;
         }
@@ -225,6 +229,17 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         return new SchemaPropertyGroupModel(schemaProperty);
     }
 
+    onConstraintChange = (constraints: any): void => {
+        if (this.property) {
+            if (!this.property.constraints) {
+                this.property.constraints = [];
+            }
+            this.property.constraints = constraints.constraints;
+        }
+        else {
+            this.constraintsForm.setValue(constraints.constraints);
+        }
+    }
 }
 
 export class PropertyValidationEvent {
