@@ -7,6 +7,7 @@ exports[`InfoTabComponent can load instance 1`] = `
   compositionService={[Function Object]}
   eventListenerService={[Function Object]}
   flatLeftPaletteElementsFromService={[Function Function]}
+  getCategoryDisplayNameOrName={[Function Function]}
   getPathNamesVersionChangeModal={[Function Function]}
   initEditResourceVersion={[Function Function]}
   modalService={[Function Object]}
