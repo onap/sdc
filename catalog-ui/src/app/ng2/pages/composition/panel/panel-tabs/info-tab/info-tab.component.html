@@ -46,7 +46,7 @@
         <ng-container *ngIf="component.categories && component.categories[0]">
             <div class="component-details-panel-item">
                 <span class="name" [innerHTML]="'GENERAL_LABEL_CATEGORY' | translate"></span>
-                <span class="value" data-tests-id="rightTab_category" tooltip="{{component.categories[0].name}}">{{component.categories[0].name}}</span>
+                <span class="value" data-tests-id="rightTab_category" tooltip="{{getCategoryDisplayNameOrName(component.categories[0])}}">{{getCategoryDisplayNameOrName(component.categories[0])}}</span>
             </div>
 
             <!-- SUB CATEGORY -->
