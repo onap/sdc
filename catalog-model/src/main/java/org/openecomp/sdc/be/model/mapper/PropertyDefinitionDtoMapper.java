@@ -21,9 +21,14 @@
 
 package org.openecomp.sdc.be.model.mapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,6 +38,7 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyDefinitionDtoMapper {
@@ -52,8 +58,24 @@ public class PropertyDefinitionDtoMapper {
         }
         if (CollectionUtils.isNotEmpty(propertyDefinitionDto.getConstraints())) {
             final List<PropertyConstraint> propertyConstraints = new ArrayList<>();
+
+            propertyDefinitionDto.getConstraints().forEach(rawConstraint -> {
+                ObjectMapper mapper = new ObjectMapper();
+
+                SimpleModule module = new SimpleModule("customDeserializationModule");
+                module.addDeserializer(PropertyConstraint.class,
+                    new PropertyOperation.PropertyConstraintJacksonDeserializer());
+                mapper.registerModule(module);
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                try {
+                    PropertyConstraint constraint =
+                        mapper.readValue(new Gson().toJson(rawConstraint, Map.class), PropertyConstraint.class);
+                    propertyConstraints.add(constraint);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            });
             propertyDefinition.setConstraints(propertyConstraints);
-            propertyConstraints.addAll(propertyDefinitionDto.getConstraints());
         }
         propertyDefinition.setDescription(propertyDefinitionDto.getDescription());
         propertyDefinition.setValue(new Gson().toJson(propertyDefinitionDto.getValue()));
@@ -71,7 +93,7 @@ public class PropertyDefinitionDtoMapper {
         propertyDefinitionDto.setRequired(propertyDefinition.getRequired());
         propertyDefinitionDto.setSchemaType(propertyDefinition.getSchemaType());
         if (CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
-            final List<PropertyConstraint> propertyConstraints = new ArrayList<>();
+            final List<Object> propertyConstraints = new ArrayList<>();
             propertyDefinitionDto.setConstraints(propertyConstraints);
             propertyConstraints.addAll(propertyDefinition.getConstraints());
         }

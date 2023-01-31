@@ -200,6 +200,32 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         this.filteredProperties = Array.from(this.properties);
         this.sort();
     }
+
+    onConstraintChange = (constraints: any): void => {
+        if (!this.$scope.invalidMandatoryFields) {
+            this.$scope.footerButtons[0].disabled = !constraints.valid;
+        } else {
+            this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
+        }
+        if (!constraints.constraints || constraints.constraints.length == 0) {
+            this.$scope.editPropertyModel.property.propertyConstraints = null;
+            this.$scope.editPropertyModel.property.constraints = null;
+            return;
+        }
+        this.$scope.editPropertyModel.property.propertyConstraints = this.serializePropertyConstraints(constraints.constraints);
+        this.$scope.editPropertyModel.property.constraints = constraints.constraints;
+    }
+
+    private serializePropertyConstraints(constraints: any[]): string[] {
+        if (constraints) {
+            let stringConstraints = new Array();
+            constraints.forEach((constraint) => {
+                stringConstraints.push(JSON.stringify(constraint));
+            })
+            return stringConstraints;
+        }
+        return null;
+    }
 }
 
 interface TableHeader {
