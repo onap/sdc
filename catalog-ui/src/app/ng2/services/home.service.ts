@@ -36,7 +36,7 @@ export class HomeService {
     private api: IApi;
     private smallObjectAttributes = [
         'uniqueId', 'name', 'componentType', 'resourceType', 'lastUpdateDate', 'lifecycleState', 'distributionStatus',
-        'icon', 'version'
+        'icon', 'version', 'model'
     ];
 
     constructor(private http: HttpClient,
