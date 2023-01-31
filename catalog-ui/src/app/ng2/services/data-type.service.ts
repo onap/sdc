@@ -88,7 +88,7 @@ export class DataTypeService {
     }
 
     public createProperty(id: string, property: PropertyBEModel): Observable<PropertyBEModel> {
-        const url = `${this.dataTypeUrl}/${id}/properties`
+        const url = `${this.dataTypeUrl}/${id}/properties`;
         return this.httpClient.post<PropertyBEModel>(url, property);
     }
 
