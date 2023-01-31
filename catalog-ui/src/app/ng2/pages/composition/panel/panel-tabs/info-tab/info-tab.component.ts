@@ -5,7 +5,7 @@ import {
     Component as TopologyTemplate,
     ComponentInstance,
     LeftPaletteComponent,
-    FullComponentInstance
+    FullComponentInstance, IMainCategory
 } from "app/models";
 import {Store} from "@ngxs/store";
 import { EVENTS, GRAPH_EVENTS } from 'app/utils';
@@ -22,7 +22,6 @@ import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 import Dictionary = _.Dictionary;
 import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
-
 
 @Component({
     selector: 'panel-info-tab',
@@ -81,11 +80,14 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         return this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
     }
 
+    private getCategoryDisplayNameOrName = (mainCategory: IMainCategory): string => {
+        return mainCategory.displayName ? mainCategory.displayName : mainCategory.name;
+    }
+
     private versioning: Function = (versionNumber: string): string => {
         let version: Array<string> = versionNumber && versionNumber.split('.');
         return '00000000'.slice(version[0].length) + version[0] + '.' + '00000000'.slice(version[1].length) + version[1];
     };
-
 
     private onChangeVersion = (versionDropdown) => {
         let newVersionValue = versionDropdown.value;
@@ -106,10 +108,10 @@ export class InfoTabComponent implements OnInit, OnDestroy {
             let onUpdate = () => {
                 //this function will update the instance version than the function call getComponent to update the current component and return the new instance version
                 this.componentInstanceService.changeResourceInstanceVersion(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.component.uniqueId, newVersionValue)
-                    .subscribe((component) => {
-                        this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
-                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_VERSION_CHANGED, component);
-                    }, onCancel);
+                .subscribe((component) => {
+                    this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+                    this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_VERSION_CHANGED, component);
+                }, onCancel);
             };
 
             if (this.component.isService() || this.component.isServiceProxy() || this.component.isServiceSubstitution()) {
@@ -139,7 +141,6 @@ export class InfoTabComponent implements OnInit, OnDestroy {
             }
         }
     };
-
 
     private getPathNamesVersionChangeModal = (pathsToDelete:string[]):string => {
         const relatedPaths = _.filter(this.compositionService.forwardingPaths, path =>
@@ -191,4 +192,3 @@ export class InfoTabComponent implements OnInit, OnDestroy {
     }
 
 };
-
