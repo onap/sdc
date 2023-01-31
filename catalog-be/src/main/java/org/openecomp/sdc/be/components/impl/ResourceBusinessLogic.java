@@ -3643,9 +3643,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (MapUtils.isEmpty(newResource.getToscaArtifacts())) {
                 setToscaArtifactsPlaceHolders(newResource, user);
             }
-            if (MapUtils.isEmpty(newResource.getInterfaces())) {
-                newResource.setInterfaces(oldResource.getInterfaces());
-            }
+
             if (CollectionUtils.isEmpty(newResource.getAttributes())) {
                 newResource.setAttributes(oldResource.getAttributes());
             }
