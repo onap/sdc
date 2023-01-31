@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3dc5d6ef_87a68d52",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-31T18:31:19Z",
+      "side": 1,
+      "message": "adjust to\nhttps://gerrit.onap.org/r/c/sdc/+/133097/1/catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+      "range": {
+        "startLine": 161,
+        "startChar": 8,
+        "endLine": 163,
+        "endChar": 9
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa9cec17_73f0679f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/PropertyDefinitionDto.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-31T18:31:19Z",
+      "side": 1,
+      "message": "what is the reason for this change?",
+      "range": {
+        "startLine": 38,
+        "startChar": 17,
+        "endLine": 38,
+        "endChar": 23
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e660c01_e5e47ab0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-31T18:31:19Z",
+      "side": 1,
+      "message": "seems like your IDE is missing configuration of \u0027Hard wrap at: 150\u0027",
+      "range": {
+        "startLine": 66,
+        "startChar": 16,
+        "endLine": 67,
+        "endChar": 83
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8839cc2_f5a57f58",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-31T18:31:19Z",
+      "side": 1,
+      "message": "avoid printing stack trace only,\nlog exception properly",
+      "range": {
+        "startLine": 75,
+        "startChar": 20,
+        "endLine": 75,
+        "endChar": 40
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bae47bd9_c049b7a1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-01-31T18:31:19Z",
+      "side": 1,
+      "message": "inline\n\npropertyDefinitionDto.setConstraints(new ArrayList\u003c\u003e(propertyDefinition.getConstraints()));\n\nto reduce number of uncovered lines, or create Unit Test to cover",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 98,
+        "endChar": 76
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
