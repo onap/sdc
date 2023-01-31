@@ -5,19 +5,23 @@ import {
     Component as TopologyTemplate,
     ComponentInstance,
     LeftPaletteComponent,
-    FullComponentInstance
+    FullComponentInstance, IMainCategory
 } from "app/models";
 import {Store} from "@ngxs/store";
-import { EVENTS, GRAPH_EVENTS } from 'app/utils';
+import {EVENTS, GRAPH_EVENTS} from 'app/utils';
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
-import { CompositionPaletteService } from "app/ng2/pages/composition/palette/services/palette.service";
-import { SdcUiCommon, SdcUiComponents, SdcUiServices } from "onap-ui-angular";
+import {
+    CompositionPaletteService
+} from "app/ng2/pages/composition/palette/services/palette.service";
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular";
 import { SdcMenuToken, IAppMenu } from "app/ng2/config/sdc-menu.config";
-import { CompositionService } from "app/ng2/pages/composition/composition.service";
-import { ServiceServiceNg2 } from "app/services-ng2";
-import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
-import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
-import { EventListenerService } from "app/services";
+import {CompositionService} from "app/ng2/pages/composition/composition.service";
+import {ServiceServiceNg2} from "app/services-ng2";
+import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
+import {
+    ComponentInstanceServiceNg2
+} from "app/ng2/services/component-instance-services/component-instance.service";
+import {EventListenerService} from "app/services";
 import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 import Dictionary = _.Dictionary;
@@ -49,7 +53,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                 private serviceService: ServiceServiceNg2,
                 private eventListenerService: EventListenerService,
                 private topologyTemplateService: TopologyTemplateService,
-                @Inject(SdcMenuToken) public sdcMenu:IAppMenu) {
+                @Inject(SdcMenuToken) public sdcMenu: IAppMenu) {
     }
 
     ngOnInit() {
@@ -77,8 +81,12 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         return retValArr;
     }
 
-    private isComponentInstanceSelected () {
+    private isComponentInstanceSelected() {
         return this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
+    }
+
+    private getCategoryDisplayNameOrName = (mainCategory: IMainCategory): string => {
+        return mainCategory.displayName ? mainCategory.displayName : mainCategory.name;
     }
 
     private versioning: Function = (versionNumber: string): string => {
@@ -94,9 +102,9 @@ export class InfoTabComponent implements OnInit, OnDestroy {
         this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
         // let service = <Service>this.$scope.currentComponent;
-        if(this.component instanceof FullComponentInstance) {
+        if (this.component instanceof FullComponentInstance) {
 
-            let onCancel = (error:any) => {
+            let onCancel = (error: any) => {
                 this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
                 if (error) {
                     console.log(error);
@@ -106,28 +114,40 @@ export class InfoTabComponent implements OnInit, OnDestroy {
             let onUpdate = () => {
                 //this function will update the instance version than the function call getComponent to update the current component and return the new instance version
                 this.componentInstanceService.changeResourceInstanceVersion(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.component.uniqueId, newVersionValue)
-                    .subscribe((component) => {
-                        this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
-                        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_VERSION_CHANGED, component);
-                    }, onCancel);
+                .subscribe((component) => {
+                    this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+                    this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_VERSION_CHANGED, component);
+                }, onCancel);
             };
 
             if (this.component.isService() || this.component.isServiceProxy() || this.component.isServiceSubstitution()) {
                 this.serviceService.checkComponentInstanceVersionChange(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId,
-                    this.component.uniqueId, newVersionValue).subscribe((pathsToDelete:string[]) => {
+                    this.component.uniqueId, newVersionValue).subscribe((pathsToDelete: string[]) => {
                     if (pathsToDelete && pathsToDelete.length) {
                         this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
 
 
                         const {title, message} = this.sdcMenu.alertMessages['upgradeInstance'];
-                        let pathNames:string = this.getPathNamesVersionChangeModal(pathsToDelete);
+                        let pathNames: string = this.getPathNamesVersionChangeModal(pathsToDelete);
                         let onOk: Function = () => {
                             this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
 
                             onUpdate();
                         };
-                        const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
-                        const cancelButton = {testId: "Cancel", text: "Cancel", type: SdcUiCommon.ButtonType.secondary, callback: <Function>onCancel, closeModal: true} as SdcUiComponents.ModalButtonComponent;
+                        const okButton = {
+                            testId: "OK",
+                            text: "OK",
+                            type: SdcUiCommon.ButtonType.info,
+                            callback: onOk,
+                            closeModal: true
+                        } as SdcUiComponents.ModalButtonComponent;
+                        const cancelButton = {
+                            testId: "Cancel",
+                            text: "Cancel",
+                            type: SdcUiCommon.ButtonType.secondary,
+                            callback: <Function>onCancel,
+                            closeModal: true
+                        } as SdcUiComponents.ModalButtonComponent;
                         const modal = this.modalService.openInfoModal(title, message.format([pathNames]), 'confirm-modal', [okButton, cancelButton]);
                         modal.getCloseButton().onClick(onCancel);
                     } else {
@@ -141,7 +161,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
     };
 
 
-    private getPathNamesVersionChangeModal = (pathsToDelete:string[]):string => {
+    private getPathNamesVersionChangeModal = (pathsToDelete: string[]): string => {
         const relatedPaths = _.filter(this.compositionService.forwardingPaths, path =>
             _.find(pathsToDelete, id =>
                 path.uniqueId === id
