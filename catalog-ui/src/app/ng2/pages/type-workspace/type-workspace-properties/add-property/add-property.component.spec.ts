@@ -25,7 +25,7 @@ import {AddPropertyComponent} from './add-property.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "../../../../shared/translator/translate.module";
 import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {Component, Input} from "@angular/core";
+import {Component, Input, NO_ERRORS_SCHEMA} from "@angular/core";
 import {DataTypeModel} from "../../../../../models/data-types";
 import {SchemaPropertyGroupModel} from "../../../../../models/schema-property";
 import {DataTypeService} from "../../../../services/data-type.service";
@@ -68,6 +68,7 @@ describe('AddPropertyComponent', () => {
                 TranslateModule,
                 UiElementsModule
             ],
+            schemas: [NO_ERRORS_SCHEMA],
             providers: [
                 {provide: DataTypeService, useValue: dataTypeServiceMock},
                 {provide: TranslateService, useValue: translateServiceMock}

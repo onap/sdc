@@ -42,6 +42,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
     @Output() onValidityChange: EventEmitter<PropertyValidationEvent> = new EventEmitter<PropertyValidationEvent>();
 
+    private validConstraints: boolean = true;
     private valueChangesSub: Subscription;
     private descriptionForm: FormControl = new FormControl(undefined);
     private requiredForm: FormControl = new FormControl(false, Validators.required);
@@ -53,8 +54,10 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         }
         return null;
     });
+
     hasDefaultValueForm: FormControl = new FormControl(false, Validators.required);
     defaultValueForm: FormControl = new FormControl(undefined);
+    constraintsForm: FormControl = new FormControl(undefined);
     formGroup: FormGroup = new FormGroup({
         'name': this.nameForm,
         'description': this.descriptionForm,
@@ -63,6 +66,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         'schema': this.schemaForm,
         'defaultValue': this.defaultValueForm,
         'hasDefaultValue': this.hasDefaultValueForm,
+        'constraints': this.constraintsForm,
     });
 
     isLoading: boolean = false;
@@ -99,6 +103,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         this.showSchema = this.typeNeedsSchema();
         this.updateDataType();
         this.resetDefaultValue();
+        if (this.property) {
+            this.property.constraints = [];
+        }
     }
 
     private updateDataType(): void {
@@ -116,6 +123,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         this.showSchema = this.typeNeedsSchema();
         this.requiredForm.setValue(this.property.required);
         this.schemaForm.setValue(this.property.schemaType);
+        this.constraintsForm.setValue(this.property.constraints);
         this.initDefaultValueForm();
     }
 
@@ -156,7 +164,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     private emitValidityChange(): void {
         const isValid: boolean = this.formGroup.valid;
         this.onValidityChange.emit({
-            isValid: isValid,
+            isValid: isValid && this.validConstraints,
             property: isValid ? this.buildPropertyFromForm() : undefined
         });
     }
@@ -165,6 +173,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         const property = new PropertyBEModel();
         property.name = this.nameForm.value;
         property.type = this.typeForm.value;
+        property.constraints = this.constraintsForm.value;
         if (this.schemaForm.value) {
             property.schemaType = this.schemaForm.value;
         }
@@ -225,6 +234,22 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         return new SchemaPropertyGroupModel(schemaProperty);
     }
 
+    onConstraintChange = (constraints: any): void => {
+        if (this.property) {
+            if (!this.property.constraints) {
+                this.property.constraints = [];
+            }
+            this.property.constraints = constraints.constraints;
+        }
+        else {
+            this.constraintsForm.setValue(constraints.constraints);
+        }
+        this.validConstraints = constraints.valid;
+        this.onValidityChange.emit({
+            isValid: constraints.valid,
+            property: constraints.valid ? this.buildPropertyFromForm() : undefined
+        });
+    }
 }
 
 export class PropertyValidationEvent {

@@ -62,6 +62,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
+import org.apache.commons.lang3.StringUtils;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/data-types")
@@ -158,6 +159,9 @@ public class DataTypeServlet extends BeGenericServlet {
             }
             throw new OperationException(ActionStatus.INVALID_MODEL,
                 String.format("Property model is not the same as the data type model. Must be '%s'", model));
+        }
+        if (StringUtils.isEmpty(dataType.getModel())) {
+            dataType.setModel("SDC AID");
         }
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
         dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
