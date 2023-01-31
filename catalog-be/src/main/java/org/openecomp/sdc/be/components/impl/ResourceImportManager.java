@@ -27,6 +27,7 @@ import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementO
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -453,9 +454,10 @@ public class ResourceImportManager {
     private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource) {
         final Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
             .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
+        final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
+        final Map<String, Object> map;
         if (toscaInterfaces.isLeft()) {
-            final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            final Map<String, Object> map = toscaInterfaces.left().value();
+            map = toscaInterfaces.left().value();
             for (final Entry<String, Object> interfaceNameValue : map.entrySet()) {
                 final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
                     resource.getModel());
@@ -466,20 +468,22 @@ public class ResourceImportManager {
                     moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
                 }
             }
-            if (existingResource.isLeft()) {
-                final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
-                    existingResource.left().value().getInterfaces().entrySet().stream()
-                        .filter(i -> i.getValue().isUserCreated())
-                        .filter(i -> !map.containsKey(i.getValue().getType()))
-                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
-                    moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
-                }
+        } else {
+            map = Collections.emptyMap();
+        }
+        if (existingResource.isLeft()) {
+            final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
+                existingResource.left().value().getInterfaces().entrySet().stream()
+                    .filter(i -> i.getValue().isUserCreated())
+                    .filter(i -> !map.containsKey(i.getValue().getType()))
+                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
             }
+        }
 
-            if (MapUtils.isNotEmpty(moduleInterfaces)) {
-                resource.setInterfaces(moduleInterfaces);
-            }
+        if (MapUtils.isNotEmpty(moduleInterfaces)) {
+            resource.setInterfaces(moduleInterfaces);
         }
     }
 
