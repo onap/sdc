@@ -1534,7 +1534,7 @@ public class ToscaOperationFacade {
         if (StorageOperationStatus.OK == status) {
             log.debug(COMPONENT_CREATED_SUCCESSFULLY);
             List<InputDefinition> inputsResList = null;
-            if (inputsAsDataDef != null && !inputsAsDataDef.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(inputsAsDataDef)) {
                 inputsResList = inputsAsDataDef.stream().map(InputDefinition::new).collect(Collectors.toList());
             }
             return Either.left(inputsResList);

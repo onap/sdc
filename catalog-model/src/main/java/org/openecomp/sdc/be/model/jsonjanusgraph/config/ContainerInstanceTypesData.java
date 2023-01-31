@@ -27,6 +27,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -74,12 +75,12 @@ public class ContainerInstanceTypesData {
     /**
      * Gets the list of allowed component instances for a service of the given model.
      *
-     * @param model the model
+     * @param modelName the model
      * @return the list of allowed component instances
      */
     public List<String> getServiceAllowedList(final String modelName) {
         List<String> allowedInstanceResourceType = getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
-        if (modelName == null || modelName.isEmpty() || modelName.equals("SDC AID")){
+        if (modelName == null || modelName.isEmpty() || modelName.equals(Constants.DEFAULT_MODEL_NAME)){
             allowedInstanceResourceType.remove("VFC");
         }
         return allowedInstanceResourceType;
