@@ -291,48 +291,47 @@ public class ServiceImportBusinessLogic {
     protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {
         log.trace("************* created successfully from YAML, resource TOSCA ");
         try {
-            ServiceCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
-
-            final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(service.getModel(), csarInfo);
+            final ServiceCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
+            final String serviceModel = service.getModel();
+            final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
-                dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
+                dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), serviceModel, true);
                 dataTypesToCreate.keySet().forEach(key ->
-                    applicationDataTypeCache.reload(service.getModel(), UniqueIdBuilder.buildDataTypeUid(service.getModel(), key))
+                    applicationDataTypeCache.reload(serviceModel, UniqueIdBuilder.buildDataTypeUid(serviceModel, key))
                 );
             }
 
-            final Map<String, Object> artifactTypesToCreate = getArtifactTypesToCreate(service.getModel(), csarInfo);
+            final Map<String, Object> artifactTypesToCreate = getArtifactTypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(artifactTypesToCreate)) {
-                artifactTypeImportManager.createArtifactTypes(new Yaml().dump(artifactTypesToCreate), service.getModel(), true);
+                artifactTypeImportManager.createArtifactTypes(new Yaml().dump(artifactTypesToCreate), serviceModel, true);
             }
 
-            final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(service.getModel(), csarInfo);
+            final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(serviceModel, csarInfo);
             if (CollectionUtils.isNotEmpty(nodeTypesToCreate)) {
-                createNodeTypes(nodeTypesToCreate, service.getModel(), csarInfo.getModifier());
+                createNodeTypes(nodeTypesToCreate, serviceModel, csarInfo.getModifier());
             }
 
-            final Map<String, Object> groupTypesToCreate = getGroupTypesToCreate(service.getModel(), csarInfo);
+            final Map<String, Object> groupTypesToCreate = getGroupTypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(groupTypesToCreate)) {
                 final Map<String, ToscaTypeMetadata> toscaTypeMetadata = fillToscaTypeMetadata(groupTypesToCreate);
                 final ToscaTypeImportData toscaTypeImportData = new ToscaTypeImportData(new Yaml().dump(groupTypesToCreate), toscaTypeMetadata);
-                groupTypeImportManager.createGroupTypes(toscaTypeImportData, service.getModel(), true);
+                groupTypeImportManager.createGroupTypes(toscaTypeImportData, serviceModel, true);
             }
 
-            final Map<String, Object> interfaceTypesToCreate = getInterfaceTypesToCreate(service.getModel(), csarInfo);
+            final Map<String, Object> interfaceTypesToCreate = getInterfaceTypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(interfaceTypesToCreate)) {
-                interfaceLifecycleTypeImportManager
-                    .createLifecycleTypes(new Yaml().dump(interfaceTypesToCreate), service.getModel(), true);
+                interfaceLifecycleTypeImportManager.createLifecycleTypes(new Yaml().dump(interfaceTypesToCreate), serviceModel, true);
             }
 
-            final Map<String, Object> capabilityTypesToCreate = getCapabilityTypesToCreate(service.getModel(), csarInfo);
+            final Map<String, Object> capabilityTypesToCreate = getCapabilityTypesToCreate(serviceModel, csarInfo);
 
             if (MapUtils.isNotEmpty(capabilityTypesToCreate)) {
-                capabilityTypeImportManager.createCapabilityTypes(new Yaml().dump(capabilityTypesToCreate), service.getModel(), true);
+                capabilityTypeImportManager.createCapabilityTypes(new Yaml().dump(capabilityTypesToCreate), serviceModel, true);
             }
 
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
-            Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
-                .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
+            Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes
+                = serviceImportParseLogic.findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
             if (findNodeTypesArtifactsToHandleRes.isRight()) {
                 log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
                 throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
@@ -761,23 +760,22 @@ public class ServiceImportBusinessLogic {
 
     private Service updateInputs(final Service component, final String userId) {
         final List<InputDefinition> inputs = component.getInputs();
-        final List<ComponentInstance> componentInstances = component.getComponentInstances();
-        final String componentUniqueId = component.getUniqueId();
-        final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
-        for (final InputDefinition input : inputs) {
-            if (isInputFromComponentInstanceProperty(input.getName(), componentInstances, componentInstancesProperties)) {
-                associateInputToComponentInstanceProperty(userId, input, componentInstances, componentInstancesProperties,
-                    componentUniqueId);
-            } else {
-                associateInputToServiceProperty(userId, input, component);
+        if (CollectionUtils.isNotEmpty(inputs)) {
+            final List<ComponentInstance> componentInstances = component.getComponentInstances();
+            final String componentUniqueId = component.getUniqueId();
+            final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
+            for (final InputDefinition input : inputs) {
+                if (isInputFromComponentInstanceProperty(input.getName(), componentInstances, componentInstancesProperties)) {
+                    associateInputToComponentInstanceProperty(userId, input, componentInstances, componentInstancesProperties, componentUniqueId);
+                } else {
+                    associateInputToServiceProperty(userId, input, component);
+                }
             }
 
-        }
-
-        final Either<List<InputDefinition>, StorageOperationStatus> either
-            = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
-        if (either.isRight()) {
-            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+            Either<List<InputDefinition>, StorageOperationStatus> either = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
+            if (either.isRight()) {
+                throw new ComponentException(ActionStatus.GENERAL_ERROR);
+            }
         }
 
         return component;

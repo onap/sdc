@@ -21,6 +21,8 @@
  */
 package org.openecomp.sdc.be.components.csar;
 
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
+
 import fj.data.Either;
 import java.util.Map;
 import java.util.Optional;
@@ -133,13 +135,13 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         if (resource.getModel() == null) {
             if (!vendorSoftwareProduct.getModelList().isEmpty()) {
                 var modelStringList = String.join(", ", vendorSoftwareProduct.getModelList());
-                throw new ByActionStatusComponentException(ActionStatus.VSP_MODEL_NOT_ALLOWED, "SDC AID", modelStringList);
+                throw new ByActionStatusComponentException(ActionStatus.VSP_MODEL_NOT_ALLOWED, DEFAULT_MODEL_NAME, modelStringList);
             }
             return;
         }
         if (!vendorSoftwareProduct.getModelList().contains(resource.getModel())) {
             var modelStringList =
-                vendorSoftwareProduct.getModelList().isEmpty() ? "SDC AID" : String.join(", ", vendorSoftwareProduct.getModelList());
+                vendorSoftwareProduct.getModelList().isEmpty() ? DEFAULT_MODEL_NAME : String.join(", ", vendorSoftwareProduct.getModelList());
             throw new ByActionStatusComponentException(ActionStatus.VSP_MODEL_NOT_ALLOWED, resource.getModel(), modelStringList);
         }
     }

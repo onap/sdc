@@ -707,7 +707,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
                 final Resource genericType = fetchAndSetDerivedFromGenericType(service);
                 generatePropertiesFromGenericType(service, genericType);
-                generateAndAddInputsFromGenericTypeProperties(service, genericType);
+                if (Constants.DEFAULT_MODEL_NAME.equals(service.getModel()) || service.getModel() == null) {
+                    generateAndAddInputsFromGenericTypeProperties(service, genericType);
+                }
             }
             beforeCreate(service);
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);

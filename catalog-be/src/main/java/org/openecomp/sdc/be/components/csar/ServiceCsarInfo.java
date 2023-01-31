@@ -83,14 +83,15 @@ public class ServiceCsarInfo extends CsarInfo {
 
         importFilePaths.stream().filter(path -> !filesHandled.contains(path)).forEach(
             importFilePath -> {
-                byte[] importFile = csar.get(importFilePath.toString());
+                final String importFilePathString = importFilePath.toString();
+                final byte[] importFile = csar.get(importFilePathString);
                 if (importFile != null) {
                     filesHandled.add(importFilePath);
-                    Map<String, Object> mappedImportFile = new Yaml().load(new String(csar.get(importFilePath.toString())));
-                    templateImports.put(importFilePath.toString(), mappedImportFile);
+                    final Map<String, Object> mappedImportFile = new Yaml().load(new String(importFile));
+                    templateImports.put(importFilePathString, mappedImportFile);
                     templateImports.putAll(getTemplateImports(csar, mappedImportFile, importFilePath.getParent(), filesHandled));
                 } else {
-                    log.info("Import {} cannot be found in CSAR", importFilePath.toString());
+                    log.warn("Import {} cannot be found in CSAR", importFilePathString);
                 }
             });
 
