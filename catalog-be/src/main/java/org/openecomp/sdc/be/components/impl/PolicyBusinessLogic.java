@@ -693,6 +693,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             final PropertyDataDefinition currentProperty = oldProperties.get(newProperty.getName());
             currentProperty.setValue(newPropertyValueEither);
             currentProperty.setToscaFunction(newProperty.getToscaFunction());
+            currentProperty.setPropertyConstraints(newProperty.getPropertyConstraints());
             validatePropertyValueWithConstraints(currentProperty, policyOwnerComponent);
         }
         return policy;
