@@ -45,6 +45,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
@@ -152,11 +153,11 @@ public class DataTypeServlet extends BeGenericServlet {
         String model = dataType.getModel();
         Optional<DataTypeDataDefinition> propertyDataType = dataTypeOperation.getDataTypeByNameAndModel(propertyDefinitionDto.getType(), model);
         if (propertyDataType.isEmpty()) {
-            if (model == null || model.isEmpty()) {
-                model = "SDC AID";
+            if (StringUtils.isEmpty(model)) {
+                model = Constants.DEFAULT_MODEL_NAME;
             }
             throw new OperationException(ActionStatus.INVALID_MODEL,
-                String.format("Property model is not the same as the data type model. Must be be '%s'", model));
+                String.format("Property model is not the same as the data type model. Must be '%s'", model));
         }
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
         dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
