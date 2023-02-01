@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca86d4ed_50497e60",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-01T13:32:44Z",
+      "side": 1,
+      "message": "Is ther a way for this to be handled automatically when jetty does the deserialization to PropertyDefinitionDto on the endpoint?",
+      "range": {
+        "startLine": 66,
+        "startChar": 11,
+        "endLine": 80,
+        "endChar": 15
+      },
+      "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "149eb7b7_e0250acc",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-01T13:32:44Z",
+      "side": 1,
+      "message": "should not be shown if there is no constraints, dont think above \u0027if \u0027is correct",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 61
+      },
+      "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ee7c727_4706a4cb",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-01T13:32:44Z",
+      "side": 1,
+      "message": "only seems to be possible to add \u0027equal\u0027 and \u0027valid_value\u0027 constraints. Other constraint types greyed out (though I do have other open reviews in my build, so if you not seeing this let me now)",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 12
+      },
+      "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
