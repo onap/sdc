@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b7ac340_ae2a373d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-01T10:18:39Z",
+      "side": 1,
+      "message": "please use a more meaningful name e.g. importFilePathString",
+      "range": {
+        "startLine": 86,
+        "startChar": 29,
+        "endLine": 86,
+        "endChar": 35
+      },
+      "revId": "f98ae8761ea901708a68b884a987958bfa3c4f88",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
