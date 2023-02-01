@@ -413,8 +413,10 @@ public class PropertyValueConstraintValidationUtil {
             propertyDefinition.setType(inputDefinition.getType());
             propertyDefinition.setValue(inputDefinition.getDefaultValue());
             propertyDefinition.setName(inputDefinition.getName());
+            propertyDefinition.setConstraints(inputDefinition.getConstraints());
         } else if (Objects.nonNull(inputDefinition.getInputPath())) {
             propertyDefinition = evaluateComplexTypeInputs(inputDefinition);
+            propertyDefinition.setConstraints(inputDefinition.getConstraints());
         }
         return propertyDefinition;
     }

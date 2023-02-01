@@ -64,7 +64,7 @@ public class GreaterOrEqualConstraint<T> extends AbstractComparablePropertyConst
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be greater than or equal to %s", String.valueOf(greaterOrEqual));
+        return getErrorMessage(toscaType, e, propertyName, "'%s' value must be greater than or equal to %s", String.valueOf(greaterOrEqual));
     }
 
     @Override

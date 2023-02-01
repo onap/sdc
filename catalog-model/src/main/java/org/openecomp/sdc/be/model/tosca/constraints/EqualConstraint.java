@@ -78,7 +78,7 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s property value must be %s", String.valueOf(equal));
+        return getErrorMessage(toscaType, e, propertyName, "'%s' value must be %s", String.valueOf(equal));
     }
 
     @Override
