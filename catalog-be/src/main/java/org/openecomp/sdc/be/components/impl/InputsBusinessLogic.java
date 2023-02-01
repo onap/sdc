@@ -290,6 +290,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             Either<Boolean, ResponseFormat> constraintValidatorResponse = validateInputValueConstraint(inputs, component.getModel());
             if (constraintValidatorResponse.isRight()) {
                 log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
+                unlockComponent(true, component);
                 return Either.right(constraintValidatorResponse.right().value());
             }
             validateCanWorkOnComponent(component, userId);
@@ -301,8 +302,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 if (currInput == null) {
                     ActionStatus actionStatus = ActionStatus.COMPONENT_NOT_FOUND;
                     log.debug("Failed to found newInput {} under component {}, error: {}", newInput.getUniqueId(), componentId, actionStatus);
-                    result = Either.right(componentsUtils.getResponseFormat(actionStatus));
-                    return result;
+                    unlockComponent(true, component);
+                    return Either.right(componentsUtils.getResponseFormat(actionStatus));
                 }
                 String updateInputObjectValue = updateInputObjectValue(currInput, newInput, dataTypes);
                 currInput.setDefaultValue(updateInputObjectValue);
@@ -317,8 +318,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currInput);
                 if (status.isRight()) {
                     ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status.right().value());
-                    result = Either.right(componentsUtils.getResponseFormat(actionStatus, ""));
-                    return result;
+                    unlockComponent(true, component);
+                    return Either.right(componentsUtils.getResponseFormat(actionStatus, ""));
                 } else {
                     returnInputs.add(status.left().value());
                 }
@@ -341,9 +342,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         List<InputDefinition> inputDefinitions = new ArrayList<>();
         for (InputDefinition inputDefinition : inputs) {
             InputDefinition inputDef = new InputDefinition();
+            inputDef.setName(inputDefinition.getName());
             inputDef.setDefaultValue(inputDefinition.getDefaultValue());
             inputDef.setInputPath(inputDefinition.getSubPropertyInputPath());
             inputDef.setType(inputDefinition.getType());
+            inputDef.setConstraints(inputDefinition.getConstraints());
             if (Objects.nonNull(inputDefinition.getParentPropertyType())) {
                 ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
                 propertyDefinition.setType(inputDefinition.getParentPropertyType());

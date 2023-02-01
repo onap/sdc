@@ -180,7 +180,7 @@ export class InputsTableComponent {
 
     public updateProperty = (inputProperty: InputFEModel): void => {
         let modelProperty : PropertyModel = this.createPropertyModel(inputProperty);
-        if (inputProperty.instanceUniqueId != null && this.componentInstancePropertyMap != null && modelProperty.constraints == null) {
+        if (inputProperty.instanceUniqueId != null && this.componentInstancePropertyMap != null && modelProperty.constraints == null && this.componentInstancePropertyMap[inputProperty.instanceUniqueId]) {
             this.componentInstancePropertyMap[inputProperty.instanceUniqueId].forEach(tempProperty => {
                 modelProperty.constraints = tempProperty.constraints;
             });

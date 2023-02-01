@@ -118,7 +118,7 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
-        return getErrorMessage(toscaType, e, propertyName, "%s valid value must be one of the following: [%s]", String.join(",", String.valueOf(validValues)));
+        return getErrorMessage(toscaType, e, propertyName, "'%s' value must be one of the following: [%s]", String.join(",", String.valueOf(validValues)));
     }
 
     public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
