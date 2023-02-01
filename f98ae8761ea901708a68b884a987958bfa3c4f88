@@ -22,6 +22,30 @@
       "revId": "f98ae8761ea901708a68b884a987958bfa3c4f88",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c143bedb_eb9f77b7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-01T10:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b7ac340_ae2a373d",
+      "range": {
+        "startLine": 86,
+        "startChar": 29,
+        "endLine": 86,
+        "endChar": 35
+      },
+      "revId": "f98ae8761ea901708a68b884a987958bfa3c4f88",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
