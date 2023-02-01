@@ -36,7 +36,10 @@
 
             <div class="attributeType">
                 <!-- ATTRIBUTE TYPE - MANDATORY -->
-                <sdc-dropdown #attributeType [disabled]="false" label="Type" [required]="true"
+                <sdc-dropdown #attributeType
+                              [disabled]="isEdit"
+                              label="Type"
+                              [required]="true"
                               [selectedOption]="toDropDownOption(this.attributeToEdit.type)" placeHolder="Choose Type"
                               testId="attributeType"
                               [options]="types" (changed)="onTypeSelected($event)">

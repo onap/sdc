@@ -46,9 +46,9 @@ public class AttributeModal extends AbstractPageObject {
     public void fillForm(final AttributeData attributeData, final boolean isUpdate) {
         if (!isUpdate) {
             editName(attributeData.getAttributeName());
+            editType(attributeData.getAttributeType());
         }
         editDescription(attributeData.getDescription());
-        editType(attributeData.getAttributeType());
         editDefaultValue(attributeData.getDefaultValue());
     }
 
