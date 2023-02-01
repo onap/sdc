@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4cf0697a_c74ae79a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaPropertyConstraintInRange.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-01T12:31:46Z",
+      "side": 1,
+      "message": "to guarantee order of elements\nMIN - first\nMAX - last",
+      "parentUuid": "0c3063d7_bebcad17",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 39
+      },
+      "revId": "d1e7f0af1f6a3c9f879572d9ac703473a2f3444b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "49ee6a17_528c3f3f",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "d1e7f0af1f6a3c9f879572d9ac703473a2f3444b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4de64e47_69c3c3b5",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-01T12:31:46Z",
+      "side": 1,
+      "message": "should be in separate commit, remove it",
+      "parentUuid": "49ee6a17_528c3f3f",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 27
+      },
+      "revId": "d1e7f0af1f6a3c9f879572d9ac703473a2f3444b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
