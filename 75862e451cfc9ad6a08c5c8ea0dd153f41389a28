@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d67fcede_cf754b32",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T19:35:28Z",
+      "side": 1,
+      "message": "as explained, this was the only way to get it working",
+      "parentUuid": "ca86d4ed_50497e60",
+      "range": {
+        "startLine": 66,
+        "startChar": 11,
+        "endLine": 80,
+        "endChar": 15
+      },
+      "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "149eb7b7_e0250acc",
         "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.html",
         "patchSetId": 3
@@ -68,6 +92,30 @@
       "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bbf1f89e_3d700270",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T19:35:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4ee7c727_4706a4cb",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 12
+      },
+      "revId": "75862e451cfc9ad6a08c5c8ea0dd153f41389a28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
