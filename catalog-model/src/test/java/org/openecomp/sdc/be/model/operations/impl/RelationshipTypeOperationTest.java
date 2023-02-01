@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -302,10 +303,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         property2.setDescription("Number of (actual or virtual) CPUs associated with the Compute node.");
         property2.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints3 = new ArrayList<>();
-        List<Object> range = new ArrayList<>();
-        range.add("4");
-        range.add("1");
-        InRangeConstraint propertyConstraint3 = new InRangeConstraint(range);
+        InRangeConstraint propertyConstraint3 = new InRangeConstraint(Arrays.asList("1", "4"));
         constraints3.add(propertyConstraint3);
         property2.setConstraints(constraints3);
         return property2;
@@ -593,10 +591,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         propertyDefinition.setDescription(PROP + "_" + value);
         propertyDefinition.setType(ToscaType.INTEGER.name().toLowerCase());
         List<PropertyConstraint> constraints = new ArrayList<>();
-        List<Object> range = new ArrayList<>();
-        range.add("1");
-        range.add("4");
-        InRangeConstraint propertyConstraint = new InRangeConstraint(range);
+        InRangeConstraint propertyConstraint = new InRangeConstraint(Arrays.asList("1", "4"));
         constraints.add(propertyConstraint);
         propertyDefinition.setConstraints(constraints);
         Map<String, PropertyDefinition> propertiesMap = new HashMap<>();
