@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "be18aec4_96d068eb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T10:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3dc5d6ef_87a68d52",
+      "range": {
+        "startLine": 161,
+        "startChar": 8,
+        "endLine": 163,
+        "endChar": 9
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa9cec17_73f0679f",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/PropertyDefinitionDto.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31cf750c_b969ec4d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/PropertyDefinitionDto.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T10:49:08Z",
+      "side": 1,
+      "message": "Jackson wasnt able to build PropertyConstraint objects out of the incoming data, was always getting Failed to Narrow error...",
+      "parentUuid": "fa9cec17_73f0679f",
+      "range": {
+        "startLine": 38,
+        "startChar": 17,
+        "endLine": 38,
+        "endChar": 23
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "612e43ef_2dac9271",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T10:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e660c01_e5e47ab0",
+      "range": {
+        "startLine": 66,
+        "startChar": 16,
+        "endLine": 67,
+        "endChar": 83
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b8839cc2_f5a57f58",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "fcceb1be_18dc6284",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T10:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8839cc2_f5a57f58",
+      "range": {
+        "startLine": 75,
+        "startChar": 20,
+        "endLine": 75,
+        "endChar": 40
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bae47bd9_c049b7a1",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
         "patchSetId": 2
@@ -114,6 +210,30 @@
       "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "361e6617_9847a7cd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/mapper/PropertyDefinitionDtoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-01T10:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bae47bd9_c049b7a1",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 98,
+        "endChar": 76
+      },
+      "revId": "5beb6b560dde17824ac8f14eca59fbb491630e28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
