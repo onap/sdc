@@ -39,10 +39,10 @@
             </select>
         </div>
 
-
         <div class="w-sdc-form-columns-wrapper">
 
           <div class="w-sdc-form-column">
+            <!-- ConstraintTypes.in_range-->
             <div class="w-sdc-form-columns-wrapper" *ngIf="constraint.type == 'inRange'">
               <div class="w-sdc-form-column">
                 <input type="text" class="i-sdc-form-input myClass"
@@ -58,6 +58,7 @@
               </div>
             </div>
 
+            <!-- ConstraintTypes.valid_values-->
             <div *ngIf="constraint.type == 'validValues'">
               <div class="w-sdc-form-columns-wrapper-block">
                 <div class="add-btn add-list-item w-sdc-form-column-block"
@@ -66,9 +67,17 @@
               </div>
               <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraint.value; let valueIndex = index; trackBy:trackByFn">
                 <div class="w-sdc-form-column">
-                  <input type="text" class="i-sdc-form-input" [value]="value"
-                        [disabled]="isViewOnly"
+                  <input type="text" class="i-sdc-form-input" *ngIf="propertyType !== 'boolean'"
+                         [disabled]="isViewOnly"
+                         [value]="value"
                         (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
+                  <select class="i-sdc-form-select" *ngIf="propertyType == 'boolean'"
+                          [disabled]="isViewOnly"
+                          [value]="value"
+                          (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)">
+                    <option ngValue="true">true</option>
+                    <option ngValue="false">false</option>
+                  </select>
                 </div>
                 <div class="w-sdc-form-column">
                   <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(constraintIndex, valueIndex)"></span>
@@ -76,7 +85,23 @@
               </div>
             </div>
 
-            <div *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues'">
+            <!-- ConstraintTypes.equal-->
+            <div *ngIf="constraint.type == 'equal'">
+              <input type="text" class="i-sdc-form-input" *ngIf="propertyType !== 'boolean'"
+                     [disabled]="isViewOnly"
+                     (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
+                     [value]="constraint.value"/>
+              <select class="i-sdc-form-select" *ngIf="propertyType == 'boolean'"
+                      [disabled]="isViewOnly"
+                      [value]="constraint.value"
+                      (input)="onChangeConstraintValue(constraintIndex, $event.target.value)">
+                <option ngValue="true">true</option>
+                <option ngValue="false">false</option>
+              </select>
+            </div>
+
+            <!-- all other ConstraintTypes-->
+            <div *ngIf="constraint.type != 'inRange' && constraint.type != 'validValues' && constraint.type != 'equal'">
               <input type="text" class="i-sdc-form-input myClass"
                      [disabled]="isViewOnly"
                      (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"
@@ -88,7 +113,6 @@
               <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeConstraint(constraintIndex)"></span>
           </div>
         </div>
-
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
