@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
@@ -33,17 +33,11 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
 class InRangeConstraintTest {
 
     private InRangeConstraint createStringTestSubject() {
-        List<Object> validValues = new ArrayList<>();
-        validValues.add("test1");
-        validValues.add("test10");
-        return new InRangeConstraint(validValues);
+        return new InRangeConstraint(Arrays.asList("test1", "test10"));
     }
 
     private InRangeConstraint createIntegerTestSubject() {
-        List<Object> validValues = new ArrayList<>();
-        validValues.add(1);
-        validValues.add(10);
-        return new InRangeConstraint(validValues);
+        return new InRangeConstraint(Arrays.asList(1, 10));
     }
 
     @Test
@@ -59,10 +53,7 @@ class InRangeConstraintTest {
     @Test
     void testSetInRange() {
         InRangeConstraint testSubject = createStringTestSubject();
-        List<Object> validValues = new ArrayList<>();
-        validValues.add("test21");
-        validValues.add("test30");
-        testSubject.setInRange(validValues);
+        testSubject.setInRange(Arrays.asList("test21", "test30"));
         List<Object> result = testSubject.getInRange();
 
         assertEquals(2, result.size());

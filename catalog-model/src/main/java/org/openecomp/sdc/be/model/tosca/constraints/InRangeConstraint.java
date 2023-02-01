@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.model.tosca.constraints;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,10 +42,6 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
     @NonNull
     @EqualsAndHashCode.Include
     private List<Object> inRange;
-    @JsonIgnore
-    private Comparable min;
-    @JsonIgnore
-    private Comparable max;
 
     public InRangeConstraint(List<Object> inRange) {
         this.inRange = inRange;
@@ -69,8 +64,7 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "Invalid max value for in range constraint [" + maxRawText + "] as it does not follow the property type [" + propertyType + "]");
         }
-        min = ConstraintUtil.convertToComparable(propertyType, minRawText);
-        max = ConstraintUtil.convertToComparable(propertyType, maxRawText);
+        inRange.replaceAll(obj -> propertyType.convert(String.valueOf(obj)));
     }
 
     @Override
@@ -78,9 +72,22 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         if (propertyValue == null) {
             throw new ConstraintViolationException("Value to check is null");
         }
-        if (!(min.getClass().isAssignableFrom(propertyValue.getClass()))) {
+        if (!(inRange.get(0).getClass().isAssignableFrom(propertyValue.getClass()))) {
             throw new ConstraintViolationException(
-                "Value to check is not comparable to range type, value type [" + propertyValue.getClass() + "], range type [" + min.getClass() + "]");
+                "Value to check is not comparable to range type, value type [" + propertyValue.getClass() + "], range type [" + inRange.get(0)
+                    .getClass() + "]");
+        }
+        if (!(inRange.get(1).getClass().isAssignableFrom(propertyValue.getClass()))) {
+            throw new ConstraintViolationException(
+                "Value to check is not comparable to range type, value type [" + propertyValue.getClass() + "], range type [" + inRange.get(1)
+                    .getClass() + "]");
+        }
+        final ToscaType propertyType = ToscaType.getToscaType(propertyValue.getClass().getSimpleName().toLowerCase());
+        final Comparable min = ConstraintUtil.convertToComparable(propertyType, String.valueOf(inRange.get(0)));
+        final Comparable max = ConstraintUtil.convertToComparable(propertyType, String.valueOf(inRange.get(1)));
+
+        if (min.compareTo(max) > 0) {
+            throw new ConstraintViolationException("The MIN [" + min + "] should be less than MAX [" + max + "]");
         }
         if (min.compareTo(propertyValue) > 0 || max.compareTo(propertyValue) < 0) {
             throw new ConstraintViolationException("The value [" + propertyValue + "] is out of range " + inRange);
@@ -98,6 +105,8 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
 
     @Override
     public String getErrorMessage(ToscaType toscaType, ConstraintFunctionalException e, String propertyName) {
+        Comparable min = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(0)));
+        Comparable max = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(1)));
         return getErrorMessage(toscaType, e, propertyName, "%s property value must be in a range of %s", String.valueOf(min),
             String.valueOf(max));
     }
@@ -124,8 +133,6 @@ public class InRangeConstraint extends AbstractPropertyConstraint {
         ToscaType toscaType = ToscaType.getToscaType(propertyType);
         try {
             inRange.replaceAll(obj -> toscaType.convert(String.valueOf(obj)));
-            min = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(0)));
-            max = ConstraintUtil.convertToComparable(toscaType, String.valueOf(inRange.get(1)));
         } catch (Exception e) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "inRange constraint has invalid values <" + inRange + "> property type is <" + propertyType + ">");

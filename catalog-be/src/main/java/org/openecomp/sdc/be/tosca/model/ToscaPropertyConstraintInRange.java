@@ -18,10 +18,11 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.LinkedList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
