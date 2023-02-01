@@ -64,7 +64,11 @@ export class AttributeBEModel {
       this.password = attribute.password;
       this.required = attribute.required;
       this.schema = attribute.schema;
-      this.schemaType = attribute.schemaType;
+
+      if (attribute.schemaType) {
+        this.schemaType = attribute.schemaType;
+      }
+
       this.type = attribute.type;
       this.uniqueId = attribute.uniqueId;
       this.value = attribute.value;
