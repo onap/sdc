@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,14 +19,14 @@
  */
 
 'use strict';
-import * as _ from "lodash";
-import {SchemaAttribute, SchemaAttributeGroupModel} from "./schema-attribute";
-import {AttributeOutputDetail} from "app/models/attributes-outputs/attribute-output-detail";
-import {AttributeBEModel} from "app/models/attributes-outputs/attribute-be-model";
+import { AttributeBEModel } from 'app/models/attributes-outputs/attribute-be-model';
+import { AttributeOutputDetail } from 'app/models/attributes-outputs/attribute-output-detail';
+import * as _ from 'lodash';
+import { SchemaAttribute, SchemaAttributeGroupModel } from './schema-attribute';
 
 export class AttributesGroup {
   constructor(attributesObj?: AttributesGroup) {
-    _.forEach(attributesObj, (attributes: Array<AttributeModel>, instance) => {
+    _.forEach(attributesObj, (attributes: AttributeModel[], instance) => {
       this[instance] = [];
       _.forEach(attributes, (attribute: AttributeModel): void => {
         attribute.resourceInstanceUniqueId = instance;
@@ -39,7 +39,7 @@ export class AttributesGroup {
 
 export interface IAttributeModel {
 
-  //server data
+  // server data
   uniqueId: string;
   name: string;
   _default: string;
@@ -49,7 +49,7 @@ export interface IAttributeModel {
   status: string;
   value: string;
   parentUniqueId: string;
-  //custom data
+  // custom data
   resourceInstanceUniqueId: string;
   readonly: boolean;
   valueUniqueUid: string;
@@ -57,7 +57,7 @@ export interface IAttributeModel {
 
 export class AttributeModel extends AttributeBEModel implements IAttributeModel {
 
-  //server data
+  // server data
   uniqueId: string;
   name: string;
   _default: string;
@@ -67,7 +67,7 @@ export class AttributeModel extends AttributeBEModel implements IAttributeModel 
   status: string;
   value: string;
   parentUniqueId: string;
-  //custom data
+  // custom data
   resourceInstanceUniqueId: string;
   readonly: boolean;
   valueUniqueUid: string;
@@ -102,7 +102,7 @@ export class AttributeModel extends AttributeBEModel implements IAttributeModel 
     if (!this.schema || !this.schema.property) {
       this.schema = new SchemaAttributeGroupModel(new SchemaAttribute());
     } else {
-      //forcing creating new object, so editing different one than the object in the table
+      // forcing creating new object, so editing different one than the object in the table
       this.schema = new SchemaAttributeGroupModel(new SchemaAttribute(this.schema.property));
     }
 
@@ -116,21 +116,20 @@ export class AttributeModel extends AttributeBEModel implements IAttributeModel 
     if (this._default && this.type === 'list') {
       this._default = '[' + this._default + ']';
     }
-    this._default = this._default != "" && this._default != "[]" && this._default != "{}" ? this._default : null;
+    this._default = this._default != '' && this._default != '[]' && this._default != '{}' ? this._default : null;
 
     return JSON.stringify(this);
   }
 
-
   public convertValueToView() {
-    //unwrapping value {} or [] if type is complex
+    // unwrapping value {} or [] if type is complex
     if (this._default && (this.type === 'map' || this.type === 'list') &&
         ['[', '{'].indexOf(this._default.charAt(0)) > -1 &&
         [']', '}'].indexOf(this._default.slice(-1)) > -1) {
       this._default = this._default.slice(1, -1);
     }
 
-    //also for value - for the modal in canvas
+    // also for value - for the modal in canvas
     if (this.value && (this.type === 'map' || this.type === 'list') &&
         ['[', '{'].indexOf(this.value.charAt(0)) > -1 &&
         [']', '}'].indexOf(this.value.slice(-1)) > -1) {
@@ -144,6 +143,12 @@ export class AttributeModel extends AttributeBEModel implements IAttributeModel 
     }
     this.readonly = undefined;
     this.resourceInstanceUniqueId = undefined;
+
+    if (!this.schemaType) {
+      // This being set as null causes errors when editing
+      this.schemaType = undefined;
+    }
+
     return this;
-  };
+  }
 }
