@@ -176,7 +176,7 @@ class ToscaTypeTest {
     @Test
     void testConvert() throws Exception {
         ToscaType typeInt = ToscaType.INTEGER;
-        assertEquals(123l, typeInt.convert("123"));
+        assertEquals(123, typeInt.convert("123"));
 
         ToscaType typeBool = ToscaType.BOOLEAN;
         assertEquals(true, typeBool.convert("true"));
