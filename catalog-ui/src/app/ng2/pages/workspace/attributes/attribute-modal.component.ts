@@ -32,6 +32,7 @@ export class AttributeModalComponent implements OnInit {
     // The current effective default value pattern
     public defaultValuePattern: string;
     public defaultValueErrorMessage: string;
+    public isEdit: boolean;
 
     // Attribute being Edited
     public attributeToEdit: AttributeModel;
@@ -41,6 +42,11 @@ export class AttributeModalComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Disable editing the name of existing attributes
+        if (this.attributeToEdit && this.attributeToEdit.name) {
+            this.isEdit = true;
+        }
+
         this.revalidateDefaultValue();
     }
 
