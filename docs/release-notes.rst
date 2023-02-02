@@ -5,6 +5,130 @@
 Release Notes
 =============
 
+Version: 1.12.2
+===============
+
+:Release Date: 2023-02-24
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.0
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC London early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4411 <https://jira.onap.org/browse/SDC-4411>`_ - Delete non-normative data types
+*  `SDC-4365 <https://jira.onap.org/browse/SDC-4365>`_ - Show boolean-type constraint as drop-down list
+*  `SDC-4379 <https://jira.onap.org/browse/SDC-4379>`_ - Support TOSCA functions for list of map entries in property assignment view
+*  `SDC-4371 <https://jira.onap.org/browse/SDC-4371>`_ - Service Import - general page validation
+*  `SDC-4383 <https://jira.onap.org/browse/SDC-4383>`_ - Implement option to choose 'None' for not mandatory drop-box field
+*  `SDC-4378 <https://jira.onap.org/browse/SDC-4378>`_ - Support for delete property from non-normative data type
+*  `SDC-4373 <https://jira.onap.org/browse/SDC-4373>`_ - Edit properties of non-normative data types
+*  `SDC-4331 <https://jira.onap.org/browse/SDC-4331>`_ - Constraints in data type view
+*  `SDC-4360 <https://jira.onap.org/browse/SDC-4360>`_ - Enable UI component to display property constraints
+*  `SDC-4366 <https://jira.onap.org/browse/SDC-4366>`_ - Validate service input default values against constraints
+*  `SDC-4361 <https://jira.onap.org/browse/SDC-4361>`_ - Stop auto-generation of inputs from substitution mapping node
+
+
+**Bug Fixes**
+
+*  `SDC-4375 <https://jira.onap.org/browse/SDC-4375>`_ - Fix handling of default values for VFC properties
+*  `SDC-4412 <https://jira.onap.org/browse/SDC-4412>`_ - Constraint validation failure for list or map with valid values
+*  `SDC-4416 <https://jira.onap.org/browse/SDC-4416>`_ - Cannot view archived components on UI
+*  `SDC-4413 <https://jira.onap.org/browse/SDC-4413>`_ - Compilation error when building
+*  `SDC-4399 <https://jira.onap.org/browse/SDC-4399>`_ - Error validating list property with equals constraint
+*  `SDC-4401 <https://jira.onap.org/browse/SDC-4401>`_ - Constraint validation failure for yaml value
+*  `SDC-4398 <https://jira.onap.org/browse/SDC-4398>`_ - Incorrect behaviour for list valid values
+*  `SDC-3384 <https://jira.onap.org/browse/SDC-3384>`_ - Wrong behavior for 'edit' attribute
+*  `SDC-4400 <https://jira.onap.org/browse/SDC-4400>`_ - Issues adding values to complex properties in Property Assignment
+*  `SDC-4403 <https://jira.onap.org/browse/SDC-4403>`_ - NPE when setting value of complex property
+*  `SDC-4396 <https://jira.onap.org/browse/SDC-4396>`_ - AttributeServlet- Add null test before using nullable values
+*  `SDC-4394 <https://jira.onap.org/browse/SDC-4394>`_ - Support for copy/paste tosca functions into operation inputs
+*  `SDC-4392 <https://jira.onap.org/browse/SDC-4392>`_ - Issues adding values to map in Property Assignment
+*  `SDC-4380 <https://jira.onap.org/browse/SDC-4380>`_ - Fix ng lint command missing configuration
+*  `SDC-4384 <https://jira.onap.org/browse/SDC-4384>`_ - Omit tenant metadata when not set
+*  `SDC-4382 <https://jira.onap.org/browse/SDC-4382>`_ - Cannot set value to a instance property with valid values constraint
+*  `SDC-4377 <https://jira.onap.org/browse/SDC-4377>`_ - Inconsistent behaviour for interface properties removal
+*  `SDC-3794 <https://jira.onap.org/browse/SDC-3794>`_ - Incorrect substitution type being set in Services/VFs
+*  `SDC-4374 <https://jira.onap.org/browse/SDC-4374>`_ - Setting input value destroys constraints
+*  `SDC-4376 <https://jira.onap.org/browse/SDC-4376>`_ - Unable to discard service input changes
+*  `SDC-4369 <https://jira.onap.org/browse/SDC-4369>`_ - Import failures added to additional_types
+*  `SDC-4364 <https://jira.onap.org/browse/SDC-4364>`_ - NPE when deleting interface operation from VFC
+*  `SDC-4357 <https://jira.onap.org/browse/SDC-4357>`_ - in_range constraints missing from TOSCA template
+*  `SDC-3863 <https://jira.onap.org/browse/SDC-3863>`_ - Composition window category name shows instead of displayName
+*  `SDC-4352 <https://jira.onap.org/browse/SDC-4352>`_ - Unable to set values on properties of VFC instances in a service
+*  `SDC-4362 <https://jira.onap.org/browse/SDC-4362>`_ - Fix tiles on Home page always show model as SDC AID
+*  `SDC-4354 <https://jira.onap.org/browse/SDC-4354>`_ - Unable to edit VFC property after checkout
+
+
+**Tasks**
+
+*  `SDC-4408 <https://jira.onap.org/browse/SDC-4408>`_ - NotificationWebsocketHandler- Add null test before using nullable values
+*  `SDC-4406 <https://jira.onap.org/browse/SDC-4406>`_ - Update INFO.yaml
+*  `SDC-4402 <https://jira.onap.org/browse/SDC-4402>`_ - ConfigurationImpl- Add null test before using nullable values
+*  `SDC-4397 <https://jira.onap.org/browse/SDC-4397>`_ - AbstractTemplateServlet- Add null test before using nullable values
+*  `SDC-4381 <https://jira.onap.org/browse/SDC-4381>`_ - Fix major bug reported by Sonar
+*  `SDC-4358 <https://jira.onap.org/browse/SDC-4358>`_ - Improve getting Service with specific version
+*  `SDC-4370 <https://jira.onap.org/browse/SDC-4370>`_ - Fix broken 'start-sdc' profile
+*  `SDC-4112 <https://jira.onap.org/browse/SDC-4112>`_ - Skip swagger to improve build time
+*  `SDC-4359 <https://jira.onap.org/browse/SDC-4359>`_ - Fix Blocker Bug reported by Sonar
+*  `SDC-3529 <https://jira.onap.org/browse/SDC-3529>`_ - Fix Sonar CRITICAL BUGs
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.12.1
 ===============
 
