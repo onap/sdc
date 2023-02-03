@@ -68,10 +68,10 @@ public class DataTypeImportManager {
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName, !includeToModelDefaultImports), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
 
-        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+        if (elementTypes.isLeft() && includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, dataTypeYml, modelName);
         }
-        if (!includeToModelDefaultImports && StringUtils.isNotEmpty(modelName) && elementTypes.isLeft()) {
+        if (elementTypes.isLeft() && !includeToModelDefaultImports && StringUtils.isNotEmpty(modelName) && elementTypes.isLeft()) {
             commonImportManager.updateTypesInAdditionalTypesImport(ElementTypeEnum.DATA_TYPE, dataTypeYml, modelName);
         }
         return elementTypes;
