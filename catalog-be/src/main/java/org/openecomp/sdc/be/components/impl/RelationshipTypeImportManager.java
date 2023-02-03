@@ -66,7 +66,7 @@ public class RelationshipTypeImportManager {
             .createElementTypes(relationshipTypeYml, relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml, modelName),
                 relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate, inTransaction),
                 ElementTypeEnum.RELATIONSHIP_TYPE);
-        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+        if (elementTypes.isLeft() && includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipTypeYml, modelName);
         }
         return elementTypes;

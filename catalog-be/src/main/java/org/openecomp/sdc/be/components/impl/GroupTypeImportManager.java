@@ -76,7 +76,7 @@ public class GroupTypeImportManager {
                                                                                                       final boolean includeToModelDefaultImports) {
         final Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao, modelName);
-        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+        if (elementTypes.isLeft() && includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.GROUP_TYPE, toscaTypeImportData.getToscaTypesYml(), modelName);
         }
         return elementTypes;

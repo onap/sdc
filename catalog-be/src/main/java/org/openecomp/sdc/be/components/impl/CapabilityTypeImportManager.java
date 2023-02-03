@@ -62,7 +62,7 @@ public class CapabilityTypeImportManager {
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName),
             this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
-        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+        if (elementTypes.isLeft() && includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName);
         }
         return elementTypes;
