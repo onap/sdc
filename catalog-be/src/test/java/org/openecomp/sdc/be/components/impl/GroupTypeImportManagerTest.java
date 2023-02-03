@@ -19,16 +19,25 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GroupTypeImportManagerTest {
@@ -50,7 +59,23 @@ public class GroupTypeImportManagerTest {
     public void shouldInvokeCreateElementTypes() {
         GroupTypeImportManager groupTypeImportManager = new GroupTypeImportManager(groupTypeOperation, componentsUtils,
             toscaOperationFacade, commonImportManager, modelOperation);
-        groupTypeImportManager.createGroupTypes(data, null, false);
-        Mockito.verify(commonImportManager).createElementTypes(Mockito.any(ToscaTypeImportData.class), Mockito.any(), Mockito.any(), Mockito.any());
+        
+        when(commonImportManager.createElementTypes(any(ToscaTypeImportData.class), any(), any(), any())).thenReturn(Either.left(Collections.emptyList()));
+                
+        groupTypeImportManager.createGroupTypes(data, "test model", true);
+        verify(commonImportManager).createElementTypes(any(ToscaTypeImportData.class), any(), any(), any());
+        verify(commonImportManager).addTypesToDefaultImports(any(ElementTypeEnum.class), any(), any());
+    }
+    
+    @Test
+    public void shouldInvokeCreateElementTypes_Error() {
+        GroupTypeImportManager groupTypeImportManager = new GroupTypeImportManager(groupTypeOperation, componentsUtils,
+            toscaOperationFacade, commonImportManager, modelOperation);
+        
+        when(commonImportManager.createElementTypes(any(ToscaTypeImportData.class), any(), any(), any())).thenReturn(Either.right(null));
+                
+        groupTypeImportManager.createGroupTypes(data, "test model", true);
+        verify(commonImportManager).createElementTypes(any(ToscaTypeImportData.class), any(), any(), any());
+        verify(commonImportManager, never()).addTypesToDefaultImports(any(ElementTypeEnum.class), any(), any());
     }
 }

@@ -19,14 +19,23 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
+
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RelationshipTypeImportManagerTest {
@@ -44,8 +53,23 @@ public class RelationshipTypeImportManagerTest {
     public void shouldInvokeCreateElementTypes() {
         RelationshipTypeImportManager relationshipTypeImportManager =
             new RelationshipTypeImportManager(relationshipTypeOperation, commonImportManager, componentsUtils, modelOperation);
-        relationshipTypeImportManager.createRelationshipTypes("anyYaml", "anyModel", false);
-        Mockito.verify(commonImportManager).createElementTypes((String) Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        
+        when(commonImportManager.createElementTypes((String) any(), any(), any(), any())).thenReturn(Either.left(Collections.emptyList()));
 
+        relationshipTypeImportManager.createRelationshipTypes("anyYaml", "anyModel", true);
+        verify(commonImportManager).createElementTypes((String) any(), any(), any(), any());
+        verify(commonImportManager).addTypesToDefaultImports(any(ElementTypeEnum.class), any(), any());
+    }
+    
+    @Test
+    public void shouldInvokeCreateElementTypes_Error() {
+        RelationshipTypeImportManager relationshipTypeImportManager =
+            new RelationshipTypeImportManager(relationshipTypeOperation, commonImportManager, componentsUtils, modelOperation);
+        
+        when(commonImportManager.createElementTypes((String) any(), any(), any(), any())).thenReturn(Either.right(null));
+
+        relationshipTypeImportManager.createRelationshipTypes("anyYaml", "anyModel", true);
+        verify(commonImportManager).createElementTypes((String) any(), any(), any(), any());
+        verify(commonImportManager, never()).addTypesToDefaultImports(any(ElementTypeEnum.class), any(), any());
     }
 }

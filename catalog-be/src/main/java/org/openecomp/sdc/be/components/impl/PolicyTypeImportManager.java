@@ -74,7 +74,7 @@ public class PolicyTypeImportManager {
                                                                                                         final boolean includeToModelDefaultImports) {
         final Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, modelName);
-        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+        if (elementTypes.isLeft() && includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.POLICY_TYPE, toscaTypeImportData.getToscaTypesYml(), modelName);
         }
         return elementTypes;
