@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de4169a2_6d95f1ff",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-03T17:44:02Z",
+      "side": 1,
+      "message": "This \u0027Constraints\u0027 label (and the line between it and Default value) is visible even when there is no constarints.\nIt should not be shown when there is no constraints (in the same way it is not shown for properies of a VFC instance in the service)",
+      "range": {
+        "startLine": 252,
+        "startChar": 0,
+        "endLine": 252,
+        "endChar": 71
+      },
+      "revId": "ae4c1f1335d7076a5e01c597abdf5e6265d58ebd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
