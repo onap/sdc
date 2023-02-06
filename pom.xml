@@ -863,7 +863,6 @@ Modifications copyright (c) 2018-2019 Nokia
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
                 <docker.keepRunning>true</docker.keepRunning>
-                <maven.antrun.skip>true</maven.antrun.skip>
                 <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
