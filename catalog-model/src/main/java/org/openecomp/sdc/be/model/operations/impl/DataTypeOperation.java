@@ -281,6 +281,28 @@ public class DataTypeOperation extends AbstractOperation {
         return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
 
+    public PropertyDefinitionDto updateProperty(final String dataTypeId, final PropertyDefinitionDto propertyDefinitionDto) {
+        final String propertyName = propertyDefinitionDto.getName();
+        LOGGER.debug("Updating property '{}' to data type '{}'.", propertyName, dataTypeId);
+
+        getDataTypeByUid(dataTypeId).orElseThrow(DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId));
+
+        final Either<PropertyDefinition, JanusGraphOperationStatus> resultEither =
+            propertyOperation.updatePropertyAssociatedToNode(NodeTypeEnum.DataType, dataTypeId, PropertyDefinitionDtoMapper.mapTo(propertyDefinitionDto));
+        if (resultEither.isRight()) {
+            final JanusGraphOperationStatus status = resultEither.right().value();
+            LOGGER.debug("Could not update property '{}' on data type '{}'. JanusGraph status is '{}'", propertyName, dataTypeId, status);
+            if (status == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
+                throw DataTypeOperationExceptionSupplier.dataTypePropertyAlreadyExists(dataTypeId, propertyName).get();
+            }
+            LOGGER.error("Could not update property '{}' on data type '{}'. JanusGraph status is '{}'", propertyName, dataTypeId, status);
+            throw DataTypeOperationExceptionSupplier.unexpectedErrorWhileCreatingProperty(dataTypeId, propertyName).get();
+        }
+        LOGGER.debug("Property '{}' was updated in data type '{}'.", propertyName, dataTypeId);
+        final PropertyDefinition propertyData = resultEither.left().value();
+        return PropertyDefinitionDtoMapper.mapFrom(propertyData);
+    }
+
     public void addPropertyToAdditionalTypeDataType(DataTypeDataDefinition dataTypeDataDefinition, PropertyDefinitionDto property) {
         modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(), dataTypeDataDefinition.getName());
     }

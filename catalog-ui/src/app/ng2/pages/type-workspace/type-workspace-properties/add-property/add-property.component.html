@@ -6,6 +6,7 @@
       <div class="i-sdc-form-item">
         <label class="i-sdc-form-label required">{{'PROPERTY_NAME_LABEL' | translate}}</label>
         <input class="i-sdc-form-input"
+               [ngClass]="{ 'disabled': property ? true : false }"
                type="text"
                data-tests-id="property-name"
                formControlName="name"
@@ -13,7 +14,7 @@
       </div>
       <div class="i-sdc-form-item">
         <label class="i-sdc-form-label required">{{'PROPERTY_TYPE_LABEL' | translate}}</label>
-        <select formControlName="type" (change)="onTypeChange()" [attr.disabled]="readOnly ? readOnly : null">
+          <select formControlName="type" (change)="onTypeChange()" [ngClass]="{ 'disabled': property ? true : false }">
           <option [ngValue]="null">{{'GENERAL_LABEL_SELECT' | translate}}</option>
           <option *ngFor="let type of typeList"
                   [ngValue]="type">{{type}}</option>

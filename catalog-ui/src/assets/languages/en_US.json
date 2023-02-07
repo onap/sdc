@@ -594,6 +594,7 @@
   "PROPERTY_LIST_EMPTY_MESSAGE": "There are no properties to display",
   "PROPERTY_SHOWING_LABEL": "Showing Properties",
   "PROPERTY_ADD_MODAL_TITLE": "Add Property",
+  "PROPERTY_EDIT_MODAL_TITLE": "Edit Property",
   "PROPERTY_VIEW_MODAL_TITLE": "View Property",
   "PROPERTY_DESCRIPTION_LABEL": "Description",
   "PROPERTY_DEFAULT_VALUE_LABEL": "Default Value",

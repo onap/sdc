@@ -382,6 +382,23 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         return Either.left(createNodeResult.left().value());
     }
 
+    public Either<PropertyDefinition, JanusGraphOperationStatus> updatePropertyAssociatedToNode(NodeTypeEnum nodeType, String uniqueId,
+                                                                                                        PropertyDefinition newProperty) {
+        Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> oldPropertiesRes = findPropertiesOfNode(nodeType, uniqueId);
+
+        if (oldPropertiesRes.isRight()) {
+            return Either.right(oldPropertiesRes.right().value());
+        } else {
+            Map<String, PropertyDefinition> oldProperties = oldPropertiesRes.left().value();
+            PropertyDefinition oldPropDef = oldProperties.get(newProperty.getName());
+            JanusGraphOperationStatus status = updateOldProperty(newProperty, oldPropDef);
+            if (status != JanusGraphOperationStatus.OK) {
+                return Either.right(status);
+            }
+        }
+        return Either.left(newProperty);
+    }
+
     public Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode(NodeTypeEnum nodeType, String uniqueId) {
         Map<String, PropertyDefinition> resourceProps = new HashMap<>();
         Either<List<ImmutablePair<PropertyData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
@@ -501,6 +518,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         oldPropDef.setDefaultValue(newPropDef.getDefaultValue());
         oldPropDef.setDescription(newPropDef.getDescription());
         oldPropDef.setRequired(newPropDef.isRequired());
+        oldPropDef.setConstraints(newPropDef.getConstraints());
         // Type is updated to fix possible null type issue in janusGraph DB
         oldPropDef.setType(newPropDef.getType());
     }
