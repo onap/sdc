@@ -136,7 +136,6 @@ export class AddInputComponent implements OnInit {
         input.schema.property = new SchemaProperty();
         input.schema.property.type = schemaForm.value;
       }
-      input.inputId = this.generateUniqueId();
       this.onAddInputEvent.emit(input);
       this.hideAddInput();
       this.resetForm();
@@ -156,16 +155,6 @@ export class AddInputComponent implements OnInit {
   onCancel() {
     this.hideAddInput();
     this.resetForm();
-  }
-
-  private generateUniqueId(): string {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < 36; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
   }
 
   private resetForm() {
