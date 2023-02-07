@@ -220,11 +220,11 @@ public class ModelOperation {
     public List<Model> findAllModels() {
         return findModelsByCriteria(Collections.emptyMap());
     }
-    
+
     public List<Model> findModels(final ModelTypeEnum modelType) {
         final Map<GraphPropertyEnum, Object> propertyCriteria = new EnumMap<>(GraphPropertyEnum.class);
         propertyCriteria.put(GraphPropertyEnum.MODEL_TYPE, modelType.getValue());
-        
+
         return findModelsByCriteria(propertyCriteria);
     }
 
@@ -259,7 +259,7 @@ public class ModelOperation {
         if (optionalModelTypeEnum.isPresent()) {
             modelType = optionalModelTypeEnum.get();
         }
-        
+
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> parentNode =
             janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
                 GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class);
@@ -298,7 +298,7 @@ public class ModelOperation {
         }
 
         Map<String, Object> typesYamlMap = new Yaml().loadAs(typesYaml, Map.class);
-        if (typesYamlMap.containsKey("data_types")){
+        if (typesYamlMap.containsKey("data_types")) {
             typesYamlMap = (Map<String, Object>) typesYamlMap.get("data_types");
         }
         removeExistingTypesFromDefaultImports(elementTypeEnum, typesYamlMap, rebuiltModelImportList);
@@ -378,7 +378,7 @@ public class ModelOperation {
         if (deleteParentNodeByModel.isRight()) {
             final var janusGraphOperationStatus = deleteParentNodeByModel.right().value();
             log.error(EcompLoggerErrorCode.DATA_ERROR, ModelOperation.class.getName(),
-                "Failed to delete model {} on JanusGraph with status {}", new Object[] {model.getName(), janusGraphOperationStatus});
+                "Failed to delete model {} on JanusGraph with status {}", new Object[]{model.getName(), janusGraphOperationStatus});
             throw new OperationException(ActionStatus.COULD_NOT_DELETE_MODEL, model.getName());
         }
     }
@@ -397,28 +397,28 @@ public class ModelOperation {
             final Map<String, Object> existingTypeContent = getExistingTypes(elementTypeEnum, additionalTypeDefinitionsImportOptional.get());
             final Set<String> existingTypeNames = existingTypeContent.keySet();
 
-            final Map<String, Object> typesToUpate = new HashMap<>();
-
             Map<String, Object> newTypesYaml = new Yaml().load(typesYaml);
-            if (newTypesYaml.containsKey("data_types")){
+            if (newTypesYaml.containsKey("data_types")) {
                 newTypesYaml = (Map<String, Object>) newTypesYaml.get("data_types");
             }
+            final Map<String, Object> typesToUpate = new HashMap<>();
             newTypesYaml.entrySet().stream().filter(entry -> existingTypeNames.contains(entry.getKey())).forEach(newTypeToUpdate -> {
 
-                final Map<String, Object> propertiesInNewDef = (Map<String, Object>) ((Map<String, Object>) newTypeToUpdate.getValue()).get("properties");
+                final Map<String, Object> propertiesInNewDef = (Map<String, Object>) ((Map<String, Object>) newTypeToUpdate.getValue()).get(
+                    "properties");
                 final Map<String, Object> existingProperties =
-                        (Map<String, Object>) ((Map<String, Object>) existingTypeContent.get(newTypeToUpdate.getKey())).get("properties");
+                    (Map<String, Object>) ((Map<String, Object>) existingTypeContent.get(newTypeToUpdate.getKey())).get("properties");
 
                 final List<Entry<String, Object>> propertiesMissingFromNewDef = MapUtils.isEmpty(existingProperties) ? Collections.emptyList()
-                        : existingProperties.entrySet().stream()
-                                .filter(existingPropEntry -> !propertiesInNewDef.keySet().contains(existingPropEntry.getKey()))
-                                .collect(Collectors.toList());
+                    : existingProperties.entrySet().stream()
+                        .filter(existingPropEntry -> !propertiesInNewDef.keySet().contains(existingPropEntry.getKey()))
+                        .collect(Collectors.toList());
 
                 if (CollectionUtils.isNotEmpty(propertiesMissingFromNewDef)) {
                     typesToUpate.put(newTypeToUpdate.getKey(), newTypeToUpdate.getValue());
 
                     propertiesMissingFromNewDef
-                            .forEach(existingPropToAdd -> propertiesInNewDef.put(existingPropToAdd.getKey(), existingPropToAdd.getValue()));
+                        .forEach(existingPropToAdd -> propertiesInNewDef.put(existingPropToAdd.getKey(), existingPropToAdd.getValue()));
                 }
             });
             if (MapUtils.isNotEmpty(typesToUpate)) {
@@ -426,47 +426,50 @@ public class ModelOperation {
             }
         }
     }
-    
-    private  Optional<ToscaImportByModel> getAdditionalTypes(final String modelName) {
+
+    private Optional<ToscaImportByModel> getAdditionalTypes(final String modelName) {
         final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
         return modelImportList.stream().filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
     }
 
     private Map<String, Object> getExistingTypes(final ElementTypeEnum elementTypeEnum, final ToscaImportByModel additionalTypeDefinitionsImport) {
         final Map<String, Object> existingContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
-        return  (Map<String, Object>) existingContent.get(elementTypeEnum.getToscaEntryName());
+        return (Map<String, Object>) existingContent.get(elementTypeEnum.getToscaEntryName());
     }
 
-    public void addPropertyToAdditionalType(final ElementTypeEnum elementTypeEnum, final PropertyDefinitionDto property,
-                                            final String modelName, final String name) {
+    public void updatePropertyInAdditionalType(final ElementTypeEnum elementTypeEnum, final PropertyDefinitionDto property,
+                                               final String modelName, final String name, boolean isAdd) {
         final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
         final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = modelImportList.stream()
-                .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
-        final ToscaImportByModel additionalTypeDefinitionsImport;
-        final List<ToscaImportByModel> rebuiltModelImportList;
+            .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
         if (additionalTypeDefinitionsImportOptional.isEmpty()) {
             return;
         }
-        additionalTypeDefinitionsImport = additionalTypeDefinitionsImportOptional.get();
-        rebuiltModelImportList = modelImportList.stream()
-                .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(toscaImportByModel.getFullPath())))
-                .collect(Collectors.toList());
+        final ToscaImportByModel additionalTypeDefinitionsImport = additionalTypeDefinitionsImportOptional.get();
+        final List<ToscaImportByModel> rebuiltModelImportList = modelImportList.stream()
+            .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(toscaImportByModel.getFullPath())))
+            .collect(Collectors.toList());
         final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
-        additionalTypeDefinitionsImport.setContent(buildPropertyAdditionalTypeDefinitionContent(elementTypeEnum, name, property, originalContent));
+        additionalTypeDefinitionsImport.setContent(
+            buildPropertyAdditionalTypeDefinitionContent(elementTypeEnum, name, property, originalContent, isAdd));
         rebuiltModelImportList.add(additionalTypeDefinitionsImport);
         toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
     }
 
     private String buildPropertyAdditionalTypeDefinitionContent(final ElementTypeEnum elementTypeEnum, final String name,
-                                                                final PropertyDefinitionDto property, final Map<String, Object> originalContent) {
+                                                                final PropertyDefinitionDto property, final Map<String, Object> originalContent,
+                                                                boolean isAdd) {
         final Map<String, Object> originalTypeContent = (Map<String, Object>) originalContent.get(elementTypeEnum.getToscaEntryName());
         Map<String, Object> typeContent = (Map<String, Object>) originalTypeContent.get(name);
         Map<String, Object> typeProperties = (Map<String, Object>) typeContent.get("properties");
-        if (typeProperties == null) {
+        if (MapUtils.isEmpty(typeProperties)) {
             typeProperties = new HashMap<>();
         }
-        Map<String, Object> typeProp = constructProperty(property);
-        typeProperties.put(property.getName(), typeProp);
+        if (isAdd) {
+            typeProperties.put(property.getName(), constructProperty(property));
+        } else {
+            typeProperties.remove(property.getName());
+        }
         typeContent.put("properties", typeProperties);
         return new YamlUtil().objectToYaml(originalContent);
     }
