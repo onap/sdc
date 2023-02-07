@@ -38,6 +38,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -164,6 +165,45 @@ public class DataTypeServlet extends BeGenericServlet {
             dataType.setModel("SDC AID");
         }
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
+        dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
+        dataTypeBusinessLogic.updateApplicationDataTypeCache(id);
+        return Response.status(Status.CREATED).entity(property).build();
+    }
+
+    @PUT
+    @Path("{id}/properties")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a property in the given data type", method = "POST", description = "Update a property in the given data type",
+        responses = {
+            @ApiResponse(content = @Content(schema = @Schema(implementation = PropertyDefinitionDto.class))),
+            @ApiResponse(responseCode = "201", description = "Property updated in the data type"),
+            @ApiResponse(responseCode = "400", description = "Invalid payload"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "404", description = "Data type not found")
+        })
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response updateProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
+                                   @PathParam("id") final String id,
+                                   @RequestBody(description = "Property to update", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
+        Optional<DataTypeDataDefinition> dataTypeOptional = dataTypeOperation.getDataTypeByUid(id);
+        dataTypeOptional.orElseThrow(() -> {
+            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", id));
+        });
+        DataTypeDataDefinition dataType = dataTypeOptional.get();
+        String model = dataType.getModel();
+        Optional<DataTypeDataDefinition> propertyDataType = dataTypeOperation.getDataTypeByNameAndModel(propertyDefinitionDto.getType(), model);
+        if (propertyDataType.isEmpty()) {
+            if (StringUtils.isEmpty(model)) {
+                model = Constants.DEFAULT_MODEL_NAME;
+            }
+            throw new OperationException(ActionStatus.INVALID_MODEL,
+                String.format("Property model is not the same as the data type model. Must be '%s'", model));
+        }
+        if (StringUtils.isEmpty(dataType.getModel())) {
+            dataType.setModel("SDC AID");
+        }
+        final PropertyDefinitionDto property = dataTypeOperation.updateProperty(id, propertyDefinitionDto);
         dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
         dataTypeBusinessLogic.updateApplicationDataTypeCache(id);
         return Response.status(Status.CREATED).entity(property).build();
