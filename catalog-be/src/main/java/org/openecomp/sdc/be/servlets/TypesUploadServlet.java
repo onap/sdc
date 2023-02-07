@@ -55,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import org.openecomp.sdc.be.components.impl.ArtifactTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
+import org.openecomp.sdc.be.components.impl.CommonImportManager;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeImportManager;
 import org.openecomp.sdc.be.components.impl.GroupTypeImportManager;
@@ -76,6 +77,7 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerFourParam;
@@ -106,6 +108,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private final PolicyTypeImportManager policyTypeImportManager;
     private final RelationshipTypeImportManager relationshipTypeImportManager;
     private final ArtifactTypeImportManager artifactTypeImportManager;
+    private final CommonImportManager commonImportManager;
 
     @Inject
     public TypesUploadServlet(ComponentInstanceBusinessLogic componentInstanceBL,
@@ -114,7 +117,8 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                               InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
                               CategoriesImportManager categoriesImportManager, DataTypeImportManager dataTypeImportManager,
                               GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager,
-                              RelationshipTypeImportManager relationshipTypeImportManager, ArtifactTypeImportManager artifactTypeImportManager) {
+                              RelationshipTypeImportManager relationshipTypeImportManager, ArtifactTypeImportManager artifactTypeImportManager,
+                              CommonImportManager commonImportManager) {
         super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
@@ -124,6 +128,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         this.policyTypeImportManager = policyTypeImportManager;
         this.relationshipTypeImportManager = relationshipTypeImportManager;
         this.artifactTypeImportManager = artifactTypeImportManager;
+        this.commonImportManager = commonImportManager;
     }
 
     @POST
@@ -137,7 +142,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
                                          @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                         @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                         @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                          @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         ConsumerFourParam<Wrapper<Response>, String, String, Boolean> createElementsMethod = (responseWrapper, ymlPayload, model, includeToModelImport) ->
             createElementsType(responseWrapper, () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, modelName,
@@ -157,10 +162,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                           @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                           @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                            @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
-        return uploadElementTypeServletLogic(
-            this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(), modelName, includeToModelDefaultImports);
+        return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(),
+            modelName, includeToModelDefaultImports);
     }
 
     @POST
@@ -174,7 +179,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadInterfaceLifecycleType(@Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
                                                  @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                                 @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                                 @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                                  @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
             createElementsType(responseWrapper, () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, modelName,
@@ -230,7 +235,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                    @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                    @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                     @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
@@ -247,7 +252,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypesYaml(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesYaml") File file,
                                         @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                        @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                        @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                         @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         return uploadElementTypeServletLogicYaml(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
             includeToModelDefaultImports);
@@ -263,7 +268,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "group types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadGroupTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
-                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                     @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                      @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                      @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
@@ -282,7 +287,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "policy types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadPolicyTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
-                                      @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                      @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                       @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
                                       @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                       @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
@@ -331,8 +336,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
             if (responseWrapper.isEmpty()) {
                 fillZipContents(yamlStringWrapper, file);
-            }
-            if (responseWrapper.isEmpty()) {
                 createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName, includeToModelDefaultImports);
             }
             return responseWrapper.getInnerElement();
@@ -353,11 +356,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             final String url = request.getMethod() + " " + request.getRequestURI();
             log.debug(START_HANDLE_REQUEST_OF, url);
             final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
+            final String yamlAsString = getFileAsString(file);
             if (responseWrapper.isEmpty()) {
-                final String yamlAsString = getFileAsString(file);
                 log.debug("received yaml: {}", yamlAsString);
                 createElementsMethod.accept(responseWrapper, yamlAsString, modelName, includeToModelDefaultImports);
             }
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, yamlAsString, modelName);
+
             return responseWrapper.getInnerElement();
         } catch (final Exception e) {
             log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);

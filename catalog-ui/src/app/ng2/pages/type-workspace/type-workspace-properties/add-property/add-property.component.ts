@@ -99,6 +99,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         this.showSchema = this.typeNeedsSchema();
         this.updateDataType();
         this.resetDefaultValue();
+        if (this.property) {
+            this.property.constraints = [];
+        }
     }
 
     private updateDataType(): void {

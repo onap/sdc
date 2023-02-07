@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -159,8 +160,11 @@ public class DataTypeServlet extends BeGenericServlet {
             throw new OperationException(ActionStatus.INVALID_MODEL,
                 String.format("Property model is not the same as the data type model. Must be '%s'", model));
         }
+        if (StringUtils.isEmpty(model)) {
+            dataType.setModel(Constants.DEFAULT_MODEL_NAME);
+        }
         final PropertyDefinitionDto property = dataTypeOperation.createProperty(id, propertyDefinitionDto);
-        dataTypeOperation.addPropertyToAdditionalTypeDataType(dataType, property);
+        dataTypeOperation.updatePropertyInAdditionalTypeDataType(dataType, property, true);
         dataTypeBusinessLogic.updateApplicationDataTypeCache(id);
         return Response.status(Status.CREATED).entity(property).build();
     }
@@ -179,5 +183,25 @@ public class DataTypeServlet extends BeGenericServlet {
     public Response getDataTypeModels(@PathParam("dataTypeName") String dataTypeName) {
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
             gson.toJson(dataTypeOperation.getAllDataTypeModels(dataTypeName)));
+    }
+
+    @DELETE
+    @Path("{dataTypeId}/{propertyId}")
+    public Response deleteProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
+                                   @PathParam("dataTypeId") final String dataTypeId,
+                                   @Parameter(in = ParameterIn.PATH, required = true, description = "The property id to delete")
+                                   @PathParam("propertyId") final String propertyId) {
+        final Optional<DataTypeDataDefinition> dataTypeOptional = dataTypeOperation.getDataTypeByUid(dataTypeId);
+        dataTypeOptional.orElseThrow(() -> {
+            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", dataTypeId));
+        });
+        final DataTypeDataDefinition dataTypeDataDefinition = dataTypeOptional.get();
+        if (StringUtils.isEmpty(dataTypeDataDefinition.getModel())) {
+            dataTypeDataDefinition.setModel(Constants.DEFAULT_MODEL_NAME);
+        }
+        final PropertyDefinitionDto propertyDefinitionDto = dataTypeOperation.deleteProperty(dataTypeDataDefinition, propertyId);
+        dataTypeOperation.updatePropertyInAdditionalTypeDataType(dataTypeDataDefinition, propertyDefinitionDto, false);
+        dataTypeBusinessLogic.updateApplicationDataTypeCache(dataTypeId);
+        return Response.status(Status.OK).entity(propertyDefinitionDto).build();
     }
 }
