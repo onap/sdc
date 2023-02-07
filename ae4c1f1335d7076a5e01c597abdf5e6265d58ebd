@@ -22,6 +22,30 @@
       "revId": "ae4c1f1335d7076a5e01c597abdf5e6265d58ebd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b694f5e_8c47f5ce",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-07T18:46:15Z",
+      "side": 1,
+      "message": "Another story covered the logic, I removed my policy condition to enable the constraints label. Tested and its working fine with existing condition.",
+      "parentUuid": "de4169a2_6d95f1ff",
+      "range": {
+        "startLine": 252,
+        "startChar": 0,
+        "endLine": 252,
+        "endChar": 71
+      },
+      "revId": "ae4c1f1335d7076a5e01c597abdf5e6265d58ebd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
