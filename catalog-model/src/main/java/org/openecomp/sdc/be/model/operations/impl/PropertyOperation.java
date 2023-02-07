@@ -2178,7 +2178,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 if (constraintType == null) {
                     log.warn("ConstraintType was not found for constraint name:{}", key);
                 } else {
-                    if (set.size() == 1 || (set.size() == 2 && ConstraintType.PATTERN == constraintType)) {
                         final JsonElement value = element.getValue();
                         final Object typedValue = getTypedValue(value);
                         switch (constraintType) {
@@ -2297,7 +2296,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                             default:
                                 log.warn("Key {} is not supported. Ignored.", key);
                         }
-                    }
                 }
             }
             return propertyConstraint;
