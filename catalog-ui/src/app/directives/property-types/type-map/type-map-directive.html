@@ -13,10 +13,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
- 
- 
+
+
 <div class="type-map">
-    <div data-ng-repeat="i in getNumber(mapKeys.length) track by $index" class="map-item" data-ng-class="{'primitive-value-map':!isSchemaTypeDataType}">
+    <div  ng-if="mapKeys.length > 0" data-ng-repeat="i in getNumber(mapKeys.length) track by $index" class="map-item" data-ng-class="{'primitive-value-map':!isSchemaTypeDataType}">
         <div class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapKey'+fieldsPrefixName+$index].$dirty && parentFormObj['mapKey'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Key</label>
             <input class="i-sdc-form-input"
@@ -42,9 +42,9 @@
         <div data-ng-if="!isSchemaTypeDataType" class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Value</label>
             <form class="temp-form">
-                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/> 
+                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/>
                 Value
-                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" ng-disabled="mapKeys[$index] == '' || mapKeys[$index] == null"/> 
+                <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" ng-disabled="mapKeys[$index] == '' || mapKeys[$index] == null"/>
                 {{'TOSCA_FUNCTION_LABEL' | translate}}
             </form>
             <input class="i-sdc-form-input"
@@ -92,11 +92,11 @@
                 <!-- Get the saved value for the relevant key -->
                 <option ng-if = "valueObjRef[mapKeys[$index]]" value = "{{valueObjRef[mapKeys[$index]]}}" name = "{{valueObjRef[mapKeys[$index]]}}" hidden selected>
                         {{valueObjRef[mapKeys[$index]]}}
-                </option> 
+                </option>
                 <!-- add all constratint to Select list -->
                 <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
                     {{value}}
-                </option> 
+                </option>
             </select>
 
             <div class="input-error" data-ng-show="parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid">
