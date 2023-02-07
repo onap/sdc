@@ -613,7 +613,7 @@ class ModelOperationTest extends ModelTestBase {
         property.setRequired(true);
 
         String dataTypeName = "tosca.datatypes.nfv.PreviouslyExistingType1";
-        modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, modelName, dataTypeName);
+        modelOperation.updatePropertyInAdditionalType(ElementTypeEnum.DATA_TYPE, property, modelName, dataTypeName, true);
         ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
 
