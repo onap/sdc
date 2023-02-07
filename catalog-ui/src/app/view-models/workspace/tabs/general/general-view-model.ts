@@ -760,6 +760,12 @@ export class GeneralViewModel {
         });
 
         this.$scope.onCategoryChange = (): void => {
+            if (!this.$scope.component.selectedCategory) {
+                this.$scope.editForm['category'].$setDirty();
+            }
+            if (!this.$scope.component.description) {
+                this.$scope.editForm['description'].$setDirty();
+            }
             this.$scope.component.selectedCategory = this.$scope.componentCategories.selectedCategory;
             if (this.$scope.component.selectedCategory) {
                 this.$scope.component.categories = this.convertCategoryStringToOneArray();
