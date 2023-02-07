@@ -32,6 +32,8 @@ import {TranslateService} from "../../../shared/translator/translate.service";
 import {AddPropertyComponent, PropertyValidationEvent} from "./add-property/add-property.component";
 import {IWorkspaceViewModelScope} from "../../../../view-models/workspace/workspace-view-model";
 import {SdcUiServices} from "onap-ui-angular/dist";
+import {PropertyModel} from "../../../../models/properties";
+import {SdcUiCommon, SdcUiComponents} from "onap-ui-angular";
 
 @Component({
     selector: 'app-type-workspace-properties',
@@ -184,7 +186,7 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         modal.instance.open();
     }
 
-    onRowClick(property: PropertyBEModel) {
+    onNameClick(property: PropertyBEModel) {
         this.openAddPropertyModal(property, true);
     }
 
@@ -200,6 +202,28 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         this.filteredProperties = Array.from(this.properties);
         this.sort();
     }
+
+    delete(property: PropertyModel) {
+        let onOk: Function = (): void => {
+            this.dataTypeService.deleteProperty(this.dataType.uniqueId, property.uniqueId).subscribe((response) => {
+                const props = this.properties;
+                props.splice(props.findIndex(p => p.uniqueId === response), 1);
+                this.filter();
+            }, (error) => {
+                console.error(error);
+            });
+        };
+        let title: string = this.translateService.translate("PROPERTY_VIEW_DELETE_MODAL_TITLE");
+        let message: string = this.translateService.translate("PROPERTY_VIEW_DELETE_MODAL_TEXT", {'name': property.name});
+        const okButton = {
+            testId: "OK",
+            text: "OK",
+            type: SdcUiCommon.ButtonType.info,
+            callback: onOk,
+            closeModal: true
+        } as SdcUiComponents.ModalButtonComponent;
+        this.modalServiceSdcUI.openInfoModal(title, message, 'delete-modal', [okButton]);
+    };
 }
 
 interface TableHeader {

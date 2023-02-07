@@ -519,7 +519,7 @@ class TypesUploadServletTest extends JerseyTest {
         final TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, componentUtils,
             servletUtils, null, capabilityTypeImportManager, interfaceLifecycleTypeImportManager,
             categoriesImportManager, dataTypeImportManager,
-            groupTypeImportManager, policyTypeImportManager, relationshipTypeImportManager, artifactTypeImportManager);
+            groupTypeImportManager, policyTypeImportManager, relationshipTypeImportManager, artifactTypeImportManager, null);
         final ResourceConfig resourceConfig = new ResourceConfig().register(typesUploadServlet);
 
         resourceConfig.register(MultiPartFeature.class);
