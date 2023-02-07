@@ -149,7 +149,7 @@
                                ng-change="onValueTypeChange()"/> {{(editPropertyModel.property.type == 'map' || editPropertyModel.property.type == 'list') ? 'Entries' : 'Value'}}
                         <input type="radio" name="hasGetFunctionValue"
                                ng-model="editPropertyModel.hasGetFunctionValue"
-                               ng-value="true"
+                               ng-value="editPropertyModel.property.defaultValue"
                                ng-change="onValueTypeChange()"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
                         <div data-ng-if="editPropertyModel.hasGetFunctionValue">
                             <tosca-function [property]="editPropertyModel.property"
@@ -216,7 +216,7 @@
                                            data-ng-maxlength="maxLength"
                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                            maxlength="{{maxLength}}"
-                                           data-ng-model="editPropertyModel.property.value"
+                                           data-ng-model="editPropertyModel.property.defaultValue"
                                            type="text"
                                            name="value"
                                            data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
@@ -230,6 +230,7 @@
                                             ng-if="(editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean'"
                                             data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                             name="value"
+                                            ng-value="editPropertyModel.property.defaultValue"
                                             data-ng-change="onValueChange()"
                                             data-ng-model="editPropertyModel.property.value">
                                         <option value="true">true</option>
