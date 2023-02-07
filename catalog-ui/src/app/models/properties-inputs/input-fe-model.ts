@@ -143,6 +143,10 @@ export class InputFEModel extends InputBEModel {
     }
 
     public resetMetadata = (): void => {
+        if (!this.metadataOrig){
+          return;
+        }
+
         this.metadata =  _.cloneDeep(this.metadataOrig);
         this.metadataIsValid = true;
 
