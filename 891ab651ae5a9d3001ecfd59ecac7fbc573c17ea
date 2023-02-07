@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46e85e16_1d60ed8f",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-07T19:33:08Z",
+      "side": 1,
+      "message": "remove commented code, or un-comment",
+      "range": {
+        "startLine": 441,
+        "startChar": 8,
+        "endLine": 449,
+        "endChar": 0
+      },
+      "revId": "891ab651ae5a9d3001ecfd59ecac7fbc573c17ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
