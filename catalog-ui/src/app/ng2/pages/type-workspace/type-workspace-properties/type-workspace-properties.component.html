@@ -38,9 +38,9 @@
         <div *ngIf="filteredProperties.length === 0" class="no-row-text">
           {{'PROPERTY_LIST_EMPTY_MESSAGE' | translate}}
         </div>
-        <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row" (click)="onRowClick(property)">
+        <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row" (click)="onNameClick(property)">
           <div class="table-col-general flex-item text" [title]="property.name">
-            <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': isViewOnly}">{{property.name}}</a>
+            <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': false}">{{property.name}}</a>
           </div>
           <div class="table-col-general flex-item text" [title]="property.type">
             <span [attr.data-tests-id]="'property-type-' + property.name">{{property.type}}</span>
