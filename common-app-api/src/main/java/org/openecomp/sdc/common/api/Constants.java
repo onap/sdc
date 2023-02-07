@@ -19,6 +19,10 @@
  */
 package org.openecomp.sdc.common.api;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Constants {
 
     public static final String APPLICATION_NAME = "application-name";
@@ -62,8 +66,6 @@ public final class Constants {
     public static final String RESOURCE_SUPPORTED_VERSION = "0.0.1";
     public static final String ARTIFACT_ID_FORMAT = "%s:%s:%s"; // resourceName:resourceVersion:artifactName
     public static final String ADDITIONAL_TYPE_DEFINITIONS = "additional_type_definitions.yaml";
-
-
     public static final String SERVICE_ARTIFACT_ID_FORMAT = "%s:%s:%s:%s"; // serviceName:serviceVersion:nodeTemplateName:artifactName
     public static final String CONTENT_DISPOSITION = "content-disposition";
     public static final String DOWNLOAD_ARTIFACT_LOGIC_ATTR = "downloadArtifactLogic";
@@ -156,8 +158,6 @@ public final class Constants {
     public static final String INITIAL_COUNT = "initial_count";
     public static final String VF_MODULE_TYPE = "vf_module_type";
     public static final String VOLUME_GROUP = "volume_group";
-    public static final String ASD_DEPLOYMENT_ITEM= "tosca.artifacts.asd.deploymentItem";
+    public static final String ASD_DEPLOYMENT_ITEM = "tosca.artifacts.asd.deploymentItem";
 
-    private Constants() {
-    }
 }

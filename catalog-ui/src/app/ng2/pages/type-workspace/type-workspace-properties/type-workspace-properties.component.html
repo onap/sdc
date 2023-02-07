@@ -32,14 +32,15 @@
         <div class="table-header head-row hand flex-item" *ngFor="let header of tableHeadersList" (click)="onUpdateSort(header.property)">{{header.title}}
           <span *ngIf="tableSortBy === header.property" class="table-header-sort-arrow" [ngClass]="{'down': tableColumnReverse, 'up': !tableColumnReverse}"></span>
         </div>
+        <div class="table-no-text-header head-row flex-item" *ngIf="!isViewOnly"><span class="delete-col-header"></span></div>
       </div>
 
       <div class="body">
         <div *ngIf="filteredProperties.length === 0" class="no-row-text">
           {{'PROPERTY_LIST_EMPTY_MESSAGE' | translate}}
         </div>
-        <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row" (click)="onRowClick(property)">
-          <div class="table-col-general flex-item text" [title]="property.name">
+        <div *ngFor="let property of filteredProperties" [attr.data-tests-id]="'property-row-' + property.name" class="flex-container data-row">
+          <div class="table-col-general flex-item text" [title]="property.name" (click)="onNameClick(property)">
             <a [attr.data-tests-id]="'property-name-' + property.name" [ngClass]="{'disabled': isViewOnly}">{{property.name}}</a>
           </div>
           <div class="table-col-general flex-item text" [title]="property.type">
@@ -53,6 +54,10 @@
           </div>
           <div class="table-col-general flex-item text" [title]="property.description || ''">
             <span [attr.data-tests-id]="'property-description-' + property.name" [title]="property.description">{{property.description}}</span>
+          </div>
+          <div class="table-btn-col flex-item" *ngIf="!isViewOnly">
+            <button class="table-delete-btn" data-ng-if="!property.ownerId || property.ownerId==component.uniqueId"
+                    (click)="delete(property); $event.stopPropagation();"  data-ng-class="{'disabled': isViewOnly}"></button>
           </div>
         </div>
       </div>
