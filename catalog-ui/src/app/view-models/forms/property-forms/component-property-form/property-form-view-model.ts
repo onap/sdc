@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,6 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
     close():void;
-    onValueChange():void;
     onSchemaTypeChange():void;
     onTypeChange(resetSchema:boolean):void;
     showSchema():boolean;
@@ -150,6 +149,7 @@ export class PropertyFormViewModel {
     private initResource = ():void => {
         this.$scope.editPropertyModel.property = new PropertyModel(this.property);
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
+        this.$scope.editPropertyModel.property.value = this.property.value ? this.property.value : this.property.defaultValue;
         this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"] : null;
         this.initToscaGetFunction();
         this.setMaxLength();
@@ -159,7 +159,7 @@ export class PropertyFormViewModel {
         this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaFunction();
         this.$scope.editPropertyModel.isGetFunctionValid = true;
     }
-    
+
     private isDataTypeForPropertyType = (property:PropertyModel):boolean=> {
         property.simpleType = "";
         if (property.type && PROPERTY_DATA.TYPES.indexOf(property.type) > -1) {
@@ -172,7 +172,7 @@ export class PropertyFormViewModel {
         }
         return true;
     };
-    
+
     private getTypeForDataTypeDerivedFromSimple = (dataTypeName:string):string => {
         if (!this.$scope.dataTypes[dataTypeName]) {
             return 'string';
@@ -436,15 +436,6 @@ export class PropertyFormViewModel {
 
         this.$scope.close = ():void => {
             this.$uibModalInstance.close();
-        };
-
-        // put default value when instance value is empty
-        this.$scope.onValueChange = ():void => {
-            if (!this.$scope.editPropertyModel.property.value) {
-                if (this.$scope.isPropertyValueOwner) {
-                    this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.defaultValue;
-                }
-            }
         };
 
         // Add the done button at the footer.
