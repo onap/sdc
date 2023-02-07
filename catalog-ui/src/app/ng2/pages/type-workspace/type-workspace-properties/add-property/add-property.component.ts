@@ -45,7 +45,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     private validConstraints: boolean = true;
     private valueChangesSub: Subscription;
     private descriptionForm: FormControl = new FormControl(undefined);
-    private requiredForm: FormControl = new FormControl(false, Validators.required);
+    private requiredForm: FormControl = new FormControl(false);
     nameForm: FormControl = new FormControl(undefined, [Validators.required]);
     typeForm: FormControl = new FormControl(undefined, Validators.required);
     schemaForm: FormControl = new FormControl(undefined, (control: AbstractControl): ValidationErrors | null => {
@@ -163,9 +163,10 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
     private emitValidityChange(): void {
         const isValid: boolean = this.formGroup.valid;
+        this.findInvalidControls().forEach(name => console.error("Validation error in field: " + name));
         this.onValidityChange.emit({
             isValid: isValid && this.validConstraints,
-            property: isValid ? this.buildPropertyFromForm() : undefined
+            property: isValid ? this.buildPropertyFromForm() : this.nameForm.value
         });
     }
 
@@ -173,6 +174,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         const property = new PropertyBEModel();
         property.name = this.nameForm.value;
         property.type = this.typeForm.value;
+        property.required = this.requiredForm.value;
         property.constraints = this.constraintsForm.value;
         if (this.schemaForm.value) {
             property.schemaType = this.schemaForm.value;
@@ -241,14 +243,26 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
             }
             this.property.constraints = constraints.constraints;
         }
-        else {
-            this.constraintsForm.setValue(constraints.constraints);
-        }
+
+        this.constraintsForm.setValue(constraints.constraints);
+
         this.validConstraints = constraints.valid;
+        let formValid = constraints.valid && this.findInvalidControls().length === 0;
         this.onValidityChange.emit({
-            isValid: constraints.valid,
-            property: constraints.valid ? this.buildPropertyFromForm() : undefined
+            isValid: formValid,
+            property: formValid ? this.buildPropertyFromForm() : undefined
         });
+    }
+
+    findInvalidControls() {
+        const invalid = [];
+        const controls = this.formGroup.controls;
+        for (const name in controls) {
+            if (controls[name].invalid) {
+                invalid.push(name);
+            }
+        }
+        return invalid;
     }
 }
 

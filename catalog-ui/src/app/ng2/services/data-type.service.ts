@@ -92,6 +92,11 @@ export class DataTypeService {
         return this.httpClient.post<PropertyBEModel>(url, property);
     }
 
+    public updateProperty(id: string, property: PropertyBEModel): Observable<PropertyBEModel> {
+        const url = `${this.dataTypeUrl}/${id}/properties`;
+        return this.httpClient.put<PropertyBEModel>(url, property);
+    }
+
     public createImportedType(model: string, importingFile: File): Observable<any> {
         const url = `${this.dataTypeUploadUrl}/datatypesyaml`;
         const formData = new FormData();
