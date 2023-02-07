@@ -132,12 +132,20 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
         this.filter();
     }
 
+    private updateProperty(oldProperty: PropertyBEModel, newProperty: PropertyBEModel) {
+        this.properties.forEach((value,index)=>{
+            if(value.name == oldProperty.name) this.properties.splice(index,1);
+        });
+        this.properties.push(newProperty);
+        this.filter();
+    }
+
     onClickAddProperty() {
-        this.openAddPropertyModal();
+        this.openAddPropertyModal(null, false);
     }
 
     private openAddPropertyModal(property?: PropertyBEModel, readOnly: boolean = false) {
-        const modalTitle = this.translateService.translate('PROPERTY_ADD_MODAL_TITLE');
+        const modalTitle = this.translateService.translate(property ? 'PROPERTY_EDIT_MODAL_TITLE' : 'PROPERTY_ADD_MODAL_TITLE');
         const modalButtons = [];
         let disableSaveButtonFlag = true;
         let propertyFromModal: PropertyBEModel = undefined;
@@ -156,9 +164,16 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
             modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
                 () => {
                     disableSaveButtonFlag = true;
-                    this.dataTypeService.createProperty(this.dataType.uniqueId, propertyFromModal).subscribe(property => {
-                        this.addProperty(new PropertyBEModel(property));
-                    });
+                    if (property) {
+                        this.dataTypeService.updateProperty(this.dataType.uniqueId, propertyFromModal).subscribe(property => {
+                            this.updateProperty(propertyFromModal, new PropertyBEModel(property));
+                        });
+                    }
+                    else {
+                        this.dataTypeService.createProperty(this.dataType.uniqueId, propertyFromModal).subscribe(property => {
+                            this.addProperty(new PropertyBEModel(property));
+                        });
+                    }
                     this.modalService.closeCurrentModal();
                 },
                 (): boolean => {
@@ -186,7 +201,7 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
     }
 
     onRowClick(property: PropertyBEModel) {
-        this.openAddPropertyModal(property, true);
+        this.openAddPropertyModal(property, this.isViewOnly);
     }
 
     private showPropertiesMap(properties: Array<PropertyBEModel>): void {
