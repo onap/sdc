@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
@@ -57,7 +58,9 @@ public class PropertyValueConstraintValidationUtil {
     private static final String UNDERSCORE = "_";
     private static final String VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY = "%nValue provided in invalid format for %s property";
     private static final Logger logger = LoggerFactory.getLogger(PropertyValueConstraintValidationUtil.class);
-    private static final String IGNORE_PROPERTY_VALUE_START_WITH = "{\"get_input\":";
+    private static final String IGNORE_PROPERTY_VALUE_START_WITH_INPUT = "{\"get_input\":";
+    private static final String IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY = "{\"get_property\":";
+    private static final String IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE = "{\"get_attribute\":";
     private Map<String, DataTypeDefinition> dataTypeDefinitionCache;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<String> errorMessages = new ArrayList<>();
@@ -153,7 +156,8 @@ public class PropertyValueConstraintValidationUtil {
     }
 
     private boolean isPropertyNotMappedAsInput(PropertyDefinition propertyDefinition) {
-        return !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH);
+        return !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_INPUT) && !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY)
+                && !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE);
     }
 
     private void checkAndEvaluatePrimitiveProperty(PropertyDefinition propertyDefinition, DataTypeDefinition dataTypeDefinition) {
@@ -203,21 +207,21 @@ public class PropertyValueConstraintValidationUtil {
                     }
                 }
                 if (ToscaType.isPrimitiveType(prop.getType())) {
-                    newPropertyWithValue = copyPropertyWithNewValue(prop, String.valueOf(valueMap.get(prop.getName())));
+                    newPropertyWithValue = copyPropertyWithNewValue(prop, String.valueOf(valueMap.get(prop.getName())), prop.getName());
                     if (isPropertyToEvaluate(newPropertyWithValue)) {
                         evaluateConstraintsOnProperty(newPropertyWithValue);
                     }
                 } else if (ToscaType.isCollectionType(prop.getType())) {
                     newPropertyWithValue =
                         copyPropertyWithNewValue(prop,
-                            objectMapper.writeValueAsString(valueMap.get(prop.getName())));
+                            objectMapper.writeValueAsString(valueMap.get(prop.getName())), prop.getName());
                     if (isPropertyToEvaluate(newPropertyWithValue)) {
                         evaluateCollectionTypeProperties(newPropertyWithValue);
                     }
                 } else {
                     newPropertyWithValue =
                         copyPropertyWithNewValue(prop,
-                            objectMapper.writeValueAsString(valueMap.get(prop.getName())));
+                            objectMapper.writeValueAsString(valueMap.get(prop.getName())), prop.getName());
                     if (isPropertyToEvaluate(newPropertyWithValue)) {
                         evaluateComplexTypeProperties(newPropertyWithValue);
                     }
@@ -365,7 +369,7 @@ public class PropertyValueConstraintValidationUtil {
             final Object value = valueMap.get(mapKey);
             try {
                 final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition,
-                    objectMapper.writeValueAsString(value));
+                    objectMapper.writeValueAsString(value),mapKey);
                 propertyCopyWithNewValue.setToscaSubPath(mapKey);
                 if (ToscaType.isPrimitiveType(schemaType)) {
                     evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
@@ -399,8 +403,16 @@ public class PropertyValueConstraintValidationUtil {
         return propertyName;
     }
 
-    private PropertyDefinition copyPropertyWithNewValue(final PropertyDefinition propertyToCopy, final String value) {
+    private PropertyDefinition copyPropertyWithNewValue(final PropertyDefinition propertyToCopy, final String value, final String key) {
         final var propertyDefinition = new PropertyDefinition(propertyToCopy);
+        if (key != null && propertyToCopy.getSubPropertyToscaFunctions() != null) {
+            propertyToCopy.getSubPropertyToscaFunctions().forEach(subPropertyToscaFunction -> {
+                final List<String> subPropertyPath = subPropertyToscaFunction.getSubPropertyPath();
+                if (subPropertyPath.get((subPropertyPath.size() - 1)).equals(key)) {
+                    propertyDefinition.setToscaFunction(subPropertyToscaFunction.getToscaFunction());
+                }
+            });
+        }
         propertyDefinition.setValue(value);
         return propertyDefinition;
     }

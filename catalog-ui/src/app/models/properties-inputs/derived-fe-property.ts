@@ -45,7 +45,8 @@ export class DerivedFEProperty extends PropertyBEModel {
     canBeDeclared: boolean;
     mapKey: string;
     mapKeyError: string;
-    mapInlist: boolean
+    mapInlist: boolean;
+    parentMapKey: string;
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
         if (!createChildOfListOrMap) { //creating a standard derived prop
@@ -68,26 +69,28 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.parentName = parentName;
             this.propertiesName = parentName + '#' + this.name;
             
-            if (property.type == PROPERTY_TYPES.LIST) {
-                if (property.schemaType != PROPERTY_TYPES.MAP) {
-                    if(property.value != null) {
-                        const valueJson = JSON.parse(property.value);
-                        if (key != '') {
-                            this.mapKey = key;
-                        }else{
-                            let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                            this.mapKey = indexNumber.toString();
-                        }
-                    }else {
-                        this.mapKey = "0";
+            if (property.type == PROPERTY_TYPES.LIST) { 
+                let parentKey : string = null;
+                if(property.value != null) {
+                    const valueJson = JSON.parse(property.value);
+                    if (key != '') {
+                        parentKey = key;
+                    }else{
+                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                        parentKey = indexNumber.toString();
                     }
+                }else {
+                    parentKey = "0";
+                }
+                if (property.schemaType != PROPERTY_TYPES.MAP) {
+                    this.mapKey = parentKey;
                 }
                 this.mapKeyError = null;
                 this.type = property.schema.property.type;
                 if (this.type == PROPERTY_TYPES.MAP){
                     this.mapInlist = true;
+                    this.parentMapKey = parentKey;
                 }
-
                 this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
             } else { //map
                 if (key) {
@@ -105,12 +108,18 @@ export class DerivedFEProperty extends PropertyBEModel {
                     schProp.simpleType = PROPERTY_TYPES.STRING;
                     this.schema = new SchemaPropertyGroupModel(schProp);
                     this.schemaType = PROPERTY_TYPES.STRING;
+                    if (property instanceof DerivedFEProperty) {
+                        this.parentMapKey = property.parentMapKey;
+                        if (value != null && typeof value == 'object') {
+                            this.toscaFunction = property.toscaFunction;
+                        }
+                    }
                 } else {
                     this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
                 }
 	
             }
-            this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
+            this.valueObj = ((this.type == PROPERTY_TYPES.JSON || this.type == PROPERTY_TYPES.MAP) && typeof value == 'object') ? JSON.stringify(value) : value;
             if (value != null) {
                 this.value = typeof value == 'object' ? JSON.stringify(value) : value;
             }

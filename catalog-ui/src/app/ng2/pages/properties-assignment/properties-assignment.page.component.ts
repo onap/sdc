@@ -592,8 +592,11 @@ export class PropertiesAssignmentComponent {
             const parts = propertiesNameArray.split("#");
             let currentKey = [];
             if (this.isListOrMap(checkedInstanceProperty.type)) {
+                if (checkedInstanceProperty.schemaType == PROPERTY_TYPES.MAP) {
+                    currentKey.push((<DerivedFEProperty>checkedInstanceProperty.input).parentMapKey);
+                }
                 currentKey.push((<DerivedFEProperty>checkedInstanceProperty.input).mapKey);
-                if (this.isComplexSchemaType(checkedInstanceProperty.schemaType)) {
+                if (checkedInstanceProperty.schemaType != PROPERTY_TYPES.MAP && this.isComplexSchemaType(checkedInstanceProperty.schemaType)) {
                     currentKey.push(parts.reverse()[0]);
                 }
             }
@@ -636,8 +639,11 @@ export class PropertiesAssignmentComponent {
             const parts = propertiesName.split("#");
             let currentKey = [];
             if (this.isListOrMap(checkedProperty.type)) {
+                if (checkedProperty.schemaType == PROPERTY_TYPES.MAP) {
+                    currentKey.push((<DerivedFEProperty>checkedProperty.input).parentMapKey);
+                }
                 currentKey.push((<DerivedFEProperty>checkedProperty.input).mapKey);
-                if (this.isComplexSchemaType(checkedProperty.schemaType)) {
+                if (checkedProperty.schemaType != PROPERTY_TYPES.MAP && this.isComplexSchemaType(checkedProperty.schemaType)) {
                     currentKey.push(parts.reverse()[0]);
                 }
             }

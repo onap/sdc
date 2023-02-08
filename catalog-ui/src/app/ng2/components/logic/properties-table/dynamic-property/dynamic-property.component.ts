@@ -154,20 +154,23 @@ export class DynamicPropertyComponent {
     createNewChildProperty = (): void => {
 
         let mapKeyValue = this.property instanceof DerivedFEProperty ? this.property.mapKey : "";
+        let parentToscaFunction = null;
         if (this.property.type == PROPERTY_TYPES.LIST && mapKeyValue === "") {
-            if (this.property.schemaType != PROPERTY_TYPES.MAP) {
-                if (this.property.value != null) {
-                    const valueJson = JSON.parse(this.property.value);
-                    if (this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null) {
-                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                        mapKeyValue = indexNumber.toString();
-                    }else{
-                        mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
-                    }
-                }else {
-                    mapKeyValue = "0";
+            if (this.property.value != null) {
+                const valueJson = JSON.parse(this.property.value);
+                if (this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null) {
+                    let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
+                    mapKeyValue = indexNumber.toString();
+                }else{
+                    mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
                 }
+            }else {
+                mapKeyValue = "0";
             }
+        }
+        if (this.property.type == PROPERTY_TYPES.MAP && this.property instanceof DerivedFEProperty && this.property.mapInlist) {
+            parentToscaFunction = this.property.toscaFunction;
+            this.property.toscaFunction = null;
         }
         let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, mapKeyValue, null);
 
@@ -177,6 +180,7 @@ export class DynamicPropertyComponent {
         } else {
             this.addChildPropsToParent.emit(newProps);
         }
+        this.property.toscaFunction = parentToscaFunction;
     }
 
     addChildProps = (newProps: Array<DerivedFEProperty>, childPropName: string) => {
@@ -221,9 +225,20 @@ export class DynamicPropertyComponent {
 
     deleteListOrMapItem = (item: DerivedFEProperty) => {
         if (this.property instanceof PropertyFEModel) {
+            const childMapKey = item.mapKey;
             this.removeValueFromParent(item);
             this.property.flattenedChildren.splice(this.property.getIndexOfChild(item.propertiesName), this.property.getCountOfChildren(item.propertiesName));
             this.expandChildById(item.propertiesName);
+            if (this.property.type == PROPERTY_TYPES.LIST && this.property.schemaType == PROPERTY_TYPES.MAP && childMapKey != null) {
+                let valueObject = JSON.parse(this.property.value);
+                let innerObject = valueObject[item.parentMapKey];
+                delete innerObject[childMapKey];
+                this.property.valueObj = valueObject;
+                this.property.value = JSON.stringify(valueObject);
+                this.property.flattenedChildren[0].valueObj = valueObject;
+                this.property.flattenedChildren[0].value = JSON.stringify(valueObject);
+                this.property.flattenedChildren[0].valueObjIsChanged = true;
+            }
         }
     }
 
@@ -234,12 +249,19 @@ export class DynamicPropertyComponent {
             if (!itemParent) {
                 return;
             }
-            const oldKey = item.getActualMapKey();
+            let oldKey = item.getActualMapKey();
+            let keyIndex : number = 0;
+                if(item.parentMapKey != null && oldKey != null) {
+                    keyIndex = 1;
+                }
+                if(item.parentMapKey != null && oldKey == null) {
+                    oldKey = item.parentMapKey;
+                }
             if (this.property.subPropertyToscaFunctions !== null) {
                 let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
-                this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction, index) => {
-                    if(item.subPropertyPath[0] != oldKey){
-                        tempSubToscaFunction.push(item);
+                this.property.subPropertyToscaFunctions.forEach((subToscaItem : SubPropertyToscaFunction) => {
+                    if(subToscaItem.subPropertyPath[keyIndex] != oldKey){
+                        tempSubToscaFunction.push(subToscaItem);
                     }
                 });
                 this.property.subPropertyToscaFunctions = tempSubToscaFunction;
