@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58fe3d52_f9072d20",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-08T15:29:36Z",
+      "side": 1,
+      "message": "why change this?",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 81
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab866c25_35895dfe",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-08T15:29:36Z",
+      "side": 1,
+      "message": "the default value should only be displayed when the value is not set",
+      "range": {
+        "startLine": 219,
+        "startChar": 0,
+        "endLine": 219,
+        "endChar": 98
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63dfa98d_0ecd349b",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/properties/properties-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-08T15:29:36Z",
+      "side": 1,
+      "message": "The default value missing here is not the issue - when you click on the property, opening the \u0027Update Property\u0027 modal the \u0027Default Value\u0027 field is empty",
+      "range": {
+        "startLine": 62,
+        "startChar": 24,
+        "endLine": 64,
+        "endChar": 30
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
