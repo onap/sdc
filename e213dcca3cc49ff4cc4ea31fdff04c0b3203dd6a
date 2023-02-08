@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "07613fa1_f7d5d214",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-08T15:33:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21284973_4ddf28c2",
+      "range": {
+        "startLine": 390,
+        "startChar": 12,
+        "endLine": 390,
+        "endChar": 41
+      },
+      "revId": "e213dcca3cc49ff4cc4ea31fdff04c0b3203dd6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4982e959_50cfbd5f",
         "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "e213dcca3cc49ff4cc4ea31fdff04c0b3203dd6a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4da6314_2e215ff5",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-08T15:33:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4982e959_50cfbd5f",
+      "range": {
+        "startLine": 203,
+        "startChar": 4,
+        "endLine": 203,
+        "endChar": 14
+      },
+      "revId": "e213dcca3cc49ff4cc4ea31fdff04c0b3203dd6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
