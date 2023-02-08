@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
@@ -117,8 +118,10 @@ public class PropertyValueConstraintValidationUtil {
             } else if (ToscaType.isCollectionType(propertyDefinition.getType())) {
                 propertyDefinition.setConstraints(org.openecomp.sdc.be.dao.utils.CollectionUtils.merge(propertyDefinition.safeGetConstraints(),
                     propertyConstraints.isEmpty() ? new ArrayList<>() : propertyConstraints));
-                evaluateConstraintsOnProperty(propertyDefinition);
-                evaluateCollectionTypeProperties(propertyDefinition);
+                if (propertyDefinition.getSchemaType() != null && !ToscaType.isCollectionType(propertyDefinition.getSchemaType())) {
+                    evaluateConstraintsOnProperty(propertyDefinition);
+                    evaluateCollectionTypeProperties(propertyDefinition);
+                }
             } else {
                 setCompletePropertyName(propertyDefinition);
                 evaluateComplexTypeProperties(propertyDefinition);
@@ -337,12 +340,17 @@ public class PropertyValueConstraintValidationUtil {
 
     private void evaluateMapType(final PropertyDefinition propertyDefinition) {
         try {
+            boolean emptyMapFlag = false;
             if (propertyDefinition.getSchemaType() == null) {
+                emptyMapFlag = true;
                 propertyDefinition.setSchema(createStringSchema());
             }
             final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
             });
-            evaluateCollectionType(propertyDefinition, map);
+            if (!emptyMapFlag) {
+                evaluateCollectionType(propertyDefinition, map);
+            }
+
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
             errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));

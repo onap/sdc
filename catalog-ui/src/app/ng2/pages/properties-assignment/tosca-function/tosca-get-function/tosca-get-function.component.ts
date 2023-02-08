@@ -267,7 +267,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             if ((this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
                     (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
                 if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
-                    return (<PropertyDeclareAPIModel> this.property).input.type;
+                    let propertySchemaType = (<PropertyDeclareAPIModel> this.property).input.type;
+                    return propertySchemaType == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : propertySchemaType;
                 }else{
                     return this.property.schema.property.type;
                 }
@@ -379,7 +380,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         if (this.typeHasSchema(this.property.type)) {
             if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
                 if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
-                    return property.type === (<PropertyDeclareAPIModel> this.property).input.type;
+                    let propertySchemaType = (<PropertyDeclareAPIModel> this.property).input.type;
+                    propertySchemaType = propertySchemaType == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : propertySchemaType;
+                    return property.type === propertySchemaType;
                 }else{
                     return property.type === this.property.schema.property.type;
                 }

@@ -116,8 +116,11 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             if (propertiesPath.length > 1){
                 let keyToFind = [];
                 if (this.property.type == PROPERTY_TYPES.MAP || this.property.type == PROPERTY_TYPES.LIST) {
+                    if (this.property.type == PROPERTY_TYPES.LIST && this.property.schemaType == PROPERTY_TYPES.MAP) {
+                        keyToFind.push((<DerivedFEProperty>this.property.input).parentMapKey);
+                    }
                     keyToFind.push((<DerivedFEProperty>this.property.input).mapKey);
-                    if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.property.schemaType) === -1) {
+                    if (this.property.schemaType != PROPERTY_TYPES.MAP && PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.property.schemaType) === -1) {
                         keyToFind.push(propertiesPath.reverse()[0]);
                     }
                 }
