@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cea6df76_7f1b27ca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-08T15:18:14Z",
+      "side": 1,
+      "message": "reuse Constants.DEFAULT_MODEL_NAME",
+      "range": {
+        "startLine": 204,
+        "startChar": 30,
+        "endLine": 204,
+        "endChar": 39
+      },
+      "revId": "6edc3a33bf35063aaca4f92a9e51cdc5b945850c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

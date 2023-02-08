@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21284973_4ddf28c2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-08T15:18:14Z",
+      "side": 1,
+      "message": "unnecessary attribution, join with next line",
+      "range": {
+        "startLine": 390,
+        "startChar": 12,
+        "endLine": 390,
+        "endChar": 41
+      },
+      "revId": "e213dcca3cc49ff4cc4ea31fdff04c0b3203dd6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4982e959_50cfbd5f",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-08T15:18:14Z",
+      "side": 1,
+      "message": "I\u0027d suggest to change from \u0027onRowClick\u0027 to \u0027onNameClick\u0027\nsee\nhttps://gerrit.nordix.org/c/onap/sdc/+/16963/5/catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.html#43\nand \nhttps://gerrit.nordix.org/c/onap/sdc/+/16963/5/catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.ts#189\nto avoid confusion between \u0027edit\u0027 and \u0027delete\u0027 property",
+      "range": {
+        "startLine": 203,
+        "startChar": 4,
+        "endLine": 203,
+        "endChar": 14
+      },
+      "revId": "e213dcca3cc49ff4cc4ea31fdff04c0b3203dd6a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
