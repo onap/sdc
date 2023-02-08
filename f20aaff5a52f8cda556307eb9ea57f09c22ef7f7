@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8135b66_a1d8ef16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-08T12:00:27Z",
+      "side": 1,
+      "message": "this one is not needed here, as its already done in TypesUploadServlet::crateDataTypes-\u003eDataTypeImportManager::createDataTypes",
+      "revId": "f20aaff5a52f8cda556307eb9ea57f09c22ef7f7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
