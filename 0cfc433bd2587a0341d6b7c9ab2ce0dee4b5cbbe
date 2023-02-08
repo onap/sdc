@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a4d8fad8_d5655934",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/add-property/add-property.component.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-08T14:18:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28746a64_64f3f155",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 61
+      },
+      "revId": "0cfc433bd2587a0341d6b7c9ab2ce0dee4b5cbbe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5d89c2c_ad8b81a6",
         "filename": "catalog-ui/src/app/utils/service-data-type-reader.ts",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "0cfc433bd2587a0341d6b7c9ab2ce0dee4b5cbbe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5501c50f_58609d17",
+        "filename": "catalog-ui/src/app/utils/service-data-type-reader.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-02-08T14:18:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5d89c2c_ad8b81a6",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 185,
+        "endChar": 82
+      },
+      "revId": "0cfc433bd2587a0341d6b7c9ab2ce0dee4b5cbbe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
