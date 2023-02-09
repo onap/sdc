@@ -281,8 +281,38 @@ public class DataTypeOperation extends AbstractOperation {
         return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
 
-    public void addPropertyToAdditionalTypeDataType(DataTypeDataDefinition dataTypeDataDefinition, PropertyDefinitionDto property) {
-        modelOperation.addPropertyToAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(), dataTypeDataDefinition.getName());
+    public void updatePropertyInAdditionalTypeDataType(final DataTypeDataDefinition dataTypeDataDefinition,
+                                                       final PropertyDefinitionDto property,
+                                                       final boolean isAdd) {
+        modelOperation.updatePropertyInAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(),
+            dataTypeDataDefinition.getName(), isAdd);
+    }
+
+    public PropertyDefinitionDto deleteProperty(final DataTypeDataDefinition dataTypeDataDefinition, final String propertyId) {
+        final List<PropertyDefinition> propertiesData = findAllProperties(dataTypeDataDefinition.getUniqueId());
+        final String dataTypeDataDefinitionName = dataTypeDataDefinition.getName();
+        if (CollectionUtils.isEmpty(propertiesData)) {
+            throw new OperationException(ActionStatus.PROPERTY_NOT_FOUND,
+                String.format("Failed to find property '%s' for data type '%s'", propertyId, dataTypeDataDefinitionName));
+        }
+        Optional<PropertyDefinition> optionalPropertyDefinition = propertiesData.stream()
+            .filter(propertyDataDefinition -> propertyDataDefinition.getUniqueId().equals(propertyId)).findAny();
+        optionalPropertyDefinition.orElseThrow(() -> {
+            throw new OperationException(ActionStatus.PROPERTY_NOT_FOUND,
+                String.format("Failed to find property '%s' for data type '%s'", propertyId, dataTypeDataDefinitionName));
+        });
+        final Either<PropertyData, JanusGraphOperationStatus> statusEither = propertyOperation.deletePropertyFromGraph(propertyId);
+        if (statusEither.isRight()) {
+            throw new OperationException(ActionStatus.PROPERTY_NOT_FOUND,
+                String.format("Failed to delete property '%s' from data type '%s'", propertyId, dataTypeDataDefinitionName));
+        }
+        final PropertyDefinition propertyDefinition = optionalPropertyDefinition.get();
+        final PropertyData propertyData = statusEither.left().value();
+        final PropertyDataDefinition propertyDataDefinition = propertyData.getPropertyDataDefinition();
+        propertyDataDefinition.setName(propertyDefinition.getName());
+        propertyDataDefinition.setPropertyConstraints(propertyData.getConstraints());
+        propertiesData.remove(propertyDefinition);
+        return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
 
 }
