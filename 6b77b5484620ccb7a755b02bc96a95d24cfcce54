@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30a9b33b_59385de1",
+        "filename": "catalog-ui/src/assets/languages/en_US.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-09T11:44:50Z",
+      "side": 1,
+      "message": "Perhaps use \"Update Property\" rather than \"Edit Property\" to be consistent with terminology used when editing VFC properties",
+      "range": {
+        "startLine": 597,
+        "startChar": 32,
+        "endLine": 597,
+        "endChar": 36
+      },
+      "revId": "6b77b5484620ccb7a755b02bc96a95d24cfcce54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
