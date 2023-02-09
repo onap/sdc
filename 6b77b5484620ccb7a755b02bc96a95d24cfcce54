@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "3b94b72e_12d42c54",
+        "filename": "catalog-ui/src/app/ng2/pages/type-workspace/type-workspace-properties/type-workspace-properties.component.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-09T11:47:43Z",
+      "side": 1,
+      "message": "should be always false, as can click on property to view in any scenario",
+      "range": {
+        "startLine": 43,
+        "startChar": 95,
+        "endLine": 43,
+        "endChar": 105
+      },
+      "revId": "6b77b5484620ccb7a755b02bc96a95d24cfcce54",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "30a9b33b_59385de1",
         "filename": "catalog-ui/src/assets/languages/en_US.json",
         "patchSetId": 4
