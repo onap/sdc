@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1337db2d_afe34dd4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DataTypeServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-09T12:17:16Z",
+      "side": 1,
+      "message": "In the scenario where the property is not found in the DB, we should still try to delete from \u0027additional types\u0027 in case something went wrong ending up with the type in the additional types but not in the DB",
+      "range": {
+        "startLine": 203,
+        "startChar": 5,
+        "endLine": 205,
+        "endChar": 6
+      },
+      "revId": "2ba94eef705e8f6bb995b42d8115bf5d1e09ab8f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
