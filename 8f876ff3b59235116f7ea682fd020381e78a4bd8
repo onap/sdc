@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8858e2e4_55759133",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-09T11:16:27Z",
+      "side": 1,
+      "message": "Please describe the details of the error so reviewers can understand the issue and the fix",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 54
+      },
+      "revId": "8f876ff3b59235116f7ea682fd020381e78a4bd8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
