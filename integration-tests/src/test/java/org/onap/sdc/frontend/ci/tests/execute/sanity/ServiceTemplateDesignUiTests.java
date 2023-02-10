@@ -485,9 +485,9 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     private void declareInputToBaseService(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName) {
         propertiesAssignmentPage.selectProperty(propertyName);
-        propertiesAssignmentPage.clickOnDeclareInput();
+        propertiesAssignmentPage.clickOnDeclareInput("inputName1");
         propertiesAssignmentPage.clickInputTab(propertyName);
-        propertiesAssignmentPage.isInputPresent(vfResourceCreateData.getName() + "_" + propertyName);
+        propertiesAssignmentPage.isInputPresent("inputName1");
     }
 
     private void declareInputToInstanceProperties(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName) {
@@ -495,9 +495,9 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         propertiesAssignmentPage.loadCompositionTab();
         propertiesAssignmentPage.loadComponentInstanceProperties(vfcs.get(0).getName().concat(" 0"));
         propertiesAssignmentPage.selectProperty(propertyName);
-        propertiesAssignmentPage.clickOnDeclareInput();
+        propertiesAssignmentPage.clickOnDeclareInput("inputName2");
         propertiesAssignmentPage.clickInputTab(propertyName);
-        propertiesAssignmentPage.isInputPresent(vfResourceCreateData.getName() + "_" + vfcs.get(0).getName());
+        propertiesAssignmentPage.isInputPresent("inputName2");
     }
 
     private CreateVfFlow createVF() {
@@ -815,7 +815,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, Object> inputsTosca = getMapEntry(topologyTemplateTosca, "inputs");
         assertThat(String.format("'%s' should contain a inputs entry", toscaYaml), inputsTosca, notNullValue());
         assertEquals(2, inputsTosca.keySet().stream()
-            .filter(s -> (s.contains("resourceSubtype") || s.contains("property1"))).count());
+            .filter(s -> (s.contains("inputName"))).count());
         final Map<String, Object> substitutionMapping = getMapEntry(topologyTemplateTosca, "substitution_mappings");
         assertThat(String.format("'%s' should contain a substitution_mappings entry", toscaYaml), substitutionMapping,
             notNullValue());

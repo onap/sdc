@@ -344,8 +344,16 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.INSTANCE_SPAN.getXpath(instanceName))).click();
     }
 
-    public void clickOnDeclareInput(){
+    public void clickOnDeclareInput(final String inputName){
         waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.DECLARE_INPUT_BTN.getXpath())).click();
+        declareInputWithSetInputName(inputName);
+    }
+
+    private void declareInputWithSetInputName(final String inputName) {
+        final By setInputNameLocator = By.xpath(XpathSelector.SET_INPUT_NAME_FIELD.getXpath());
+        final WebElement inputNameField = waitForElementVisibility(setInputNameLocator, 5);
+        inputNameField.sendKeys(inputName);
+        waitToBeClickable(By.xpath(XpathSelector.INPUT_NAME_SAVE_BTN.getXpath())).click();
     }
 
     public void loadCompositionTab(){
@@ -364,6 +372,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         SOFTWARE_VERSION_PROPERTY_CHECKBOX("software_versions", "//checkbox[@data-tests-id='%s']"),
         SOFTWARE_VERSION_INPUT("value-prop-software_versions", "//input[starts-with(@data-tests-id,'%s')]"),
         PROPERTY_CHECKBOX("//checkbox[@data-tests-id='%s']"),
+        SET_INPUT_NAME_FIELD("//*[@id=\"myText\"]"),
         PROPERTY_SAVE_BTN("properties-save-button", "//button[@data-tests-id='%s']"),
         PROPERTY_ADD_RIGHT_COLUMN_DIV("right-column", "//div[@class='%s']"),
         PROPERTY_ADD_BTN("add-btn", "//div[contains(@class,'%s')]"),
@@ -376,6 +385,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),
         PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]"),
         DECLARE_INPUT_BTN("declare-button declare-input", "//button[@data-tests-id='%s']"),
+        INPUT_NAME_SAVE_BTN("//button[@data-tests-id='Save']"),
         COMPOSITION_TAB("Composition", "//div[contains(@class,'tab') and contains(text(), '%s')]"),
         INSTANCE_SPAN("//span[@data-tests-id='%s']");
 
