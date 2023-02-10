@@ -46,6 +46,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     mapKey: string;
     mapKeyError: string;
     mapInlist: boolean
+    inputName: string;
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
         if (!createChildOfListOrMap) { //creating a standard derived prop
@@ -119,6 +120,7 @@ export class DerivedFEProperty extends PropertyBEModel {
         // this.constraints = property ? property.constraints : null;
         this.valueObjIsValid = true;
         this.derivedDataType = this.getDerivedPropertyType();
+        this.inputName = property.inputName;
     }
 
     public getActualMapKey() {

@@ -85,6 +85,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private List<String> propertyConstraints;
     private Map<String, String> metadata;
     private boolean userCreated;
+    private String inputName;
 
     public PropertyDataDefinition() {
         super();
@@ -139,6 +140,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         }
         this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
         this.setUserCreated(propertyDataDefinition.isUserCreated());
+        this.setInputName(propertyDataDefinition.getInputName());
     }
 
     public boolean isDefinition() {
