@@ -518,6 +518,8 @@
   "=========== PROPERTIES ASSIGNMENT DECLARE AS POLICY ===========": "",
   "DELETE_POLICY_TITLE": "Delete Policy",
   "DELETE_POLICY_MSG": "Are you sure you want to delete policy '{{policyName}}'?",
+  "=========== PROPERTIES ASSIGNMENT DECLARE AS INPUT ===========": "",
+  "ADD_INPUT_NAME_TO_DECLARE": "Enter name of input to be created",
   "=========== PROPERTIES ASSIGNMENT TOSCA FUNCTION BUTTON ===========": "",
   "TOSCA_FUNCTION_LABEL": "TOSCA function",
   "TOSCA_FUNCTION_PROPERTY_SOURCE_LABEL": "Property Source",
