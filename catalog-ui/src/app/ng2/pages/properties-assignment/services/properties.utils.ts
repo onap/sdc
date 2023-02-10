@@ -65,9 +65,6 @@ export class PropertiesUtils {
                     newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
                     this.dataTypeService.checkForCustomBehavior(newFEProp);
 
-                    if (newFEProp.isToscaFunction()) {
-                        return;
-                    }
                     //if this prop (or any children) are declared, set isDeclared and disable checkbox on parents/children
                     if (newFEProp.getInputValues && newFEProp.getInputValues.length) {
                         newFEProp.getInputValues.forEach(propInputDetail => {

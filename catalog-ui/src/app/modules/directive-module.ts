@@ -99,6 +99,7 @@ import {ToscaFunctionComponent} from '../ng2/pages/properties-assignment/tosca-f
 import {ConstraintsComponent} from '../ng2/pages/properties-assignment/constraints/constraints.component';
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
+import {DeclareInputComponent} from "../ng2/pages/properties-assignment/declare-input/declare-input.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -340,5 +341,11 @@ directiveModule.directive('appTypeWorkspace', downgradeComponent({
 directiveModule.directive('appTypeWorkspaceGeneral', downgradeComponent({
   component: TypeWorkspaceGeneralComponent,
   inputs: [],
+  outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('declareInput', downgradeComponent({
+  component: DeclareInputComponent,
+  inputs: ['property'],
   outputs: []
 }) as angular.IDirectiveFactory);
