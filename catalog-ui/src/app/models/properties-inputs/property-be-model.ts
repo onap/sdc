@@ -69,6 +69,7 @@ export class PropertyBEModel {
     parentPropertyType: string;
     subPropertyInputPath: string;
     inputPath: string;
+    inputName: string;
     toscaPresentation: ToscaPresentationData;
     metadata: Metadata;
     /**
@@ -101,6 +102,7 @@ export class PropertyBEModel {
             this.toscaPresentation = property.toscaPresentation;
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
+            this.inputName = property.inputName;
             this.metadata = property.metadata;
             if (property.toscaFunction) {
                 this.toscaFunction = property.toscaFunction;
