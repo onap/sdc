@@ -158,6 +158,7 @@
                         data-ng-class="{'view-mode': isViewMode()}"
                         data-ng-model="component.categorySpecificMetadata[key]"
                         data-tests-id="{{key}}">
+                  <option value=""/>
                   <option ng-repeat="value in getMetadataKeyValidValues(key)">{{value}}</option>
                 </select>
               </div>
