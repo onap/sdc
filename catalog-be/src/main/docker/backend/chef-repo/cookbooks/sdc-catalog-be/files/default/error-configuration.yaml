@@ -2870,3 +2870,10 @@ errors:
         message: "Cannot change this properties constraints as the resource is an instance.",
         messageId: "SVC4015"
     }
+
+    #---------SVC4016-----------------------------
+    INPUT_NAME_ALREADY_EXIST: {
+        code: 400,
+        message: "Input name already exist.",
+        messageId: "SVC4016"
+    }

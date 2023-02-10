@@ -70,6 +70,7 @@ import {Observable} from "rxjs";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaFunction} from "../../../models/tosca-function";
 import {SubPropertyToscaFunction} from "../../../models/sub-property-tosca-function";
+import {DeclareInputComponent} from "./declare-input/declare-input.component";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -728,7 +729,7 @@ export class PropertiesAssignmentComponent {
     }
 
     /*** DECLARE PROPERTIES/INPUTS ***/
-    declareProperties = (): void => {
+    declareInputFromProperties = (inputName:string): void => {
         console.debug("==>" + this.constructor.name + ": declareProperties");
 
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
@@ -743,6 +744,9 @@ export class PropertiesAssignmentComponent {
                 if (!this.isInput(selectedInstanceData.originType)) {
                     // convert Property FE model -> Property BE model, extract only checked
                     selectedComponentInstancesProperties[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+                    if (inputName) {
+                        selectedComponentInstancesProperties[instanceId][0].inputName = inputName;
+                    }
                 } else {
                     selectedComponentInstancesInputs[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
                 }
@@ -800,6 +804,37 @@ export class PropertiesAssignmentComponent {
                 }
             }, error => {}); //ignore error
     };
+
+    private openAddInputNameAndDeclareInputModal = (): void => {
+        const modalTitle = this.translateService.translate('ADD_INPUT_NAME_TO_DECLARE');
+        const modalButtons = [];
+        const modal = this.modalService.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            modalButtons,
+            null /* type */
+        ));
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
+            () => {
+                const inputName: string = modal.instance.dynamicContent.instance.inputNameForm.value;
+                if (inputName) {
+                    this.declareInputFromProperties(inputName);
+                } else {
+                    this.notification.warning({
+                        message: 'Failed to set input name',
+                        title: 'Warning'
+                    });
+                }
+                this.modalService.closeCurrentModal();
+            }
+        ));
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
+            this.modalService.closeCurrentModal();
+        }));
+        this.modalService.addDynamicContentToModal(modal, DeclareInputComponent, {});
+        modal.instance.open();
+    }
 
     declareListProperties = (): void => {
         // get selected properties

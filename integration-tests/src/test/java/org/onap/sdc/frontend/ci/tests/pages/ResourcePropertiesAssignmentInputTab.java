@@ -136,7 +136,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
     public boolean isInputPresent(final String inputName) {
         isInputPropertiesTableLoaded();
         try {
-            waitForElementVisibility(By.xpath(XpathSelector.INPUT_CHECKBOX.formatXpath(inputName)), 5);
+            waitForElementVisibility(By.xpath(XpathSelector.INPUT_TABLE.formatXpath(inputName)), 5);
         } catch (final Exception ignored) {
             return false;
         }
@@ -151,7 +151,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
     private enum XpathSelector {
         INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'active')]"),
         PROPERTIES_TABLE("//div[contains(@class,'properties-table')]"),
-        INPUT_CHECKBOX("//checkbox[@data-tests-id='%s']"),
+        INPUT_TABLE("//*[contains(@class, 'property-name') and text()='%s']"),
         NO_DATA_MESSAGE("//div[contains(@class,'no-data') and text()='No data to display']"),
         PROPERTY_SAVE_BTN("//button[@data-tests-id='properties-save-button']"),
         PROPERTY_SAVE_MESSAGE("//div[contains(text(), 'Successfully saved')]"),

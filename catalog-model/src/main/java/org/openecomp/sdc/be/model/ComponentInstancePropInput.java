@@ -23,6 +23,7 @@ public class ComponentInstancePropInput extends ComponentInstanceProperty {
 
     private String propertiesName;
     private PropertyDefinition input;
+    private String inputName;
 
     public ComponentInstancePropInput() {
         super();
@@ -46,6 +47,14 @@ public class ComponentInstancePropInput extends ComponentInstanceProperty {
 
     public void setInput(PropertyDefinition input) {
         this.input = input;
+    }
+
+    public String getInputName() {
+        return inputName;
+    }
+
+    public void setInputName(String inputName) {
+        this.inputName = inputName;
     }
 
     public String[] getParsedPropNames() {

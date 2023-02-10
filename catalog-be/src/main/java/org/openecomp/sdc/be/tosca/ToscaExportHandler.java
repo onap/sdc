@@ -1764,8 +1764,24 @@ public class ToscaExportHandler {
         if (component == null || CollectionUtils.isEmpty(component.getInputs())) {
             return Collections.emptyMap();
         }
-        return component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).map(PropertyDataDefinition::getName)
-            .collect(Collectors.toMap(inputName -> inputName, inputName -> new String[]{inputName}, (inputName1, inputName2) -> inputName1));
+        Map<String, String[]> propertyMapping = new HashMap<>();
+        List<InputDefinition> propertyMappedInputList = component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).collect(
+            Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(propertyMappedInputList)) {
+            propertyMappedInputList.forEach(inputDefinition -> {
+                if (StringUtils.isNotEmpty(inputDefinition.getPropertyId())) {
+                    Optional<PropertyDefinition> property = component.getProperties().stream()
+                        .filter(propertyDefinition -> propertyDefinition.getUniqueId().equals(inputDefinition.getPropertyId())).findFirst();
+                    if (property.isPresent()) {
+                        propertyMapping.put(property.get().getName(), new String[]{inputDefinition.getName()});
+                    }
+                } else {
+                    propertyMapping.put(inputDefinition.getName(), new String[]{inputDefinition.getName()});
+                }
+            });
+        }
+        return propertyMapping;
     }
 
     private Map<String, String[]> buildSubstitutionMappingAttributesMapping(final Component component) {
