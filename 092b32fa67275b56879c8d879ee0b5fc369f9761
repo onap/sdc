@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "565d2e1f_c115e346",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/add-input/add-input.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-10T13:24:45Z",
+      "side": 0,
+      "message": "uniqueId set in BE, needless to set in FE",
+      "parentUuid": "a1c21aa7_7c2be000",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 46
+      },
+      "revId": "092b32fa67275b56879c8d879ee0b5fc369f9761",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12952a65_4805d39a",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/add-input/add-input.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "092b32fa67275b56879c8d879ee0b5fc369f9761",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6159757_8dbb2f98",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/add-input/add-input.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-10T13:24:45Z",
+      "side": 0,
+      "message": "https://sonarcloud.io/project/security_hotspots?id\u003donap_sdc\u0026hotspots\u003dAX97D87nUCM-jLIOs8FT",
+      "parentUuid": "12952a65_4805d39a",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 169,
+        "endChar": 3
+      },
+      "revId": "092b32fa67275b56879c8d879ee0b5fc369f9761",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
