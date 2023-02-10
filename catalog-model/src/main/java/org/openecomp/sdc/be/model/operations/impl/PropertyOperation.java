@@ -2419,18 +2419,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
 
         private PropertyConstraint deserializeConstraint(JsonNode value, Class<? extends PropertyConstraint> constraintClass) {
-            JsonNodeType type = value.getNodeType();
-            if (type.equals(JsonNodeType.NUMBER)) {
-                float asFloat = (float) value.asDouble();
-                if ((asFloat % 1) == 0) {
-                    return deserializeConstraintWithObjectOperand(value.asInt(), constraintClass);
-                }
-                return deserializeConstraintWithObjectOperand(asFloat, constraintClass);
-            } else if (type.equals(JsonNodeType.BOOLEAN)) {
-                return deserializeConstraintWithObjectOperand(value.asBoolean(), constraintClass);
-            } else {
-                return deserializeConstraintWithObjectOperand(value.asText(), constraintClass);
-            }
+            return deserializeConstraintWithObjectOperand(convertToType(value), constraintClass);
         }
 
         private PropertyConstraint deserializeConstraintWithObjectOperand(Object value, Class<? extends PropertyConstraint> constraintClass) {
@@ -2496,14 +2485,29 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 ValidValuesConstraint vvConstraint = new ValidValuesConstraint();
                 List<Object> validValues = new ArrayList<>();
                 for (JsonNode jsonElement : rangeArray) {
-                    String item = jsonElement.asText();
-                    validValues.add(item);
+                    validValues.add(convertToType(jsonElement));
                 }
                 vvConstraint.setValidValues(validValues);
                 return vvConstraint;
             }
             return null;
         }
+        
+        private Object convertToType(JsonNode jsonElement) {
+            if (jsonElement.getNodeType().equals(JsonNodeType.NUMBER)) {
+                float asFloat = (float) jsonElement.asDouble();
+                if ((asFloat % 1) == 0) {
+                   return jsonElement.asInt();
+                } else {
+                    return asFloat;
+                }
+            } else if (jsonElement.getNodeType().equals(JsonNodeType.BOOLEAN)) {
+                return jsonElement.asBoolean();
+            } else {
+                return jsonElement.asText();
+            }
+        }
+
 
     }
 
