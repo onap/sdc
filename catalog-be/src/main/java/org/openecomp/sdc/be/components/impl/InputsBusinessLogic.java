@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -398,6 +399,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         try {
             validateUserExists(userId);
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
+            StorageOperationStatus status = validateInputName(component, componentInstInputsMapUi);
+            if (status != StorageOperationStatus.OK) {
+                log.debug("Input name already exist");
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INPUT_NAME_ALREADY_EXIST));
+            }
             result = propertyDeclarationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi).left()
                 .bind(inputsToCreate -> prepareInputsForCreation(userId, componentId, inputsToCreate)).right()
                 .map(componentsUtils::getResponseFormat);
@@ -421,6 +427,31 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
             }
         }
+    }
+
+    private StorageOperationStatus validateInputName(final Component component, final ComponentInstInputsMap componentInstInputsMap) {
+        AtomicReference<StorageOperationStatus> storageOperationStatus = new AtomicReference<>(StorageOperationStatus.OK);
+        Map<String, List<ComponentInstancePropInput>> inputDeclaredProperties = new HashMap<>();
+        if (MapUtils.isNotEmpty(componentInstInputsMap.getComponentInstanceProperties())) {
+            inputDeclaredProperties = componentInstInputsMap.getComponentInstanceProperties();
+        } else if (MapUtils.isNotEmpty(componentInstInputsMap.getServiceProperties())) {
+            inputDeclaredProperties = componentInstInputsMap.getServiceProperties();
+        }
+
+        if (MapUtils.isNotEmpty(inputDeclaredProperties) && CollectionUtils.isNotEmpty(component.getInputs())) {
+            inputDeclaredProperties.values()
+                .forEach(componentInstancePropInputs ->
+                    componentInstancePropInputs
+                        .forEach(componentInstancePropInput -> component.getInputs()
+                            .forEach(existingInput -> {
+                                if (existingInput.getName().equals(componentInstancePropInput.getInputName())) {
+                                    storageOperationStatus.set(StorageOperationStatus.INVALID_VALUE);
+                                }
+                            })
+                        )
+                );
+        }
+        return storageOperationStatus.get();
     }
 
     /**

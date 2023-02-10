@@ -138,8 +138,8 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
         resourcePropertiesAssignmentTab.loadComponentInstanceProperties(instanceName);
     }
 
-    public void clickOnDeclareInput(){
-        resourcePropertiesAssignmentTab.clickOnDeclareInput();
+    public void clickOnDeclareInput(final String inputName){
+        resourcePropertiesAssignmentTab.clickOnDeclareInput(inputName);
     }
 
     public void loadCompositionTab(){

@@ -255,7 +255,12 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             generatedInputPrefix =
                 generatedInputPrefix == null || generatedInputPrefix.isEmpty() ? capName : generatedInputPrefix + UNDERSCORE + capName;
         }
-        String generatedInputName = generateInputName(generatedInputPrefix, propInput);
+        String generatedInputName = null;
+        if (StringUtils.isNotEmpty(propInput.getInputName())) {
+            generatedInputName = propInput.getInputName();
+        } else {
+            generatedInputName = generateInputName(generatedInputPrefix, propInput);
+        }
         log.debug("createInput: propOwner.uniqueId={}, propInput.parentUniqueId={}", propertiesOwner.getUniqueId(), propInput.getParentUniqueId());
         return createInputFromProperty(component.getUniqueId(), propertiesOwner, generatedInputName, propInput, prop);
     }

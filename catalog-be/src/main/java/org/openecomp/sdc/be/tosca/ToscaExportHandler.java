@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.tosca;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.utils.PropertiesUtils.getPropertyByInputId;
 import static org.openecomp.sdc.be.components.utils.PropertiesUtils.resolvePropertyValueFromInput;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
@@ -1761,11 +1762,30 @@ public class ToscaExportHandler {
     }
 
     private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {
+        Map<String, String[]> substitutionMappingMap = new HashMap<>();
         if (component == null || CollectionUtils.isEmpty(component.getInputs())) {
             return Collections.emptyMap();
         }
-        return component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).map(PropertyDataDefinition::getName)
-            .collect(Collectors.toMap(inputName -> inputName, inputName -> new String[]{inputName}, (inputName1, inputName2) -> inputName1));
+
+        List<InputDefinition> propertyMappedInputList = component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).collect(
+            Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(propertyMappedInputList)) {
+            propertyMappedInputList.forEach(inputDefinition -> {
+                if (StringUtils.isNotEmpty(inputDefinition.getPropertyId())) {
+                    Optional<PropertyDefinition> property = component.getProperties().stream()
+                        .filter(propertyDefinition -> propertyDefinition.getUniqueId().equals(inputDefinition.getPropertyId())).findFirst();
+                    if (property.isPresent()) {
+                        substitutionMappingMap.put(property.get().getName(), new String[]{inputDefinition.getName()});
+                    }
+                } else {
+                    substitutionMappingMap.put(inputDefinition.getName(), new String[]{inputDefinition.getName()});
+                }
+            });
+        }
+        return substitutionMappingMap;
+        /*return component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).map(PropertyDataDefinition::getName)
+            .collect(Collectors.toMap(inputName -> inputName, inputName -> new String[]{inputName}, (inputName1, inputName2) -> inputName1));*/
     }
 
     private Map<String, String[]> buildSubstitutionMappingAttributesMapping(final Component component) {

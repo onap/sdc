@@ -45,7 +45,8 @@ export class DerivedFEProperty extends PropertyBEModel {
     canBeDeclared: boolean;
     mapKey: string;
     mapKeyError: string;
-    mapInlist: boolean;
+    mapInlist: boolean
+    inputName: string;
     parentMapKey: string;
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
@@ -69,7 +70,7 @@ export class DerivedFEProperty extends PropertyBEModel {
             this.parentName = parentName;
             this.propertiesName = parentName + '#' + this.name;
             
-            if (property.type == PROPERTY_TYPES.LIST) { 
+            if (property.type == PROPERTY_TYPES.LIST) {
                 let parentKey : string = null;
                 if(property.value != null) {
                     const valueJson = JSON.parse(property.value);
@@ -128,6 +129,7 @@ export class DerivedFEProperty extends PropertyBEModel {
         // this.constraints = property ? property.constraints : null;
         this.valueObjIsValid = true;
         this.derivedDataType = this.getDerivedPropertyType();
+        this.inputName = property.inputName;
     }
 
     public getActualMapKey() {
