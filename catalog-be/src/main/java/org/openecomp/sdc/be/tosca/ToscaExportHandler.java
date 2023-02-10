@@ -583,7 +583,9 @@ public class ToscaExportHandler {
                 }
                 toscaMetadata.put(JsonPresentationFields.SUB_CATEGORY.getPresentation(), categoryDefinition.getSubcategories().get(0).getName());
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR.getPresentation(), resource.getVendorName());
-                toscaMetadata.put(JsonPresentationFields.TENANT.getPresentation(), resource.getTenant());
+                if (resource.getTenant() != null) {
+                    toscaMetadata.put(JsonPresentationFields.TENANT.getPresentation(), resource.getTenant());
+                }
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_RELEASE.getPresentation(), resource.getVendorRelease());
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER.getPresentation(), resource.getResourceVendorModelNumber());
                 break;
