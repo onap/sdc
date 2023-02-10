@@ -210,8 +210,6 @@ export class TypeWorkspacePropertiesComponent implements OnInit {
             if (property.defaultValue) {
                 if (!this.isTypeSimple(property.type) && typeof property.defaultValue === 'string') {
                     property.defaultValue = JSON.parse(property.defaultValue);
-                } else {
-                    property.defaultValue = property.defaultValue;
                 }
             }
             return property;
