@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "19c6df6f_2b4144de",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-02-10T14:43:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "58fe3d52_f9072d20",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 81
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab866c25_35895dfe",
         "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "6b358a63_e80ac64e",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-02-10T14:43:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab866c25_35895dfe",
+      "range": {
+        "startLine": 219,
+        "startChar": 0,
+        "endLine": 219,
+        "endChar": 98
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "63dfa98d_0ecd349b",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/properties/properties-view.html",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f41bbf5e_e56c0d33",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/properties/properties-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-02-10T14:43:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63dfa98d_0ecd349b",
+      "range": {
+        "startLine": 62,
+        "startChar": 24,
+        "endLine": 64,
+        "endChar": 30
+      },
+      "revId": "8652a34b25643a2c7c2b57fadbe8c5070f84a6e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
