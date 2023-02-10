@@ -25,6 +25,7 @@ import { PropertyBEModel, PropertyFEModel, DerivedFEProperty } from "../../model
 export class PropertyDeclareAPIModel extends PropertyBEModel{
     input: PropertyBEModel;
     propertiesName: string;
+    inputName: string;
 
 
     constructor(property: PropertyFEModel, childProperty?: DerivedFEProperty) {
@@ -32,6 +33,7 @@ export class PropertyDeclareAPIModel extends PropertyBEModel{
         if (childProperty) {
             this.input = childProperty;
             this.propertiesName = childProperty.propertiesName;
+            this.inputName = childProperty.inputName;
         }
     }
 
