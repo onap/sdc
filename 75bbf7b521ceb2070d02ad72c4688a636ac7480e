@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "842776a2_128488d8",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-14T16:26:24Z",
+      "side": 1,
+      "message": "Can we disable the elements rather than removing",
+      "range": {
+        "startLine": 70,
+        "startChar": 18,
+        "endLine": 70,
+        "endChar": 169
+      },
+      "revId": "75bbf7b521ceb2070d02ad72c4688a636ac7480e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
