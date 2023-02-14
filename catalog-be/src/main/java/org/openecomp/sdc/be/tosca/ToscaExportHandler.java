@@ -276,8 +276,7 @@ public class ToscaExportHandler {
         options.setCanonical(false);
         representer.addClassTag(toscaTemplate.getClass(), Tag.MAP);
         representer.setPropertyUtils(new UnsortedPropertyUtils());
-        
-       
+
         Yaml yaml = new Yaml(representer, options);
         String yamlAsString = yaml.dumpAsMap(toscaTemplate);
         StringBuilder sb = new StringBuilder();
@@ -343,7 +342,8 @@ public class ToscaExportHandler {
                     .collect(Collectors.toMap(
                         PropertyDataDefinition::getName,
                         s -> propertyConvertor.convertProperty(dataTypes, s, PropertyType.PROPERTY),
-                        (toscaPropertyTobeValidated, toscaProperty) -> validateToscaProperty((List<DataTypeDefinition>) dataTypeDefinition, toscaPropertyTobeValidated,
+                        (toscaPropertyTobeValidated, toscaProperty) -> validateToscaProperty((List<DataTypeDefinition>) dataTypeDefinition,
+                            toscaPropertyTobeValidated,
                             toscaProperty)
                     )));
             }
@@ -539,12 +539,12 @@ public class ToscaExportHandler {
         }
     }
 
-    private Map<String, String> convertMetadata(Component component) {
+    private Map<String, Object> convertMetadata(Component component) {
         return convertMetadata(component, false, null);
     }
 
-    private Map<String, String> convertMetadata(Component component, boolean isInstance, ComponentInstance componentInstance) {
-        Map<String, String> toscaMetadata = new LinkedHashMap<>();
+    private Map<String, Object> convertMetadata(Component component, boolean isInstance, ComponentInstance componentInstance) {
+        Map<String, Object> toscaMetadata = new LinkedHashMap<>();
         toscaMetadata.put(convertMetadataKey(JsonPresentationFields.INVARIANT_UUID), component.getInvariantUUID());
         toscaMetadata.put(JsonPresentationFields.UUID.getPresentation(), component.getUUID());
         toscaMetadata
@@ -983,7 +983,7 @@ public class ToscaExportHandler {
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             NodeFilter nodeFilter = convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter());
-            if(nodeFilter != null && nodeFilter.hasData()){
+            if (nodeFilter != null && nodeFilter.hasData()) {
                 nodeTemplate.setNode_filter(nodeFilter);
             }
             final Either<Component, Boolean> originComponentRes = capabilityRequirementConverter
@@ -1791,7 +1791,7 @@ public class ToscaExportHandler {
     }
 
     private Map<String, ToscaProperty> convertInputsToProperties(Map<String, DataTypeDefinition> dataTypes, List<InputDefinition> componentInputs,
-                                                             String componentUniqueId) {
+                                                                 String componentUniqueId) {
         if (CollectionUtils.isEmpty(componentInputs)) {
             return new HashMap<>();
         }
@@ -1853,7 +1853,7 @@ public class ToscaExportHandler {
                 return null;
             }
             if (javaBean instanceof ToscaPropertyConstraint) {
-                return handleToscaPropertyConstraint((ToscaPropertyConstraint)javaBean, property, propertyValue, customTag);
+                return handleToscaPropertyConstraint((ToscaPropertyConstraint) javaBean, property, propertyValue, customTag);
             }
             removeDefaultP(propertyValue);
             NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
@@ -1862,9 +1862,9 @@ public class ToscaExportHandler {
             }
             return "_defaultp_".equals(property.getName()) ? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;
         }
-        
+
         private NodeTuple handleToscaPropertyConstraint(final ToscaPropertyConstraint javaBean, final Property property, final Object propertyValue,
-                final Tag customTag) {
+                                                        final Tag customTag) {
             final NodeTuple nodeTuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
             final String entryToscaName = javaBean.getEntryToscaName(property.getName());
             return new NodeTuple(representData(entryToscaName), nodeTuple.getValueNode());

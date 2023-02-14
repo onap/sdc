@@ -38,7 +38,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
     private String environmentContext;
     private String instantiationType;
     private String serviceFunction;
-    private Map<String, String> categorySpecificMetadata;
+    private Map<String, Object> categorySpecificMetadata;
     private String model;
 
     public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {

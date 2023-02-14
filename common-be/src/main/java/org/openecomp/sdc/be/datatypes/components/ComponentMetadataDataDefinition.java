@@ -73,7 +73,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     private Boolean isArchived = false;
     private Long archiveTime;
     private Boolean isVspArchived = false;
-    private Map<String, String> categorySpecificMetadata;
+    private Map<String, Object> categorySpecificMetadata;
     private String model;
     private boolean normative = false;
 
@@ -134,7 +134,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.isVspArchived = extractor.isVspArchived();
         this.archiveTime = extractor.getArchiveTime();
         this.model = extractor.getModel();
-        this.normative = extractor.isNormative() == null ? false: extractor.isNormative();
+        this.normative = extractor.isNormative() != null && extractor.isNormative();
     }
 
     public void setUniqueId(String uniqueId) {

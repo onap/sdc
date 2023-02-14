@@ -262,11 +262,11 @@ public class CategoriesImportManager {
             metadataKeyDef.setName(metadataKeyName);
             metadataKeyDef.setDisplayName((String) metadataKeyInfo.get(MetadataKeyEnum.DISPLAY_NAME.getName()));
             final Object mandatoryProperty = metadataKeyInfo.get(MetadataKeyEnum.MANDATORY.getName());
-            final boolean mandatory = mandatoryProperty == null ? false : (Boolean) mandatoryProperty;
+            final boolean mandatory = mandatoryProperty != null && (Boolean) mandatoryProperty;
             metadataKeyDef.setMandatory(mandatory);
-            List<String> validValues = (List<String>) metadataKeyInfo.get(MetadataKeyEnum.VALID_VALUES.getName());
+            List<Object> validValues = (List<Object>) metadataKeyInfo.get(MetadataKeyEnum.VALID_VALUES.getName());
             metadataKeyDef.setValidValues(validValues);
-            metadataKeyDef.setDefaultValue((String) metadataKeyInfo.get(MetadataKeyEnum.DEFAULT.getName()));
+            metadataKeyDef.setDefaultValue(metadataKeyInfo.get(MetadataKeyEnum.DEFAULT.getName()));
             metadataKeyDefs.add(metadataKeyDef);
         }
         return metadataKeyDefs;
@@ -277,7 +277,7 @@ public class CategoriesImportManager {
         for (Map.Entry<String, Object> entry : categoryPerType.entrySet()) {
             Map<String, Object> category = (Map<String, Object>) entry.getValue();
             CategoryDefinition catDef = new CategoryDefinition();
-            String catName = (String) category.get("name");
+            String catName = (String) category.get(NAME.getProperty());
             catDef.setName(catName);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);
             catDef.setNormalizedName(normalizedName);
@@ -286,9 +286,9 @@ public class CategoriesImportManager {
             for (Entry<String, Object> subcategory : subcategories.entrySet()) {
                 Map<String, Object> subcategoryInfo = (Map<String, Object>) subcategory.getValue();
                 SubCategoryDefinition subDef = new SubCategoryDefinition();
-                String subcategoryName = (String) subcategoryInfo.get("name");
+                String subcategoryName = (String) subcategoryInfo.get(NAME.getProperty());
                 subDef.setName(subcategoryName);
-                List<String> subcategoryIcons = (List<String>) subcategoryInfo.get("icons");
+                List<String> subcategoryIcons = (List<String>) subcategoryInfo.get(ICONS.getProperty());
                 subDef.setIcons(subcategoryIcons);
                 normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(subcategoryName);
                 subDef.setNormalizedName(normalizedName);
