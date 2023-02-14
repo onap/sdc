@@ -824,10 +824,10 @@ public class ModelConverter {
         component.setToscaType(toscaElement.getToscaType().getValue());
         final List<MetadataKeyDataDefinition> metadataKeys = getCategorySpecificMetadataKeys(toscaElement);
         if (CollectionUtils.isNotEmpty(metadataKeys)) {
-            final Map<String, String> categorySpecificMetadata = new HashMap<>();
+            final Map<String, Object> categorySpecificMetadata = new HashMap<>();
             for (final MetadataKeyDataDefinition metadataKey : metadataKeys) {
                 if (toscaElement.getMetadata().get(metadataKey.getName()) != null) {
-                    categorySpecificMetadata.put(metadataKey.getName(), (String) toscaElement.getMetadata().get(metadataKey.getName()));
+                    categorySpecificMetadata.put(metadataKey.getName(), toscaElement.getMetadata().get(metadataKey.getName()));
                 } else if (metadataKey.getDefaultValue() != null && metadataKey.isMandatory()) {
                     categorySpecificMetadata.put(metadataKey.getName(), metadataKey.getDefaultValue());
                 }

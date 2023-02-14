@@ -24,11 +24,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.factory.EtsiNfvNsdCsarGeneratorFactory;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.EtsiVersion;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.NsdCsar;
 import org.slf4j.Logger;
@@ -66,10 +66,10 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
             return Collections.emptyMap();
         }
         final boolean isEOTemplate = component.getCategories().stream().anyMatch(category ->
-                CategoriesToGenerateNsd.hasCategoryName(category.getName()));
+            CategoriesToGenerateNsd.hasCategoryName(category.getName()));
         if (!isEOTemplate) {
             LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it does not belong to any of the categories '{}'",
-                    componentName, CategoriesToGenerateNsd.getCategories());
+                componentName, CategoriesToGenerateNsd.getCategories());
             return Collections.emptyMap();
         }
 
@@ -90,9 +90,9 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     }
 
     private EtsiVersion getComponentEtsiVersion(Component component) {
-        String etsiVersion = component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
+        String etsiVersion = (String) component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
         final String modelName = component.getModel();
-        if (etsiVersion == null && modelName.matches(".*\\d+\\.\\d+\\.\\d+.*" )){
+        if (etsiVersion == null && modelName.matches(".*\\d+\\.\\d+\\.\\d+.*")) {
             etsiVersion = modelName.replaceAll(".*?(\\d+\\.\\d+\\.\\d+).*", "$1");
         }
         return EtsiVersion.convertOrNull(etsiVersion);
