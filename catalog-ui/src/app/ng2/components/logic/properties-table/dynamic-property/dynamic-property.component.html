@@ -67,7 +67,7 @@
         <div class="table-cell empty"></div>
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
-    <ng-container *ngIf="(!property.isDeclared && !property.isToscaFunction()) || (property.isToscaFunction() && property.isChildOfListOrMap)">
+    <ng-container *ngIf="(!property.isSelected && (!property.isDeclared && !property.isToscaFunction()) || (property.isToscaFunction() && property.isChildOfListOrMap))">
             <a *ngIf="(propType == derivedPropertyTypes.LIST) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</a>
             <a *ngIf="(propType == derivedPropertyTypes.MAP) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to map</a>
             <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId"></span>
