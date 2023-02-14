@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.HashMap;
@@ -144,5 +146,63 @@ class ToscaValueBaseConverterTest {
         assertEquals(innerObject.get("int").getAsInt(), objectPropertyAsMap.get("int"));
         assertEquals(innerObject.get("float").getAsDouble(), objectPropertyAsMap.get("float"));
         assertNull(objectPropertyAsMap.get("null"));
+    }
+
+    @Test
+    void testParseToJson() {
+        final JsonElement result1 = converter.parseToJson("");
+        assertTrue(result1.isJsonNull());
+
+        final JsonElement result2 = converter.parseToJson("testString");
+        assertTrue(result2.isJsonPrimitive());
+
+        final JsonElement result3 = converter.parseToJson("1");
+        assertTrue(result3.isJsonPrimitive());
+
+        final JsonElement result4 = converter.parseToJson("true");
+        assertTrue(result4.isJsonPrimitive());
+
+        final JsonElement result5 = converter.parseToJson("{\"get_property\":[\"relatedParty_0\",\"name\"]}");
+        assertTrue(result5.isJsonObject());
+
+        final JsonElement result6 = converter.parseToJson("[\"relatedParty_0\",\"name\"]");
+        assertTrue(result6.isJsonArray());
+
+    }
+
+    @Test
+    void testIsJsonElementAJsonPrimitive() {
+
+        JsonElement emptyStringEle = new JsonPrimitive("");
+        final Boolean result1 = converter.isJsonElementAJsonPrimitive(emptyStringEle);
+        assertTrue(result1);
+
+        JsonElement stringEle = new JsonPrimitive("testString");
+        final Boolean result2 = converter.isJsonElementAJsonPrimitive(stringEle);
+        assertTrue(result2);
+
+        JsonElement toscaFunctionEle = new JsonPrimitive("{\"get_property\":[\"relatedParty_0\",\"name\"]}");
+        final Boolean result3 = converter.isJsonElementAJsonPrimitive(toscaFunctionEle);
+        assertFalse(result3);
+
+        JsonElement jsonObjectEle = new JsonObject();
+        final Boolean result4 = converter.isJsonElementAJsonPrimitive(jsonObjectEle);
+        assertFalse(result4);
+
+        JsonElement jsonArrayEle = new JsonArray();
+        final Boolean result5 = converter.isJsonElementAJsonPrimitive(jsonArrayEle);
+        assertFalse(result5);
+
+        JsonElement intEle = new JsonPrimitive(123);
+        final Boolean result6 = converter.isJsonElementAJsonPrimitive(intEle);
+        assertTrue(result6);
+
+        JsonElement boolEle = new JsonPrimitive(true);
+        final Boolean result7 = converter.isJsonElementAJsonPrimitive(boolEle);
+        assertTrue(result7);
+
+        JsonElement nullEle = new JsonNull();
+        final Boolean result8 = converter.isJsonElementAJsonPrimitive(nullEle);
+        assertFalse(result8);
     }
 }

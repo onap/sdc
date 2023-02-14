@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import com.google.gson.JsonArray;
@@ -67,7 +68,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
             } else {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
                 if (dataTypeDefinition != null) {
-                    ToscaPropertyType toscaPropertyType = null;
+                    ToscaPropertyType toscaPropertyType;
                     if ((toscaPropertyType = isScalarType(dataTypeDefinition)) != null) {
                         innerConverter = toscaPropertyType.getValueConverter();
                     } else {
@@ -85,15 +86,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 }
             }
             JsonElement jsonElement;
-            try {
-                StringReader reader = new StringReader(value);
-                JsonReader jsonReader = new JsonReader(reader);
-                jsonReader.setLenient(true);
-                jsonElement = JsonParser.parseReader(jsonReader);
-            } catch (JsonSyntaxException e) {
-                log.debug("convertToToscaValue failed to parse json value :", e);
-                return null;
-            }
+            jsonElement = parseToJson(value);
             if (jsonElement == null || jsonElement.isJsonNull()) {
                 log.debug("convertToToscaValue json element is null");
                 return null;
@@ -127,9 +120,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     propType = pd.getType();
                     final DataTypeDefinition pdDataType = dataTypes.get(propType);
                     final ToscaPropertyType toscaPropType = isScalarType(pdDataType);
-                    if (toscaPropType == null) {
-                        scalar = false;
-                    } else {
+                    if (toscaPropType != null) {
                         scalar = true;
                         propType = toscaPropType.getType();
                         innerConverterProp = toscaPropType.getValueConverter();
@@ -144,14 +135,9 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 
     public Object convertDataTypeToToscaObject(String innerType, Map<String, DataTypeDefinition> dataTypes, ToscaValueConverter innerConverter,
                                                final boolean isScalarF, JsonElement entryValue, boolean preserveEmptyValue) {
-        Object convertedValue = null;
-        if (isScalarF && entryValue.isJsonPrimitive()) {
-            log.debug("try convert scalar value ");
-            if (entryValue.getAsString() == null) {
-                convertedValue = null;
-            } else {
-                convertedValue = innerConverter.convertToToscaValue(entryValue.getAsString(), innerType, dataTypes);
-            }
+        Object convertedValue;
+        if (isScalarF && isJsonElementAJsonPrimitive(entryValue)) {
+            return innerConverter.convertToToscaValue(entryValue.getAsString(), innerType, dataTypes);
         } else {
             if (entryValue.isJsonPrimitive()) {
                 return handleComplexJsonValue(entryValue);
@@ -201,11 +187,11 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     String type = propertyDefinition.getType();
                     ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
                     if (propertyType != null) {
-                        if (elementValue.isJsonPrimitive()) {
+                        if (isJsonElementAJsonPrimitive(elementValue)) {
                             ToscaValueConverter valueConverter = propertyType.getValueConverter();
                             convValue = valueConverter.convertToToscaValue(elementValue.getAsString(), type, dataTypes);
                         } else {
-                            if (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(propertyType)) {
+                            if (ToscaPropertyType.MAP.equals(propertyType) || ToscaPropertyType.LIST.equals(propertyType)) {
                                 ToscaValueConverter valueConverter = propertyType.getValueConverter();
                                 String json = gson.toJson(elementValue);
                                 String innerTypeRecursive = propertyDefinition.getSchema().getProperty().getType();
@@ -219,7 +205,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     }
                 }
             } else {
-                if (elementValue.isJsonPrimitive()) {
+                if (isJsonElementAJsonPrimitive(elementValue)) {
                     convValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
                 } else {
                     convValue = handleComplexJsonValue(elementValue);

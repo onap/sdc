@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ import org.openecomp.sdc.be.tosca.PropertyConvertor;
 public class PropertyDataValueMergeBusinessLogicTest {
 
     private ObjectMapper mapper = new ObjectMapper();
-    
+
     private PropertyDataValueMergeBusinessLogic testInstance;
 
     @Mock
@@ -66,9 +66,9 @@ public class PropertyDataValueMergeBusinessLogicTest {
     @Before
     public void setUp() throws Exception {
         PropertyValueMerger propertyValueMerger = new PropertyValueMerger();
-        
+
         testInstance = new PropertyDataValueMergeBusinessLogic(propertyValueMerger, applicationDataTypeCache,
-                new PropertyConvertor());
+            new PropertyConvertor());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDataDefinition newProp = createProp("prop1", ToscaPropertyType.LIST.getType(), "string", "[\"x\", \"\"]");
         testMergeProps(oldProp, newProp, "[\"x\",\"b\"]");
     }
-    
+
     @Test
     public void mergeSimpleListType_differentSize() throws Exception {
         PropertyDataDefinition oldProp = createProp("prop1", ToscaPropertyType.LIST.getType(), "string", "[\"a\", \"b\", \"c\"]");
@@ -148,73 +148,80 @@ public class PropertyDataValueMergeBusinessLogicTest {
         testMergeProps(oldProp, newProp, "[[\"a\"],\"d\"]");
     }
 
-    /**                                   
-     * Old property:                       New property:                           Expected:                           
-     *   {                                  {                                       {                                 
-     *     "mac_range_plan": "y",             "mac_range_plan": "",                   "mac_range_plan": "y",          
-     *     "mac_count_required": {            "mac_count_required": {                 "mac_count_required": {         
-     *       "is_required": true,               "is_required": false,                   "is_required": false,         
-     *       "count": 44                        "mac_address": "myAddress"              "mac_address": "myAddress"    
-     *     }                                  }                                       }                               
-     *   }                                  }                                       }                                 
-     *                                                                                                                
+    /**
+     * Old property:                       New property:                           Expected:
+     * {                                  {                                       {
+     * "mac_range_plan": "y",             "mac_range_plan": "",                   "mac_range_plan": "y",
+     * "mac_count_required": {            "mac_count_required": {                 "mac_count_required": {
+     * "is_required": true,               "is_required": false,                   "is_required": false,
+     * "count": 44                        "mac_address": "myAddress"              "mac_address": "myAddress"
+     * }                                  }                                       }
+     * }                                  }                                       }
      */
     @Test
     public void mergeComplexType() throws Exception {
-        PropertyDataDefinition oldProp = createProp("prop1", "myType", null, "{\"mac_range_plan\":\"y\", \"mac_count_required\":{\"is_required\":true,\"count\":44}}");
-        PropertyDataDefinition newProp = createProp("prop1", "myType", null, "{\"mac_range_plan\":\"\",  \"mac_count_required\":{\"is_required\":false, \"mac_address\":\"myAddress\"}}");
-        
+        PropertyDataDefinition oldProp =
+            createProp("prop1", "myType", null, "{\"mac_range_plan\":\"y\", \"mac_count_required\":{\"is_required\":true,\"count\":44}}");
+        PropertyDataDefinition newProp = createProp("prop1", "myType", null,
+            "{\"mac_range_plan\":\"\",  \"mac_count_required\":{\"is_required\":false, \"mac_address\":\"myAddress\"}}");
+
         DataTypeDefinition myType = new DataTypeDefinition();
         myType.setName("myType");
-      
+
         PropertyDefinition mac_range_plan = new PropertyDefinition();
         mac_range_plan.setName("mac_range_plan");
         mac_range_plan.setType("string");
 
+        PropertyDefinition schemaProp = new PropertyDefinition();
+        schemaProp.setType("string");
+        SchemaDefinition schema = new SchemaDefinition();
+        schema.setProperty(schemaProp);
         PropertyDefinition mac_count_required = new PropertyDefinition();
         mac_count_required.setName("mac_count_required");
         mac_count_required.setType("map");
-        
+        mac_count_required.setSchema(schema);
+
         myType.setProperties(Arrays.asList(mac_range_plan, mac_count_required));
         Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
-        
+
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
-        
-        assertEquals("myType", "{\"mac_range_plan\":\"y\",\"mac_count_required\":{\"is_required\":false,\"mac_address\":\"myAddress\"}}", newProp.getValue());
+
+        assertEquals("myType", "{\"mac_range_plan\":\"y\",\"mac_count_required\":{\"is_required\":\"false\",\"mac_address\":\"myAddress\"}}",
+            newProp.getValue());
     }
-    
-    
-    
-    
-    /**                                                                                    Expected property:
+
+
+    /**
+     * Expected property:
      * Old property:                            New property:                                {
-     *   {                                        {                                            "mac_range_plan": "n",
-     *     "mac_range_plan": "y",   "               "mac_range_plan": "n",                     "mymap": {
-     * 	   "mymap": {                           	"mymap": {                             	       "mac_count_required": {      
-     * 		  "mac_count_required": {           		"mac_count_required": {            		      "is_required": false,
-     * 		    "is_required": true,            		  "is_required": false                        "count": 44		  
-     * 		    "count": 44                    		    },                                 		   },
-     * 		  },                                		"host":"localhost",                		   "host":"localhost",
-     * 		  "backup-mode":"daily",            		"ip":"127.0.0.1"                   		   "ip":"127.0.0.1"
-     * 		  "ip":"0.0.0.0"                    	}                                      	   }                            
-     * 	   }                                      }                                          }
-     *   }                                                                                      
-     *                                                                                       
+     * {                                        {                                            "mac_range_plan": "n",
+     * "mac_range_plan": "y",   "               "mac_range_plan": "n",                     "mymap": {
+     * "mymap": {                           	"mymap": {                             	       "mac_count_required": {
+     * "mac_count_required": {           		"mac_count_required": {            		      "is_required": false,
+     * "is_required": true,            		  "is_required": false                        "count": 44
+     * "count": 44                    		    },                                 		   },
+     * },                                		"host":"localhost",                		   "host":"localhost",
+     * "backup-mode":"daily",            		"ip":"127.0.0.1"                   		   "ip":"127.0.0.1"
+     * "ip":"0.0.0.0"                    	}                                           }
+     * }                                      }                                          }
+     * }
      */
     @Test
     public void mergeComplexType_containingMapWithComplexType() throws Exception {
-        PropertyDataDefinition oldProp = createProp("prop1", "myType", null, "{\"mac_range_plan\":\"y\",\"mymap\": {\"mac_count_required\": {\"is_required\":true,\"count\":44},\"backup-mode\":\"daily\",\"ip\":\"0.0.0.0\"}}");
-        PropertyDataDefinition newProp = createProp("prop1", "myType", null, "{\"mac_range_plan\":\"n\",\"mymap\": {\"mac_count_required\": {\"is_required\":false},\"host\":\"localhost\",\"ip\":\"127.0.0.1\"}}");
-        
+        PropertyDataDefinition oldProp = createProp("prop1", "myType", null,
+            "{\"mac_range_plan\":\"y\",\"mymap\": {\"mac_count_required\": {\"is_required\":true,\"count\":44},\"backup-mode\":\"daily\",\"ip\":\"0.0.0.0\"}}");
+        PropertyDataDefinition newProp = createProp("prop1", "myType", null,
+            "{\"mac_range_plan\":\"n\",\"mymap\": {\"mac_count_required\": {\"is_required\":false},\"host\":\"localhost\",\"ip\":\"127.0.0.1\"}}");
+
         DataTypeDefinition myType = new DataTypeDefinition();
         myType.setName("myType");
-      
+
         PropertyDefinition mac_range_plan = new PropertyDefinition();
         mac_range_plan.setName("mac_range_plan");
         mac_range_plan.setType("string");
-        
+
         PropertyDefinition mymap = new PropertyDefinition();
         mymap.setName("mymap");
         mymap.setType("map");
@@ -222,32 +229,54 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDefinition mac_count_required = new PropertyDefinition();
         mac_count_required.setName("mac_count_required");
         mac_count_required.setType("MacType");
-        
+
         SchemaDefinition entrySchema = new SchemaDefinition();
         entrySchema.setProperty(mac_count_required);
         mymap.setSchema(entrySchema);
-        
+
         myType.setProperties(Arrays.asList(mac_range_plan, mymap, mac_count_required));
-        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
+
+        DataTypeDefinition root = new DataTypeDefinition();
+        root.setName("tosca.datatypes.Root");
+
+        DataTypeDefinition macType = new DataTypeDefinition();
+        macType.setName("MacType");
+        macType.setDerivedFrom(root);
+
+        PropertyDefinition is_required = new PropertyDefinition();
+        is_required.setName("is_required");
+        is_required.setType("boolean");
+
+        PropertyDefinition count = new PropertyDefinition();
+        count.setName("count");
+        count.setType("integer");
+
+        macType.setProperties(Arrays.asList(is_required, count));
+
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        dataTypes.put(myType.getName(), myType);
+        dataTypes.put(macType.getName(), macType);
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
-        
+
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
-        
-        assertEquals("myType", "{\"mac_range_plan\":\"n\",\"mymap\":{\"ip\":\"127.0.0.1\",\"mac_count_required\":{\"is_required\":false,\"count\":44},\"host\":\"localhost\"}}", newProp.getValue());
+
+        assertEquals("myType",
+            "{\"mac_range_plan\":\"n\",\"mymap\":{\"ip\":\"127.0.0.1\",\"mac_count_required\":{\"is_required\":false,\"count\":44},\"host\":\"localhost\"}}",
+            newProp.getValue());
     }
 
 
-    /*                                                               
-     *  Old Property:                      New Property:                          Expected:          
-     *  [                                  [                                      [                      
-     *    {                                   {                                      {                   
-     *      "prop1": "val1",                    "prop2": {                             "prop2": {        
-     *      "prop2": {                            "prop3": false                         "prop3": false  
-     *        "prop3": true,                    }                                      }                 
-     *        "prop4": 44                     }                                      }                   
-     *      }                              ]                                      ]                      
-     *    },                                                         
+    /*
+     *  Old Property:                      New Property:                          Expected:
+     *  [                                  [                                      [
+     *    {                                   {                                      {
+     *      "prop1": "val1",                    "prop2": {                             "prop2": {
+     *      "prop2": {                            "prop3": false                         "prop3": false
+     *        "prop3": true,                    }                                      }
+     *        "prop4": 44                     }                                      }
+     *      }                              ]                                      ]
+     *    },
      *    {
      *      "prop1": "val2",
      *      "prop2": {
@@ -255,12 +284,12 @@ public class PropertyDataValueMergeBusinessLogicTest {
      *      }
      *    }
      *  ]
-     *  
+     *
      */
     @Test
     public void mergeListOfComplexType_differentSize() throws Exception {
         PropertyDataDefinition oldProp = createProp("prop1", "list", "myType", "[{\"prop1\":\"val1\", \"prop2\":{\"prop3\":true,\"prop4\":44}}, " +
-                                                                                       "{\"prop1\":\"val2\", \"prop2\":{\"prop3\":true}}]");
+            "{\"prop1\":\"val2\", \"prop2\":{\"prop3\":true}}]");
         PropertyDataDefinition newProp = createProp("prop1", "list", "myType", "[{\"prop2\":{\"prop3\":false}}]");
 
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
@@ -268,8 +297,8 @@ public class PropertyDataValueMergeBusinessLogicTest {
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("myType", "[{\"prop2\":{\"prop3\":false}}]", newProp.getValue());
     }
-    
-    
+
+
     /*
      *  Old Property:                     New Property:                 Expected:
      *  [                                 [                             [
@@ -278,37 +307,40 @@ public class PropertyDataValueMergeBusinessLogicTest {
      *      "prop2": {                        "prop2": {                   "prop2": {
      *        "prop3": true,                    "prop4": 45                  "prop3": true
      *        "prop4": 44                     }                              "prop4": 45
-     *      }                               },                             }                       
-     *    },                                {                            },                        
-     *    {                                                              {                         
-     *      "prop1": "val2",                  "prop2": {                   "prop1": "val2",                        
-     *      "prop2": {                          "prop3": false             "prop2": {              
-     *        "prop3": true                   }                              "prop3": false        
-     *      }                               }                              }                       
-     *    }                               ]                              }                         
-     *  ]                                                              ]                           
-     *                                                                                             
-     */                                                                                            
+     *      }                               },                             }
+     *    },                                {                            },
+     *    {                                                              {
+     *      "prop1": "val2",                  "prop2": {                   "prop1": "val2",
+     *      "prop2": {                          "prop3": false             "prop2": {
+     *        "prop3": true                   }                              "prop3": false
+     *      }                               }                              }
+     *    }                               ]                              }
+     *  ]                                                              ]
+     *
+     */
     @Test
     public void mergeListOfComplexType() throws Exception {
         PropertyDataDefinition oldProp = createProp("lprop", "list", "myType", "[{\"prop1\":\"val1\", \"prop2\":{\"prop3\":true,\"prop4\":44}}, " +
-                                                                                "{\"prop1\":\"val2\", \"prop2\":{\"prop3\":true}}]");
-        PropertyDataDefinition newProp = createProp("lprop", "list", "myType", "[{\"prop1\":\"\", \"prop2\":{\"prop4\":45}}, {\"prop2\":{\"prop3\":false}}]");
+            "{\"prop1\":\"val2\", \"prop2\":{\"prop3\":true}}]");
+        PropertyDataDefinition newProp =
+            createProp("lprop", "list", "myType", "[{\"prop1\":\"\", \"prop2\":{\"prop4\":45}}, {\"prop2\":{\"prop3\":false}}]");
 
-        
+
         DataTypeDefinition myType = new DataTypeDefinition();
         myType.setName("myType");
-        
+
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
-        assertEquals("lprop",  "[{\"prop2\":{\"prop4\":45,\"prop3\":true},\"prop1\":\"val1\"},{\"prop2\":{\"prop3\":false},\"prop1\":\"val2\"}]", newProp.getValue());
+        assertEquals("lprop", "[{\"prop2\":{\"prop4\":45,\"prop3\":true},\"prop1\":\"val1\"},{\"prop2\":{\"prop3\":false},\"prop1\":\"val2\"}]",
+            newProp.getValue());
     }
 
     @Test
     public void mergeListOfMapsWithJsonAsInnerType() throws Exception {
         PropertyDataDefinition oldProp = createProp("value_spec", "list", "json", "[{\"prop1\":\"val1\", \"prop2\":\"prop3\",\"prop4\":44}]");
-        PropertyDataDefinition newProp = createProp("value_spec", "list", "json", "[{\"prop22\":{\"prop221\":45,\"prop222\":\"val222\",\"prop223\":\"false\"}}]");
+        PropertyDataDefinition newProp =
+            createProp("value_spec", "list", "json", "[{\"prop22\":{\"prop221\":45,\"prop222\":\"val222\",\"prop223\":\"false\"}}]");
 
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
@@ -317,9 +349,8 @@ public class PropertyDataValueMergeBusinessLogicTest {
     }
 
 
-
     /*
-     * Old Property:                          New Property:                               Expected:                          
+     * Old Property:                          New Property:                               Expected:
      * {                                      {                                           {
      *   "lprop": [                             "lprop": [                                  "lprop": [
      *     {                                      {                                           {
@@ -345,17 +376,17 @@ public class PropertyDataValueMergeBusinessLogicTest {
      *     }                                  }                                               }
      *   ],                                                                                 ],
      *   "prop5": "value5"                                                                  "prop5": "value05"
-     * }                                                                                  }   
+     * }                                                                                  }
      *
      *
-     */                                                                                            
+     */
     @Test
     public void mergeComplexType_containsListOfComplexType() throws Exception {
-        PropertyDataDefinition oldProp = createProp("complexProp", "complexType", null, 
-                "{\"lprop\":[{\"prop1\":\"val1\",\"prop2\":[{\"prop3\":true,\"prop4\":44},{\"prop3\":false,\"prop4\":96}]}," + 
+        PropertyDataDefinition oldProp = createProp("complexProp", "complexType", null,
+            "{\"lprop\":[{\"prop1\":\"val1\",\"prop2\":[{\"prop3\":true,\"prop4\":44},{\"prop3\":false,\"prop4\":96}]}," +
                 "{\"prop1\":\"val2\",\"prop2\":[{\"prop3\":true}]}],\"prop5\":\"value5\"} ");
         PropertyDataDefinition newProp = createProp("complexProp", "complexType", null,
-                "{\"lprop\":[{\"prop2\":[{\"prop3\":true},{\"prop4\":69}]},{\"prop1\":\"val1\",\"prop2\":[{\"prop3\":false}]}],\"prop5\":\"value05\"}");
+            "{\"lprop\":[{\"prop2\":[{\"prop3\":true},{\"prop4\":69}]},{\"prop1\":\"val1\",\"prop2\":[{\"prop3\":false}]}],\"prop5\":\"value05\"}");
 
         DataTypeDefinition complexType = new DataTypeDefinition();
         complexType.setName("complexType");
@@ -365,18 +396,18 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDefinition prop5 = new PropertyDefinition();
         prop5.setName("prop5");
         prop5.setType("string");
-        
+
         DataTypeDefinition complexProp = new DataTypeDefinition();
         complexProp.setName("complexType");
         complexType.setProperties(Arrays.asList(lprop, prop5));
-        
+
         DataTypeDefinition myType = new DataTypeDefinition();
         myType.setName("myType");
 
         PropertyDefinition prop1 = new PropertyDefinition();
         prop1.setName("prop1");
         prop1.setType("string");
-        
+
         DataTypeDefinition myInnerType = new DataTypeDefinition();
         myInnerType.setName("myInnerType");
 
@@ -393,38 +424,40 @@ public class PropertyDataValueMergeBusinessLogicTest {
         complexType.setProperties(Arrays.asList(lprop, prop5));
         myType.setProperties(Arrays.asList(prop1, prop2));
         myInnerType.setProperties(Arrays.asList(prop3, prop4));
-        
+
         Map<String, DataTypeDefinition> dataTypes = Stream.of(complexType, myType, myInnerType)
-                                                           .collect(Collectors.toMap(DataTypeDefinition::getName, Function.identity()));
-        
+            .collect(Collectors.toMap(DataTypeDefinition::getName, Function.identity()));
+
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
-        
+
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
-        
-        assertEquals("complexProp", 
-                "{\"lprop\":[{\"prop2\":[{\"prop4\":44,\"prop3\":true},{\"prop4\":69,\"prop3\":false}],\"prop1\":\"val1\"},{\"prop2\":[{\"prop3\":false}],\"prop1\":\"val1\"}],\"prop5\":\"value05\"}",
-                newProp.getValue());
+
+        assertEquals("complexProp",
+            "{\"lprop\":[{\"prop2\":[{\"prop4\":44,\"prop3\":true},{\"prop4\":69,\"prop3\":false}],\"prop1\":\"val1\"},{\"prop2\":[{\"prop3\":false}],\"prop1\":\"val1\"}],\"prop5\":\"value05\"}",
+            newProp.getValue());
     }
-    
-    
+
+
     @Test
     public void mergeMapType_differentSize() throws Exception {
         PropertyDataDefinition oldProp = createProp("prop1", "map", "string", "{\"prop1\":\"val1\", \"prop2\":\"val2\", \"prop3\":\"val3\"}");
         PropertyDataDefinition newProp = createProp("prop1", "map", "string", "{\"prop1\":\"valY\", \"prop2\":\"\"}");
-        
+
         HashMap<String, String> expected = Maps.newHashMap();
         expected.put("prop1", "valY");
         expected.put("prop2", "val2");
         verifyMapMerge(getMergedMapProp(oldProp, newProp, Collections.emptyList()), expected);
     }
-    
-    
+
+
     @Test
     public void mergeMapType() throws Exception {
-        PropertyDataDefinition oldProp = createProp("prop1", "map", "string", "{\"prop1\":\"val1\", \"prop2\":\"val2\", \"prop3\":\"\", \"prop4\":\"val4\"}");
-        PropertyDataDefinition newProp = createProp("prop1", "map", "string", "{\"prop1\":\"valY\", \"prop2\":\"\", \"prop3\":\"val3\", \"prop5\":\"val5\"}");
-        
-        
+        PropertyDataDefinition oldProp =
+            createProp("prop1", "map", "string", "{\"prop1\":\"val1\", \"prop2\":\"val2\", \"prop3\":\"\", \"prop4\":\"val4\"}");
+        PropertyDataDefinition newProp =
+            createProp("prop1", "map", "string", "{\"prop1\":\"valY\", \"prop2\":\"\", \"prop3\":\"val3\", \"prop5\":\"val5\"}");
+
+
         HashMap<String, String> expected = Maps.newHashMap();
         expected.put("prop1", "valY");
         expected.put("prop2", "val2");
@@ -456,61 +489,66 @@ public class PropertyDataValueMergeBusinessLogicTest {
     public void mergeGetInputValue_valueIsNull_InNewProp() throws Exception {
         PropertyDataDefinition oldProp = createGetInputProp("prop1", "string", null, "input1");
         PropertyDataDefinition newProp = createProp("prop1", "string", null, null);
-        testMergeProps(oldProp, newProp,"{\"get_input\":\"input1\"}", Collections.singletonList("input1"));
+        testMergeProps(oldProp, newProp, "{\"get_input\":\"input1\"}", Collections.singletonList("input1"));
         assertGetInputValues(newProp, "input1");
     }
 
     /*
-     * Old property:                      New property:                       Expected:              
-     * [                                  [                                   [                          
-     *   {                                  {                                   {                         
-     *     "mac_range_plan": {                "mac_count_required": {           "mac_range_plan": {     
-     *       "get_input": "input1"              "is_required": true               "get_input": "input1" 
-     *     },                                 }                                 },                      
-     *     "mac_count_required": {          }                                   "mac_count_required": {                                    
-     *       "is_required": true,                                                 "is_required": true         
-     *       "count": {                   inputs: intput1, input2               }                             
-     *         "get_input": "input2"      ]                                   }                               
-     *       }                                                                                                
-     *     }                                                                  inputs: input2                    
-     *   }                                                                  ]                                 
-     *                                                                        
-     *   inputs: intput1, input2                                                                            
-     * ]                                                                                                    
-     * 
-     * 
-     * 
+     * Old property:                      New property:                       Expected:
+     * [                                  [                                   [
+     *   {                                  {                                   {
+     *     "mac_range_plan": {                "mac_count_required": {           "mac_range_plan": {
+     *       "get_input": "input1"              "is_required": true               "get_input": "input1"
+     *     },                                 }                                 },
+     *     "mac_count_required": {          }                                   "mac_count_required": {
+     *       "is_required": true,                                                 "is_required": true
+     *       "count": {                   inputs: intput1, input2               }
+     *         "get_input": "input2"      ]                                   }
+     *       }
+     *     }                                                                  inputs: input2
+     *   }                                                                  ]
+     *
+     *   inputs: intput1, input2
+     * ]
+     *
+     *
+     *
      */
     @Test
     public void mergeComplexGetInputValue() throws Exception {
-        PropertyDataDefinition oldProp = new PropertyDataDefinitionBuilder().addGetInputValue("input1").addGetInputValue("input2").setName("prop1").setType("myType").setValue("{\"mac_range_plan\":{\"get_input\": \"input1\"}, \"mac_count_required\":{\"is_required\":true,\"count\":{\"get_input\": \"input2\"}}}").build();
-        PropertyDataDefinition newProp = new PropertyDataDefinitionBuilder().addGetInputValue("input2").setName("prop1").setType("myType").setValue("{\"mac_count_required\":{\"is_required\":true}}").build();
-        testMergeProps(oldProp, newProp,"{\"mac_range_plan\":{},\"mac_count_required\":{\"is_required\":true}}", Collections.singletonList("input2"));
+        PropertyDataDefinition oldProp =
+            new PropertyDataDefinitionBuilder().addGetInputValue("input1").addGetInputValue("input2").setName("prop1").setType("myType").setValue(
+                    "{\"mac_range_plan\":{\"get_input\": \"input1\"}, \"mac_count_required\":{\"is_required\":true,\"count\":{\"get_input\": \"input2\"}}}")
+                .build();
+        PropertyDataDefinition newProp = new PropertyDataDefinitionBuilder().addGetInputValue("input2").setName("prop1").setType("myType")
+            .setValue("{\"mac_count_required\":{\"is_required\":true}}").build();
+        testMergeProps(oldProp, newProp, "{\"mac_range_plan\":{},\"mac_count_required\":{\"is_required\":true}}",
+            Collections.singletonList("input2"));
         assertGetInputValues(newProp, "input2");
     }
 
     @Test
     public void mergeListValueWithMultipleGetInputs() throws Exception {
         PropertyDataDefinition oldProp = new PropertyDataDefinitionBuilder()
-                .addGetInputValue("input1").addGetInputValue("input2").addGetInputValue("input3")
-                .setName("prop1")
-                .setType("list").setSchemaType("string")
-                .setValue("[{\"get_input\": \"input2\"},{\"get_input\": \"input3\"},{\"get_input\": \"input1\"}]")
-                .build();
+            .addGetInputValue("input1").addGetInputValue("input2").addGetInputValue("input3")
+            .setName("prop1")
+            .setType("list").setSchemaType("string")
+            .setValue("[{\"get_input\": \"input2\"},{\"get_input\": \"input3\"},{\"get_input\": \"input1\"}]")
+            .build();
 
         PropertyDataDefinition newProp = new PropertyDataDefinitionBuilder()
-                .addGetInputValue("input3")
-                .addGetInputValue("input5")
-                .setName("prop1")
-                .setType("list").setSchemaType("string")
-                .setValue("[{\"get_input\": \"input5\"}, {\"get_input\": \"input3\"}]")
-                .build();
+            .addGetInputValue("input3")
+            .addGetInputValue("input5")
+            .setName("prop1")
+            .setType("list").setSchemaType("string")
+            .setValue("[{\"get_input\": \"input5\"}, {\"get_input\": \"input3\"}]")
+            .build();
 
-        testMergeProps(oldProp, newProp,"[{\"get_input\":\"input5\"},{\"get_input\":\"input3\"}]");
+        testMergeProps(oldProp, newProp, "[{\"get_input\":\"input5\"},{\"get_input\":\"input3\"}]");
         assertGetInputValues(newProp, "input3", "input5");
     }
 
-    private void assertGetInputValues(PropertyDataDefinition newProp, String ... expectedInputNames) {
+    private void assertGetInputValues(PropertyDataDefinition newProp, String... expectedInputNames) {
         assertTrue(newProp.isGetInputProperty());
         assertEquals(newProp.getGetInputValues().size(), expectedInputNames.length);
         for (int i = 0; i < expectedInputNames.length; i++) {
@@ -519,12 +557,12 @@ public class PropertyDataValueMergeBusinessLogicTest {
             assertEquals(getInputValueDataDefinition.getInputName(), expectedInputName);
         }
     }
-    
+
     private void testMergeProps(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, String expectedValue) {
         testMergeProps(oldProp, newProp, expectedValue, Collections.emptyList());
     }
 
-    private void testMergeProps(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, String expectedValue,  List<String> getInputsToMerge) {
+    private void testMergeProps(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, String expectedValue, List<String> getInputsToMerge) {
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(Collections.emptyMap()));
         testInstance.mergePropertyValue(oldProp, newProp, getInputsToMerge);
         assertEquals(expectedValue, newProp.getValue());
@@ -545,28 +583,29 @@ public class PropertyDataValueMergeBusinessLogicTest {
 
     private PropertyDataDefinition createProp(String name, String type, String innerType, String val) {
         return new PropertyDataDefinitionBuilder()
-                .setType(type)
-                .setSchemaType(innerType)
-                .setValue(val)
-                .setName(name)
-                .build();
+            .setType(type)
+            .setSchemaType(innerType)
+            .setValue(val)
+            .setName(name)
+            .build();
     }
 
     private PropertyDataDefinition createGetInputProp(String name, String type, String innerType, String inputName) {
         String val = String.format("{\"get_input\":\"%s\"}", inputName);
         return new PropertyDataDefinitionBuilder()
-                .setType(type)
-                .setSchemaType(innerType)
-                .setValue(val)
-                .addGetInputValue(inputName)
-                .setName(name)
-                .build();
+            .setType(type)
+            .setSchemaType(innerType)
+            .setValue(val)
+            .addGetInputValue(inputName)
+            .setName(name)
+            .build();
 
     }
 
     private Map<String, String> convertJsonToMap(String jsonString) {
         try {
-            return mapper.readValue(jsonString, new TypeReference<Map<String, String>>(){});
+            return mapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+            });
         } catch (IOException e) {
             return null;
         }
