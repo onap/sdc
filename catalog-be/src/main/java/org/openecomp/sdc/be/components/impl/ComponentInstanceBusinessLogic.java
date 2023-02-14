@@ -1986,7 +1986,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     property.setValue(property.getToscaFunction().getValue());
                 }
                 if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())) {
-                    if (StringUtils.isNumeric(property.getSubPropertyToscaFunctions().iterator().next().getSubPropertyPath().get(0))) {
+                    ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
+                    if (type.equals(ToscaPropertyType.LIST)) {
                         final JSONArray jsonArray = property.getValue() == null ? new JSONArray() : new JSONArray(property.getValue());
                         property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
                             addE(jsonArray, subToscaFunction.getSubPropertyPath(), subToscaFunction.getToscaFunction().getValue());
