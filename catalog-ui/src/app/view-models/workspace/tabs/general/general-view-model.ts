@@ -861,6 +861,14 @@ export class GeneralViewModel {
             return [];
         }
 
+        this.$scope.getMetadataKeyDefaultValue = (key: string): string => {
+            let metadataKey = this.getMetadataKey(key);
+            if (metadataKey) {
+                return metadataKey.defaultValue;
+            }
+            return '';
+        }
+
         this.$scope.getMetadataDisplayName = (key: string): string => {
             let metadataKey = this.getMetadataKey(key);
             if (metadataKey) {
@@ -916,16 +924,18 @@ export class GeneralViewModel {
         baseTypeResponseList.baseTypes.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
         if (this.$scope.isBaseTypeRequired || defaultBaseType != null) {
             let baseType = baseTypeResponseList.baseTypes[0];
-            if(defaultBaseType != null){
-                baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
-                    if(baseTypeObj.toscaResourceName == defaultBaseType) {
-                        baseType = baseTypeObj;
-                    }
-                });
+            if (baseType) {
+                if (defaultBaseType != null) {
+                    baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
+                        if (baseTypeObj.toscaResourceName == defaultBaseType) {
+                            baseType = baseTypeObj;
+                        }
+                    });
+                }
+                baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+                this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             }
-            baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
-            this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             this.$scope.showBaseTypeVersions = true;
             return
         }

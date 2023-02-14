@@ -35,8 +35,8 @@ public class MetadataKeyDataDefinition extends ToscaDataDefinition {
 
     private String name;
     private String displayName;
-    private List<String> validValues;
+    private List<Object> validValues;
     private boolean mandatory;
-    private String defaultValue;
+    private Object defaultValue;
 
 }
