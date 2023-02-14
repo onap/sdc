@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72c16674_a8539035",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-14T17:02:41Z",
+      "side": 1,
+      "message": "Hi Krupa, can you just explain a bit how this solves the issue, Im not quiet getting it",
+      "range": {
+        "startLine": 763,
+        "startChar": 0,
+        "endLine": 768,
+        "endChar": 13
+      },
+      "revId": "c050bb96438b5b7c6af8d2166498d3c195b1d52f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
