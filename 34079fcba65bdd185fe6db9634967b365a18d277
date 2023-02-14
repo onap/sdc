@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c79b76c_284b6693",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-14T16:32:49Z",
+      "side": 1,
+      "message": "isPropertyNotMappedAsInput should be expanded in scope to skip constraint validation as appropriate for TOSCA function values",
+      "range": {
+        "startLine": 343,
+        "startChar": 2,
+        "endLine": 352,
+        "endChar": 13
+      },
+      "revId": "34079fcba65bdd185fe6db9634967b365a18d277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
