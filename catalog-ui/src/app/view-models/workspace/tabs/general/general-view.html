@@ -136,15 +136,15 @@
             <ng-container ng-repeat="(key, value) in component.categorySpecificMetadata"-->
               <div ng-if="isMetadataKeyForComponentCategory(key) && !isCategoryServiceMetadataKey(key) && getMetadataKeyValidValues(key) && isMetadataKeyMandatory(key)"
                    class="i-sdc-form-item"
-                   data-ng-class="{'error': validateField(editForm['{{key}}'])}">
+                  data-ng-class="{'error': validateField(editForm['{{key}}'])}">
                 <label class="i-sdc-form-label required" translate="{{getMetadataDisplayName(key)}}"></label>
                 <select class="i-sdc-form-select"
                         name="{{key}}"
                         data-ng-class="{'view-mode': isViewMode()}"
-                        data-ng-model="component.categorySpecificMetadata[key]"
                         data-tests-id="{{key}}"
+                        [(ngModel)]="getMetadataKeyDefaultValue(key)"
                         data-required>
-                  <option ng-repeat="value in getMetadataKeyValidValues(key)">{{value}}</option>
+                  <option ng-repeat="value in getMetadataKeyValidValues(key)" [ngValue]="value">{{value}}</option>
                 </select>
                 <div class="input-error" data-ng-show="validateField(editForm['{{key}}'])">
                   <span ng-show="editForm['{{key}}'].$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_REQUIRED"></span>
