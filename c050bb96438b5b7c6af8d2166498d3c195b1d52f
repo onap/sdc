@@ -22,6 +22,30 @@
       "revId": "c050bb96438b5b7c6af8d2166498d3c195b1d52f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2d8a4f2_d0aaf884",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-14T17:53:05Z",
+      "side": 1,
+      "message": "Hi Michael, This validation happens only during service import when required fields like category and description are missing in import file. Other two required fields like model and userID are auto filled with default values. So i added validation to category and description fields only. Currently if these fields are missing, only create button gets disabled without any information on what is missing.",
+      "parentUuid": "72c16674_a8539035",
+      "range": {
+        "startLine": 763,
+        "startChar": 0,
+        "endLine": 768,
+        "endChar": 13
+      },
+      "revId": "c050bb96438b5b7c6af8d2166498d3c195b1d52f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
