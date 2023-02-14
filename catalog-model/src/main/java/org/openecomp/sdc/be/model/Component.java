@@ -95,12 +95,12 @@ public abstract class Component implements PropertiesOwner {
         this.componentMetadataDefinition = componentMetadataDefinition;
     }
 
-    public Map<String, String> getCategorySpecificMetadata() {
-        final Map<String, String> categorySpecificMetadata = componentMetadataDefinition.getMetadataDataDefinition().getCategorySpecificMetadata();
+    public Map<String, Object> getCategorySpecificMetadata() {
+        final Map<String, Object> categorySpecificMetadata = componentMetadataDefinition.getMetadataDataDefinition().getCategorySpecificMetadata();
         return categorySpecificMetadata == null ? Collections.emptyMap() : categorySpecificMetadata;
     }
 
-    public void setCategorySpecificMetadata(final Map<String, String> categorySpecificMetadata) {
+    public void setCategorySpecificMetadata(final Map<String, Object> categorySpecificMetadata) {
         componentMetadataDefinition.getMetadataDataDefinition().setCategorySpecificMetadata(categorySpecificMetadata);
     }
 

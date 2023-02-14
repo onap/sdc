@@ -63,7 +63,7 @@ public class UploadServiceInfo {
     private String serviceVendorModelNumber;
     private String serviceType = "";
     private String model;
-    private Map<String, String> categorySpecificMetadata;
+    private Map<String, Object> categorySpecificMetadata;
     private String derivedFromGenericType;
     private String derivedFromGenericVersion;
 
@@ -92,9 +92,9 @@ public class UploadServiceInfo {
                 selectedCategory.setSubcategories(subcategories);
             }
             SubCategoryDefinition selectedSubcategory = null;
-            for (SubCategoryDefinition subcategory : subcategories) {
-                if (subcategory.getName().equals(subCategory)) {
-                    selectedSubcategory = subcategory;
+            for (SubCategoryDefinition subCategoryDefinition : subcategories) {
+                if (subCategoryDefinition.getName().equals(subCategory)) {
+                    selectedSubcategory = subCategoryDefinition;
                 }
             }
             if (selectedSubcategory == null) {

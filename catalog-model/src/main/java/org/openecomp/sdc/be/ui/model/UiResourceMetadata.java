@@ -42,7 +42,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
     private String licenseType;
     private String toscaResourceName;
     private List<String> derivedFrom;
-    private Map<String, String> categorySpecificMetadata;
+    private Map<String, Object> categorySpecificMetadata;
     private String csarVersionId;
     private String tenant;
 
