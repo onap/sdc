@@ -171,9 +171,14 @@ public class PropertyDataValueMergeBusinessLogicTest {
         mac_range_plan.setName("mac_range_plan");
         mac_range_plan.setType("string");
 
+        PropertyDefinition schemaProp = new PropertyDefinition();
+        schemaProp.setType("string");
+        SchemaDefinition schema = new SchemaDefinition();
+        schema.setProperty(schemaProp);
         PropertyDefinition mac_count_required = new PropertyDefinition();
         mac_count_required.setName("mac_count_required");
         mac_count_required.setType("map");
+        mac_count_required.setSchema(schema);
         
         myType.setProperties(Arrays.asList(mac_range_plan, mac_count_required));
         Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
@@ -182,7 +187,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         
-        assertEquals("myType", "{\"mac_range_plan\":\"y\",\"mac_count_required\":{\"is_required\":false,\"mac_address\":\"myAddress\"}}", newProp.getValue());
+        assertEquals("myType", "{\"mac_range_plan\":\"y\",\"mac_count_required\":{\"is_required\":\"false\",\"mac_address\":\"myAddress\"}}", newProp.getValue());
     }
     
     
@@ -210,11 +215,11 @@ public class PropertyDataValueMergeBusinessLogicTest {
         
         DataTypeDefinition myType = new DataTypeDefinition();
         myType.setName("myType");
-      
+
         PropertyDefinition mac_range_plan = new PropertyDefinition();
         mac_range_plan.setName("mac_range_plan");
         mac_range_plan.setType("string");
-        
+
         PropertyDefinition mymap = new PropertyDefinition();
         mymap.setName("mymap");
         mymap.setType("map");
@@ -222,13 +227,33 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDefinition mac_count_required = new PropertyDefinition();
         mac_count_required.setName("mac_count_required");
         mac_count_required.setType("MacType");
-        
+
         SchemaDefinition entrySchema = new SchemaDefinition();
         entrySchema.setProperty(mac_count_required);
         mymap.setSchema(entrySchema);
-        
+
         myType.setProperties(Arrays.asList(mac_range_plan, mymap, mac_count_required));
-        Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
+
+        DataTypeDefinition root = new DataTypeDefinition();
+        root.setName("tosca.datatypes.Root");
+
+        DataTypeDefinition macType = new DataTypeDefinition();
+        macType.setName("MacType");
+        macType.setDerivedFrom(root);
+
+        PropertyDefinition is_required = new PropertyDefinition();
+        is_required.setName("is_required");
+        is_required.setType("boolean");
+
+        PropertyDefinition count = new PropertyDefinition();
+        count.setName("count");
+        count.setType("integer");
+
+        macType.setProperties(Arrays.asList(is_required, count));
+
+        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
+        dataTypes.put(myType.getName(), myType);
+        dataTypes.put(macType.getName(), macType);
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         

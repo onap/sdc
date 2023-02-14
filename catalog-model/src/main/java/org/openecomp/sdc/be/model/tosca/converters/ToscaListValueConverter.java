@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import com.google.gson.JsonArray;
@@ -32,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -93,12 +93,11 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
             final boolean isScalarF = isScalar;
             final ToscaValueConverter innerConverterFinal = innerConverter;
             asJsonArray.forEach(e -> {
-                Object convertedValue = null;
+                Object convertedValue;
                 if (isScalarF) {
-                    if (e.isJsonPrimitive()) {
-                        String jsonAsString = e.getAsString();
-                        log.debug("try to convert scalar value {}", jsonAsString);
-                        convertedValue = innerConverterFinal.convertToToscaValue(jsonAsString, innerType, dataTypes);
+                    if (isJsonElementAJsonPrimitive(e)) {
+                        log.debug("try to convert scalar value {}", e.getAsString());
+                        convertedValue = innerConverterFinal.convertToToscaValue(e.getAsString(), innerType, dataTypes);
                     } else {
                         convertedValue = handleComplexJsonValue(e);
                     }
@@ -151,18 +150,6 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
         } catch (JsonParseException e) {
             log.debug("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
-            return null;
-        }
-    }
-
-    private JsonElement parseToJson(final String value) {
-        try {
-            final StringReader reader = new StringReader(value);
-            final JsonReader jsonReader = new JsonReader(reader);
-            jsonReader.setLenient(true);
-            return JsonParser.parseReader(jsonReader);
-        } catch (final JsonSyntaxException e) {
-            log.debug("convertToToscaValue failed to parse json value :", e);
             return null;
         }
     }
