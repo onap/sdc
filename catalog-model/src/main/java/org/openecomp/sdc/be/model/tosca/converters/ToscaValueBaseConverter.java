@@ -17,13 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +96,9 @@ public class ToscaValueBaseConverter {
             return handleJsonArray(jsonElement);
         }
         if (jsonElement.isJsonPrimitive()) {
+            if (!isJsonElementAJsonPrimitive(jsonElement)) {
+                return handleComplexJsonValue(parseToJson(jsonElement.getAsString()));
+            }
             return json2JavaPrimitive(jsonElement.getAsJsonPrimitive());
         }
         log.debug("JSON type '{}' not supported", jsonElement);
@@ -136,5 +144,29 @@ public class ToscaValueBaseConverter {
             return jsonPrimitive.getAsInt();
         }
         throw new IllegalStateException(String.format("JSON primitive not supported: %s", jsonPrimitive));
+    }
+
+    public JsonElement parseToJson(final String value) {
+        try {
+            final StringReader reader = new StringReader(value);
+            final JsonReader jsonReader = new JsonReader(reader);
+            jsonReader.setLenient(true);
+            return JsonParser.parseReader(jsonReader);
+        } catch (final JsonSyntaxException e) {
+            log.debug("convertToToscaValue failed to parse json value :", e);
+            return null;
+        }
+    }
+
+    public boolean isJsonElementAJsonPrimitive(JsonElement jsonElement) {
+        if (!jsonElement.isJsonPrimitive()) {
+            return false;
+        }
+        String elementAsString = jsonElement.getAsString();
+        JsonElement elementAsJson = parseToJson(elementAsString);
+        if (elementAsJson.isJsonPrimitive() || elementAsJson.isJsonNull()) {
+            return true;
+        }
+        return false;
     }
 }
