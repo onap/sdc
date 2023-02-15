@@ -51,7 +51,9 @@
                     <label class="i-sdc-form-label required">{{"OPERATOR_LABEL" | translate}}</label>
                     <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator"
                                          [testId]="'constraintOperator'"
-                                         [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
+                                         [values]="operatorTypes" [(value)]="currentRule.constraintOperator"
+                                         >
+                    </ui-element-dropdown>
                 </div>
             </div>
             <div class="rule-builder-content">
@@ -79,13 +81,23 @@
                     </tosca-function>
                 </div>
             </div>
+            <div class="rule-builder-content" *ngIf="isToscaFunctionSource() && selectedProperty && (isRangeType() || isValidValuesOperator())">
+                <div class="i-sdc-form-item rule-input-field">
+                    <tosca-function [property]="selectedProperty"
+                                    [componentInstanceMap]="componentInstanceMap"
+                                    [allowClear]="false"
+                                    (onValidityChange)="onToscaFunctionValidityChange($event)"
+                    >
+                    </tosca-function>
+                </div>
+            </div>
             <div *ngIf="isToscaFunctionSource() && !selectedProperty">
                 {{"NODE_FILTER_SELECT_PROPERTY" | translate}}
             </div>
             <div class="rule-builder-content" *ngIf="isStaticSource()">
                 <div class="i-sdc-form-item rule-input-field complex-input-field">
                     <dynamic-property
-                        *ngIf="isComplexListMapType()"
+                            *ngIf="isComplexListMapType() && !isRangeType() && !isValidValuesOperator()"
                         [selectedPropertyId]="selectedProperty.uniqueId"
                         [property]="selectedProperty"
                         [expandedChildId]="selectedProperty.expandedChildPropertyId ?
@@ -96,12 +108,30 @@
                         (expandChild)="selectedProperty.updateExpandedChildPropertyId($event)">
                     </dynamic-property>
                     <dynamic-element
-                        *ngIf="!isComplexListMapType()"
+                        *ngIf="!isComplexListMapType() && !isValidValuesOperator()"
                         [(value)]="currentRule.value"
                         class="rule-assigned-value"
                         data-tests-id="ruleAssignedValue"
                         (elementChanged)="onValueChange($event.isValid)"
-                        [type]="selectedProperty ? selectedProperty.type : 'string'">
+                        [type]="selectedProperty ? selectedProperty.type : 'string'"
+                        [operator]="currentRule.constraintOperator">
+                    </dynamic-element>
+                    <dynamic-element
+                            *ngIf="isRangeType()"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="selectedProperty ? selectedProperty.type : 'string'">
+                    </dynamic-element>
+                    <dynamic-element
+                            *ngIf="isValidValuesOperator()"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="selectedProperty ? selectedProperty.type : 'string'"
+                            [operator]="currentRule.constraintOperator">
                     </dynamic-element>
                 </div>
             </div>

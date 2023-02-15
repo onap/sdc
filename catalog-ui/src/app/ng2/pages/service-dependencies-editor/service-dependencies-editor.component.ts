@@ -19,7 +19,7 @@ import {InputBEModel, PropertyBEModel, PropertyFEModel, PropertyModel} from 'app
 import {SourceType} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
-import {PROPERTY_DATA} from 'app/utils';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils';
 import {PropertiesUtils} from '../properties-assignment/services/properties.utils';
 import {ToscaFunctionValidationEvent} from "../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../models/instance-fe-details";
@@ -49,8 +49,23 @@ export class ServiceDependenciesEditorComponent implements OnInit {
       ConstraintOperatorType.LESS_THAN,
       ConstraintOperatorType.EQUAL,
       ConstraintOperatorType.GREATER_OR_EQUAL,
-      ConstraintOperatorType.LESS_OR_EQUAL
+      ConstraintOperatorType.LESS_OR_EQUAL,
+      ConstraintOperatorType.IN_RANGE,
+      ConstraintOperatorType.VALID_VALUES,
+      ConstraintOperatorType.LENGTH,
+      ConstraintOperatorType.MIN_LENGTH,
+      ConstraintOperatorType.MAX_LENGTH,
+      ConstraintOperatorType.PATTERN
   ];
+    @Input() comparableAllowedOperators: ConstraintOperatorType[] = [
+        ConstraintOperatorType.GREATER_THAN,
+        ConstraintOperatorType.LESS_THAN,
+        ConstraintOperatorType.EQUAL,
+        ConstraintOperatorType.GREATER_OR_EQUAL,
+        ConstraintOperatorType.LESS_OR_EQUAL,
+        ConstraintOperatorType.IN_RANGE,
+        ConstraintOperatorType.VALID_VALUES,
+    ];
   @Input() capabilityNameAndPropertiesMap: Map<string, PropertyModel[]>;
   @Input() filterType: FilterType;
   @Input() filterConstraint: PropertyFilterConstraintUi;
@@ -125,27 +140,50 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     this.servicePropertyDropdownList = [new DropdownValue(undefined, selectLabel), ...propertyList.map(prop => new DropdownValue(prop.name, prop.name))];
   }
 
-  private initConstraintOperatorOptions(): void {
-    if (!this.selectedProperty) {
-      this.operatorTypes = [new DropdownValue(undefined, 'Select a Property')];
-      return;
+    private initConstraintOperatorOptions(): void {
+        if (!this.selectedProperty) {
+            this.operatorTypes = [this.setOperatorDropdownValue(undefined)];
+            return;
+        }
+        const operatorList: DropdownValue[] = [];
+        switch (true) {
+            case this.selectedProperty.type === PROPERTY_TYPES.RANGE:
+                if (this.currentRule.constraintOperator !== ConstraintOperatorType.IN_RANGE) {
+                    this.currentRule.constraintOperator = ConstraintOperatorType.IN_RANGE;
+                }
+                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.IN_RANGE)];
+                break;
+            case this.selectedProperty.type === PROPERTY_TYPES.STRING:
+                this.allowedOperators.forEach(constraintOperatorType =>
+                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
+                );
+                this.operatorTypes = operatorList;
+                break;
+            case  this.selectedProperty.type != PROPERTY_TYPES.STRING &&
+            ((PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedProperty.type) > -1) ||
+            (PROPERTY_DATA.COMPARABLE_TYPES.indexOf(this.selectedProperty.type) > -1)):
+                this.comparableAllowedOperators.forEach(constraintOperatorType =>
+                    operatorList.push(this.setOperatorDropdownValue(constraintOperatorType))
+                );
+                this.operatorTypes = operatorList;
+                break;
+            default:
+                if (this.currentRule.constraintOperator !== ConstraintOperatorType.EQUAL) {
+                    this.currentRule.constraintOperator = ConstraintOperatorType.EQUAL;
+                }
+                this.operatorTypes = [this.setOperatorDropdownValue(ConstraintOperatorType.EQUAL)];
+                break;
+        }
     }
 
-    if (PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedProperty.type) === -1) {
-      if (this.currentRule.constraintOperator !== ConstraintOperatorType.EQUAL) {
-        this.currentRule.constraintOperator = ConstraintOperatorType.EQUAL;
-      }
-      this.operatorTypes = [new DropdownValue(ConstraintOperatorType.EQUAL, FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.EQUAL))];
-    } else {
-      const operatorList: DropdownValue[] = [];
-      this.allowedOperators.forEach(constraintOperatorType =>
-        operatorList.push(new DropdownValue(constraintOperatorType, FilterConstraintHelper.convertToSymbol(constraintOperatorType)))
-      );
-      this.operatorTypes = operatorList;
+    private setOperatorDropdownValue(constraintOperatorType: ConstraintOperatorType) {
+        if (constraintOperatorType === undefined) {
+            return new DropdownValue(undefined, 'Select a Property');
+        }
+        return new DropdownValue(constraintOperatorType, FilterConstraintHelper.convertToSymbol(constraintOperatorType));
     }
-  }
 
-  private initSelectedSourceType(): void {
+    private initSelectedSourceType(): void {
     if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC) {
       this.selectedSourceType = SourceType.STATIC;
     } else {
@@ -255,6 +293,14 @@ export class ServiceDependenciesEditorComponent implements OnInit {
 
   isComplexListMapType(): boolean {
     return this.selectedProperty && this.selectedProperty.derivedDataType > 0;
+  }
+
+  isRangeType(): boolean {
+    return this.selectedProperty && this.selectedProperty.derivedDataType == 4;
+  }
+
+  isValidValuesOperator(): boolean {
+    return this.currentRule.constraintOperator && this.currentRule.constraintOperator == ConstraintOperatorType.VALID_VALUES;
   }
 
   updateComplexListMapTypeRuleValue(): void {
