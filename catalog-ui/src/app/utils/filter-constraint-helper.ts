@@ -50,9 +50,14 @@ export class FilterConstraintHelper {
             case ConstraintOperatorType.GREATER_THAN: return '>';
             case ConstraintOperatorType.GREATER_OR_EQUAL: return '>=';
             case ConstraintOperatorType.LESS_OR_EQUAL: return '<=';
+            case ConstraintOperatorType.IN_RANGE: return 'in range';
+            case ConstraintOperatorType.VALID_VALUES: return 'valid values';
+            case ConstraintOperatorType.LENGTH: return 'length';
+            case ConstraintOperatorType.MIN_LENGTH: return 'minimum length';
+            case ConstraintOperatorType.MAX_LENGTH: return 'maximum length';
+            case ConstraintOperatorType.PATTERN: return 'pattern';
         }
     }
-
 }
 
 export enum ConstraintOperatorType {
@@ -60,6 +65,12 @@ export enum ConstraintOperatorType {
     GREATER_THAN = 'greater_than',
     LESS_THAN = 'less_than',
     GREATER_OR_EQUAL = 'greater_or_equal',
-    LESS_OR_EQUAL = 'less_or_equal'
+    LESS_OR_EQUAL = 'less_or_equal',
+    IN_RANGE = 'in_range',
+    VALID_VALUES = 'valid_values',
+    LENGTH = 'length',
+    MIN_LENGTH = 'min_length',
+    MAX_LENGTH = 'max_length',
+    PATTERN = 'pattern'
 }
 
