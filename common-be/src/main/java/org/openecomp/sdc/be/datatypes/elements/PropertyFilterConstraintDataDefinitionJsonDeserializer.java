@@ -22,11 +22,13 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -73,6 +75,9 @@ public class PropertyFilterConstraintDataDefinitionJsonDeserializer extends StdD
         if (node.get("valueType") != null) {
             propertyFilterConstraint.setValueType(FilterValueType.valueOf(node.get("valueType").asText()));
         }
+        if (node.get("originalType") != null) {
+            propertyFilterConstraint.setOriginalType(node.get("originalType").asText());
+        }
         propertyFilterConstraint.setValue(deserializeValue(node.get("value")));
 
         return propertyFilterConstraint;
@@ -91,7 +96,25 @@ public class PropertyFilterConstraintDataDefinitionJsonDeserializer extends StdD
             LOGGER.debug(COULD_NOT_PARSE_CLASS, PropertyFilterConstraintDataDefinition.class.getName(), Map.class.getName(), e);
         }
         try {
-            return objectMapper.treeToValue(value, List.class);
+            if (value.isArray()) {
+                try {
+                    objectMapper.treeToValue(value.get(0), ToscaFunction.class);
+                } catch (JsonProcessingException e) {
+                    return objectMapper.treeToValue(value, List.class);
+                }
+                List<ToscaFunction> listToscaFunction = new ArrayList<>();
+                value.forEach(nodeListValue -> {
+                    try {
+                        listToscaFunction.add(objectMapper.treeToValue(nodeListValue, ToscaFunction.class));
+                    } catch (JsonProcessingException e) {
+                        LOGGER.debug(COULD_NOT_PARSE_CLASS, PropertyFilterConstraintDataDefinition.class.getName(), List.class.getName(), e);
+                    }
+                });
+                return listToscaFunction;
+            }
+            else {
+                return objectMapper.treeToValue(value, List.class);
+            }
         } catch (final Exception e) {
             LOGGER.debug(COULD_NOT_PARSE_CLASS, PropertyFilterConstraintDataDefinition.class.getName(), List.class.getName(), e);
         }

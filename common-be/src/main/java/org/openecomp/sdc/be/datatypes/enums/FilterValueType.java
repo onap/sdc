@@ -35,7 +35,8 @@ public enum FilterValueType {
     GET_INPUT("get_input", "service_input"),
     GET_ATTRIBUTE("get_attribute", null),
     YAML("yaml", null),
-    CONCAT("concat", null);
+    CONCAT("concat", null),
+    SEVERAL("several", null);
 
     private final String name;
     private final String legacyName;
