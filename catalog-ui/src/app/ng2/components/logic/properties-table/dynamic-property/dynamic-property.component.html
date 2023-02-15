@@ -44,7 +44,7 @@
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
     <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || (property.isToscaFunction() && !property.isChildOfListOrMap) || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
         <div class="table-cell">
-            <checkbox class="{{propType == derivedPropertyTypes.MAP ? 'inline-checkBox' : 'inline-checkBox-List'}}" *ngIf="((nestedLevel == 1 || nestedLevel == 2) && property.isChildOfListOrMap && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
+            <checkbox class="{{propType == derivedPropertyTypes.MAP ? 'inline-checkBox' : 'inline-checkBox-List'}}" *ngIf="hideCheckBox === false && ((nestedLevel == 1 || nestedLevel == 2) && property.isChildOfListOrMap && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
                 [value]="(property.isDeclared || property.isToscaFunction()) ? property.value : property.valueObj"
