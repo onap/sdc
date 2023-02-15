@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.validation;
 
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -139,26 +141,64 @@ public class NodeFilterValidator {
     private Either<Boolean, ResponseFormat> validatePropertyConstraint(final Component parentComponent, final String componentInstanceId,
                                                                        final FilterConstraintDto filterConstraint, final String capabilityName) {
         String source = SOURCE;
+        ResponseFormat responseFormat = null;
+        List<ToscaGetFunctionDataDefinition> toscaGetFunctionDataDefinitionList = new ArrayList<>();
         final ToscaGetFunctionDataDefinition toscaGetFunction = filterConstraint.getAsToscaGetFunction().orElse(null);
         if (toscaGetFunction == null || !(filterConstraint.getValue() instanceof ToscaGetFunctionDataDefinition)) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
-        }
-        final Optional<? extends ToscaPropertyData> sourceSelectedProperty = findPropertyFromGetFunction(parentComponent, toscaGetFunction);
-        if (sourceSelectedProperty.isPresent()) {
-            Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
-                getInstanceProperties(parentComponent, componentInstanceId, capabilityName, filterConstraint.getPropertyName());
-
-            source = targetComponentInstanceProperty.isEmpty() ? TARGET : SOURCE;
-            if (targetComponentInstanceProperty.isPresent()) {
-                final ResponseFormat responseFormat = validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get());
-                if (responseFormat != null) {
-                    return Either.right(responseFormat);
-                }
-                return Either.left(true);
+            final List<ToscaGetFunctionDataDefinition> toscaGetFunctionList = filterConstraint.getAsListToscaGetFunction().orElse(null);
+            if (toscaGetFunctionList == null || toscaGetFunctionList.isEmpty() || !(filterConstraint.getValue() instanceof List)) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
+            }
+            else {
+                toscaGetFunctionDataDefinitionList = toscaGetFunctionList;
             }
         }
-        final String missingProperty = SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
-        return Either.right(componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty));
+        else{
+            toscaGetFunctionDataDefinitionList.add(toscaGetFunction);
+        }
+        Boolean allGood = true;
+        for (ToscaGetFunctionDataDefinition _toscaGetFunction: toscaGetFunctionDataDefinitionList) {
+
+            final Optional<? extends ToscaPropertyData> sourceSelectedProperty =
+                findPropertyFromGetFunction(parentComponent, _toscaGetFunction);
+            if (sourceSelectedProperty.isPresent()) {
+                Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
+                    getInstanceProperties(parentComponent, componentInstanceId, capabilityName,
+                        filterConstraint.getPropertyName());
+
+                source = targetComponentInstanceProperty.isEmpty() ? TARGET : SOURCE;
+                if (targetComponentInstanceProperty.isPresent()) {
+                    responseFormat =
+                        validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get(),
+                            filterConstraint.getOperator().isLengthConstraint());
+                    if (responseFormat != null) {
+                        allGood = false;
+                        break;
+                    }
+
+                }
+                else {
+                    allGood = false;
+                    final String missingProperty =
+                        SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
+                    responseFormat =
+                        componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty);
+                    break;
+                }
+            }
+            else {
+                allGood = false;
+                final String missingProperty =
+                    SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
+                responseFormat =
+                    componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty);
+                break;
+            }
+        }
+        if (allGood) {
+            return Either.left(true);
+        }
+        return Either.right(responseFormat);
     }
 
     private Optional<? extends ToscaPropertyData> findPropertyFromGetFunction(final Component parentComponent,
@@ -276,80 +316,118 @@ public class NodeFilterValidator {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_DOES_NOT_HAVE_INPUTS, parentComponent.getName()));
         }
         if (!(filterConstraint.getValue() instanceof ToscaGetFunctionDataDefinition)) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
-        }
-        final ToscaGetFunctionDataDefinition getFunction = (ToscaGetFunctionDataDefinition) filterConstraint.getValue();
-        final List<String> propertyPathFromSource = getFunction.getPropertyPathFromSource();
-        Optional<? extends PropertyDefinition> sourceSelectedProperty =
-            sourceInputDefinition.stream().filter(input -> input.getName().equals(propertyPathFromSource.get(0))).findFirst();
-        if (sourceSelectedProperty.isEmpty()) {
-            LOGGER.debug(INPUT_NOT_FOUND_LOG,
-                propertyPathFromSource.get(0), parentComponent.getName(), parentComponent.getUniqueId());
-            return Either.right(
-                componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INPUT_NOT_FOUND, propertyPathFromSource.get(0), parentComponent.getName())
-            );
-        }
-        if (propertyPathFromSource.size() > 1) {
-            final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither =
-                applicationDataTypeCache.getAll(parentComponent.getModel());
-            if (allDataTypesEither.isRight()) {
-                LOGGER.error("Could not load data types for model {}", parentComponent.getModel());
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPES_NOT_LOADED, parentComponent.getModel()));
+            if (filterConstraint.getValue() instanceof List) {
+                Optional optValid = ((List<?>) filterConstraint.getValue()).stream().filter(filterConstraintValue ->
+                    !(filterConstraintValue instanceof ToscaGetFunctionDataDefinition)).findAny();
+                if (optValid.isPresent()) {
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
+                }
             }
-            sourceSelectedProperty =
-                findSubProperty(propertyPathFromSource.subList(1, propertyPathFromSource.size()), sourceSelectedProperty.get().getType(),
-                    allDataTypesEither.left().value());
+            else {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
+            }
         }
-        final Optional<? extends PropertyDefinition> targetComponentInstanceProperty;
-        if (PropertyFilterTargetType.CAPABILITY.equals(filterConstraint.getTargetType())) {
-            final CapabilityDefinition capability = parentComponent.getComponentInstances().stream()
-                .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId))
-                .map(componentInstance -> componentInstance.getCapabilities().values())
-                .flatMap(Collection::stream)
-                .flatMap(Collection::stream)
-                .filter(capabilityDefinition -> capabilityDefinition.getName().equals(filterConstraint.getCapabilityName()))
-                .findFirst().orElse(null);
-            if (capability == null) {
+        if (filterConstraint.getValue() instanceof ToscaGetFunctionDataDefinition) {
+            final ToscaGetFunctionDataDefinition getFunction =
+                (ToscaGetFunctionDataDefinition) filterConstraint.getValue();
+            final List<String> propertyPathFromSource = getFunction.getPropertyPathFromSource();
+            Optional<? extends PropertyDefinition> sourceSelectedProperty =
+                sourceInputDefinition.stream().filter(input -> input.getName().equals(propertyPathFromSource.get(0)))
+                    .findFirst();
+            if (sourceSelectedProperty.isEmpty()) {
+                LOGGER.debug(INPUT_NOT_FOUND_LOG,
+                    propertyPathFromSource.get(0), parentComponent.getName(), parentComponent.getUniqueId());
                 return Either.right(
-                    componentsUtils.getResponseFormat(ActionStatus.CAPABILITY_NOT_FOUND_IN_COMPONENT,
-                        filterConstraint.getCapabilityName(), parentComponent.getComponentType().getValue(), parentComponent.getName())
+                    componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INPUT_NOT_FOUND,
+                        propertyPathFromSource.get(0), parentComponent.getName())
                 );
             }
-            targetComponentInstanceProperty = capability.getProperties().stream()
-                .filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
-                .findFirst();
-        } else {
-            targetComponentInstanceProperty =
-                parentComponent.getComponentInstancesProperties()
-                    .get(componentInstanceId).stream()
+            if (propertyPathFromSource.size() > 1) {
+                final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither =
+                    applicationDataTypeCache.getAll(parentComponent.getModel());
+                if (allDataTypesEither.isRight()) {
+                    LOGGER.error("Could not load data types for model {}", parentComponent.getModel());
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.DATA_TYPES_NOT_LOADED,
+                        parentComponent.getModel()));
+                }
+                sourceSelectedProperty =
+                    findSubProperty(propertyPathFromSource.subList(1, propertyPathFromSource.size()),
+                        sourceSelectedProperty.get().getType(),
+                        allDataTypesEither.left().value());
+            }
+            final Optional<? extends PropertyDefinition> targetComponentInstanceProperty;
+            if (PropertyFilterTargetType.CAPABILITY.equals(filterConstraint.getTargetType())) {
+                final CapabilityDefinition capability = parentComponent.getComponentInstances().stream()
+                    .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId))
+                    .map(componentInstance -> componentInstance.getCapabilities().values())
+                    .flatMap(Collection::stream)
+                    .flatMap(Collection::stream)
+                    .filter(capabilityDefinition -> capabilityDefinition.getName()
+                        .equals(filterConstraint.getCapabilityName()))
+                    .findFirst().orElse(null);
+                if (capability == null) {
+                    return Either.right(
+                        componentsUtils.getResponseFormat(ActionStatus.CAPABILITY_NOT_FOUND_IN_COMPONENT,
+                            filterConstraint.getCapabilityName(), parentComponent.getComponentType().getValue(),
+                            parentComponent.getName())
+                    );
+                }
+                targetComponentInstanceProperty = capability.getProperties().stream()
                     .filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
                     .findFirst();
-        }
-        if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
-            final ResponseFormat responseFormat = validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get());
-            if (responseFormat != null) {
-                return Either.right(responseFormat);
+            } else {
+                targetComponentInstanceProperty =
+                    parentComponent.getComponentInstancesProperties()
+                        .get(componentInstanceId).stream()
+                        .filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
+                        .findFirst();
             }
-            return Either.left(true);
-        }
+            if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
+                final ResponseFormat responseFormat =
+                    validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get(),
+                        filterConstraint.getOperator().isLengthConstraint());
+                if (responseFormat != null) {
+                    return Either.right(responseFormat);
+                }
+                return Either.left(true);
+            }
 
-        return Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUTS_NOT_FOUND));
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUTS_NOT_FOUND));
+        }
+        return Either.left(true);
     }
 
     private <T extends ToscaPropertyData> ResponseFormat validatePropertyData(final T sourcePropDefinition,
-                                                                              final T targetPropDefinition) {
+                                                                              final T targetPropDefinition,
+                                                                              final boolean isLengthConstraint) {
         final String sourceType = sourcePropDefinition.getType();
         final String targetType = targetPropDefinition.getType();
-        if (sourceType.equals(targetType)) {
-            if (TYPES_WITH_SCHEMA.contains(sourceType)) {
-                final String sourceSchemaType = sourcePropDefinition.getSchemaType();
-                final String targetSchemaType = targetPropDefinition.getSchemaType();
-                if (sourceSchemaType != null && !sourceSchemaType.equals(targetSchemaType)) {
-                    return componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
-                        targetPropDefinition.getName(), targetSchemaType, sourcePropDefinition.getName(), sourceSchemaType);
+        if (!isLengthConstraint) {
+            if (sourceType.equals(targetType)) {
+                if (TYPES_WITH_SCHEMA.contains(sourceType)) {
+                    final String sourceSchemaType = sourcePropDefinition.getSchemaType();
+                    final String targetSchemaType = targetPropDefinition.getSchemaType();
+                    if (sourceSchemaType != null && !sourceSchemaType.equals(targetSchemaType)) {
+                        return componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
+                            targetPropDefinition.getName(), targetSchemaType, sourcePropDefinition.getName(),
+                            sourceSchemaType);
+                    }
                 }
+                return null;
             }
-            return null;
+        }
+        else {
+            if (sourceType.equalsIgnoreCase("integer")) {
+                if (TYPES_WITH_SCHEMA.contains(sourceType)) {
+                    final String sourceSchemaType = sourcePropDefinition.getSchemaType();
+                    if (sourceSchemaType != null && !sourceSchemaType.equalsIgnoreCase("integer")) {
+                        return componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
+                            targetPropDefinition.getName(), "integer", sourcePropDefinition.getName(),
+                            sourceSchemaType);
+                    }
+                }
+                return null;
+            }
         }
         return componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_PROPERTY_TYPE_MISMATCH,
             sourcePropDefinition.getName(), sourcePropDefinition.getType(), targetPropDefinition.getName(), targetPropDefinition.getType());
@@ -369,6 +447,13 @@ public class NodeFilterValidator {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_OPERATOR_PROVIDED, filterConstraint.getPropertyName(),
                 filterConstraint.getOperator().getType()));
         }
+        if (filterConstraint.getOperator().equals(ConstraintType.VALID_VALUES) || filterConstraint.getOperator().equals(ConstraintType.IN_RANGE)) {
+            return isValidValueCheck("list", componentInstanceProperty.getType(), parentComponent.getModel(),
+                filterConstraint.getValue(), filterConstraint.getPropertyName());
+        }
+        if (filterConstraint.getOperator().isLengthConstraint() && componentInstanceProperty.getType().equals("list")) {
+            return Either.left(true);
+        }
         return isValidValueCheck(componentInstanceProperty.getType(), componentInstanceProperty.getSchemaType(), parentComponent.getModel(),
             filterConstraint.getValue(), filterConstraint.getPropertyName());
     }
@@ -385,6 +470,10 @@ public class NodeFilterValidator {
             && !COMPARABLE_TYPES.contains(componentProperty.getType())) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_OPERATOR_PROVIDED, filterConstraint.getPropertyName(),
                 filterConstraint.getOperator().getType()));
+        }
+        if (filterConstraint.getOperator().equals(ConstraintType.VALID_VALUES) || filterConstraint.getOperator().equals(ConstraintType.IN_RANGE)) {
+            return isValidValueCheck("list", componentProperty.getType(), component.getModel(),
+                filterConstraint.getValue(), filterConstraint.getPropertyName());
         }
         return isValidValueCheck(componentProperty.getType(), componentProperty.getSchemaType(), component.getModel(),
             filterConstraint.getValue(), filterConstraint.getPropertyName());
@@ -517,7 +606,9 @@ public class NodeFilterValidator {
                 String.join("->", toscaGetFunction.getPropertyPathFromSource())));
         }
 
-        final ResponseFormat responseFormat = validatePropertyData(sourceSelectedProperty.get(), targetComponentProperty.get());
+        final ResponseFormat responseFormat =
+            validatePropertyData(sourceSelectedProperty.get(), targetComponentProperty.get(),
+                filterConstraint.getOperator().isLengthConstraint());
         if (responseFormat != null) {
             return Either.right(responseFormat);
         }

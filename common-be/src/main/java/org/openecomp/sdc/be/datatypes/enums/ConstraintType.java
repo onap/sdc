@@ -48,6 +48,10 @@ public enum ConstraintType {
         ConstraintType.GREATER_OR_EQUAL,
         ConstraintType.LESS_OR_EQUAL,
         ConstraintType.LESS_THAN);
+    private static final Set<ConstraintType> lengthConstraints = Set.of(
+        ConstraintType.LENGTH,
+        ConstraintType.MIN_LENGTH,
+        ConstraintType.MAX_LENGTH);
     private final String type;
     private final List<String> typeAlias;
 
@@ -72,6 +76,10 @@ public enum ConstraintType {
 
     public boolean isComparable() {
         return comparableConstraints.contains(this);
+    }
+
+    public boolean isLengthConstraint() {
+        return lengthConstraints.contains(this);
     }
 
 }
