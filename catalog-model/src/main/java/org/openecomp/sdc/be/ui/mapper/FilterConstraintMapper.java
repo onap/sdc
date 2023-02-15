@@ -49,6 +49,7 @@ public class FilterConstraintMapper {
         filterConstraint.setTargetType(StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? PropertyFilterTargetType.PROPERTY : PropertyFilterTargetType.CAPABILITY);
         FilterValueType.findByName(uiConstraint.getSourceType()).ifPresent(filterConstraint::setValueType);
         filterConstraint.setValue(mapValueFrom(uiConstraint));
+        filterConstraint.setOriginalType(uiConstraint.getOriginalType());
         return filterConstraint;
     }
 
@@ -95,6 +96,7 @@ public class FilterConstraintMapper {
         propertyFilterConstraint.setOperator(filterConstraintDto.getOperator());
         propertyFilterConstraint.setValueType(filterConstraintDto.getValueType());
         propertyFilterConstraint.setValue(filterConstraintDto.getValue());
+        propertyFilterConstraint.setOriginalType(filterConstraintDto.getOriginalType());
         return propertyFilterConstraint;
     }
 
@@ -106,6 +108,7 @@ public class FilterConstraintMapper {
         uiConstraint.setServicePropertyName(filterConstraintDto.getPropertyName());
         uiConstraint.setSourceType(filterConstraintDto.getValueType().getName());
         uiConstraint.setSourceName(uiConstraint.getSourceType());
+        uiConstraint.setOriginalType(uiConstraint.getOriginalType());
         return uiConstraint;
     }
 

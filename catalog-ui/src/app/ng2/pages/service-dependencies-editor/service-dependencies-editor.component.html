@@ -51,7 +51,10 @@
                     <label class="i-sdc-form-label required">{{"OPERATOR_LABEL" | translate}}</label>
                     <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator"
                                          [testId]="'constraintOperator'"
-                                         [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
+                                         (change)="onSourceTypeChange()"
+                                         [values]="operatorTypes" [(value)]="currentRule.constraintOperator"
+                                         >
+                    </ui-element-dropdown>
                 </div>
             </div>
             <div class="rule-builder-content">
@@ -61,15 +64,26 @@
                            data-tests-id="value-type-static"
                            [(ngModel)]="selectedSourceType"
                            [value]="SOURCE_TYPES.STATIC.value"
-                           (ngModelChange)="onSourceTypeChange()"/> {{"VALUE_LABEL" | translate}}
+                           (ngModelChange)="onSourceTypeChange($event)"/> {{"VALUE_LABEL" | translate}}
                     <input type="radio" name="sourceType"
                            data-tests-id="value-type-tosca-function"
                            [(ngModel)]="selectedSourceType"
-                           [value]="SOURCE_TYPES.TOSCA_FUNCTION.value"
-                           (ngModelChange)="onSourceTypeChange()"/> {{"VALUE_EXPRESSION_LABEL" | translate}}
+                           [value]="isValidValuesOperator() || isRangeType() || isInRangeOperator() ? SOURCE_TYPES.TOSCA_FUNCTION_LIST.value: SOURCE_TYPES.TOSCA_FUNCTION.value"
+                           (ngModelChange)="onSourceTypeChange($event)"/> {{"VALUE_EXPRESSION_LABEL" | translate}}
                 </div>
             </div>
             <div class="rule-builder-content" *ngIf="isToscaFunctionSource() && selectedProperty">
+                <div class="i-sdc-form-item rule-input-field">
+                    <tosca-function [property]="selectedProperty"
+                                    [overridingType] = "isLengthOperator() ? overridingType : undefined"
+                                    [componentInstanceMap]="componentInstanceMap"
+                                    [allowClear]="false"
+                                    (onValidityChange)="onToscaFunctionValidityChange($event)"
+                    >
+                    </tosca-function>
+                </div>
+            </div>
+            <div class="rule-builder-content" *ngIf="isToscaFunctionSource() && selectedProperty && (isRangeType() || isInRangeOperator())">
                 <div class="i-sdc-form-item rule-input-field">
                     <tosca-function [property]="selectedProperty"
                                     [componentInstanceMap]="componentInstanceMap"
@@ -79,29 +93,97 @@
                     </tosca-function>
                 </div>
             </div>
+
+            <div class="rule-builder-content" *ngIf="isToscaFunctionListSource() && selectedProperty && (isRangeType() || isInRangeOperator())">
+
+                <div class="i-sdc-form-item rule-input-field">
+                    <div class="w-sdc-form-columns-wrapper" *ngFor="let val of rangeToscaFunctionList; let valueIndex = index; trackBy:trackByFn">
+                        <div class="w-sdc-form-column" style="border-width:3px; border-style:solid; border-color:#009fdb; padding: 1em;">
+                            <tosca-function [property]="selectedProperty"
+                                            [inToscaFunction]="val"
+                                            [componentInstanceMap]="componentInstanceMap"
+                                            [allowClear]="false"
+                                            (onValidityChange)="onToscaRangeFunctionListValidityChange($event, valueIndex)"
+                            >
+                            </tosca-function>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-builder-content" *ngIf="isToscaFunctionListSource() && selectedProperty && isValidValuesOperator()">
+
+                <div class="i-sdc-form-item rule-input-field">
+                    <div class="add-btn"
+                         (click)="addToList()">Add to List
+                    </div>
+                    <div class="w-sdc-form-columns-wrapper" *ngFor="let val of this.validValuesToscaFunctionList; let valueIndex = index; trackBy:trackByFn">
+                        <div class="w-sdc-form-column" style="border-width:3px; border-style:solid; border-color:#009fdb; padding: 1em;">
+                            <tosca-function [property]="selectedProperty"
+                                            [inToscaFunction]="val"
+                                            [componentInstanceMap]="componentInstanceMap"
+                                            [allowClear]="false"
+                                            (onValidityChange)="onToscaFunctionListValidityChange($event, valueIndex)"
+                            >
+                            </tosca-function>
+                        </div>
+                        <div class="w-sdc-form-column">
+                            <span class="sprite-new delete-btn" (click)="removeFromList(valueIndex)"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div *ngIf="isToscaFunctionSource() && !selectedProperty">
                 {{"NODE_FILTER_SELECT_PROPERTY" | translate}}
             </div>
             <div class="rule-builder-content" *ngIf="isStaticSource()">
                 <div class="i-sdc-form-item rule-input-field complex-input-field">
                     <dynamic-property
-                        *ngIf="isComplexListMapType()"
+                            *ngIf="isComplexListMapType() && !isRangeType() && !isValidValuesOperator() && !isLengthOperator()"
                         [selectedPropertyId]="selectedProperty.uniqueId"
                         [property]="selectedProperty"
                         [expandedChildId]="selectedProperty.expandedChildPropertyId ?
                                 selectedProperty.expandedChildPropertyId : selectedProperty.name"
                         [canBeDeclared]="true"
+                        [hideCheckBox]="true"
                         (propertyChanged)="updateComplexListMapTypeRuleValue()"
                         [rootProperty]="selectedProperty"
                         (expandChild)="selectedProperty.updateExpandedChildPropertyId($event)">
                     </dynamic-property>
                     <dynamic-element
-                        *ngIf="!isComplexListMapType()"
+                        *ngIf="!isComplexListMapType() && !isValidValuesOperator()"
                         [(value)]="currentRule.value"
                         class="rule-assigned-value"
                         data-tests-id="ruleAssignedValue"
                         (elementChanged)="onValueChange($event.isValid)"
-                        [type]="selectedProperty ? selectedProperty.type : 'string'">
+                        [type]="isLengthOperator() ? 'integer' : selectedProperty ? selectedProperty.type : 'string'"
+                        [operator]="currentRule.constraintOperator">
+                    </dynamic-element>
+                    <dynamic-element
+                            *ngIf="isComplexListMapType() && isLengthOperator()"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="isLengthOperator() ? 'integer' : selectedProperty ? selectedProperty.type : 'string'"
+                            [operator]="currentRule.constraintOperator">
+                    </dynamic-element>
+                    <dynamic-element
+                            *ngIf="isRangeType()"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="selectedProperty ? selectedProperty.type : 'string'">
+                    </dynamic-element>
+                    <dynamic-element
+                            *ngIf="isValidValuesOperator()"
+                            [(value)]="currentRule.value"
+                            class="rule-assigned-value"
+                            data-tests-id="ruleAssignedValue"
+                            (elementChanged)="onValueChange($event.isValid)"
+                            [type]="selectedProperty ? selectedProperty.type : 'string'"
+                            [operator]="currentRule.constraintOperator">
                     </dynamic-element>
                 </div>
             </div>
