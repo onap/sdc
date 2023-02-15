@@ -73,6 +73,9 @@ public class PropertyFilterConstraintDataDefinitionJsonDeserializer extends StdD
         if (node.get("valueType") != null) {
             propertyFilterConstraint.setValueType(FilterValueType.valueOf(node.get("valueType").asText()));
         }
+        if (node.get("originalType") != null) {
+            propertyFilterConstraint.setOriginalType(node.get("originalType").asText());
+        }
         propertyFilterConstraint.setValue(deserializeValue(node.get("value")));
 
         return propertyFilterConstraint;
