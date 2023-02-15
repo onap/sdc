@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.validation;
 
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -139,26 +141,62 @@ public class NodeFilterValidator {
     private Either<Boolean, ResponseFormat> validatePropertyConstraint(final Component parentComponent, final String componentInstanceId,
                                                                        final FilterConstraintDto filterConstraint, final String capabilityName) {
         String source = SOURCE;
+        ResponseFormat responseFormat = null;
+        List<ToscaGetFunctionDataDefinition> toscaGetFunctionDataDefinitionList = new ArrayList<>();
         final ToscaGetFunctionDataDefinition toscaGetFunction = filterConstraint.getAsToscaGetFunction().orElse(null);
         if (toscaGetFunction == null || !(filterConstraint.getValue() instanceof ToscaGetFunctionDataDefinition)) {
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
-        }
-        final Optional<? extends ToscaPropertyData> sourceSelectedProperty = findPropertyFromGetFunction(parentComponent, toscaGetFunction);
-        if (sourceSelectedProperty.isPresent()) {
-            Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
-                getInstanceProperties(parentComponent, componentInstanceId, capabilityName, filterConstraint.getPropertyName());
-
-            source = targetComponentInstanceProperty.isEmpty() ? TARGET : SOURCE;
-            if (targetComponentInstanceProperty.isPresent()) {
-                final ResponseFormat responseFormat = validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get());
-                if (responseFormat != null) {
-                    return Either.right(responseFormat);
-                }
-                return Either.left(true);
+            final List<ToscaGetFunctionDataDefinition> toscaGetFunctionList = filterConstraint.getAsListToscaGetFunction().orElse(null);
+            if (toscaGetFunctionList == null || toscaGetFunctionList.isEmpty() || !(filterConstraint.getValue() instanceof List)) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
+            }
+            else {
+                toscaGetFunctionDataDefinitionList = toscaGetFunctionList;
             }
         }
-        final String missingProperty = SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
-        return Either.right(componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty));
+        else{
+            toscaGetFunctionDataDefinitionList.add(toscaGetFunction);
+        }
+        Boolean allGood = true;
+        for (ToscaGetFunctionDataDefinition _toscaGetFunction: toscaGetFunctionDataDefinitionList) {
+
+            final Optional<? extends ToscaPropertyData> sourceSelectedProperty =
+                findPropertyFromGetFunction(parentComponent, _toscaGetFunction);
+            if (sourceSelectedProperty.isPresent()) {
+                Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
+                    getInstanceProperties(parentComponent, componentInstanceId, capabilityName,
+                        filterConstraint.getPropertyName());
+
+                source = targetComponentInstanceProperty.isEmpty() ? TARGET : SOURCE;
+                if (targetComponentInstanceProperty.isPresent()) {
+                    responseFormat =
+                        validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get());
+                    if (responseFormat != null) {
+                        allGood = false;
+                        break;
+                    }
+                }
+                else {
+                    allGood = false;
+                    final String missingProperty =
+                        SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
+                    responseFormat =
+                        componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty);
+                    break;
+                }
+            }
+            else {
+                allGood = false;
+                final String missingProperty =
+                    SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
+                responseFormat =
+                    componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty);
+                break;
+            }
+        }
+        if (allGood) {
+            return Either.left(true);
+        }
+        return Either.right(responseFormat);
     }
 
     private Optional<? extends ToscaPropertyData> findPropertyFromGetFunction(final Component parentComponent,
@@ -368,6 +406,10 @@ public class NodeFilterValidator {
             && !COMPARABLE_TYPES.contains(componentInstanceProperty.getType())) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_OPERATOR_PROVIDED, filterConstraint.getPropertyName(),
                 filterConstraint.getOperator().getType()));
+        }
+        if (filterConstraint.getOperator().equals(ConstraintType.VALID_VALUES) || filterConstraint.getOperator().equals(ConstraintType.IN_RANGE)) {
+            return isValidValueCheck("list", componentInstanceProperty.getType(), parentComponent.getModel(),
+                filterConstraint.getValue(), filterConstraint.getPropertyName());
         }
         return isValidValueCheck(componentInstanceProperty.getType(), componentInstanceProperty.getSchemaType(), parentComponent.getModel(),
             filterConstraint.getValue(), filterConstraint.getPropertyName());
