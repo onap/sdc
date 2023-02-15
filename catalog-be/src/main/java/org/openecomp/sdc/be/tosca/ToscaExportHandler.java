@@ -79,6 +79,7 @@ import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDef
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -111,6 +112,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
@@ -1755,9 +1757,25 @@ public class ToscaExportHandler {
     private static Object buildNodeFilterValue(final PropertyFilterConstraintDataDefinition filterConstraint) {
         if (filterConstraint.getValue() instanceof ToscaFunction) {
             return Map.of(filterConstraint.getOperator().getType(), ((ToscaFunction) filterConstraint.getValue()).getJsonObjectValue());
-        } else {
-            return Map.of(filterConstraint.getOperator().getType(), filterConstraint.getValue());
         }
+        if (doesTypeNeedConvertingToIntOrFloat(filterConstraint.getOriginalType(), filterConstraint.getValue())) {
+            ToscaType toscaType = ToscaType.getToscaType(
+                filterConstraint.getValue() instanceof List ? ToscaType.LIST.getType() : filterConstraint.getOriginalType());
+            filterConstraint.setValue(toscaType.convert(String.valueOf(filterConstraint.getValue())));
+        }
+        else if (ConstraintType.LENGTH.getType().equals(filterConstraint.getOperator().getType()) ||
+            ConstraintType.MIN_LENGTH.getType().equals(filterConstraint.getOperator().getType()) ||
+            ConstraintType.MAX_LENGTH.getType().equals(filterConstraint.getOperator().getType())) {
+                filterConstraint.setValue(Integer.valueOf(String.valueOf(filterConstraint.getValue())));
+        }
+        return Map.of(filterConstraint.getOperator().getType(), filterConstraint.getValue());
+    }
+
+    private static boolean doesTypeNeedConvertingToIntOrFloat(String propertyType, Object value) {
+        if (value instanceof List && ((List<?>) value).get(0) instanceof LinkedHashMap && ((LinkedHashMap) ((List<?>) value).get(0)).get("type") != null ) {
+            return false;
+        }
+        return ToscaType.INTEGER.getType().equals(propertyType) || ToscaType.FLOAT.getType().equals(propertyType);
     }
 
     private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {
