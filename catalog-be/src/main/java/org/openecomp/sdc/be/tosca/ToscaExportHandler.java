@@ -111,6 +111,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
@@ -1756,8 +1757,16 @@ public class ToscaExportHandler {
         if (filterConstraint.getValue() instanceof ToscaFunction) {
             return Map.of(filterConstraint.getOperator().getType(), ((ToscaFunction) filterConstraint.getValue()).getJsonObjectValue());
         } else {
+            if (doesTypeNeedConvertingToIntOrFloat(filterConstraint.getOriginalType())) {
+                ToscaType toscaType = ToscaType.getToscaType(filterConstraint.getOriginalType());
+                filterConstraint.setValue(toscaType.convert(String.valueOf(filterConstraint.getValue())));
+            }
             return Map.of(filterConstraint.getOperator().getType(), filterConstraint.getValue());
         }
+    }
+
+    private static boolean doesTypeNeedConvertingToIntOrFloat(String propertyType) {
+        return ToscaType.INTEGER.getType().equals(propertyType) || ToscaType.FLOAT.getType().equals(propertyType);
     }
 
     private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {

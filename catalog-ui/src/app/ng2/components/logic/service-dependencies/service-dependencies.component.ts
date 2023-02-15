@@ -33,7 +33,8 @@ import {ConstraintOperatorType, FilterConstraintHelper} from "../../../../utils/
 
 export enum SourceType {
     STATIC = 'static',
-    TOSCA_FUNCTION = 'tosca_function'
+    TOSCA_FUNCTION = 'tosca_function',
+    TOSCA_FUNCTION_LIST = 'tosca_function_list'
 }
 
 class I18nTexts {
@@ -125,7 +126,12 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_THAN), value: ConstraintOperatorType.LESS_THAN},
             {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.EQUAL), value: ConstraintOperatorType.EQUAL},
             {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_OR_EQUAL), value: ConstraintOperatorType.GREATER_OR_EQUAL},
-            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_OR_EQUAL), value: ConstraintOperatorType.LESS_OR_EQUAL}
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_OR_EQUAL), value: ConstraintOperatorType.LESS_OR_EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LENGTH), value: ConstraintOperatorType.LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.IN_RANGE), value: ConstraintOperatorType.IN_RANGE},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.MIN_LENGTH), value: ConstraintOperatorType.MIN_LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.MAX_LENGTH), value: ConstraintOperatorType.MAX_LENGTH},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.PATTERN), value: ConstraintOperatorType.PATTERN}
         ];
         this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId)
         .subscribe((result: ComponentGenericResponse) => {
