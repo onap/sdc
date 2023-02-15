@@ -42,6 +42,7 @@ import {YamlFunction} from "../../../../models/yaml-function";
 export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
+    @Input() inToscaFunction: ToscaFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() allowClear: boolean = true;
     @Input() compositionMap: boolean = false;
@@ -69,7 +70,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.componentMetadata = this.workspaceService.metadata;
-        this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
+        this.toscaFunction = this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction ? this.property.toscaFunction : undefined;
         this.loadToscaFunctions();
         this.formGroup.valueChanges.subscribe(() => {
             if (!this.isInitialized) {
@@ -88,7 +89,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.property) {
             this.resetForm();
-            this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
+            this.toscaFunction = this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction ? this.property.toscaFunction : undefined;
             this.initToscaFunction();
             this.loadToscaFunctions();
             this.emitValidityChange();
@@ -125,12 +126,11 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
                 return;
             }
         }
-
         if (!this.property.isToscaFunction()) {
             return;
         }
-        this.toscaFunctionForm.setValue(this.property.toscaFunction);
-        this.toscaFunctionTypeForm.setValue(this.property.toscaFunction.type);
+        this.toscaFunctionForm.setValue(this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction);
+        this.toscaFunctionTypeForm.setValue(this.inToscaFunction ? this.inToscaFunction.type : this.property.toscaFunction.type);
     }
 
     private areEqual(array1: string[], array2: string[]): boolean {
