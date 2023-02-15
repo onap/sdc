@@ -14,6 +14,8 @@ import { UiElementIntegerInputComponent } from './integer-input/ui-element-integ
 import { UiElementPopoverInputComponent } from './popover-input/ui-element-popover-input.component';
 import { RadioButtonComponent } from './radio-buttons/radio-buttons.component';
 import { UiElementBase } from './ui-element-base.component';
+import {UiElementRangeInputComponent} from "./range-input/ui-element-range-input.component";
+import {UiElementValidValuesInputComponent} from "./valid-values-input/ui-element-valid-values-input.component";
 
 @NgModule({
     imports: [
@@ -29,12 +31,16 @@ import { UiElementBase } from './ui-element-base.component';
         UiElementInputComponent,
         UiElementIntegerInputComponent,
         UiElementPopoverInputComponent,
+        UiElementRangeInputComponent,
+        UiElementValidValuesInputComponent,
         UiElementBase,
         RadioButtonComponent],
 
     exports: [UiElementDropDownComponent,
         UiElementInputComponent,
         UiElementIntegerInputComponent,
+        UiElementRangeInputComponent,
+        UiElementValidValuesInputComponent,
         UiElementPopoverInputComponent,
         RadioButtonComponent,
         TooltipModule,
