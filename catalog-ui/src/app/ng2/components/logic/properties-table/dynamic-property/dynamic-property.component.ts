@@ -55,6 +55,7 @@ export class DynamicPropertyComponent {
     @Input() hasChildren: boolean;
     @Input() hasDeclareOption:boolean;
     @Input() disablePropertyValue: boolean;
+    @Input() hideCheckBox: boolean;
     @Input() rootProperty: PropertyFEModel;
 
     @Output('propertyChanged') emitter: EventEmitter<void> = new EventEmitter<void>();

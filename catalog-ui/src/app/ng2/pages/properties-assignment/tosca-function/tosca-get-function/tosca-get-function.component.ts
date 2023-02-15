@@ -42,6 +42,7 @@ import {ToscaGetFunctionTypeConverter} from "../../../../../models/tosca-get-fun
 export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
+    @Input() overridingType: PROPERTY_TYPES;
     @Input() toscaGetFunction: ToscaGetFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() functionType: ToscaGetFunctionType;
@@ -243,13 +244,13 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             const properties: Array<PropertyBEModel | AttributeBEModel> = this.extractProperties(response);
             if (!properties || properties.length === 0) {
                 const msgCode = this.getNotFoundMsgCode();
-                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
+                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.overridingType != undefined ? this.overridingType : this.propertyTypeToString()});
                 return;
             }
             this.addPropertiesToDropdown(properties);
             if (this.propertyDropdownList.length == 0) {
                 const msgCode = this.getNotFoundMsgCode();
-                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
+                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.overridingType != undefined ? this.overridingType : this.propertyTypeToString()});
             }
         }, (error) => {
             console.error('An error occurred while loading properties.', error);
@@ -403,6 +404,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
+        if (this.overridingType != undefined) {
+            return property.type === this.overridingType;
+        }
         if (this.property.type === PROPERTY_TYPES.ANY) {
             return true;
         }
