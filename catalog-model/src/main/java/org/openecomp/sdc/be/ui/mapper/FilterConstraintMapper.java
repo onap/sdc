@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.ui.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class FilterConstraintMapper {
         filterConstraint.setTargetType(StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? PropertyFilterTargetType.PROPERTY : PropertyFilterTargetType.CAPABILITY);
         FilterValueType.findByName(uiConstraint.getSourceType()).ifPresent(filterConstraint::setValueType);
         filterConstraint.setValue(mapValueFrom(uiConstraint));
+        filterConstraint.setOriginalType(uiConstraint.getOriginalType());
         return filterConstraint;
     }
 
@@ -95,6 +97,7 @@ public class FilterConstraintMapper {
         propertyFilterConstraint.setOperator(filterConstraintDto.getOperator());
         propertyFilterConstraint.setValueType(filterConstraintDto.getValueType());
         propertyFilterConstraint.setValue(filterConstraintDto.getValue());
+        propertyFilterConstraint.setOriginalType(filterConstraintDto.getOriginalType());
         return propertyFilterConstraint;
     }
 
@@ -106,13 +109,25 @@ public class FilterConstraintMapper {
         uiConstraint.setServicePropertyName(filterConstraintDto.getPropertyName());
         uiConstraint.setSourceType(filterConstraintDto.getValueType().getName());
         uiConstraint.setSourceName(uiConstraint.getSourceType());
+        uiConstraint.setOriginalType(uiConstraint.getOriginalType());
         return uiConstraint;
     }
 
     private Object parseValueFromUiConstraint(final Object value) {
-        if (!(value instanceof Map || value instanceof String)) {
+        if (!(value instanceof Map || value instanceof List || value instanceof String)) {
             return value;
         }
+        if (value instanceof List) {
+            List<ToscaFunction> listValue = new ArrayList<>();
+            for (Object obj: (List)value) {
+                listValue.add((ToscaFunction) getValueObject(obj));
+            }
+            return listValue;
+        }
+        return getValueObject(value);
+    }
+
+    private Object getValueObject(Object value) {
         final Map<?, ?> valueAsMap;
         if (value instanceof String) {
             try {

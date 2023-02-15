@@ -42,6 +42,7 @@ import {ToscaGetFunctionTypeConverter} from "../../../../../models/tosca-get-fun
 export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
+    @Input() overridingType: PROPERTY_TYPES;
     @Input() toscaGetFunction: ToscaGetFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() functionType: ToscaGetFunctionType;
@@ -387,6 +388,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
+        if (this.overridingType != undefined) {
+            return property.type === this.overridingType;
+        }
         if (this.property.type === PROPERTY_TYPES.ANY) {
             return true;
         }

@@ -30,7 +30,7 @@ import {ToscaGetFunctionValidationEvent} from "./tosca-get-function/tosca-get-fu
 import {ToscaFunction} from "../../../../models/tosca-function";
 import {ToscaConcatFunctionValidationEvent} from "./tosca-concat-function/tosca-concat-function.component";
 import {ToscaCustomFunctionValidationEvent} from "./tosca-custom-function/tosca-custom-function.component";
-import {PROPERTY_TYPES, PROPERTY_DATA} from "../../../../utils/constants";
+import {PROPERTY_TYPES} from "../../../../utils/constants";
 import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.component";
 import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
 import {ToscaCustomFunction} from "../../../../models/tosca-custom-function";
@@ -44,6 +44,8 @@ import {YamlFunction} from "../../../../models/yaml-function";
 export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
+    @Input() overridingType: PROPERTY_TYPES;
+    @Input() inToscaFunction: ToscaFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     @Input() allowClear: boolean = true;
     @Input() compositionMap: boolean = false;
@@ -71,7 +73,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.componentMetadata = this.workspaceService.metadata;
-        this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
+        this.toscaFunction = this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction ? this.property.toscaFunction : undefined;
         this.loadToscaFunctions();
         this.formGroup.valueChanges.subscribe(() => {
             if (!this.isInitialized) {
@@ -90,7 +92,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.property) {
             this.resetForm();
-            this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
+            this.toscaFunction = this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction ? this.property.toscaFunction : undefined;
             this.initToscaFunction();
             this.loadToscaFunctions();
             this.emitValidityChange();
@@ -127,12 +129,11 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
                 return;
             }
         }
-
         if (!this.property.isToscaFunction()) {
             return;
         }
-        this.toscaFunctionForm.setValue(this.property.toscaFunction);
-        this.toscaFunctionTypeForm.setValue(this.property.toscaFunction.type);
+        this.toscaFunctionForm.setValue(this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction);
+        this.toscaFunctionTypeForm.setValue(this.inToscaFunction ? this.inToscaFunction.type : this.property.toscaFunction.type);
     }
 
     private areEqual(array1: string[], array2: string[]): boolean {
@@ -145,7 +146,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
         this.toscaFunctions.push(ToscaFunctionType.CUSTOM);
-        if (this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) {
+        if ((this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) && this.overridingType === undefined) {
             this.toscaFunctions.push(ToscaFunctionType.CONCAT);
         }
         this.toscaFunctions.push(ToscaFunctionType.YAML);
