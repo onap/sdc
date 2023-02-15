@@ -22,6 +22,8 @@
 package org.openecomp.sdc.be.model.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.Data;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
@@ -52,6 +54,18 @@ public class FilterConstraintDto {
         } catch (final Exception ignored) {
             return Optional.empty();
         }
+    }
+    public Optional<List<ToscaGetFunctionDataDefinition>> getAsListToscaGetFunction() {
+        List<ToscaGetFunctionDataDefinition> toscaGetFunctionDataDefinitionList = new ArrayList<>();
+        if (value instanceof List) {
+            try {
+                ((List<?>) value).forEach(toscaValue -> toscaGetFunctionDataDefinitionList.add(new ObjectMapper().convertValue(toscaValue, ToscaGetFunctionDataDefinition.class)));
+                return Optional.of(toscaGetFunctionDataDefinitionList);
+            } catch (final Exception ignored) {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
     }
 
 }

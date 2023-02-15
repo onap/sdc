@@ -173,6 +173,8 @@ export class PropertiesUtils {
                     property.childPropUpdated(childProp);
                 });
 
+            } else if (property.derivedDataType === DerivedPropertyType.RANGE) {
+                property.valueObj = JSON.stringify(property.getValueObj());
             }
         }
         property.updateValueObjOrig();

@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2022 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,31 +18,20 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+@import '../../../../../../assets/styles/variables';
 
-import {FilterConstraint} from "../filter-constraint";
+/deep/ ui-element-range-input {
 
-export class PropertyFilterConstraintUi extends FilterConstraint {
-    isValidValue: boolean;
-
-    constructor(input?: any) {
-        super(input);
-        if (input) {
-            this.isValidValue = input.isValidValue ? input.isValidValue : input.value !== '';
-        }
+    input {
+        text-indent: 6px;
+        border: solid 1px @main_color_o;
     }
 
-    public updateValidity(isValidValue: boolean) {
-        console.error("isValidValue->" + isValidValue);
-        this.isValidValue = isValidValue;
+    .error {
+        border: solid 1px @func_color_q;
+        color: @func_color_q;
+        outline: none;
+        box-sizing: border-box;
     }
 
-    public isValidRule() {
-        const isValidValue = this.isStatic() ? this.isValidValue : true;
-        return this.servicePropertyName != null && this.servicePropertyName !== ''
-            && this.value != null && this.value !== '' && isValidValue;
-    }
-
-    private isStatic() {
-        return this.sourceName === 'static';
-    }
 }
