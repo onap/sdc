@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2022 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,25 +18,20 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+@import '../../../../../../assets/styles/variables';
 
-package org.openecomp.sdc.be.datatypes.elements;
+/deep/ ui-element-range-input {
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
-import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
-import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+    input {
+        text-indent: 6px;
+        border: solid 1px @main_color_o;
+    }
 
-@Data
-@NoArgsConstructor
-@JsonDeserialize(using = PropertyFilterConstraintDataDefinitionJsonDeserializer.class)
-public class PropertyFilterConstraintDataDefinition {
-    private String propertyName;
-    private String capabilityName;
-    private PropertyFilterTargetType targetType;
-    private ConstraintType operator;
-    private FilterValueType valueType;
-    private Object value;
-    private String originalType;
+    .error {
+        border: solid 1px @func_color_q;
+        color: @func_color_q;
+        outline: none;
+        box-sizing: border-box;
+    }
+
 }
