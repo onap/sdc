@@ -26,6 +26,7 @@ export class FilterConstraint {
     sourceType: string;
     sourceName: string;
     value: any;
+    originalType: string;
 
     constructor(input?: any) {
         if (input) {
@@ -35,6 +36,7 @@ export class FilterConstraint {
             this.sourceType = input.sourceType;
             this.sourceName = input.sourceName;
             this.value = input.value;
+            this.originalType = input.originalType;
         }
     }
 }
