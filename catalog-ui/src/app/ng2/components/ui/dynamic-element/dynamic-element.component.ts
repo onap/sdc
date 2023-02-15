@@ -22,13 +22,15 @@
 
 import * as _ from "lodash";
 import { Component, Compiler, EventEmitter, ViewContainerRef, ViewChild, Input, Output, ElementRef, ComponentRef, ComponentFactoryResolver } from '@angular/core'
-import {ValidationConfiguration, PropertyFEModel} from "app/models";
+import {ValidationConfiguration} from "app/models";
 import {IUiElementChangeEvent} from "../form-components/ui-element-base.component";
 import {UiElementInputComponent} from "../form-components/input/ui-element-input.component";
 import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";
 import {UiElementIntegerInputComponent} from "../form-components/integer-input/ui-element-integer-input.component";
 import {UiElementDropDownComponent, DropdownValue} from "../form-components/dropdown/ui-element-dropdown.component";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
+import {UiElementValidValuesInputComponent} from "../form-components/valid-values-input/ui-element-valid-values-input.component";
+import {UiElementRangeInputComponent} from "../form-components/range-input/ui-element-range-input.component";
 
 enum DynamicElementComponentCreatorIdentifier {
     STRING,
@@ -39,7 +41,9 @@ enum DynamicElementComponentCreatorIdentifier {
     ENUM,
     LIST,
     DEFAULT,
-    TIMESTAMP
+    TIMESTAMP,
+    RANGE,
+    VALID_VALUES
 }
 
 @Component({
@@ -51,13 +55,16 @@ enum DynamicElementComponentCreatorIdentifier {
         UiElementInputComponent,
         UiElementDropDownComponent,
         UiElementPopoverInputComponent,
-        UiElementIntegerInputComponent
+        UiElementIntegerInputComponent,
+        UiElementRangeInputComponent,
+        UiElementValidValuesInputComponent
     ]
 })
 export class DynamicElementComponent {
 
     @ViewChild('target', { read: ViewContainerRef }) target: any;
     @Input() type: any;
+    @Input() operator: any;
     @Input() childType: any;
     @Input() name: string;
     @Input() testId: string;
@@ -92,27 +99,36 @@ export class DynamicElementComponent {
         // Factory to create component based on type or other property attributes.
         const prevElementCreatorIdentifier: DynamicElementComponentCreatorIdentifier = this.elementCreatorIdentifier;
         switch(true) {
-            case this.path && this.path.toUpperCase().indexOf("SUBNETPOOLID") !== -1:
+            case this.path && this.path.toUpperCase().indexOf("SUBNETPOOLID") !== -1 && this.operator != 'valid_values':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.SUBNETPOOLID;
                 break;
             case this.getValidValues() !== undefined && this.getValidValues() !== null:
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.ENUM;
                 break;
-            case this.type === 'integer':
+            case this.operator === 'length' || this.operator === 'min_length' || this.operator === 'max_length':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
                 break;
-            case this.type === 'float':
+            case this.type === 'integer' && this.operator != 'valid_values' && this.operator != 'in_range':
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.INTEGER;
+                break;
+            case this.type === 'float' && this.operator != 'valid_values' && this.operator != 'in_range':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.FLOAT;
                 break;
-            case PROPERTY_DATA.SCALAR_TYPES.indexOf(this.type) > -1:
-            case this.type === 'string':
+            case PROPERTY_DATA.SCALAR_TYPES.indexOf(this.type) > -1 && this.operator != 'valid_values' && this.operator != 'in_range':
+            case this.type === 'string' && this.operator != 'valid_values' && this.operator != 'in_range' && this.operator != 'length' && this.operator != 'min_length' && this.operator != 'max_length':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
                 break;
-            case this.type === PROPERTY_TYPES.TIMESTAMP:
+            case this.type === PROPERTY_TYPES.TIMESTAMP && this.operator != 'valid_values' && this.operator != 'in_range':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.TIMESTAMP;
                 break;
-            case this.type === 'boolean':
+            case this.type === 'boolean' && this.operator != 'valid_values':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
+                break;
+            case this.type === 'range' || this.operator === 'in_range':
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.RANGE;
+                break;
+            case this.operator === 'valid_values':
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.VALID_VALUES;
                 break;
           case this.type === 'map':
                 this.createElementCreatorIdentifierForChild();
@@ -156,6 +172,12 @@ export class DynamicElementComponent {
         case 'boolean':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
           break;
+        case 'range':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.RANGE;
+          break;
+          case 'valid-values':
+              this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.VALID_VALUES;
+              break;
         default:
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.DEFAULT;
       }
@@ -199,6 +221,15 @@ export class DynamicElementComponent {
 
                 case DynamicElementComponentCreatorIdentifier.TIMESTAMP:
                     this.createComponent(UiElementInputComponent);
+                    break;
+
+                case DynamicElementComponentCreatorIdentifier.RANGE:
+                    this.createComponent(UiElementRangeInputComponent);
+                    break;
+
+                case DynamicElementComponentCreatorIdentifier.VALID_VALUES:
+                    this.createComponent(UiElementValidValuesInputComponent);
+                    this.cmpRef.instance.type = this.type;
                     break;
 
                 case DynamicElementComponentCreatorIdentifier.BOOLEAN:

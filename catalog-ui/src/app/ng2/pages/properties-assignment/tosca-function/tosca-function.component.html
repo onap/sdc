@@ -43,6 +43,7 @@
     </div>
     <div *ngIf="isGetFunctionSelected()">
       <app-tosca-get-function [property]="property" [toscaGetFunction]="toscaFunction"
+                              [overridingType] = "overridingType"
                               [componentInstanceMap]="componentInstanceMap"
                               [functionType]="toscaFunctionTypeForm.value"
                               [compositionMap]="compositionMap"

@@ -70,7 +70,7 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
 
     private File waitAndGetDowloadedTemplate() {
         new Actions(webDriver).pause(Duration.ofSeconds(waitBeforeGetTheFile)).perform();
-        final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
+        final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(20)).pollingEvery(Duration.ofSeconds(4));
         fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);
         return FileHandling.getLastModifiedFileNameFromDir();
     }
