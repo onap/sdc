@@ -35,6 +35,7 @@ public class UIConstraint implements Serializable {
     private String sourceType;
     private String sourceName;
     private Object value;
+    private String originalType;
 
     public UIConstraint() {
     }
