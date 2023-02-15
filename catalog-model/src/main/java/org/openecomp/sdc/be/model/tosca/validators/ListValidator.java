@@ -72,6 +72,27 @@ public class ListValidator implements PropertyTypeValidator {
                 case MAP:
                 	innerValidator = ToscaPropertyType.MAP.getValidator();
                 	break;
+                case RANGE:
+                    innerValidator = ToscaPropertyType.RANGE.getValidator();
+                    break;
+                case SCALAR_UNIT_BITRATE:
+                    innerValidator = ToscaPropertyType.SCALAR_UNIT_BITRATE.getValidator();
+                    break;
+                case SCALAR_UNIT_FREQUENCY:
+                    innerValidator = ToscaPropertyType.SCALAR_UNIT_FREQUENCY.getValidator();
+                    break;
+                case SCALAR_UNIT_TIME:
+                    innerValidator = ToscaPropertyType.SCALAR_UNIT_TIME.getValidator();
+                    break;
+                case SCALAR_UNIT_SIZE:
+                    innerValidator = ToscaPropertyType.SCALAR_UNIT_SIZE.getValidator();
+                    break;
+                case SCALAR_UNIT:
+                    innerValidator = ToscaPropertyType.SCALAR_UNIT.getValidator();
+                    break;
+                case TIMESTAMP:
+                    innerValidator = ToscaPropertyType.TIMESTAMP.getValidator();
+                    break;
                 default:
                     log.debug("inner Tosca Type is unknown. {}", innerToscaType);
                     return false;
