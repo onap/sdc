@@ -20,6 +20,9 @@
  */
 
 import {FilterConstraint} from "../filter-constraint";
+import {ConstraintOperatorType} from "../../utils/filter-constraint-helper";
+import {ToscaGetFunction} from "../tosca-get-function";
+import {ToscaFunction} from "../tosca-function";
 
 export class PropertyFilterConstraintUi extends FilterConstraint {
     isValidValue: boolean;
