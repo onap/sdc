@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "218f0b68_f0ed4147",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-16T13:54:17Z",
+      "side": 1,
+      "message": "2023",
+      "range": {
+        "startLine": 3,
+        "startChar": 19,
+        "endLine": 3,
+        "endChar": 23
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b3e35e0_9e6ecddd",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.spec.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-16T13:54:17Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e843dfb8_f8d42b52",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-16T13:54:17Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "594ce372_97779343",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.module.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-16T13:54:17Z",
+      "side": 1,
+      "message": "2023",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
