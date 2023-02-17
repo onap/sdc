@@ -271,13 +271,13 @@ public final class ImportUtils {
     }
 
     private static void setPropertyConstraints(Map<String, Object> propertyValue, PropertyDefinition property) {
-        List<PropertyConstraint> constraints = getPropertyConstraints(propertyValue, property.getType());
+        List<PropertyConstraint> constraints = getPropertyConstraints(propertyValue, property.getType(), property.getSchema());
         if (CollectionUtils.isNotEmpty(constraints)) {
             property.setConstraints(constraints);
         }
     }
 
-    private static List<PropertyConstraint> getPropertyConstraints(final Map<String, Object> propertyValue, final String propertyType) {
+    private static List<PropertyConstraint> getPropertyConstraints(final Map<String, Object> propertyValue, final String propertyType, final SchemaDefinition schema) {
         final List<Object> propertyFieldConstraints = findCurrentLevelConstraintsElement(propertyValue);
         if (CollectionUtils.isEmpty(propertyFieldConstraints)) {
             return Collections.emptyList();
@@ -287,7 +287,7 @@ public final class ImportUtils {
         }.getType();
         final Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
         for (final Object constraintJson : propertyFieldConstraints) {
-            final PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson);
+            final PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson, schema);
             if (propertyConstraint != null) {
                 constraintList.add(propertyConstraint);
             }
@@ -308,7 +308,7 @@ public final class ImportUtils {
         return constraints;
     }
 
-    private static PropertyConstraint validateAndGetPropertyConstraint(String propertyType, Type constraintType, Gson gson, Object constraintJson) {
+    private static PropertyConstraint validateAndGetPropertyConstraint(String propertyType, Type constraintType, Gson gson, Object constraintJson, SchemaDefinition schema) {
         PropertyConstraint propertyConstraint;
         try {
             propertyConstraint = gson.fromJson(gson.toJson(constraintJson), constraintType);
@@ -317,7 +317,7 @@ public final class ImportUtils {
         }
         if (propertyConstraint instanceof ValidValuesConstraint) {
             try {
-                ((ValidValuesConstraint) propertyConstraint).validateType(propertyType);
+                ((ValidValuesConstraint) propertyConstraint).validateType(propertyType, schema);
                 boolean valid = ((ValidValuesConstraint) propertyConstraint).validateValueType(propertyType);
                 if (!valid) {
                     ((ValidValuesConstraint) propertyConstraint).changeConstraintValueTypeTo(propertyType);
