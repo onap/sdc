@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "12296019_fbca092f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-17T15:17:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5204f9ae_454be636",
+      "range": {
+        "startLine": 31,
+        "startChar": 45,
+        "endLine": 43,
+        "endChar": 22
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20facc53_9c232dcc",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "14a6f3a0_a244577c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-17T15:17:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "20facc53_9c232dcc",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 45
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "600b5c40_91e63a9d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "a773940eede8d59e757971c6e437fa489bd40042",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6dd74966_f4413610",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-17T15:17:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "600b5c40_91e63a9d",
+      "range": {
+        "startLine": 233,
+        "startChar": 8,
+        "endLine": 240,
+        "endChar": 9
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
