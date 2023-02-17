@@ -53,16 +53,8 @@ public final class ConstraintUtil {
             throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid property type <" + propertyType.toString() + ">");
         }
     }
-
-    /**
-     * Verify that the given tosca type is supported for comparison
-     *
-     * @param propertyType the tosca type to check
-     * @throws ConstraintValueDoNotMatchPropertyTypeException if the property type cannot be compared
-     */
-    public static void checkComparableType(final ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        // The validity of the value is already assured by us with our ToscaType.convert() method
-        // here we just want to check that the constraint is not used on unsupported type as boolean
+    
+    public static boolean isComparableType(final ToscaType propertyType)  {
         final ToscaType toscaType = ToscaType.getToscaType(propertyType.getType());
         switch (toscaType) {
             case FLOAT:
@@ -76,12 +68,21 @@ public final class ConstraintUtil {
             case SCALAR_UNIT_TIME:
             case SCALAR_UNIT_BITRATE:
             case SCALAR_UNIT_FREQUENCY:
-                break;
-            case BOOLEAN:
-            case SCALAR_UNIT:
-                throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.getType() + ">");
+                return true;
             default:
-                throw new ConstraintValueDoNotMatchPropertyTypeException("Invalid property type <" + propertyType.getType() + ">");
+                return false;
+        }
+    }
+
+    /**
+     * Verify that the given tosca type is supported for comparison
+     *
+     * @param propertyType the tosca type to check
+     * @throws ConstraintValueDoNotMatchPropertyTypeException if the property type cannot be compared
+     */
+    public static void checkComparableType(final ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+        if (!isComparableType(propertyType)) {
+            throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.getType() + ">");
         }
     }
 
