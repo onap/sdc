@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,10 +54,9 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         if (propertyType.isValidValue(String.valueOf(equal))) {
             typed = propertyType.convert(String.valueOf(equal));
-            if (propertyType.equals(ToscaType.BOOLEAN)) {
-                return;
+            if (ConstraintUtil.isComparableType(propertyType)) {
+                initialize(String.valueOf(equal), propertyType);
             }
-            initialize(String.valueOf(equal), propertyType);
         } else {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "constraintValue constraint has invalid value <" + equal + "> property type is <" + propertyType.toString() + ">");
@@ -104,10 +105,14 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
         if (propertyValue == null) {
             throw new ConstraintViolationException("Value to check is null");
         }
-        if (!(propertyValue instanceof Boolean)) {
+        if (isComparableValue(propertyValue)) {
             super.validate(propertyValue);
         }
         doValidate(propertyValue);
+    }
+    
+    private boolean isComparableValue(Object propertyValue) {
+        return Comparable.class.isAssignableFrom(propertyValue.getClass());
     }
 
     public boolean validateValueType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
