@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.AbstractTemplateBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
@@ -226,13 +229,16 @@ public class AbstractTemplateServlet extends AbstractValidationsServlet {
         log.debug("getServiceAbstractStatus: Service Fetching Success");
         Service service = (Service) assetTypeData.left().value().get(0);
         List<String> tags = service.getTags();
-        if (tags != null && !tags.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(tags)) {
+
             for (int i = tags.size() - 1; i >= 0; i--) {
                 String tag = tags.get(i);
                 if (service.getName().equals(tag)) {
                     tags.remove(tag);
                 }
             }
+        } else {
+            tags = new ArrayList<>();
         }
         service.setName(copyServiceInfo.getNewServiceName());
         tags.add(copyServiceInfo.getNewServiceName());
