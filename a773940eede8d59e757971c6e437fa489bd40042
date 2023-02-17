@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5204f9ae_454be636",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-17T14:02:53Z",
+      "side": 1,
+      "message": "remove unused imports",
+      "range": {
+        "startLine": 31,
+        "startChar": 45,
+        "endLine": 43,
+        "endChar": 22
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20facc53_9c232dcc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-17T14:02:53Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 45
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "600b5c40_91e63a9d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AbstractTemplateServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-17T14:02:53Z",
+      "side": 1,
+      "message": "if (CollectionUtils.isNotEmpty(tags)) {\n            for (int i \u003d tags.size() - 1; i \u003e\u003d 0; i--) {\n                String tag \u003d tags.get(i);\n                if (service.getName().equals(tag)) {\n                    tags.remove(tag);\n                }\n            }\n        } else {\n            tags \u003d new ArrayList\u003c\u003e();\n        }",
+      "range": {
+        "startLine": 233,
+        "startChar": 8,
+        "endLine": 240,
+        "endChar": 9
+      },
+      "revId": "a773940eede8d59e757971c6e437fa489bd40042",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
