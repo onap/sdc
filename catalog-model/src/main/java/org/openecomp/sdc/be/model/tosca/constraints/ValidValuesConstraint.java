@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -71,8 +72,8 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
         }
     }
 
-    public void validateType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+    public void validateType(String propertyType, SchemaDefinition schema) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = ToscaType.isCollectionType(propertyType) ? ToscaType.getToscaType(schema.getProperty().getType()) : ToscaType.getToscaType(propertyType);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "validValues constraint has invalid values <" + validValues.toString() + PROPERTY_TYPE_IS + propertyType + ">");
