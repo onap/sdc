@@ -119,7 +119,7 @@ export class DerivedFEProperty extends PropertyBEModel {
                 }
 	
             }
-            this.valueObj = ((this.type == PROPERTY_TYPES.JSON || this.type == PROPERTY_TYPES.MAP) && typeof value == 'object') ? JSON.stringify(value) : value;
+            this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
             if (value != null) {
                 this.value = typeof value == 'object' ? JSON.stringify(value) : value;
             }
