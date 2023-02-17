@@ -115,6 +115,10 @@ public class AttributeServlet extends AbstractValidationsServlet {
         try {
             final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
             AttributeDefinition attributeDataDefinition = convertJsonToObject(data, errorWrapper);
+            if (attributeDataDefinition == null) {
+                log.error("Unexpected null value for `attributeDataDefinition`");
+                return buildErrorResponse(errorWrapper.getInnerElement());
+            }
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
                 Either<AttributeDefinition, ResponseFormat> createAttribute = businessLogic
@@ -175,6 +179,10 @@ public class AttributeServlet extends AbstractValidationsServlet {
         try {
             final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
             AttributeDefinition attributeDataDefinition = convertJsonToObject(data, errorWrapper);
+            if (attributeDataDefinition == null) {
+                log.error("Unexpected null value for `attributeDataDefinition`");
+                return buildErrorResponse(errorWrapper.getInnerElement());
+            }
             if (errorWrapper.isEmpty()) {
                 AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
                 Either<AttributeDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic
