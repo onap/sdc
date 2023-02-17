@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
@@ -28,12 +29,12 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolatio
 import org.openecomp.sdc.be.model.tosca.constraints.exception.PropertyConstraintException;
 
 public interface PropertyConstraint {
-
-    void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException;
-
+    
+    void initialize(ToscaType propertyType, SchemaDefinition schema) throws ConstraintValueDoNotMatchPropertyTypeException;
+    
     void validate(Object propertyValue) throws ConstraintViolationException;
 
-    void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException;
+    void validate(ToscaType toscaType, SchemaDefinition schema, String propertyTextValue) throws ConstraintViolationException;
 
     @JsonIgnore
     ConstraintType getConstraintType();

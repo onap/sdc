@@ -21,8 +21,13 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Sets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -30,6 +35,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -53,26 +59,27 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
     public ValidValuesConstraint(List<Object> validValues) {
         this.validValues = validValues;
     }
-
+    
     @Override
-    public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
+    public void initialize(ToscaType propertyType, SchemaDefinition schema) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = getValuesType(propertyType, schema);
         validValuesTyped = Sets.newHashSet();
         if (validValues == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "validValues constraint has invalid value <> property type is <" + propertyType.toString() + ">");
         }
         for (Object value : validValues) {
-            if (!propertyType.isValidValue(String.valueOf(value))) {
+            if (!toscaType.isValidValue(String.valueOf(value))) {
                 throw new ConstraintValueDoNotMatchPropertyTypeException(
                     "validValues constraint has invalid value <" + value + PROPERTY_TYPE_IS + propertyType.toString() + ">");
             } else {
-                validValuesTyped.add(propertyType.convert(String.valueOf(value)));
+                validValuesTyped.add(toscaType.convert(String.valueOf(value)));
             }
         }
     }
 
-    public void validateType(String propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        ToscaType toscaType = ToscaType.getToscaType(propertyType);
+    public void validateType(String propertyType, SchemaDefinition schema) throws ConstraintValueDoNotMatchPropertyTypeException {
+        ToscaType toscaType = getValuesType(ToscaType.getToscaType(propertyType), schema);
         if (toscaType == null) {
             throw new ConstraintValueDoNotMatchPropertyTypeException(
                 "validValues constraint has invalid values <" + validValues.toString() + PROPERTY_TYPE_IS + propertyType + ">");
@@ -88,6 +95,10 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
             }
         }
     }
+    
+    private ToscaType getValuesType(ToscaType propertyType, SchemaDefinition schema) {
+        return ToscaType.isCollectionType(propertyType.getType()) ? ToscaType.getToscaType(schema.getProperty().getType()) : propertyType;
+    }
 
     @Override
     public void validateValueOnUpdate(PropertyConstraint newConstraint) throws PropertyConstraintException {
@@ -98,6 +109,27 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
                     validValues.stream().filter(v -> !((ValidValuesConstraint) newConstraint).getValidValues().contains(v)).collect(toList())
                         .toString());
             }
+        }
+    }
+    
+    @Override
+    public void validate(ToscaType toscaType, SchemaDefinition schema, String propertyTextValue) throws ConstraintViolationException {
+        try {
+            Collection<Object> valuesToValidate;
+            if (ToscaType.LIST == toscaType) {
+                valuesToValidate = ConstraintUtil.parseToCollection(propertyTextValue, new TypeReference<>() {});
+            } else if (ToscaType.MAP == toscaType) {
+                final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyTextValue, new TypeReference<>() {});
+                valuesToValidate = map.values();
+            } else {
+                valuesToValidate = Collections.singleton(propertyTextValue);
+            }
+            ToscaType valuesType = getValuesType(toscaType, schema);
+            for (final Object value: valuesToValidate) {
+                validate(valuesType, value.toString());
+            }
+        } catch (ConstraintValueDoNotMatchPropertyTypeException exception) {
+            throw new ConstraintViolationException("Value cannot be parsed to a list", exception);
         }
     }
 

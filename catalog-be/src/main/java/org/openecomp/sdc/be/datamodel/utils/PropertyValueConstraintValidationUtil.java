@@ -140,8 +140,8 @@ public class PropertyValueConstraintValidationUtil {
         if (isPropertyNotMappedAsInput(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
-                    propertyConstraint.initialize(toscaType);
-                    propertyConstraint.validate(toscaType, propertyDefinition.getValue());
+                    propertyConstraint.initialize(toscaType, propertyDefinition.getSchema());
+                    propertyConstraint.validate(toscaType, propertyDefinition.getSchema(), propertyDefinition.getValue());
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
                     errorMessages.add(propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
                 } catch (IllegalArgumentException ie) {
