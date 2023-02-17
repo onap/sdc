@@ -2503,6 +2503,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 }
             } else if (jsonElement.getNodeType().equals(JsonNodeType.BOOLEAN)) {
                 return jsonElement.asBoolean();
+            } else if (jsonElement.getNodeType().equals(JsonNodeType.ARRAY)) {
+                List<Object> listValues = new ArrayList<>();
+                for (JsonNode jsonArrayElement : jsonElement) {
+                    listValues.add(convertToType(jsonArrayElement));
+                }
+                return listValues;
             } else {
                 return jsonElement.asText();
             }
