@@ -371,17 +371,19 @@ public class PropertyValueConstraintValidationUtil {
                 final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition,
                     objectMapper.writeValueAsString(value),mapKey);
                 propertyCopyWithNewValue.setToscaSubPath(mapKey);
-                if (ToscaType.isPrimitiveType(schemaType)) {
-                    evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
-                } else if (ToscaType.isCollectionType(schemaType)) {
-                    propertyCopyWithNewValue.setType(schemaType);
-                    propertyCopyWithNewValue.setSchemaType(propertyDefinition.getSchemaProperty().getSchemaType());
-                    evaluateCollectionTypeProperties(propertyCopyWithNewValue);
-                } else {
-                    propertyCopyWithNewValue.setType(schemaType);
-                    completePropertyName.append(UNDERSCORE);
-                    completePropertyName.append(propertyCopyWithNewValue.getName());
-                    evaluateComplexTypeProperties(propertyCopyWithNewValue);
+                if (isPropertyNotMappedAsInput(propertyCopyWithNewValue)) {
+                    if (ToscaType.isPrimitiveType(schemaType)) {
+                        evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
+                    } else if (ToscaType.isCollectionType(schemaType)) {
+                        propertyCopyWithNewValue.setType(schemaType);
+                        propertyCopyWithNewValue.setSchemaType(propertyDefinition.getSchemaProperty().getSchemaType());
+                        evaluateCollectionTypeProperties(propertyCopyWithNewValue);
+                    } else {
+                        propertyCopyWithNewValue.setType(schemaType);
+                        completePropertyName.append(UNDERSCORE);
+                        completePropertyName.append(propertyCopyWithNewValue.getName());
+                        evaluateComplexTypeProperties(propertyCopyWithNewValue);
+                    }
                 }
             } catch (final Exception e) {
                 logger.debug(e.getMessage(), e);
