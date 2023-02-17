@@ -73,7 +73,7 @@ public class PropertyValueConstraintValidationUtil {
 
         dataTypeDefinitionCache = applicationDataTypeCache.getAll(model).left().value();
         CollectionUtils.emptyIfNull(propertyDefinitionList).stream()
-            .filter(this::isValuePresent)
+            .filter(this::isNonToscaFunctionValuePresent)
             .forEach(this::evaluatePropertyTypeForConstraintValidation);
         if (CollectionUtils.isNotEmpty(errorMessages)) {
             final String errorMsgAsString = String.join(",", errorMessages);
@@ -83,7 +83,10 @@ public class PropertyValueConstraintValidationUtil {
         return Either.left(Boolean.TRUE);
     }
 
-    private boolean isValuePresent(PropertyDefinition propertyDefinition) {
+    private boolean isNonToscaFunctionValuePresent(PropertyDefinition propertyDefinition) {
+        if (isValueAToscaFunction(propertyDefinition)) {
+            return false;
+        }
         if (propertyDefinition instanceof ComponentInstanceInput) {
             return StringUtils.isNotEmpty(propertyDefinition.getValue());
         }
@@ -137,7 +140,7 @@ public class PropertyValueConstraintValidationUtil {
 
     private void evaluateConstraintsOnProperty(PropertyDefinition propertyDefinition) {
         ToscaType toscaType = ToscaType.isValidType(propertyDefinition.getType());
-        if (isPropertyNotMappedAsInput(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
+        if (!isValueAToscaFunction(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
                     propertyConstraint.initialize(toscaType, propertyDefinition.getSchema());
@@ -148,16 +151,16 @@ public class PropertyValueConstraintValidationUtil {
                     errorMessages.add(ie.getMessage());
                 }
             }
-        } else if (isPropertyNotMappedAsInput(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
+        } else if (!isValueAToscaFunction(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
                 && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(propertyDefinition.getValue())) {
             errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
                 getCompletePropertyName(propertyDefinition), toscaType.getType()));
         }
     }
 
-    private boolean isPropertyNotMappedAsInput(PropertyDefinition propertyDefinition) {
-        return !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_INPUT) && !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY)
-                && !propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE);
+    private boolean isValueAToscaFunction(PropertyDefinition propertyDefinition) {
+        return propertyDefinition.getToscaFunction() != null  || propertyDefinition.getValue() != null && (propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_INPUT) || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY)
+                || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE));
     }
 
     private void checkAndEvaluatePrimitiveProperty(PropertyDefinition propertyDefinition, DataTypeDefinition dataTypeDefinition) {
