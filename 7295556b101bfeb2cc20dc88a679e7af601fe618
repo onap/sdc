@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "103153c6_34066db9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-17T10:44:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "218f0b68_f0ed4147",
+      "range": {
+        "startLine": 3,
+        "startChar": 19,
+        "endLine": 3,
+        "endChar": 23
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b3e35e0_9e6ecddd",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.spec.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad30cada_6a7ccb96",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.spec.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-17T10:44:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b3e35e0_9e6ecddd",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "bafef3ef_aa5c2ee9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-17T10:44:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e843dfb8_f8d42b52",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 6
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "594ce372_97779343",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.module.ts",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74aeb6e8_66ae4442",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/declare-input/declare-input.module.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-02-17T10:44:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "594ce372_97779343",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "7295556b101bfeb2cc20dc88a679e7af601fe618",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
