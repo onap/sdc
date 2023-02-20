@@ -121,21 +121,23 @@ export class TypeListDirective implements ng.IDirective {
     link = (scope:ITypeListScope, element:any, $attr:any) => {
         scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         scope.stringSchema = this.stringSchema;
-        if (scope.valueObjRef.length == 0) {
-            scope.valueObjRef.push("");
-        }
-        scope.showToscaFunction = new Array(scope.valueObjRef.length);
-        scope.valueObjRef.forEach((value, index) => {
-            scope.showToscaFunction[index] = false;
-            let key : string = index.toString();
-            if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) != -1) {
-                        scope.showToscaFunction[index] = true;
-                    }
-                });
+        if (scope.valueObjRef) {
+            if (scope.valueObjRef.length == 0) {
+                scope.valueObjRef.push("");
             }
-        });
+            scope.showToscaFunction = new Array(scope.valueObjRef.length);
+            scope.valueObjRef.forEach((value, index) => {
+                scope.showToscaFunction[index] = false;
+                let key: string = index.toString();
+                if (scope.parentProperty.subPropertyToscaFunctions != null) {
+                    scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
+                        if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) != -1) {
+                            scope.showToscaFunction[index] = true;
+                        }
+                    });
+                }
+            });
+        }
         //reset valueObjRef when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
             scope.isSchemaTypeDataType = this.isDataTypeForSchemaType(scope.schemaProperty, scope.types);
