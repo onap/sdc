@@ -135,6 +135,7 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.janusgraph.core.attribute.Text.REGEX;
+import static org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum.TOPOLOGY_TEMPLATE;
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
 public class ToscaOperationFacade {
@@ -604,7 +605,7 @@ public class ToscaOperationFacade {
 
     public Either<Resource, StorageOperationStatus> getLatestResourceByToscaResourceName(String toscaResourceName) {
         if (toscaResourceName != null && toscaResourceName.contains("org.openecomp.resource.vf")) {
-            return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseMetadata);
+            return getLatestResourceByToscaResourceName(toscaResourceName, TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseMetadata);
         } else {
             return getLatestResourceByToscaResourceName(toscaResourceName, VertexTypeEnum.NODE_TYPE, JsonParseFlagEnum.ParseMetadata);
         }
@@ -861,7 +862,7 @@ public class ToscaOperationFacade {
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
         final Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceResult
-            = janusGraphDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch,JsonParseFlagEnum.ParseAll);
+            = janusGraphDao.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
         if (getResourceResult.isRight()) {
             final JanusGraphOperationStatus status = getResourceResult.right().value();
             log.debug("Failed to find resource with systemName {}, version {}. Status is {} ", systemName, version, status);
@@ -1647,23 +1648,23 @@ public class ToscaOperationFacade {
     }
 
     public Either<Map<String, MapInterfaceDataDefinition>, StorageOperationStatus> associateComponentInstanceInterfacesToComponent(
-            Map<String, Map<String, InterfaceDefinition>> instInterfaces,
-            String componentId
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces,
+        String componentId
     ) {
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(
-                componentId,
-                JsonParseFlagEnum.NoParse
+            componentId,
+            JsonParseFlagEnum.NoParse
         );
         if (getVertexEither.isRight()) {
             log.debug(
-                    COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR,
-                    componentId,
-                    getVertexEither.right().value()
+                COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR,
+                componentId,
+                getVertexEither.right().value()
             );
             return Either.right(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
-                            getVertexEither.right().value()
-                    )
+                DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                    getVertexEither.right().value()
+                )
             );
         }
         GraphVertex vertex = getVertexEither.left().value();
@@ -1672,14 +1673,14 @@ public class ToscaOperationFacade {
             MapInterfaceDataDefinition interfacesMap = new MapInterfaceDataDefinition();
             for (Map.Entry<String, Map<String, InterfaceDefinition>> entryInstances : instInterfaces.entrySet()) {
                 Map<String, InterfaceDataDefinition> incomingInterfacesMap = entryInstances.getValue().entrySet().stream()
-                        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                    .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
                 interfacesMap.setMapToscaDataDefinition(incomingInterfacesMap);
                 instInterfacesMap.put(entryInstances.getKey(), interfacesMap);
             }
         }
         StorageOperationStatus status = topologyTemplateOperation.associateInstInterfacesToComponent(
-                vertex,
-                instInterfacesMap
+            vertex,
+            instInterfacesMap
         );
         if (StorageOperationStatus.OK == status) {
             log.debug(COMPONENT_CREATED_SUCCESSFULLY);
@@ -2333,7 +2334,7 @@ public class ToscaOperationFacade {
     }
 
     private VertexTypeEnum getVertexTypeEnum(final ResourceTypeEnum resourceType) {
-        return ModelConverter.isAtomicComponent(resourceType) ? VertexTypeEnum.NODE_TYPE : VertexTypeEnum.TOPOLOGY_TEMPLATE;
+        return ModelConverter.isAtomicComponent(resourceType) ? VertexTypeEnum.NODE_TYPE : TOPOLOGY_TEMPLATE;
     }
 
     private Map<GraphPropertyEnum, Object> propertiesToMatch(final String normalizedName, final ComponentTypeEnum componentType) {
@@ -2405,7 +2406,7 @@ public class ToscaOperationFacade {
         }
         if (ComponentTypeEnum.SERVICE == componentTypeEnum || SERVICE.equalsIgnoreCase(internalComponentType) || VF.equalsIgnoreCase(
             internalComponentType)) {
-            internalVertexTypes.add(VertexTypeEnum.TOPOLOGY_TEMPLATE);
+            internalVertexTypes.add(TOPOLOGY_TEMPLATE);
         }
         return internalVertexTypes;
     }
@@ -2766,7 +2767,7 @@ public class ToscaOperationFacade {
         }
         propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
-        if (distStatus != null && !distStatus.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(distStatus)) {
             for (DistributionStatusEnum state : distStatus) {
                 propertiesToMatch.put(GraphPropertyEnum.DISTRIBUTION_STATUS, state.name());
                 Either<List<Service>, StorageOperationStatus> fetchServicesByCriteria = fetchServicesByCriteria(servicesAll, propertiesToMatch,
@@ -2787,8 +2788,12 @@ public class ToscaOperationFacade {
                                                                                   Map<GraphPropertyEnum, Object> propertiesToMatch,
                                                                                   Map<GraphPropertyEnum, Object> propertiesNotToMatch,
                                                                                   String modelName) {
-        Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll, modelName);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> getRes;
+        if (StringUtils.isEmpty(modelName)) {
+            getRes = janusGraphDao.getByCriteria(TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
+        } else {
+            getRes = janusGraphDao.getByCriteria(TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll, modelName);
+        }
         if (getRes.isRight()) {
             if (getRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
@@ -3440,7 +3445,7 @@ public class ToscaOperationFacade {
             log.error(COULDNT_FETCH_A_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value()));
         } else {
-            if (getVertexEither.left().value().getLabel() != VertexTypeEnum.TOPOLOGY_TEMPLATE) {
+            if (getVertexEither.left().value().getLabel() != TOPOLOGY_TEMPLATE) {
                 log.error("Policy association to component of Tosca type {} is not allowed. ", getVertexEither.left().value().getLabel());
                 result = Either.right(StorageOperationStatus.BAD_REQUEST);
             }

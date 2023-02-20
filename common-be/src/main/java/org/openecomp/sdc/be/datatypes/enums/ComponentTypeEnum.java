@@ -20,10 +20,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ComponentTypeEnum {
-    RESOURCE("Resource"), SERVICE("Service"), RESOURCE_INSTANCE("Resource Instance"), PRODUCT("Product"), SERVICE_INSTANCE("Service Instance");
-    // Those values cannot be another field in enum, because they are needed
+    RESOURCE("Resource"),
+    SERVICE("Service"),
+    RESOURCE_INSTANCE("Resource Instance"),
+    PRODUCT("Product"),
+    SERVICE_INSTANCE("Service Instance");
 
-    // as constants for Swagger allowedValues param
+    // Those values cannot be another field in enum, because they are needed as constants for Swagger allowedValues param
     public static final String RESOURCE_PARAM_NAME = "resources";
     public static final String SERVICE_PARAM_NAME = "services";
     public static final String PRODUCT_PARAM_NAME = "products";
