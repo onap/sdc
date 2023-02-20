@@ -63,11 +63,13 @@ export interface ITypeMapScope extends ng.IScope {
 
 
 export class TypeMapDirective implements ng.IDirective {
+    private types: DataTypesMap;
 
     constructor(private DataTypesService:DataTypesService,
                 private MapKeyValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
                 private $timeout:ng.ITimeoutService) {
+        this.types = DataTypesService.getAllDataTypes();
     }
 
     scope = {
@@ -118,10 +120,12 @@ export class TypeMapDirective implements ng.IDirective {
     };
 
     link = (scope:ITypeMapScope, element:any, $attr:any) => {
+        scope.types = this.types;
         scope.showAddBtn = angular.isDefined(scope.showAddBtn) ? scope.showAddBtn : true;
         scope.MapKeyValidationPattern = this.MapKeyValidationPattern;
         scope.isMapKeysUnique = true;
         if (scope.mapKeys === undefined) {
+            scope.valueObjRef = scope.valueObjRef || {};
             scope.mapKeys = Object.keys(scope.valueObjRef);
         }
         scope.showToscaFunction = new Array(scope.mapKeys.length);
@@ -263,6 +267,7 @@ export class TypeMapDirective implements ng.IDirective {
         }
 
         scope.addMapItemFields = ():void => {
+            scope.valueObjRef = scope.valueObjRef || {};
             scope.valueObjRef[''] = null;
             scope.mapKeys = Object.keys(scope.valueObjRef);
             scope.showToscaFunction.push(false);
