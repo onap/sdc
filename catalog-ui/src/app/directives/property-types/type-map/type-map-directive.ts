@@ -62,6 +62,14 @@ export interface ITypeMapScope extends ng.IScope {
 }
 
 export class TypeMapDirective implements ng.IDirective {
+    private types: DataTypesMap;
+
+    constructor(private DataTypesService: DataTypesService,
+                private MapKeyValidationPattern: RegExp,
+                private ValidationUtils: ValidationUtils,
+                private $timeout: ng.ITimeoutService) {
+        this.types = DataTypesService.getAllDataTypes();
+    }
 
     scope = {
         valueObjRef: '=', // ref to map object in the parent value object
@@ -81,12 +89,6 @@ export class TypeMapDirective implements ng.IDirective {
     restrict = 'E';
     replace = true;
 
-    constructor(private DataTypesService: DataTypesService,
-                private MapKeyValidationPattern: RegExp,
-                private ValidationUtils: ValidationUtils,
-                private $timeout: ng.ITimeoutService) {
-    }
-
     public static factory = (DataTypesService: DataTypesService,
                              MapKeyValidationPattern: RegExp,
                              ValidationUtils: ValidationUtils,
@@ -98,6 +100,7 @@ export class TypeMapDirective implements ng.IDirective {
     }
 
     link = (scope: ITypeMapScope, element: any, $attr: any) => {
+        scope.types = this.types;
         scope.showAddBtn = angular.isDefined(scope.showAddBtn) ? scope.showAddBtn : true;
         scope.MapKeyValidationPattern = this.MapKeyValidationPattern;
         scope.isMapKeysUnique = true;
