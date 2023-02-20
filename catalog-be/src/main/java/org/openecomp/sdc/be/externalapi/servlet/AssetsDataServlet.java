@@ -30,9 +30,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +51,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
@@ -90,8 +87,8 @@ import org.springframework.stereotype.Controller;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-7 APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDCE-7 APIs")
+@Server(url = "/sdc")
 @Controller
 public class AssetsDataServlet extends AbstractValidationsServlet {
 
@@ -100,21 +97,19 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     private final AssetMetadataConverter assetMetadataConverter;
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
-    private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
     @Context
     private HttpServletRequest request;
 
     @Inject
-    public AssetsDataServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
-                             ServletUtils servletUtils, ResourceImportManager resourceImportManager, ElementBusinessLogic elementBusinessLogic,
-                             AssetMetadataConverter assetMetadataConverter, ComponentBusinessLogicProvider componentBusinessLogicProvider,
-                             ServiceBusinessLogic serviceBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
+    public AssetsDataServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
+                             ResourceImportManager resourceImportManager, ElementBusinessLogic elementBusinessLogic,
+                             AssetMetadataConverter assetMetadataConverter, ServiceBusinessLogic serviceBusinessLogic,
+                             ResourceBusinessLogic resourceBusinessLogic) {
         super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.elementBusinessLogic = elementBusinessLogic;
         this.assetMetadataConverter = assetMetadataConverter;
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.resourceBusinessLogic = resourceBusinessLogic;
-        this.componentBusinessLogicProvider = componentBusinessLogicProvider;
     }
 
     @GET
@@ -135,10 +130,12 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
         @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
             "services"}), required = true) @PathParam("assetType") final String assetType,
-        @Parameter(description = "The filter key (resourceType only for resources)", required = false) @QueryParam("category") String category,
-        @Parameter(description = "The filter key (resourceType only for resources)", required = false) @QueryParam("subCategory") String subCategory,
-        @Parameter(description = "The filter key (resourceType only for resources)", required = false) @QueryParam("distributionStatus") String distributionStatus,
-        @Parameter(description = "The filter key (resourceType only for resources)", required = false) @QueryParam("resourceType") String resourceType)
+        @Parameter(description = "The filter key (for resources and services)", required = false) @QueryParam("category") String category,
+        @Parameter(description = "The filter key (only for resources)", required = false) @QueryParam("subCategory") String subCategory,
+        @Parameter(description = "The filter key (for resources and services)", required = false) @QueryParam("distributionStatus") String distributionStatus,
+        @Parameter(description = "The filter key (only for resources)", required = false) @QueryParam("resourceType") String resourceType,
+        @Parameter(description = "The filter key (only for services)", required = false) @QueryParam("version") String version,
+        @Parameter(description = "The filter key (only for services)", required = false) @QueryParam("metadata") List<String> metadata)
         throws IOException {
         ResponseFormat responseFormat = null;
         String query = request.getQueryString();
@@ -156,7 +153,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             return buildErrorResponse(responseFormat);
         }
         try {
-            Map<FilterKeyEnum, String> filters = new EnumMap<>(FilterKeyEnum.class);
+            Map<FilterKeyEnum, Object> filters = new EnumMap<>(FilterKeyEnum.class);
             if (category != null) {
                 filters.put(FilterKeyEnum.CATEGORY, category);
             }
@@ -165,6 +162,12 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             }
             if (distributionStatus != null) {
                 filters.put(FilterKeyEnum.DISTRIBUTION_STATUS, distributionStatus);
+            }
+            if (version != null) {
+                filters.put(FilterKeyEnum.VERSION, version);
+            }
+            if (metadata != null) {
+                filters.put(FilterKeyEnum.METADATA, metadata);
             }
             if (resourceType != null) {
                 ResourceTypeEnum resourceTypeEnum = ResourceTypeEnum.getTypeIgnoreCase(resourceType);
@@ -176,8 +179,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 }
                 filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeEnum.name());
             }
-            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic
-                .getFilteredCatalogComponents(assetType, filters, query);
+            Either<List<? extends Component>, ResponseFormat> assetTypeData
+                = elementBusinessLogic.getFilteredCatalogComponents(assetType, filters, query);
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
                 responseFormat = assetTypeData.right().value();

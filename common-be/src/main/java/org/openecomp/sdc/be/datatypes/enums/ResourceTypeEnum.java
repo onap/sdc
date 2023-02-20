@@ -38,7 +38,8 @@ public enum ResourceTypeEnum {
 
     VL("VL"/* (Virtual Link)"*/, true),
     VFCMT("VFCMT"/* (VFC Monitoring Template)"*/, true),
-    Configuration("Configuration", true), ServiceProxy("ServiceProxy", true),
+    Configuration("Configuration", true),
+    ServiceProxy("ServiceProxy", true),
     //Generic VFC/VF/PNF/Service Type
     ABSTRACT("Abstract", true),
     SERVICE("Service"/*(Network Service)"*/, false);

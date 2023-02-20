@@ -38,7 +38,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -56,6 +61,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
+import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
@@ -66,6 +72,7 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.externalapi.servlet.representation.VersionFilterEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
@@ -932,7 +939,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<List<? extends Component>, ResponseFormat> getFilteredCatalogComponents(String assetType, Map<FilterKeyEnum, String> filters,
+    public Either<List<? extends Component>, ResponseFormat> getFilteredCatalogComponents(String assetType, Map<FilterKeyEnum, Object> filters,
                                                                                           String query) {
         ComponentTypeEnum assetTypeEnum = AssetTypeEnum.convertToComponentTypeEnum(assetType);
         if (query != null) {
@@ -943,7 +950,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                     FilterKeyEnum.getValidFiltersByAssetType(assetTypeEnum).toString()));
             }
         }
-        if (filters == null || filters.isEmpty()) {
+        if (MapUtils.isEmpty(filters)) {
             Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum, null, false);
             if (componentsList.isRight()) {
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentsList.right().value())));
@@ -957,51 +964,81 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value()), params.get(0), params.get(1), params.get(2)));
         }
-        if (result.left().value().isEmpty()) {// no assets found for requested
-
-            // criteria
+        if (result.left().value().isEmpty()) { // no assets found for requested criteria
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.NO_ASSETS_FOUND, assetType, query));
         }
         return Either.left(result.left().value());
     }
 
-    private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType,
+    private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, Object> filters, ComponentTypeEnum assetType,
                                                                                   boolean inTransaction) {
         Either<List<Component>, StorageOperationStatus> assetResult = Either.left(new LinkedList<>());
         if (assetType == ComponentTypeEnum.RESOURCE) {
             assetResult = getFilteredResources(filters, inTransaction);
         } else if (assetType == ComponentTypeEnum.SERVICE) {
-            assetResult = getFilteredServices(filters, inTransaction);
+            assetResult = getFilteredServices(filters);
         }
         return assetResult;
     }
 
-    private <T extends Component> Either<List<T>, StorageOperationStatus> getFilteredServices(Map<FilterKeyEnum, String> filters,
-                                                                                              boolean inTransaction) {
-        Either<List<T>, StorageOperationStatus> components = null;
-        String categoryName = filters.get(FilterKeyEnum.CATEGORY);
-        String distributionStatus = filters.get(FilterKeyEnum.DISTRIBUTION_STATUS);
-        DistributionStatusEnum distEnum = DistributionStatusEnum.findState(distributionStatus);
-        if (distributionStatus != null && distEnum == null) {
-            filters.remove(FilterKeyEnum.CATEGORY);
-            return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
-        }
-        if (categoryName != null) { // primary filter
-            components = fetchByCategoryOrSubCategoryName(categoryName, NodeTypeEnum.ServiceNewCategory, NodeTypeEnum.Service, inTransaction, null);
-            if (components.isLeft() && distEnum != null) {// secondary filter
-                Predicate<T> statusFilter = p -> ((Service) p).getDistributionStatus() == distEnum;
-                return Either.left(components.left().value().stream().filter(statusFilter).collect(Collectors.toList()));
+    private <T extends Component> Either<List<T>, StorageOperationStatus> getFilteredServices(Map<FilterKeyEnum, Object> filters) {
+        final String distributionStatus = (String) filters.get(FilterKeyEnum.DISTRIBUTION_STATUS);
+        final DistributionStatusEnum distEnum;
+        if (StringUtils.isNotBlank(distributionStatus)) {
+            distEnum = DistributionStatusEnum.findState(distributionStatus);
+            if (distEnum == null) {
+                return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }
-            filters.remove(FilterKeyEnum.DISTRIBUTION_STATUS);
-            return components;
+        } else {
+            distEnum = null;
         }
-        Set<DistributionStatusEnum> distStatusSet = new HashSet<>();
-        distStatusSet.add(distEnum);
-        Either<List<Service>, StorageOperationStatus> servicesWithDistStatus = toscaOperationFacade.getServicesWithDistStatus(distStatusSet, null);
-        if (servicesWithDistStatus.isRight()) { // not found == empty list
+        Either<List<Service>, StorageOperationStatus> components = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE, null, false);
+        if (components.isRight()) { // not found == empty list
             return Either.left(new ArrayList<>());
         }
-        return Either.left((List<T>) servicesWithDistStatus.left().value());
+        final String categoryName = (String) filters.get(FilterKeyEnum.CATEGORY);
+        Predicate<Service> servPredicate = Component::isService;
+        if (StringUtils.isNotBlank(categoryName)) { // primary filter
+            servPredicate = servPredicate.and(
+                p -> p.getCategories().parallelStream().map(CategoryDataDefinition::getName).collect(Collectors.toList()).contains(categoryName));
+        }
+        if (distEnum != null) {// secondary filter
+            servPredicate = servPredicate.and(p -> p.getDistributionStatus() == distEnum);
+        }
+        List<Service> serviceList = components.left().value().parallelStream().filter(servPredicate).collect(Collectors.toList());
+
+        final String version = (String) filters.get(FilterKeyEnum.VERSION);
+        if (StringUtils.isNotBlank(version)) {
+            serviceList = filterServicesWithVersion(serviceList, version);
+        }
+        final List<String> metadata = (List<String>) filters.get(FilterKeyEnum.METADATA);
+        if (CollectionUtils.isNotEmpty(metadata)) {
+            serviceList = filterServicesWithMetadata(serviceList, metadata);
+        }
+        return Either.left((List<T>) serviceList);
+    }
+
+    private List<Service> filterServicesWithMetadata(final List<Service> serviceList, final List<String> metadata) {
+        Predicate<Service> predicate = Component::isService;
+        final String regex = "[\\w\\.\\-]";
+        for (final String keyValuePair : metadata) {
+            final Matcher matcher = Pattern.compile("(" + regex + "+)[ :=]+(" + regex + "+)").matcher(keyValuePair);
+            if (matcher.find()) {
+                predicate = predicate.and(
+                    // TODO - check if getCategorySpecificMetadata() or any other metadata
+                    service -> matcher.group(2).equals(service.getCategorySpecificMetadata().get(matcher.group(1))));
+            }
+        }
+        return serviceList.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    private List<Service> filterServicesWithVersion(final List<Service> serviceList, final String version) {
+        String trim = version.trim();
+        final Optional<VersionFilterEnum> versionFilter = VersionFilterEnum.getFilter(trim);
+        if (versionFilter.isPresent()) {
+            return versionFilter.get().filter(serviceList, trim);
+        }
+        return serviceList;
     }
 
     public Either<List<? extends Component>, ResponseFormat> getCatalogComponentsByUuidAndAssetType(String assetType, String uuid) {
@@ -1059,30 +1096,28 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     private Optional<NameValuePair> findInvalidFilter(String query, ComponentTypeEnum assetType) {
-        List<NameValuePair> params = URLEncodedUtils.parse(query, StandardCharsets.UTF_8);
-        List<String> validKeys = FilterKeyEnum.getValidFiltersByAssetType(assetType);
-        Predicate<NameValuePair> noMatch = p -> !validKeys.contains(p.getName());
-        return params.stream().filter(noMatch).findAny();
+        return URLEncodedUtils.parse(query, StandardCharsets.UTF_8)
+            .stream().filter(p -> !FilterKeyEnum.getValidFiltersByAssetType(assetType).contains(p.getName())).findAny();
     }
 
-    private List<String> getErrorResponseParams(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType) {
+    private List<String> getErrorResponseParams(Map<FilterKeyEnum, Object> filters, ComponentTypeEnum assetType) {
         List<String> params = new ArrayList<>();
         if (1 == filters.size()) {
             params.add(assetType.getValue().toLowerCase());
             params.add(filters.keySet().iterator().next().getName());
-            params.add(filters.values().iterator().next());
+            params.add((String) filters.values().iterator().next());
         } else {
             params.add(assetType.getValue());
-            params.add(filters.get(FilterKeyEnum.SUB_CATEGORY));
-            params.add(filters.get(FilterKeyEnum.CATEGORY));
+            params.add((String) filters.get(FilterKeyEnum.SUB_CATEGORY));
+            params.add((String) filters.get(FilterKeyEnum.CATEGORY));
         }
         return params;
     }
 
-    public Either<List<Component>, StorageOperationStatus> getFilteredResources(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
-        String subCategoryName = filters.get(FilterKeyEnum.SUB_CATEGORY);
-        String categoryName = filters.get(FilterKeyEnum.CATEGORY);
-        ResourceTypeEnum resourceType = ResourceTypeEnum.getType(filters.get(FilterKeyEnum.RESOURCE_TYPE));
+    public Either<List<Component>, StorageOperationStatus> getFilteredResources(Map<FilterKeyEnum, Object> filters, boolean inTransaction) {
+        String subCategoryName = (String) filters.get(FilterKeyEnum.SUB_CATEGORY);
+        String categoryName = (String) filters.get(FilterKeyEnum.CATEGORY);
+        ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) filters.get(FilterKeyEnum.RESOURCE_TYPE));
         Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> subcategories = null;
         Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategoryData;
         if (categoryName != null) {
@@ -1095,7 +1130,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (subCategoryName != null) { // primary filter
             if (categoryName != null) {
                 subCategoryData = validateCategoryHierarcy(subcategories.left().value(), subCategoryName);
-                if (!subCategoryData.isPresent()) {
+                if (subCategoryData.isEmpty()) {
                     return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
                 }
                 return fetchByCategoryOrSubCategoryUid(subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.Resource, inTransaction,
@@ -1107,7 +1142,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (subcategories != null) {
             return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
         }
-        return fetchComponentMetaDataByResourceType(filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
+        return fetchComponentMetaDataByResourceType((String) filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
     }
 
     private Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> getAllSubCategories(String categoryName) {
@@ -1153,10 +1188,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                                                                                                              ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
         try {
-            Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
+            Class<? extends GraphNode> categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
             Map<String, Object> props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
-            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao.getByCriteria(categoryType, props, categoryClazz);
+            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao.getByCriteria(categoryType, props,
+                (Class<GraphNode>) categoryClazz);
             if (getCategory.isRight()) {
                 return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }
@@ -1249,7 +1285,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         List<Component> components = null;
         StorageOperationStatus status;
         Wrapper<StorageOperationStatus> statusWrapper = new Wrapper<>();
-        Either<List<Component>, StorageOperationStatus> result;
         try {
             ComponentParametersView fetchUsersAndCategoriesFilter = new ComponentParametersView(
                 Arrays.asList(ComponentFieldsEnum.USERS.getValue(), ComponentFieldsEnum.CATEGORIES.getValue()));
@@ -1265,12 +1300,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             } else {
                 components = getResources.left().value();
             }
-            if (!statusWrapper.isEmpty()) {
-                result = Either.right(statusWrapper.getInnerElement());
+            if (statusWrapper.isEmpty()) {
+                return Either.left(components);
             } else {
-                result = Either.left(components);
+                return Either.right(statusWrapper.getInnerElement());
             }
-            return result;
         } finally {
             if (!inTransaction) {
                 janusGraphDao.commit();

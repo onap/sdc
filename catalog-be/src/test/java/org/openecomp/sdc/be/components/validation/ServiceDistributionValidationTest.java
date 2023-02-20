@@ -21,16 +21,21 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -43,21 +48,10 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
-import org.openecomp.sdc.common.api.ConfigurationSource;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+class ServiceDistributionValidationTest {
 
-public class ServiceDistributionValidationTest {
-
-    ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
-    ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
     private static final String USER_ID = "userId";
     private static final String SERVICE_ID = "serviceId";
     private static final String ENV_ID = "envId";
@@ -85,7 +79,7 @@ public class ServiceDistributionValidationTest {
     private OperationalEnvironmentEntry operationalEnvironmentEntry;
     private ResponseFormat errResponse;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         user = new User();
@@ -99,85 +93,93 @@ public class ServiceDistributionValidationTest {
     }
 
     @Test
-    public void validateActivateServiceRequest_userNotExist() {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenThrow(new ByResponseFormatComponentException(errResponse));
+    void validateActivateServiceRequest_userNotExist() {
+        when(userValidations.validateUserExists(USER_ID)).thenThrow(new ByResponseFormatComponentException(errResponse));
         try {
             testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
-        } catch(ByResponseFormatComponentException e){
+        } catch (ByResponseFormatComponentException e) {
             assertEquals(errResponse, e.getResponseFormat());
         }
         verifyNoInteractions(toscaOperationFacade, operationalEnvironmentDao, componentsUtils);
     }
 
     @Test
-    public void validateActivateServiceRequest_ServiceNotExist() {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
-        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR, ComponentTypeEnum.SERVICE)).thenReturn(ActionStatus.GENERAL_ERROR);
+    void validateActivateServiceRequest_ServiceNotExist() {
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR, ComponentTypeEnum.SERVICE)).thenReturn(
+            ActionStatus.GENERAL_ERROR);
         when(componentsUtils.getResponseFormat(ActionStatus.API_RESOURCE_NOT_FOUND, ApiResourceEnum.SERVICE_ID.getValue())).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
         verifyNoInteractions(operationalEnvironmentDao);
     }
 
     @Test
-    public void validateActivateServiceRequest_ServiceLifeCycleStateNotReadyForDistribution() {
+    void validateActivateServiceRequest_ServiceLifeCycleStateNotReadyForDistribution() {
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE))).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_SERVICE_STATE)).thenReturn(errResponse);
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
         verifyNoInteractions(operationalEnvironmentDao);
     }
 
     @Test
-    public void validateActivateServiceRequest_operationalEnvNotExist() throws Exception {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
+    void validateActivateServiceRequest_operationalEnvNotExist() throws Exception {
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
         when(distributionEngine.getEnvironmentById(ENV_ID)).thenReturn(null);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.API_RESOURCE_NOT_FOUND), anyString())).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
     }
 
     @Test
-    public void validateActivateServiceRequest_operationalEnvStatusNotComplete() {
+    void validateActivateServiceRequest_operationalEnvStatusNotComplete() {
         operationalEnvironmentEntry.setStatus(EnvironmentStatusEnum.IN_PROGRESS);
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
         when(distributionEngine.getEnvironmentById(ENV_ID)).thenReturn(operationalEnvironmentEntry);
         when(componentsUtils.getResponseFormat(eq(ActionStatus.API_RESOURCE_NOT_FOUND), anyString())).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("distributionData"));
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo("distributionData"));
         assertEquals(errResponse, activateServiceReq.right().value());
     }
 
     @Test
-    public void validateActivateServiceRequest_couldNotParseDistributionData() {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
+    void validateActivateServiceRequest_couldNotParseDistributionData() {
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
         when(distributionEngine.getEnvironmentById(ENV_ID)).thenReturn(operationalEnvironmentEntry);
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_BODY))).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo());
+        when(componentsUtils.getResponseFormat(ActionStatus.MISSING_BODY)).thenReturn(errResponse);
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo(null));
         assertEquals(errResponse, activateServiceReq.right().value());
     }
 
     @Test
-    public void validateActivateServiceRequest_distributionDataHasNoWorkloadContext() {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
+    void validateActivateServiceRequest_distributionDataHasNoWorkloadContext() {
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
         when(distributionEngine.getEnvironmentById(ENV_ID)).thenReturn(operationalEnvironmentEntry);
-        when(componentsUtils.getResponseFormat(eq(ActionStatus.MISSING_BODY))).thenReturn(errResponse);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo(""));
+        when(componentsUtils.getResponseFormat(ActionStatus.MISSING_BODY)).thenReturn(errResponse);
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo(""));
         assertEquals(errResponse, activateServiceReq.right().value());
     }
 
     @Test
-    public void validateActivateServiceRequest_requestValid() {
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
-        when(toscaOperationFacade.getLatestServiceByUuid(eq(SERVICE_ID))).thenReturn(Either.left(service));
+    void validateActivateServiceRequest_requestValid() {
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        when(toscaOperationFacade.getLatestServiceByUuid(SERVICE_ID)).thenReturn(Either.left(service));
         when(distributionEngine.getEnvironmentById(ENV_ID)).thenReturn(operationalEnvironmentEntry);
-        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID, user, new ServiceDistributionReqInfo("context"));
+        Either<ActivationRequestInformation, ResponseFormat> activateServiceReq = testInstance.validateActivateServiceRequest(SERVICE_ID, ENV_ID,
+            user, new ServiceDistributionReqInfo("context"));
         assertEquals(service, activateServiceReq.left().value().getServiceToActivate());
         assertEquals("context", activateServiceReq.left().value().getWorkloadContext());
     }
