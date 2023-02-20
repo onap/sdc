@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
@@ -204,8 +205,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 namespace = tenantNamespaceArray[1];
             }
         }
-        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase() : Constants.DEFAULT_TENANT;
-        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase() : Constants.DEFAULT_NAMESPACE;
+        tenant = tenant != null && ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase() : Constants.DEFAULT_TENANT;
+        namespace = namespace != null && ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase() : Constants.DEFAULT_NAMESPACE;
         hints = hints == null || hints.length == 0 ? new Hint[]{Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints;
         T returnValue;
         returnValue = getInternal(tenant, namespace, key, clazz, hints);
