@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "005d7ed6_17041282",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1990,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-20T15:09:15Z",
+      "side": 1,
+      "message": "just flip the equals and this will fix NPE",
+      "range": {
+        "startLine": 1990,
+        "startChar": 45,
+        "endLine": 1990,
+        "endChar": 51
+      },
+      "revId": "f2fb97b53c368fc96ad60455617877293d28573d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
