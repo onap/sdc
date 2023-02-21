@@ -54,7 +54,7 @@ import {ConstraintsModule} from "../properties-assignment/constraints/constraint
         NgxDatatableModule,
         SvgIconModule,
         AutoCompleteModule,
-       ConstraintsModule
+        ConstraintsModule
     ],
     declarations: [
         TypeWorkspaceComponent,

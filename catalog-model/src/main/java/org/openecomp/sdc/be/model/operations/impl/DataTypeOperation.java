@@ -16,6 +16,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
@@ -190,6 +191,18 @@ public class DataTypeOperation extends AbstractOperation {
         });
     }
 
+    public void deleteDataTypesByDataTypeId(final String dataTypeId) {
+        final JanusGraph janusGraph = janusGraphGenericDao.getJanusGraph();
+        final GraphTraversalSource traversal = janusGraph.traversal();
+        final List<Vertex> dataTypeList = traversal.V()
+            .has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), dataTypeId)
+            .toList();
+        dataTypeList.forEach(dataTypeVertex -> {
+            traversal.V(dataTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
+            dataTypeVertex.remove();
+        });
+    }
+
     public Optional<DataTypeDataDefinition> getDataTypeByUid(final String uniqueId) {
         final Either<DataTypeData, JanusGraphOperationStatus> dataTypeEither = janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, DataTypeData.class);
@@ -288,7 +301,8 @@ public class DataTypeOperation extends AbstractOperation {
         getDataTypeByUid(dataTypeId).orElseThrow(DataTypeOperationExceptionSupplier.dataTypeNotFound(dataTypeId));
 
         final Either<PropertyDefinition, JanusGraphOperationStatus> resultEither =
-            propertyOperation.updatePropertyAssociatedToNode(NodeTypeEnum.DataType, dataTypeId, PropertyDefinitionDtoMapper.mapTo(propertyDefinitionDto));
+            propertyOperation.updatePropertyAssociatedToNode(NodeTypeEnum.DataType, dataTypeId,
+                PropertyDefinitionDtoMapper.mapTo(propertyDefinitionDto));
         if (resultEither.isRight()) {
             final JanusGraphOperationStatus status = resultEither.right().value();
             LOGGER.debug("Could not update property '{}' on data type '{}'. JanusGraph status is '{}'", propertyName, dataTypeId, status);
@@ -308,6 +322,11 @@ public class DataTypeOperation extends AbstractOperation {
                                                        final boolean isAdd) {
         modelOperation.updatePropertyInAdditionalType(ElementTypeEnum.DATA_TYPE, property, dataTypeDataDefinition.getModel(),
             dataTypeDataDefinition.getName(), isAdd);
+    }
+
+    public void removeDataTypeFromAdditionalType(final DataTypeDataDefinition dataTypeDataDefinition) {
+        modelOperation.removeDataTypeFromAdditionalType(ElementTypeEnum.DATA_TYPE, dataTypeDataDefinition.getModel(),
+            dataTypeDataDefinition.getName());
     }
 
     public PropertyDefinitionDto deleteProperty(final DataTypeDataDefinition dataTypeDataDefinition, final String propertyId) {
@@ -336,5 +355,4 @@ public class DataTypeOperation extends AbstractOperation {
         propertiesData.remove(propertyDefinition);
         return PropertyDefinitionDtoMapper.mapFrom(propertyDataDefinition);
     }
-
 }
