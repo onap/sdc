@@ -21,10 +21,13 @@ package org.openecomp.sdc.notification.websocket;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
@@ -79,19 +82,26 @@ public class NotificationWebsocketHandler extends TextWebSocketHandler {
 
     private String getOwnerId(WebSocketSession session) {
         HttpHeaders handshakeHeaders = session.getHandshakeHeaders();
-        if (handshakeHeaders.containsKey(COOKIE)) {
-            String[] cookies = handshakeHeaders.get(COOKIE).get(0).split("; ");
-            Optional<String> cookie = extractValue(cookies, USER_ID_HEADER_PARAM);
-            if (cookie.isPresent()) {
-                return cookie.get();
+            if (handshakeHeaders.containsKey(COOKIE)) {
+                final List<String> handshakeHeadersOrEmpty = handshakeHeaders.getOrEmpty(COOKIE);
+                if (CollectionUtils.isNotEmpty(handshakeHeadersOrEmpty)) {
+                    final Optional<String> cookie = extractValue(handshakeHeadersOrEmpty.get(0).split("; "), USER_ID_HEADER_PARAM);
+                    if (cookie.isPresent()) {
+                        return cookie.get();
+                    }
+                }
             }
-        }
         LOGGER.error("No " + USER_ID_HEADER_PARAM + " specified in the session cookies.");
         return null;
     }
 
     private UUID getLastEventId(WebSocketSession session) {
-        String uriQuery = session.getUri().getQuery();
+        URI uri = session.getUri();
+        if (uri == null) {
+            LOGGER.warn("No " + LAST_DELIVERED_QUERY_PARAM + " specified in the request URI.");
+            return null;
+        }
+        String uriQuery =  uri.getQuery();
         if (uriQuery != null) {
             String[] queries = uriQuery.split("; ");
             Optional<String> paramValue = extractValue(queries, LAST_DELIVERED_QUERY_PARAM);
