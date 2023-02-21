@@ -20,7 +20,8 @@
   -->
 
 <div class="sdc-workspace-container">
-  <loader [display]="isLoading"></loader>
+
+  <loader class="loader" [display]="isLoading"></loader>
   <div class="w-sdc-main-container">
     <app-workspace-menu [menuHeader]="dataType.name"
                         (onMenuUpdate)="onMenuUpdate($event)"
@@ -33,7 +34,15 @@
         </div>
         <div class="sdc-workspace-top-bar-buttons">
           <button *ngIf="!isViewOnly" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || unsavedChanges" (click)="createImportType()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
-          <span *ngIf="!isViewOnly" class="delimiter"></span>
+
+          <span *ngIf="!dataType.normative && isViewOnly"
+            class="sprite-new delete-btn"
+            data-tests-id="delete"
+            sdc-smart-tooltip="Delete Type"
+            (click)="deleteDataType()"
+            [title]="'DELETE_LABEL' | translate"></span>
+
+          <span class="delimiter"></span>
           <span class="sprite-new x-btn" (click)="goToBreadcrumbHome()" sdc-smart-tooltip="Close" [title]="'CLOSE_LABEL' | translate"></span>
         </div>
       </div>

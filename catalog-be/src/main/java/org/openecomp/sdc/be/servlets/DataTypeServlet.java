@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -185,7 +186,8 @@ public class DataTypeServlet extends BeGenericServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                    @PathParam("id") final String id,
-                                   @RequestBody(description = "Property to update", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
+                                   @RequestBody(description = "Property to update", required = true)
+                                   final PropertyDefinitionDto propertyDefinitionDto) {
         Optional<DataTypeDataDefinition> dataTypeOptional = dataTypeOperation.getDataTypeByUid(id);
         dataTypeOptional.orElseThrow(() -> {
             throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", id));
@@ -252,6 +254,33 @@ public class DataTypeServlet extends BeGenericServlet {
             dataTypeBusinessLogic.updateApplicationDataTypeCache(dataTypeId);
         }
         return Response.status(Status.OK).entity(propertyDefinitionDto).build();
+    }
+
+    @DELETE
+    @Path("{dataTypeId}")
+    public Response deleteDatatype(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
+                                   @PathParam("dataTypeId") final String dataTypeId) {
+        final Optional<DataTypeDataDefinition> dataTypeOptional = dataTypeOperation.getDataTypeByUid(dataTypeId);
+        dataTypeOptional.orElseThrow(() -> {
+            throw new OperationException(ActionStatus.DATA_TYPE_NOT_FOUND, String.format("Failed to find data type '%s'", dataTypeId));
+        });
+        final DataTypeDataDefinition dataTypeDataDefinition = dataTypeOptional.get();
+        if (dataTypeDataDefinition.isNormative()) {
+            throw new OperationException(ActionStatus.CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES, ElementTypeEnum.DATA_TYPE.getToscaEntryName(),
+                dataTypeId);
+        }
+        if (StringUtils.isEmpty(dataTypeDataDefinition.getModel())) {
+            dataTypeDataDefinition.setModel(Constants.DEFAULT_MODEL_NAME);
+        }
+        try {
+            dataTypeOperation.deleteDataTypesByDataTypeId(dataTypeId);
+            dataTypeOperation.removeDataTypeFromAdditionalType(dataTypeDataDefinition);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Datatype");
+            log.debug("delete datatype failed with exception ", e);
+            throw e;
+        }
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
     }
 
     private String extractNameFromPropertyId(final String propertyId) {

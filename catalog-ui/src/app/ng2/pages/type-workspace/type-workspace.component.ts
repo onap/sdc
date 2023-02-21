@@ -20,6 +20,7 @@
  */
 
 import {Component, Inject, Injector, OnInit} from '@angular/core';
+import {SdcMenuToken, IAppMenu} from "../../config/sdc-menu.config";
 import {MenuItem, MenuItemGroup} from "../../../utils/menu-handler";
 import {CacheService} from "../../services/cache.service";
 import {DataTypeModel} from "../../../models/data-types";
@@ -29,7 +30,7 @@ import {TranslateService} from "../../shared/translator/translate.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ServerErrorResponse} from "../../../models/server-error-response";
 import {Observable} from "rxjs/Observable";
-import {SdcUiServices} from "onap-ui-angular/dist";
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular/dist";
 
 @Component({
   selector: 'app-type-workspace',
@@ -54,7 +55,9 @@ export class TypeWorkspaceComponent implements OnInit {
               private translateService: TranslateService,
               @Inject('$state') private $state: ng.ui.IStateService,
               @Inject('$stateParams') private stateParams,
-              private injector: Injector) { }
+              private injector: Injector,
+              private modalServiceSdcUI: SdcUiServices.ModalService,
+              @Inject(SdcMenuToken) public sdcMenu: IAppMenu) { }
 
   ngOnInit(): void {
     this.sdcVersion = this.cacheService.get('version');
@@ -113,6 +116,57 @@ export class TypeWorkspaceComponent implements OnInit {
               title: this.translateService.translate('IMPORT_DATA_TYPE_TITLE_TEXT')
           });
       }
+  }
+
+  private deleteDataType() {
+      const modalTitle: string = this.translateService.translate('DELETE_DATA_TYPE_TITLE_CONFIRMATION_TEXT');
+      const modalMessage: string = this.translateService.translate('DELETE_DATA_TYPE_MESSAGE_CONFIRMATION_TEXT');;
+      const modalButton = {
+          testId: 'ok-button',
+          text: this.sdcMenu.alertMessages.okButton,
+          type: SdcUiCommon.ButtonType.warning,
+          callback: this.handleDeleteDataType(),
+          closeModal: true
+      } as SdcUiComponents.ModalButtonComponent;
+      this.modalServiceSdcUI.openWarningModal(modalTitle, modalMessage, 'alert-modal', [modalButton]);
+  }
+
+  private handleDeleteDataType():Function {
+    return () => {
+      this.isLoading = true;
+      this.dataTypeService.deleteDataType(this.dataType.uniqueId).subscribe(()=> {
+        this.Notification.success({
+            message: this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_SUCCESS_MESSAGE_TEXT'),
+            title: this.translateService.translate("DELETE_SUCCESS_MESSAGE_TITLE")
+        });
+        if (this.$state.params.previousState) {
+            switch (this.$state.params.previousState) {
+                case 'catalog':
+                case 'dashboard':
+                    this.$state.go(this.$state.params.previousState);
+                    break;
+                default:
+                    this.$state.go('dashboard');
+                    break;
+            }
+        }
+    }, (error) => {
+        this.isLoading = false;
+        this.Notification.error({
+            message: this.dataType.model + ' ' + this.dataType.name + ' ' + this.translateService.translate('DELETE_FAILURE_MESSAGE_TEXT'),
+            title: this.translateService.translate('DELETE_FAILURE_MESSAGE_TITLE')
+        });
+        if (error instanceof HttpErrorResponse) {
+            const errorResponse: ServerErrorResponse = new ServerErrorResponse(error);
+            const modalService = this.injector.get(SdcUiServices.ModalService);
+            const errorDetails = {
+                'Error Code': errorResponse.messageId,
+                'Status Code': errorResponse.status
+            };
+            modalService.openErrorDetailModal('Error', errorResponse.message, 'error-modal', errorDetails);
+        }
+    });
+    }
   }
 
   private updateTypeBreadcrumb(): void {
