@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentInstancePropertyToPolicyDeclarator;
 import org.openecomp.sdc.be.components.property.propertytopolicydeclarators.ComponentPropertyToPolicyDeclarator;
@@ -77,8 +78,17 @@ public class PropertyDeclarationOrchestrator {
                                                                                            ComponentInstInputsMap componentInstInputsMap) {
         updatePropertiesConstraints(component, componentInstInputsMap);
         PropertyDeclarator propertyDeclarator = getPropertyDeclarator(componentInstInputsMap);
+        undoCISubstitutionMapping(componentInstInputsMap);
         Pair<String, List<ComponentInstancePropInput>> propsToDeclare = componentInstInputsMap.resolvePropertiesToDeclare();
         return propertyDeclarator.declarePropertiesAsInputs(component, propsToDeclare.getLeft(), propsToDeclare.getRight());
+    }
+
+    private void undoCISubstitutionMapping(ComponentInstInputsMap componentInstInputsMap) {
+        if (MapUtils.isNotEmpty(componentInstInputsMap.getComponentInstanceProperties())) {
+            componentInstInputsMap.getComponentInstanceProperties().values()
+                .forEach(componentInstancePropInputsList -> componentInstancePropInputsList.stream()
+                    .forEach(componentInstancePropInput -> componentInstancePropInput.setMappedToComponentProperty(false)));
+        }
     }
 
     private void updatePropertiesConstraints(Component component, ComponentInstInputsMap componentInstInputsMap) {
