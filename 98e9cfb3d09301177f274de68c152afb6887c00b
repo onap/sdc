@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4b09db5f_f50dbe9b",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-websocket/src/main/java/org/openecomp/sdc/notification/websocket/NotificationWebsocketHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-21T14:59:20Z",
+      "side": 1,
+      "message": "Thanks for your suggestion.",
+      "parentUuid": "02dd157a_a6cf1145",
+      "range": {
+        "startLine": 84,
+        "startChar": 8,
+        "endLine": 93,
+        "endChar": 9
+      },
+      "revId": "98e9cfb3d09301177f274de68c152afb6887c00b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37cf6a2d_b081d2dd",
         "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-websocket/src/main/java/org/openecomp/sdc/notification/websocket/NotificationWebsocketHandler.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "98e9cfb3d09301177f274de68c152afb6887c00b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd99a89b_f103de2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-websocket/src/main/java/org/openecomp/sdc/notification/websocket/NotificationWebsocketHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-21T14:59:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "37cf6a2d_b081d2dd",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 15
+      },
+      "revId": "98e9cfb3d09301177f274de68c152afb6887c00b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
