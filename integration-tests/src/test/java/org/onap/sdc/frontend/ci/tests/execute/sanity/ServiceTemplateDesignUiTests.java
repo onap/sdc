@@ -822,8 +822,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, Object> substitutionMappingProperties = getMapEntry(substitutionMapping, "properties");
         assertThat(String.format("'%s' should contain a properties entry", toscaYaml), substitutionMappingProperties,
             notNullValue());
-        assertEquals(2, substitutionMappingProperties.keySet().stream()
-            .filter(s -> (s.contains("resourceSubtype") || s.contains("property1"))).count());
+        assertEquals(1, substitutionMappingProperties.keySet().stream()
+            .filter(s -> (s.contains("property1"))).count());
     }
 
     private void verifyToscaTemplateAddInput(Map<?, ?> yaml) {
