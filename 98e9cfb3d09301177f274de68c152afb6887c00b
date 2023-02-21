@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02dd157a_a6cf1145",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-websocket/src/main/java/org/openecomp/sdc/notification/websocket/NotificationWebsocketHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-21T14:42:18Z",
+      "side": 1,
+      "message": "if (handshakeHeaders.containsKey(COOKIE)) {\n            final List\u003cString\u003e handshakeHeadersOrEmpty \u003d handshakeHeaders.getOrEmpty(COOKIE);\n            if (CollectionUtils.isNotEmpty(handshakeHeadersOrEmpty)) {\n                final Optional\u003cString\u003e cookie \u003d extractValue(handshakeHeadersOrEmpty.get(0).split(\"; \"), USER_ID_HEADER_PARAM);\n                if (cookie.isPresent()) {\n                    return cookie.get();\n                }\n            }\n        }",
+      "range": {
+        "startLine": 84,
+        "startChar": 8,
+        "endLine": 93,
+        "endChar": 9
+      },
+      "revId": "98e9cfb3d09301177f274de68c152afb6887c00b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37cf6a2d_b081d2dd",
+        "filename": "openecomp-be/lib/openecomp-sdc-notification-lib/openecomp-sdc-notification-websocket/src/main/java/org/openecomp/sdc/notification/websocket/NotificationWebsocketHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-02-21T14:42:18Z",
+      "side": 1,
+      "message": "if uri is null dont need to check anything else\n\n        URI uri \u003d session.getUri();\n        if (uri \u003d\u003d null) {\n            LOGGER.warn(\"No \" + LAST_DELIVERED_QUERY_PARAM + \" specified in the request URI.\");\n            return null;\n        }",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 15
+      },
+      "revId": "98e9cfb3d09301177f274de68c152afb6887c00b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
