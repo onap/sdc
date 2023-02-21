@@ -16,6 +16,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DATA_TYPES;
@@ -74,9 +75,8 @@ import org.yaml.snakeyaml.Yaml;
 @Component("model-operation")
 public class ModelOperation {
 
-    private static final Logger log = Logger.getLogger(ModelOperation.class);
     static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of(ADDITIONAL_TYPE_DEFINITIONS);
-
+    private static final Logger log = Logger.getLogger(ModelOperation.class);
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;
     private final ToscaModelImportCassandraDao toscaModelImportCassandraDao;
@@ -411,10 +411,9 @@ public class ModelOperation {
                 final Map<String, Object> existingProperties =
                     (Map<String, Object>) ((Map<String, Object>) existingTypeContent.get(newTypeToUpdate.getKey())).get(PROPERTIES.getElementName());
 
-                final List<Entry<String, Object>> propertiesMissingFromNewDef = MapUtils.isEmpty(existingProperties) ? Collections.emptyList()
-                    : existingProperties.entrySet().stream()
-                        .filter(existingPropEntry -> !propertiesInNewDef.keySet().contains(existingPropEntry.getKey()))
-                        .collect(Collectors.toList());
+                final List<Entry<String, Object>> propertiesMissingFromNewDef = MapUtils.isEmpty(existingProperties) ? Collections.emptyList() :
+                    existingProperties.entrySet().stream()
+                        .filter(existingPropEntry -> !propertiesInNewDef.keySet().contains(existingPropEntry.getKey())).collect(Collectors.toList());
 
                 if (CollectionUtils.isNotEmpty(propertiesMissingFromNewDef)) {
                     typesToUpate.put(newTypeToUpdate.getKey(), newTypeToUpdate.getValue());
@@ -454,6 +453,23 @@ public class ModelOperation {
         final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
         additionalTypeDefinitionsImport.setContent(
             buildPropertyAdditionalTypeDefinitionContent(elementTypeEnum, name, property, originalContent, isAdd));
+        rebuiltModelImportList.add(additionalTypeDefinitionsImport);
+        toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
+    }
+
+    public void removeDataTypeFromAdditionalType(final ElementTypeEnum elementTypeEnum, final String modelName, final String name) {
+        final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
+        final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = modelImportList.stream()
+            .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
+        if (additionalTypeDefinitionsImportOptional.isEmpty()) {
+            return;
+        }
+        final ToscaImportByModel additionalTypeDefinitionsImport = additionalTypeDefinitionsImportOptional.get();
+        removeExistingTypesFromDefaultImports(elementTypeEnum, Collections.singletonMap(name, null),
+            Collections.singletonList(additionalTypeDefinitionsImport));
+        final List<ToscaImportByModel> rebuiltModelImportList = modelImportList.stream()
+            .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(toscaImportByModel.getFullPath())))
+            .collect(Collectors.toList());
         rebuiltModelImportList.add(additionalTypeDefinitionsImport);
         toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
     }

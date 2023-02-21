@@ -630,6 +630,72 @@ class ModelOperationTest extends ModelTestBase {
         assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
     }
 
+    @Test
+    void removeDataTypeFromAdditionalType() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        var originalAdditionalTypesImport = new ToscaImportByModel();
+        originalAdditionalTypesImport.setModelId(modelName);
+        originalAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        final Path originalAdditionalTypesImportPath = testResourcePath.resolve(Path.of("original-additional_types-1.yaml"));
+        originalAdditionalTypesImport.setContent(Files.readString(originalAdditionalTypesImportPath));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(originalAdditionalTypesImport);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        String dataTypeName = "tosca.datatypes.nfv.PreviouslyExistingType1";
+        modelOperation.removeDataTypeFromAdditionalType(ElementTypeEnum.DATA_TYPE, modelName, dataTypeName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(1, actualImportList.size());
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-5.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+                actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+    }
+
+    @Test
+    void removeOnlyDataTypeFromAdditionalType() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        var originalAdditionalTypesImport = new ToscaImportByModel();
+        originalAdditionalTypesImport.setModelId(modelName);
+        originalAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        final Path originalAdditionalTypesImportPath = testResourcePath.resolve(Path.of("original-additional_types-3.yaml"));
+        originalAdditionalTypesImport.setContent(Files.readString(originalAdditionalTypesImportPath));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(originalAdditionalTypesImport);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        String dataTypeName = "tosca.datatypes.nfv.PreviouslyExistingType1";
+        modelOperation.removeDataTypeFromAdditionalType(ElementTypeEnum.DATA_TYPE, modelName, dataTypeName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(1, actualImportList.size());
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-6.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+                actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+    }
+
     private ToscaImportByModel createModelImport(final String parentModelName, final String importPath) {
         var toscaImportByModel = new ToscaImportByModel();
         toscaImportByModel.setModelId(parentModelName);

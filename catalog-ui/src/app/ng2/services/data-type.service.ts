@@ -112,6 +112,15 @@ export class DataTypeService {
         });
     }
 
+    public deleteDataType(dataTypeId: string): Observable<Object> {
+        const url = `${this.dataTypeUrl}/${dataTypeId}`;
+        let headers = new HttpHeaders({'USER_ID': this.authService.getLoggedinUser().userId});
+        let options = {headers: headers};
+        return this.httpClient.delete(url, options).map((res: Response) => {
+            return dataTypeId;
+        });
+    }
+
     public createImportedType(model: string, importingFile: File): Observable<any> {
         const url = `${this.dataTypeUploadUrl}/datatypesyaml`;
         const formData = new FormData();
