@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -74,7 +75,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
-import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -765,7 +765,7 @@ public class ServiceImportBusinessLogic {
             final String componentUniqueId = component.getUniqueId();
             final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
             for (final InputDefinition input : inputs) {
-                if (isInputFromComponentInstanceProperty(input.getName(), componentInstances, componentInstancesProperties)) {
+                if (isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentInstancesProperties, componentUniqueId);
                 } else {
                     associateInputToServiceProperty(userId, input, component);
@@ -781,50 +781,49 @@ public class ServiceImportBusinessLogic {
         return component;
     }
 
-    private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances,
-                                                         final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties) {
+    private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances) {
+
+        AtomicBoolean isInputFromCIProp = new AtomicBoolean(false);
         if (CollectionUtils.isNotEmpty(componentInstances)) {
-            // get instance's names
-            final List<String> componentInstancesNames = componentInstances.stream().map(ComponentInstanceDataDefinition::getNormalizedName)
-                .collect(toList());
-            final Optional<String> componentInstancesNameOptional = componentInstancesNames.stream()
-                .filter(cin -> inputName.startsWith(cin + "_")).findFirst();
-            if (componentInstancesNameOptional.isPresent() && MapUtils.isNotEmpty(componentInstancesProperties)) {
-                final Optional<String> componentInstanceIdOptional = componentInstancesProperties.keySet().stream()
-                    .filter(key -> key.endsWith("." + componentInstancesNameOptional.get())).findFirst();
-                if (componentInstanceIdOptional.isPresent()) {
-                    // get property's name
-                    final String propertyNameFromInput = extractPropertyNameFromInputName(inputName, componentInstancesNames);
-                    return componentInstancesProperties.get(componentInstanceIdOptional.get()).stream()
-                        .anyMatch(prop -> prop.getName().equals(propertyNameFromInput) && prop.getValue() != null
-                            && prop.getValue().contains(ToscaGetFunctionType.GET_INPUT.getFunctionName()));
-                }
-            }
+            componentInstances
+                .forEach(componentInstance -> componentInstance.getProperties().stream()
+                    .filter(property -> CollectionUtils.isNotEmpty(property.getGetInputValues()))
+                    .forEach(propertyDefinition -> propertyDefinition.getGetInputValues()
+                        .forEach(getInputValueDataDefinition -> {
+                                if (inputName.equals(getInputValueDataDefinition.getInputName())) {
+                                    isInputFromCIProp.set(true);
+                                }
+                            }
+                        )
+                    )
+                );
         }
-        return false;
+        return isInputFromCIProp.get();
     }
 
     private void associateInputToComponentInstanceProperty(final String userId, final InputDefinition input,
                                                            final List<ComponentInstance> componentInstances,
                                                            final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties,
                                                            String componentUniqueId) {
-        // From Instance
-        final List<String> componentInstancesNames = componentInstances.stream().map(ComponentInstanceDataDefinition::getNormalizedName)
-            .collect(toList());
-        final String propertyNameFromInput = extractPropertyNameFromInputName(input.getName(), componentInstancesNames);
 
-        final Optional<String> componentInstancesNameOptional = componentInstancesNames.stream()
-            .filter(cin -> input.getName().startsWith(cin + "_")).findFirst();
+        String componentInstanceId = null;
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
 
-        final Optional<String> componentInstanceIdOptional = componentInstancesProperties.keySet().stream()
-            .filter(key -> key.endsWith("." + componentInstancesNameOptional.get())).findFirst();
+        for (ComponentInstance instance : componentInstances) {
+            for (PropertyDefinition instanceProperty : instance.getProperties()) {
+                if (CollectionUtils.isNotEmpty(instanceProperty.getGetInputValues())) {
+                    for (GetInputValueDataDefinition getInputValueDataDefinition : instanceProperty.getGetInputValues()) {
+                        if (input.getName().equals(getInputValueDataDefinition.getInputName())) {
+                            componentInstanceId = instance.getUniqueId();
+                            componentInstanceProperty = new ComponentInstanceProperty(instanceProperty);
+                        }
+                    }
+                }
+            }
+        }
 
-        final String componentInstanceId = componentInstanceIdOptional.get();
-        final List<ComponentInstanceProperty> componentInstanceProperties = componentInstancesProperties.get(componentInstanceId);
-
-        final ComponentInstanceProperty componentInstanceProperty = componentInstanceProperties.stream()
-            .filter(prop -> prop.getName().equals(propertyNameFromInput) && prop.getValue() != null
-                && prop.getValue().contains(ToscaGetFunctionType.GET_INPUT.getFunctionName())).findFirst().get();
+        //unmapping instance property declared inputs from substitution mapping
+        input.setMappedToComponentProperty(false);
 
         // From Instance
         updateInput(input, componentInstanceProperty, userId, componentInstanceId);
