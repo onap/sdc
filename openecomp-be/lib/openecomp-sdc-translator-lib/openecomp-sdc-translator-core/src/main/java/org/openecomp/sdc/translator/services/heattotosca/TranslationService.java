@@ -155,15 +155,15 @@ public class TranslationService {
     public void translateHelmFile(ServiceTemplate serviceTemplate, FileData heatFileData, TranslationContext context) {
         String heatFileName = heatFileData.getFile();
         Map<String, ParameterDefinition> inputs = serviceTemplate.getTopology_template().getInputs();
-        if (!Objects.isNull(inputs)) {
+        if (Objects.nonNull(inputs)) {
             inputs.entrySet().forEach(stringParameterDefinitionEntry -> {
                 List inputParamVFModuleList = getVFModulesList(inputs.get(stringParameterDefinitionEntry.getKey()));
                 if (!inputParamVFModuleList.contains(FileUtils.getFileWithoutExtention(heatFileName))) {
                     inputParamVFModuleList.add(FileUtils.getFileWithoutExtention(heatFileName));
                 }
             });
+            inputs.putAll(inputs);
         }
-        inputs.putAll(inputs);
     }
 
     private void handleHeatPseudoParam(String heatFileName, ServiceTemplate serviceTemplate, TranslationContext context) {
