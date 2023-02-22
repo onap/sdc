@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -38,6 +39,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
@@ -113,18 +115,24 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
     }
     
     @Override
-    public void validate(ToscaType toscaType, SchemaDefinition schema, String propertyTextValue) throws ConstraintViolationException {
+    public void validate(PropertyDefinition propertyDefinition) throws ConstraintViolationException {
+        ToscaType toscaType = ToscaType.isValidType(propertyDefinition.getType());
         try {
             Collection<Object> valuesToValidate;
             if (ToscaType.LIST == toscaType) {
-                valuesToValidate = ConstraintUtil.parseToCollection(propertyTextValue, new TypeReference<>() {});
+                valuesToValidate = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
             } else if (ToscaType.MAP == toscaType) {
-                final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyTextValue, new TypeReference<>() {});
+                final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
                 valuesToValidate = map.values();
             } else {
-                valuesToValidate = Collections.singleton(propertyTextValue);
+                valuesToValidate = Collections.singleton(propertyDefinition.getValue());
             }
-            ToscaType valuesType = getValuesType(toscaType, schema);
+            if (propertyDefinition.getSubPropertyToscaFunctions() != null) {
+                propertyDefinition.getSubPropertyToscaFunctions().forEach(subPropToscaFunction -> {
+                    valuesToValidate.remove(subPropToscaFunction.getToscaFunction().getJsonObjectValue());
+                });
+            }
+            ToscaType valuesType = getValuesType(toscaType, propertyDefinition.getSchema());
             for (final Object value: valuesToValidate) {
                 validate(valuesType, value.toString());
             }

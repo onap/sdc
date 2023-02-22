@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
@@ -34,8 +35,8 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
     private static final String INVALID_VALUE_ERROR_MESSAGE = "Unsupported value provided for %s property supported value type is %s.";
 
     @Override
-    public void validate(ToscaType toscaType, SchemaDefinition schema, String propertyTextValue) throws ConstraintViolationException {
-        validate(toscaType, propertyTextValue);
+    public void validate(PropertyDefinition property) throws ConstraintViolationException {
+        validate(ToscaType.isValidType(property.getType()), property.getValue());
     }
     
     protected void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {
