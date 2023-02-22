@@ -374,7 +374,7 @@ public class PropertyValueConstraintValidationUtil {
                 final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition,
                     objectMapper.writeValueAsString(value),mapKey);
                 propertyCopyWithNewValue.setToscaSubPath(mapKey);
-                if (isPropertyNotMappedAsInput(propertyCopyWithNewValue)) {
+                if (isValueAToscaFunction(propertyCopyWithNewValue)) {
                     if (ToscaType.isPrimitiveType(schemaType)) {
                         evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
                     } else if (ToscaType.isCollectionType(schemaType)) {
