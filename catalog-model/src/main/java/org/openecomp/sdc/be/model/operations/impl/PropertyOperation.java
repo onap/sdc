@@ -2464,8 +2464,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 if (rangeArray.size() != 2) {
                     log.error("The range constraint content is invalid. value = {}", value);
                 } else {
-                    final String minValue = rangeArray.get(0).asText();
-                    final String maxValue = rangeArray.get(1).asText();
+                    final Object minValue = convertToType(rangeArray.get(0));
+                    final Object maxValue = convertToType(rangeArray.get(1));
                     final Comparable min = ConstraintUtil.convertToComparable(
                         ToscaType.getToscaType(minValue.getClass().getSimpleName().toLowerCase()), String.valueOf(minValue));
                     final Comparable max = ConstraintUtil.convertToComparable(

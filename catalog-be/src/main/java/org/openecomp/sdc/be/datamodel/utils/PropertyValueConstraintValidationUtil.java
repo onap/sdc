@@ -144,7 +144,7 @@ public class PropertyValueConstraintValidationUtil {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
                     propertyConstraint.initialize(toscaType, propertyDefinition.getSchema());
-                    propertyConstraint.validate(toscaType, propertyDefinition.getSchema(), propertyDefinition.getValue());
+                    propertyConstraint.validate(propertyDefinition);
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
                     errorMessages.add(propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
                 } catch (IllegalArgumentException ie) {

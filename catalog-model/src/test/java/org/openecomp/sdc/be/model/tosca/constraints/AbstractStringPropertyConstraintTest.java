@@ -62,7 +62,7 @@ public class AbstractStringPropertyConstraintTest {
     @Test(expected = ConstraintViolationException.class)
     public void testValidateNull() throws ConstraintViolationException {
         // when
-        constraint.validate(null);
+        constraint.validate((String)null);
     }
 
     @Test(expected = ConstraintViolationException.class)
