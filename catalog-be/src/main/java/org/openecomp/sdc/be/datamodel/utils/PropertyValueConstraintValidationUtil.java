@@ -144,7 +144,7 @@ public class PropertyValueConstraintValidationUtil {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
                     propertyConstraint.initialize(toscaType, propertyDefinition.getSchema());
-                    propertyConstraint.validate(toscaType, propertyDefinition.getSchema(), propertyDefinition.getValue());
+                    propertyConstraint.validate(propertyDefinition);
                 } catch (ConstraintValueDoNotMatchPropertyTypeException | ConstraintViolationException exception) {
                     errorMessages.add(propertyConstraint.getErrorMessage(toscaType, exception, getCompletePropertyName(propertyDefinition)));
                 } catch (IllegalArgumentException ie) {
@@ -374,7 +374,7 @@ public class PropertyValueConstraintValidationUtil {
                 final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition,
                     objectMapper.writeValueAsString(value),mapKey);
                 propertyCopyWithNewValue.setToscaSubPath(mapKey);
-                if (isPropertyNotMappedAsInput(propertyCopyWithNewValue)) {
+                if (!isValueAToscaFunction(propertyCopyWithNewValue)) {
                     if (ToscaType.isPrimitiveType(schemaType)) {
                         evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
                     } else if (ToscaType.isCollectionType(schemaType)) {

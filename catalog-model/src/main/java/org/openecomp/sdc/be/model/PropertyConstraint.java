@@ -34,7 +34,7 @@ public interface PropertyConstraint {
     
     void validate(Object propertyValue) throws ConstraintViolationException;
 
-    void validate(ToscaType toscaType, SchemaDefinition schema, String propertyTextValue) throws ConstraintViolationException;
+    void validate(PropertyDefinition property) throws ConstraintViolationException;
 
     @JsonIgnore
     ConstraintType getConstraintType();
