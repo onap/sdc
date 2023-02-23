@@ -58,7 +58,7 @@ export class CatalogService {
 
     public getArchiveCatalog() {
         return this.http.get<IComponentsArray>(this.baseUrl + '/v1/catalog/archive/', {})
-            .map(res => this.processComponentsResponse(res[0]));
+            .map(res => this.processComponentsResponse([res, []]));
     }
 
     private processComponentsResponse(componentsArr: [IComponentsArray, DataTypeModel[]], addSharing:boolean = false) {
