@@ -423,6 +423,7 @@ export class PropertiesAssignmentComponent {
         const dataChangedIdx = this.changedData.findIndex((changedItem) => changedItem === item);
         if (itemHasChanged) {
             if (dataChangedIdx === -1) {
+                this.changedData = new Array<PropertyFEModel | InputFEModel>();
                 this.changedData.push(item);
             }
         } else {
