@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac34774d_1ed2e68f",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-02-23T13:49:22Z",
+      "side": 0,
+      "message": "remove references of onValueChange from property-form-view-model.ts and property-form-view.html",
+      "range": {
+        "startLine": 442,
+        "startChar": 20,
+        "endLine": 442,
+        "endChar": 33
+      },
+      "revId": "0c54db816bcadb231b007ce56c5c90d7b96d0706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
