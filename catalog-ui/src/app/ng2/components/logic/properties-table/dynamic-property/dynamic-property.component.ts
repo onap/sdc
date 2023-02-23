@@ -23,7 +23,7 @@ import {Component, Input, Output, EventEmitter, ViewChild, ComponentRef} from "@
 import { PropertyFEModel, DerivedFEProperty, DerivedPropertyType } from "app/models";
 import { PROPERTY_TYPES } from 'app/utils';
 import { DataTypeService } from "../../../../services/data-type.service";
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { trigger, style, transition, animate } from '@angular/animations';
 import {PropertiesUtils} from "../../../../pages/properties-assignment/services/properties.utils";
 import {IUiElementChangeEvent} from "../../../ui/form-components/ui-element-base.component";
 import {DynamicElementComponent} from "../../../ui/dynamic-element/dynamic-element.component";
@@ -44,6 +44,7 @@ export class DynamicPropertyComponent {
     nestedLevel: number;
     propertyTestsId: string;
     constraints:string[];
+    checkboxDisabled: boolean = false;
 
     @Input() canBeDeclared: boolean;
     @Input() property: PropertyFEModel | DerivedFEProperty;
@@ -148,6 +149,12 @@ export class DynamicPropertyComponent {
 
     onElementChanged = (event: IUiElementChangeEvent) => {
         this.property.updateValueObj(event.value, event.isValid);
+        if (this.property.hasValueObjChanged()) {
+            this.checkboxDisabled = true;
+        }
+        if (event.value === '' || event.value === null || event.value === undefined) {
+            this.checkboxDisabled = false;
+        }
         this.emitter.emit();
     };
 
