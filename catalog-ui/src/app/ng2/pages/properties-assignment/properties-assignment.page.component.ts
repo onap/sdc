@@ -626,6 +626,13 @@ export class PropertiesAssignmentComponent {
             }
         }
         if (this.selectedInstanceData instanceof ComponentInstance) {
+            var toRemove = this.changedData.filter(obj => {
+                return obj.name == checkedInstanceProperty.name && obj.type == checkedInstanceProperty.type && obj.value == null;
+            });
+            const index: number = this.changedData.indexOf(toRemove[0]);
+            if (index !== -1) {
+                this.changedData.splice(index, 1);
+            }
             this.updateInstanceProperty(checkedInstanceProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
             this.updateGroupInstanceProperty(checkedInstanceProperty);
@@ -689,6 +696,7 @@ export class PropertiesAssignmentComponent {
         this.loadingProperties = true;
         this.enableToscaFunction = false;
         this.checkedToscaCount = 0;
+
         this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
