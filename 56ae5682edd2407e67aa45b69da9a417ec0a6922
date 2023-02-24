@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "848e8295_49ef4497",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-02-24T10:03:27Z",
+      "side": 1,
+      "message": "Also should be for in_range constraint.\n\nFor valid_values constraint there can be any number of entries, not necessarily two",
+      "range": {
+        "startLine": 84,
+        "startChar": 101,
+        "endLine": 84,
+        "endChar": 142
+      },
+      "revId": "56ae5682edd2407e67aa45b69da9a417ec0a6922",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
