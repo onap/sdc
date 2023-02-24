@@ -133,7 +133,7 @@ public class PropertyConvertor {
 
         if (CollectionUtils.isNotEmpty(property.getConstraints())) {
             try {
-                prop.setConstraints(convertConstraints(property.getConstraints(), property.getType()));
+                prop.setConstraints(convertConstraints(property.getConstraints(), property.getType(), property.getSchemaType()));
             } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
                 log.error(e.getMessage());
             }
@@ -141,14 +141,14 @@ public class PropertyConvertor {
         return prop;
     }
 
-    private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints, String propertyType)
+    private List<ToscaPropertyConstraint> convertConstraints(List<PropertyConstraint> constraints, String propertyType, String schemaType)
         throws ConstraintValueDoNotMatchPropertyTypeException {
         List<ToscaPropertyConstraint> convertedConstraints = new ArrayList<>();
         for (PropertyConstraint constraint : constraints) {
             if (constraint instanceof EqualConstraint) {
                 EqualConstraint equalConstraint = ((EqualConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     equalConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -158,7 +158,9 @@ public class PropertyConvertor {
             if (constraint instanceof GreaterThanConstraint) {
                 GreaterThanConstraint greaterThanConstraint = ((GreaterThanConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    greaterThanConstraint.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     greaterThanConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -168,7 +170,9 @@ public class PropertyConvertor {
             if (constraint instanceof GreaterOrEqualConstraint) {
                 GreaterOrEqualConstraint greaterOrEqualConstraint = ((GreaterOrEqualConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    greaterOrEqualConstraint.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     greaterOrEqualConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -178,7 +182,9 @@ public class PropertyConvertor {
             if (constraint instanceof LessThanConstraint) {
                 LessThanConstraint lessThanConstraint = ((LessThanConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    lessThanConstraint.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     lessThanConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -188,7 +194,9 @@ public class PropertyConvertor {
             if (constraint instanceof LessOrEqualConstraint) {
                 LessOrEqualConstraint lessOrEqualConstraint = ((LessOrEqualConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    lessOrEqualConstraint.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     lessOrEqualConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -198,7 +206,9 @@ public class PropertyConvertor {
             if (constraint instanceof InRangeConstraint) {
                 InRangeConstraint inRangeConstraint = (InRangeConstraint) constraint;
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    inRangeConstraint.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     inRangeConstraint.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -207,7 +217,9 @@ public class PropertyConvertor {
             if (constraint instanceof ValidValuesConstraint) {
                 ValidValuesConstraint validValues = ((ValidValuesConstraint) constraint);
 
-                if (doesPropertyTypeNeedConverted(propertyType)) {
+                if (isTypeMapOrList(propertyType) && doesTypeNeedConvertingToIntOrFloat(schemaType)) {
+                    validValues.changeConstraintValueTypeTo(schemaType);
+                } else if (doesTypeNeedConvertingToIntOrFloat(propertyType)) {
                     validValues.changeConstraintValueTypeTo(propertyType);
                 }
 
@@ -230,8 +242,12 @@ public class PropertyConvertor {
         return convertedConstraints;
     }
 
-    private boolean doesPropertyTypeNeedConverted(String propertyType) {
+    private boolean doesTypeNeedConvertingToIntOrFloat(String propertyType) {
         return ToscaType.INTEGER.getType().equals(propertyType) || ToscaType.FLOAT.getType().equals(propertyType);
+    }
+
+    private boolean isTypeMapOrList (String type) {
+        return ToscaType.MAP.getType().equals(type) || ToscaType.LIST.getType().equals(type);
     }
 
     public Object convertToToscaObject(PropertyDataDefinition property, String value, Map<String, DataTypeDefinition> dataTypes,
