@@ -197,8 +197,8 @@ export class InterfaceOperationHandlerComponent {
             this.toscaArtifactTypeSelected = undefined;
             this.artifactVersion = undefined;
             if (this.operationToUpdate.implementation.artifactType) {
-                this.operationToUpdate.implementation.artifactName = '';
                 this.operationToUpdate.implementation.artifactVersion = '';
+                this.operationToUpdate.implementation.artifactType = '';
             }
             this.toscaArtifactTypeProperties = undefined;
             this.artifactTypeProperties = undefined;
