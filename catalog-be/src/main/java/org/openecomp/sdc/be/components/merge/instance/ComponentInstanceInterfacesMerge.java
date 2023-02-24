@@ -77,7 +77,7 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
         }
         currentComponent.getComponentInstancesInterfaces().get(instanceId).forEach(
             newInterfaceDef -> {
-                Map<String, Operation> newInterfaceDefOperationMap = new HashMap<>();
+                Map<String, Operation> newInterfaceDefOperationMap = newInterfaceDef.getOperationsMap();
                 newInterfaceDef.getOperationsMap().forEach(
                     (newOperationDefKey, newOperationDefKeyValue) -> prevInstanceInterfaces.stream()
                         .filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId())).forEach(
