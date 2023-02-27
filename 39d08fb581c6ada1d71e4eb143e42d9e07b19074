@@ -22,6 +22,30 @@
       "revId": "39d08fb581c6ada1d71e4eb143e42d9e07b19074",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c250be64_14ab371c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/PortalRestApiCentralServiceImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-02-27T18:34:09Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4909d84c_aeb60c19",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 30
+      },
+      "revId": "39d08fb581c6ada1d71e4eb143e42d9e07b19074",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
