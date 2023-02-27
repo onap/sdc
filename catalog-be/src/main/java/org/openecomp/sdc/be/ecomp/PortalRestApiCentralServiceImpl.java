@@ -65,8 +65,10 @@ public final class PortalRestApiCentralServiceImpl implements IPortalRestCentral
     public PortalRestApiCentralServiceImpl() throws PortalAPIException {
         try {
             ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-            userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
-            userBusinessLogicExt = (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
+            if (ctx != null) {
+                userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
+                userBusinessLogicExt = (UserBusinessLogicExt) ctx.getBean("userBusinessLogicExt");
+            }
         } catch (Exception e) {
             log.debug("Failed to get user UserBusinessLogic", e);
             BeEcompErrorManager.getInstance()
