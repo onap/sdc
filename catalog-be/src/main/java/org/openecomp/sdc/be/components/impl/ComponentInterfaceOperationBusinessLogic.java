@@ -18,7 +18,10 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
+
+import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -64,6 +67,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -204,14 +208,14 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         return componentInstanceOptional;
     }
 
-    private Either<Boolean, ResponseFormat> validateOperationInputConstraints (
+    private Either<Boolean, ResponseFormat> validateOperationInputConstraints(
         OperationDataDefinition operationDataDefinition, PropertyValueConstraintValidationUtil constraintValidatorUtil, String model) {
         return constraintValidatorUtil
             .validatePropertyConstraints(convertOperationInputsToPropertyDefinitions(operationDataDefinition), applicationDataTypeCache,
                 model);
     }
 
-    private Either<Boolean, ResponseFormat> validateOperationArtifactPropertyConstraints (
+    private Either<Boolean, ResponseFormat> validateOperationArtifactPropertyConstraints(
         OperationDataDefinition operationDataDefinition, PropertyValueConstraintValidationUtil constraintValidatorUtil, String model) {
         return constraintValidatorUtil
             .validatePropertyConstraints(convertOperationArtifactPropsToPropertyDefinitions(operationDataDefinition, model), applicationDataTypeCache,
@@ -330,6 +334,8 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
 
         final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
         updatedOperationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        updatedOperationDataDefinition.getImplementation()
+            .setArtifactName(generateArtifactName(updatedOperationDataDefinition.getImplementation().getArtifactName()));
 
         final InterfaceDefinition interfaceDefinitionFound = componentInterfaceMap.get(componentInterfaceUpdatedKey);
         if (interfaceDefinitionFound != null) {
@@ -381,6 +387,14 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         return Optional.of(component);
     }
 
+    private String generateArtifactName(final String name) {
+        if (OperationArtifactUtil.artifactNameIsALiteralValue(name)) {
+            return name;
+        } else {
+            return QUOTE + name + QUOTE;
+        }
+    }
+
     public User validateUser(final String userId) {
         final User user = userValidations.validateUserExists(userId);
         userValidations.validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
@@ -418,7 +432,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
     }
 
     private List<PropertyDefinition> convertOperationArtifactPropsToPropertyDefinitions(final OperationDataDefinition operationDataDefinition,
-                                                                         final String model) {
+                                                                                        final String model) {
         List<PropertyDefinition> artifactPropertiesToValidateCollection = new ArrayList<>();
         final ArtifactDataDefinition artifactDataDefinition = operationDataDefinition.getImplementation();
         if (null != artifactDataDefinition) {
