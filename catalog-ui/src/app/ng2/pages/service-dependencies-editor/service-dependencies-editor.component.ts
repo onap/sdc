@@ -122,7 +122,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     } else {
       selectLabel = 'Select';
     }
-    this.servicePropertyDropdownList = [new DropdownValue(undefined, selectLabel), ...propertyList.map(prop => new DropdownValue(prop.name, prop.name))];
+    this.servicePropertyDropdownList = [new DropdownValue(undefined, selectLabel), ...propertyList.map(prop => new DropdownValue(prop.name, prop.name)).sort((prop1, prop2) => prop1.value.localeCompare(prop2.value))];
   }
 
   private initConstraintOperatorOptions(): void {
