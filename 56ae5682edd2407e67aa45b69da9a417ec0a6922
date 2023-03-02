@@ -22,6 +22,30 @@
       "revId": "56ae5682edd2407e67aa45b69da9a417ec0a6922",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c503f6f_f6aa10e0",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-03-02T12:02:13Z",
+      "side": 1,
+      "message": "DONE",
+      "parentUuid": "848e8295_49ef4497",
+      "range": {
+        "startLine": 84,
+        "startChar": 101,
+        "endLine": 84,
+        "endChar": 142
+      },
+      "revId": "56ae5682edd2407e67aa45b69da9a417ec0a6922",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
