@@ -17,8 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,9 +32,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -50,8 +50,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
-
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {
 
@@ -67,7 +65,8 @@ public class InterfaceLifecycleTypeImportManager {
 
     public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml, final String modelName,
                                                                                   final boolean includeToModelDefaultImports) {
-        Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml, modelName);
+        Either<List<InterfaceDefinition>, ActionStatus> interfaces =
+            createInterfaceTypeFromYml(interfaceLifecycleTypesYml, modelName, !includeToModelDefaultImports);
         if (interfaces.isRight()) {
             ActionStatus status = interfaces.right().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByGroupType(status, null);
@@ -80,17 +79,28 @@ public class InterfaceLifecycleTypeImportManager {
         return elementTypes;
     }
 
-    private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml, final String modelName) {
-        final Either<List<InterfaceDefinition>, ActionStatus> interfaceTypes = commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
-        if (interfaceTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+    private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml, final String modelName,
+                                                                                       final boolean normative) {
+        final Either<List<InterfaceDefinition>, ActionStatus> interfaceTypesEither =
+            commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
+        if (interfaceTypesEither.isRight()) {
+            return interfaceTypesEither;
+        }
+        final List<InterfaceDefinition> interfaceTypes = interfaceTypesEither.left().value();
+        if (StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
-                interfaceTypes.left().value().forEach(interfaceType -> interfaceType.setModel(modelName));
-                return interfaceTypes;
+                interfaceTypes.forEach(interfaceType -> {
+                    interfaceType.setModel(modelName);
+                    interfaceType.setUserCreated(!normative);
+                });
+                return Either.left(interfaceTypes);
             }
             return Either.right(ActionStatus.INVALID_MODEL);
+        } else {
+            interfaceTypes.forEach(interfaceType -> interfaceType.setUserCreated(!normative));
         }
-        return interfaceTypes;
+        return Either.left(interfaceTypes);
     }
 
     private Either<List<InterfaceDefinition>, ResponseFormat> createInterfacesByDao(List<InterfaceDefinition> interfacesToCreate) {
@@ -148,8 +158,9 @@ public class InterfaceLifecycleTypeImportManager {
                 .asList(ToscaTagNamesEnum.DERIVED_FROM.getElementName(), ToscaTagNamesEnum.DESCRIPTION.getElementName(),
                     ToscaTagNamesEnum.VERSION.getElementName(), ToscaTagNamesEnum.METADATA.getElementName(),
                     ToscaTagNamesEnum.INPUTS.getElementName(), ToscaTagNamesEnum.NOTIFICATIONS.getElementName());
-            
-            Stream<Entry<String, Object>> oldFormatOperations =  toscaJson.entrySet().stream().filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()));
+
+            Stream<Entry<String, Object>> oldFormatOperations =
+                toscaJson.entrySet().stream().filter(interfaceEntry -> !entitySchemaEntryList.contains(interfaceEntry.getKey()));
             operationsMap = new HashMap<>();
             oldFormatOperations.forEach(entry -> operationsMap.put(entry.getKey(), entry.getValue()));
         }
