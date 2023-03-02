@@ -325,7 +325,7 @@ public class DataTypeOperation extends AbstractOperation {
     }
 
     public void removeDataTypeFromAdditionalType(final DataTypeDataDefinition dataTypeDataDefinition) {
-        modelOperation.removeDataTypeFromAdditionalType(ElementTypeEnum.DATA_TYPE, dataTypeDataDefinition.getModel(),
+        modelOperation.removeTypeFromAdditionalType(ElementTypeEnum.DATA_TYPE, dataTypeDataDefinition.getModel(),
             dataTypeDataDefinition.getName());
     }
 

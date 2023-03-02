@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -51,6 +52,7 @@ import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.InterfaceData;
@@ -70,6 +72,7 @@ public class InterfaceLifecycleOperationTest {
     private static String INTERFACE_TYPE = "tosca.interfaces.standard";
 
     JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
+    ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
     @InjectMocks
     private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation();
 
@@ -217,4 +220,16 @@ public class InterfaceLifecycleOperationTest {
         Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(MODEL_NAME).left().value().size());
     }
 
+
+    @Test
+    void removeInterfaceTypeFromAdditionalType() {
+        String modelName = "model";
+        String interfaceType = "tosca.artifact.interface.PreviouslyExistingType1";
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setModel(modelName);
+        interfaceDefinition.setType(interfaceType);
+
+        interfaceLifecycleOperation.removeInterfaceTypeFromAdditionalType(interfaceDefinition);
+        verify(modelOperation).removeTypeFromAdditionalType(ElementTypeEnum.INTERFACE_LIFECYCLE_TYPE, modelName, interfaceType);
+    }
 }
