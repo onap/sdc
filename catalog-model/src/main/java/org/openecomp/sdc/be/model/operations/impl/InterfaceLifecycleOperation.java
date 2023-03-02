@@ -17,8 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.operations.impl;
 
+import fj.data.Either;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,8 +29,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import javax.annotation.Resource;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
@@ -42,6 +47,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
@@ -53,8 +59,6 @@ import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
-import fj.data.Either;
-
 @Component("interface-operation")
 public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation {
 
@@ -65,6 +69,9 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     private ArtifactOperation artifactOperation;
     @javax.annotation.Resource
     private JanusGraphGenericDao janusGraphGenericDao;
+    @Resource
+    private ModelOperation modelOperation;
+
     public InterfaceLifecycleOperation() {
         super();
     }
@@ -816,7 +823,8 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
         final GraphNode to = new UniqueIdData(NodeTypeEnum.Interface, interfaceDefinition.getUniqueId());
         log.info("Connecting model {} to type {}", from, to);
-        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right()
+            .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
@@ -860,7 +868,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         List<InterfaceData> interfaceDataList = allInterfaceLifecycleTypes.left().value();
         List<InterfaceDefinition> interfaceDefinitions = interfaceDataList.stream().map(this::convertInterfaceDataToInterfaceDefinition)
             .filter(interfaceDefinition -> interfaceDefinition.getUniqueId()
-                    .equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(interfaceDefinition.getModel(), interfaceDefinition.getType()))
+                .equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(interfaceDefinition.getModel(), interfaceDefinition.getType()))
             ).collect(Collectors.toList());
         for (InterfaceDefinition interfaceDefinition : interfaceDefinitions) {
             Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
@@ -881,11 +889,34 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
     private String getModelAssociatedToInterface(String uid) {
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(
-                UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), uid, GraphEdgeLabels.MODEL_ELEMENT,
-                NodeTypeEnum.Model, ModelData.class);
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), uid, GraphEdgeLabels.MODEL_ELEMENT,
+            NodeTypeEnum.Model, ModelData.class);
         if (model.isLeft()) {
             return model.left().value().getLeft().getName();
         }
         return null;
+    }
+
+    public void deleteInterfaceTypeById(String interfaceTypeId) {
+        final JanusGraph janusGraph = janusGraphGenericDao.getJanusGraph();
+        final GraphTraversalSource traversal = janusGraph.traversal();
+        final List<Vertex> interfaceOperationTypeList = traversal.V()
+            .has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), interfaceTypeId)
+            .out(GraphEdgeLabels.INTERFACE_OPERATION.getProperty())
+            .toList();
+        interfaceOperationTypeList.forEach(interfaceOperationVertex -> {
+            traversal.V(interfaceOperationVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
+            interfaceOperationVertex.remove();
+        });
+        final List<Vertex> interfaceTypeList = traversal.V().has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), interfaceTypeId).toList();
+        interfaceTypeList.forEach(interfaceTypeVertex -> {
+            traversal.V(interfaceTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
+            interfaceTypeVertex.remove();
+        });
+    }
+
+    public void removeInterfaceTypeFromAdditionalType(InterfaceDefinition interfaceDefinition) {
+        modelOperation.removeTypeFromAdditionalType(ElementTypeEnum.INTERFACE_LIFECYCLE_TYPE, interfaceDefinition.getModel(),
+            interfaceDefinition.getType());
     }
 }

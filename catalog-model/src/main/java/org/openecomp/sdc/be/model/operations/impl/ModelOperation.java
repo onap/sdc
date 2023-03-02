@@ -457,7 +457,7 @@ public class ModelOperation {
         toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
     }
 
-    public void removeDataTypeFromAdditionalType(final ElementTypeEnum elementTypeEnum, final String modelName, final String name) {
+    public void removeTypeFromAdditionalType(final ElementTypeEnum elementTypeEnum, final String modelName, final String name) {
         final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
         final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = modelImportList.stream()
             .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
