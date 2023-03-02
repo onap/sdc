@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.resources.data;
 
 import java.util.HashMap;
@@ -52,6 +53,8 @@ public class InterfaceData extends GraphNode {
         interfaceDataDefinition.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
         interfaceDataDefinition.setCreationDate((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
         interfaceDataDefinition.setLastUpdateDate((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
+        final Object normativeProperty = properties.get(GraphPropertiesDictionary.NORMATIVE.getProperty());
+        interfaceDataDefinition.setUserCreated(!(normativeProperty instanceof Boolean && (Boolean) normativeProperty));
     }
 
     public InterfaceDataDefinition getInterfaceDataDefinition() {
@@ -75,6 +78,7 @@ public class InterfaceData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, interfaceDataDefinition.getCreationDate());
         addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, interfaceDataDefinition.getLastUpdateDate());
         addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, interfaceDataDefinition.getDescription());
+        addIfExists(map, GraphPropertiesDictionary.NORMATIVE, !interfaceDataDefinition.isUserCreated());
         return map;
     }
 }

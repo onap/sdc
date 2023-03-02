@@ -17,24 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
+import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
-
 public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
     @Getter
     @Setter
     private boolean userCreated;
+
     public InterfaceDataDefinition(String type, String description) {
         this();
         setType(type);
@@ -93,16 +94,16 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
         return (String) getToscaPresentationValue(TOSCA_RESOURCE_NAME);
     }
 
+    public void setToscaResourceName(String toscaResourceName) {
+        setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
+    }
+
     public Map<String, OperationDataDefinition> getOperations() {
         return (Map<String, OperationDataDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATIONS);
     }
 
     public void setOperations(Map<String, OperationDataDefinition> operations) {
         setToscaPresentationValue(JsonPresentationFields.OPERATIONS, operations);
-    }
-
-    public void setToscaResourceName(String toscaResourceName) {
-        setToscaPresentationValue(TOSCA_RESOURCE_NAME, toscaResourceName);
     }
 
     public Long getCreationDate() {
