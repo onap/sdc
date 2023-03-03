@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43bedb51_953147d5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/InterfaceTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-03T15:21:37Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to use buildErrorResponse() or buildGeneralErrorResponse()",
+      "range": {
+        "startLine": 68,
+        "startChar": 12,
+        "endLine": 69,
+        "endChar": 86
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7932da3d_87c05d50",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/InterfaceData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-03T15:21:37Z",
+      "side": 1,
+      "message": "I\u0027d change this for\n        final Object normativeProperty \u003d properties.get(GraphPropertiesDictionary.NORMATIVE.getProperty());\n        interfaceDataDefinition.setUserCreated(!(normativeProperty instanceof Boolean \u0026\u0026 (boolean) normativeProperty));",
+      "range": {
+        "startLine": 56,
+        "startChar": 8,
+        "endLine": 58,
+        "endChar": 56
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4b02e95_5ce349dc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-03T15:21:37Z",
+      "side": 1,
+      "message": "I\u0027d change for\n\n{\n        try (final GraphTraversalSource traversal \u003d janusGraphGenericDao.getJanusGraph().traversal()) {\n            traversal.V()\n                .has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), interfaceTypeId)\n                .out(GraphEdgeLabels.INTERFACE_OPERATION.getProperty())\n                .toList()\n                .forEach(interfaceOperationVertex -\u003e {\n                    traversal.V(interfaceOperationVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();\n                    interfaceOperationVertex.remove();\n                });\n            traversal.V().has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), interfaceTypeId).toList()\n                .forEach(interfaceTypeVertex -\u003e {\n                    traversal.V(interfaceTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();\n                    interfaceTypeVertex.remove();\n                });\n        } catch (Exception e) {\n            log.error(\"Bla-bla-bla\");\n        }\n    }\n\nby doing this :\n- inline unnecessary variables (interfaceOperationTypeList, interfaceTypeList, janusGraph)\n- close AutoCloseable traversal",
+      "range": {
+        "startLine": 900,
+        "startChar": 64,
+        "endLine": 917,
+        "endChar": 0
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "529b1e1c_9721477a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-03T15:21:37Z",
+      "side": 1,
+      "message": "uncovered code",
+      "range": {
+        "startLine": 900,
+        "startChar": 4,
+        "endLine": 921,
+        "endChar": 5
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57e29d3e_aee3b8a2",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/InterfaceDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-03T15:21:37Z",
+      "side": 1,
+      "message": "isn\u0027t\nnormative \u003d !userCreated\n?\n\ndo we need additional boolean?",
+      "range": {
+        "startLine": 37,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 0
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
