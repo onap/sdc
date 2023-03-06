@@ -41,7 +41,7 @@ node_types:
         type: string
         required: false
         metadata:
-          common: true
+          common: 'true'
         description: Specifies the organization that provides the automation composition element
       version:
         type: string
@@ -51,12 +51,12 @@ node_types:
         type: string
         required: true
         metadata:
-          common: true
+          common: 'true'
       participantType:
         type: string
         required: true
         metadata:
-          common: true
+          common: 'true'
         description: The identity of the participant type that hosts this type of Automation Composition Element
       startPhase:
         type: integer
@@ -64,7 +64,7 @@ node_types:
         constraints:
           - greater_or_equal: 0
         metadata:
-          common: true
+          common: 'true'
         description: A value indicating the start phase in which this automation composition element will be started, the
           first start phase is zero. Automation Composition Elements are started in their start_phase order and stopped
           in reverse start phase order. Automation Composition Elements with the same start phase are started and
@@ -76,7 +76,7 @@ node_types:
           - greater_or_equal: 0
         default: 60
         metadata:
-          common: true
+          common: 'true'
         description: The maximum time in seconds to wait for a state chage from uninitialized to passive
       passiveToRunningTimeout:
         type: integer
@@ -85,7 +85,7 @@ node_types:
           - greater_or_equal: 0
         default: 60
         metadata:
-          common: true
+          common: 'true'
         description: The maximum time in seconds to wait for a state chage from passive to running
       runningToPassiveTimeout:
         type: integer
@@ -94,7 +94,7 @@ node_types:
           - greater_or_equal: 0
         default: 60
         metadata:
-          common: true
+          common: 'true'
         description: The maximum time in seconds to wait for a state chage from running to passive
       passiveToUninitializedTimeout:
         type: integer
@@ -103,7 +103,7 @@ node_types:
           - greater_or_equal: 0
         default: 60
         metadata:
-          common: true
+          common: 'true'
         description: The maximum time in seconds to wait for a state chage from passive to uninitialized
   org.onap.policy.clamp.acm.AutomationComposition:
     derived_from: tosca.nodes.Root
@@ -112,7 +112,7 @@ node_types:
         type: string
         required: false
         metadata:
-          common: true
+          common: 'true'
         description: Specifies the organization that provides the automation composition element
       version:
         type: string
@@ -122,7 +122,7 @@ node_types:
         type: list
         required: true
         metadata:
-          common: true
+          common: 'true'
         entry_schema:
           type: string
         description: Specifies a list of automation composition element definitions that make up this automation composition definition
