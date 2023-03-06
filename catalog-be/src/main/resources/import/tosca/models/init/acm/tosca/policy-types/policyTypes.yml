@@ -17,12 +17,9 @@ onap.policies.monitoring.dcae-pm-subscription-handler:
       typeVersion: 0.0.0
       description: PMSH Policy JSON
       required: false
-      constraints: []
-      metadata: {}
   name: onap.policies.monitoring.dcae-pm-subscription-handler
   version: 1.0.0
   derived_from: onap.policies.Monitoring
-  metadata: {}
 onap.policies.acm.operational.Common:
   derived_from: tosca.policies.Root
   version: 1.0.0
