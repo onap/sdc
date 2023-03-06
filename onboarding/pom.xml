@@ -80,7 +80,6 @@
         <zusammen-index-store.version>1.0.0</zusammen-index-store.version>
         <zusammen-common-utilities.version>1.0.3</zusammen-common-utilities.version>
         <build.tools.version>${project.version}</build.tools.version>
-        <javax.servlet.version>${servlet-api.version}</javax.servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -197,8 +196,8 @@
                 <version>${aspectjrt.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api.version}</version>
                 <scope>provided</scope>
             </dependency>

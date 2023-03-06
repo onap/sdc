@@ -116,6 +116,10 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-http</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -377,13 +381,6 @@
             <scope>compile</scope>
         </dependency>
         <!-- http client END -->
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -733,6 +730,10 @@
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -813,6 +814,10 @@
                     <groupId>javax.jms</groupId>
                     <artifactId>jms</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -833,6 +838,10 @@
                 <exclusion>
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
