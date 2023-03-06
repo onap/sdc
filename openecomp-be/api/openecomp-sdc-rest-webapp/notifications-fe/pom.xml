@@ -23,12 +23,6 @@
             <artifactId>openecomp-sdc-notification-websocket</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
