@@ -56,7 +56,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <jakarta.el.version>3.0.4</jakarta.el.version>
 
         <netty.version>4.1.77.Final</netty.version>
-        <servlet-api.version>4.0.1</servlet-api.version>
+        <servlet-api.version>4.0.4</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>3.4.0</ecomp.version>
         <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
@@ -378,9 +378,10 @@ Modifications copyright (c) 2018-2019 Nokia
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>

@@ -291,6 +291,12 @@ limitations under the License.
             <artifactId>selenium-server</artifactId>
             <version>${selenium.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -364,6 +370,10 @@ limitations under the License.
                 <exclusion>
                     <groupId>org.owasp.esapi</groupId>
                     <artifactId>esapi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
