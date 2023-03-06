@@ -40,7 +40,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -83,6 +86,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Component
 public final class ImportUtils {
 
@@ -90,9 +94,6 @@ public final class ImportUtils {
     private static final Yaml strictYamlLoader = new YamlLoader().getStrictYamlLoader();
     private static final Logger log = Logger.getLogger(ImportUtils.class);
     private static ComponentsUtils componentsUtils;
-
-    private ImportUtils() {
-    }
 
     @Autowired
     public static void setComponentsUtils(ComponentsUtils cu) {
@@ -361,6 +362,7 @@ public final class ImportUtils {
         setJsonStringField(propertyValue, TypeUtils.ToscaTagNamesEnum.VALUE, propertyDef.getType(), propertyDef::setValue);
         setFieldBoolean(propertyValue, TypeUtils.ToscaTagNamesEnum.IS_PASSWORD, pass -> propertyDef.setPassword(Boolean.parseBoolean(pass)));
         setField(propertyValue, TypeUtils.ToscaTagNamesEnum.STATUS, propertyDef::setStatus);
+        setFieldMap(propertyValue, ToscaTagNamesEnum.METADATA, propertyDef::setMetadata);
         setSchema(propertyValue, propertyDef);
         setPropertyConstraints(propertyValue, propertyDef);
         return propertyDef;
@@ -533,7 +535,7 @@ public final class ImportUtils {
     private static void setFieldMap(final Map<String, Object> toscaJson, final ToscaTagNamesEnum tagName,
                                     final Consumer<Map<String, String>> setter) {
         final Either<Map<String, String>, ResultStatusEnum> toscaMapElement = findFirstToscaMapElement(toscaJson, tagName);
-        if (toscaMapElement.isLeft()) {
+        if (toscaMapElement.isLeft() && MapUtils.isNotEmpty(toscaMapElement.left().value())) {
             setter.accept(toscaMapElement.left().value());
         }
     }
@@ -770,6 +772,7 @@ public final class ImportUtils {
         }
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Constants {
 
         public static final String FIRST_NON_CERTIFIED_VERSION = "0.1";
@@ -790,7 +793,5 @@ public final class ImportUtils {
         public static final String VF_DESCRIPTION = "Nested VF in service";
         public static final String TENANT = "tenant";
 
-        private Constants() {
-        }
     }
 }

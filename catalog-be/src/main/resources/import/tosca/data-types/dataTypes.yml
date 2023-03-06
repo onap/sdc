@@ -232,7 +232,6 @@ org.openecomp.datatypes.heat.network.neutron.Subnet:
       type: map
       description: Extra parameters to include in the request
       required: false
-      default: {}
       status: supported
       entry_schema:
         type: string
@@ -252,7 +251,6 @@ org.openecomp.datatypes.heat.network.neutron.Subnet:
       type: list
       description: A specified set of DNS name servers to be used
       required: false
-      default: []
       status: supported
       entry_schema:
         type: string
@@ -342,7 +340,6 @@ org.openecomp.datatypes.heat.novaServer.network.PortExtraProperties:
       type: map
       description: Extra parameters to include in the request
       required: false
-      default: {}
       status: supported
       entry_schema:
         type: string
