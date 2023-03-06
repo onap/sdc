@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d966c700_4d744d58",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 794,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-06T11:33:22Z",
+      "side": 1,
+      "message": "if set TRUE should break",
+      "range": {
+        "startLine": 794,
+        "startChar": 36,
+        "endLine": 794,
+        "endChar": 64
+      },
+      "revId": "4472662a7080bc15c2d14f059200ba580ffcd51b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb2006f1_06545ffa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 819,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-06T11:33:22Z",
+      "side": 1,
+      "message": "do we expect to have more that one? \nif not, should break after first found",
+      "range": {
+        "startLine": 817,
+        "startChar": 28,
+        "endLine": 819,
+        "endChar": 25
+      },
+      "revId": "4472662a7080bc15c2d14f059200ba580ffcd51b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
