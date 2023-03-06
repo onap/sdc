@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1763f8df_61fd431a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/InterfaceTypeServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-06T15:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43bedb51_953147d5",
+      "range": {
+        "startLine": 68,
+        "startChar": 12,
+        "endLine": 69,
+        "endChar": 86
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7932da3d_87c05d50",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/InterfaceData.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "214f484a_d00f9be7",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/InterfaceData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-06T15:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7932da3d_87c05d50",
+      "range": {
+        "startLine": 56,
+        "startChar": 8,
+        "endLine": 58,
+        "endChar": 56
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "31a0e266_04a6be1b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-06T15:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4b02e95_5ce349dc",
+      "range": {
+        "startLine": 900,
+        "startChar": 64,
+        "endLine": 917,
+        "endChar": 0
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "529b1e1c_9721477a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "b7fde98d_483f5e18",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-06T15:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "529b1e1c_9721477a",
+      "range": {
+        "startLine": 900,
+        "startChar": 4,
+        "endLine": 921,
+        "endChar": 5
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57e29d3e_aee3b8a2",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/InterfaceDataDefinition.java",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abb88cdd_4b2baafa",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/InterfaceDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-06T15:27:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57e29d3e_aee3b8a2",
+      "range": {
+        "startLine": 37,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 0
+      },
+      "revId": "00f0be7432f625f0fc9b46232e82e5664ba47145",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
