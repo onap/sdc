@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd6448ad_fa0c3eeb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-07T12:45:34Z",
+      "side": 1,
+      "message": "Can be null if no inputs already exist",
+      "range": {
+        "startLine": 445,
+        "startChar": 63,
+        "endLine": 445,
+        "endChar": 84
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3d2a9f7_72a12fa2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-07T12:45:34Z",
+      "side": 1,
+      "message": "rename existingInput",
+      "range": {
+        "startLine": 446,
+        "startChar": 37,
+        "endLine": 446,
+        "endChar": 52
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89e48c95_392cccc8",
+        "filename": "catalog-ui/src/assets/languages/en_US.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-07T12:45:34Z",
+      "side": 1,
+      "message": "Change to \"Enter name of input to be created\"",
+      "range": {
+        "startLine": 522,
+        "startChar": 32,
+        "endLine": 522,
+        "endChar": 64
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfe00df1_cc0e9844",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-07T12:45:34Z",
+      "side": 1,
+      "message": "This seems to be only used for ComponentInstancePropInput subclass, can we just add it there, or do you see an advantage to adding here instead",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 29
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
