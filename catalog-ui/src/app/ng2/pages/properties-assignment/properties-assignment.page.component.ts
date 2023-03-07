@@ -124,6 +124,7 @@ export class PropertiesAssignmentComponent {
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
     componentInstancePropertyMap : PropertiesGroup;
+    defaultInputName: string;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -805,6 +806,32 @@ export class PropertiesAssignmentComponent {
             }, error => {}); //ignore error
     };
 
+    generateDefaultInputName = (): string => {
+        let defaultInputName: string;
+        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
+        angular.forEach(instancesIds, (instanceId: string) => {
+            let selectedProperty: PropertyBEModel = new PropertyBEModel(this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId])[0]);
+            let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == selectedProperty.parentUniqueId);
+            defaultInputName = this.generateInputName(selectedInstanceData.invariantName, selectedProperty.name);
+        });
+        return defaultInputName;
+    }
+
+    private generateInputName = (componentName: string, propertyName: string): string => {
+        let inputName: string;
+        if (propertyName) {
+            if (propertyName.includes("::")) {
+                propertyName = propertyName.replace("::", "_");
+            }
+            if (componentName) {
+                inputName = componentName + "_" + propertyName;
+            } else {
+                inputName = propertyName;
+            }
+        }
+        return inputName;
+    }
+
     private openAddInputNameAndDeclareInputModal = (): void => {
         const modalTitle = this.translateService.translate('ADD_INPUT_NAME_TO_DECLARE');
         const modalButtons = [];
@@ -832,7 +859,7 @@ export class PropertiesAssignmentComponent {
         modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
             this.modalService.closeCurrentModal();
         }));
-        this.modalService.addDynamicContentToModal(modal, DeclareInputComponent, {});
+        this.modalService.addDynamicContentToModal(modal, DeclareInputComponent, {defaultInputName: this.generateDefaultInputName()});
         modal.instance.open();
     }
 
