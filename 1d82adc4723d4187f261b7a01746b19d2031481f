@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "73bf8134_bf78220f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-07T16:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd6448ad_fa0c3eeb",
+      "range": {
+        "startLine": 445,
+        "startChar": 63,
+        "endLine": 445,
+        "endChar": 84
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3d2a9f7_72a12fa2",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "585c09bc_ccf5a963",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-07T16:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3d2a9f7_72a12fa2",
+      "range": {
+        "startLine": 446,
+        "startChar": 37,
+        "endLine": 446,
+        "endChar": 52
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "26e22ab9_d460dd1d",
+        "filename": "catalog-ui/src/assets/languages/en_US.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-07T16:23:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89e48c95_392cccc8",
+      "range": {
+        "startLine": 522,
+        "startChar": 32,
+        "endLine": 522,
+        "endChar": 64
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cfe00df1_cc0e9844",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b12b680d_d294fe24",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-07T16:23:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cfe00df1_cc0e9844",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 29
+      },
+      "revId": "1d82adc4723d4187f261b7a01746b19d2031481f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
