@@ -124,6 +124,7 @@ export class PropertiesAssignmentComponent {
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
     componentInstancePropertyMap : PropertiesGroup;
+    defaultInputName: string;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -805,6 +806,22 @@ export class PropertiesAssignmentComponent {
             }, error => {}); //ignore error
     };
 
+    generateDefaultInputName = (): string => {
+        let defaultInputName: string;
+        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
+        angular.forEach(instancesIds, (instanceId: string) => {
+            let selectedProperty: PropertyBEModel = new PropertyBEModel(this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId])[0]);
+            let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == selectedProperty.parentUniqueId);
+            let selectedComponent: ComponentInstance = new ComponentInstance(selectedInstanceData);
+            if (selectedComponent.invariantName) {
+                defaultInputName = selectedComponent.invariantName + "_" + selectedProperty.name;
+            } else {
+                defaultInputName = selectedComponent.name + "_" + selectedProperty.name;
+            }
+        });
+        return defaultInputName;
+    }
+
     private openAddInputNameAndDeclareInputModal = (): void => {
         const modalTitle = this.translateService.translate('ADD_INPUT_NAME_TO_DECLARE');
         const modalButtons = [];
@@ -832,7 +849,7 @@ export class PropertiesAssignmentComponent {
         modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
             this.modalService.closeCurrentModal();
         }));
-        this.modalService.addDynamicContentToModal(modal, DeclareInputComponent, {});
+        this.modalService.addDynamicContentToModal(modal, DeclareInputComponent, {defaultInputName: this.generateDefaultInputName()});
         modal.instance.open();
     }
 
