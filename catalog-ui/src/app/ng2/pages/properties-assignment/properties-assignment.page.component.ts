@@ -1200,6 +1200,8 @@ export class PropertiesAssignmentComponent {
     //used for declare button, to keep count of newly checked properties (and ignore declared properties)
     updateCheckedPropertyCount = (increment: boolean): void => {
         this.checkedPropertiesCount += (increment) ? 1 : -1;
+        this.checkedToscaCount = 0;
+        this.enableToscaFunction = false;
         console.debug("CheckedProperties count is now.... " + this.checkedPropertiesCount);
     };
 
