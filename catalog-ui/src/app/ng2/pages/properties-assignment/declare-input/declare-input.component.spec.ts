@@ -19,25 +19,33 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeclareInputComponent } from './declare-input.component';
+import {ModalService} from "../../../services/modal.service";
+import {DynamicComponentService} from "../../../services/dynamic-component.service";
 
 describe('DeclareInputComponent', () => {
   let component: DeclareInputComponent;
   let fixture: ComponentFixture<DeclareInputComponent>;
+  let modalService: ModalService;
+  let dynamicComponentService: DynamicComponentService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DeclareInputComponent ]
+      declarations: [ DeclareInputComponent ],
+      providers: [ ModalService, DynamicComponentService]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DeclareInputComponent);
+    modalService = TestBed.get(ModalService);
+    dynamicComponentService = TestBed.get(DynamicComponentService);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(modalService).toBeTruthy();
+    expect(dynamicComponentService).toBeTruthy();
   });
 });
