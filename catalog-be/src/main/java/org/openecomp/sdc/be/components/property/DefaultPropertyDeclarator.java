@@ -479,6 +479,9 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             op.ifPresent(getInputsValues::remove);
         }
         inputValue.setGetInputValues(getInputsValues);
+        if (CollectionUtils.isEmpty(inputValue.getGetInputValues()) && inputValue.getToscaFunction() != null) {
+            inputValue.setToscaFunction(null);
+        }
         return deleteEither;
     }
 
