@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6243a44_dac8f444",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-08T10:30:05Z",
+      "side": 1,
+      "message": "The solution is fine for properties of an instance but in the case of inputs generated from the SELF properties, the default input name should be the same as the property name, i.e. for property \"testProp\" the default name should be \"testProp\" rather than \"SELF_testProp\"\n\nalso, in case where the property name includes \"::\" replace the \"::\" with \"_\"",
+      "range": {
+        "startLine": 809,
+        "startChar": 3,
+        "endLine": 824,
+        "endChar": 0
+      },
+      "revId": "6d2327f5d344184c71415cd4ca70d21ba5bea5fa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
