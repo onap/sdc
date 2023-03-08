@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df6c9cb7_45f69e47",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-08T15:21:54Z",
+      "side": 1,
+      "message": "I think inserting this here will address the issue Vasyl raised:\n\n        if (filterConstraint.getOperator().equals(ConstraintType.VALID_VALUES) || filterConstraint.getOperator().equals(ConstraintType.IN_RANGE)) {\n            return isValidValueCheck(\"list\", componentInstanceProperty.getType(), parentComponent.getModel(),\n                    filterConstraint.getValue(), filterConstraint.getPropertyName());\n        }",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 9
+      },
+      "revId": "93a1ed415b6cabc19f88339a0cdbec1a4df15aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
