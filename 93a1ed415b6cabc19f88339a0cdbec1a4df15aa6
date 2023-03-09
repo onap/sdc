@@ -22,6 +22,30 @@
       "revId": "93a1ed415b6cabc19f88339a0cdbec1a4df15aa6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e977d4dc_030445d2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-03-09T09:21:25Z",
+      "side": 1,
+      "message": "By inserting this, not here, but in previous method (validateStaticValueAndOperator), the issue Vasy raised has been addressed",
+      "parentUuid": "df6c9cb7_45f69e47",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 9
+      },
+      "revId": "93a1ed415b6cabc19f88339a0cdbec1a4df15aa6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
