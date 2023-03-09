@@ -45,6 +45,54 @@
       "revId": "3b4c721fdd4dfc14ab29a60ee45db3ca0cd9caf3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72e12b28_930ac65b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-09T17:07:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9189fceb_82f2850d",
+      "range": {
+        "startLine": 1764,
+        "startChar": 30,
+        "endLine": 1764,
+        "endChar": 52
+      },
+      "revId": "3b4c721fdd4dfc14ab29a60ee45db3ca0cd9caf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97c29fcc_113f9454",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1764,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-09T17:07:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3d70bb5_154efc67",
+      "range": {
+        "startLine": 1764,
+        "startChar": 0,
+        "endLine": 1764,
+        "endChar": 71
+      },
+      "revId": "3b4c721fdd4dfc14ab29a60ee45db3ca0cd9caf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
