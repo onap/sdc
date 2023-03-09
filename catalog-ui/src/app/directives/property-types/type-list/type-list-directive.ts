@@ -46,6 +46,7 @@ export interface ITypeListScope extends ng.IScope {
     showToscaFunction: Array<boolean>;
     constraints:string[];
     types:DataTypesMap;
+    isService:boolean;
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -83,7 +84,8 @@ export class TypeListDirective implements ng.IDirective {
         defaultValue: '@',//this list default value
         maxLength: '=',
         constraints: '=',
-        types: '='
+        types: '=',
+        isService: '='
     };
 
     restrict = 'E';

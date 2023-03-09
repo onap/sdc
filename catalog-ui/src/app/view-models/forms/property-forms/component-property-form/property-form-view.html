@@ -185,6 +185,7 @@
                                           default-value="{{getDefaultValue()}}"
                                           max-length="maxLength"
                                           types="dataTypes"
+                                          is-service="!componentMetadata.isVfc"
                                           constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues">
                                 </type-map>
                             </div>
@@ -200,6 +201,7 @@
                                            default-value="{{getDefaultValue()}}"
                                            max-length="maxLength"
                                            types="dataTypes"
+                                           is-service="!componentMetadata.isVfc"
                                            constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues"></type-list>
                             </div>
 

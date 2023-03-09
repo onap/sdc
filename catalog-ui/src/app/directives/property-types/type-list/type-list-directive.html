@@ -28,7 +28,7 @@
         <div data-ng-if="!isSchemaTypeDataType">
             <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}"
                 ng-if="schemaProperty.type !== 'map'">
-                <form class="temp-form">
+                <form class="temp-form" data-ng-if="isService">
                     <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/> 
                     Value
                     <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" /> 
