@@ -188,7 +188,7 @@ export class PropertyFormViewModel {
 
     private initForNotSimpleType = ():void => {
         const property = this.$scope.editPropertyModel.property;
-        this.$scope.isTypeDataType = this.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
+        this.$scope.isTypeDataType = this.DataTypesService.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
         if (property.isToscaFunction()) {
             this.initValueForGetFunction();
             return;
@@ -305,6 +305,7 @@ export class PropertyFormViewModel {
             }
         }
         this.initResource();
+        this.initForNotSimpleType();
         this.initComponentInstanceMap();
 
         this.$scope.validateJson = (json:string):boolean => {
@@ -320,7 +321,6 @@ export class PropertyFormViewModel {
             this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
                 return this.$scope.editPropertyModel.types.indexOf(type) == -1;
             });
-            this.initForNotSimpleType();
             this.$scope.isLoading = false;
         });
 
