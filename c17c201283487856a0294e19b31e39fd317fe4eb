@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c6671402_67219fe0",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 6
+      },
+      "lineNbr": 814,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-09T11:44:36Z",
+      "side": 1,
+      "message": "This does not work in the case where the property is defined in a node type that the subst. mapping type inherits from (as the parentUniqueId is not equal to the instanceId)",
+      "range": {
+        "startLine": 814,
+        "startChar": 12,
+        "endLine": 814,
+        "endChar": 130
+      },
+      "revId": "c17c201283487856a0294e19b31e39fd317fe4eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
