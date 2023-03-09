@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8edd017e_6dc7ce98",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1788,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-09T22:28:20Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 1787,
+        "startChar": 8,
+        "endLine": 1788,
+        "endChar": 143
+      },
+      "revId": "1fb7f51f3d159a68abea96b1bd292117be4ef314",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c17578ff_005b10a1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ComponentInstancePropInput.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-09T22:28:20Z",
+      "side": 1,
+      "message": "replace all with lombok Getter/Setter",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 58,
+        "endChar": 5
+      },
+      "revId": "1fb7f51f3d159a68abea96b1bd292117be4ef314",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
