@@ -48,6 +48,7 @@ export interface ITypeMapScope extends ng.IScope {
     showAddBtn: boolean;
     showToscaFunction: boolean[];
     types: DataTypesMap;
+    isService: boolean;
 
     getValidationPattern(type: string): RegExp;
     validateIntRange(value: string): boolean;
@@ -75,7 +76,8 @@ export class TypeMapDirective implements ng.IDirective {
         constraints: '=',
         showAddBtn: '=?',
         parentProperty: '=',
-        types: '='
+        types: '=',
+        isService: '='
     };
 
     restrict = 'E';
