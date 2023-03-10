@@ -19,6 +19,7 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -97,6 +98,10 @@ import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -1036,6 +1041,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate) {
         try {
             boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentService.getVersion());
+            if (isSubstitutionNodeChanged(currentService, serviceUpdate)) {
+                List<String> subNodePropsToBeRemoved = substitutionNodePropertiesToBeRemoved(currentService, serviceUpdate);
+                areSubstitutionNodePropertiesInUse(currentService, subNodePropsToBeRemoved);
+            }
+
             Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate, hasBeenCertified,
                 UPDATE_SERVICE_METADATA);
             if (response.isRight()) {
@@ -1101,6 +1111,54 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(responseFormat);
         }
     }
+
+    private void areSubstitutionNodePropertiesInUse(Service service, List<String> subNodePropsToBeRemoved) {
+        Map<String, List<ComponentInstanceProperty>> componentInstancesProps = service.getComponentInstancesProperties();
+        Map<String, List<String>> inUse = new HashMap<>();
+        if (componentInstancesProps != null && !componentInstancesProps.isEmpty()) {
+            componentInstancesProps.forEach((compInstanceId, listOfProps) -> {
+                List<String> propsInUse = new ArrayList<>();
+                listOfProps.stream()
+                    .filter(PropertyDataDefinition::isToscaFunction)
+                    .filter(compProp -> ToscaFunctionType.isGetFunction(compProp.getToscaFunction().getType()))
+                    .forEach(compProp -> {
+                        ToscaFunction toscaFunction = compProp.getToscaFunction();
+                        ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) toscaFunction;
+                        String propName = toscaGetFunction.getPropertyName();
+                        if (subNodePropsToBeRemoved.contains(propName)) {
+                            propsInUse.add(compProp.getName());
+                        }
+                    });
+                if(!propsInUse.isEmpty()) {
+                    Optional<ComponentInstance> componentInstance = service.getComponentInstanceById(compInstanceId);
+                    componentInstance.ifPresent(instance -> inUse.put(instance.getName(), propsInUse));
+                }
+
+            });
+        }
+        if (!inUse.isEmpty()) {
+            throw new ByActionStatusComponentException(ActionStatus.SUBSTITUTION_NODE_TYPE_PROPERTY_IN_USE, String.valueOf(inUse));
+        }
+    }
+
+
+    private boolean isSubstitutionNodeChanged(Service currentService, Service updatedService) {
+        String currentServiceType = currentService.getDerivedFromGenericType();
+        String updatedServiceType = updatedService.getDerivedFromGenericType();
+        String currentServiceVersion = currentService.getDerivedFromGenericVersion();
+        String updatedServiceVersion = updatedService.getDerivedFromGenericVersion();
+        return !(StringUtils.equals(currentServiceType, updatedServiceType) && StringUtils.equals(currentServiceVersion, updatedServiceVersion));
+    }
+
+    private List<String> substitutionNodePropertiesToBeRemoved(Service currentService, Service serviceUpdate) {
+        List<PropertyDefinition> currentProps = fetchDerivedFromGenericType(currentService, null).getProperties();
+        List<PropertyDefinition> updatedProps = fetchDerivedFromGenericType(serviceUpdate, null).getProperties();
+        Set<String> updatedPropNames = updatedProps.stream().map(PropertyDefinition::getName).collect(Collectors.toSet());
+        List<String> propNamesToBeRemoved = currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
+        propNamesToBeRemoved.removeIf(updatedPropNames::contains);
+        return propNamesToBeRemoved;
+    }
+
 
     private void verifyValuesAreIdentical(Object updatedValue, Object originalValue, String fieldName) {
         if (updatedValue != null && !updatedValue.equals(originalValue)) {
