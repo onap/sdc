@@ -22,6 +22,30 @@
       "revId": "7511bba2d66829bba2243eeaba282b568d9cc773",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cfef40b_53f3fe1e",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/InterfaceData.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-10T17:36:07Z",
+      "side": 1,
+      "message": "I am not seeing this interaction when normativeProperty is true, but I will set as Boolean as both seem to work",
+      "parentUuid": "5d386dc8_4e5542e0",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 119
+      },
+      "revId": "7511bba2d66829bba2243eeaba282b568d9cc773",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
