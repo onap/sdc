@@ -46,4 +46,9 @@ public enum ToscaFunctionType {
         }
         return Arrays.stream(values()).filter(toscaFunctionType -> toscaFunctionType.getName().equalsIgnoreCase(functionType)).findFirst();
     }
+
+    public static boolean isGetFunction(final ToscaFunctionType functionType) {
+        return GET_INPUT.equals(functionType) || GET_PROPERTY.equals(functionType) || GET_ATTRIBUTE.equals(functionType);
+    }
+
 }
