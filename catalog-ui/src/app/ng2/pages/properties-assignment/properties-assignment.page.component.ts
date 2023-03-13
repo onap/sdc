@@ -833,6 +833,10 @@ export class PropertiesAssignmentComponent {
     }
 
     private openAddInputNameAndDeclareInputModal = (): void => {
+        if (this.checkedPropertiesCount > 1){
+          this.declareInputFromProperties(null);
+          return;
+        }
         const modalTitle = this.translateService.translate('ADD_INPUT_NAME_TO_DECLARE');
         const modalButtons = [];
         const modal = this.modalService.createCustomModal(new ModalModel(
