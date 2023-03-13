@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a7d5421_9e0faa71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-13T17:01:23Z",
+      "side": 1,
+      "message": "could be protected",
+      "range": {
+        "startLine": 728,
+        "startChar": 4,
+        "endLine": 728,
+        "endChar": 10
+      },
+      "revId": "82dfb88ec41bdebe6ffcaf2090296185683c5197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e972e8f8_7c48c3f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1153,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-13T17:01:23Z",
+      "side": 1,
+      "message": "potential NPE",
+      "range": {
+        "startLine": 1153,
+        "startChar": 0,
+        "endLine": 1153,
+        "endChar": 119
+      },
+      "revId": "82dfb88ec41bdebe6ffcaf2090296185683c5197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddd04576_0c2de3ec",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionType.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-13T17:01:23Z",
+      "side": 1,
+      "message": "flip .equals() to avoid NPE",
+      "range": {
+        "startLine": 51,
+        "startChar": 15,
+        "endLine": 51,
+        "endChar": 120
+      },
+      "revId": "82dfb88ec41bdebe6ffcaf2090296185683c5197",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
