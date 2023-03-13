@@ -350,14 +350,13 @@ export class ConstraintsComponent implements OnInit {
       });
 
       const valRef = newForm.get('value') as FormArray;
-
       if (constraint.hasOwnProperty(ConstraintTypes.valid_values)) {
         constraint.validValues.forEach((val) => {
-          valRef.push(new FormControl(val, this.constraintValidators));
+          valRef.push(new FormControl({value: val, disabled: this.isViewOnly}, this.constraintValidators));
         });
       } else {
         constraint.inRange.forEach((val) => {
-          valRef.push(new FormControl(val, this.constraintValidators));
+          valRef.push(new FormControl({value: val, disabled: this.isViewOnly}, this.constraintValidators));
         });
       }
 
