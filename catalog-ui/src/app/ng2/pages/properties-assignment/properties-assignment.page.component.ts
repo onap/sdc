@@ -739,8 +739,16 @@ export class PropertiesAssignmentComponent {
         });
     }
 
+    declareInput = (): void => {
+        if (this.checkedPropertiesCount == 1) {
+            this.openAddInputNameAndDeclareInputModal();
+        } else if (this.checkedPropertiesCount > 1) {
+            this.declareInputFromProperties();
+        }
+    }
+
     /*** DECLARE PROPERTIES/INPUTS ***/
-    declareInputFromProperties = (inputName:string): void => {
+    declareInputFromProperties = (inputName?: string): void => {
         console.debug("==>" + this.constructor.name + ": declareProperties");
 
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
@@ -831,7 +839,7 @@ export class PropertiesAssignmentComponent {
         let inputName: string;
         if (propertyName) {
             if (propertyName.includes("::")) {
-                propertyName = propertyName.replace("::", "_");
+                propertyName = propertyName.replace(/::/g, "_");
             }
             if (componentName) {
                 inputName = componentName + "_" + propertyName;
