@@ -88,8 +88,9 @@
                 </div>
                 <div class="w-sdc-form-columns-wrapper" *ngFor="let value of constraintValuesArray(constraintIndex).controls; let valueIndex = index; trackBy:trackByFn">
                   <div class="w-sdc-form-column">
-                    <input type="text" class="i-sdc-form-input" required
+                    <input type="text" class="i-sdc-form-input" required 
                       [value]="value.value"
+                      [disabled]=isViewOnly
                       (input)="onChangeConstrainValueIndex(constraintIndex, $event.target.value, valueIndex)"/>
                   </div>
 
