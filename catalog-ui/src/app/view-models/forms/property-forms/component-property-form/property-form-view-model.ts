@@ -396,6 +396,7 @@ export class PropertyFormViewModel {
                 } else {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
                         property.defaultValue = JSON.stringify(this.$scope.myValue);
+                        property.value = JSON.stringify(this.$scope.myValue);
                     } else {
                         this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
                     }
