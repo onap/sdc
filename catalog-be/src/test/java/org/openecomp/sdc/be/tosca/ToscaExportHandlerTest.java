@@ -121,6 +121,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     private static final String RESOURCE_NAME = "resource";
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String LOCAL_INTERFACE_TYPE = "Local";
+    public static final String UNIQUE_ID = "1L";
 
     @InjectMocks
     private ToscaExportHandler testSubject;
@@ -1623,6 +1624,8 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         Component originComponent = new Service();
         RelationshipInfo reqAndRelationshipPair = new RelationshipInfo();
         RequirementDefinition requirement = new RequirementDefinition();
+        requirement.setUniqueId(UNIQUE_ID);
+        reqAndRelationshipPair.setRequirementUid(UNIQUE_ID);
         String fromInstanceId = "";
         boolean result;
 

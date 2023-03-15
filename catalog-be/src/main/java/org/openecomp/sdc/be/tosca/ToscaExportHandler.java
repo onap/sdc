@@ -1579,6 +1579,9 @@ public class ToscaExportHandler {
      */
     private boolean isRequirementBelongToRelation(Component originComponent, RelationshipInfo reqAndRelationshipPair,
                                                   RequirementDefinition requirement, String fromInstanceId) {
+        if (originComponent.isService() && requirement.getUniqueId().equals(reqAndRelationshipPair.getRequirementUid())) {
+            return true;
+        }
         if (!StringUtils.equals(requirement.getName(), reqAndRelationshipPair.getRequirement())) {
             log.debug("Failed to find a requirement with name {} and  reqAndRelationshipPair {}", requirement.getName(),
                 reqAndRelationshipPair.getRequirement());
