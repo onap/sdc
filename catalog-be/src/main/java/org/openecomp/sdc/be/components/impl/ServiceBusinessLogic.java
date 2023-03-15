@@ -194,7 +194,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator;
     private final ServiceCategoryValidator serviceCategoryValidator;
     private final ServiceValidator serviceValidator;
-    private final PolicyBusinessLogic policyBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
@@ -214,8 +213,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation,
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
-                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator,
-                                final PolicyBusinessLogic policyBusinessLogic) {
+                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -229,7 +227,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceInstantiationTypeValidator = serviceInstantiationTypeValidator;
         this.serviceCategoryValidator = serviceCategoryValidator;
         this.serviceValidator = serviceValidator;
-        this.policyBusinessLogic = policyBusinessLogic;
         this.groupBusinessLogic = groupBusinessLogic;
     }
 
@@ -853,21 +850,42 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.info("Restricted operation for user: {}, on service: {}", user.getUserId(), currentService.getCreatorUserId());
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
-        Either<Service, ResponseFormat> validationRsponse = validateAndUpdateServiceMetadata(user, currentService, serviceUpdate);
-        if (validationRsponse.isRight()) {
+        List<String> subNodePropsToBeRemoved = substitutionNodePropertiesToBeRemoved(currentService, serviceUpdate);
+        List<PropertyDefinition> subNodePropsToBeAdded = substitutionNodePropertiesToBeAdded(currentService, serviceUpdate);
+        boolean subNodeChanged = isSubstitutionNodeChanged(currentService, serviceUpdate);
+        Either<Service, ResponseFormat> validationResponse =
+            validateAndUpdateServiceMetadata(user, currentService, serviceUpdate, subNodeChanged, ListUtils.emptyIfNull(subNodePropsToBeRemoved));
+        if (validationResponse.isRight()) {
             log.info("service update metadata: validations field.");
-            return validationRsponse;
+            return validationResponse;
         }
-        Service serviceToUpdate = validationRsponse.left().value();
+        Service serviceToUpdate = validationResponse.left().value();
         // lock resource
         lockComponent(serviceId, currentService, "Update Service Metadata");
         try {
+            if (subNodeChanged) {
+                if (!subNodePropsToBeRemoved.isEmpty()) {
+                    removePropertiesFromService(currentService, subNodePropsToBeRemoved);
+                    removeInputsFromService(currentService, subNodePropsToBeRemoved);
+                }
+                if (!subNodePropsToBeAdded.isEmpty()) {
+                    addPropertiesToService(currentService, subNodePropsToBeAdded);
+                    if (Constants.DEFAULT_MODEL_NAME.equals(currentService.getModel()) || currentService.getModel() == null) {
+                        addInputsToService(currentService, subNodePropsToBeAdded);
+                    }
+                }
+            }
             return toscaOperationFacade.updateToscaElement(serviceToUpdate).right().map(rf -> {
                 janusGraphDao.rollback();
                 BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
                 log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
                 return (componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
             }).left().bind(this::updateCatalogAndCommit);
+        } catch (ComponentException e) {
+            janusGraphDao.rollback();
+            BeEcompErrorManager.getInstance().logBeSystemError("Update Service Metadata");
+            log.debug("failed to update sevice {}", serviceToUpdate.getUniqueId());
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         } finally {
             graphLockOperation.unlockComponent(serviceId, NodeTypeEnum.Service);
         }
@@ -1038,12 +1056,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @VisibleForTesting
-    Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate) {
+    Either<Service, ResponseFormat> validateAndUpdateServiceMetadata(User user, Service currentService, Service serviceUpdate, boolean subNodeChanged,
+                                                                     List<String> subNodePropsToBeRemoved) {
         try {
             boolean hasBeenCertified = ValidationUtils.hasBeenCertified(currentService.getVersion());
-            if (isSubstitutionNodeChanged(currentService, serviceUpdate)) {
-                List<String> subNodePropsToBeRemoved = substitutionNodePropertiesToBeRemoved(currentService, serviceUpdate);
-                areSubstitutionNodePropertiesInUse(currentService, subNodePropsToBeRemoved);
+            if (subNodeChanged) {
+                if (!subNodePropsToBeRemoved.isEmpty()) {
+                    areSubstitutionNodePropertiesInUse(currentService, subNodePropsToBeRemoved);
+                }
+                currentService.setDerivedFromGenericVersion(serviceUpdate.getDerivedFromGenericVersion());
+                currentService.setDerivedFromGenericType(serviceUpdate.getDerivedFromGenericType());
             }
 
             Either<Boolean, ResponseFormat> response = validateAndUpdateCategory(user, currentService, serviceUpdate, hasBeenCertified,
@@ -1112,6 +1134,55 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
+    private void addPropertiesToService(Service currentService, List<PropertyDefinition> subNodePropsToBeAdded) {
+        ListUtils.emptyIfNull(subNodePropsToBeAdded).forEach(prop -> {
+            Either<PropertyDefinition, StorageOperationStatus> addPropertyEither =
+                toscaOperationFacade.addPropertyToComponent(prop, currentService);
+            if (addPropertyEither.isRight()) {
+                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            }
+        });
+    }
+
+    private void addInputsToService(Service currentService, List<PropertyDefinition> subNodePropsToBeAdded) {
+            ListUtils.emptyIfNull(subNodePropsToBeAdded).forEach(prop -> {
+                InputDefinition inputDef = new InputDefinition(prop);
+                Either<InputDefinition, StorageOperationStatus> status =
+                        toscaOperationFacade.addInputToComponent(prop.getName(), inputDef, currentService);
+                if (status.isRight()) {
+                    throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+                }
+            });
+    }
+
+    private void removePropertiesFromService(Service currentService, List<String> subNodePropsToBeRemoved) {
+        List<PropertyDefinition> props = currentService.getProperties();
+        List<String> propsUniqueIdsToBeRemoved =
+            props.stream().filter(prop -> subNodePropsToBeRemoved.contains(prop.getName())).map(PropertyDefinition::getUniqueId)
+                .collect(Collectors.toList());
+        ListUtils.emptyIfNull(props).stream().filter(prop -> propsUniqueIdsToBeRemoved.contains(prop.getUniqueId())).forEach(prop -> {
+            StorageOperationStatus status = toscaOperationFacade.deletePropertyOfComponent(currentService, prop.getName());
+            if (status != StorageOperationStatus.OK) {
+                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            }
+        });
+    }
+
+    private void removeInputsFromService(Service currentService, List<String> subNodePropsToBeRemoved) {
+        List<PropertyDefinition> props = currentService.getProperties();
+        List<InputDefinition> inputs = currentService.getInputs();
+        List<String> propsUniqueIdsToBeRemoved =
+            props.stream().filter(prop -> subNodePropsToBeRemoved.contains(prop.getName())).map(PropertyDefinition::getUniqueId)
+                .collect(Collectors.toList());
+        ListUtils.emptyIfNull(inputs).stream().filter(input -> input.isMappedToComponentProperty() &&
+            (propsUniqueIdsToBeRemoved.contains(input.getPropertyId()) || subNodePropsToBeRemoved.contains(input.getName()))).forEach(input -> {
+            StorageOperationStatus status = toscaOperationFacade.deleteInputOfResource(currentService, input.getName());
+            if (status != StorageOperationStatus.OK) {
+                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            }
+        });
+    }
+
     private void areSubstitutionNodePropertiesInUse(Service service, List<String> subNodePropsToBeRemoved) {
         Map<String, List<ComponentInstanceProperty>> componentInstancesProps = service.getComponentInstancesProperties();
         List<String> propsUniqueIdsToBeRemoved =
@@ -1161,12 +1232,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private List<String> substitutionNodePropertiesToBeRemoved(Service currentService, Service serviceUpdate) {
-        List<PropertyDefinition> currentProps = fetchDerivedFromGenericType(currentService, null).getProperties();
-        List<PropertyDefinition> updatedProps = fetchDerivedFromGenericType(serviceUpdate, null).getProperties();
-        Set<String> updatedPropNames = updatedProps.stream().map(PropertyDefinition::getName).collect(Collectors.toSet());
+        List<PropertyDefinition> currentProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(currentService, null).getProperties());
+        List<PropertyDefinition> updatedProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(serviceUpdate, null).getProperties());
+        if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
+            return currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
+        }
+        List<String> updatedPropNames = updatedProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
         List<String> propNamesToBeRemoved = currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
         propNamesToBeRemoved.removeIf(updatedPropNames::contains);
         return propNamesToBeRemoved;
+    }
+
+    private List<PropertyDefinition> substitutionNodePropertiesToBeAdded(Service currentService, Service serviceUpdate) {
+        List<PropertyDefinition> currentProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(currentService, null).getProperties());
+        List<PropertyDefinition> updatedProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(serviceUpdate, null).getProperties());
+        if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
+            return updatedProps;
+        }
+        Set<String> currentPropNames = currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toSet());
+        updatedProps.removeIf(prop -> currentPropNames.contains(prop.getName()));
+        return updatedProps;
     }
 
 
