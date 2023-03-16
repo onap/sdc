@@ -196,6 +196,9 @@ public class YamlTemplateParsingHandler {
                 parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
                 parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
             }
+            if (substitutionMappings.get("properties") != null) {
+                parsedToscaYamlInfo.setSubstitutionMappingProperties((Map<String, List<String>>) substitutionMappings.get("properties"));
+            }
             parsedToscaYamlInfo.setSubstitutionMappingNodeType((String) substitutionMappings.get(NODE_TYPE.getElementName()));
         }
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);

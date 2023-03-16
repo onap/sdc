@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.be.model;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,4 +41,5 @@ public class ParsedToscaYamlInfo {
     Map<String, PropertyDefinition> properties;
     ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties;
     String substitutionMappingNodeType;
+    Map<String, List<String>> substitutionMappingProperties;
 }
