@@ -736,7 +736,7 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
-            service = updateInputs(service, userId);
+            service = updateInputs(service, userId, parsedToscaYamlInfo.getSubstitutionMappingProperties());
 
             ASDCKpiApi.countCreatedResourcesKPI();
             return service;
@@ -758,7 +758,7 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    private Service updateInputs(final Service component, final String userId) {
+    private Service updateInputs(final Service component, final String userId, final Map<String, List<String>> substitutionMappingProperties) {
         final List<InputDefinition> inputs = component.getInputs();
         if (CollectionUtils.isNotEmpty(inputs)) {
             final List<ComponentInstance> componentInstances = component.getComponentInstances();
@@ -767,7 +767,7 @@ public class ServiceImportBusinessLogic {
                 if (isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentUniqueId);
                 } else {
-                    associateInputToServiceProperty(userId, input, component);
+                    associateInputToServiceProperty(userId, input, component, substitutionMappingProperties);
                 }
             }
 
@@ -836,11 +836,18 @@ public class ServiceImportBusinessLogic {
     }
 
     private void associateInputToServiceProperty(final String userId,
-                                                 final InputDefinition input, final Service component) {
+                                                 final InputDefinition input, final Service component,
+                                                 final Map<String, List<String>> substitutionMappingProperties) {
         final List<PropertyDefinition> properties = component.getProperties();
-        if (CollectionUtils.isNotEmpty(properties)) {
-            final String propertyNameFromInput = input.getName();
-            final Optional<PropertyDefinition> propDefOptional = properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput))
+        if (CollectionUtils.isNotEmpty(properties) && MapUtils.isNotEmpty(substitutionMappingProperties)) {
+            AtomicReference<String> propertyNameFromInput = new AtomicReference<>(" ");
+            substitutionMappingProperties.entrySet().forEach(stringEntry -> {
+                if (stringEntry.getValue().get(0).equals(input.getName())) {
+                    propertyNameFromInput.set(stringEntry.getKey());
+                }
+            });
+
+            final Optional<PropertyDefinition> propDefOptional = properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
                 .findFirst();
             if (propDefOptional.isPresent()) {
                 // From SELF
