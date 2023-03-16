@@ -817,7 +817,7 @@ public class ToscaExportHandler {
                                                                       ToscaTemplate toscaNode, Map<String, ToscaNodeType> nodeTypes,
                                                                       boolean isAssociatedComponent) {
         log.debug("start convert node type for {}", component.getUniqueId());
-        ToscaNodeType toscaNodeType = createNodeType(component);
+         ToscaNodeType toscaNodeType = createNodeType(component);
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> lifecycleTypeEither = interfaceLifecycleOperation
             .getAllInterfaceLifecycleTypes(component.getModel());
         if (lifecycleTypeEither.isRight() && !StorageOperationStatus.NOT_FOUND.equals(lifecycleTypeEither.right().value())) {
@@ -835,24 +835,21 @@ public class ToscaExportHandler {
             return Either.right(ToscaError.GENERAL_ERROR);
         }
         Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
-        List<InputDefinition> inputDef = component.getInputs();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, toscaNodeType, dataTypes, isAssociatedComponent);
         final var toscaAttributeMap = convertToToscaAttributes(component.getAttributes(), dataTypes);
         if (!toscaAttributeMap.isEmpty()) {
             toscaNodeType.setAttributes(toscaAttributeMap);
         }
-        final var mergedProperties = convertInputsToProperties(dataTypes, inputDef, component.getUniqueId());
+        Map<String, ToscaProperty> convertedProperties = new HashMap();
         if (CollectionUtils.isNotEmpty(component.getProperties())) {
             List<PropertyDefinition> properties = component.getProperties();
-            Map<String, ToscaProperty> convertedProperties = properties.stream()
+            convertedProperties = properties.stream()
                 .map(propertyDefinition -> resolvePropertyValueFromInput(propertyDefinition, component.getInputs())).collect(Collectors
                     .toMap(PropertyDataDefinition::getName,
                         property -> propertyConvertor.convertProperty(dataTypes, property, PropertyConvertor.PropertyType.PROPERTY)));
-            // merge component properties and inputs properties
-            mergedProperties.putAll(convertedProperties);
         }
-        if (MapUtils.isNotEmpty(mergedProperties)) {
-            toscaNodeType.setProperties(mergedProperties);
+        if (MapUtils.isNotEmpty(convertedProperties)) {
+            toscaNodeType.setProperties(convertedProperties);
         }
         /* convert private data_types */
         List<DataTypeDefinition> privateDataTypes = component.getDataTypes();
