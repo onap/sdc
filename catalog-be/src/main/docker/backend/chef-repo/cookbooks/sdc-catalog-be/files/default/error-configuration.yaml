@@ -2871,9 +2871,10 @@ errors:
         messageId: "SVC4015"
     }
 
+    # %1 - The input name
     #---------SVC4016-----------------------------
     INPUT_NAME_ALREADY_EXIST: {
         code: 400,
-        message: "Input name already exist.",
+        message: "Input name '%1' already exist.",
         messageId: "SVC4016"
     }

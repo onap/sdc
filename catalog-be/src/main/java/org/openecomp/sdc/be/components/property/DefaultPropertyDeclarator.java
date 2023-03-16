@@ -274,7 +274,11 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             String[] propName = {propInput.getName()};
             declaredInputName = handleInputName(inputName, propName);
         }
-        return declaredInputName;
+        return validateDeclaredInputName(declaredInputName);
+    }
+
+    private String validateDeclaredInputName(String inputName) {
+        return inputName.replace("::", "_");
     }
 
     private String handleInputName(String inputName, String[] parsedPropNames) {

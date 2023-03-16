@@ -38,6 +38,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -399,10 +400,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         try {
             validateUserExists(userId);
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
-            StorageOperationStatus status = validateInputName(component, componentInstInputsMapUi);
-            if (status != StorageOperationStatus.OK) {
+            ImmutablePair<StorageOperationStatus, String> status = validateInputName(component, componentInstInputsMapUi);
+            if (status.getLeft() != StorageOperationStatus.OK) {
                 log.debug("Input name already exist");
-                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INPUT_NAME_ALREADY_EXIST));
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.INPUT_NAME_ALREADY_EXIST, status.getRight()));
             }
             result = propertyDeclarationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi).left()
                 .bind(inputsToCreate -> prepareInputsForCreation(userId, componentId, inputsToCreate)).right()
@@ -429,29 +430,27 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private StorageOperationStatus validateInputName(final Component component, final ComponentInstInputsMap componentInstInputsMap) {
-        AtomicReference<StorageOperationStatus> storageOperationStatus = new AtomicReference<>(StorageOperationStatus.OK);
-        Map<String, List<ComponentInstancePropInput>> inputDeclaredProperties = new HashMap<>();
+    private ImmutablePair<StorageOperationStatus, String> validateInputName(final Component component,
+                                                                            final ComponentInstInputsMap componentInstInputsMap) {
+        final Map<String, List<ComponentInstancePropInput>> inputDeclaredProperties = new HashMap<>();
         if (MapUtils.isNotEmpty(componentInstInputsMap.getComponentInstanceProperties())) {
-            inputDeclaredProperties = componentInstInputsMap.getComponentInstanceProperties();
+            inputDeclaredProperties.putAll(componentInstInputsMap.getComponentInstanceProperties());
         } else if (MapUtils.isNotEmpty(componentInstInputsMap.getServiceProperties())) {
-            inputDeclaredProperties = componentInstInputsMap.getServiceProperties();
+            inputDeclaredProperties.putAll(componentInstInputsMap.getServiceProperties());
         }
-
         if (MapUtils.isNotEmpty(inputDeclaredProperties) && CollectionUtils.isNotEmpty(component.getInputs())) {
-            inputDeclaredProperties.values()
-                .forEach(componentInstancePropInputs ->
-                    componentInstancePropInputs
-                        .forEach(componentInstancePropInput -> component.getInputs()
-                            .forEach(existingInput -> {
-                                if (existingInput.getName().equals(componentInstancePropInput.getInputName())) {
-                                    storageOperationStatus.set(StorageOperationStatus.INVALID_VALUE);
-                                }
-                            })
-                        )
-                );
+            for (final List<ComponentInstancePropInput> componentInstancePropInputs : inputDeclaredProperties.values()) {
+                for (final ComponentInstancePropInput componentInstancePropInput : componentInstancePropInputs) {
+                    final Optional<InputDefinition> inputDefinition = component.getInputs().stream()
+                        .filter(input -> input.getName().equals(componentInstancePropInput.getInputName())
+                            || input.getName().equals(componentInstancePropInput.getName())).findAny();
+                    if (inputDefinition.isPresent()) {
+                        return new ImmutablePair<>(StorageOperationStatus.INVALID_VALUE, inputDefinition.get().getName());
+                    }
+                }
+            }
         }
-        return storageOperationStatus.get();
+        return new ImmutablePair<>(StorageOperationStatus.OK, StringUtils.EMPTY);
     }
 
     /**
