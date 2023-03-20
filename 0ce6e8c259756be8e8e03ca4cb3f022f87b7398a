@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "739eae7f_bf159db6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-20T19:06:56Z",
+      "side": 1,
+      "message": "when i said \u0027return immediately \u0027 I meant something like this\n\nprivate ImmutablePair\u003cStorageOperationStatus, String\u003e validateInputName(final Component component,\n                                                                            final ComponentInstInputsMap componentInstInputsMap) {\n        final Map\u003cString, List\u003cComponentInstancePropInput\u003e\u003e inputDeclaredProperties \u003d new HashMap\u003c\u003e();\n        if (MapUtils.isNotEmpty(componentInstInputsMap.getComponentInstanceProperties())) {\n            inputDeclaredProperties.putAll(componentInstInputsMap.getComponentInstanceProperties());\n        } else if (MapUtils.isNotEmpty(componentInstInputsMap.getServiceProperties())) {\n            inputDeclaredProperties.putAll(componentInstInputsMap.getServiceProperties());\n        }\n\n        if (MapUtils.isNotEmpty(inputDeclaredProperties) \u0026\u0026 CollectionUtils.isNotEmpty(component.getInputs())) {\n            for (final List\u003cComponentInstancePropInput\u003e componentInstancePropInputs : inputDeclaredProperties.values()) {\n                for (final ComponentInstancePropInput componentInstancePropInput : componentInstancePropInputs) {\n                    final Optional\u003cInputDefinition\u003e inputDefinition \u003d component.getInputs().stream()\n                        .filter(input -\u003e input.getName().equals(componentInstancePropInput.getInputName())\n                            || input.getName().equals(componentInstancePropInput.getName())).findAny();\n                    if (inputDefinition.isPresent()) {\n                        return new ImmutablePair\u003c\u003e(StorageOperationStatus.INVALID_VALUE, inputDefinition.get().getName());\n                    }\n                }\n\n            }\n        }\n\n        return new ImmutablePair\u003c\u003e(StorageOperationStatus.OK, StringUtils.EMPTY);\n    }",
+      "range": {
+        "startLine": 456,
+        "startChar": 32,
+        "endLine": 459,
+        "endChar": 33
+      },
+      "revId": "0ce6e8c259756be8e8e03ca4cb3f022f87b7398a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c47b7077_757c2054",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-03-20T19:06:56Z",
+      "side": 1,
+      "message": "inline\n\nreturn validateDeclaredInputName(declaredInputName);",
+      "range": {
+        "startLine": 277,
+        "startChar": 8,
+        "endLine": 278,
+        "endChar": 33
+      },
+      "revId": "0ce6e8c259756be8e8e03ca4cb3f022f87b7398a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
