@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9ffbca0a_cc58207d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-20T11:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c218301_51c8170f",
+      "range": {
+        "startLine": 451,
+        "startChar": 36,
+        "endLine": 452,
+        "endChar": 75
+      },
+      "revId": "5d5186e338d62c1349a48325c10a1bb1f95264a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9c941579_939809f3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "bad6f145_5b6494af",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-20T11:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c941579_939809f3",
+      "range": {
+        "startLine": 443,
+        "startChar": 8,
+        "endLine": 457,
+        "endChar": 9
+      },
+      "revId": "5d5186e338d62c1349a48325c10a1bb1f95264a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "457c2c37_64985c04",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ParsedToscaYamlInfo.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "5d5186e338d62c1349a48325c10a1bb1f95264a8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d4208ef_2833b753",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ParsedToscaYamlInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-03-20T11:29:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "457c2c37_64985c04",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 31
+      },
+      "revId": "5d5186e338d62c1349a48325c10a1bb1f95264a8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
