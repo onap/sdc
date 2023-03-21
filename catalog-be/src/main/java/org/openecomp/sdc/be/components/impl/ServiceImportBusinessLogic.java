@@ -86,6 +86,7 @@ import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -1847,11 +1848,12 @@ public class ServiceImportBusinessLogic {
         log.debug("************* Going to create all nodes {}", yamlName);
         handleServiceNodeTypes(yamlName, service, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts,
             nodeTypesInfo, csarInfo, nodeName);
+        List<PropertyDefinition> serviceProperties = service.getProperties();
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfoMap)) {
             log.debug("************* Going to create all resource instances {}", yamlName);
             service = createServiceInstances(yamlName, service, uploadComponentInstanceInfoMap, csarInfo.getCreatedNodes());
             log.debug("************* Going to create all relations {}", yamlName);
-            service = createServiceInstancesRelations(csarInfo.getModifier(), yamlName, service, uploadComponentInstanceInfoMap);
+            service = createServiceInstancesRelations(csarInfo.getModifier(), yamlName, service, uploadComponentInstanceInfoMap, serviceProperties);
             log.debug("************* Going to create positions {}", yamlName);
             compositionBusinessLogic.setPositionsForComponentInstances(service, csarInfo.getModifier().getUserId());
             log.debug("************* Finished to set positions {}", yamlName);
@@ -1860,7 +1862,8 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Service createServiceInstancesRelations(User user, String yamlName, Service service,
-                                                      Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
+                                                      Map<String, UploadComponentInstanceInfo> uploadResInstancesMap,
+                                                      List<PropertyDefinition> serviceProperties) {
         log.debug("#createResourceInstancesRelations - Going to create relations ");
         List<ComponentInstance> componentInstancesList = service.getComponentInstances();
         if (MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) { // PNF can have no resource instances
@@ -1888,6 +1891,7 @@ public class ServiceImportBusinessLogic {
             final Map<String, DataTypeDefinition> allDataTypesMap =
                 componentsUtils.getAllDataTypes(applicationDataTypeCache, service.getModel());
             final Service service1 = service;
+            service1.setProperties(serviceProperties);
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, service1, componentInstancesList,
                     allDataTypesMap, instProperties,
@@ -2289,6 +2293,11 @@ public class ServiceImportBusinessLogic {
                     //Inputs
                     ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
                     mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
+                    component.getProperties()
+                        .forEach(property -> instanceInputs.getListToscaDataDefinition().stream()
+                            .filter(instanceInput -> property.getName().equals(((ToscaGetFunctionDataDefinition) instanceInput.getToscaFunction()).getPropertyName()))
+                            .forEach(oldInput -> oldInput.setType(property.getType()))
+                    );
                     templateOperation.setInputs(instanceInputs);
                     //Implementation
                     templateOperation.setImplementation(instanceOperation.getImplementation());

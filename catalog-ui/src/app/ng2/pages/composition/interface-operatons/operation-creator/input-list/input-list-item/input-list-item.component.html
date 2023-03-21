@@ -100,7 +100,7 @@
                 [name]="property.name"
                 [type]="getDataType(property.type)"
                 [dataTypeMap]="dataTypeMap"
-                [valueObjRef]="valueObjRef[property.name]"
+                [valueObjRef]="valueObjRef ? valueObjRef[property.name] : undefined"
                 [schema]="property.schema"
                 [nestingLevel]="nestingLevel + 1"
                 [isViewOnly]="isViewOnly"
