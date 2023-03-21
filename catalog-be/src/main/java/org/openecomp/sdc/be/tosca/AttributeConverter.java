@@ -148,7 +148,8 @@ public class AttributeConverter {
                 return toscaMapValueConverter.handleComplexJsonValue(valueAsJson);
             }
             //if it is a data type
-            return toscaMapValueConverter.convertDataTypeToToscaObject(innerType, dataTypes, null, false, valueAsJson, preserveEmptyValue);
+            return toscaMapValueConverter.convertDataTypeToToscaObject(innerType, dataTypes, null, false, valueAsJson,
+                preserveEmptyValue, false);
         } catch (final JsonParseException e) {
             final String errorMsg = "Failed to parse json value";
             LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, "Attribute Converter", errorMsg, e);
