@@ -105,6 +105,7 @@ import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.Constants;
@@ -2091,7 +2092,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
             
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false);
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false, mock(ModelOperation.class));
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }

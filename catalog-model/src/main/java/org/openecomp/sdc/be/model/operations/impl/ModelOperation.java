@@ -75,7 +75,7 @@ import org.yaml.snakeyaml.Yaml;
 @Component("model-operation")
 public class ModelOperation {
 
-    static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of(ADDITIONAL_TYPE_DEFINITIONS);
+    public static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of(ADDITIONAL_TYPE_DEFINITIONS);
     private static final Logger log = Logger.getLogger(ModelOperation.class);
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;

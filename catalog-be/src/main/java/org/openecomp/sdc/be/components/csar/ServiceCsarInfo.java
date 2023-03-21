@@ -35,13 +35,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.NodeTypeDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.NodeTypeMetadata;
@@ -49,8 +49,10 @@ import org.openecomp.sdc.be.model.NullNodeTypeMetadata;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.Yaml;
 
@@ -63,12 +65,14 @@ public class ServiceCsarInfo extends CsarInfo {
     private final Map<String, Map<String, Object>> mainTemplateImports;
     private List<NodeTypeDefinition> nodeTypeDefinitions;
     private final String model;
+    private final ModelOperation modelOperation;
 
     public ServiceCsarInfo(final User modifier, final String csarUUID, final Map<String, byte[]> csar,
                            final String vfResourceName, final String model,
-                           final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
+                           final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate, final ModelOperation modelOperation) {
         super(modifier, csarUUID, csar, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
         this.model = model;
+        this.modelOperation = modelOperation;
         final Path mainTemplateDir = Paths.get(getMainTemplateName().substring(0, getMainTemplateName().lastIndexOf('/') + 1));
         final Collection<Path> filesHandled = new HashSet<>();
         filesHandled.add(Paths.get(mainTemplateName));
@@ -190,7 +194,7 @@ public class ServiceCsarInfo extends CsarInfo {
         if (nodeTypeDefinitions == null) {
             nodeTypeDefinitions = new ArrayList<>();
             final Set<String> nodeTypesUsed = getNodeTypesUsedInToscaTemplate(getMappedToscaMainTemplate());
-            nodeTypeDefinitions.addAll(getNodeTypeDefinitions(nodeTypesUsed));
+            nodeTypeDefinitions.addAll(getNodeTypeDefinitions(nodeTypesUsed).values());
         }
         nodeTypeDefinitions = sortNodeTypesByDependencyOrder(nodeTypeDefinitions);
         return nodeTypeDefinitions;
@@ -226,11 +230,11 @@ public class ServiceCsarInfo extends CsarInfo {
         return dependencies;
     }
 
-    private Set<NodeTypeDefinition> getNodeTypeDefinitions(final Set<String> nodeTypesToGet) {
-        final Set<NodeTypeDefinition> foundNodeTypes = getTypes(nodeTypesToGet);
-        final Set<NodeTypeDefinition> nodeTypesToReturn = new HashSet<>(foundNodeTypes);
+    private Map<String, NodeTypeDefinition> getNodeTypeDefinitions(final Set<String> nodeTypesToGet) {
+        final Map<String, NodeTypeDefinition> foundNodeTypes = getTypes(nodeTypesToGet);
+        final Map<String, NodeTypeDefinition> nodeTypesToReturn = new HashMap<>(foundNodeTypes);
         final Set<String> recursiveNodeTypesToGet = new HashSet<>();
-        foundNodeTypes.forEach(nodeTypeDef -> {
+        foundNodeTypes.values().forEach(nodeTypeDef -> {
             Either<Object, ResultStatusEnum> derivedFromTypeEither =
                 findToscaElement((Map<String, Object>) nodeTypeDef.getMappedNodeType().getValue(), TypeUtils.ToscaTagNamesEnum.DERIVED_FROM,
                     ToscaElementTypeEnum.STRING);
@@ -240,25 +244,46 @@ public class ServiceCsarInfo extends CsarInfo {
         });
         recursiveNodeTypesToGet.removeAll(nodeTypesToGet);
         if (CollectionUtils.isNotEmpty(recursiveNodeTypesToGet)) {
-            nodeTypesToReturn.addAll(getNodeTypeDefinitions(recursiveNodeTypesToGet));
+            nodeTypesToReturn.putAll(getNodeTypeDefinitions(recursiveNodeTypesToGet));
         }
         return nodeTypesToReturn;
     }
 
 
-    private Set<NodeTypeDefinition> getTypes(final Set<String> nodeTypes) {
-        Set<NodeTypeDefinition> nodeTypeDefinitionsLocal = new HashSet<>();
-        mainTemplateImports.values().forEach(template -> {
-            final Map<String, Object> types = getTypesFromTemplate(template, ToscaTagNamesEnum.NODE_TYPES, nodeTypes);
-            if (MapUtils.isNotEmpty(types)) {
-                types.entrySet().forEach(typesEntry -> {
-                    final NodeTypeMetadata metadata =
-                        getMetaDataFromTemplate(template, typesEntry.getKey());
-                    nodeTypeDefinitionsLocal.add(new NodeTypeDefinition(typesEntry, metadata));
-                });
-            }
-        });
-        return nodeTypeDefinitionsLocal;
+    private Map<String, NodeTypeDefinition> getTypes(final Set<String> nodeTypes) {
+        final Map<String, NodeTypeDefinition> nodeTypeDefinitionsMap = new HashMap<>();
+        final Set<String> lowerPrecedenceImports = new HashSet<>();
+
+        if (model != null && model != Constants.DEFAULT_MODEL_NAME) {
+            final Set<String> modelImports = new HashSet<>();
+            modelOperation.findAllModelImports(model, true).forEach(modelImport -> modelImports.add("Definitions/" + modelImport.getFullPath()));
+
+            lowerPrecedenceImports.add("Definitions/" + ModelOperation.ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+            lowerPrecedenceImports.addAll(modelImports);
+
+            mainTemplateImports.entrySet().stream().filter(entry -> modelImports.contains(entry.getKey()))
+                    .forEach(template -> addTypesFromTemplate(nodeTypeDefinitionsMap, template.getValue(), nodeTypes));
+
+            mainTemplateImports.entrySet().stream().filter(entry -> entry.getKey().equals(ModelOperation.ADDITIONAL_TYPE_DEFINITIONS_PATH.toString()))
+                    .forEach(template -> addTypesFromTemplate(nodeTypeDefinitionsMap, template.getValue(), nodeTypes));
+        }
+
+        mainTemplateImports.entrySet().stream().filter(entry -> !lowerPrecedenceImports.contains(entry.getKey()))
+                .forEach(template -> addTypesFromTemplate(nodeTypeDefinitionsMap, template.getValue(), nodeTypes));
+
+        return nodeTypeDefinitionsMap;
+    }
+
+    
+    private void addTypesFromTemplate(final Map<String, NodeTypeDefinition> nodeTypeDefinitionsMap, final Map<String, Object> mappedTemplate,
+            final Set<String> nodeTypes) {
+        final Map<String, Object> types = getTypesFromTemplate(mappedTemplate, ToscaTagNamesEnum.NODE_TYPES, nodeTypes);
+        if (MapUtils.isNotEmpty(types)) {
+            types.entrySet().forEach(typesEntry -> {
+                final NodeTypeMetadata metadata = getMetaDataFromTemplate(mappedTemplate, typesEntry.getKey());
+                nodeTypeDefinitionsMap.put(typesEntry.getKey(), new NodeTypeDefinition(typesEntry, metadata));
+            });
+        }
     }
 
     @SuppressWarnings("unchecked")
