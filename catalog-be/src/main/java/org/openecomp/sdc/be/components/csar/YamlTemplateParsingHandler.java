@@ -107,10 +107,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefin
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -1272,10 +1275,25 @@ public class YamlTemplateParsingHandler {
             operationInput.setUniqueId(UUID.randomUUID().toString());
             operationInput.setInputId(operationInput.getUniqueId());
             operationInput.setName(interfaceInput.getKey());
+
             handleInputToscaDefinition(interfaceInput.getKey(), interfaceInput.getValue(), operationInput);
             inputs.add(operationInput);
         }
         return inputs;
+    }
+
+    private ToscaGetFunctionDataDefinition createToscaFunction(final OperationInputDefinition getInput,
+                                                               final Entry<String, Object> interfaceInputValue) {
+
+        ToscaGetFunctionDataDefinition toscaFunction = new ToscaGetFunctionDataDefinition();
+        toscaFunction.setFunctionType(ToscaGetFunctionType.valueOfFunctionName(interfaceInputValue.getKey()));
+        toscaFunction.setPropertyUniqueId(getInput.getInputId());
+        List valueList = (List)interfaceInputValue.getValue();
+        toscaFunction.setPropertySource(PropertySource.valueOf((String) valueList.get(0)));
+        toscaFunction.setPropertyName((String) valueList.get(1));
+        toscaFunction.setSourceUniqueId(getInput.getInputId());
+        toscaFunction.setPropertyPathFromSource(Collections.singletonList((String) valueList.get(1)));
+        return toscaFunction;
     }
 
     private void handleInputToscaDefinition(
@@ -1288,6 +1306,12 @@ public class YamlTemplateParsingHandler {
             Type type = new TypeToken<LinkedHashMap<String, Object>>() {
             }.getType();
             String stringValue = gson.toJson(value, type);
+            for (final Entry<String, Object> interfaceInputValue : ((Map<String, Object>) value).entrySet()) {
+                Optional<ToscaFunctionType> toscaFunctionTypeOpt = ToscaFunctionType.findType(interfaceInputValue.getKey());
+                if (toscaFunctionTypeOpt.isPresent()) {
+                    operationInput.setToscaFunction(createToscaFunction(operationInput, interfaceInputValue));
+                }
+            }
             operationInput.setValue(stringValue);
         }
         if (value instanceof String) {
@@ -1295,6 +1319,10 @@ public class YamlTemplateParsingHandler {
             operationInput.setDefaultValue(stringValue);
             operationInput.setToscaDefaultValue(stringValue);
             operationInput.setValue(stringValue);
+        }
+        operationInput.setType("string");
+        if (operationInput.getValue() == null) {
+            operationInput.setValue(String.valueOf(value));
         }
     }
 
