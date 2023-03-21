@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -158,6 +159,9 @@ public class InterfacesOperationsConverter {
     }
 
     private static String getInputValue(final OperationInputDefinition input) {
+        if (null != input.getToscaFunction()) {
+            return input.getToscaFunction().getJsonObjectValue().toString();
+        }
         String inputValue = input.getValue() == null ? input.getToscaDefaultValue() : input.getValue();
         if (inputValue != null && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
             Gson gson = new Gson();

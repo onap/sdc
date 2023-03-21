@@ -1669,10 +1669,11 @@ public class ToscaOperationFacade {
         GraphVertex vertex = getVertexEither.left().value();
         Map<String, MapInterfaceDataDefinition> instInterfacesMap = new HashMap<>();
         if (instInterfaces != null) {
-            MapInterfaceDataDefinition interfacesMap = new MapInterfaceDataDefinition();
+
             for (Map.Entry<String, Map<String, InterfaceDefinition>> entryInstances : instInterfaces.entrySet()) {
                 Map<String, InterfaceDataDefinition> incomingInterfacesMap = entryInstances.getValue().entrySet().stream()
                         .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                MapInterfaceDataDefinition interfacesMap = new MapInterfaceDataDefinition();
                 interfacesMap.setMapToscaDataDefinition(incomingInterfacesMap);
                 instInterfacesMap.put(entryInstances.getKey(), interfacesMap);
             }
