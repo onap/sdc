@@ -19,6 +19,8 @@
 
 package org.openecomp.sdc.be.datatypes.tosca;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +35,16 @@ public enum ToscaGetFunctionType {
 
     private final String functionName;
     private final String propertyType;
+
+    private static final Map<String, ToscaGetFunctionType> BY_FUNCTION_NAME = new HashMap<>();
+    private static final Map<String, ToscaGetFunctionType> BY_PROPERTY_TYPE = new HashMap<>();
+
+    static {
+        for (ToscaGetFunctionType e : values()) {
+            BY_FUNCTION_NAME.put(e.functionName, e);
+            BY_PROPERTY_TYPE.put(e.propertyType, e);
+        }
+    }
 
     /**
      * Converts a {@link ToscaFunctionType} to a {@link ToscaGetFunctionType}
@@ -50,6 +62,14 @@ public enum ToscaGetFunctionType {
             default:
                 return Optional.empty();
         }
+    }
+
+    public static ToscaGetFunctionType valueOfFunctionName(String functionName) {
+        return BY_FUNCTION_NAME.get(functionName);
+    }
+
+    public static ToscaGetFunctionType valueOfPropertyType(String propertyType) {
+        return BY_PROPERTY_TYPE.get(propertyType);
     }
 
 }
