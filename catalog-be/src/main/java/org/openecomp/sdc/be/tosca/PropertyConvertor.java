@@ -314,7 +314,8 @@ public class PropertyConvertor {
                 convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
             } else {
                 convertedValue = mapConverterInst
-                    .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
+                    .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue,
+                        property.isToscaFunction());
             }
             return convertedValue;
 

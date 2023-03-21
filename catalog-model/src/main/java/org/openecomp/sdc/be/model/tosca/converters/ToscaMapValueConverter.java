@@ -131,12 +131,13 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 }
             }
         }
-        final Object convertedValue = convertDataTypeToToscaObject(propType, dataTypes, innerConverterProp, scalar, e.getValue(), false);
+        final Object convertedValue = convertDataTypeToToscaObject(propType, dataTypes, innerConverterProp, scalar, e.getValue(), false, false);
         toscaMap.put(e.getKey(), convertedValue);
     }
 
     public Object convertDataTypeToToscaObject(String innerType, Map<String, DataTypeDefinition> dataTypes, ToscaValueConverter innerConverter,
-                                               final boolean isScalarF, JsonElement entryValue, boolean preserveEmptyValue) {
+                                               final boolean isScalarF, JsonElement entryValue, boolean preserveEmptyValue,
+                                               final boolean isToscaFunction) {
         Object convertedValue;
         if (isScalarF && isJsonElementAJsonPrimitive(entryValue)) {
             return innerConverter.convertToToscaValue(entryValue.getAsString(), innerType, dataTypes);
@@ -149,25 +150,29 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 ArrayList<Object> toscaObjectPresentationArray = new ArrayList<>();
                 JsonArray jsonArray = entryValue.getAsJsonArray();
                 for (JsonElement jsonElement : jsonArray) {
-                    Object convertedDataTypeToToscaMap = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, jsonElement, preserveEmptyValue);
+                    Object convertedDataTypeToToscaMap = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, jsonElement, preserveEmptyValue,
+                        isToscaFunction);
                     toscaObjectPresentationArray.add(convertedDataTypeToToscaMap);
                 }
                 convertedValue = toscaObjectPresentationArray;
             } else {
-                convertedValue = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, entryValue, preserveEmptyValue);
+                convertedValue = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, entryValue, preserveEmptyValue, isToscaFunction);
             }
         }
         return convertedValue;
     }
 
     private Object convertDataTypeToToscaMap(String innerType, Map<String, DataTypeDefinition> dataTypes, final boolean isScalarF,
-                                             JsonElement entryValue, boolean preserveEmptyValue) {
+                                             JsonElement entryValue, boolean preserveEmptyValue, final boolean isToscaFunction) {
         Object convertedValue;
         if (entryValue.isJsonPrimitive()) {
             return json2JavaPrimitive(entryValue.getAsJsonPrimitive());
         }
         JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
-        DataTypePropertyConverter.getInstance().mergeDataTypeDefaultValuesWithPropertyValue(asJsonObjectIn, innerType, dataTypes);
+        if (!isToscaFunction) {
+            DataTypePropertyConverter.getInstance()
+                .mergeDataTypeDefaultValuesWithPropertyValue(asJsonObjectIn, innerType, dataTypes);
+        }
         Map<String, Object> toscaObjectPresentation = new HashMap<>();
         Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
         for (Entry<String, JsonElement> entry : entrySetIn) {

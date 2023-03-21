@@ -71,20 +71,33 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
 
     private buildGetInputFunctionValue(): Object {
         if (this.propertyPathFromSource.length === 1) {
-            return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], this.toscaIndex]};
+            if (this.toscaIndex) {
+                return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], this.toscaIndex]};
+            }
+            return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0]]};
         }
         return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource, this.toscaIndex]};
     }
 
     private buildFunctionValueWithPropertySource(): Object {
         if (this.propertySource == PropertySource.SELF) {
+            if (this.toscaIndex) {
+                return {
+                    [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, this.toscaIndex]
+                };
+            }
             return {
-                [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, this.toscaIndex]
+                [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource]
             };
         }
         if (this.propertySource == PropertySource.INSTANCE) {
+            if (this.toscaIndex) {
+                return {
+                    [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource, this.toscaIndex]
+                };
+            }
             return {
-                [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource,this.toscaIndex]
+                [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource]
             };
         }
     }
