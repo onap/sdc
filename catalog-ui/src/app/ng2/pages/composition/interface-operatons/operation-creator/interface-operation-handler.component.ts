@@ -138,8 +138,10 @@ export class InterfaceOperationHandlerComponent {
     private initCustomToscaFunctions() {
         this.customToscaFunctions = [];
         this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
-            for (let customFunction of data) {
-                this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+            if (data) {
+                for (let customFunction of data) {
+                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+                }
             }
         });
     }
@@ -299,7 +301,12 @@ export class InterfaceOperationHandlerComponent {
             changedInput.value = JSON.stringify(changedInput.value);
         }
         const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
+        inputOperationParameter.toscaFunction = null;
         inputOperationParameter.value = changedInput.value;
+        if (changedInput.isToscaFunction()) {
+            inputOperationParameter.toscaFunction = changedInput.toscaFunction;
+            inputOperationParameter.value = changedInput.toscaFunction.buildValueString();
+        }
     }
 
     onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
@@ -345,7 +352,7 @@ export class InterfaceOperationHandlerComponent {
         const input1 = currentInputs.find(value => value.name === inputName);
         const indexOfInput = currentInputs.indexOf(input1);
         if (indexOfInput === -1) {
-            console.error(`Could delete input '${inputName}'. Input not found.`);
+            console.error(`Could not delete input '${inputName}'. Input not found.`);
             return;
         }
         currentInputs.splice(currentInputs.indexOf(input1), 1);
