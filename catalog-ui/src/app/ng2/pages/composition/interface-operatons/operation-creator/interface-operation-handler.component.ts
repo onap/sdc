@@ -284,6 +284,10 @@ export class InterfaceOperationHandlerComponent {
         }
         const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
         inputOperationParameter.value = changedInput.value;
+        if (changedInput.isToscaFunction()) {
+            inputOperationParameter.toscaFunction = changedInput.toscaFunction;
+            inputOperationParameter.value = changedInput.toscaFunction.buildValueString();
+        }
     }
 
     onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
