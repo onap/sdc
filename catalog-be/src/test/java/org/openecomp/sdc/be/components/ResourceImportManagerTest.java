@@ -100,6 +100,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -770,7 +771,7 @@ class ResourceImportManagerTest {
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
 
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false);
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false, mock(ModelOperation.class));
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }
