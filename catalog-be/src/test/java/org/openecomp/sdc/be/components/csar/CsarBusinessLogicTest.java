@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.model.VendorSoftwareProduct;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -73,9 +74,10 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
     private final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
     private final User user = Mockito.mock(User.class);
     private final YamlTemplateParsingHandler yamlHandler = Mockito.mock(YamlTemplateParsingHandler.class);
+    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
 
     private final CsarBusinessLogic csarBusinessLogic = new CsarBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-        interfaceOperation, interfaceLifecycleTypeOperation, yamlHandler, artifactToscaOperation);
+        interfaceOperation, interfaceLifecycleTypeOperation, yamlHandler, artifactToscaOperation, modelOperation);
 
     private static final String CSAR_UUID = "csarUUID";
     private static final String CSAR_ENTRY = "Definitions/tosca_mock_vf.yaml";

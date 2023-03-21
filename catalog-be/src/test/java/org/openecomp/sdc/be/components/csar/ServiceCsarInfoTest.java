@@ -23,6 +23,8 @@ package org.openecomp.sdc.be.components.csar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -33,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.zip.ZipUtils;
@@ -62,7 +65,7 @@ class ServiceCsarInfoTest {
         final File csarFile = new File(ServiceCsarInfoTest.class.getClassLoader().getResource(csarFileName).toURI());
         final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
         String mainTemplateContent = new String(payload.get(mainTemplateName));
-        return new ServiceCsarInfo(user, CSAR_UUID, payload, SERVICE_NAME, null, mainTemplateName, mainTemplateContent, true);
+        return new ServiceCsarInfo(user, CSAR_UUID, payload, SERVICE_NAME, null, mainTemplateName, mainTemplateContent, true, mock(ModelOperation.class));
     }
 
     @SuppressWarnings("unchecked")

@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -64,15 +65,17 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED = " failed";
     private final YamlTemplateParsingHandler yamlHandler;
     private CsarOperation csarOperation;
+    private ModelOperation modelOperation;
 
     @Autowired
     public CsarBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                              IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
                              InterfaceLifecycleOperation interfaceLifecycleTypeOperation, YamlTemplateParsingHandler yamlHandler,
-                             ArtifactsOperations artifactToscaOperation) {
+                             ArtifactsOperations artifactToscaOperation, ModelOperation modelOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.yamlHandler = yamlHandler;
+        this.modelOperation = modelOperation;
     }
 
     @Autowired
@@ -160,7 +163,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
             oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().setImportedToscaChecksum(checksum);
         }
         return new ServiceCsarInfo(user, csarUUID, csar, service.getName(), service.getModel(), toscaYamlCsarStatus.getKey(),
-            toscaYamlCsarStatus.getValue(), true);
+            toscaYamlCsarStatus.getValue(), true, modelOperation);
     }
 
     public ParsedToscaYamlInfo getParsedToscaYamlInfo(String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
