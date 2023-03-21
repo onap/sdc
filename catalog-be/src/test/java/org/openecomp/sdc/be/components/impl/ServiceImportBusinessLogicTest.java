@@ -1278,7 +1278,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             any(ComponentInstance.class), any(UploadReqInfo.class))).thenReturn(capabilityDefinition);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class), anyString())).thenReturn(responseFormat);
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(service));
-        Assertions.assertNotNull(sIBL.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap));
+        Assertions.assertNotNull(sIBL.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap, null));
     }
 
     @Test
@@ -1289,7 +1289,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
 
         Assertions.assertThrows(ComponentException.class,
-            () -> sIBL.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap));
+            () -> sIBL.createServiceInstancesRelations(user, yamlName, service, uploadResInstancesMap, null));
     }
 
     @Test

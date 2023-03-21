@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -134,10 +135,11 @@ public class ToscaValueBaseConverter {
         if (jsonPrimitive.isBoolean()) {
             return jsonPrimitive.getAsBoolean();
         }
-        if (jsonPrimitive.isString()) {
+        if (jsonPrimitive.isString() && !NumberUtils.isCreatable(jsonPrimitive.getAsString())) {
             return jsonPrimitive.getAsString();
         }
-        if (jsonPrimitive.isNumber()) {
+        if (jsonPrimitive.isNumber() ||
+            (jsonPrimitive.isString() && NumberUtils.isCreatable(jsonPrimitive.getAsString()))) {
             if (jsonPrimitive.getAsString().contains(".")) {
                 return jsonPrimitive.getAsDouble();
             }
