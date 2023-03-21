@@ -107,10 +107,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefin
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -1272,6 +1275,7 @@ public class YamlTemplateParsingHandler {
             operationInput.setUniqueId(UUID.randomUUID().toString());
             operationInput.setInputId(operationInput.getUniqueId());
             operationInput.setName(interfaceInput.getKey());
+
             handleInputToscaDefinition(interfaceInput.getKey(), interfaceInput.getValue(), operationInput);
             inputs.add(operationInput);
         }
@@ -1288,6 +1292,9 @@ public class YamlTemplateParsingHandler {
             Type type = new TypeToken<LinkedHashMap<String, Object>>() {
             }.getType();
             String stringValue = gson.toJson(value, type);
+            if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(value)) {
+                toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) value).ifPresent(operationInput::setToscaFunction);
+            }
             operationInput.setValue(stringValue);
         }
         if (value instanceof String) {
@@ -1295,6 +1302,10 @@ public class YamlTemplateParsingHandler {
             operationInput.setDefaultValue(stringValue);
             operationInput.setToscaDefaultValue(stringValue);
             operationInput.setValue(stringValue);
+        }
+        operationInput.setType("string");
+        if (operationInput.getValue() == null) {
+            operationInput.setValue(String.valueOf(value));
         }
     }
 
