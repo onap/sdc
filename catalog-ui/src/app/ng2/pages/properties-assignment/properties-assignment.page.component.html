@@ -29,7 +29,8 @@
                             [readonly]="isReadonly || resourceIsReadonly"
                             [isLoading]="loadingProperties || savingChangedData"
                             [hasDeclareOption]="true"
-                            [showDelete]="!isReadOnly && isSelf()"
+                            [showDelete]="!isReadonly && isSelf()"
+                            [disablePropertyValue] = "disablePropertyValue()"
                             (propertyChanged)="dataChanged($event)"
                             (propertySelected)="propertySelected($event)"
                             (selectPropertyRow)="selectPropertyRow($event)"
@@ -38,14 +39,15 @@
                             (updateCheckedChildPropertyCount)="updateCheckedChildPropertyCount($event)"
                             (togggleToscaBtn)="togggleToscaBtn($event)"
                             (selectInstanceRow)="selectInstanceRow($event)"
-                            (deleteProperty)="deleteProperty($event)">
+                            (deleteProperty)="deleteProperty($event)"
+                        >
                         </properties-table>
                     </tab>
                     <tab tabTitle="Inputs" [show]="isSelf()">
                         <inputs-table class="properties-table"
                             [fePropertiesMap]="instanceFePropertiesMap"
                             [readonly]="isReadonly"
-                            [showDelete]="!isReadOnly && isSelf()"
+                            [showDelete]="!isReadonly && isSelf()"
                             [inputs]="inputs | searchFilter:'name':searchQuery"
                             [instanceNamesMap]="componentInstanceNamesMap"
                             [componentInstancePropertyMap]="componentInstancePropertyMap"
@@ -90,7 +92,7 @@
         </div>
         <div class="right-column">
             <div *ngIf="!isReadonly && !isInputsTabSelected" class="add-btn"
-                 (click)="addProperty(component.model)" data-tests-id="properties-add-button" [ngClass]="{'disabled': !showAddProperties()}">Add Property</div>
+                 (click)="addProperty(component.model)" data-tests-id="properties-add-button" [ngClass]="{'ng-hide': hideAddProperties(), 'disabled': !showAddProperties()}" >Add Property</div>
             <div *ngIf="!isReadonly && isInputsTabSelected" class="add-btn"
                  (click)="addInput()" [ngClass]="{'disabled': !isSelf()}">Add Input</div>
             <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">
