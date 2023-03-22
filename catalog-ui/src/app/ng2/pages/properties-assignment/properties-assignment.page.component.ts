@@ -71,6 +71,7 @@ import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaFunction} from "../../../models/tosca-function";
 import {SubPropertyToscaFunction} from "../../../models/sub-property-tosca-function";
 import {DeclareInputComponent} from "./declare-input/declare-input.component";
+import {ElementService} from "../../services/element.service";
 import {CustomToscaFunction} from "../../../models/default-custom-functions";
 import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
 
@@ -128,6 +129,7 @@ export class PropertiesAssignmentComponent {
     selectedInstance_FlattenCapabilitiesList: Capability[];
     componentInstancePropertyMap : PropertiesGroup;
     defaultInputName: string;
+    doNotExtendBaseType: boolean;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -150,7 +152,8 @@ export class PropertiesAssignmentComponent {
                 private modalService: ModalService,
                 private keysPipe: KeysPipe,
                 private topologyTemplateService: TopologyTemplateService,
-                private translateService: TranslateService) {
+                private translateService: TranslateService,
+                private service: ElementService) {
 
         this.instanceFePropertiesMap = new InstanceFePropertiesMap();
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
@@ -236,7 +239,19 @@ export class PropertiesAssignmentComponent {
         }, error => {
             this.loadingInstances = false;
         }); //ignore error
+        let modelName = this.component.model ? this.component.model : null;
+        const categoryName= this.component.categories[0].name;
+        if (this.component.categories[0].name != null && this.component.model != null) {
+            this.service.getCategoryBaseTypes(categoryName, modelName).subscribe((response: ListBaseTypesResponse) => {
+                this.doNotExtendBaseType = response.doNotExtendBaseType;
+                this.loadingProperties = false;
 
+            }, error => {
+                //ignore error
+            }, () => {
+                this.loadingProperties = false;
+            });
+        }
         this.stateChangeStartUnregister = this.$scope.$on('$stateChangeStart', (event, toState, toParams) => {
             // stop if has changed properties
             if (this.hasChangedData) {
@@ -251,7 +266,7 @@ export class PropertiesAssignmentComponent {
       this.loadDataTypesByComponentModel(this.component.model);
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(){
         this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         this.stateChangeStartUnregister();
     }
@@ -278,8 +293,26 @@ export class PropertiesAssignmentComponent {
     showAddProperties = (): boolean => {
         if (this.component.isService() && !(<Service>this.component).isSubstituteCandidate()) {
             return false;
+        } else if (this.hideAddProperties()) {
+            return false;
         }
         return this.isSelf();
+
+    }
+
+    hideAddProperties = (): boolean => {
+        if (this.component.isService() && this.doNotExtendBaseType && this.isSelf) {
+            return true;
+        }
+            return false;
+
+    }
+
+    disablePropertyValue = () : boolean => {
+        if (this.component.isService() && this.doNotExtendBaseType){
+            return true;
+        }
+        return false;
     }
 
     getServiceProperties() {
