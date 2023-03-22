@@ -45,7 +45,7 @@
     <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || (property.isToscaFunction() && !property.isChildOfListOrMap) || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
         <div class="table-cell">
             <checkbox class="{{propType == derivedPropertyTypes.MAP ? 'inline-checkBox' : 'inline-checkBox-List'}}" *ngIf="(property.isChildOfListOrMap && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
-            <dynamic-element class="value-input"
+            <dynamic-element class="value-input" *ngIf="!disablePropertyValue && (property.isDeclared || property.isToscaFunction()) ? property.value : property.valueObj"
                 pattern="validationUtils.getValidationPattern(property.type)"
                 [value]="(property.isDeclared || property.isToscaFunction()) ? property.value : property.valueObj"
                 [type]="property.isDeclared || property.isToscaFunction() ? 'string' : property.type"
@@ -81,6 +81,7 @@
         <dynamic-property
             [selectedPropertyId]="selectedPropertyId"
             [hasDeclareOption]="hasDeclareOption"
+            [disablePropertyValue] = "disablePropertyValue"
             [canBeDeclared]="hasDeclareOption && prop.canBeDeclared"
             [property]="prop"
             [rootProperty]="rootProperty || property"
