@@ -454,6 +454,18 @@ public class ElementOperation implements IElementOperation {
         return categoryBaseTypeConfig.isRequired();
     }
 
+    @Override
+    public boolean isDoNotExtendBaseType(final String categoryName) {
+        final Map<String, CategoryBaseTypeConfig> categoriesSpecificBaseTypeMap = getConfiguration().getServiceBaseNodeTypes();
+        if (MapUtils.isEmpty(categoriesSpecificBaseTypeMap)) {
+            return true;
+        }
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = categoriesSpecificBaseTypeMap.get(categoryName);
+        if (categoryBaseTypeConfig == null) {
+            return true;
+        }
+        return categoryBaseTypeConfig.isDoNotExtendBaseType();
+    }
     private List<String> getCategoryBaseTypes(final String categoryName) {
         final Optional<CategoryBaseTypeConfig> categoryBaseTypeConfigOptional = getCategoryBaseTypeConfig(categoryName);
         if (categoryBaseTypeConfigOptional.isEmpty()) {
