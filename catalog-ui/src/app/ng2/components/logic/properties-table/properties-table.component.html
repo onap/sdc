@@ -75,8 +75,8 @@
                     </div>
                 </div>
                 <!-- Property Value -->
-                <div class="table-cell valueCol">
-                    <!-- [ngClass]="{'filtered':property.name === propertyNameSearchText}" (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" [propType]="property.type" [propSchema]="property.schema" [propKey]="" [propValue]="property.value"-->
+                <div class="table-cell valueCol" >
+<!--     [ngClass]="{'filtered':property.name === propertyNameSearchText}" (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" [propType]="property.type" [propSchema]="property.schema" [propKey]="" [propValue]="property.value"-->
                     <dynamic-property
                         [selectedPropertyId]="selectedPropertyId"
                         [hasDeclareOption]="hasDeclareOption"
@@ -85,6 +85,7 @@
                         [expandedChildId]="property.expandedChildPropertyId"
                         [propertyNameSearchText]="propertyNameSearchText"
                         [readonly]="readonly"
+                        [disablePropertyValue]="disablePropertyValue"
                         (propertyChanged)="onPropertyChanged(property)"
                         (expandChild)="property.updateExpandedChildPropertyId($event)"
                         (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceId)"
