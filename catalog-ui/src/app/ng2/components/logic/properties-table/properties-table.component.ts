@@ -19,12 +19,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { DerivedFEProperty, InstanceFePropertiesMap, PropertyFEModel } from 'app/models';
+import {Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { DerivedFEProperty, InstanceFePropertiesMap, PropertyFEModel} from 'app/models';
 import { InstanceFeDetails } from '../../../../models/instance-fe-details';
 import { PropertiesService } from '../../../services/properties.service';
 import { ModalService } from '../../../services/modal.service';
-
 @Component({
     selector: 'properties-table',
     templateUrl: './properties-table.component.html',
@@ -42,7 +41,7 @@ export class PropertiesTableComponent implements OnChanges {
     @Input() hasDeclareOption: boolean;
     @Input() hidePropertyType: boolean;
     @Input() showDelete:boolean;
-
+    @Input() disablePropertyValue:boolean;
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>(); // only for hasDeclareOption
@@ -50,6 +49,8 @@ export class PropertiesTableComponent implements OnChanges {
     @Output() togggleToscaBtn: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() deleteProperty: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     private selectedPropertyToDelete: PropertyFEModel;
+
+
 
     sortBy: String;
     reverse: boolean;
@@ -59,7 +60,7 @@ export class PropertiesTableComponent implements OnChanges {
     readonly ascUpperLettersFirst = 1;
     readonly descLowerLettersFirst = -1;
 
-    constructor(private propertiesService: PropertiesService, private modalService: ModalService ) {
+    constructor(private propertiesService: PropertiesService, private modalService: ModalService) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -112,6 +113,7 @@ export class PropertiesTableComponent implements OnChanges {
     toggleToscaFunction = (prop: DerivedFEProperty) => {
         this.togggleToscaBtn.emit(prop.isSelected);
     };
+
 
     onDeleteProperty = () => {
         this.deleteProperty.emit(this.selectedPropertyToDelete);

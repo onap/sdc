@@ -22,6 +22,7 @@ interface ListBaseTypesResponse {
   baseTypes: BaseTypeResponse[];
   required: boolean;
   defaultBaseType: string;
+  doNotExtendBaseType: boolean;
 }
 
 interface BaseTypeResponse {

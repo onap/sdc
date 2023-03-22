@@ -297,4 +297,9 @@ public class ElementOperationMock implements IElementOperation {
         return "";
     }
 
+    @Override
+    public boolean isDoNotExtendBaseType(String categoryName) {
+        return true;
+    }
+
 }

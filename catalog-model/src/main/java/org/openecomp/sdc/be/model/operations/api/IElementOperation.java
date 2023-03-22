@@ -98,6 +98,8 @@ public interface IElementOperation {
 
     String getDefaultBaseType(String categoryName);
 
+    boolean isDoNotExtendBaseType(String categoryName);
+
     Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 
     Either<SubCategoryDefinition, ActionStatus> getSubCategoryUniqueForType(NodeTypeEnum nodeType, String normalizedName);
