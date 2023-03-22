@@ -220,7 +220,8 @@ public class ElementServlet extends BeGenericServlet {
                 final Map<String, Object> baseTypesMap = new HashMap<>();
                 baseTypesMap.put("baseTypes", either.left().value());
                 baseTypesMap.put("required", elementBL.isBaseTypeRequired(categoryName));
-                baseTypesMap.put("defaultBaseType",elementBL.getDefaultBaseType(categoryName));
+                baseTypesMap.put("defaultBaseType", elementBL.getDefaultBaseType(categoryName));
+                baseTypesMap.put("doNotExtendBaseType", elementBL.isDoNotExtendBaseType(categoryName));
 
                 return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), baseTypesMap);
             }

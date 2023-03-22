@@ -52,13 +52,14 @@
                 [name]="property.name"
                 [path]="property.propertiesName"
                 (elementChanged)="onElementChanged($event)"
-                [readonly]="readonly || property.isDeclared || property.isDisabled || property.isToscaFunction()"
+                [readonly]="readonly || property.isDeclared || property.isDisabled || property.isToscaFunction() || disablePropertyValue"
                 [testId]="'prop-' + propertyTestsId"
                 [declared] = "property.isDeclared"
                 [constraints] = "constraints"
             ></dynamic-element>
         </div>
     </ng-container>
+
     <ng-container *ngIf="!isPropertyFEModel && propType != derivedPropertyTypes.SIMPLE && !property.isDeclared && (!property.isToscaFunction() || (property.isToscaFunction() && property.isChildOfListOrMap && propType != derivedPropertyTypes.SIMPLE))"> <!-- right cell for complex elements, or list complex -->
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.COMPLEX">{{property.type | contentAfterLastDot }}</div>
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.MAP && !property.schema.property.isSimpleType">{{property.schema.property.type | contentAfterLastDot }}</div>
@@ -81,6 +82,7 @@
         <dynamic-property
             [selectedPropertyId]="selectedPropertyId"
             [hasDeclareOption]="hasDeclareOption"
+            [disablePropertyValue]="disablePropertyValue"
             [canBeDeclared]="hasDeclareOption && prop.canBeDeclared"
             [property]="prop"
             [rootProperty]="rootProperty || property"
