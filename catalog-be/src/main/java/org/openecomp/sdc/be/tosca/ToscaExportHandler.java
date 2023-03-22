@@ -61,6 +61,7 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
+import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -482,38 +483,53 @@ public class ToscaExportHandler {
         final String toscaResourceName = toscaResourceNameEither.left().value();
 
         final SubstitutionMapping substitutionMapping = new SubstitutionMapping();
-        substitutionMapping.setNode_type(toscaResourceName);
-        convertSubstitutionMappingFilter(component).ifPresent(substitutionMapping::setSubstitution_filter);
+        final Map<String, CategoryBaseTypeConfig> serviceNodeTypesConfig =
+                ConfigurationManager.getConfigurationManager().getConfiguration().getServiceBaseNodeTypes();
+        List<CategoryDefinition> categories = component.getCategories();
+        if (CollectionUtils.isNotEmpty(categories) && MapUtils.isNotEmpty(serviceNodeTypesConfig) && serviceNodeTypesConfig.get(categories.get(0).getName()) != null) {
+            boolean doNotExtendBaseType = serviceNodeTypesConfig.get(categories.get(0).getName()).isDoNotExtendBaseType();
+          if (doNotExtendBaseType) {
+              substitutionMapping.setNode_type(component.getDerivedFromGenericType());
+              final Map<String, String[]> propertyMappingMap = buildSubstitutionMappingPropertyMapping(component);
+              if (MapUtils.isNotEmpty(propertyMappingMap)) {
+                  substitutionMapping.setProperties(propertyMappingMap);
+              }
+              convertSubstitutionMappingFilter(component).ifPresent(substitutionMapping::setSubstitution_filter);
+          }
+        } else {
+            substitutionMapping.setNode_type(toscaResourceName);
 
-        final Either<Map<String, String[]>, ToscaError> capabilitiesEither = convertSubstitutionMappingCapabilities(component, componentCache);
-        if (capabilitiesEither.isRight()) {
-            throw new ToscaExportException("Could not convert substitution mapping capabilities", capabilitiesEither.right().value());
-        }
-        final Map<String, String[]> capabilityMap = capabilitiesEither.left().value();
-        if (!capabilityMap.isEmpty()) {
-            substitutionMapping.setCapabilities(capabilityMap);
-        }
+            convertSubstitutionMappingFilter(component).ifPresent(substitutionMapping::setSubstitution_filter);
 
-        final Either<Map<String, String[]>, ToscaError> requirements =
-            capabilityRequirementConverter.convertSubstitutionMappingRequirements(component, componentCache);
-        if (requirements.isRight()) {
-            throw new ToscaExportException("Could not convert substitution mapping requirements", requirements.right().value());
-        }
-        final Map<String, String[]> requirementMap = requirements.left().value();
-        if (MapUtils.isNotEmpty(requirementMap)) {
-            substitutionMapping.setRequirements(requirementMap);
-        }
+            final Either<Map<String, String[]>, ToscaError> capabilitiesEither = convertSubstitutionMappingCapabilities(component, componentCache);
+            if (capabilitiesEither.isRight()) {
+                throw new ToscaExportException("Could not convert substitution mapping capabilities", capabilitiesEither.right().value());
+            }
+            final Map<String, String[]> capabilityMap = capabilitiesEither.left().value();
+            if (!capabilityMap.isEmpty()) {
+                substitutionMapping.setCapabilities(capabilityMap);
+            }
 
-        final Map<String, String[]> propertyMappingMap = buildSubstitutionMappingPropertyMapping(component);
-        if (MapUtils.isNotEmpty(propertyMappingMap)) {
-            substitutionMapping.setProperties(propertyMappingMap);
-        }
+            final Either<Map<String, String[]>, ToscaError> requirements =
+                    capabilityRequirementConverter.convertSubstitutionMappingRequirements(component, componentCache);
+            if (requirements.isRight()) {
+                throw new ToscaExportException("Could not convert substitution mapping requirements", requirements.right().value());
+            }
+            final Map<String, String[]> requirementMap = requirements.left().value();
+            if (MapUtils.isNotEmpty(requirementMap)) {
+                substitutionMapping.setRequirements(requirementMap);
+            }
 
-        final Map<String, String[]> attributesMappingMap = buildSubstitutionMappingAttributesMapping(component);
-        if (MapUtils.isNotEmpty(attributesMappingMap)) {
-            substitutionMapping.setAttributes(attributesMappingMap);
-        }
+            final Map<String, String[]> propertyMappingMap = buildSubstitutionMappingPropertyMapping(component);
+            if (MapUtils.isNotEmpty(propertyMappingMap)) {
+                substitutionMapping.setProperties(propertyMappingMap);
+            }
 
+            final Map<String, String[]> attributesMappingMap = buildSubstitutionMappingAttributesMapping(component);
+            if (MapUtils.isNotEmpty(attributesMappingMap)) {
+                substitutionMapping.setAttributes(attributesMappingMap);
+            }
+        }
         return Optional.of(substitutionMapping);
     }
 
@@ -980,7 +996,7 @@ public class ToscaExportHandler {
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             NodeFilter nodeFilter = convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter());
-            if(nodeFilter != null && nodeFilter.hasData()){
+            if (nodeFilter != null && nodeFilter.hasData()) {
                 nodeTemplate.setNode_filter(nodeFilter);
             }
             final Either<Component, Boolean> originComponentRes = capabilityRequirementConverter
@@ -1869,7 +1885,7 @@ public class ToscaExportHandler {
                 return null;
             }
             if (javaBean instanceof ToscaPropertyConstraint) {
-                return handleToscaPropertyConstraint((ToscaPropertyConstraint)javaBean, property, propertyValue, customTag);
+                return handleToscaPropertyConstraint((ToscaPropertyConstraint) javaBean, property, propertyValue, customTag);
             }
             removeDefaultP(propertyValue);
             NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
