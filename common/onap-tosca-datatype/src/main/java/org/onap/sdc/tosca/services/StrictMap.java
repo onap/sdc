@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2021 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2023 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,37 @@
  */
 package org.onap.sdc.tosca.services;
 
+import java.util.AbstractMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.parser.ParserException;
+import java.util.Set;
+import lombok.NoArgsConstructor;
 
-public class StrictMapAppenderConstructor extends Constructor {
+@NoArgsConstructor
+public class StrictMap extends AbstractMap {
 
-    /**
-     * Instantiates a new Strict map appender constructor.
-     *
-     * @param theRoot the the root
-     */
-    public StrictMapAppenderConstructor(Class<?> theRoot) {
-        super(theRoot);
+    private Map<Object, Object> delegate;
+
+    public StrictMap(Map<Object, Object> delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    protected Map<Object, Object> createDefaultMap(int initSize) {
-        return new StrictMap(super.createDefaultMap(initSize));
-    }
-
-    @Override
-    protected Map<Object, Object> constructMapping(MappingNode node) {
-        try {
-            return super.constructMapping(node);
-        } catch (IllegalStateException exception) {
-            throw new ParserException("while parsing MappingNode", node.getStartMark(), exception.getMessage(), node.getEndMark());
+    public Object put(Object key, Object value) {
+        if (delegate == null) {
+            delegate = new LinkedHashMap<>();
         }
+        if (delegate.containsKey(key)) {
+            throw new IllegalStateException("duplicate key: " + key);
+        }
+        return delegate.put(key, value);
     }
 
+    @Override
+    public Set<Entry<Object, Object>> entrySet() {
+        if (delegate == null) {
+            delegate = new LinkedHashMap<>();
+        }
+        return delegate.entrySet();
+    }
 }
