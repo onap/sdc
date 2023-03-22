@@ -73,10 +73,7 @@ import org.apache.commons.text.WordUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
-import org.openecomp.sdc.be.config.ArtifactConfiguration;
-import org.openecomp.sdc.be.config.ComponentType;
-import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.*;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
@@ -94,6 +91,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -673,6 +671,15 @@ public class CsarUtils {
     }
 
     private boolean hasToWriteComponentSubstitutionType(final Component component) {
+        final Map<String, CategoryBaseTypeConfig> serviceNodeTypesConfig =
+                ConfigurationManager.getConfigurationManager().getConfiguration().getServiceBaseNodeTypes();
+        List<CategoryDefinition> categories = component.getCategories();
+        if (CollectionUtils.isNotEmpty(categories) && MapUtils.isNotEmpty(serviceNodeTypesConfig) && serviceNodeTypesConfig.get(categories.get(0).getName()) != null) {
+            boolean doNotExtendBaseType = serviceNodeTypesConfig.get(categories.get(0).getName()).isDoNotExtendBaseType();
+            if (doNotExtendBaseType) {
+                return false;
+            }
+        }
         if (component instanceof Service) {
             return !ModelConverter.isAtomicComponent(component) && ((Service) component).isSubstituteCandidate();
         }
