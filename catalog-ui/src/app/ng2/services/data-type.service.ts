@@ -140,16 +140,24 @@ export class DataTypeService {
         return null;
     }
 
-    public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
+    public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string, toscaPath?: string[]) {
         //push all child properties to array
+        const parentToscaPath = toscaPath != null ? toscaPath.toString() : null;
         if (!dataTypeObj) return;
         if (dataTypeObj.properties) {
             dataTypeObj.properties.forEach((derivedProperty) => {
+                derivedProperty.parentToscaPath = parentToscaPath != null ? parentToscaPath.split(',') : [];
+                let innerToscaPath = null;
                 if (dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedProperty.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA) {//The requirement is to not display the property supplemental_data
-                    propertiesArray.push(new DerivedFEProperty(derivedProperty, parentName));
+                    const childProperty : DerivedFEProperty = new DerivedFEProperty(derivedProperty, parentName);
+                    innerToscaPath = childProperty.toscaPath;
+                    propertiesArray.push(childProperty);
                 }
+
                 let derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedProperty.type);
-                this.getDerivedDataTypeProperties(derivedDataTypeObj, propertiesArray, parentName + "#" + derivedProperty.name);
+                if (dataTypeObj && dataTypeObj.properties) {
+                    this.getDerivedDataTypeProperties(derivedDataTypeObj, propertiesArray, parentName + "#" + derivedProperty.name, innerToscaPath);
+                }
             });
         }
         //recurse parent (derivedFrom), in case one of parents contains properties
