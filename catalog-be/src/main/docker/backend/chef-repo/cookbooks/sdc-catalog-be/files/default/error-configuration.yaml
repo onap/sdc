@@ -2878,3 +2878,11 @@ errors:
         message: "Input name '%1' already exist.",
         messageId: "SVC4016"
     }
+
+    #---------SVC4017-----------------------------
+    # %1 - Map of component instance and properties
+    SUBSTITUTION_NODE_TYPE_PROPERTY_IN_USE: {
+        code: 409,
+        message: "Cannot change substitution node type as properties of the existing type are referenced by properties %1.",
+        messageId: "SVC4017"
+    }
