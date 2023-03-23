@@ -61,6 +61,9 @@ public class PropertyValueConstraintValidationUtil {
     private static final String IGNORE_PROPERTY_VALUE_START_WITH_INPUT = "{\"get_input\":";
     private static final String IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY = "{\"get_property\":";
     private static final String IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE = "{\"get_attribute\":";
+    private static final String IGNORE_PROPERTY_VALUE_INPUT = "{get_input=";
+    private static final String IGNORE_PROPERTY_VALUE_PROPERTY = "{get_property=";
+    private static final String IGNORE_PROPERTY_VALUE_ATTRIBUTE = "{get_attribute=";
     private Map<String, DataTypeDefinition> dataTypeDefinitionCache;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<String> errorMessages = new ArrayList<>();
@@ -159,8 +162,10 @@ public class PropertyValueConstraintValidationUtil {
     }
 
     private boolean isValueAToscaFunction(PropertyDefinition propertyDefinition) {
-        return propertyDefinition.getToscaFunction() != null  || propertyDefinition.getValue() != null && (propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_INPUT) || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY)
-                || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE));
+        return (propertyDefinition.getToscaFunction() != null)  || (propertyDefinition.getValue() != null
+            && ((propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_INPUT) || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_PROPERTY)
+            || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_START_WITH_ATTRIBUTE) || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_ATTRIBUTE)
+            || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_PROPERTY) || propertyDefinition.getValue().startsWith(IGNORE_PROPERTY_VALUE_INPUT))));
     }
 
     private void checkAndEvaluatePrimitiveProperty(PropertyDefinition propertyDefinition, DataTypeDefinition dataTypeDefinition) {
@@ -197,10 +202,8 @@ public class PropertyValueConstraintValidationUtil {
                 if (propertyDefinition.getSubPropertyToscaFunctions() != null) {
                     for (SubPropertyToscaFunction subPropertyToscaFunction : propertyDefinition.getSubPropertyToscaFunctions()) {
                         final List<String> path = subPropertyToscaFunction.getSubPropertyPath();
-                        if (path.size() == 1) {
-                            if (path.get(0).equals(prop.getName())) {
-                                return;
-                            }
+                        if (path.size() == 1 && path.get(0).equals(prop.getName())) {
+                            return;
                         }
                         if (path.size() > 1) {
                             if (path.get(0).equals(propertyDefinition.getToscaSubPath()) && path.get(1).equals(prop.getName())) {

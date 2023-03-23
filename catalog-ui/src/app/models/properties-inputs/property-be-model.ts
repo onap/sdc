@@ -79,6 +79,7 @@ export class PropertyBEModel {
     toscaGetFunction: ToscaGetFunctionDto;
     toscaFunction: ToscaFunction;
     subPropertyToscaFunctions: SubPropertyToscaFunction[];
+    parentToscaPath: string[] = [];
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -106,6 +107,7 @@ export class PropertyBEModel {
             this.inputPath = property.inputPath;
             this.inputName = property.inputName;
             this.metadata = property.metadata;
+            this.parentToscaPath = property.parentToscaPath;
             if (property.toscaFunction) {
                 this.toscaFunction = property.toscaFunction;
             } else if (property.toscaGetFunction) {

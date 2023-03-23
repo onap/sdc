@@ -182,6 +182,7 @@ export class PropertyFEModel extends PropertyBEModel {
         const oldActualMapKey = childProp.getActualMapKey();
 
         childProp.mapKey = newMapKey;
+        childProp.toscaPath[childProp.toscaPath.length - 1] = newMapKey;
         if (childProp.mapKey === null) {  // null -> remove map key
             childProp.mapKeyError = null;
         } else if (!childProp.mapKey) {
