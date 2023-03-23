@@ -264,11 +264,21 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private propertyTypeToString() {
 	    if (this.isSubProperty()){
-            if ((this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
-                    (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
+            if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty)
+                || this.compositionMap) {
                 if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
-                    let propertySchemaType = (<PropertyDeclareAPIModel> this.property).input.type;
-                    return propertySchemaType == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : propertySchemaType;
+                    let mapChildProp : DerivedFEProperty = (<DerivedFEProperty> (<PropertyDeclareAPIModel> this.property).input);
+                    let propertySchemaType = mapChildProp.type;
+                    if (this.property.type == PROPERTY_TYPES.MAP || propertySchemaType == PROPERTY_TYPES.MAP) {
+                        if (mapChildProp.mapKey != '' && mapChildProp.mapKey != null && mapChildProp.schema.property.type != null) {
+                            propertySchemaType = mapChildProp.schema.property.type;
+                        }
+                    }
+                    if ((propertySchemaType == PROPERTY_TYPES.MAP || (propertySchemaType == PROPERTY_TYPES.LIST && mapChildProp.schema.property.type == PROPERTY_TYPES.MAP))
+                        && mapChildProp.isChildOfListOrMap) {
+                        propertySchemaType = PROPERTY_TYPES.STRING;
+                    }
+                    return  propertySchemaType;
                 }else{
                     return this.property.schema.property.type;
                 }
@@ -379,10 +389,13 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
         if (this.typeHasSchema(this.property.type)) {
             if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
-                if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
-                    let propertySchemaType = (<PropertyDeclareAPIModel> this.property).input.type;
-                    propertySchemaType = propertySchemaType == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : propertySchemaType;
-                    return property.type === propertySchemaType;
+                let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
+                let childSchemaType = this.property.schemaType != null ? this.property.schemaType : childObject.type;
+                if(this.isComplexType(childSchemaType) && !this.compositionMap){
+                    if (childObject.type == PROPERTY_TYPES.MAP && childObject.isChildOfListOrMap) {
+                        return property.type === PROPERTY_TYPES.STRING;
+                    }
+                    return property.type === childObject.type;
                 }else{
                     return property.type === this.property.schema.property.type;
                 }
@@ -393,7 +406,11 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             return property.type === this.property.type && this.property.schema.property.type === property.schema.property.type;
         }
         if (this.property.schema.property.isDataType && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
-            let typeToMatch = this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
+            let typeToMatch = (<PropertyDeclareAPIModel> this.property).input.type;
+            let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
+            if (childObject.type == PROPERTY_TYPES.MAP && childObject.isChildOfListOrMap) {
+                typeToMatch = PROPERTY_TYPES.STRING;
+            }
             return property.type === typeToMatch;
         }
 
