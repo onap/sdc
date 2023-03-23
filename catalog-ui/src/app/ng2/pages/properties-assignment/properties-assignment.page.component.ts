@@ -585,6 +585,18 @@ export class PropertiesAssignmentComponent {
         modal.instance.open();
     }
 
+    private deleteToscaValue(valueJson : any, currentKey: string[]) {
+        if(currentKey.length == 1) {
+            if (Array.isArray(valueJson) && !isNaN(Number(currentKey[0]))) {
+                valueJson.splice(Number(currentKey[0]),1);
+            } else {
+                delete valueJson[currentKey[0]];
+            }
+        } else {
+            this.deleteToscaValue(valueJson[currentKey[0]],currentKey.splice(1,currentKey.length -1));
+        }
+    }
+
     private clearCheckedInstancePropertyValue() {
         const checkedInstanceProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
         const currentValue : any = checkedInstanceProperty.value;
@@ -594,37 +606,15 @@ export class PropertiesAssignmentComponent {
         if (checkedInstanceProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName){
             const propertiesNameArray = (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName;
             const parts = propertiesNameArray.split("#");
-            let currentKey = [];
-            if (this.isListOrMap(checkedInstanceProperty.type)) {
-                if (checkedInstanceProperty.schemaType == PROPERTY_TYPES.MAP) {
-                    currentKey.push((<DerivedFEProperty>checkedInstanceProperty.input).parentMapKey);
-                }
-                currentKey.push((<DerivedFEProperty>checkedInstanceProperty.input).mapKey);
-                if (checkedInstanceProperty.schemaType != PROPERTY_TYPES.MAP && this.isComplexSchemaType(checkedInstanceProperty.schemaType)) {
-                    currentKey.push(parts.reverse()[0]);
-                }
-            }
+            let currentKey = (<DerivedFEProperty>checkedInstanceProperty.input).toscaPath;
             if (propertiesNameArray.length > 1){
                 const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey.length > 0 ? currentKey : parts.slice(1)));
                 checkedInstanceProperty.subPropertyToscaFunctions.splice(index, 1);
             }
             if(currentValue !== null && currentKey.length > 0){
                 let valueJson = JSON.parse(currentValue);
-                if(currentKey.length >1){
-                    let innerObj = valueJson[currentKey[0]];
-                    delete innerObj[currentKey[1]];
-                    valueJson[currentKey[0]] = innerObj;
-                }else{
-                    delete valueJson[currentKey[0]];
-                }
-                if (checkedInstanceProperty.type == PROPERTY_TYPES.LIST && currentKey.length == 1) {
-                    let listValue = valueJson.filter(function (item) {
-                        return item != null && item != '';
-                    });
-                    checkedInstanceProperty.value = JSON.stringify(listValue);
-                } else {
-                    checkedInstanceProperty.value = JSON.stringify(valueJson);
-                }
+                this.deleteToscaValue(valueJson, currentKey);
+                checkedInstanceProperty.value = JSON.stringify(valueJson);
             }
         }
         if (this.selectedInstanceData instanceof ComponentInstance) {
@@ -648,16 +638,7 @@ export class PropertiesAssignmentComponent {
         if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
             const propertiesName = (<PropertyDeclareAPIModel>checkedProperty).propertiesName;
             const parts = propertiesName.split("#");
-            let currentKey = [];
-            if (this.isListOrMap(checkedProperty.type)) {
-                if (checkedProperty.schemaType == PROPERTY_TYPES.MAP) {
-                    currentKey.push((<DerivedFEProperty>checkedProperty.input).parentMapKey);
-                }
-                currentKey.push((<DerivedFEProperty>checkedProperty.input).mapKey);
-                if (checkedProperty.schemaType != PROPERTY_TYPES.MAP && this.isComplexSchemaType(checkedProperty.schemaType)) {
-                    currentKey.push(parts.reverse()[0]);
-                }
-            }
+            let currentKey = (<DerivedFEProperty>checkedProperty.input).toscaPath;
             if (checkedProperty.subPropertyToscaFunctions == null){
                 checkedProperty.subPropertyToscaFunctions = [];
             }

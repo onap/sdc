@@ -162,19 +162,6 @@ export class DynamicPropertyComponent {
 
         let mapKeyValue = this.property instanceof DerivedFEProperty ? this.property.mapKey : "";
         let parentToscaFunction = null;
-        if (this.property.type == PROPERTY_TYPES.LIST && mapKeyValue === "") {
-            if (this.property.value != null) {
-                const valueJson = JSON.parse(this.property.value);
-                if (this.property instanceof PropertyFEModel && this.property.expandedChildPropertyId != null) {
-                    let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                    mapKeyValue = indexNumber.toString();
-                }else{
-                    mapKeyValue = Object.keys(valueJson).sort().reverse()[0];
-                }
-            }else {
-                mapKeyValue = "0";
-            }
-        }
         if (this.property.type == PROPERTY_TYPES.MAP && this.property instanceof DerivedFEProperty && this.property.mapInlist) {
             parentToscaFunction = this.property.toscaFunction;
             this.property.toscaFunction = null;
@@ -257,21 +244,45 @@ export class DynamicPropertyComponent {
                 return;
             }
             let oldKey = item.getActualMapKey();
-            let keyIndex : number = 0;
-                if(item.parentMapKey != null && oldKey != null) {
-                    keyIndex = 1;
-                }
-                if(item.parentMapKey != null && oldKey == null) {
-                    oldKey = item.parentMapKey;
-                }
             if (this.property.subPropertyToscaFunctions !== null) {
+                let deletedIndex = item.toscaPath.length > 0 ? Number(item.toscaPath[item.toscaPath.length - 1]) : null;
+                let parentIndex = item.toscaPath.length > 1 ? item.toscaPath.splice(0,item.toscaPath.length - 2) : null;
                 let tempSubToscaFunction: SubPropertyToscaFunction[] = [];
+                let toscaPathMap = new Map();
                 this.property.subPropertyToscaFunctions.forEach((subToscaItem : SubPropertyToscaFunction) => {
-                    if(subToscaItem.subPropertyPath[keyIndex] != oldKey){
+                    if ((subToscaItem.subPropertyPath.toString()).indexOf(item.toscaPath.toString()) == -1) {
                         tempSubToscaFunction.push(subToscaItem);
+                    } else {
+                        if (item.derivedDataType == DerivedPropertyType.LIST ) {
+                            if (parentIndex != null) {
+                                if ((subToscaItem.subPropertyPath.toString()).indexOf(parentIndex.toString()) != -1
+                                    && subToscaItem.subPropertyPath.length > parentIndex.length) {
+                                    let nextIndex = Number(subToscaItem.subPropertyPath[parentIndex.length]);
+                                    if(!isNaN(nextIndex) && !isNaN(deletedIndex) && nextIndex > deletedIndex) {
+                                        let revisedPAth = subToscaItem.subPropertyPath;
+                                        revisedPAth[parentIndex.length] = (nextIndex - 1).toString();
+                                        toscaPathMap.set(subToscaItem.subPropertyPath.toString(),revisedPAth.toString());
+                                    }
+                                }
+                            } else {
+                                if (subToscaItem.subPropertyPath.length == 1 && !isNaN(deletedIndex)) {
+                                    let nextElementIndex = Number(subToscaItem.subPropertyPath[0]);
+                                    if (!isNaN(nextElementIndex) && nextElementIndex > deletedIndex) {
+                                        subToscaItem.subPropertyPath[0] = (nextElementIndex - 1).toString();
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
                 this.property.subPropertyToscaFunctions = tempSubToscaFunction;
+                if (item.derivedDataType == DerivedPropertyType.LIST && parentIndex != null && toscaPathMap.size > 0) {
+                    this.property.flattenedChildren.forEach((childProperties : DerivedFEProperty) => {
+                        if (toscaPathMap.has(childProperties.toscaPath.toString())) {
+                            childProperties.toscaPath = toscaPathMap.get(childProperties.toscaPath.toString());
+                        }
+                    });
+                }
             }
             if (item.derivedDataType == DerivedPropertyType.MAP && !item.mapInlist) {
                 delete itemParent.valueObj[oldKey];
@@ -299,21 +310,27 @@ export class DynamicPropertyComponent {
     updateChildKeyInParent(childProp: DerivedFEProperty, newMapKey: string) {
         if (this.property instanceof PropertyFEModel) {
             let oldKey = childProp.getActualMapKey();
+            let oldToscaPath = childProp.toscaPath;
             this.property.childPropMapKeyUpdated(childProp, newMapKey);
-            this.property.flattenedChildren.forEach(tempDervObj => {
-                if (childProp.propertiesName === tempDervObj.parentName) {
-                    tempDervObj.mapKey = newMapKey;
-                }
-            });
+            this.updateChildMapKey(this.property.flattenedChildren, childProp.propertiesName, newMapKey);
             if (this.property.subPropertyToscaFunctions != null) {
                 this.property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
-                    if(item.subPropertyPath[0] === oldKey){
-                        item.subPropertyPath = [newMapKey];
+                    if(item.subPropertyPath === oldToscaPath){
+                        item.subPropertyPath = childProp.toscaPath;
                     }
                 });
             }
             this.emitter.emit();
         }
+    }
+
+    updateChildMapKey(childProps: Array<DerivedFEProperty>, parentName: string, newMapKey: string) {
+        childProps.forEach(tempDervObj => {
+            if (parentName === tempDervObj.parentName) {
+                tempDervObj.mapKey = newMapKey;
+                tempDervObj.toscaPath[tempDervObj.toscaPath.length - 2] = newMapKey;
+            }
+        });
     }
 
     preventInsertItem = (property:DerivedFEProperty):boolean => {

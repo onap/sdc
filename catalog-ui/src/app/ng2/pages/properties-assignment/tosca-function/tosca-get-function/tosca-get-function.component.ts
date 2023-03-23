@@ -264,8 +264,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private propertyTypeToString() {
 	    if (this.isSubProperty()){
-            if ((this.typeHasSchema(this.property.type) && this.property instanceof PropertyDeclareAPIModel && 
-                    (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
+            if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty)
+                || this.compositionMap) {
                 if(this.isComplexType(this.property.schemaType) && !this.compositionMap){
                     let propertySchemaType = (<PropertyDeclareAPIModel> this.property).input.type;
                     return propertySchemaType == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : propertySchemaType;
@@ -393,7 +393,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             return property.type === this.property.type && this.property.schema.property.type === property.schema.property.type;
         }
         if (this.property.schema.property.isDataType && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
-            let typeToMatch = this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
+            let typeToMatch = (<PropertyDeclareAPIModel> this.property).input.type;
+            typeToMatch = typeToMatch == PROPERTY_TYPES.MAP ? PROPERTY_TYPES.STRING : typeToMatch;
             return property.type === typeToMatch;
         }
 
