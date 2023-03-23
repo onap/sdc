@@ -2856,3 +2856,11 @@ errors:
         message: "Cannot change this properties constraints as the resource is an instance.",
         messageId: "SVC4015"
     }
+
+    #---------SVC4017-----------------------------
+    # %1 - Map of component instance and properties
+    SUBSTITUTION_NODE_TYPE_PROPERTY_IN_USE: {
+        code: 409,
+        message: "Cannot change substitution node type as properties of the existing type are referenced by properties %1.",
+        messageId: "SVC4017"
+    }

@@ -204,7 +204,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
             interfaceLifecycleTypeOperation, artifactBl, distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation,
             forwardingPathValidator, uiComponentDataConverter, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
-            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator, null);
+            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator);
         bl.setComponentContactIdValidator(componentContactIdValidator);
         bl.setComponentIconValidator(componentIconValidator);
         bl.setComponentTagsValidator(componentTagsValidator);
