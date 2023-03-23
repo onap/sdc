@@ -2878,3 +2878,11 @@ errors:
         message: "Input name '%1' already exist.",
         messageId: "SVC4016"
     }
+
+    #---------SVC4017-----------------------------
+    # %1 - Map of component instance and properties
+    SUBSTITUTION_NODE_TYPE_PROPERTY_IN_USE: {
+        code: 409,
+        message: "Cannot change service node type as node type properties are in use by %1.",
+        messageId: "SVC4017"
+    }

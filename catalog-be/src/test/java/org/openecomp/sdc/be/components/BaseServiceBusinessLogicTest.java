@@ -187,7 +187,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
             artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
-            modelOperation, null, null, null, null, null);
+            modelOperation, null, null, null, null);
         bl.setUserAdmin(mockUserAdmin);
         bl.setGraphLockOperation(graphLockOperation);
         bl.setJanusGraphDao(mockJanusGraphDao);
