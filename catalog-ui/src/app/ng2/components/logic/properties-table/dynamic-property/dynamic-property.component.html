@@ -25,7 +25,7 @@
             <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">
-            <checkbox *ngIf="nestedLevel == 2" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
+            <checkbox *ngIf="nestedLevel >= 2" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
             <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && !property.mapInlist"><!-- map left cell -->
@@ -44,7 +44,7 @@
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
     <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || (property.isToscaFunction() && !property.isChildOfListOrMap) || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
         <div class="table-cell">
-            <checkbox class="{{propType == derivedPropertyTypes.MAP ? 'inline-checkBox' : 'inline-checkBox-List'}}" *ngIf="((nestedLevel == 1 || nestedLevel == 2) && property.isChildOfListOrMap && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
+            <checkbox class="{{propType == derivedPropertyTypes.MAP ? 'inline-checkBox' : 'inline-checkBox-List'}}" *ngIf="(property.isChildOfListOrMap && property.schema.property.isSimpleType)" [(checked)]="property.isSelected" [disabled]="property.isDisabled || readonly || property.mapKey == '' || checkboxDisabled" (checkedChange)="toggleTosca.emit(property)" ></checkbox>
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
                 [value]="(property.isDeclared || property.isToscaFunction()) ? property.value : property.valueObj"

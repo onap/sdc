@@ -48,22 +48,34 @@ export class DerivedFEProperty extends PropertyBEModel {
     mapInlist: boolean
     inputName: string;
     parentMapKey: string;
+    toscaPath: string[];
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
         if (!createChildOfListOrMap) { //creating a standard derived prop
             super(property);
+            this.toscaPath = [];
             this.parentName = parentName ? parentName : null;
             this.propertiesName = (parentName) ? parentName + '#' + property.name : property.name;
             this.canBeDeclared = true; //defaults to true
+            if (property instanceof DerivedFEProperty) {
+                this.toscaPath = property.toscaPath != null ? property.toscaPath : [];
+            } else {
+                this.toscaPath = property.parentToscaPath != null ? property.parentToscaPath : property.parentToscaPath;
+            }
+            if (this.toscaPath.length == 0 && parentName != null && parentName.indexOf('#') != -1) {
+                let lastparent = parentName.split('#');
+                this.toscaPath.push(lastparent[lastparent.length - 1]);
+            }
+            this.toscaPath.push(property.name);
         } else { //creating a direct child of list or map (ie. Item that can be deleted, with UUID instead of name)
             super(null);
-            if(property.subPropertyToscaFunctions != null){
-                property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
-                    if(item.subPropertyPath[0] === key){
-                        this.toscaFunction = item.toscaFunction;
-                    }
-                });
+            let toscaPathCopy = null;
+            if (property instanceof DerivedFEProperty) {
+                toscaPathCopy = property.toscaPath != null ? property.toscaPath .toString() : null;
+            } else {
+                toscaPathCopy = property.parentToscaPath != null ? property.parentToscaPath.toString() : null;
             }
+            this.toscaPath = toscaPathCopy != null ? toscaPathCopy.split(",") : [];
             this.isChildOfListOrMap = true;
             this.canBeDeclared = false;
             this.name = UUID.UUID();
@@ -72,16 +84,29 @@ export class DerivedFEProperty extends PropertyBEModel {
             
             if (property.type == PROPERTY_TYPES.LIST) {
                 let parentKey : string = null;
-                if(property.value != null) {
-                    const valueJson = JSON.parse(property.value);
-                    if (key != '') {
-                        parentKey = key;
-                    }else{
-                        let indexNumber = Number(Object.keys(valueJson).sort().reverse()[0]) + 1;
-                        parentKey = indexNumber.toString();
+                if (property instanceof DerivedFEProperty) {
+                    if (property.valueObj != '') {
+                        if (key != '') {
+                            this.toscaPath.push(key);
+                        } else {
+                            let toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
+                            this.toscaPath.push((Number(toscaIndex) + 1).toString());
+                        }
+                    } else {
+                        this.toscaPath.push("0");
                     }
-                }else {
-                    parentKey = "0";
+                } else {
+                    if (property instanceof PropertyFEModel && property.valueObj != '') {
+                        if (key != '') {
+                            parentKey = key;
+                        }else{
+                            let toscaIndex = Object.keys(property.valueObj).sort().reverse()[0];
+                            parentKey = (Number(toscaIndex) + 1).toString();
+                        }
+                    } else {
+                        parentKey = "0";
+                    }
+                    this.toscaPath.push(parentKey);
                 }
                 if (property.schemaType != PROPERTY_TYPES.MAP) {
                     this.mapKey = parentKey;
@@ -118,7 +143,14 @@ export class DerivedFEProperty extends PropertyBEModel {
                 } else {
                     this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
                 }
-	
+                if (this.toscaPath != null) {
+                    let lastIndex = this.toscaPath[this.toscaPath.length - 1];
+                    if(this.mapKey != lastIndex){
+                        this.toscaPath.push(this.mapKey);
+                    }
+                } else {
+                    this.toscaPath.push(this.mapKey);
+                }
             }
             this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
             if (value != null) {
@@ -126,7 +158,14 @@ export class DerivedFEProperty extends PropertyBEModel {
             }
             this.updateValueObjOrig();
         }
-        // this.constraints = property ? property.constraints : null;
+        this.parentToscaPath = this.toscaPath;
+        if(property.subPropertyToscaFunctions != null){
+            property.subPropertyToscaFunctions.forEach((item : SubPropertyToscaFunction) => {
+                if(item.subPropertyPath.toString() === this.toscaPath.toString() && this.uniqueId == null){
+                    this.toscaFunction = item.toscaFunction;
+                }
+            });
+        }
         this.valueObjIsValid = true;
         this.derivedDataType = this.getDerivedPropertyType();
         this.inputName = property.inputName;
