@@ -594,7 +594,7 @@
                 <select class="i-sdc-form-select"
                         name="baseType"
                         data-ng-class="{'view-mode': isViewMode()}"
-                        data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
+                        data-ng-disabled="component.isCsarComponent() || !(isEditMode() || isCreateMode())"
                         data-ng-model="component.derivedFromGenericType"
                         data-ng-change="onBaseTypeChange()"
                         data-tests-id="selectBaseType"
@@ -609,7 +609,7 @@
                 <select class="i-sdc-form-select"
                         name="baseTypeVersion"
                         data-ng-class="{'view-mode': isViewMode()}"
-                        data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
+                        data-ng-disabled="component.isCsarComponent() || !(isEditMode() || isCreateMode())"
                         data-ng-model="component.derivedFromGenericVersion"
                         data-tests-id="selectBaseTypeVersion">
                   <option ng-repeat="version in baseTypeVersions">{{version}}</option>
