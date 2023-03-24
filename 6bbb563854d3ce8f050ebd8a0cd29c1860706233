@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5aea547b_4e643fbc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1234,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-24T14:51:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c37ad39_e7f4d8dc",
+      "range": {
+        "startLine": 1234,
+        "startChar": 25,
+        "endLine": 1234,
+        "endChar": 62
+      },
+      "revId": "6bbb563854d3ce8f050ebd8a0cd29c1860706233",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "78ae2977_8b772b98",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "6bbb563854d3ce8f050ebd8a0cd29c1860706233",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2746f05_6f0dc245",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1246,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-24T14:51:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78ae2977_8b772b98",
+      "range": {
+        "startLine": 1246,
+        "startChar": 37,
+        "endLine": 1246,
+        "endChar": 72
+      },
+      "revId": "6bbb563854d3ce8f050ebd8a0cd29c1860706233",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

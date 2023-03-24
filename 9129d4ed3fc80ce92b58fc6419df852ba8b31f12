@@ -22,6 +22,30 @@
       "revId": "9129d4ed3fc80ce92b58fc6419df852ba8b31f12",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59d04013_8137af35",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-24T14:51:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f3f4da0_4aca1b53",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 0
+      },
+      "revId": "9129d4ed3fc80ce92b58fc6419df852ba8b31f12",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
