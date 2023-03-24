@@ -5,6 +5,107 @@
 Release Notes
 =============
 
+Version: 1.12.3
+===============
+
+:Release Date: 2023-03-24
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC London early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4438 <https://jira.onap.org/browse/SDC-4438>`_ - Allign properties import during service import
+*  `SDC-4441 <https://jira.onap.org/browse/SDC-4441>`_ - Order targets in policy target modal
+*  `SDC-4423 <https://jira.onap.org/browse/SDC-4423>`_ - Support for delete of non normative interface types
+*  `SDC-4427 <https://jira.onap.org/browse/SDC-4427>`_ - Provide input name suggestion
+*  `SDC-4385 <https://jira.onap.org/browse/SDC-4385>`_ - Provide input name when declaring service property as input
+*  `SDC-4429 <https://jira.onap.org/browse/SDC-4429>`_ - Sort drop down lists in VFC requirements and capabilities
+*  `SDC-4424 <https://jira.onap.org/browse/SDC-4424>`_ - VFC property metadata backend support
+*  `SDC-4422 <https://jira.onap.org/browse/SDC-4422>`_ - Sort properties in node filter modal
+*  `SDC-4316 <https://jira.onap.org/browse/SDC-4316>`_ - Add validation for int and float constraints
+
+
+**Bug Fixes**
+
+*  `SDC-4437 <https://jira.onap.org/browse/SDC-4437>`_ - Certifying a template with two connected services results in error
+*  `SDC-4434 <https://jira.onap.org/browse/SDC-4434>`_ - Error thrown when setting default value for list of floats property in VFC
+*  `SDC-4432 <https://jira.onap.org/browse/SDC-4432>`_ - Valid values constraints not showing for lists
+*  `SDC-4431 <https://jira.onap.org/browse/SDC-4431>`_ - Property with '::' in name produces wrong Input
+*  `SDC-4405 <https://jira.onap.org/browse/SDC-4405>`_ - Setting Tosca Function on top of unsaved value causes problems
+*  `SDC-4404 <https://jira.onap.org/browse/SDC-4404>`_ - Error opening list property for editing
+*  `SDC-4410 <https://jira.onap.org/browse/SDC-4410>`_ - Fix instance declared inputs mapped to substitution mapping
+*  `SDC-4428 <https://jira.onap.org/browse/SDC-4428>`_ - Fix undeclarePropertiesAsInput in UI after Service Import
+*  `SDC-4428 <https://jira.onap.org/browse/SDC-4428>`_ - Unable to use stringbuilder to for simple list/map items
+*  `SDC-4420 <https://jira.onap.org/browse/SDC-4420>`_ - VFC interface operation not clearing artifact details when unchecked
+*  `SDC-4421 <https://jira.onap.org/browse/SDC-4421>`_ - Operation implementation name not formatting correctly
+
+
+**Tasks**
+
+*  `SDC-4287 <https://jira.onap.org/browse/SDC-4287>`_ - PACKAGES UPGRADES IN DIRECT DEPENDENCIES FOR LONDON RELEASE
+*  `SDC-4446 <https://jira.onap.org/browse/SDC-4446>`_ - Fix missing default no-args constructor
+*  `SDC-4425 <https://jira.onap.org/browse/SDC-4425>`_ - Update vulnerable dependency - javax.servlet:javax.servlet-api
+*  `SDC-4415 <https://jira.onap.org/browse/SDC-4415>`_ - PortalRestApiCentralServiceImpl- Add null test before using nullable values
+*  `SDC-4372 <https://jira.onap.org/browse/SDC-4372>`_ - Remove 'Security Hotspot - Weak Cryptography' reported by Sonar
+*  `SDC-4414 <https://jira.onap.org/browse/SDC-4414>`_ - TranslationService- Add null test before using nullable values
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.12.2
 ===============
 
