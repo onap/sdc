@@ -3975,11 +3975,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditResource(componentsUtils.getResponseFormat(ActionStatus.CREATED), user, createdResource, actionEnum);
             ASDCKpiApi.countCreatedResourcesKPI();
         } catch (ComponentException e) {
+            janusGraphDao.rollback();
             ResponseFormat responseFormat =
                 e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
             throw e;
         } catch (StorageException e) {
+            janusGraphDao.rollback();
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
