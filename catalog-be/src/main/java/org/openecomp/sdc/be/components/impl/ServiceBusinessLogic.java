@@ -720,6 +720,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 ASDCKpiApi.countCreatedServicesKPI();
                 return Either.left(dataModelResponse.left().value());
             }
+            janusGraphDao.rollback();
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
                     ComponentTypeEnum.SERVICE);

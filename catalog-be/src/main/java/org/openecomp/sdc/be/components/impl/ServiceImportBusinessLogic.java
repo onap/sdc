@@ -753,7 +753,7 @@ public class ServiceImportBusinessLogic {
                 }
             }
             if (shouldLock) {
-                graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Resource);
+                graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
             }
         }
     }
