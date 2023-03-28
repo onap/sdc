@@ -22,6 +22,30 @@
       "revId": "1369eb7e001cbfb200dcca36e7c2439121e916e3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1e56cc1_d0ac2c88",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-03-28T12:55:26Z",
+      "side": 1,
+      "message": "Looks like the commit is done in unlockComponentByName() by org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao#unlockNode",
+      "parentUuid": "064dbc1a_6825bbf8",
+      "range": {
+        "startLine": 723,
+        "startChar": 0,
+        "endLine": 723,
+        "endChar": 37
+      },
+      "revId": "1369eb7e001cbfb200dcca36e7c2439121e916e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
