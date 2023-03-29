@@ -1,0 +1,45 @@
+{
+  "type": "CUSTOM",
+  "name": "first_custom_function_name",
+  "parameters": [
+    {
+      "type": "STRING",
+      "value": "string1"
+    },
+    {
+      "type": "GET_ATTRIBUTE",
+      "propertyUniqueId": "36897651-f5e5-4603-8064-b60c771a3c37.descriptor_id",
+      "propertyName": "descriptor_id",
+      "propertySource": "SELF",
+      "sourceUniqueId": "36897651-f5e5-4603-8064-b60c771a3c37",
+      "sourceName": "testService",
+      "functionType": "GET_ATTRIBUTE",
+      "propertyPathFromSource": [
+        "descriptor_id"
+      ]
+    },
+    {
+      "type": "CUSTOM",
+      "name": "second_custom_function_name",
+      "parameters": [
+        {
+          "type": "CONCAT",
+          "parameters": [
+            {
+              "type": "STRING",
+              "value": "string2"
+            },
+            {
+              "type": "YAML",
+              "value": "myList: [1, two, three three]\nget_something: [SELF, something]\nstring: this is my string\n"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "string3"
+        }
+      ]
+    }
+  ]
+}

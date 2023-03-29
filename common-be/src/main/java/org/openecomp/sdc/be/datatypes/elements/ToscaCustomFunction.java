@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2022 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,30 +21,42 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.Arrays;
-import java.util.Optional;
-import lombok.AllArgsConstructor;
+import com.google.gson.Gson;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Setter;
 
-@AllArgsConstructor
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Getter
-public enum ToscaFunctionType {
+@Setter
+public class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParameter {
 
-    GET_INPUT("get_input"),
-    GET_PROPERTY("get_property"),
-    GET_ATTRIBUTE("get_attribute"),
-    CONCAT("concat"),
-    CUSTOM("custom"),
-    YAML("yaml"),
-    STRING("string");
+    private String name;
+    private List<ToscaFunctionParameter> parameters = new ArrayList<>();
 
-    private final String name;
-
-    public static Optional<ToscaFunctionType> findType(final String functionType) {
-        if (StringUtils.isBlank(functionType)) {
-            return Optional.empty();
-        }
-        return Arrays.stream(values()).filter(toscaFunctionType -> toscaFunctionType.getName().equalsIgnoreCase(functionType)).findFirst();
+    @Override
+    public ToscaFunctionType getType() {
+        return ToscaFunctionType.CUSTOM;
     }
+
+    @Override
+    public String getValue() {
+        return new Gson().toJson(getJsonObjectValue());
+    }
+
+    @Override
+    public Object getJsonObjectValue() {
+        return Map.of(
+                name,
+                parameters.stream().map(ToscaFunctionParameter::getJsonObjectValue).collect(Collectors.toList())
+        );
+    }
+
+    public void addParameter(final ToscaFunctionParameter functionParameter) {
+        this.parameters.add(functionParameter);
+    }
+
 }
