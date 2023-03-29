@@ -139,6 +139,56 @@ class ToscaFunctionJsonDeserializerTest {
         assertDoesNotThrow(() -> new Yaml().load(toscaFunction.getValue()));
     }
 
+    @Test
+    void testCustomToscaFunction() throws IOException {
+        //given
+        final String toscaCustomFunction = Files.readString(TEST_RESOURCES_PATH.resolve("customFunction.json"));
+        //when
+        final ToscaFunction toscaFunction = parseToscaFunction(toscaCustomFunction);
+        //then
+        assertTrue(toscaFunction instanceof ToscaCustomFunction);
+        final Object yamlObject = new Yaml().load(toscaFunction.getValue());
+        assertTrue(yamlObject instanceof Map);
+        final Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
+        final Object customFunctionObj = yamlMap.get("$" + ((ToscaCustomFunction) toscaFunction).getName());
+        assertNotNull(customFunctionObj);
+        assertTrue(customFunctionObj instanceof List);
+        final List<Object> customFunctionParameters = (List<Object>) customFunctionObj;
+        assertEquals(3, customFunctionParameters.size(), "Expecting three parameters");
+        assertEquals("string1", customFunctionParameters.get(0));
+
+        assertTrue(customFunctionParameters.get(1) instanceof Map);
+        final Map<String, Object> parameter1Map = (Map<String, Object>) customFunctionParameters.get(1);
+        assertNotNull(parameter1Map.get(ToscaFunctionType.GET_ATTRIBUTE.getName()));
+        assertTrue(parameter1Map.get(ToscaFunctionType.GET_ATTRIBUTE.getName()) instanceof List);
+        List<String> getAttributeParameters = (List<String>) parameter1Map.get(ToscaFunctionType.GET_ATTRIBUTE.getName());
+        assertEquals(2, getAttributeParameters.size(), "Expecting two parameters in the get_attribute function");
+        assertEquals("SELF", getAttributeParameters.get(0));
+        assertEquals("descriptor_id", getAttributeParameters.get(1));
+
+        assertTrue(customFunctionParameters.get(2) instanceof Map);
+        final Map<String, Object> parameter2Map = (Map<String, Object>) customFunctionParameters.get(2);
+        Object customFunctionObj2 = parameter2Map.get(parameter2Map.keySet().stream().iterator().next());
+        assertNotNull(customFunctionObj2);
+        assertTrue(customFunctionObj2 instanceof List);
+        List<Object> customParameters = (List<Object>) customFunctionObj2;
+        assertEquals(2, customParameters.size(), "Expecting two parameters in the sub custom function");
+        assertTrue(customParameters.get(0) instanceof Map);
+        final Map<String, Object> concatFunctionValueMap = (Map<String, Object>) customParameters.get(0);
+        assertNotNull(concatFunctionValueMap.get(ToscaFunctionType.CONCAT.getName()));
+        assertTrue(concatFunctionValueMap.get(ToscaFunctionType.CONCAT.getName()) instanceof List);
+        List<Object> concatParameters = (List<Object>) concatFunctionValueMap.get(ToscaFunctionType.CONCAT.getName());
+        assertEquals(2, concatParameters.size(), "Expecting two parameters in the sub concat function");
+        assertEquals("string2", concatParameters.get(0));
+        assertTrue(concatParameters.get(1) instanceof Map);
+        Map<String, Object> yamlFunctionValueMap = (Map<String, Object>) concatParameters.get(1);
+        assertTrue(yamlFunctionValueMap.get("myList") instanceof List);
+        assertTrue(yamlFunctionValueMap.get("get_something") instanceof List);
+        assertTrue(yamlFunctionValueMap.get("string") instanceof String);
+
+        assertEquals("string3", customParameters.get(1));
+    }
+
     private ToscaFunction parseToscaFunction(final String toscaFunctionJson) throws JsonProcessingException {
         return new ObjectMapper().readValue(toscaFunctionJson, ToscaFunction.class);
     }
