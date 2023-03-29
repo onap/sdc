@@ -81,6 +81,10 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             return this.deserializeYamlFunction(node, context);
         }
 
+        if (toscaFunctionType == ToscaFunctionType.CUSTOM) {
+            return this.deserializeCustomFunction(node, context);
+        }
+
         return null;
     }
 
@@ -144,22 +148,42 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
     private ToscaConcatFunction deserializeConcatFunction(final JsonNode concatFunctionJsonNode,
                                                           final DeserializationContext context) throws IOException {
         final var toscaConcatFunction = new ToscaConcatFunction();
+        List<ToscaFunctionParameter> functionParameterList = getParameters(concatFunctionJsonNode, context);
+        toscaConcatFunction.setParameters(functionParameterList);
+        return toscaConcatFunction;
+    }
+
+    private ToscaCustomFunction deserializeCustomFunction(final JsonNode customFunctionJsonNode,
+                                                          final DeserializationContext context) throws IOException {
+        final var toscaCustomFunction = new ToscaCustomFunction();
+        final String name = getAsTextOrElseNull(customFunctionJsonNode, "name");
+        if (name == null) {
+            throw context.instantiationException(List.class, "Expecting a string for the 'name' entry");
+        }
+        toscaCustomFunction.setName(name);
+        List<ToscaFunctionParameter> functionParameterList = getParameters(customFunctionJsonNode, context);
+        toscaCustomFunction.setParameters(functionParameterList);
+        return toscaCustomFunction;
+    }
+
+    private List<ToscaFunctionParameter> getParameters(final JsonNode functionJsonNode, final DeserializationContext context) throws IOException {
         final List<ToscaFunctionParameter> functionParameterList = new ArrayList<>();
-        final JsonNode parametersNode = concatFunctionJsonNode.get("parameters");
+        final JsonNode parametersNode = functionJsonNode.get("parameters");
         if (parametersNode == null) {
-            return toscaConcatFunction;
+            return functionParameterList;
         }
         if (!parametersNode.isArray()) {
             throw context.instantiationException(List.class, "Expecting an array for the 'parameters' entry");
         }
+
         for (final JsonNode parameterNode : parametersNode) {
             final JsonNode typeJsonNode = parameterNode.get("type");
             if (typeJsonNode == null) {
-                throw context.instantiationException(ToscaConcatFunction.class, "TOSCA concat function parameter type attribute not provided");
+                throw context.instantiationException(ToscaCustomFunction.class, "TOSCA concat function parameter type attribute not provided");
             }
             final String parameterType = typeJsonNode.asText();
             final ToscaFunctionType toscaFunctionType = ToscaFunctionType.findType(parameterType)
-                .orElseThrow(() -> context.instantiationException(ToscaConcatFunction.class,
+                .orElseThrow(() -> context.instantiationException(ToscaCustomFunction.class,
                     String.format("Invalid TOSCA concat function parameter type '%s'", parameterType))
                 );
             if (toscaFunctionType == ToscaFunctionType.STRING) {
@@ -171,8 +195,7 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
                 functionParameterList.add((ToscaFunctionParameter) toscaFunction);
             }
         }
-        toscaConcatFunction.setParameters(functionParameterList);
-        return toscaConcatFunction;
+        return functionParameterList;
     }
 
 }
