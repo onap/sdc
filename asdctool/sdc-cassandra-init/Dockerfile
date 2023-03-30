@@ -8,9 +8,11 @@ RUN mkdir ~/.cassandra/ && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc
 USER root
 
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y python-pip && \
-    python -m pip install --upgrade pip \
-    pip install cqlsh==6.0.0 && \
+RUN apt-get update --allow-releaseinfo-change &&  \
+    apt-get purge python* -y && \
+    apt-get install -y python3-pip && \
+    python3 -m pip install --upgrade pip && \
+    pip3 install cqlsh==6.1.0 && \
     mkdir ~/.cassandra/ && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
