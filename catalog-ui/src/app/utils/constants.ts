@@ -150,6 +150,7 @@ export class SEVERITY {
 }
 
 export class PROPERTY_TYPES {
+    public static ANY = 'any';
     public static STRING = 'string';
     public static INTEGER = 'integer';
     public static TIMESTAMP = 'timestamp';
