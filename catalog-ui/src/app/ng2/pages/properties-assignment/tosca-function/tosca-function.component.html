@@ -30,6 +30,10 @@
       <app-tosca-concat-function [toscaConcatFunction]="toscaFunction" [componentInstanceMap]="componentInstanceMap"
                                  (onValidityChange)="onConcatFunctionValidityChange($event)"></app-tosca-concat-function>
     </div>
+    <div *ngIf="isCustomSelected()">
+      <app-tosca-custom-function [propertyType]="property.type" [toscaCustomFunction]="toscaFunction" [componentInstanceMap]="componentInstanceMap"
+                                 (onValidityChange)="onCustomFunctionValidityChange($event)"></app-tosca-custom-function>
+    </div>
     <div *ngIf="isGetFunctionSelected()">
       <app-tosca-get-function [property]="property" [toscaGetFunction]="toscaFunction"
                               [componentInstanceMap]="componentInstanceMap"

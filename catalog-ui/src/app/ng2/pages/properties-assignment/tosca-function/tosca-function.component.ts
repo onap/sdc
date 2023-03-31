@@ -29,9 +29,11 @@ import {ToscaFunctionType} from "../../../../models/tosca-function-type.enum";
 import {ToscaGetFunctionValidationEvent} from "./tosca-get-function/tosca-get-function.component";
 import {ToscaFunction} from "../../../../models/tosca-function";
 import {ToscaConcatFunctionValidationEvent} from "./tosca-concat-function/tosca-concat-function.component";
+import {ToscaCustomFunctionValidationEvent} from "./tosca-custom-function/tosca-custom-function.component";
 import {PROPERTY_TYPES, PROPERTY_DATA} from "../../../../utils/constants";
 import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.component";
 import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
+import {ToscaCustomFunction} from "../../../../models/tosca-custom-function";
 import {YamlFunction} from "../../../../models/yaml-function";
 
 @Component({
@@ -151,6 +153,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
         this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
+        this.toscaFunctions.push(ToscaFunctionType.CUSTOM);
         if (this.property.type === PROPERTY_TYPES.STRING) {
             this.toscaFunctions.push(ToscaFunctionType.CONCAT);
         }
@@ -178,6 +181,10 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         return this.formGroup.get('toscaFunctionType').value === ToscaFunctionType.CONCAT;
     }
 
+    isCustomSelected(): boolean {
+        return this.formGroup.get('toscaFunctionType').value === ToscaFunctionType.CUSTOM;
+    }
+
     isGetFunctionSelected(): boolean {
         return this.isGetInputSelected() || this.isGetPropertySelected() || this.isGetAttributeSelected();
     }
@@ -197,6 +204,14 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     onConcatFunctionValidityChange(validationEvent: ToscaConcatFunctionValidationEvent): void {
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.toscaConcatFunction);
+        } else {
+            this.toscaFunctionForm.setValue(undefined);
+        }
+    }
+
+    onCustomFunctionValidityChange(validationEvent: ToscaCustomFunctionValidationEvent): void {
+        if (validationEvent.isValid) {
+            this.toscaFunctionForm.setValue(validationEvent.toscaCustomFunction);
         } else {
             this.toscaFunctionForm.setValue(undefined);
         }
@@ -237,6 +252,9 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         }
         if (this.isConcatSelected()) {
             return new ToscaConcatFunction(this.toscaFunctionForm.value);
+        }
+        if (this.isCustomSelected()) {
+            return new ToscaCustomFunction(this.toscaFunctionForm.value);
         }
         if (this.isGetFunctionSelected()) {
             return new ToscaGetFunction(this.toscaFunctionForm.value);
