@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2022 Nordix Foundation.
+ *  Copyright (C) 2023 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ToscaConcatFunctionComponent} from './tosca-concat-function.component';
-import {ToscaCustomFunctionComponent} from '../tosca-custom-function/tosca-custom-function.component';
+import {ToscaConcatFunctionComponent} from '../tosca-concat-function/tosca-concat-function.component';
+import {ToscaCustomFunctionComponent} from './tosca-custom-function.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ToscaFunctionComponent} from "../tosca-function.component";
 import {TranslateModule} from "../../../../shared/translator/translate.module";
@@ -30,13 +30,18 @@ import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-functio
 import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
 import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
 
-describe('ToscaConcatFunctionComponent', () => {
-    let component: ToscaConcatFunctionComponent;
-    let fixture: ComponentFixture<ToscaConcatFunctionComponent>;
+describe('ToscaCustomFunctionComponent', () => {
+    let component: ToscaCustomFunctionComponent;
+    let fixture: ComponentFixture<ToscaCustomFunctionComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ToscaConcatFunctionComponent, ToscaFunctionComponent, ToscaGetFunctionComponent, YamlFunctionComponent, ToscaCustomFunctionComponent],
+            declarations: [
+                ToscaCustomFunctionComponent,
+                ToscaConcatFunctionComponent,
+                ToscaFunctionComponent,
+                ToscaGetFunctionComponent,
+                YamlFunctionComponent],
             imports: [
                 FormsModule,
                 ReactiveFormsModule,
@@ -48,7 +53,7 @@ describe('ToscaConcatFunctionComponent', () => {
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ToscaConcatFunctionComponent);
+        fixture = TestBed.createComponent(ToscaCustomFunctionComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

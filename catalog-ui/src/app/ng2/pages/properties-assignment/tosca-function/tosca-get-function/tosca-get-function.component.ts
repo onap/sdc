@@ -387,6 +387,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private hasSameType(property: PropertyBEModel | AttributeBEModel): boolean {
+        if (!this.property.type) {
+            return true;
+        }
         if (this.typeHasSchema(this.property.type)) {
             if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
                 let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
