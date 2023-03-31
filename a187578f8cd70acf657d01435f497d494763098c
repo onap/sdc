@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bd4e7429_78553306",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-31T12:03:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5fa7272a_0fd60729",
+      "range": {
+        "startLine": 257,
+        "startChar": 29,
+        "endLine": 257,
+        "endChar": 66
+      },
+      "revId": "a187578f8cd70acf657d01435f497d494763098c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21fcf058_8efc98f0",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "a187578f8cd70acf657d01435f497d494763098c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7a45ad2_894de2a0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-03-31T12:03:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21fcf058_8efc98f0",
+      "range": {
+        "startLine": 261,
+        "startChar": 103,
+        "endLine": 261,
+        "endChar": 114
+      },
+      "revId": "a187578f8cd70acf657d01435f497d494763098c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
