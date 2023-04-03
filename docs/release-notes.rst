@@ -5,6 +5,88 @@
 Release Notes
 =============
 
+Version: 1.12.4
+===============
+
+:Release Date: 2023-04-03
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC London release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4452 <https://jira.onap.org/browse/SDC-4452>`_ - Add robustness to type creation on service import
+*  `SDC-4445 <https://jira.onap.org/browse/SDC-4445>`_ - Stringbuilder support for child elements of type list
+*  `SDC-4439 <https://jira.onap.org/browse/SDC-4439>`_ - Support to change substitution mapping node or version after service creation
+*  `SDC-4430 <https://jira.onap.org/browse/SDC-4430>`_ - Check for service property usage in sub mapping node change
+*  `SDC-4451 <https://jira.onap.org/browse/SDC-4451>`_ - No rollback on import fail
+
+
+**Bug Fixes**
+
+N/A
+
+
+**Tasks**
+
+*  `SDC-4456 <https://jira.onap.org/browse/SDC-4456>`_ - Upgrade docker images to use Python 3
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.12.3
 ===============
 
