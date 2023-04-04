@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b240b48_a1f98a9d",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-04T09:58:02Z",
+      "side": 1,
+      "message": "not \u0027concat\u0027 any more, could be custom too, isn\u0027t ?",
+      "range": {
+        "startLine": 182,
+        "startChar": 87,
+        "endLine": 182,
+        "endChar": 93
+      },
+      "revId": "9106c4dd155c4be63af81111791719c2fa806af0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5589787_97f610e5",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-04T09:58:02Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 187,
+        "startChar": 49,
+        "endLine": 187,
+        "endChar": 55
+      },
+      "revId": "9106c4dd155c4be63af81111791719c2fa806af0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
