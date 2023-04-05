@@ -481,11 +481,6 @@ Modifications copyright (c) 2018-2019 Nokia
                     <version>1.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <version>1.5</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.2.0</version>
@@ -622,31 +617,6 @@ Modifications copyright (c) 2018-2019 Nokia
                 </dependencies>
             </plugin>
 
-            <!-- Set the deployment repositories properties. -->
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <inherited>false</inherited>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <source>
-                                pom.properties['deploy.url'] =
-                                    pom.version.contains('-SNAPSHOT') ?
-                                        project.distributionManagement.snapshotRepository.url :
-                                        project.distributionManagement.repository.url;
-                                pom.properties['repo.id'] = pom.version.contains('-SNAPSHOT') ?
-                                    project.distributionManagement.snapshotRepository.id :
-                                    project.distributionManagement.repository.id;
-                            </source>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
