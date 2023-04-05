@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f522b77_780b113d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-05T15:05:24Z",
+      "side": 1,
+      "message": "replace with\nCollectionUtils.isNotEmpty(categories)",
+      "range": {
+        "startLine": 677,
+        "startChar": 12,
+        "endLine": 677,
+        "endChar": 34
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92f21ba0_2c675af8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-05T15:05:24Z",
+      "side": 1,
+      "message": "replace with\nMapUtils.isNotEmpty(serviceNodeTypesConfig)",
+      "range": {
+        "startLine": 677,
+        "startChar": 37,
+        "endLine": 677,
+        "endChar": 70
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2be30cd_85746c5a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/IElementOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-05T15:05:24Z",
+      "side": 1,
+      "message": "use default to return true\nlike this no need to override in https://gerrit.onap.org/r/c/sdc/+/134013/2/catalog-be/src/test/java/org/openecomp/sdc/ElementOperationMock.java",
+      "range": {
+        "startLine": 101,
+        "startChar": 4,
+        "endLine": 101,
+        "endChar": 11
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
