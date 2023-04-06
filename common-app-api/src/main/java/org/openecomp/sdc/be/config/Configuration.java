@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.config;
 
 import static java.lang.String.format;
@@ -99,6 +100,7 @@ public class Configuration extends BasicConfiguration {
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
     private List<String> directives;
+    private List<CustomToscaFunction> defaultCustomToscaFunctions;
     private Integer additionalInformationMaxNumberOfKeys;
     private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
     private BeMonitoringConfig systemMonitoring;
@@ -526,6 +528,15 @@ public class Configuration extends BasicConfiguration {
     public static class CsarFormat {
 
         private String defaultFormat;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class CustomToscaFunction {
+
+        private String name;
+        private String type;
     }
 
 }
