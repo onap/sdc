@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "e5962ef1_86db79db",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-04-06T12:49:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92f21ba0_2c675af8",
+      "range": {
+        "startLine": 677,
+        "startChar": 37,
+        "endLine": 677,
+        "endChar": 70
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98dc1758_26a1ce83",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-04-06T12:49:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f522b77_780b113d",
+      "range": {
+        "startLine": 677,
+        "startChar": 12,
+        "endLine": 677,
+        "endChar": 34
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2be30cd_85746c5a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/IElementOperation.java",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7ae9158_152d0e93",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/IElementOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-04-06T12:49:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2be30cd_85746c5a",
+      "range": {
+        "startLine": 101,
+        "startChar": 4,
+        "endLine": 101,
+        "endChar": 11
+      },
+      "revId": "233f8624caaf56327fcdcb79e59fabc122288713",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
