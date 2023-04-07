@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb206243_c0ec8486",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/IElementOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-07T12:56:06Z",
+      "side": 1,
+      "message": "according to requirement, default value is false",
+      "range": {
+        "startLine": 102,
+        "startChar": 15,
+        "endLine": 102,
+        "endChar": 19
+      },
+      "revId": "5c088b5acc6449bf4e8ce005539079c07cc45f34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
