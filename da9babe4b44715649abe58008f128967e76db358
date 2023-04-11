@@ -22,6 +22,30 @@
       "revId": "da9babe4b44715649abe58008f128967e76db358",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d3b9fe7_0d3f2941",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-11T09:24:25Z",
+      "side": 0,
+      "message": "According to https://groovy.github.io/gmaven/\nGroovy integration for Apache Maven.\nGMaven 2.x no longer supports any integration for compilation of Groovy sources. \n\nRan Unit teste, UI/IT and could not find any usage, consequences of removing, everything looks good",
+      "parentUuid": "900a8416_31bc1ca5",
+      "range": {
+        "startLine": 625,
+        "startChar": 6,
+        "endLine": 650,
+        "endChar": 20
+      },
+      "revId": "da9babe4b44715649abe58008f128967e76db358",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
