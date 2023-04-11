@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "900a8416_31bc1ca5",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-11T09:12:46Z",
+      "side": 0,
+      "message": "what was this doing? what are the consequences of removing?",
+      "range": {
+        "startLine": 625,
+        "startChar": 6,
+        "endLine": 650,
+        "endChar": 20
+      },
+      "revId": "da9babe4b44715649abe58008f128967e76db358",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
