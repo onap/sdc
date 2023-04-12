@@ -452,6 +452,30 @@ public class ResponseParser {
 
     }
 
+    public static Map<String, List<Component>> convertCatalogDataTypeToJavaObject(String response) {
+        Map<String, List<Component>> map = new HashMap<>();
+        JsonElement jElement = new JsonParser().parse(response);
+        JsonObject jObject = jElement.getAsJsonObject();
+
+        if (jObject != null) {
+            //////// DATATYPE/////////////////////////////
+            ArrayList<Component> restResponseArray = new ArrayList<>();
+            Component component = null;
+            for (int i = 0; i < jObject.size(); i++) {
+                String resourceString = jObject.toString();
+                component = ResponseParser.convertResourceResponseToJavaObject(resourceString);
+                restResponseArray.add(component);
+            }
+
+            map.put("datatypes", restResponseArray);
+
+        } else {
+            map.put("datatypes", new ArrayList<>());
+        }
+        return map;
+
+    }
+
     public static Map<Long, ServiceDistributionStatus> convertServiceDistributionStatusToObject(String response) throws ParseException {
 
         Map<Long, ServiceDistributionStatus> serviceDistributionStatusMap = new HashMap<>();

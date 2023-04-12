@@ -84,6 +84,11 @@ public class ComponentPage extends AbstractPageObject {
         notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 
+    public void clickOnTypeCreate() {
+        workspaceTopBarComponent.clickOnCreate();
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+    }
+
     public String getLifecycleState() {
         return workspaceTopBarComponent.getLifecycleState();
     }

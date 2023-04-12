@@ -144,6 +144,8 @@ public interface Urls {
 	final String GET_FOLLWED_LIST = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/followed";
 
 	final String GET_CATALOG_DATA = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/screen/?excludeTypes=VFCMT&excludeTypes=Configuration";
+	final String GET_CATALOG_DATATYPE = SDC_HTTP_METHOD + "://%s:%s/sdc2/rest/v1/catalog/allDataTypes?excludePrimitives=true";
+
 
 	// *****************************************Resources
 	// **********************************************************************

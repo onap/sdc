@@ -126,6 +126,8 @@ public class RestCDUtils {
     public static Map<String, List<Component>> getCatalogAsMap() throws IOException {
         User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
         RestResponse catalog = CatalogRestUtils.getCatalog(defaultAdminUser.getUserId());
+        //RestResponse catalogDataType = CatalogRestUtils.getCatalogDataType(defaultAdminUser.getUserId());
+        //Map<String, List<Component>> dataTypeResponse = ResponseParser.convertCatalogResponseToJavaObject(catalogDataType.getResponse());
         return ResponseParser.convertCatalogResponseToJavaObject(catalog.getResponse());
     }
 

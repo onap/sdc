@@ -1,0 +1,105 @@
+tosca.datatypes.testDataTypeSimple:
+  derived_from: tosca.datatypes.Root
+  description: The generic abstract type from which all VNF specific abstract node types shall be derived to form, together with other node types, the TOSCA service template(s) representing the VNFD
+  properties:
+    str_prop: 
+      type: string 
+      required: true
+    int_prop: 
+      type: integer
+      required: true
+    timestamp_prop: 
+      type: timestamp
+      required: true
+    boolean_prop: 
+      type: boolean
+      required: true
+    float_prop: 
+      type: float
+      required: true
+    json_prop: 
+      type: json
+      required: true
+    list_str_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    list_int_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    list_map_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: map
+    map_str_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: string
+    map_int_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: integer
+tosca.datatypes.testDataTypeComplex:
+  derived_from: tosca.datatypes.Root
+  description: The generic abstract type from which all VNF specific abstract node types shall be derived to form, together with other node types, the TOSCA service template(s) representing the VNFD
+  properties:
+    str_prop: 
+      type: string 
+      required: true
+    int_prop: 
+      type: integer
+      required: true
+    timestamp_prop: 
+      type: timestamp
+      required: true
+    boolean_prop: 
+      type: boolean
+      required: true
+    float_prop: 
+      type: float
+      required: true
+    json_prop: 
+      type: json
+      required: true
+    complex_prop:
+      type: tosca.datatypes.testDataTypeSimple
+    list_str_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    list_int_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    list_complex_prop:
+      type: list
+      entry_schema:
+        type: tosca.datatypes.testDataTypeSimple
+    list_map_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: map
+    map_str_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    map_int_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: integer
+    map_complex_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: tosca.datatypes.testDataTypeSimple

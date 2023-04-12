@@ -52,6 +52,12 @@ public class CatalogRestUtils extends BaseRestUtils {
 		return sendGet(url, userId);
 	}
 
+	public static RestResponse getCatalogDataType(String userId) throws IOException {
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_CATALOG_DATATYPE, config.getCatalogBeHost(), config.getCatalogBePort());
+		return sendGet(url, userId);
+	}
+
 	public static RestResponse getAllCategoriesTowardsCatalogBe() throws IOException {
 
 		Config config = Utils.getConfig();
