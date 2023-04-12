@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a7ae76a_247cf1e9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/DefaultCustomToscaFunctionServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-04-12T12:21:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98417268_fa667c74",
+      "range": {
+        "startLine": 90,
+        "startChar": 87,
+        "endLine": 90,
+        "endChar": 122
+      },
+      "revId": "089da27b8bc4ffbd5267615aeb3c8ba8d5f27d06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98feecb2_56496545",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/Configuration.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "089da27b8bc4ffbd5267615aeb3c8ba8d5f27d06",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db6e4d14_b496d4f3",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/Configuration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-04-12T12:21:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98feecb2_56496545",
+      "range": {
+        "startLine": 538,
+        "startChar": 8,
+        "endLine": 539,
+        "endChar": 20
+      },
+      "revId": "089da27b8bc4ffbd5267615aeb3c8ba8d5f27d06",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
