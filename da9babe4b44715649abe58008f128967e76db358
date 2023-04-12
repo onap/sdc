@@ -46,6 +46,30 @@
       "revId": "da9babe4b44715649abe58008f128967e76db358",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6225d0a_1268799d",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-12T11:11:49Z",
+      "side": 0,
+      "message": "Whats the connection to JDK17?",
+      "parentUuid": "9d3b9fe7_0d3f2941",
+      "range": {
+        "startLine": 625,
+        "startChar": 6,
+        "endLine": 650,
+        "endChar": 20
+      },
+      "revId": "da9babe4b44715649abe58008f128967e76db358",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
