@@ -109,6 +109,7 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         toscaGetFunction.setSourceUniqueId(getAsTextOrElseNull(node, "sourceUniqueId"));
         toscaGetFunction.setPropertyName(getAsTextOrElseNull(node, "propertyName"));
         toscaGetFunction.setPropertyUniqueId(getAsTextOrElseNull(node, "propertyUniqueId"));
+        toscaGetFunction.setToscaIndex(getNumberAsTextOrElseNull(node, "toscaIndex"));
         final String propertySource = getAsTextOrElseNull(node, "propertySource");
         if (StringUtils.isNotEmpty(propertySource)) {
             final PropertySource propertySource1 = PropertySource.findType(propertySource).orElseThrow(() ->
@@ -139,6 +140,22 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             return null;
         }
         return jsonNode.asText();
+    }
+
+    private Object getNumberAsTextOrElseNull(final JsonNode node, final String fieldName) {
+        final JsonNode jsonNode = node.get(fieldName);
+        if (jsonNode == null) {
+            return null;
+        }
+        if (jsonNode.asText().equalsIgnoreCase("INDEX")) {
+            return jsonNode.asText();
+        }
+        try {
+            Integer.parseInt(jsonNode.asText());
+        } catch(Exception e) {
+            return null;
+        }
+        return Integer.parseInt(jsonNode.asText());
     }
 
     private ToscaConcatFunction deserializeConcatFunction(final JsonNode concatFunctionJsonNode,

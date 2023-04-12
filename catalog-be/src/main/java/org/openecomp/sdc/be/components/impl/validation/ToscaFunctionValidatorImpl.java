@@ -129,11 +129,11 @@ public class ToscaFunctionValidatorImpl implements ToscaFunctionValidator {
             referredProperty = findSubProperty(referredProperty, toscaGetFunction, model);
         }
 
-        if (!property.getType().equals(referredProperty.getType())) {
+        if (!property.getType().equals(referredProperty.getType()) && !"list".equalsIgnoreCase(referredProperty.getType())) {
             throw ToscaGetFunctionExceptionSupplier
                 .propertyTypeDiverge(toscaGetFunction.getType(), referredProperty.getType(), property.getType()).get();
         }
-        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
+        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
             throw ToscaGetFunctionExceptionSupplier
                 .propertySchemaDiverge(toscaGetFunction.getType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
         }
