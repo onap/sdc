@@ -31,6 +31,8 @@
       <select formControlName="selectedProperty">
         <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
       </select>
+      <label class="i-sdc-form-label">Index</label>
+      <input type="number" min="0" formControlName="toscaIndex"/>
     </div>
     <div *ngIf="dropDownErrorMsg" class="tosca-error">{{dropDownErrorMsg}}</div>
   </form>
