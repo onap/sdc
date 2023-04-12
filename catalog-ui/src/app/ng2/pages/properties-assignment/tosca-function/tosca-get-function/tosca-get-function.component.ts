@@ -52,7 +52,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     formGroup: FormGroup = new FormGroup({
         'selectedProperty': new FormControl(undefined, Validators.required),
-        'propertySource': new FormControl(undefined, Validators.required)
+        'propertySource': new FormControl(undefined, Validators.required),
+        'toscaIndex' : new FormControl(undefined)
     });
 
     isLoading: boolean = false;
@@ -132,6 +133,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             } else {
                 subscriber.next();
             }
+            if (this.toscaGetFunction.toscaIndex != null) {
+                this.toscaIndex.setValue(Number(this.toscaGetFunction.toscaIndex));
+            }
         });
     }
 
@@ -154,6 +158,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         toscaGetFunction.propertyUniqueId = selectedProperty.propertyId;
         toscaGetFunction.propertyName = selectedProperty.propertyName;
         toscaGetFunction.propertyPathFromSource = selectedProperty.propertyPath;
+        toscaGetFunction.toscaIndex = this.toscaIndex.value;
 
         return toscaGetFunction;
     }
@@ -219,6 +224,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     private resetPropertyDropdown(): void {
         this.dropDownErrorMsg = undefined;
         this.selectedProperty.reset();
+        this.toscaIndex.reset();
         this.propertyDropdownList = [];
     }
 
@@ -464,6 +470,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     onPropertySourceChange(): void {
         this.selectedProperty.reset();
+        this.toscaIndex.reset();
         if (!this.functionType || !this.propertySource.valid) {
             return;
         }
@@ -484,6 +491,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private get selectedProperty(): FormControl {
         return this.formGroup.get('selectedProperty') as FormControl;
+    }
+
+    private get toscaIndex(): FormControl {
+        return this.formGroup.get('toscaIndex') as FormControl;
     }
 
 }
