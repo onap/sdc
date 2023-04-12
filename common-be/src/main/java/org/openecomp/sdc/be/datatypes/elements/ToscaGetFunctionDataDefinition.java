@@ -43,6 +43,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
     private String sourceName;
     private ToscaGetFunctionType functionType;
     private List<String> propertyPathFromSource = new ArrayList<>();
+    private String toscaIndex;
 
     public ToscaGetFunctionDataDefinition() {
         //necessary for JSON conversions
@@ -87,6 +88,11 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
             );
         }
         if (propertySource == PropertySource.SELF) {
+            if (!"null".equals(toscaIndex)) {
+                return Map.of(functionType.getFunctionName(),
+                    Stream.concat(Stream.of(PropertySource.SELF.getName()), Stream.concat(propertyPathFromSource.stream(),Stream.of(toscaIndex))).collect(Collectors.toList())
+                );
+            }
             return Map.of(functionType.getFunctionName(),
                 Stream.concat(Stream.of(PropertySource.SELF.getName()), propertyPathFromSource.stream()).collect(Collectors.toList())
             );
@@ -95,6 +101,11 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
             if (sourceName == null) {
                 throw new IllegalStateException(
                     String.format("sourceName is required in order to generate the %s from INSTANCE value", functionType.getFunctionName())
+                );
+            }
+            if (!"null".equals(toscaIndex)) {
+                return Map.of(functionType.getFunctionName(),
+                    Stream.concat(Stream.of(sourceName), Stream.concat(propertyPathFromSource.stream(),Stream.of(toscaIndex))).collect(Collectors.toList())
                 );
             }
             return Map.of(functionType.getFunctionName(),
@@ -106,10 +117,17 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
     }
 
     private Map<String, Object> buildGetInputFunctionValue() {
-        if (this.propertyPathFromSource.size() == 1) {
-            return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource.get(0));
+        List<String> propertySourceCopy = this.propertyPathFromSource;
+        List<String> propertySourceOneCopy = new ArrayList<>();
+        propertySourceOneCopy.add(this.propertyPathFromSource.get(0));
+        if (!"null".equals(toscaIndex)) {
+            propertySourceCopy.add(toscaIndex);
+            propertySourceOneCopy.add(toscaIndex);
         }
-        return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource);
+        if (this.propertyPathFromSource.size() == 1) {
+            return Map.of(this.functionType.getFunctionName(), propertySourceOneCopy);
+        }
+        return Map.of(this.functionType.getFunctionName(), propertySourceCopy);
     }
 
     @Override
