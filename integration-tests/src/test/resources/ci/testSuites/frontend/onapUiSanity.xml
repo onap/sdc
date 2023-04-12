@@ -51,6 +51,7 @@
       </class>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.EtsiModelUiTests"/>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ModelToscaTypeImportTest"/>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.InstancePropertiesValueSetTests"/>
     </classes>
   </test>
 </suite>

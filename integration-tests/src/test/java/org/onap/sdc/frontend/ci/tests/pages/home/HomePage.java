@@ -106,6 +106,18 @@ public class HomePage extends AbstractPageObject {
         return new ResourceCreatePage(webDriver);
     }
 
+    /**
+     * Clicks on the Import DataType button.
+     *
+     * @return the following dataType create page
+     */
+    public ResourceCreatePage clickOnImportDataType(final String fullFileName) {
+        hoverToAddArea().findElement(By.xpath(XpathSelector.IMPORT_TYPE_BTN.getXpath())).click();
+        clickOnImport(By.xpath(XpathSelector.IMPORT_TYPE_FILE.getXpath()), fullFileName);
+        hoverToAddArea().findElement(By.xpath(XpathSelector.IMPORT_BTN.getXpath())).click();
+        return new ResourceCreatePage(webDriver);
+    }
+
     private void clickOnImport(final By locator, final String fullFileName) {
         hoverToImportArea().findElement(locator).sendKeys(fullFileName);
     }
@@ -182,6 +194,9 @@ public class HomePage extends AbstractPageObject {
         ADD_PNF_BTN("createPNFButton", "//*[@data-tests-id='%s']"),
         ADD_CR_BTN("createCRButton", "//*[@data-tests-id='%s']"),
         IMPORT_VFC_BTN("fileimportVFCbutton", "//*[@data-tests-id='%s']"),
+        IMPORT_TYPE_BTN("importTypebutton", "//*[@data-tests-id='%s']"),
+        IMPORT_TYPE_FILE("importType", "//*[@data-tests-id='%s']"),
+        IMPORT_BTN("Import", "//*[@data-tests-id='%s']"),
         ADD_BUTTONS_AREA("AddButtonsArea", "//*[@data-tests-id='%s']"),
         IMPORT_BUTTONS_AREA("importButtonsArea", "//*[@data-tests-id='%s']"),
         COMPONENT("//*[@data-tests-id='%s']");
