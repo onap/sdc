@@ -61,8 +61,8 @@ class ToscaGetFunctionDataDefinitionTest {
         final Map<?, ?> getInputJsonAsMap = convertJsonStringToMap(actualValue);
         assertTrue(getInputJsonAsMap.containsKey(ToscaGetFunctionType.GET_INPUT.getFunctionName()));
         final Object value = getInputJsonAsMap.get(ToscaGetFunctionType.GET_INPUT.getFunctionName());
-        assertTrue(value instanceof String);
-        assertEquals(value, propertyName);
+        assertTrue(value instanceof List);
+        assertEquals(((List<String>)value).get(0), propertyName);
     }
 
     @Test

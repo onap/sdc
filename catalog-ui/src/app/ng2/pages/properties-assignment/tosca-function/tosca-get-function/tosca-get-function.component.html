@@ -28,9 +28,11 @@
     </div>
     <div *ngIf="showPropertyDropdown()" class="i-sdc-form-item">
       <label class="i-sdc-form-label required">{{dropdownValuesLabel}}</label>
-      <select formControlName="selectedProperty">
+      <select formControlName="selectedProperty" (change)="onPropertyValueChange()">
         <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
       </select>
+      <label class="i-sdc-form-label required" *ngIf="toscaIndexFlag">Index</label>
+      <input type="text" *ngIf="toscaIndexFlag" formControlName="toscaIndex" (change)="indexTokenChange()"/>
     </div>
     <div *ngIf="dropDownErrorMsg" class="tosca-error">{{dropDownErrorMsg}}</div>
   </form>

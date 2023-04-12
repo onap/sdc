@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
@@ -43,6 +44,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
     private String sourceName;
     private ToscaGetFunctionType functionType;
     private List<String> propertyPathFromSource = new ArrayList<>();
+    private Object toscaIndex;
 
     public ToscaGetFunctionDataDefinition() {
         //necessary for JSON conversions
@@ -87,6 +89,11 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
             );
         }
         if (propertySource == PropertySource.SELF) {
+            if (toscaIndex != null) {
+                return Map.of(functionType.getFunctionName(),
+                    Stream.concat(Stream.of(PropertySource.SELF.getName()), Stream.concat(propertyPathFromSource.stream(),Stream.of(toscaIndex))).collect(Collectors.toList())
+                );
+            }
             return Map.of(functionType.getFunctionName(),
                 Stream.concat(Stream.of(PropertySource.SELF.getName()), propertyPathFromSource.stream()).collect(Collectors.toList())
             );
@@ -95,6 +102,11 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
             if (sourceName == null) {
                 throw new IllegalStateException(
                     String.format("sourceName is required in order to generate the %s from INSTANCE value", functionType.getFunctionName())
+                );
+            }
+            if (toscaIndex != null) {
+                return Map.of(functionType.getFunctionName(),
+                    Stream.concat(Stream.of(sourceName), Stream.concat(propertyPathFromSource.stream(),Stream.of(toscaIndex))).collect(Collectors.toList())
                 );
             }
             return Map.of(functionType.getFunctionName(),
@@ -106,10 +118,17 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
     }
 
     private Map<String, Object> buildGetInputFunctionValue() {
-        if (this.propertyPathFromSource.size() == 1) {
-            return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource.get(0));
+        List<Object> propertySourceCopy = new ArrayList<Object>(this.propertyPathFromSource);
+        List<Object> propertySourceOneCopy = new ArrayList<>();
+        propertySourceOneCopy.add(this.propertyPathFromSource.get(0));
+        if (toscaIndex != null) {
+            propertySourceCopy.add(toscaIndex);
+            propertySourceOneCopy.add(toscaIndex);
         }
-        return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource);
+        if (this.propertyPathFromSource.size() == 1) {
+            return Map.of(this.functionType.getFunctionName(), propertySourceOneCopy);
+        }
+        return Map.of(this.functionType.getFunctionName(), propertySourceCopy);
     }
 
     @Override
