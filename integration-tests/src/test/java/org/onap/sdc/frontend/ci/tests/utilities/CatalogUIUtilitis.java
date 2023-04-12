@@ -132,4 +132,9 @@ public class CatalogUIUtilitis {
         return searchBox;
     }
 
+    public static WebElement clickOnDataType(final String dataTypeName) {
+        final WebElement dataTypeElement = GeneralUIUtils.getWebElementByTestID(dataTypeName);
+        return dataTypeElement;
+    }
+
 }
