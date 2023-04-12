@@ -23,8 +23,11 @@ package org.openecomp.sdc.be.components.csar;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
@@ -51,7 +54,9 @@ public class ToscaFunctionYamlParsingHandler {
         }
         final List<String> functionParameters;
         try {
-            functionParameters = (List<String>) functionValueObj;
+            functionParameters = ((List<Object>) functionValueObj).stream()
+                .map(object -> Objects.toString(object, null))
+                .collect(Collectors.toList());
         } catch (final ClassCastException ignored) {
             return Optional.empty();
         }
@@ -66,7 +71,14 @@ public class ToscaFunctionYamlParsingHandler {
             toscaGetFunction.setPropertySource(PropertySource.INSTANCE);
             toscaGetFunction.setSourceName(propertySourceType);
         }
-        toscaGetFunction.setPropertyPathFromSource(functionParameters.subList(1, functionParameters.size()));
+        List<String> propertySourceIndex = functionParameters.subList(1, functionParameters.size());
+        String toscaIndexValue = propertySourceIndex.get((propertySourceIndex.size() - 1));
+        if (propertySourceIndex.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
+            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex.subList(0,(propertySourceIndex.size() - 1)));
+            toscaGetFunction.setToscaIndex(toscaIndexValue);
+        } else {
+            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex);
+        }
         final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
         toscaGetFunction.setPropertyName(propertyName);
         return Optional.of(toscaGetFunction);
@@ -85,11 +97,19 @@ public class ToscaFunctionYamlParsingHandler {
         } else {
             final List<String> functionParameters;
             try {
-                functionParameters = (List<String>) functionValueObj;
+                functionParameters = ((List<Object>) functionValueObj).stream()
+                    .map(object -> Objects.toString(object, null))
+                    .collect(Collectors.toList());
             } catch (final ClassCastException ignored) {
                 return Optional.empty();
             }
-            toscaGetFunction.setPropertyPathFromSource(functionParameters);
+            String toscaIndexValue = functionParameters.get((functionParameters.size() - 1));
+            if (functionParameters.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
+                toscaGetFunction.setPropertyPathFromSource(functionParameters.subList(0,(functionParameters.size() - 1)));
+                toscaGetFunction.setToscaIndex(toscaIndexValue);
+            } else {
+                toscaGetFunction.setPropertyPathFromSource(functionParameters);
+            }
         }
         final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
         toscaGetFunction.setPropertyName(propertyName);
