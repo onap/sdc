@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+  tosca.nodes.nfv.testWithConstraint2:
+    derived_from: tosca.nodes.Root
+    properties:
+      string_prop_cith_c:
+        type: string
+        constraints:
+        - valid_values:
+          - abc
+          - def
