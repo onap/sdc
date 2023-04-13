@@ -154,6 +154,7 @@
                         <div data-ng-if="editPropertyModel.hasGetFunctionValue">
                             <tosca-function [property]="editPropertyModel.property"
                                             [component-instance-map]="componentInstanceMap"
+                                            [custom-tosca-functions]="customToscaFunctions"
                                             [allow-clear]="false"
                                             (on-valid-function)="onGetFunctionValidFunction($event)"
                                             (on-validity-change)="onToscaFunctionValidityChange($event)"

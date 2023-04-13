@@ -29,12 +29,19 @@ import {TranslateModule} from "../../../../shared/translator/translate.module";
 import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
 import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
 import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
+import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
+import {Observable} from "rxjs/Observable";
+import {defaultCustomFunctionsMock} from "../../../../../../jest/mocks/default-custom-tosca-function.mock";
 
 describe('ToscaCustomFunctionComponent', () => {
     let component: ToscaCustomFunctionComponent;
     let fixture: ComponentFixture<ToscaCustomFunctionComponent>;
+    let topologyTemplateServiceMock: Partial<TopologyTemplateService>;
 
     beforeEach(async(() => {
+        topologyTemplateServiceMock = {
+            getDefaultCustomFunction: jest.fn().mockImplementation(() => Observable.of(defaultCustomFunctionsMock))
+        };
         TestBed.configureTestingModule({
             declarations: [
                 ToscaCustomFunctionComponent,
@@ -47,6 +54,9 @@ describe('ToscaCustomFunctionComponent', () => {
                 ReactiveFormsModule,
                 TranslateModule,
                 UiElementsModule
+            ],
+            providers: [
+                {provide: TopologyTemplateService, useValue: topologyTemplateServiceMock}
             ]
         })
         .compileComponents();

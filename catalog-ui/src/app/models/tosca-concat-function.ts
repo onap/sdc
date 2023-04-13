@@ -23,6 +23,7 @@ import {ToscaFunction} from "./tosca-function";
 import {ToscaFunctionType} from "./tosca-function-type.enum";
 import {ToscaFunctionParameter} from "./tosca-function-parameter";
 import {ToscaGetFunction} from "./tosca-get-function";
+import {ToscaCustomFunction} from "./tosca-custom-function";
 import {YamlFunction} from "./yaml-function";
 import {ToscaStringParameter} from "./tosca-string-parameter";
 
@@ -52,6 +53,9 @@ export class ToscaConcatFunction implements ToscaFunction, ToscaFunctionParamete
                         break;
                     case ToscaFunctionType.STRING:
                         this.parameters.push(new ToscaStringParameter(<ToscaStringParameter>parameter));
+                        break;
+                    case ToscaFunctionType.CUSTOM:
+                        this.parameters.push(new ToscaCustomFunction(<ToscaCustomFunction>parameter));
                         break;
                     default:
                         console.error(`Unsupported parameter type "${parameter.type}"`);
