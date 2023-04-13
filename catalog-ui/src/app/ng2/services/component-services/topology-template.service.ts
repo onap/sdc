@@ -62,6 +62,7 @@ import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../../model
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {InstanceAttributesAPIMap} from "../../../models/attributes-outputs/attribute-fe-map";
 import {FilterConstraint} from "../../../models/filter-constraint";
+import {CustomToscaFunction} from "../../../models/default-custom-functions";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -654,6 +655,11 @@ export class TopologyTemplateService {
         };
         return this.http.put<ComponentInstance>(this.baseUrl + this
         .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList);
+    }
+
+    getDefaultCustomFunction(type: string): Observable<CustomToscaFunction[]> {
+        return this.http.get<DefaultCustomFunctions>(this.baseUrl + "customToscaFunctions/" + type)
+        .pipe(map(response => response.defaultCustomToscaFunction ? response.defaultCustomToscaFunction : undefined));
     }
 
 }

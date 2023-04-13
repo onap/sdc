@@ -28,8 +28,10 @@ import {ToscaFunctionType} from "../../../../../models/tosca-function-type.enum"
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {PROPERTY_TYPES} from "../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
+import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {ToscaFunctionValidationEvent} from "../tosca-function.component";
 import {ToscaFunction} from "../../../../../models/tosca-function";
+import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
 
 @Component({
     selector: 'app-tosca-custom-function',
@@ -44,6 +46,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
     @Output() onValidityChange: EventEmitter<ToscaCustomFunctionValidationEvent> = new EventEmitter<ToscaCustomFunctionValidationEvent>();
 
     name: string = '';
+    showDefaultNames: boolean = false;
     customFunctionFormName: FormControl = new FormControl('', [Validators.required, Validators.minLength(1)]);
     customParameterFormArray: FormArray = new FormArray([], Validators.minLength(1));
     formGroup: FormGroup = new FormGroup(
@@ -55,14 +58,21 @@ export class ToscaCustomFunctionComponent implements OnInit {
 
     parameters: ToscaFunctionParameter[] = [];
     propertyInputList: Array<PropertyBEModel> = [];
+    defaultCustomFunctions: CustomToscaFunction[];
 
     STRING_FUNCTION_TYPE = ToscaFunctionType.STRING
+
+    constructor(private topologyTemplateService: TopologyTemplateService) {
+    }
 
     ngOnInit() {
         this.initForm();
     }
 
     private initForm(): void {
+        this.topologyTemplateService.getDefaultCustomFunction(ToscaFunctionType.CUSTOM).subscribe((data: CustomToscaFunction[]) => {
+            this.defaultCustomFunctions = data;
+        });
         this.formGroup.valueChanges.subscribe(() => {
             this.onValidityChange.emit({
                 isValid: this.formGroup.valid,
@@ -152,6 +162,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
             this.customParameterFormArray.controls[index].setValue(undefined);
         }
     }
+
 }
 
 export interface ToscaCustomFunctionValidationEvent {
