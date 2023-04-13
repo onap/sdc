@@ -21,8 +21,23 @@
 
 <div class="component-container">
   <ng-container [formGroup]="formGroup">
-    <label>Custom function name: </label>
-    <input type="text" formControlName="customName" [value]="name" required/><br/><br/>
+    <div class="i-sdc-form-item">
+      <label>Custom function name: </label>
+      <div class="i-sdc-form-item" *ngIf="defaultCustomFunctions">
+        <checkbox [(checked)]="showDefaultNames"></checkbox>
+        <span>Default Names</span>
+      </div>
+      <div class="i-sdc-form-item" *ngIf="!showDefaultNames">
+        <input type="text" formControlName="customName" [value]="name" (input)="name = $event.target.value" required/>
+      </div>
+      <div class="i-sdc-form-item" *ngIf="showDefaultNames">
+        <select formControlName="customName" [value]="name" (change)="name = $event.target.value">
+          <option *ngFor="let defaultCustomFunction of defaultCustomFunctions"
+                  [value]="defaultCustomFunction.name">{{defaultCustomFunction.name}}
+          </option>
+        </select>
+      </div>
+    </div>
     <div formArrayName="customParameterList">
       <div *ngFor="let parameter of parameters; let idx = index">
         <div *ngIf="idx > 0" class="text-center"><span class="custom-plus-icon"></span></div>
