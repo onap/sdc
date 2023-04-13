@@ -28,6 +28,7 @@ import {DataTypeModel} from '../../../../../../models/data-types';
 import {TranslateService} from '../../../../../shared/translator/translate.service';
 import {ToscaFunction} from '../../../../../../models/tosca-function';
 import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
+import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";
 
 @Component({selector: 'app-input-list-item', template: ''})
 class InputListItemStubComponent {
@@ -41,6 +42,7 @@ class InputListItemStubComponent {
   @Input() toscaFunction: ToscaFunction;
   @Input() showToscaFunctionOption: boolean;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = null;
+  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
 }
 
 const translateServiceMock: Partial<TranslateService> = {

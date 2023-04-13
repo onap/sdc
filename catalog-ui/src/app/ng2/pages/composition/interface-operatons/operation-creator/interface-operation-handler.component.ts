@@ -34,6 +34,9 @@ import {DataTypeService} from "../../../../services/data-type.service";
 import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../../models/data-types";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
+import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
+import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
+import {ToscaFunctionType} from "../../../../../models/tosca-function-type.enum";
 
 @Component({
     selector: 'operation-handler',
@@ -83,11 +86,14 @@ export class InterfaceOperationHandlerComponent {
     artifactTypeProperties: Array<InputOperationParameter> = [];
     toscaArtifactTypes: Array<DropdownValue> = [];
     componentInstanceMap: Map<string, InstanceFeDetails>;
+    customToscaFunctions: Array<CustomToscaFunction>;
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
     inputTypeOptions: any[];
 
-    constructor(private dataTypeService: DataTypeService, private componentServiceNg2: ComponentServiceNg2) {
+    constructor(private dataTypeService: DataTypeService,
+                private componentServiceNg2: ComponentServiceNg2,
+                private topologyTemplateService: TopologyTemplateService) {
     }
 
     ngOnInit() {
@@ -100,6 +106,7 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
         this.modelName = this.input.modelName;
+        this.initCustomToscaFunctions();
         this.initInputs();
         this.removeImplementationQuote();
         this.loadInterfaceOperationImplementation();
@@ -126,6 +133,15 @@ export class InterfaceOperationHandlerComponent {
         this.removeImplementationQuote();
         this.loadInterfaceOperationImplementation();
         this.loadInterfaceType();
+    }
+
+    private initCustomToscaFunctions() {
+        this.customToscaFunctions = [];
+        this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+            for (let customFunction of data) {
+                this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+            }
+        });
     }
 
     private loadInterfaceType() {

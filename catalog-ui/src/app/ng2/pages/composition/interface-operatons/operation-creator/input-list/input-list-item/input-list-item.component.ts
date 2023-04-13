@@ -28,6 +28,7 @@ import {ToscaFunction} from '../../../../../../../models/tosca-function';
 import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
 import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
+import {CustomToscaFunction} from "../../../../../../../models/default-custom-functions";
 
 @Component({
   selector: 'app-input-list-item',
@@ -51,6 +52,7 @@ export class InputListItemComponent implements OnInit {
   @Input() allowDeletion: boolean = false;
   @Input() toscaFunction: ToscaFunction;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
+  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
   @Output('onValueChange') onValueChangeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output('onDelete') onDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output('onChildListItemDelete') onChildListItemDeleteEvent: EventEmitter<number> = new EventEmitter<number>();

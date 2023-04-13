@@ -85,9 +85,12 @@ public class DefaultCustomToscaFunctionServlet extends BeGenericServlet {
         LOGGER.debug("Start handle request of {}", url);
         final Map<String, Object> defaultCustomToscaFunctionssMap = new HashMap<>();
         try {
-            final List<Configuration.CustomToscaFunction> defaultCustomToscaFunction = getDefaultCustomToscaFunctionValues().stream()
-                .filter(func -> type.name().toLowerCase().equals(func.getType())).collect(
-                    Collectors.toList());
+            List<Configuration.CustomToscaFunction> defaultCustomToscaFunction = getDefaultCustomToscaFunctionValues();
+            if (!type.equals(Type.ALL)) {
+                defaultCustomToscaFunction = defaultCustomToscaFunction.stream()
+                    .filter(func -> type.name().toLowerCase().equals(func.getType())).collect(
+                        Collectors.toList());
+            }
             if (CollectionUtils.isEmpty(defaultCustomToscaFunction)) {
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
             }
@@ -106,5 +109,5 @@ public class DefaultCustomToscaFunctionServlet extends BeGenericServlet {
         return customFunctions == null ? Collections.emptyList() : customFunctions;
     }
 
-    public enum Type {CUSTOM, GET_INPUT}
+    public enum Type {ALL, CUSTOM, GET_INPUT}
 }
