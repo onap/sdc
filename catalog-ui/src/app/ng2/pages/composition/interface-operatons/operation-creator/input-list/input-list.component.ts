@@ -25,6 +25,7 @@ import {DataTypeModel} from "../../../../../../models/data-types";
 import {DerivedPropertyType} from "../../../../../../models/properties-inputs/property-be-model";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
+import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";
 
 @Component({
   selector: 'input-list',
@@ -51,6 +52,7 @@ export class InputListComponent {
   @Input() showToscaFunctionOption: boolean = false;
   @Input() allowDeletion: boolean = false;
   @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map();
+  @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
   @Output('onInputsValidityChange') inputsValidityChangeEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();

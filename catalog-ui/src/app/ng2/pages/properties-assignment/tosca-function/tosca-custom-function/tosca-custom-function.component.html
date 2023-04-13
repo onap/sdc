@@ -21,8 +21,12 @@
 
 <div class="component-container">
   <ng-container [formGroup]="formGroup">
-    <label>Custom function name: </label>
-    <input type="text" formControlName="customName" [value]="name" required/><br/><br/>
+    <div *ngIf="!isDefaultCustomFunction" class="i-sdc-form-item">
+      <label>Custom function name: </label>
+      <div class="i-sdc-form-item">
+        <input type="text" formControlName="customName" [value]="name" (input)="name = $event.target.value" required/>
+      </div>
+    </div>
     <div formArrayName="customParameterList">
       <div *ngFor="let parameter of parameters; let idx = index">
         <div *ngIf="idx > 0" class="text-center"><span class="custom-plus-icon"></span></div>
@@ -32,7 +36,7 @@
               <input type="text" [formControlName]="idx" [value]="parameter.value"/><br/>
             </ng-container>
             <ng-container *ngIf="parameter.type !== STRING_FUNCTION_TYPE">
-              <tosca-function [property]="propertyInputList[idx]" [componentInstanceMap]="componentInstanceMap" [allowClear]="false"
+              <tosca-function [property]="propertyInputList[idx]" [customToscaFunctions]="customToscaFunctions" [componentInstanceMap]="componentInstanceMap" [allowClear]="false"
                               (onValidityChange)="onFunctionValidityChange($event, idx)">
               </tosca-function>
             </ng-container>

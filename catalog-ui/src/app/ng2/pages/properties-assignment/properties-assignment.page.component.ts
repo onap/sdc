@@ -71,6 +71,8 @@ import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaFunction} from "../../../models/tosca-function";
 import {SubPropertyToscaFunction} from "../../../models/sub-property-tosca-function";
 import {DeclareInputComponent} from "./declare-input/declare-input.component";
+import {CustomToscaFunction} from "../../../models/default-custom-functions";
+import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -83,6 +85,7 @@ export class PropertiesAssignmentComponent {
     component: ComponentData;
     componentInstanceNamesMap: { [key: string]: InstanceFeDetails } = {}; //key is the instance uniqueId
     componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>(); //key is the instance uniqueId
+    customToscaFunctions: Array<CustomToscaFunction> = [];
 
     propertiesNavigationData = [];
     instancesNavigationData = [];
@@ -179,6 +182,13 @@ export class PropertiesAssignmentComponent {
 
         }, error => {
         }); //ignore error
+
+        this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+            for (let customFunction of data) {
+                this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+            }
+        });
+
         this.componentServiceNg2
         .getComponentResourcePropertiesData(this.component)
         .subscribe(response => {
@@ -577,7 +587,8 @@ export class PropertiesAssignmentComponent {
 
         this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
             'property': checkedInstanceProperty,
-            'componentInstanceMap': this.componentInstanceMap
+            'componentInstanceMap': this.componentInstanceMap,
+            'customToscaFunctions': this.customToscaFunctions
         });
         modal.instance.dynamicContent.instance.onValidityChange.subscribe((validationEvent: ToscaFunctionValidationEvent) => {
             disableSaveButtonFlag = !validationEvent.isValid;

@@ -30,6 +30,7 @@ import {PROPERTY_TYPES} from "../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaFunctionValidationEvent} from "../tosca-function.component";
 import {ToscaFunction} from "../../../../../models/tosca-function";
+import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
 
 @Component({
     selector: 'app-tosca-custom-function',
@@ -40,10 +41,12 @@ export class ToscaCustomFunctionComponent implements OnInit {
 
     @Input() toscaCustomFunction: ToscaCustomFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
+    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
+    @Input() name: string;
+    @Input() isDefaultCustomFunction: boolean;
     @Output() onValidFunction: EventEmitter<ToscaCustomFunction> = new EventEmitter<ToscaCustomFunction>();
     @Output() onValidityChange: EventEmitter<ToscaCustomFunctionValidationEvent> = new EventEmitter<ToscaCustomFunctionValidationEvent>();
 
-    name: string = '';
     customFunctionFormName: FormControl = new FormControl('', [Validators.required, Validators.minLength(1)]);
     customParameterFormArray: FormArray = new FormArray([], Validators.minLength(1));
     formGroup: FormGroup = new FormGroup(
@@ -62,12 +65,18 @@ export class ToscaCustomFunctionComponent implements OnInit {
         this.initForm();
     }
 
+    ngOnChanges() {
+        if (this.name && this.isDefaultCustomFunction) {
+            this.customFunctionFormName.setValue(this.name);
+            this.emitOnValidityChange();
+        } else {
+            this.name = "";
+        }
+    }
+
     private initForm(): void {
         this.formGroup.valueChanges.subscribe(() => {
-            this.onValidityChange.emit({
-                isValid: this.formGroup.valid,
-                toscaCustomFunction: this.formGroup.valid ? this.buildCustomFunctionFromForm() : undefined
-            })
+            this.emitOnValidityChange();
             if (this.formGroup.valid) {
                 this.onValidFunction.emit(this.buildCustomFunctionFromForm());
             }
@@ -112,6 +121,13 @@ export class ToscaCustomFunctionComponent implements OnInit {
         });
 
         return toscaCustomFunction1;
+    }
+
+    private emitOnValidityChange() {
+        this.onValidityChange.emit({
+            isValid: this.formGroup.valid,
+            toscaCustomFunction: this.formGroup.valid ? this.buildCustomFunctionFromForm() : undefined
+        })
     }
 
     addFunction(): void {

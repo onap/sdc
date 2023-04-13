@@ -28,6 +28,9 @@ import {ToscaGetFunction} from "../../../models/tosca-get-function";
 import {PropertyFilterConstraintUi} from "../../../models/ui-models/property-filter-constraint-ui";
 import {ConstraintOperatorType, FilterConstraintHelper} from "../../../utils/filter-constraint-helper";
 import {ToscaFunctionHelper} from "../../../utils/tosca-function-helper";
+import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
+import {CustomToscaFunction} from "../../../models/default-custom-functions";
+import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
 
 @Component({
   selector: 'service-dependencies-editor',
@@ -72,6 +75,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
   selectedProperty: PropertyFEModel;
   selectedSourceType: string;
   componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
+  customToscaFunctions: Array<CustomToscaFunction>;
   capabilityDropdownList: DropdownValue[] = [];
 
   SOURCE_TYPES = {
@@ -79,7 +83,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     TOSCA_FUNCTION: {label: 'Tosca Function', value: SourceType.TOSCA_FUNCTION}
   };
 
-  constructor(private propertiesUtils: PropertiesUtils, private compositionService: CompositionService) {}
+  constructor(private propertiesUtils: PropertiesUtils, private compositionService: CompositionService, private topologyTemplateService: TopologyTemplateService) {}
 
   ngOnInit(): void {
     if (this.compositionService.componentInstances) {
@@ -89,6 +93,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         });
       });
     }
+    this.initCustomToscaFunctions();
     this.initCapabilityDropdown();
     this.initCurrentRule();
     this.initConstraintOperatorOptions();
@@ -97,6 +102,14 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     this.syncRuleData();
   }
 
+  private initCustomToscaFunctions() {
+    this.customToscaFunctions = [];
+    this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+        for (let customFunction of data) {
+            this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+        }
+    });
+}
 
   private initCapabilityDropdown(): void {
     if (this.filterType == FilterType.CAPABILITY) {
