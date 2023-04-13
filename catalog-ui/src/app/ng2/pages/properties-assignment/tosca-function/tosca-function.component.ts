@@ -35,6 +35,7 @@ import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.compone
 import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
 import {ToscaCustomFunction} from "../../../../models/tosca-custom-function";
 import {YamlFunction} from "../../../../models/yaml-function";
+import {CustomToscaFunction} from "../../../../models/default-custom-functions";
 
 @Component({
     selector: 'tosca-function',
@@ -45,6 +46,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
+    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
     @Input() allowClear: boolean = true;
     @Input() compositionMap: boolean = false;
     @Input() compositionMapKey: string = "";
@@ -61,6 +63,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     isLoading: boolean = false;
     toscaFunction: ToscaFunction;
     toscaFunctions: Array<string> = [];
+    toscaCustomFunctions: Array<String> = [];
 
     private isInitialized: boolean = false;
     private componentMetadata: ComponentMetadata;
@@ -132,7 +135,18 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             return;
         }
         this.toscaFunctionForm.setValue(this.property.toscaFunction);
-        this.toscaFunctionTypeForm.setValue(this.property.toscaFunction.type);
+        let type = this.property.toscaFunction.type;
+        if (type == ToscaFunctionType.CUSTOM) {
+            let name = (this.property.toscaFunction as ToscaCustomFunction).name;
+            let test = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
+            if (test) {
+                this.toscaFunctionTypeForm.setValue(name);
+            } else {
+                this.toscaFunctionTypeForm.setValue("other");
+            }
+        } else {
+            this.toscaFunctionTypeForm.setValue(type);
+        }
     }
 
     private areEqual(array1: string[], array2: string[]): boolean {
@@ -144,11 +158,41 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
         this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
-        this.toscaFunctions.push(ToscaFunctionType.CUSTOM);
         if (this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) {
             this.toscaFunctions.push(ToscaFunctionType.CONCAT);
         }
-        this.toscaFunctions.push(ToscaFunctionType.YAML);
+        this.loadCustomToscaFunctions();
+    }
+
+    private loadCustomToscaFunctions(): void {
+        if (!this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, "other"))) {
+            let other = new CustomToscaFunction();
+            other.name = "other";
+            other.type = ToscaFunctionType.CUSTOM;
+            this.customToscaFunctions.push(other);
+        }
+        this.toscaCustomFunctions = [];
+        for (let func of this.customToscaFunctions) {
+            this.toscaCustomFunctions.push(func.name);
+        }
+    }
+
+    getCustomToscaFunction(): CustomToscaFunction {
+        let funcName = this.formGroup.get('toscaFunctionType').value;
+        return this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, funcName));
+    }
+
+    getCustomFunctionName():string {
+        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        return toscaFunctionType.name;
+    }
+
+    isNameReadonly(): boolean {
+        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        if (toscaFunctionType.name === "other") {
+            return false;
+        }
+        return this.customToscaFunctions.filter(e => e.name === toscaFunctionType.name).length > 0;
     }
 
     private resetForm(): void {
@@ -173,7 +217,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     }
 
     isCustomSelected(): boolean {
-        return this.formGroup.get('toscaFunctionType').value === ToscaFunctionType.CUSTOM;
+        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        return toscaFunctionType && toscaFunctionType.type === ToscaFunctionType.CUSTOM;
     }
 
     isGetFunctionSelected(): boolean {

@@ -22,17 +22,24 @@
     <div class="i-sdc-form-item">
       <label class="i-sdc-form-label">{{'TOSCA_FUNCTION_LABEL' | translate}}</label>
       <select formControlName="toscaFunctionType" (change)="onFunctionTypeChange()">
-        <option *ngFor="let toscaFunction of toscaFunctions"
+        <optgroup label="Standard">
+          <option *ngFor="let toscaFunction of toscaFunctions"
                 [ngValue]="toscaFunction">{{toscaFunction | lowercase}}</option>
+        </optgroup>
+        <optgroup *ngIf="toscaCustomFunctions" label="Custom">
+          <option *ngFor="let toscaCustomFunction of toscaCustomFunctions"
+                [ngValue]="toscaCustomFunction">{{toscaCustomFunction | lowercase}}</option>
+        </optgroup>
+        <option value="YAML">yaml</option>
       </select>
     </div>
     <div *ngIf="isConcatSelected()">
-      <app-tosca-concat-function [toscaConcatFunction]="toscaFunction" [componentInstanceMap]="componentInstanceMap"
+      <app-tosca-concat-function [toscaConcatFunction]="toscaFunction" [customToscaFunctions]="customToscaFunctions" [componentInstanceMap]="componentInstanceMap"
                                  (onValidityChange)="onConcatFunctionValidityChange($event)"></app-tosca-concat-function>
     </div>
     <div *ngIf="isCustomSelected()">
-      <app-tosca-custom-function [toscaCustomFunction]="toscaFunction" [componentInstanceMap]="componentInstanceMap"
-                                 (onValidityChange)="onCustomFunctionValidityChange($event)"></app-tosca-custom-function>
+      <app-tosca-custom-function [toscaCustomFunction]="toscaFunction" [customToscaFunctions]="customToscaFunctions" [name]="getCustomFunctionName()" [componentInstanceMap]="componentInstanceMap"
+                                 [isNameReadonly]="isNameReadonly()" (onValidityChange)="onCustomFunctionValidityChange($event)"></app-tosca-custom-function>
     </div>
     <div *ngIf="isGetFunctionSelected()">
       <app-tosca-get-function [property]="property" [toscaGetFunction]="toscaFunction"

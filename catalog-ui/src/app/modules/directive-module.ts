@@ -322,7 +322,7 @@ directiveModule.directive('deploymentArtifactPage', downgradeComponent({
 
 directiveModule.directive('toscaFunction', downgradeComponent({
   component: ToscaFunctionComponent,
-  inputs: ['componentInstanceMap', 'property'],
+  inputs: ['componentInstanceMap', 'property', 'customToscaFunctions'],
   outputs: []
 }) as angular.IDirectiveFactory);
 

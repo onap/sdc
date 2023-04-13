@@ -9,6 +9,7 @@ import {PROPERTY_TYPES} from "../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaFunctionValidationEvent} from "../tosca-function.component";
 import {ToscaFunction} from "../../../../../models/tosca-function";
+import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
 
 @Component({
     selector: 'app-tosca-concat-function',
@@ -19,6 +20,7 @@ export class ToscaConcatFunctionComponent implements OnInit {
 
     @Input() toscaConcatFunction: ToscaConcatFunction;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
+    @Input() customToscaFunctions: Array<CustomToscaFunction> = [];
     @Output() onValidFunction: EventEmitter<ToscaConcatFunction> = new EventEmitter<ToscaConcatFunction>();
     @Output() onValidityChange: EventEmitter<ToscaConcatFunctionValidationEvent> = new EventEmitter<ToscaConcatFunctionValidationEvent>();
 

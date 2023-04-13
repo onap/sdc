@@ -34,6 +34,8 @@ import {TopologyTemplateService} from "app/ng2/services/component-services/topol
 import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../models/tosca-get-function";
 import {ToscaFunctionValidationEvent} from "../../../../ng2/pages/properties-assignment/tosca-function/tosca-function.component";
+import {CustomToscaFunction} from "../../../../models/default-custom-functions";
+import {ToscaFunctionType} from "../../../../models/tosca-function-type.enum";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -56,6 +58,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     commentValidationPattern:RegExp;
     editPropertyModel: IEditPropertyModel;
     componentInstanceMap: Map<string, InstanceFeDetails>;
+    customToscaFunctions: Array<CustomToscaFunction>;
     modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;
     currentPropertyIndex:number;
     isLastProperty:boolean;
@@ -228,6 +231,15 @@ export class PropertyFormViewModel {
         }
     }
 
+    private initCustomToscaFunctions() {
+        this.$scope.customToscaFunctions = [];
+        this.topologyTemplateService.getDefaultCustomFunction(ToscaFunctionType.CUSTOM).toPromise().then((data) => {
+            for (let customFunction of data) {
+                this.$scope.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+            }
+        });
+    }
+
     private initEmptyComplexValue(type: string): any {
         switch (type) {
             case PROPERTY_TYPES.MAP:
@@ -308,6 +320,7 @@ export class PropertyFormViewModel {
         this.initResource();
         this.initForNotSimpleType();
         this.initComponentInstanceMap();
+        this.initCustomToscaFunctions();
 
         this.$scope.validateJson = (json:string):boolean => {
             if (!json) {
