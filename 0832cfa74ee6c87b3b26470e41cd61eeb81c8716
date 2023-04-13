@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c4ec0a_4998b600",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-13T09:24:35Z",
+      "side": 1,
+      "message": "can be more simple \nif (!\"null\".equals(toscaIndex))",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 67
+      },
+      "revId": "0832cfa74ee6c87b3b26470e41cd61eeb81c8716",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4330d691_32b1d37a",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-13T09:24:35Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 67
+      },
+      "revId": "0832cfa74ee6c87b3b26470e41cd61eeb81c8716",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04b72b0b_9d1aeed1",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-13T09:24:35Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 63
+      },
+      "revId": "0832cfa74ee6c87b3b26470e41cd61eeb81c8716",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
