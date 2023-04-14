@@ -291,6 +291,7 @@ export class PropertyFormViewModel {
             hasGetFunctionValue: property.isToscaFunction(),
             isGetFunctionValid: true,
         };
+        this.$scope.editPropertyModel.types.sort((a,b) => a.localeCompare(b));
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
         this.$scope.propertyOwnerType = this.propertyOwnerType;
         this.$scope.modelNameFilter = this.workspaceService.metadata.model;
@@ -317,11 +318,10 @@ export class PropertyFormViewModel {
 
         this.DataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then(response => {
             this.$scope.dataTypes = response.data as DataTypesMap;
-
-            this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
-                return this.$scope.editPropertyModel.types.indexOf(type) == -1;
-            });
-            this.$scope.isLoading = false;
+                this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type: string) => {
+                    return this.$scope.editPropertyModel.types.indexOf(type) == -1 ;
+                }).sort((a, b) => a.localeCompare(b));
+                this.$scope.isLoading = false;
         });
 
         //scope methods
