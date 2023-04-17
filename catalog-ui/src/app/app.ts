@@ -20,32 +20,31 @@
 
 'use strict';
 
-import * as _ from "lodash";
-import "reflect-metadata";
+import { AuthenticationService } from 'app/ng2/services/authentication.service';
+import * as _ from 'lodash';
 import 'ng-infinite-scroll';
-import './modules/filters.ts';
-import './modules/utils.ts';
+import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
+import 'reflect-metadata';
+import { IAppConfigurtaion, IAppMenu, IHostedApplication, Resource } from './models';
+import { Component } from './models/components/component';
+import { IUserProperties } from './models/user';
 import './modules/directive-module.ts';
+import './modules/filters.ts';
 import './modules/service-module';
+import './modules/utils.ts';
 import './modules/view-model-module.ts';
-import {SdcUiCommon, SdcUiComponents, SdcUiServices} from 'onap-ui-angular';
-import {CookieService, DataTypesService, EcompHeaderService, LeftPaletteLoaderService} from "./services";
-import {CacheService, CatalogService, HomeService} from "./services-ng2";
-import {AuthenticationService} from "app/ng2/services/authentication.service";
-import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States} from "./utils";
-import {IAppConfigurtaion, IAppMenu, IHostedApplication, Resource} from "./models";
-import {ComponentFactory} from "./utils/component-factory";
-import {Component} from "./models/components/component";
-import {IUserProperties} from "./models/user";
-import {WorkspaceService} from "./ng2/pages/workspace/workspace.service";
-import {TypeWorkspaceGeneralComponent} from "./ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
+import { WorkspaceService } from './ng2/pages/workspace/workspace.service';
+import { CookieService, DataTypesService, EcompHeaderService, LeftPaletteLoaderService } from './services';
+import { CacheService, CatalogService, HomeService } from './services-ng2';
+import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, PREVIOUS_CSAR_COMPONENT, States } from './utils';
+import { ComponentFactory } from './utils/component-factory';
 
-let moduleName: string = 'sdcApp';
-let viewModelsModuleName: string = 'Sdc.ViewModels';
-let directivesModuleName: string = 'Sdc.Directives';
-let servicesModuleName: string = 'Sdc.Services';
-let filtersModuleName: string = 'Sdc.Filters';
-let utilsModuleName: string = 'Sdc.Utils';
+const moduleName: string = 'sdcApp';
+const viewModelsModuleName: string = 'Sdc.ViewModels';
+const directivesModuleName: string = 'Sdc.Directives';
+const servicesModuleName: string = 'Sdc.Services';
+const filtersModuleName: string = 'Sdc.Filters';
+const utilsModuleName: string = 'Sdc.Utils';
 
 // Load configuration according to environment.
 declare var __ENV__: string;
@@ -58,11 +57,11 @@ if (__ENV__ === 'dev') {
   sdcConfig = require('./../../configurations/prod.js');
   pathPrefix = 'sdc1/';
 } else {
-  console.log("ERROR: Environment configuration not found!");
+  console.log('ERROR: Environment configuration not found!');
 }
 sdcMenu = require('./../../configurations/menu.js');
 
-let dependentModules: Array<string> = [
+const dependentModules: string[] = [
   'ui.router',
   'ui.bootstrap',
   'ui.bootstrap.tpls',
@@ -90,22 +89,22 @@ let dependentModules: Array<string> = [
 
 // ===================== Hosted applications section ====================
 // Define here new hosted apps
-let hostedApplications: Array<IHostedApplication> = [
+const hostedApplications: IHostedApplication[] = [
   {
-    "moduleName": "dcaeApp",
-    "navTitle": "DCAE",
-    "defaultState": 'dcae.app.home',
-    "state": {
-      "name": "dcae",
-      "url": "/dcae",
-      "relativeHtmlPath": 'dcae-app/dcae-app-view.html',
-      "controllerName": '.DcaeAppViewModel'
+    moduleName: 'dcaeApp',
+    navTitle: 'DCAE',
+    defaultState: 'dcae.app.home',
+    state: {
+      name: 'dcae',
+      url: '/dcae',
+      relativeHtmlPath: 'dcae-app/dcae-app-view.html',
+      controllerName: '.DcaeAppViewModel'
     }
   }
 ];
 
 // Check if module exists (in case the javascript was not loaded).
-let isModuleExists = (moduleName: string): boolean => {
+const isModuleExists = (moduleName: string): boolean => {
   try {
     angular.module(moduleName);
     dependentModules.push(moduleName);
@@ -119,7 +118,7 @@ let isModuleExists = (moduleName: string): boolean => {
 // Check which hosted applications exists
 _.each(hostedApplications, (hostedApp) => {
   if (isModuleExists(hostedApp.moduleName)) {
-    hostedApp['exists'] = true;
+    hostedApp.exists = true;
   }
 });
 // ===================== Hosted applications section ====================
@@ -171,8 +170,7 @@ ng1appModule.config([
         },
     );
 
-
-    let componentsParam: Array<any> = ['$stateParams', 'HomeService', 'CatalogService', 'Sdc.Services.CacheService', ($stateParams: any, HomeService: HomeService, CatalogService: CatalogService, cacheService: CacheService) => {
+    const componentsParam: any[] = ['$stateParams', 'HomeService', 'CatalogService', 'Sdc.Services.CacheService', ($stateParams: any, HomeService: HomeService, CatalogService: CatalogService, cacheService: CacheService) => {
       if (cacheService.get('breadcrumbsComponentsState') === $stateParams.previousState) {
         const breadcrumbsComponents = cacheService.get('breadcrumbsComponents');
         if (breadcrumbsComponents) {
@@ -197,7 +195,7 @@ ng1appModule.config([
       }
     }];
 
-    const oldWorkspaceController: Array<any> = ['$location', ($location: ng.ILocationService) => {
+    const oldWorkspaceController: any[] = ['$location', ($location: ng.ILocationService) => {
       // redirect old /workspace/* urls to /catalog/workspace/* url
       const newUrl = '/catalog' + $location.url();
       console.log('old workspace path - redirecting to:', newUrl);
@@ -215,7 +213,7 @@ ng1appModule.config([
         States.TYPE_WORKSPACE, {
           url: '/:previousState/type-workspace/:type/:id/:subPage',
           params: {
-              'importedFile': null
+              importedFile: null
           },
           template: '<app-type-workspace></app-type-workspace>'
         }
@@ -225,23 +223,23 @@ ng1appModule.config([
         States.WORKSPACE, {
           url: '/:previousState/workspace/:id/:type/',
           params: {
-            'importedFile': null,
-            'componentCsar': null,
-            'resourceType': null,
-            'disableButtons': null
+            importedFile: null,
+            componentCsar: null,
+            resourceType: null,
+            disableButtons: null
           },
           templateUrl: './view-models/workspace/workspace-view.html',
           controller: viewModelsModuleName + '.WorkspaceViewModel',
           resolve: {
-            injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function ($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
-              if ($stateParams.id && $stateParams.id.length) { //need to check length in case ID is an empty string
+            injectComponent: ['$stateParams', 'ComponentFactory', 'workspaceService', 'Sdc.Services.CacheService', function($stateParams, ComponentFactory: ComponentFactory, workspaceService: WorkspaceService, cacheService: CacheService) {
+              if ($stateParams.id && $stateParams.id.length) { // need to check length in case ID is an empty string
                 return ComponentFactory.getComponentWithMetadataFromServer($stateParams.type.toUpperCase(), $stateParams.id).then(
                     (component: Component) => {
                       if ($stateParams.componentCsar && component.isResource()) {
-                        if ((<Resource>component).csarVersion != $stateParams.componentCsar.csarVersion) {
+                        if ((component as Resource).csarVersion != $stateParams.componentCsar.csarVersion) {
                           cacheService.set(PREVIOUS_CSAR_COMPONENT, angular.copy(component));
                         }
-                        component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, <Resource>component);
+                        component = ComponentFactory.updateComponentFromCsar($stateParams.componentCsar, component as Resource);
                       }
                       workspaceService.setComponentMetadata(component.componentMetadata);
                       return component;
@@ -249,13 +247,13 @@ ng1appModule.config([
               } else if ($stateParams.componentCsar && $stateParams.componentCsar.csarUUID) {
                 return $stateParams.componentCsar;
               } else {
-                let emptyComponent = ComponentFactory.createEmptyComponent($stateParams.type.toUpperCase());
+                const emptyComponent = ComponentFactory.createEmptyComponent($stateParams.type.toUpperCase());
                 if (emptyComponent.isResource() && $stateParams.resourceType) {
                   // Set the resource type
-                  (<Resource>emptyComponent).resourceType = $stateParams.resourceType;
+                  (emptyComponent as Resource).resourceType = $stateParams.resourceType;
                 }
                 if ($stateParams.importedFile) {
-                  (<Resource>emptyComponent).importedFile = $stateParams.importedFile;
+                  (emptyComponent as Resource).importedFile = $stateParams.importedFile;
                 }
                 return emptyComponent;
               }
@@ -275,7 +273,6 @@ ng1appModule.config([
         }
     );
 
-
     $stateProvider.state(
         States.WORKSPACE_INFORMATION_ARTIFACTS, {
           url: 'information_artifacts',
@@ -291,7 +288,6 @@ ng1appModule.config([
           template: '<tosca-artifact-page></tosca-artifact-page>'
         }
     );
-
 
     $stateProvider.state(
         States.WORKSPACE_DEPLOYMENT_ARTIFACTS, {
@@ -316,11 +312,11 @@ ng1appModule.config([
     $stateProvider.state(
         States.WORKSPACE_PROPERTIES_ASSIGNMENT, {
           url: 'properties_assignment',
-          params: {'component': null},
+          params: {component: null},
           template: '<properties-assignment></properties-assignment>',
           parent: 'workspace',
           resolve: {
-            componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
+            componentData: ['injectComponent', '$stateParams', function(injectComponent: Component, $stateParams) {
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -345,7 +341,7 @@ ng1appModule.config([
           parent: 'workspace',
           template: '<attributes-outputs></attributes-outputs>',
           resolve: {
-            componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
+            componentData: ['injectComponent', '$stateParams', function(injectComponent: Component, $stateParams) {
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -377,7 +373,6 @@ ng1appModule.config([
         }
     );
 
-
     $stateProvider.state(
         States.WORKSPACE_MANAGEMENT_WORKFLOW, {
           parent: 'workspace',
@@ -396,15 +391,14 @@ ng1appModule.config([
         }
     );
 
-
     $stateProvider.state(
         States.WORKSPACE_COMPOSITION, {
           url: 'composition/',
-          params: {'component': null},
+          params: {component: null},
           parent: 'workspace',
           template: '<composition-page></composition-page>',
           resolve: {
-            componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
+            componentData: ['injectComponent', '$stateParams', function(injectComponent: Component, $stateParams) {
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -445,7 +439,7 @@ ng1appModule.config([
           url: 'details',
           parent: 'workspace.composition',
           resolve: {
-            componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
+            componentData: ['injectComponent', '$stateParams', function(injectComponent: Component, $stateParams) {
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -532,7 +526,7 @@ ng1appModule.config([
           parent: 'workspace',
           template: '<plugin-context-view></plugin-context-view>',
           resolve: {
-            componentData: ['injectComponent', '$stateParams', function (injectComponent: Component, $stateParams) {
+            componentData: ['injectComponent', '$stateParams', function(injectComponent: Component, $stateParams) {
               $stateParams.component = injectComponent;
               return injectComponent;
             }],
@@ -583,8 +577,8 @@ ng1appModule.config([
           url: '/catalog?filter.components&filter.resourceSubTypes&filter.categories&filter.statuses&filter.order&filter.term&filter.active',
           template: '<catalog-page></catalog-page>',
           resolve: {
-            auth: ["$q", "AuthenticationServiceNg2", ($q: any, authService: AuthenticationService) => {
-              let userInfo: IUserProperties = authService.getLoggedinUser();
+            auth: ['$q', 'AuthenticationServiceNg2', ($q: any, authService: AuthenticationService) => {
+              const userInfo: IUserProperties = authService.getLoggedinUser();
               if (userInfo) {
                 return $q.when(userInfo);
               } else {
@@ -598,7 +592,7 @@ ng1appModule.config([
     $stateProvider.state(
         'error-403', {
           url: '/error-403',
-          templateUrl: "./view-models/modals/error-modal/error-403-view.html",
+          templateUrl: './view-models/modals/error-modal/error-403-view.html',
           controller: viewModelsModuleName + '.ErrorViewModel'
         }
     );
@@ -615,8 +609,8 @@ ng1appModule.config([
 ]);
 
 ng1appModule.value('ValidationPattern', /^[\s\w\&_.:-]{1,1024}$/);
-ng1appModule.value('ComponentNameValidationPattern', /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/); //DE250513 - same as ValidationPattern above, plus requirement that name not consist of dots and/or spaces alone.
-ng1appModule.value('PropertyNameValidationPattern', /^[a-zA-Z0-9_:-@]{1,100}$/);// DE210977
+ng1appModule.value('ComponentNameValidationPattern', /^(?=.*[^. ])[\s\w\&_.:-]{1,1024}$/); // DE250513 - same as ValidationPattern above, plus requirement that name not consist of dots and/or spaces alone.
+ng1appModule.value('PropertyNameValidationPattern', /^[a-zA-Z0-9_:-@]{1,100}$/); // DE210977
 ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
 ng1appModule.value('VendorReleaseValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
 ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
@@ -673,14 +667,14 @@ ng1appModule.run([
     // Add hosted applications to sdcConfig
     sdcConfig.hostedApplications = hostedApplications;
 
-    //handle http config
+    // handle http config
     $http.defaults.withCredentials = true;
     $http.defaults.headers.common[cookieService.getUserIdSuffix()] = cookieService.getUserId();
 
     DataTypesService.loadDataTypesCache(null);
 
-    //handle stateChangeStart
-    let internalDeregisterStateChangeStartWatcher: Function = (): void => {
+    // handle stateChangeStart
+    const internalDeregisterStateChangeStartWatcher: Function = (): void => {
       if (deregisterStateChangeStartWatcher) {
         deregisterStateChangeStartWatcher();
         deregisterStateChangeStartWatcher = null;
@@ -691,44 +685,43 @@ ng1appModule.run([
       }
     };
 
-    let removeLoader: Function = (): void => {
-      $(".sdc-loading-page .main-loader").addClass("animated fadeOut");
-      $(".sdc-loading-page .caption1").addClass("animated fadeOut");
-      $(".sdc-loading-page .caption2").addClass("animated fadeOut");
+    const removeLoader: Function = (): void => {
+      $('.sdc-loading-page .main-loader').addClass('animated fadeOut');
+      $('.sdc-loading-page .caption1').addClass('animated fadeOut');
+      $('.sdc-loading-page .caption2').addClass('animated fadeOut');
       window.setTimeout((): void => {
-        $(".sdc-loading-page .main-loader").css("display", "none");
-        $(".sdc-loading-page .caption1").css("display", "none");
-        $(".sdc-loading-page .caption2").css("display", "none");
-        $(".sdc-loading-page").addClass("animated fadeOut");
+        $('.sdc-loading-page .main-loader').css('display', 'none');
+        $('.sdc-loading-page .caption1').css('display', 'none');
+        $('.sdc-loading-page .caption2').css('display', 'none');
+        $('.sdc-loading-page').addClass('animated fadeOut');
       }, 1000);
     };
 
-    let onNavigateOut: Function = (toState, toParams): void => {
-      let onOk: Function = (): void => {
+    const onNavigateOut: Function = (toState, toParams): void => {
+      const onOk: Function = (): void => {
         $state.current.data.unsavedChanges = false;
         $state.go(toState.name, toParams);
       };
 
-      let data = sdcMenu.alertMessages.exitWithoutSaving;
+      const data = sdcMenu.alertMessages.exitWithoutSaving;
       const okButton = {
-        testId: "OK",
+        testId: 'OK',
         text: sdcMenu.alertMessages.okButton,
         type: SdcUiCommon.ButtonType.warning,
         callback: onOk,
         closeModal: true
       } as SdcUiComponents.ModalButtonComponent;
-      //open notify to user if changes are not saved
+      // open notify to user if changes are not saved
       ModalServiceSdcUI.openWarningModal(data.title,
           data.message,
           'navigate-modal',
           [okButton]);
     };
 
-    let onStateChangeStart: Function = (event, toState, toParams, fromState, fromParams): void => {
+    const onStateChangeStart: Function = (event, toState, toParams, fromState, fromParams): void => {
       console.debug((new Date()).getTime());
       console.debug('$stateChangeStart', toState.name);
       if (toState.name !== 'error-403' && !authService.getLoggedinUser()) {
-
 
         authService.authenticate().subscribe((userInfo: IUserProperties) => {
           if (!doesUserHasAccess(toState, userInfo)) {
@@ -737,12 +730,12 @@ ng1appModule.run([
             return;
           }
           authService.setLoggedinUser(userInfo);
-          setTimeout(function () {
+          setTimeout(function() {
 
             removeLoader();
 
             if (authService.getLoggedinUser().role === 'ADMIN') {
-              $state.go("adminDashboard", toParams);
+              $state.go('adminDashboard', toParams);
               return;
             }
 
@@ -752,7 +745,7 @@ ng1appModule.run([
                 $state.go(toState.name, toParams);
               }
 
-              console.log("------$state.current.name=" + $state.current.name);
+              console.log('------$state.current.name=' + $state.current.name);
 
             }, 1000);
 
@@ -762,7 +755,7 @@ ng1appModule.run([
           $state.go('error-403');
         });
       } else if (authService.getLoggedinUser()) {
-        let user: IUserProperties = authService.getLoggedinUser();
+        const user: IUserProperties = authService.getLoggedinUser();
         if (!cacheService.contains('user')) {
           cacheService.set('user', user);
         }
@@ -774,12 +767,11 @@ ng1appModule.run([
         }
 
         if (authService.getLoggedinUser().role === 'ADMIN') {
-          $state.go("adminDashboard", toParams);
+          $state.go('adminDashboard', toParams);
           return;
         }
 
-
-        //if form is dirty and not save  - notify to user
+        // if form is dirty and not save  - notify to user
         if (fromState.data && fromState.data.unsavedChanges && fromParams.id != toParams.id) {
           event.preventDefault();
           onNavigateOut(toState, toParams);
@@ -797,7 +789,7 @@ ng1appModule.run([
 
     };
 
-    let onStateChangeSuccess: Function = (event, toState, toParams, fromState, fromParams): void => {
+    const onStateChangeSuccess: Function = (event, toState, toParams, fromState, fromParams): void => {
       console.debug('$stateChangeSuccess', toState.name);
 
       // Workaround in case we are entering other state then workspace (user move to catalog)
@@ -811,14 +803,14 @@ ng1appModule.run([
         }
       }
 
-      //set body class
-      $rootScope['bodyClass'] = 'default-class';
+      // set body class
+      $rootScope.bodyClass = 'default-class';
       if (toState.data && toState.data.bodyClass) {
-        $rootScope['bodyClass'] = toState.data.bodyClass;
+        $rootScope.bodyClass = toState.data.bodyClass;
       }
     };
 
-    let doesUserHasAccess: Function = (toState, user): boolean => {
+    const doesUserHasAccess: Function = (toState, user): boolean => {
 
       let isUserHasAccess = true;
       if (toState.permissions && toState.permissions.length > 0) {
@@ -829,7 +821,7 @@ ng1appModule.run([
     let deregisterStateChangeStartWatcher: Function;
     let deregisterStateChangeSuccessWatcher: Function;
 
-    let registerStateChangeStartWatcher: Function = (): void => {
+    const registerStateChangeStartWatcher: Function = (): void => {
       internalDeregisterStateChangeStartWatcher();
       console.debug('registerStateChangeStartWatcher $stateChangeStart');
       deregisterStateChangeStartWatcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams): void => {
@@ -841,4 +833,3 @@ ng1appModule.run([
     };
     registerStateChangeStartWatcher();
   }]);
-

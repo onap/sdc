@@ -79,6 +79,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.scanner.ScannerException;
 
 @Service
 public class PropertyConvertor {
@@ -320,7 +321,13 @@ public class PropertyConvertor {
 
         } catch (JsonParseException e) {
             log.trace("{} not parsable as JSON. Convert as YAML instead", value);
-            return new Yaml().load(value);
+            try {
+                return new Yaml().load(value);
+            } catch (ScannerException ex) {
+                log.trace("{} not parsable as YAML. Returning as string", value);
+                return value;
+            }
+
         } catch (Exception e) {
             log.debug("convertToToscaValue failed to parse json value :", e);
             return null;

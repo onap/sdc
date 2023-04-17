@@ -94,7 +94,8 @@ export class ConstraintsComponent implements OnInit {
       constraint: [
         { type: 'required', message: 'Constraint value is required'},
         { type: 'invalidInt', message: 'Constraint value is not a valid integer'},
-        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'}
+        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'},
+        { type: 'invalidString', message: 'String contains invalid characters'}
       ],
       type : [
         { type: 'required', message: 'Constraint type is required'}
