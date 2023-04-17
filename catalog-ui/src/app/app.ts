@@ -632,6 +632,7 @@ ng1appModule.value('FloatValidationPattern', /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-
 ng1appModule.value('NumberValidationPattern', /^((([-+]?\d+)|([-+]?0x[0-9a-fA-F]+))|([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?))$/);
 ng1appModule.value('KeyValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('CommentValidationPattern', /^[\u0000-\u00BF]*$/);
+ng1appModule.value('StringValidationPattern', /^(?:[a-zA-Z0-9]+[-./\\_@]?\s*)+$/);
 ng1appModule.value('BooleanValidationPattern', /^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$/);
 ng1appModule.value('MapKeyValidationPattern', /^[\w]{1,50}$/);
 

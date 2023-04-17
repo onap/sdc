@@ -428,7 +428,7 @@ export class PropertyFormViewModel {
         };
 
         this.$scope.getValidationPattern = (type:string):RegExp => {
-            return this.ValidationUtils.getValidationPattern(type);
+            return this.ValidationUtils.getValidationPattern(type, 'propDefault');
         };
 
         this.$scope.validateIntRange = (value:string):boolean => {

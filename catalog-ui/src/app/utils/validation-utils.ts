@@ -43,6 +43,7 @@ export class ValidationUtils {
         'IntegerNoLeadingZeroValidationPattern',
         'FloatValidationPattern',
         'CommentValidationPattern',
+        'StringValidationPattern',
         'BooleanValidationPattern',
         'NumberValidationPattern',
         'LabelValidationPattern',
@@ -55,6 +56,7 @@ export class ValidationUtils {
     constructor(private IntegerNoLeadingZeroValidationPattern:RegExp,
                 private FloatValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
+                private StringValidationPattern:RegExp,
                 private BooleanValidationPattern:RegExp,
                 private NumberValidationPattern:RegExp,
                 private LabelValidationPattern:RegExp) {
@@ -79,7 +81,11 @@ export class ValidationUtils {
             case 'number':
                 return this.NumberValidationPattern;
             case 'string':
-                return this.CommentValidationPattern;
+                if (parameterType === 'propDefault') {
+                    return this.StringValidationPattern;
+                } else {
+                    return this.CommentValidationPattern;
+                }
             case 'boolean':
             {
                 //Bug Fix DE197437 [Patch]Mismatch between BE to FE regarding supported characters in Boolean filed

@@ -54,10 +54,12 @@ export class Validation {
     VendorNameValidationPattern:RegExp;
     VendorModelNumberValidationPattern:RegExp;
     commentValidationPattern:RegExp;
+    stringValidationPattern:RegExp;
 
     constructor(validationData?:Validations) {
         if(validationData) {
             this.commentValidationPattern = validationData.validationPatterns.comment;
+            this.stringValidationPattern = validationData.validationPatterns.string;
             this.componentNameValidationPattern = validationData.validationPatterns.componentName;
             this.contactIdValidationPattern = validationData.validationPatterns.contactId;
             this.tagValidationPattern = validationData.validationPatterns.tag;
