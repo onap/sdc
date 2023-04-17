@@ -15,6 +15,9 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -266,6 +270,34 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             Map<String, PropertyDefinition> properties = propertyDefinition.left().value();
             if (properties == null || properties.size() != 1) {
                 log.info("Property content is invalid - {}", data);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            }
+
+            // Test if default value can be parsed to JSON
+            try {
+                properties.forEach((propName, propDefinition) -> {
+                    StringReader reader = new StringReader(propDefinition.getDefaultValue());
+                    JsonReader jsonReader = new JsonReader(reader);
+                    jsonReader.setLenient(true);
+                    JsonParser.parseReader(jsonReader);
+                });
+            } catch (JsonSyntaxException e) {
+                log.info("Property contains invalid default value - {}", data);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+            }
+
+            // Test if constraint value can be parsed to JSON
+            try {
+                properties.forEach((propName, propDefinition) -> {
+                    propDefinition.getConstraints().forEach((propertyConstraint -> {
+                        StringReader reader = new StringReader(propertyConstraint.getConstraintType().getType());
+                        JsonReader jsonReader = new JsonReader(reader);
+                        jsonReader.setLenient(true);
+                        JsonParser.parseReader(jsonReader);
+                    }));
+                });
+            } catch (JsonSyntaxException e) {
+                log.info("Property contains invalid constraint - {}", data);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
 
