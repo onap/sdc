@@ -67,6 +67,11 @@ export class ConstraintsComponent implements OnInit {
           Validators.required,
           floatValidator()
         ]);
+      case PROPERTY_TYPES.STRING:
+        return Validators.compose([
+            Validators.required,
+            Validators.pattern(/^(?:[a-zA-Z0-9]+[-./\\_@,!|+]?\s*)+$/)
+        ]);
       default:
         console.warn('Only required validator');
         return Validators.compose([
@@ -94,7 +99,8 @@ export class ConstraintsComponent implements OnInit {
       constraint: [
         { type: 'required', message: 'Constraint value is required'},
         { type: 'invalidInt', message: 'Constraint value is not a valid integer'},
-        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'}
+        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'},
+        { type: 'pattern', message: 'Invalid value. Can only contain alphanumeric characters and -./\\_@,|+'}
       ],
       type : [
         { type: 'required', message: 'Constraint type is required'}
