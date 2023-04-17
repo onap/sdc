@@ -67,6 +67,11 @@ export class ConstraintsComponent implements OnInit {
           Validators.required,
           floatValidator()
         ]);
+      case PROPERTY_TYPES.STRING:
+        return Validators.compose([
+            Validators.required,
+            stringValidator()
+        ]);
       default:
         console.warn('Only required validator');
         return Validators.compose([
@@ -94,7 +99,8 @@ export class ConstraintsComponent implements OnInit {
       constraint: [
         { type: 'required', message: 'Constraint value is required'},
         { type: 'invalidInt', message: 'Constraint value is not a valid integer'},
-        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'}
+        { type: 'invalidFloat', message: 'Constraint value is not a valid floating point value'},
+        { type: 'invalidString', message: 'String contains invalid characters'}
       ],
       type : [
         { type: 'required', message: 'Constraint type is required'}
@@ -548,5 +554,24 @@ export function floatValidator(): ValidatorFn {
     }
 
     return null;
+  };
+}
+
+export function stringValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value) {
+      const value: string = control.value;
+      const checks: string[] = ['\'', '"', '`', '[', '{', '}', ']'];
+
+      for (const check of checks) {
+        if (value.startsWith(check) && !(value.length >= 2 && value.endsWith(check))) {
+          return {invalidString: true};
+        }
+      }
+
+      return null;
+    } else {
+      return null;
+    }
   };
 }

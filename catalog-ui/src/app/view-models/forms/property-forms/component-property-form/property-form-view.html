@@ -208,25 +208,26 @@
 
                             <div ng-switch-default>
                                 <div class="i-sdc-form-item"
-                                     data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid), 'input-group' : editPropertyModel.property.addOn}">
+                                    data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid), 'input-group' : editPropertyModel.property.addOn}">
                                     <span ng-if="editPropertyModel.property.addOn"
-                                          class="input-group-addon">{{editPropertyModel.property.addOn}}</span>
+                                        class="input-group-addon">{{editPropertyModel.property.addOn}}</span>
 
                                     <!-- Constraints any NOT Boolean -->
                                     <input class="i-sdc-form-input"
-                                           data-tests-id="defaultvalue"
-                                           ng-if="!((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
-                                           data-ng-maxlength="maxLength"
-                                           data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
-                                           maxlength="{{maxLength}}"
-                                           data-ng-model="editPropertyModel.property.value"
-                                           type="text"
-                                           name="value"
-                                           data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
-                                           data-ng-model-options="{ debounce: 200 }"
-                                           data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
-                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value))))"
-                                           autofocus/>
+                                        data-tests-id="defaultvalue"
+                                        ng-if="!((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
+                                        data-ng-maxlength="maxLength"
+                                        data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                        maxlength="{{maxLength}}"
+                                        data-ng-model="editPropertyModel.property.value"
+                                        type="text"
+                                        name="value"
+                                        data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
+                                        data-ng-model-options="{ debounce: 200 }"
+                                        data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
+                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value))))
+                                                        ||('string' === editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateString(editPropertyModel.property.value)))"
+                                        autofocus/>
                                     <!-- Boolean -->
                                     <select class="i-sdc-form-select"
                                             data-tests-id="booleantype"
