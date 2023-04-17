@@ -46,16 +46,16 @@ export interface IEditPropertyModel {
 }
 
 interface IPropertyFormViewModelScope extends ng.IScope {
-    forms:any;
-    editForm:ng.IFormController;
-    footerButtons:Array<any>;
-    isNew:boolean;
-    nameMaxLength:number;
-    isLoading:boolean;
-    componentMetadata: { isService: boolean, isVfc: boolean }
-    validationPattern:RegExp;
-    propertyNameValidationPattern:RegExp;
-    commentValidationPattern:RegExp;
+    forms: any;
+    editForm: ng.IFormController;
+    footerButtons: Array<any>;
+    isNew: boolean;
+    nameMaxLength: number;
+    isLoading: boolean;
+    componentMetadata: { isService: boolean, isVfc: boolean };
+    validationPattern: RegExp;
+    propertyNameValidationPattern: RegExp;
+    commentValidationPattern: RegExp;
     editPropertyModel: IEditPropertyModel;
     componentInstanceMap: Map<string, InstanceFeDetails>;
     customToscaFunctions: Array<CustomToscaFunction>;
@@ -75,19 +75,20 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     isGetFunctionValueType: boolean;
     invalidMandatoryFields: boolean;
 
-    validateJson(json:string):boolean;
-    save(doNotCloseModal?:boolean):void;
-    getValidationPattern(type:string):RegExp;
-    validateIntRange(value:string):boolean;
-    close():void;
-    onSchemaTypeChange():void;
-    onTypeChange(resetSchema:boolean):void;
-    showSchema():boolean;
-    delete(property:PropertyModel):void;
-    getPrev():void;
-    getNext():void;
-    isSimpleType(typeName:string):boolean;
-    getDefaultValue():any;
+    validateJson(json: string): boolean;
+    save(doNotCloseModal?: boolean): void;
+    getValidationPattern(type: string): RegExp;
+    validateIntRange(value: string): boolean;
+    validateString(value: string): boolean;
+    close(): void;
+    onSchemaTypeChange(): void;
+    onTypeChange(resetSchema: boolean): void;
+    showSchema(): boolean;
+    delete(property: PropertyModel): void;
+    getPrev(): void;
+    getNext(): void;
+    isSimpleType(typeName: string): boolean;
+    getDefaultValue(): any;
     onValueTypeChange(): void;
 }
 
@@ -441,11 +442,25 @@ export class PropertyFormViewModel {
         };
 
         this.$scope.getValidationPattern = (type:string):RegExp => {
-            return this.ValidationUtils.getValidationPattern(type);
+            return this.ValidationUtils.getValidationPattern(type, 'propDefault');
         };
 
-        this.$scope.validateIntRange = (value:string):boolean => {
+        this.$scope.validateIntRange = (value: string): boolean => {
             return !value || this.ValidationUtils.validateIntRange(value);
+        };
+
+        // Return true if string is valid
+        this.$scope.validateString = (value: string): boolean => {
+            console.log('Value', value);
+            try {
+                if (value.startsWith('\'') || value.startsWith('"') || value.startsWith('`')) {
+                    return value.endsWith('\'') || value.endsWith('"') || value.endsWith('`');
+                } else {
+                    return true;
+                }
+            } catch (e) {
+                return false;
+            }
         };
 
         this.$scope.close = ():void => {

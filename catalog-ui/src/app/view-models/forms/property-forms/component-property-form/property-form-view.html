@@ -225,7 +225,8 @@
                                            data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
                                            data-ng-model-options="{ debounce: 200 }"
                                            data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
-                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value))))"
+                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value))))
+                                                        ||('string' === editPropertyModel.property.type && validateString(editPropertyModel.property.value))"
                                            autofocus/>
                                     <!-- Boolean -->
                                     <select class="i-sdc-form-select"
