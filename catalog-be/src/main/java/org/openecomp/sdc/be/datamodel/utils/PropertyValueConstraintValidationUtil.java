@@ -96,7 +96,7 @@ public class PropertyValueConstraintValidationUtil {
         if (propertyDefinition instanceof InputDefinition) {
             return StringUtils.isNotEmpty(propertyDefinition.getDefaultValue());
         }
-        return StringUtils.isNotEmpty(propertyDefinition.getValue());
+        return StringUtils.isNotEmpty(propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue());
     }
 
     private void evaluatePropertyTypeForConstraintValidation(PropertyDefinition propertyDefinition) {
@@ -155,7 +155,8 @@ public class PropertyValueConstraintValidationUtil {
                 }
             }
         } else if (!isValueAToscaFunction(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
-                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(propertyDefinition.getValue())) {
+                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(
+                    propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue())) {
             errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
                 getCompletePropertyName(propertyDefinition), toscaType.getType()));
         }
@@ -245,7 +246,9 @@ public class PropertyValueConstraintValidationUtil {
                 return StringUtils.isNotEmpty(propertyDefinition.getValue()) &&
                     !"null".equals(propertyDefinition.getValue());
             } else if (ToscaType.LIST == ToscaType.isValidType(propertyDefinition.getType())) {
-                Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                String referenceType = propertyDefinition.getSchemaType();
+                Collection<?> list = ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ?
+                    propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<List<?>>() {
                 });
                 return CollectionUtils.isNotEmpty(list);
             } else {
@@ -323,7 +326,8 @@ public class PropertyValueConstraintValidationUtil {
             if (propertyDefinition.getSchemaType() == null) {
                 propertyDefinition.setSchema(createStringSchema());
             }
-            Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+            Collection<?> list = ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ?
+                propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<List<?>>() {});
             final Map<String, Object> map = new HashMap<>();
             int index = 0;
             for (Object obj : list) {
