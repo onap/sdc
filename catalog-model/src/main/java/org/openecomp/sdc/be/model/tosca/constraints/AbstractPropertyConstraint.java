@@ -36,7 +36,7 @@ public abstract class AbstractPropertyConstraint implements PropertyConstraint {
 
     @Override
     public void validate(PropertyDefinition property) throws ConstraintViolationException {
-        validate(ToscaType.isValidType(property.getType()), property.getValue());
+        validate(ToscaType.isValidType(property.getType()), property.getValue() != null ? property.getValue() : property.getDefaultValue());
     }
     
     protected void validate(ToscaType toscaType, String propertyTextValue) throws ConstraintViolationException {

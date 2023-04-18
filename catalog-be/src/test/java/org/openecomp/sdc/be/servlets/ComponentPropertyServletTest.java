@@ -25,6 +25,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
@@ -36,13 +38,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.components.impl.DataTypesService;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -73,10 +80,17 @@ class ComponentPropertyServletTest extends JerseySpringBaseTest {
     private static final String INVALID_PROPERTY_NAME = "invalid_name_$.&";
     private static final String STRING_TYPE = "string";
 
+    ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+    Map<String, DataTypeDefinition> mapreturn = new HashMap<>();
+    Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes;
+
     @BeforeEach
     public void before() throws Exception {
         super.setUp();
         when(request.getSession()).thenReturn(session);
+        mapreturn.put("Demo",new DataTypeDefinition());
+        allDataTypes = Either.left(mapreturn);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
     }
 
     @AfterEach

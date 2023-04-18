@@ -81,7 +81,7 @@ public final class ConstraintUtil {
      * @throws ConstraintValueDoNotMatchPropertyTypeException if the property type cannot be compared
      */
     public static void checkComparableType(final ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
-        if (!isComparableType(propertyType)) {
+        if (!isComparableType(propertyType) && !ToscaType.BOOLEAN.equals(propertyType)) {
             throw new ConstraintValueDoNotMatchPropertyTypeException("Constraint is invalid for property type <" + propertyType.getType() + ">");
         }
     }
