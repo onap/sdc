@@ -64,6 +64,7 @@ public final class ConstraintUtil {
             case TIMESTAMP:
             case VERSION:
             case STRING:
+            case BOOLEAN:
             case SCALAR_UNIT_SIZE:
             case SCALAR_UNIT_TIME:
             case SCALAR_UNIT_BITRATE:

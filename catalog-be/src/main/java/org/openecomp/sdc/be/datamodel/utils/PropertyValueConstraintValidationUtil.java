@@ -96,7 +96,7 @@ public class PropertyValueConstraintValidationUtil {
         if (propertyDefinition instanceof InputDefinition) {
             return StringUtils.isNotEmpty(propertyDefinition.getDefaultValue());
         }
-        return StringUtils.isNotEmpty(propertyDefinition.getValue());
+        return StringUtils.isNotEmpty(propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue());
     }
 
     private void evaluatePropertyTypeForConstraintValidation(PropertyDefinition propertyDefinition) {
@@ -155,7 +155,8 @@ public class PropertyValueConstraintValidationUtil {
                 }
             }
         } else if (!isValueAToscaFunction(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
-                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(propertyDefinition.getValue())) {
+                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(
+                    propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue())) {
             errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
                 getCompletePropertyName(propertyDefinition), toscaType.getType()));
         }
