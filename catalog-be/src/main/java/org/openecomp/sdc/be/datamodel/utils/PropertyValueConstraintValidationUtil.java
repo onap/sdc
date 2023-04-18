@@ -96,7 +96,7 @@ public class PropertyValueConstraintValidationUtil {
         if (propertyDefinition instanceof InputDefinition) {
             return StringUtils.isNotEmpty(propertyDefinition.getDefaultValue());
         }
-        return StringUtils.isNotEmpty(propertyDefinition.getValue());
+        return StringUtils.isNotEmpty(propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue());
     }
 
     private void evaluatePropertyTypeForConstraintValidation(PropertyDefinition propertyDefinition) {
