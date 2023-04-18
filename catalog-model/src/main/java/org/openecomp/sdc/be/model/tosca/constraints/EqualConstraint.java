@@ -54,7 +54,7 @@ public class EqualConstraint extends AbstractComparablePropertyConstraint {
     public void initialize(ToscaType propertyType) throws ConstraintValueDoNotMatchPropertyTypeException {
         if (propertyType.isValidValue(String.valueOf(equal))) {
             typed = propertyType.convert(String.valueOf(equal));
-            if (ConstraintUtil.isComparableType(propertyType)) {
+            if (ConstraintUtil.isComparableType(propertyType) || ToscaType.BOOLEAN.equals(propertyType)) {
                 initialize(String.valueOf(equal), propertyType);
             }
         } else {
