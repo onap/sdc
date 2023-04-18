@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf796843_e6c368dd",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-18T10:01:13Z",
+      "side": 1,
+      "message": "any reason to restrict 2+, why 1 char not permitted ?\nI think , better to confirm with author of ticket list of  permitted chars \n\nex .\n\u00271.2\u0027 - for version\n\u0027This is Default value\u0027",
+      "range": {
+        "startLine": 635,
+        "startChar": 60,
+        "endLine": 635,
+        "endChar": 61
+      },
+      "revId": "a9a199db5694182e32b36710da6f4b36a71ee232",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
