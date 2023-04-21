@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.components.kafka;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fj.data.Either;
-import lombok.Getter;
 import lombok.Setter;
 import org.apache.http.HttpStatus;
 import org.apache.kafka.common.KafkaException;
