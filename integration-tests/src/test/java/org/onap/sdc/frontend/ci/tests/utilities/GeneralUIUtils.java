@@ -43,6 +43,7 @@ import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -398,7 +399,15 @@ public final class GeneralUIUtils {
     public static Select getSelectList(String item, String datatestsid) {
         Select selectList = new Select(getWebElementByTestID(datatestsid));
         if (item != null) {
-            selectList.selectByVisibleText(item);
+            try {
+                selectList.selectByVisibleText(item);
+            } catch (ElementClickInterceptedException e) {
+                getExtendTest().log(Status.DEBUG, e.getMessage());
+
+                // Occasionally select elements need a few seconds to load
+                GeneralUIUtils.ultimateWait();
+                selectList.selectByVisibleText(item);
+            }
         }
         return selectList;
     }
