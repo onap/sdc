@@ -414,7 +414,7 @@ public abstract class SetupCDTest extends DriverFactory {
         return getWindowTest().getUser();
     }
 
-    private void setBrowserBeforeTest(final UserRoleEnum role) {
+    public void setBrowserBeforeTest(final UserRoleEnum role) {
         LOGGER.info(String.format("Setup before test for role '%s'", role.name()));
         if (!getWindowTest().getPreviousRole().equalsIgnoreCase(role.name())) {
             LOGGER.info(String.format("Logging in with new role '%s'. Previous role was: '%s'.", role.name(),

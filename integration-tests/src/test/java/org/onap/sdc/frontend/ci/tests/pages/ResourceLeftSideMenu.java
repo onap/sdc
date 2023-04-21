@@ -24,7 +24,9 @@ import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -121,7 +123,15 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     public ResourcePropertiesPage clickOnPropertiesMenuItem() {
-        wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        try {
+            wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        }catch (StaleElementReferenceException e) {
+            System.err.println(e.getMessage());
+
+            GeneralUIUtils.waitForElementInVisibilityBy(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath()), 10);
+            wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        }
+
         return new ResourcePropertiesPage(webDriver);
     }
 
