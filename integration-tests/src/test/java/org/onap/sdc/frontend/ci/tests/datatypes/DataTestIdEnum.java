@@ -266,10 +266,53 @@ public final class DataTestIdEnum {
         ADD("Add"),
         DONE("Done"),
         PROPERTY_RADIO_BUTTON_CONTAINER("propertyRadioButton_"),
-        RADIO_BUTTON_CLASS("tlv-radio-label");
+        RADIO_BUTTON_CLASS("tlv-radio-label"),
+        RADIO_BUTTON_VALUE("radio-defaultvalue-value"),
+        RADIO_BUTTON_TOSCA("radio-defaultvalue-toscafunction"),
+        SELECT_TOSCA("select-toscafunction"),
+        SELECT_SOURCE("select-source"),
+        SELECT_ATTRIBUTE("select-attribute"),
+        YAML_TEXT_AREA("yaml-text-area");
 
         private final String value;
 
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum ToscaFunction {
+        GET_ATTRIBUTE("get_attribute"),
+        GET_INPUT("get_input"),
+        GET_PROPERTY("get_property"),
+        OTHER("other"),
+        YAML("yaml");
+
+        private final String value;
+
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum ConstraintEnum {
+        TYPE("constraint-type"),
+        VALUE("constraint-value"),
+        MIN_VALUE("min-constraint-value"),
+        MAX_VALUE("max-constraint-value"),
+        ADD("add-constraint"),
+        DELETE("delete-constraint"),
+        ADD_VALID_VALUE("add-valid-value"),
+        DELETE_VALID_VALUE("delete-valid-value"),
+        VALID_VALUE("valid-value");
+
+        private final String value;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum ErrorModalEnum {
+        OK("error-modal-button-ok");
+
+        private final String value;
     }
 
     @AllArgsConstructor
