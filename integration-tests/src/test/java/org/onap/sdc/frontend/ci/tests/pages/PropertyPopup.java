@@ -21,16 +21,22 @@
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import com.aventstack.extentreports.Status;
+import java.util.List;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum.ConstraintEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertyPopup {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyPopup.class);
 
     private static final int WAIT_FOR_ELEMENT_TIME_OUT = 60;
 
@@ -42,6 +48,35 @@ public class PropertyPopup {
         WebElement propertyNameField = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.PropertiesPopupEnum.PROPERTY_NAME.getValue());
         propertyNameField.clear();
         propertyNameField.sendKeys(name);
+    }
+
+    public void setConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting constraint value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ConstraintEnum.VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setMinConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting min value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(ConstraintEnum.MIN_VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setMaxConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting max value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(ConstraintEnum.MAX_VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setValidConstraintValue(String value, int inputField) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting valid value: %s ", value));
+        List<WebElement> constraintValueFields = GeneralUIUtils.getInputElements(ConstraintEnum.VALID_VALUE.getValue());
+        WebElement constraintValueField = constraintValueFields.get(inputField);
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
     }
 
     public void insertPropertyDefaultValue(String value) {
@@ -73,7 +108,7 @@ public class PropertyPopup {
                 PropertiesPage.getPropertyPopup().selectEntrySchema(propertyType);
             }
         } catch (NoSuchElementException e) {
-
+            LOGGER.error("Couldn't select property", e);
         }
     }
 
@@ -86,9 +121,36 @@ public class PropertyPopup {
         //GeneralUIUtils.ultimateWait();
     }
 
-    public void clickSave() {
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
-        getPopupForm();
+    public void clickAddConstraint() {
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ConstraintEnum.ADD.getValue());
+    }
+
+    public void clickAddValidValue() {
+        GeneralUIUtils.clickOnElementByTestId(ConstraintEnum.ADD_VALID_VALUE.getValue());
+    }
+
+    public void clickDeleteValidValue() {
+        GeneralUIUtils.clickOnElementByTestId(ConstraintEnum.DELETE_VALID_VALUE.getValue());
+    }
+
+    public void setConstraintType(ConstraintType constraintType) {
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ConstraintEnum.TYPE.getValue());
+
+        WebElement constraint = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ConstraintEnum.TYPE.getValue());
+        constraint.sendKeys(constraintType.getType());
+    }
+
+    public void clickSave() throws InterruptedException {
+        if (isSaveEnabled()) {
+            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
+            getPopupForm();
+        } else {
+            throw new InterruptedException("Save button is disabled");
+        }
+    }
+
+    public boolean isSaveEnabled() {
+        return !GeneralUIUtils.isElementDisabled(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
     }
 
     public void clickCancel() {
