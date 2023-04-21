@@ -274,6 +274,30 @@ public final class DataTestIdEnum {
 
     @AllArgsConstructor
     @Getter
+    public enum ConstraintEnum {
+        TYPE("constraint-type"),
+        VALUE("constraint-value"),
+        MIN_VALUE("min-constraint-value"),
+        MAX_VALUE("max-constraint-value"),
+        ADD("add-constraint"),
+        DELETE("delete-constraint"),
+        ADD_VALID_VALUE("add-valid-value"),
+        DELETE_VALID_VALUE("delete-valid-value"),
+        VALID_VALUE("valid-value");
+
+        private final String value;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public enum ErrorModalEnum {
+        OK("error-modal-button-ok");
+
+        private final String value;
+    }
+
+    @AllArgsConstructor
+    @Getter
     public enum AdminPageTabs {
         USER_MANAGEMENT("usermanagmenttab"),
         CATEGORY_MANAGEMENT("categorymanagmenttab");
