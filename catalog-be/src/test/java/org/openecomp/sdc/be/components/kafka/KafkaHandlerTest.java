@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2022 Nordix Foundation. All rights reserved.
+ * Copyright (C) 2022-2023 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,28 +21,24 @@ package org.openecomp.sdc.be.components.kafka;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.google.gson.JsonSyntaxException;
-import org.apache.kafka.common.KafkaException;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.kafka.common.KafkaException;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
-import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
 import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
+import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
-
 
 @ExtendWith(MockitoExtension.class)
 public class KafkaHandlerTest {
@@ -52,8 +48,6 @@ public class KafkaHandlerTest {
 
     @Mock
     private SdcKafkaProducer mockSdcKafkaProducer;
-
-    private KafkaHandler kafkaHandler;
 
     @Test
     public void testIsKafkaActiveTrue(){
