@@ -274,6 +274,17 @@ public final class DataTestIdEnum {
 
     @AllArgsConstructor
     @Getter
+    public enum ConstraintEnum {
+        TYPE("constraint-type"),
+        VALUE("constraint-value"),
+        ADD("add-constraint"),
+        DELETE("delete-constraint");
+
+        private final String value;
+    }
+
+    @AllArgsConstructor
+    @Getter
     public enum AdminPageTabs {
         USER_MANAGEMENT("usermanagmenttab"),
         CATEGORY_MANAGEMENT("categorymanagmenttab");

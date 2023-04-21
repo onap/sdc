@@ -27,7 +27,7 @@
         <div class="w-sdc-form-columns-wrapper" [formGroupName]="constraintIndex">
           <div class="w-sdc-form-column-small">
               <select class="i-sdc-form-select"
-                      data-tests-id="constraints"
+                      data-tests-id="constraint-type"
                       formControlName="type"
                       [value]="constraintsArray.at(constraintIndex).get('type').value"
                       (change)="onChangeConstraintType(constraintIndex, $event.target.value)">
@@ -109,6 +109,7 @@
               <div *ngIf="constraint.get('type').value != 'inRange' && constraint.get('type').value != 'validValues'">
                 <input type="text" class="i-sdc-form-input myClass required" required
                        formControlName="value"
+                       data-tests-id="constraint-value"
                        [value]="constraintsArray.at(constraintIndex).get('value').value"
                        (input)="onChangeConstraintValue(constraintIndex, $event.target.value)"/>
 
@@ -123,7 +124,10 @@
             </div>
 
             <div class="w-sdc-form-column-vsmall" *ngIf="!isViewOnly">
-                <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeConstraint(constraintIndex)"></span>
+                <span class="sprite-new delete-btn"
+                      [ngClass]="{'disabled': isViewOnly}"
+                      data-tests-id="delete-constraint"
+                      (click)="removeConstraint(constraintIndex)"></span>
             </div>
           </div>
         </div>
@@ -131,7 +135,7 @@
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        <div class="add-btn add-list-item w-sdc-form-column-small" data-tests-id="add-constraint" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
         (click)="addConstraint()"> Add Constraint </div>
     </div>
   </form>
