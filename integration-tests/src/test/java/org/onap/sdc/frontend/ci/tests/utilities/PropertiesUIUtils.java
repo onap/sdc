@@ -60,7 +60,7 @@ public class PropertiesUIUtils {
         return propertyvalues;
     }
 
-    public static void vlidateProperties(Map<String, String> propertyValues) throws InterruptedException {
+    public static void validateProperties(Map<String, String> propertyValues) throws InterruptedException {
         WebElement name = GeneralUIUtils.getWebElementByTestID(propertyValues.get("name"));
         name.getText().equalsIgnoreCase(propertyValues.get("name"));
         WebElement defaultValue = GeneralUIUtils.getWebElementByTestID(propertyValues.get("name"));
@@ -69,7 +69,7 @@ public class PropertiesUIUtils {
         type.getText().equalsIgnoreCase(propertyValues.get("type"));
     }
 
-    public static void addNewProperty(PropertyTypeEnum property) {
+    public static void addNewProperty(PropertyTypeEnum property) throws InterruptedException {
         GeneralUIUtils.ultimateWait();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding new %s property", property.name()));
         PropertiesPage.clickAddPropertyArtifact();
@@ -80,7 +80,7 @@ public class PropertiesUIUtils {
         PropertiesPage.getPropertyPopup().clickSave();
     }
 
-    public static void updateProperty(PropertyTypeEnum property) {
+    public static void updateProperty(PropertyTypeEnum property) throws InterruptedException {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Updating property: %s", property.name()));
         PropertiesPage.clickOnProperty(property.getName());
         PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getUpdateDescription());
@@ -88,7 +88,7 @@ public class PropertiesUIUtils {
         PropertiesPage.getPropertyPopup().clickSave();
     }
 
-    public static void changePropertyDefaultValueInComposition(String propertyName, String defaultValue) {
+    public static void changePropertyDefaultValueInComposition(String propertyName, String defaultValue) throws InterruptedException{
         GeneralUIUtils.clickOnElementByTestId(propertyName);
         PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(defaultValue);
         PropertiesPage.getPropertyPopup().clickSave();

@@ -86,9 +86,17 @@ public class PropertyPopup {
         //GeneralUIUtils.ultimateWait();
     }
 
-    public void clickSave() {
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
-        getPopupForm();
+    public void clickSave() throws InterruptedException {
+        if (isSaveEnabled()) {
+            GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
+            getPopupForm();
+        } else {
+            throw new InterruptedException("Save button is disabled");
+        }
+    }
+
+    public boolean isSaveEnabled() {
+        return !GeneralUIUtils.isElementDisabled(DataTestIdEnum.PropertiesPopupEnum.SAVE.getValue());
     }
 
     public void clickCancel() {

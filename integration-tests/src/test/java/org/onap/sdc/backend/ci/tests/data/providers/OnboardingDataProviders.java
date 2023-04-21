@@ -214,6 +214,27 @@ public final class OnboardingDataProviders {
         return parametersArray;
     }
 
+    @DataProvider(name = "SimpleVFC")
+    private static Object[][] SimpleVFC() {
+        final List<String> vfcFileNameList = OnboardingUtils.getVfcFilenameList();
+        if (CollectionUtils.isEmpty(vfcFileNameList)) {
+            fail("Could not create vfcList datasource");
+        }
+        final String vfc1 = "SimpleVFC.yaml";
+        final List<String> vfcFiles = vfcFileNameList.stream()
+            .filter(filename -> filename.equals(vfc1) )
+            .collect(Collectors.toList());
+        Collections.sort(vfcFiles);
+        if (CollectionUtils.isEmpty(vfcFiles) || vfcFiles.size() < 1) {
+            fail(String.format("Could not create vfcList datasource, one of the vfc file '%s' was not found", vfcFiles));
+        }
+
+        final String folderPath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.VFC);
+        final Object[][] parametersArray = new Object[1][];
+        parametersArray[0] = new Object[]{folderPath, vfcFiles.get(0)};
+        return parametersArray;
+    }
+
     @DataProvider(name = "dataTypesList")
     private static Object[][] dataTypesList() {
         final String dataType = "1-Custom-DataType.yaml";

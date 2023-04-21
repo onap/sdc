@@ -131,7 +131,7 @@
 
     </div>
     <div class="w-sdc-form-columns-wrapper-small" *ngIf="!isViewOnly">
-        <div class="add-btn add-list-item w-sdc-form-column-small" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
+        <div class="add-btn add-list-item w-sdc-form-column-small" data-tests-id="add-constraint" *ngIf="!isViewOnly" [ngClass]="{'disabled': isViewOnly}"
         (click)="addConstraint()"> Add Constraint </div>
     </div>
   </form>
