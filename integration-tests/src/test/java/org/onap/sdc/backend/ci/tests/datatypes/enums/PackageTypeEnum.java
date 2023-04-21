@@ -33,7 +33,8 @@ public enum PackageTypeEnum {
     PNF("PNF"),
     VFC("VFC"),
     VNF("VNF"),
-    ASD("ASD");
+    ASD("ASD"),
+    TYPE("Type");
 
     private String value;
 }

@@ -82,6 +82,8 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
                 return new CompositionInterfaceOperationsTab(webDriver);
             case DIRECTIVE_NODE_FILTER:
                 return new CompositionDirectiveNodeFilterTab(webDriver);
+            case PROPERTIES_ATTRIBUTES:
+                return new CompositionPropertiesAttributesTab(webDriver);
             default:
                 throw new IllegalStateException("Not yet implemented: " + tabName);
         }
@@ -99,6 +101,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
         TAB_LIST("sdc-tabs-list", "//ul[@class='%s']/li"),
         INFORMATION_TAB("detail-tab-information", "//li[@data-tests-id='%s']"),
         INPUTS_TAB("detail-tab-inputs", "//li[@data-tests-id='%s']"),
+        PROPERTIES_ATTRIBUTES_TAB("detail-tab-properties-attributes", "//li[@data-tests-id='%s']"),
         DEPLOYMENT_ARTIFACTS_TAB("detail-tab-deployment-artifacts", "//li[@data-tests-id='%s']"),
         INFORMATION_ARTIFACTS_TAB("detail-tab-information-artifacts", "//li[@data-tests-id='%s']"),
         REQUIREMENTS_CAPABILITIES_TAB("detail-tab-requirements-capabilities", "//li[@data-tests-id='%s']"),
@@ -121,6 +124,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
     public enum CompositionDetailTabName {
         INFORMATION(XpathSelector.INFORMATION_TAB),
         INPUTS(XpathSelector.INPUTS_TAB),
+        PROPERTIES_ATTRIBUTES(XpathSelector.PROPERTIES_ATTRIBUTES_TAB),
         DEPLOYMENT_ARTIFACTS(XpathSelector.DEPLOYMENT_ARTIFACTS_TAB),
         INFORMATIONAL_ARTIFACTS(XpathSelector.INFORMATION_ARTIFACTS_TAB),
         API_ARTIFACTS(XpathSelector.API_ARTIFACTS_TAB),
