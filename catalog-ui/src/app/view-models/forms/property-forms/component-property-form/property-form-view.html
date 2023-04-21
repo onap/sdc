@@ -144,13 +144,16 @@
                     <ng-container ng-if="!componentMetadata.isVfc">
                         <input type="hidden" ng-model="editPropertyModel.isGetFunctionValid" required="required"/>
                         <input type="radio" name="hasGetFunctionValue"
-                               ng-model="editPropertyModel.hasGetFunctionValue"
-                               ng-value="false"
-                               ng-change="onValueTypeChange()"/> {{(editPropertyModel.property.type == 'map' || editPropertyModel.property.type == 'list') ? 'Entries' : 'Value'}}
+                                ng-model="editPropertyModel.hasGetFunctionValue"
+                                ng-value="false"
+                                ng-change="onValueTypeChange()"
+                                data-tests-id="radio-defaultvalue-value"
+                                /> {{(editPropertyModel.property.type == 'map' || editPropertyModel.property.type == 'list') ? 'Entries' : 'Value'}}
                         <input type="radio" name="hasGetFunctionValue"
-                               ng-model="editPropertyModel.hasGetFunctionValue"
-                               ng-value="true"
-                               ng-change="onValueTypeChange()"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
+                                ng-model="editPropertyModel.hasGetFunctionValue"
+                                ng-value="true"
+                                ng-change="onValueTypeChange()"
+                                data-tests-id="radio-defaultvalue-toscafunction"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
                         <div data-ng-if="editPropertyModel.hasGetFunctionValue">
                             <tosca-function [property]="editPropertyModel.property"
                                             [component-instance-map]="componentInstanceMap"
