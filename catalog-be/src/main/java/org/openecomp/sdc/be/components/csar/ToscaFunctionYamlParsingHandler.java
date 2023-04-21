@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionParameter;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
@@ -37,88 +38,6 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
 @org.springframework.stereotype.Component
 public class ToscaFunctionYamlParsingHandler {
-
-    /**
-     * Builds a {@link ToscaFunction} based on the property value. It will build the object with the maximum information available in the property
-     * value, as not all the necessary information can be extracted from it. It will only parse values from supported functions in
-     * {@link ToscaFunctionType}.
-     *
-     * @param toscaFunctionPropertyValueMap the value of a property calls a TOSCA function
-     * @return the partially filled {@link ToscaFunction} object
-     */
-    public Optional<ToscaFunction> buildToscaFunctionBasedOnPropertyValue(final Map<String, Object> toscaFunctionPropertyValueMap) {
-        if (!isPropertyValueToscaFunction(toscaFunctionPropertyValueMap)) {
-            return Optional.empty();
-        }
-        final String functionType = toscaFunctionPropertyValueMap.keySet().iterator().next();
-        final ToscaFunctionType toscaFunctionType = ToscaFunctionType.findType(functionType).orElse(null);
-        if (toscaFunctionType == null) {
-            return Optional.empty();
-        }
-        switch (toscaFunctionType) {
-            case GET_INPUT: {
-                return handleGetInputFunction(toscaFunctionPropertyValueMap, functionType);
-            }
-            case GET_PROPERTY:
-            case GET_ATTRIBUTE: {
-                return handleGetPropertyFunction(toscaFunctionPropertyValueMap, functionType, toscaFunctionType);
-            }
-            case CONCAT:
-                return handleConcatFunction(toscaFunctionPropertyValueMap, functionType);
-            default:
-                return Optional.empty();
-        }
-    }
-
-    /**
-     * Checks if the property value is a supported TOSCA function.
-     *
-     * @param propValueObj the value of a property
-     * @return {@code true} if the value is a supported TOSCA function, {@code false} otherwise
-     */
-    public boolean isPropertyValueToscaFunction(final Object propValueObj) {
-        if (propValueObj instanceof Map) {
-            final Map<String, Object> propValueMap = (Map<String, Object>) propValueObj;
-            if (propValueMap.keySet().size() > 1) {
-                return false;
-            }
-            return Stream.of(ToscaFunctionType.GET_INPUT, ToscaFunctionType.GET_PROPERTY, ToscaFunctionType.GET_ATTRIBUTE, ToscaFunctionType.CONCAT)
-                .anyMatch(type -> propValueMap.containsKey(type.getName()));
-        }
-        return false;
-    }
-
-    private Optional<ToscaFunction> handleConcatFunction(Map<String, Object> toscaFunctionPropertyValueMap, String functionType) {
-        final ToscaConcatFunction toscaConcatFunction = new ToscaConcatFunction();
-        final Object functionValueObj = toscaFunctionPropertyValueMap.get(functionType);
-        if (!(functionValueObj instanceof List)) {
-            return Optional.empty();
-        }
-        final List<Object> functionParameters = (List<Object>) functionValueObj;
-        if (functionParameters.size() < 2) {
-            return Optional.empty();
-        }
-        functionParameters.forEach(parameter -> {
-            if (parameter instanceof String) {
-                final var stringParameter = new ToscaStringParameter();
-                stringParameter.setValue((String) parameter);
-                toscaConcatFunction.addParameter(stringParameter);
-                return;
-            }
-            if (isPropertyValueToscaFunction(parameter)) {
-                buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) parameter).ifPresent(toscaFunction -> {
-                    if (toscaFunction instanceof ToscaFunctionParameter) {
-                        toscaConcatFunction.addParameter((ToscaFunctionParameter) toscaFunction);
-                    }
-                });
-                return;
-            }
-            final var customYamlFunction = new CustomYamlFunction();
-            customYamlFunction.setYamlValue(parameter);
-            toscaConcatFunction.addParameter(customYamlFunction);
-        });
-        return Optional.of(toscaConcatFunction);
-    }
 
     private static Optional<ToscaFunction> handleGetPropertyFunction(Map<String, Object> toscaFunctionPropertyValueMap, String functionType,
                                                                      ToscaFunctionType toscaFunctionType) {
@@ -175,6 +94,125 @@ public class ToscaFunctionYamlParsingHandler {
         final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
         toscaGetFunction.setPropertyName(propertyName);
         return Optional.of(toscaGetFunction);
+    }
+
+    /**
+     * Builds a {@link ToscaFunction} based on the property value. It will build the object with the maximum information available in the property
+     * value, as not all the necessary information can be extracted from it. It will only parse values from supported functions in
+     * {@link ToscaFunctionType}.
+     *
+     * @param toscaFunctionPropertyValueMap the value of a property calls a TOSCA function
+     * @return the partially filled {@link ToscaFunction} object
+     */
+    public Optional<ToscaFunction> buildToscaFunctionBasedOnPropertyValue(final Map<String, Object> toscaFunctionPropertyValueMap) {
+        if (!isPropertyValueToscaFunction(toscaFunctionPropertyValueMap)) {
+            return Optional.empty();
+        }
+        final String functionType = toscaFunctionPropertyValueMap.keySet().iterator().next();
+        final ToscaFunctionType toscaFunctionType =
+            ToscaFunctionType.findType(functionType).orElse(functionType.startsWith("$") ? ToscaFunctionType.CUSTOM : null);
+        if (toscaFunctionType == null) {
+            return Optional.empty();
+        }
+        switch (toscaFunctionType) {
+            case GET_INPUT: {
+                return handleGetInputFunction(toscaFunctionPropertyValueMap, functionType);
+            }
+            case GET_PROPERTY:
+            case GET_ATTRIBUTE: {
+                return handleGetPropertyFunction(toscaFunctionPropertyValueMap, functionType, toscaFunctionType);
+            }
+            case CONCAT:
+                return handleConcatFunction(toscaFunctionPropertyValueMap, functionType);
+            case CUSTOM:
+                return handleCustomFunction(toscaFunctionPropertyValueMap, functionType);
+            default:
+                return Optional.empty();
+        }
+    }
+
+    private Optional<ToscaFunction> handleCustomFunction(Map<String, Object> toscaFunctionPropertyValueMap, String functionType) {
+        final ToscaCustomFunction toscaCustomFunction = new ToscaCustomFunction();
+        toscaCustomFunction.setName(functionType.substring(1));
+        final Object functionValueObj = toscaFunctionPropertyValueMap.get(functionType);
+        if (!(functionValueObj instanceof List)) {
+            return Optional.empty();
+        }
+        final List<Object> functionParameters = (List<Object>) functionValueObj;
+        functionParameters.forEach(parameter -> {
+            if (parameter instanceof String) {
+                final var stringParameter = new ToscaStringParameter();
+                stringParameter.setValue((String) parameter);
+                toscaCustomFunction.addParameter(stringParameter);
+                return;
+            }
+            if (isPropertyValueToscaFunction(parameter)) {
+                buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) parameter).ifPresent(toscaFunction -> {
+                    if (toscaFunction instanceof ToscaFunctionParameter) {
+                        toscaCustomFunction.addParameter((ToscaFunctionParameter) toscaFunction);
+                    }
+                });
+                return;
+            }
+            final var customYamlFunction = new CustomYamlFunction();
+            customYamlFunction.setYamlValue(parameter);
+            toscaCustomFunction.addParameter(customYamlFunction);
+        });
+        return Optional.of(toscaCustomFunction);
+    }
+
+    /**
+     * Checks if the property value is a supported TOSCA function.
+     *
+     * @param propValueObj the value of a property
+     * @return {@code true} if the value is a supported TOSCA function, {@code false} otherwise
+     */
+    public boolean isPropertyValueToscaFunction(final Object propValueObj) {
+        if (propValueObj instanceof Map) {
+            final Map<String, Object> propValueMap = (Map<String, Object>) propValueObj;
+            if (propValueMap.keySet().size() > 1) {
+                return false;
+            }
+            if (propValueMap.keySet().stream().anyMatch(keyValue -> keyValue.startsWith("$"))) {
+                return true;
+            }
+
+            return Stream.of(ToscaFunctionType.GET_INPUT, ToscaFunctionType.GET_PROPERTY, ToscaFunctionType.GET_ATTRIBUTE, ToscaFunctionType.CONCAT)
+                .anyMatch(type -> propValueMap.containsKey(type.getName()));
+        }
+        return false;
+    }
+
+    private Optional<ToscaFunction> handleConcatFunction(Map<String, Object> toscaFunctionPropertyValueMap, String functionType) {
+        final ToscaConcatFunction toscaConcatFunction = new ToscaConcatFunction();
+        final Object functionValueObj = toscaFunctionPropertyValueMap.get(functionType);
+        if (!(functionValueObj instanceof List)) {
+            return Optional.empty();
+        }
+        final List<Object> functionParameters = (List<Object>) functionValueObj;
+        if (functionParameters.size() < 2) {
+            return Optional.empty();
+        }
+        functionParameters.forEach(parameter -> {
+            if (parameter instanceof String) {
+                final var stringParameter = new ToscaStringParameter();
+                stringParameter.setValue((String) parameter);
+                toscaConcatFunction.addParameter(stringParameter);
+                return;
+            }
+            if (isPropertyValueToscaFunction(parameter)) {
+                buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) parameter).ifPresent(toscaFunction -> {
+                    if (toscaFunction instanceof ToscaFunctionParameter) {
+                        toscaConcatFunction.addParameter((ToscaFunctionParameter) toscaFunction);
+                    }
+                });
+                return;
+            }
+            final var customYamlFunction = new CustomYamlFunction();
+            customYamlFunction.setYamlValue(parameter);
+            toscaConcatFunction.addParameter(customYamlFunction);
+        });
+        return Optional.of(toscaConcatFunction);
     }
 
 }
