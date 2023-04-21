@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
@@ -42,6 +43,18 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 class ToscaFunctionYamlParsingHandlerTest {
 
     final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler = new ToscaFunctionYamlParsingHandler();
+
+    private static void assertGetInput(final ToscaFunction actualGetInputFunction, final List<String> expectedGetInputParameters) {
+        assertEquals(ToscaFunctionType.GET_INPUT, actualGetInputFunction.getType());
+        assertTrue(actualGetInputFunction instanceof ToscaGetFunctionDataDefinition);
+        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) actualGetInputFunction;
+        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunction.getFunctionType());
+        assertEquals(expectedGetInputParameters.get(expectedGetInputParameters.size() - 1), toscaGetFunction.getPropertyName());
+        assertEquals(PropertySource.SELF, toscaGetFunction.getPropertySource());
+        assertEquals(expectedGetInputParameters, toscaGetFunction.getPropertyPathFromSource());
+        assertNull(toscaGetFunction.getPropertyUniqueId());
+        assertNull(toscaGetFunction.getSourceName());
+    }
 
     @Test
     void buildToscaFunctionBasedOnPropertyValue_NotAToscaFunctionTest() {
@@ -119,6 +132,30 @@ class ToscaFunctionYamlParsingHandlerTest {
         assertGetInput(getFunction, List.of("inputName"));
     }
 
+    @Test
+    void buildToscaFunctionBasedOnPropertyValue_CustomTest() {
+        final List<Object> customValue = List.of("string1", "-", Map.of(ToscaFunctionType.GET_INPUT.getName(), "inputName"));
+        final Map<String, Object> customValueMap = Map.of("$customFuncName", customValue);
+
+        final Optional<ToscaFunction> actualToscaFunctionOpt = toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue(customValueMap);
+        assertTrue(actualToscaFunctionOpt.isPresent());
+        final ToscaFunction actualToscaFunction = actualToscaFunctionOpt.get();
+        assertEquals(ToscaFunctionType.CUSTOM, actualToscaFunction.getType());
+        assertTrue(actualToscaFunction instanceof ToscaCustomFunction);
+        final ToscaCustomFunction toscaCustomFunction = (ToscaCustomFunction) actualToscaFunction;
+        final String functionName = toscaCustomFunction.getName();
+        assertEquals("customFuncName", functionName);
+        assertEquals(3, toscaCustomFunction.getParameters().size());
+        assertTrue(toscaCustomFunction.getParameters().get(0) instanceof ToscaStringParameter);
+        final ToscaStringParameter parameter1 = (ToscaStringParameter) toscaCustomFunction.getParameters().get(0);
+        assertEquals("string1", parameter1.getValue());
+        assertTrue(toscaCustomFunction.getParameters().get(1) instanceof ToscaStringParameter);
+        final ToscaStringParameter parameter2 = (ToscaStringParameter) toscaCustomFunction.getParameters().get(1);
+        assertEquals("-", parameter2.getValue());
+        assertTrue(toscaCustomFunction.getParameters().get(2) instanceof ToscaGetFunctionDataDefinition);
+        final ToscaGetFunctionDataDefinition getFunction = (ToscaGetFunctionDataDefinition) toscaCustomFunction.getParameters().get(2);
+        assertGetInput(getFunction, List.of("inputName"));
+    }
 
     @Test
     void isPropertyValueToscaFunctionTest() {
@@ -134,17 +171,5 @@ class ToscaFunctionYamlParsingHandlerTest {
         assertTrue(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.CONCAT.getName(), "")));
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.YAML.getName(), "")));
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.STRING.getName(), "")));
-    }
-
-    private static void assertGetInput(final ToscaFunction actualGetInputFunction, final List<String> expectedGetInputParameters) {
-        assertEquals(ToscaFunctionType.GET_INPUT, actualGetInputFunction.getType());
-        assertTrue(actualGetInputFunction instanceof ToscaGetFunctionDataDefinition);
-        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) actualGetInputFunction;
-        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunction.getFunctionType());
-        assertEquals(expectedGetInputParameters.get(expectedGetInputParameters.size() - 1), toscaGetFunction.getPropertyName());
-        assertEquals(PropertySource.SELF, toscaGetFunction.getPropertySource());
-        assertEquals(expectedGetInputParameters, toscaGetFunction.getPropertyPathFromSource());
-        assertNull(toscaGetFunction.getPropertyUniqueId());
-        assertNull(toscaGetFunction.getSourceName());
     }
 }
