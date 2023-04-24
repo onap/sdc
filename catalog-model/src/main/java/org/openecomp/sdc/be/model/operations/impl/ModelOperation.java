@@ -58,12 +58,24 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.dto.PropertyDefinitionDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -512,9 +524,44 @@ public class ModelOperation {
             typeProp.put(TypeUtils.ToscaTagNamesEnum.REQUIRED.getElementName(), property.getRequired());
         }
         if (property.getConstraints() != null) {
-            typeProp.put(TypeUtils.ToscaTagNamesEnum.CONSTRAINTS.getElementName(), property.getConstraints());
+            typeProp.put(TypeUtils.ToscaTagNamesEnum.CONSTRAINTS.getElementName(), getPropertyConstraintsValues(property.getConstraints()));
         }
         return typeProp;
+    }
+
+    private List<Object> getPropertyConstraintsValues(final List<Object> propertyConstraints) {
+        List<Object> constraints = new ArrayList<>();
+        for (Object constraint : propertyConstraints) {
+            Map<String, Object> constraintsMap = new HashMap<>();
+            PropertyConstraint propertyConstraint = (PropertyConstraint) constraint;
+            Object value = null;
+            if (constraint instanceof EqualConstraint) {
+                value = ((EqualConstraint) constraint).getEqual();
+            } else if (constraint instanceof GreaterThanConstraint) {
+                value = ((GreaterThanConstraint) constraint).getGreaterThan();
+            } else if (constraint instanceof GreaterOrEqualConstraint) {
+                value = ((GreaterOrEqualConstraint) constraint).getGreaterOrEqual();
+            } else if (constraint instanceof LessThanConstraint) {
+                value = ((LessThanConstraint) constraint).getLessThan();
+            } else if (constraint instanceof LessOrEqualConstraint) {
+                value = ((LessOrEqualConstraint) constraint).getLessOrEqual();
+            } else if (constraint instanceof InRangeConstraint) {
+                value = ((InRangeConstraint) constraint).getInRange();
+            } else if (constraint instanceof ValidValuesConstraint) {
+                value = ((ValidValuesConstraint) constraint).getValidValues();
+            } else if (constraint instanceof LengthConstraint) {
+                value = ((LengthConstraint) constraint).getLength();
+            } else if (constraint instanceof MinLengthConstraint) {
+                value = ((MinLengthConstraint) constraint).getMinLength();
+            } else if (constraint instanceof MaxLengthConstraint) {
+                value = ((MaxLengthConstraint) constraint).getMaxLength();
+            } else if (constraint instanceof PatternConstraint) {
+                value = ((PatternConstraint) constraint).getPattern();
+            }
+            constraintsMap.put(propertyConstraint.getConstraintType().getType(), value);
+            constraints.add(constraintsMap);
+        }
+        return constraints;
     }
 
 }
