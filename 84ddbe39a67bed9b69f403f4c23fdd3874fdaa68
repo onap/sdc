@@ -22,6 +22,30 @@
       "revId": "84ddbe39a67bed9b69f403f4c23fdd3874fdaa68",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9ca068a_64a8509a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaCommonConfig.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2023-04-24T08:49:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "491b19ae_5879a1a8",
+      "range": {
+        "startLine": 72,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 102
+      },
+      "revId": "84ddbe39a67bed9b69f403f4c23fdd3874fdaa68",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
