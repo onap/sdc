@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17115fdc_9eb55f05",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-24T21:51:46Z",
+      "side": 1,
+      "message": "change to if-else-if for performance",
+      "range": {
+        "startLine": 533,
+        "startChar": 16,
+        "endLine": 565,
+        "endChar": 17
+      },
+      "revId": "b8bac0cd30512ca133bada6626c815686c0dc09d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e245ef4_6456dcbd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 569,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-24T21:51:46Z",
+      "side": 1,
+      "message": "extract as separate method for better visibility",
+      "range": {
+        "startLine": 527,
+        "startChar": 12,
+        "endLine": 569,
+        "endChar": 96
+      },
+      "revId": "b8bac0cd30512ca133bada6626c815686c0dc09d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
