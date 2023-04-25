@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c21465f_77070fc9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-25T12:50:29Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 249,
+        "startChar": 0,
+        "endLine": 249,
+        "endChar": 74
+      },
+      "revId": "279e1218177ef4c3137eb2ddd0e56dbe78c10379",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3f18758_cb82393d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ConstraintUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-25T12:50:29Z",
+      "side": 1,
+      "message": "why this change?",
+      "range": {
+        "startLine": 84,
+        "startChar": 44,
+        "endLine": 84,
+        "endChar": 86
+      },
+      "revId": "279e1218177ef4c3137eb2ddd0e56dbe78c10379",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
