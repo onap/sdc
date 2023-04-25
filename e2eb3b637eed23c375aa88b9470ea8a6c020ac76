@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f04ad49_636fca84",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/flow/ImportDataTypeFlow.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-04-25T09:01:43Z",
+      "side": 1,
+      "message": "2023",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "e2eb3b637eed23c375aa88b9470ea8a6c020ac76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
