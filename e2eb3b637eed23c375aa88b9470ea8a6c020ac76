@@ -22,6 +22,30 @@
       "revId": "e2eb3b637eed23c375aa88b9470ea8a6c020ac76",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "411063ac_4bf0bcb0",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/flow/ImportDataTypeFlow.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-04-25T09:25:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f04ad49_636fca84",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "e2eb3b637eed23c375aa88b9470ea8a6c020ac76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
