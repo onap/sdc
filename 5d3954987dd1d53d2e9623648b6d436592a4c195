@@ -22,6 +22,30 @@
       "revId": "5d3954987dd1d53d2e9623648b6d436592a4c195",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eec70a1e_09548dd6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2023-04-25T18:32:24Z",
+      "side": 1,
+      "message": "Hi Michael, Seems like it was the same behaviour even before this bug fix, I shall raise new bug ticket and look into the issue, Thank you for identifying the issue.",
+      "parentUuid": "b2a8d19a_3104ad6f",
+      "range": {
+        "startLine": 534,
+        "startChar": 7,
+        "endLine": 563,
+        "endChar": 9
+      },
+      "revId": "5d3954987dd1d53d2e9623648b6d436592a4c195",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
