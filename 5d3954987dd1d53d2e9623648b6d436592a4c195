@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b2a8d19a_3104ad6f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-25T16:59:28Z",
+      "side": 1,
+      "message": "This seems to be outputing string value regardless of the type, e.g.:\n      int_prop:\n        type: integer\n        constraints:\n        - less_than: \u0027100\u0027\n\nshould be:\n      int_prop:\n        type: integer\n        constraints:\n        - less_than: 100",
+      "range": {
+        "startLine": 534,
+        "startChar": 7,
+        "endLine": 563,
+        "endChar": 9
+      },
+      "revId": "5d3954987dd1d53d2e9623648b6d436592a4c195",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
