@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eaea74b0_8d751b8d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ToscaFunctionYamlParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-04-26T16:19:51Z",
+      "side": 1,
+      "message": "a custom tosca function can have 0 or more arguments. Checking here for \u003c2 results in tosca functions with less than that to not import correctly\ne.g. {\"$juel\":[\"${abc([def, ghi])}\"]}",
+      "range": {
+        "startLine": 142,
+        "startChar": 5,
+        "endLine": 144,
+        "endChar": 9
+      },
+      "revId": "ef467696c9d946c5300a78cd9acd1fb684fca4fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
