@@ -22,6 +22,30 @@
       "revId": "6acd9d732f9c8b78694e3145b2d4d89f25b9c69b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2d29051_e317f762",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-custom-function/tosca-custom-function.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-04-28T18:45:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf406904_8e863470",
+      "range": {
+        "startLine": 26,
+        "startChar": 5,
+        "endLine": 29,
+        "endChar": 12
+      },
+      "revId": "6acd9d732f9c8b78694e3145b2d4d89f25b9c69b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
