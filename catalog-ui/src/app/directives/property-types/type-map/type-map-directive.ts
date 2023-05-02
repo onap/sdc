@@ -134,7 +134,7 @@ export class TypeMapDirective implements ng.IDirective {
 
         // reset valueObjRef and mapKeys when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData: any): void => {
-            scope.isSchemaTypeDataType = this.isDataTypeForSchemaType(scope.schemaProperty, scope.types);
+            scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
             if (scope.valueObjRef) {
                 scope.mapKeys = Object.keys(scope.valueObjRef);
                 // keeping another copy of the keys, as the mapKeys gets overridden sometimes
