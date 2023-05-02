@@ -22,6 +22,30 @@
       "revId": "ef467696c9d946c5300a78cd9acd1fb684fca4fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e34c7869_5d24bcd3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ToscaFunctionYamlParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-05-02T12:36:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eaea74b0_8d751b8d",
+      "range": {
+        "startLine": 142,
+        "startChar": 5,
+        "endLine": 144,
+        "endChar": 9
+      },
+      "revId": "ef467696c9d946c5300a78cd9acd1fb684fca4fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
