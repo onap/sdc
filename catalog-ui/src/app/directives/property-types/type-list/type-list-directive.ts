@@ -140,7 +140,7 @@ export class TypeListDirective implements ng.IDirective {
         });
         //reset valueObjRef when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
-            scope.isSchemaTypeDataType = this.isDataTypeForSchemaType(scope.schemaProperty, scope.types);
+            scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
         });
 
         //when user brows between properties in "edit property form"
