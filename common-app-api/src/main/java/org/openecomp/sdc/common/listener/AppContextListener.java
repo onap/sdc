@@ -39,6 +39,7 @@ public class AppContextListener implements ServletContextListener {
 
     private static Logger log = Logger.getLogger(AppContextListener.class.getName());
 
+    @Override
     public void contextInitialized(ServletContextEvent context) {
         log.debug("ServletContextListener initialized ");
         log.debug("After read values from Manifest {}", getManifestInfo(context.getServletContext()));
@@ -57,6 +58,7 @@ public class AppContextListener implements ServletContextListener {
         ExternalConfiguration.listenForChanges();
     }
 
+    @Override
     public void contextDestroyed(ServletContextEvent context) {
         log.debug("ServletContextListener destroyed");
         ExternalConfiguration.stopListenForFileChanges();
