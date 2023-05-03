@@ -34,8 +34,8 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
     private static final Logger log = Logger.getLogger(ConfigurationManager.class.getName());
     private static ConfigurationManager instance;
-    ConfigurationSource configurationSource = null;
-    Map<String, Object> configurations = new HashMap<>();
+    private final ConfigurationSource configurationSource;
+    private final Map<String, Object> configurations = new HashMap<>();
 
     public ConfigurationManager(ConfigurationSource configurationSource) {
         super();
@@ -101,6 +101,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         return (Configuration) configurations.get(getKey(Configuration.class));
     }
 
+    @Override
     public void reconfigure(BasicConfiguration obj) {
         //
 
