@@ -66,11 +66,14 @@ public class KafkaCommonConfig {
         String securityProtocolConfig = System.getenv().getOrDefault("SECURITY_PROTOCOL", "SASL_PLAINTEXT");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocolConfig);
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, deConfiguration.getKafkaBootStrapServers());
-
         if("SSL".equals(securityProtocolConfig)) {
-              log.error("Kafka over SSL has not been implemented yet");
-        }
-        else{
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, deConfiguration.getSSLConfig().getKeystorePath());
+            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getKeystorePass());
+            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getKeyManagerPassword());
+            props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, deConfiguration.getSSLConfig().getTruststorePath());
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getTruststorePass());
+        } else {
             props.put(SaslConfigs.SASL_JAAS_CONFIG, getKafkaSaslJaasConfig());
             props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-512");
         }
