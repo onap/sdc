@@ -30,9 +30,9 @@ sslConfig:
   enabled: false
   keyStorePath: /app-service/keys/keystore.jks
   keyStorePassword: changeit
+  keyPassword: changeit
   trustStorePath: /app-service/keys/truststore.jks
   trustStorePassword: changeit
-  keyManagerPassword: changeit
 
 # access restriction
 authCookie:

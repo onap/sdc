@@ -545,12 +545,12 @@ public class Configuration extends BasicConfiguration {
     @NoArgsConstructor
     public static class SslConfig {
 
-        private boolean enabled;
+        private Boolean enabled;
         private String keyStorePath;
         private String keyStorePassword;
+        private String keyPassword;
         private String trustStorePath;
         private String trustStorePassword;
-        private String keyManagerPassword;
     }
 
 }

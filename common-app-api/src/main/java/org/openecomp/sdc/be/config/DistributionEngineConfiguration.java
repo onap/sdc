@@ -52,6 +52,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private ExternalServiceConfig msoConfig;
     private Integer opEnvRecoveryIntervalSec;
     private Integer allowedTimeBeforeStaleSec;
+    private SslConfig sslConfig;
 
     public List<String> getUebServers() {
         return uebServers;
@@ -233,6 +234,14 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
     public void setMsoConfig(ExternalServiceConfig msoConfig) {
         this.msoConfig = msoConfig;
+    }
+
+    public SslConfig getSslConfig(){
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getSslConfig();
+    }
+
+    public void setSslConfig(SslConfig sslConfig) {
+        this.sslConfig = sslConfig;
     }
 
     public enum ArtifcatTypeEnum {

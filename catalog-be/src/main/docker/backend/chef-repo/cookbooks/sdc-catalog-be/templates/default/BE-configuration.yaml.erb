@@ -29,12 +29,12 @@ toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
 sslConfig:
-  enabled: <%= node[:disableHttp] %>
-  keyStorePath: <%= node['jetty']['keystore_path'] %>
-  keyStorePassword: <%= node['jetty']['keystore_pwd'] %>
-  trustStorePath: <%= node['jetty']['truststore_path'] %>
-  trustStorePassword: <%= node['jetty']['truststore_pwd'] %>
-  keyManagerPassword: <%= node['jetty']['keymanager_pwd'] %>
+  enabled: <%= node['SslConfig']['sslEnabled'] %>
+  keyStorePath: <%= node['SslConfig']['keyStorePath'] %>
+  keyStorePassword: <%= node['SslConfig']['keyStorePassword'] %>
+  keyPassword: <%= node['SslConfig']['keyPassword'] %>
+  trustStorePath: <%= node['SslConfig']['trustStorePath'] %>
+  trustStorePassword: <%= node['SslConfig']['trustStorePassword'] %>
 
 janusGraphCfgFile: <%= node['cassandra']['janusgraph_config_file'] %>
 janusGraphInMemoryGraph: false
