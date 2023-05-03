@@ -20,8 +20,6 @@
 package org.openecomp.sdc.be.config;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.util.HashMap;
-import java.util.Map;
 import org.openecomp.sdc.be.config.validation.ArtifactConfigValidator;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.BasicConfiguration;
@@ -31,11 +29,14 @@ import org.openecomp.sdc.common.api.FileChangeCallback;
 import org.openecomp.sdc.common.config.EcompErrorConfiguration;
 import org.openecomp.sdc.common.config.IEcompConfigurationManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ConfigurationManager implements FileChangeCallback, IEcompConfigurationManager {
 
     private static ConfigurationManager instance;
     final Map<String, Object> configurations = new HashMap<>();
-    ConfigurationSource configurationSource = null;
+    private ConfigurationSource configurationSource;
 
     @VisibleForTesting
     public ConfigurationManager() {
@@ -67,7 +68,7 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         final Object configurationObj = configurations.get(getKey(Configuration.class));
         if (configurationObj instanceof Configuration) {
             final ArtifactConfigValidator artifactConfigValidator = new ArtifactConfigValidator((Configuration) configurationObj,
-                ArtifactTypeEnum.getBaseArtifacts());
+                    ArtifactTypeEnum.getBaseArtifacts());
             artifactConfigValidator.validate();
         }
     }
