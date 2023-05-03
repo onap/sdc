@@ -26,6 +26,14 @@ released: 2012-11-30
 toscaConformanceLevel: 12.0
 minToscaConformanceLevel: 3.0
 
+sslConfig:
+  enabled: false
+  keyStorePath: /app-service/keys/keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: /app-service/keys/truststore.jks
+  trustStorePassword: changeit
+  keyManagerPassword: changeit
+
 # access restriction
 authCookie:
   securityKey: "AGLDdG4D04BKm2IxIWEr8o=="
