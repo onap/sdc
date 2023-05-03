@@ -28,6 +28,14 @@ released: 2012-11-30
 toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
+sslConfig:
+  enabled: <%= node['SslConfig']['sslEnabled'] %>
+  keyStorePath: <%= node['SslConfig']['keyStorePath'] %>
+  keyStorePassword: <%= node['SslConfig']['keyStorePassword'] %>
+  keyPassword: <%= node['SslConfig']['keyPassword'] %>
+  trustStorePath: <%= node['SslConfig']['trustStorePath'] %>
+  trustStorePassword: <%= node['SslConfig']['trustStorePassword'] %>
+
 janusGraphCfgFile: <%= node['cassandra']['janusgraph_config_file'] %>
 janusGraphInMemoryGraph: false
 janusGraphLockTimeout: 1800

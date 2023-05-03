@@ -151,6 +151,7 @@ public class Configuration extends BasicConfiguration {
     private String componentInstanceCounterDelimiter;
     private String dataValidatorFilterExcludedUrls; // Comma separated list of excluded URLs by the DataValidatorFilter
     private String permittedAncestors; // Space separated list of permitted ancestors
+    private SslConfig sslConfig;
 
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
@@ -537,6 +538,19 @@ public class Configuration extends BasicConfiguration {
 
         private String name;
         private String type;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class SslConfig {
+
+        private Boolean enabled;
+        private String keyStorePath;
+        private String keyStorePassword;
+        private String keyPassword;
+        private String trustStorePath;
+        private String trustStorePassword;
     }
 
 }
