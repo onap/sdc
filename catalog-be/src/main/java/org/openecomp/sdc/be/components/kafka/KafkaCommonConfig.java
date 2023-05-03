@@ -58,7 +58,10 @@ public class KafkaCommonConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,  "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.CLIENT_ID_CONFIG, deConfiguration.getDistributionStatusTopic().getConsumerId() + "-producer-" + UUID.randomUUID());
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         return props;
     }
 
@@ -66,11 +69,22 @@ public class KafkaCommonConfig {
         String securityProtocolConfig = System.getenv().getOrDefault("SECURITY_PROTOCOL", "SASL_PLAINTEXT");
         props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocolConfig);
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, deConfiguration.getKafkaBootStrapServers());
+<<<<<<< Updated upstream
 
         if("SSL".equals(securityProtocolConfig)) {
               log.error("Kafka over SSL has not been implemented yet");
         }
         else{
+=======
+        if("SSL".equals(securityProtocolConfig)) {
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, deConfiguration.getSslConfig().getKeyStorePath());
+            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, deConfiguration.getSslConfig().getKeyStorePassword());
+            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, deConfiguration.getSslConfig().getKeyPassword());
+            props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, deConfiguration.getSslConfig().getTrustStorePath());
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, deConfiguration.getSslConfig().getTrustStorePassword());
+        } else {
+>>>>>>> Stashed changes
             props.put(SaslConfigs.SASL_JAAS_CONFIG, getKafkaSaslJaasConfig());
             props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-512");
         }

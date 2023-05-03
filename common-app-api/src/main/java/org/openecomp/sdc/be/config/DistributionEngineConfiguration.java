@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.openecomp.sdc.be.config.Configuration.SslConfig;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
@@ -51,6 +52,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private ExternalServiceConfig msoConfig;
     private Integer opEnvRecoveryIntervalSec;
     private Integer allowedTimeBeforeStaleSec;
+    private SslConfig sslConfig;
 
     public List<String> getUebServers() {
         return uebServers;
@@ -232,6 +234,14 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
     public void setMsoConfig(ExternalServiceConfig msoConfig) {
         this.msoConfig = msoConfig;
+    }
+
+    public SslConfig getSslConfig(){
+        return ConfigurationManager.getConfigurationManager().getConfiguration().getSslConfig();
+    }
+
+    public void setSslConfig(SslConfig sslConfig) {
+        this.sslConfig = sslConfig;
     }
 
     public enum ArtifcatTypeEnum {
