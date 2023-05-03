@@ -53,9 +53,11 @@ template "ssl-ini" do
   mode "0755"
   variables({
               :https_port => "8443",
-              :jetty_truststore_pwd => "z+KEj;t+,KN^iimSiS89e#p0",
+              :jetty_keystore_path => "etc/org.onap.sdc.p12" ,
               :jetty_keystore_pwd => "?(kP!Yur![*!Y5!E^f(ZKc31",
-              :jetty_keymanager_pwd => "?(kP!Yur![*!Y5!E^f(ZKc31",
+              :jetty_truststore_path => "etc/org.onap.sdc.trust.jks",
+              :jetty_truststore_pwd => "z+KEj;t+,KN^iimSiS89e#p0",
+              :jetty_keymanager_pwd => "?(kP!Yur![*!Y5!E^f(ZKc31"
             })
 end
 

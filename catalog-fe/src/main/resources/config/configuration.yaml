@@ -25,7 +25,7 @@ requestTimeout: 1200
 # catalog ms (the host-port values need to be changed once it is deployed)
 catalogFacadeMs:
   protocol: http
-  host: 192.168.33.10
+  host: 127.0.0.1
   port: 8282
   healthCheckUri: "/healthCheck"
   path: "/uicache"
