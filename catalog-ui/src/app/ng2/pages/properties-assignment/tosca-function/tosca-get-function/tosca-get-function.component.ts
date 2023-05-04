@@ -91,7 +91,6 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         this.initToscaGetFunction().subscribe(() => {
             this.isInitialized = true;
         });
-
     }
 
     ngOnChanges(_changes: SimpleChanges): void {

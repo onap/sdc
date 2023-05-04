@@ -29,18 +29,28 @@
     </div>
     <div formArrayName="customParameterList">
       <div *ngFor="let parameter of parameters; let idx = index">
-        <div *ngIf="idx > 0" class="text-center"><span class="custom-plus-icon"></span></div>
+        <div *ngIf="idx > 0 && type != GET_INPUT" class="text-center"><span class="custom-plus-icon"></span></div>
         <div class="parameter-card">
           <div class="card-content">
-            <ng-container *ngIf="parameter.type === STRING_FUNCTION_TYPE">
+            <ng-container *ngIf="parameter.type === STRING_FUNCTION_TYPE && type != GET_INPUT">
               <input type="text" [formControlName]="idx" [value]="parameter.value"/><br/>
             </ng-container>
-            <ng-container *ngIf="parameter.type !== STRING_FUNCTION_TYPE">
-              <tosca-function [property]="propertyInputList[idx]" [customToscaFunctions]="customToscaFunctions" [componentInstanceMap]="componentInstanceMap" [allowClear]="false"
+            <ng-container *ngIf="parameter.type !== STRING_FUNCTION_TYPE && type != GET_INPUT">
+              <tosca-function [property]="propertyInputList[idx]"
+                              [customToscaFunctions]="customToscaFunctions"
+                              [componentInstanceMap]="componentInstanceMap"
+                              [allowClear]="false"
                               (onValidityChange)="onFunctionValidityChange($event, idx)">
               </tosca-function>
             </ng-container>
-            <div class="buttons-container">
+            <ng-container *ngIf="type === GET_INPUT">
+              <app-tosca-get-function [property]="propertyInputList[idx]" [toscaGetFunction]="toscaGetFunction"
+                                      [componentInstanceMap]="componentInstanceMap"
+                                      [functionType]="GET_INPUT"
+                                      (onValidityChange)="onGetFunctionValidityChange($event, idx)">
+              </app-tosca-get-function>
+            </ng-container>
+            <div *ngIf="type != GET_INPUT" class="buttons-container">
               <span class="delete-icon" (click)="removeParameter(idx)"></span>
             </div>
           </div>
@@ -48,7 +58,7 @@
       </div>
     </div>
   </ng-container>
-  <div class="buttons-container">
+  <div *ngIf="type != GET_INPUT" class="buttons-container">
     <a class="add-link" (click)="addStringParameter()">String Value</a> <a class="add-link" (click)="addFunction()">TOSCA Function Expression</a>
   </div>
 </div>
