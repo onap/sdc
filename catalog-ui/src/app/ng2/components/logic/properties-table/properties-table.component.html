@@ -46,7 +46,6 @@
             
             <div class="table-row" *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm | propertiesOrderBy:{path: path, direction: direction}; trackBy:property?.name "
                 (click)="onClickPropertyRow(property, instanceId, $event)" [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name, 'readonly': property.isDisabled || property.isDeclared}">
-
                 <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared">
                 <!-- Property Name -->
                     <div class="property-name">

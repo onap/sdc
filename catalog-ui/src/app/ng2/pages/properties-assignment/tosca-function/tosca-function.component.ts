@@ -192,6 +192,11 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         return toscaFunctionType.name;
     }
 
+    getCustomFunctionType():string {
+        let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
+        return toscaFunctionType.type;
+    }
+
     isDefaultCustomFunction(): boolean {
         let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
         if (toscaFunctionType.name === "other") {
@@ -223,7 +228,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     isCustomSelected(): boolean {
         let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
-        return toscaFunctionType && toscaFunctionType.type === ToscaFunctionType.CUSTOM;
+        return toscaFunctionType && (toscaFunctionType.type === ToscaFunctionType.CUSTOM || toscaFunctionType.type === ToscaFunctionType.GET_INPUT);
     }
 
     isGetFunctionSelected(): boolean {

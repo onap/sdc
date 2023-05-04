@@ -38,8 +38,16 @@
                                  (onValidityChange)="onConcatFunctionValidityChange($event)"></app-tosca-concat-function>
     </div>
     <div *ngIf="isCustomSelected()">
-      <app-tosca-custom-function [toscaCustomFunction]="toscaFunction" [customToscaFunctions]="customToscaFunctions" [name]="getCustomFunctionName()" [componentInstanceMap]="componentInstanceMap"
-                                 [isDefaultCustomFunction]="isDefaultCustomFunction()" (onValidityChange)="onCustomFunctionValidityChange($event)"></app-tosca-custom-function>
+      <app-tosca-custom-function [toscaCustomFunction]="toscaFunction"
+                                 [customToscaFunctions]="customToscaFunctions"
+                                 [name]="getCustomFunctionName()"
+                                 [type]="getCustomFunctionType()"
+                                 [propertyType]="property.type"
+                                 [propertySchemaType]="property.schemaType"
+                                 [componentInstanceMap]="componentInstanceMap"
+                                 [isDefaultCustomFunction]="isDefaultCustomFunction()"
+                                 (onValidityChange)="onCustomFunctionValidityChange($event)">
+      </app-tosca-custom-function>
     </div>
     <div *ngIf="isGetFunctionSelected()">
       <app-tosca-get-function [property]="property" [toscaGetFunction]="toscaFunction"
@@ -48,7 +56,8 @@
                               [functionType]="toscaFunctionTypeForm.value"
                               [compositionMap]="compositionMap"
                               [compositionMapKey]="compositionMapKey"
-                              (onValidityChange)="onGetFunctionValidityChange($event)"></app-tosca-get-function>
+                              (onValidityChange)="onGetFunctionValidityChange($event)">
+      </app-tosca-get-function>
     </div>
     <div *ngIf="isYamlFunctionSelected()">
       <app-yaml-function [yamlFunction]="toscaFunction" (onValidityChange)="onYamlFunctionValidityChange($event)"></app-yaml-function>

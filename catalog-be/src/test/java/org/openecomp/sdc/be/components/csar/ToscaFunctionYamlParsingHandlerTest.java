@@ -26,11 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
@@ -134,6 +137,7 @@ class ToscaFunctionYamlParsingHandlerTest {
 
     @Test
     void buildToscaFunctionBasedOnPropertyValue_CustomTest() {
+        setDefaultCustomToscaFunctionOnConfiguration();
         final List<Object> customValue = List.of("string1", "-", Map.of(ToscaFunctionType.GET_INPUT.getName(), "inputName"));
         final Map<String, Object> customValueMap = Map.of("$customFuncName", customValue);
 
@@ -158,6 +162,32 @@ class ToscaFunctionYamlParsingHandlerTest {
     }
 
     @Test
+    void buildToscaFunctionBasedOnPropertyValue_CustomFunctionGetInputTypeTest() {
+        setDefaultCustomToscaFunctionOnConfiguration();
+        final Map<String, Object> customValueMap = Map.of("$custom_function_get_input_type", "controller_actor");
+
+        final Optional<ToscaFunction> actualToscaFunctionOpt = toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue(customValueMap);
+        assertTrue(actualToscaFunctionOpt.isPresent());
+        final ToscaFunction actualToscaFunction = actualToscaFunctionOpt.get();
+        assertEquals(ToscaFunctionType.CUSTOM, actualToscaFunction.getType());
+        assertTrue(actualToscaFunction instanceof ToscaCustomFunction);
+        final ToscaCustomFunction toscaCustomFunction = (ToscaCustomFunction) actualToscaFunction;
+        final String functionName = toscaCustomFunction.getName();
+        assertEquals("custom_function_get_input_type", functionName);
+        assertEquals(1, toscaCustomFunction.getParameters().size());
+        assertTrue(toscaCustomFunction.getParameters().get(0) instanceof ToscaGetFunctionDataDefinition);
+        final ToscaGetFunctionDataDefinition parameter1 = (ToscaGetFunctionDataDefinition) toscaCustomFunction.getParameters().get(0);
+        assertGetInput(parameter1, List.of("controller_actor"));
+//        assertEquals("string1", parameter1.getValue());
+//        assertTrue(toscaCustomFunction.getParameters().get(1) instanceof ToscaStringParameter);
+//        final ToscaStringParameter parameter2 = (ToscaStringParameter) toscaCustomFunction.getParameters().get(1);
+//        assertEquals("-", parameter2.getValue());
+//        assertTrue(toscaCustomFunction.getParameters().get(2) instanceof ToscaGetFunctionDataDefinition);
+//        final ToscaGetFunctionDataDefinition getFunction = (ToscaGetFunctionDataDefinition) toscaCustomFunction.getParameters().get(2);
+//        assertGetInput(getFunction, List.of("inputName"));
+    }
+
+    @Test
     void isPropertyValueToscaFunctionTest() {
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(ToscaFunctionType.GET_INPUT.getName()));
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(new HashMap<>()));
@@ -171,5 +201,17 @@ class ToscaFunctionYamlParsingHandlerTest {
         assertTrue(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.CONCAT.getName(), "")));
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.YAML.getName(), "")));
         assertFalse(toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(Map.of(ToscaFunctionType.STRING.getName(), "")));
+    }
+
+    private void setDefaultCustomToscaFunctionOnConfiguration() {
+        final var configurationManager = new ConfigurationManager();
+        final var configuration = new Configuration();
+        List<Configuration.CustomToscaFunction> defaultCustomToscaFunctions = new ArrayList<>();
+        Configuration.CustomToscaFunction defaultCustomType = new Configuration.CustomToscaFunction();
+        defaultCustomType.setName("custom_function_get_input_type");
+        defaultCustomType.setType("get_input");
+        defaultCustomToscaFunctions.add(defaultCustomType);
+        configuration.setDefaultCustomToscaFunctions(defaultCustomToscaFunctions);
+        configurationManager.setConfiguration(configuration);
     }
 }

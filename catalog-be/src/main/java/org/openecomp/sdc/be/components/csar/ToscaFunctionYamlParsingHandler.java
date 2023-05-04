@@ -21,6 +21,7 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
@@ -74,7 +77,7 @@ public class ToscaFunctionYamlParsingHandler {
         List<String> propertySourceIndex = functionParameters.subList(1, functionParameters.size());
         String toscaIndexValue = propertySourceIndex.get((propertySourceIndex.size() - 1));
         if (propertySourceIndex.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
-            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex.subList(0,(propertySourceIndex.size() - 1)));
+            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex.subList(0, (propertySourceIndex.size() - 1)));
             toscaGetFunction.setToscaIndex(toscaIndexValue);
         } else {
             toscaGetFunction.setPropertyPathFromSource(propertySourceIndex);
@@ -105,7 +108,7 @@ public class ToscaFunctionYamlParsingHandler {
             }
             String toscaIndexValue = functionParameters.get((functionParameters.size() - 1));
             if (functionParameters.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
-                toscaGetFunction.setPropertyPathFromSource(functionParameters.subList(0,(functionParameters.size() - 1)));
+                toscaGetFunction.setPropertyPathFromSource(functionParameters.subList(0, (functionParameters.size() - 1)));
                 toscaGetFunction.setToscaIndex(toscaIndexValue);
             } else {
                 toscaGetFunction.setPropertyPathFromSource(functionParameters);
@@ -155,6 +158,14 @@ public class ToscaFunctionYamlParsingHandler {
         final ToscaCustomFunction toscaCustomFunction = new ToscaCustomFunction();
         toscaCustomFunction.setName(functionType.substring(1));
         final Object functionValueObj = toscaFunctionPropertyValueMap.get(functionType);
+        toscaCustomFunction.setToscaFunctionType(getCustomFunctionType(toscaCustomFunction.getName()));
+        if (ToscaFunctionType.GET_INPUT.equals(toscaCustomFunction.getToscaFunctionType())) {
+            return handelCustomFunctionGetInputType(toscaCustomFunction, functionValueObj);
+        }
+        return handelCustomFunctionCustomType(toscaCustomFunction, functionValueObj);
+    }
+
+    private Optional<ToscaFunction> handelCustomFunctionCustomType(ToscaCustomFunction toscaCustomFunction, Object functionValueObj) {
         if (!(functionValueObj instanceof List)) {
             return Optional.empty();
         }
@@ -179,6 +190,35 @@ public class ToscaFunctionYamlParsingHandler {
             toscaCustomFunction.addParameter(customYamlFunction);
         });
         return Optional.of(toscaCustomFunction);
+    }
+
+    private Optional<ToscaFunction> handelCustomFunctionGetInputType(ToscaCustomFunction toscaCustomFunction, Object functionValueObj) {
+        if (!(functionValueObj instanceof String)) {
+            return Optional.empty();
+        }
+        final String parameter = (String) functionValueObj;
+        Map<String, Object> parameterMap = new HashMap<>();
+        parameterMap.put(ToscaFunctionType.GET_INPUT.getName(), parameter);
+        buildToscaFunctionBasedOnPropertyValue(parameterMap).ifPresent(toscaFunction -> {
+            if (toscaFunction instanceof ToscaFunctionParameter) {
+                toscaCustomFunction.addParameter((ToscaFunctionParameter) toscaFunction);
+            }
+        });
+        return Optional.of(toscaCustomFunction);
+    }
+
+    private ToscaFunctionType getCustomFunctionType(String name) {
+        List<Configuration.CustomToscaFunction> customFunctions =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultCustomToscaFunctions();
+        if (customFunctions.isEmpty()) {
+            return ToscaFunctionType.CUSTOM;
+        }
+        Optional<Configuration.CustomToscaFunction> optionalFunc = customFunctions.stream().filter(func -> func.getName().equals(name)).findFirst();
+        if (optionalFunc.isEmpty()) {
+            return ToscaFunctionType.CUSTOM;
+        }
+        String type = optionalFunc.get().getType();
+        return ToscaFunctionType.findType(type).get();
     }
 
     /**
