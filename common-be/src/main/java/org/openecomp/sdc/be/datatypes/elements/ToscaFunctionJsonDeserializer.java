@@ -29,7 +29,10 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.slf4j.Logger;
@@ -178,9 +181,38 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             throw context.instantiationException(List.class, "Expecting a string for the 'name' entry");
         }
         toscaCustomFunction.setName(name);
+        toscaCustomFunction.setToscaFunctionType(getCustomFunctionType(name));
         List<ToscaFunctionParameter> functionParameterList = getParameters(customFunctionJsonNode, context);
         toscaCustomFunction.setParameters(functionParameterList);
+        if (ToscaFunctionType.GET_INPUT.equals(toscaCustomFunction.getToscaFunctionType())) {
+            validateGetInput(toscaCustomFunction, context);
+        }
         return toscaCustomFunction;
+    }
+
+    private ToscaFunctionType getCustomFunctionType(String name) {
+        List<Configuration.CustomToscaFunction> customFunctions =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultCustomToscaFunctions();
+        if (customFunctions.isEmpty()) {
+            return ToscaFunctionType.CUSTOM;
+        }
+        Optional<Configuration.CustomToscaFunction> optionalFunc = customFunctions.stream().filter(func -> func.getName().equals(name)).findFirst();
+        if (optionalFunc.isEmpty()) {
+            return ToscaFunctionType.CUSTOM;
+        }
+        String type = optionalFunc.get().getType();
+        return ToscaFunctionType.findType(type).get();
+    }
+
+    private void validateGetInput(ToscaCustomFunction toscaCustomFunction, final DeserializationContext context) throws IOException {
+        List<ToscaFunctionParameter> functionParameterList = toscaCustomFunction.getParameters();
+        if (functionParameterList.size() != 1) {
+            throw context.instantiationException(List.class, "Custom GET_INPUT function must contain one GET_INPUT parameter");
+        }
+        ToscaFunctionParameter parameter = functionParameterList.get(0);
+        if (!ToscaFunctionType.GET_INPUT.equals(parameter.getType())) {
+            throw context.instantiationException(List.class, "Custom GET_INPUT function must contain a GET_INPUT parameter");
+        }
     }
 
     private List<ToscaFunctionParameter> getParameters(final JsonNode functionJsonNode, final DeserializationContext context) throws IOException {

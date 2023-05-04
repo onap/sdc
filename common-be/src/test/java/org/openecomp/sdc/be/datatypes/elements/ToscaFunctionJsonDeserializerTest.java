@@ -33,9 +33,12 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.yaml.snakeyaml.Yaml;
@@ -142,6 +145,7 @@ class ToscaFunctionJsonDeserializerTest {
     @Test
     void testCustomToscaFunction() throws IOException {
         //given
+        setDefaultCustomToscaFunctionOnConfiguration();
         final String toscaCustomFunction = Files.readString(TEST_RESOURCES_PATH.resolve("customFunction.json"));
         //when
         final ToscaFunction toscaFunction = parseToscaFunction(toscaCustomFunction);
@@ -187,6 +191,55 @@ class ToscaFunctionJsonDeserializerTest {
         assertTrue(yamlFunctionValueMap.get("string") instanceof String);
 
         assertEquals("string3", customParameters.get(1));
+    }
+
+    @Test
+    void testCustomToscaFunctionGetInputType() throws IOException {
+        //given
+        setDefaultCustomToscaFunctionOnConfiguration();
+        final String toscaCustomFunctionFile = Files.readString(TEST_RESOURCES_PATH.resolve("customFunctionGetInputType.json"));
+        //when
+        final ToscaFunction toscaFunction = parseToscaFunction(toscaCustomFunctionFile);
+        //then
+        assertTrue(toscaFunction instanceof ToscaCustomFunction);
+        ToscaCustomFunction toscaCustomFunction = (ToscaCustomFunction) toscaFunction;
+        final Object yamlObject = new Yaml().load(toscaFunction.getValue());
+        assertTrue(yamlObject instanceof Map);
+        final Map<String, Object> yamlMap = (Map<String, Object>) yamlObject;
+        assertEquals(1, yamlMap.size());
+        final Object customFunctionGetInputValue = yamlMap.get("$" + ((ToscaCustomFunction) toscaFunction).getName());
+        assertTrue(customFunctionGetInputValue instanceof ArrayList);
+        ArrayList<Object> customFunctionGetInputValueList = (ArrayList<Object>) customFunctionGetInputValue;
+        assertEquals(1, customFunctionGetInputValueList.size());
+        assertEquals(1, customFunctionGetInputValueList.size());
+        assertEquals("controller_actor", customFunctionGetInputValueList.get(0));
+
+        List<ToscaFunctionParameter> parameters = toscaCustomFunction.getParameters();
+        assertEquals(1, parameters.size());
+        ToscaFunctionParameter paramFunction = toscaCustomFunction.getParameters().get(0);
+        assertTrue(paramFunction instanceof ToscaGetFunctionDataDefinition);
+
+        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) paramFunction;
+        assertEquals(ToscaFunctionType.GET_INPUT, toscaGetFunction.getType());
+        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunction.getFunctionType());
+        assertEquals("dd0ec4d2-7e74-4d92-af2f-89c7436baa63.controller_actor", toscaGetFunction.getPropertyUniqueId());
+        assertEquals(PropertySource.SELF, toscaGetFunction.getPropertySource());
+        assertEquals("controller_actor", toscaGetFunction.getPropertyName());
+        assertEquals("testService", toscaGetFunction.getSourceName());
+        assertEquals("dd0ec4d2-7e74-4d92-af2f-89c7436baa63", toscaGetFunction.getSourceUniqueId());
+        assertEquals(List.of("controller_actor"), toscaGetFunction.getPropertyPathFromSource());
+    }
+
+    private void setDefaultCustomToscaFunctionOnConfiguration() {
+        final var configurationManager = new ConfigurationManager();
+        final var configuration = new Configuration();
+        List<Configuration.CustomToscaFunction> defaultCustomToscaFunctions = new ArrayList<>();
+        Configuration.CustomToscaFunction defaultCustomType = new Configuration.CustomToscaFunction();
+        defaultCustomType.setName("custom_function_get_input_type");
+        defaultCustomType.setType("get_input");
+        defaultCustomToscaFunctions.add(defaultCustomType);
+        configuration.setDefaultCustomToscaFunctions(defaultCustomToscaFunctions);
+        configurationManager.setConfiguration(configuration);
     }
 
     private ToscaFunction parseToscaFunction(final String toscaFunctionJson) throws JsonProcessingException {
