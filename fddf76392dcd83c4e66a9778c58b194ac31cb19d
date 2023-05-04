@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ac05ba8_fd6f4453",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/startup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2023-05-04T11:41:36Z",
+      "side": 1,
+      "message": "So are we just loading the truststore into the JVM by default?",
+      "range": {
+        "startLine": 11,
+        "startChar": 20,
+        "endLine": 11,
+        "endChar": 34
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d18288a_4a833d21",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/recipes/SDC_Simulator_5_create_jetty_modules.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2023-05-04T11:41:36Z",
+      "side": 1,
+      "message": "Should this be .jks format?",
+      "range": {
+        "startLine": 56,
+        "startChar": 56,
+        "endLine": 56,
+        "endChar": 59
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
