@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "58a0baeb_f4339975",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/startup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-04T13:15:31Z",
+      "side": 1,
+      "message": "according to comment in\nhttps://gerrit.onap.org/r/c/sdc/+/134443/8/openecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/attributes/default.rb\n\nwe have to do so",
+      "parentUuid": "4ac05ba8_fd6f4453",
+      "range": {
+        "startLine": 11,
+        "startChar": 20,
+        "endLine": 11,
+        "endChar": 34
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1d18288a_4a833d21",
         "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/recipes/SDC_Simulator_5_create_jetty_modules.rb",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08411ea5_d69bce47",
+        "filename": "utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/recipes/SDC_Simulator_5_create_jetty_modules.rb",
+        "patchSetId": 8
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-04T13:15:31Z",
+      "side": 1,
+      "message": "this needs match \nhttps://gerrit.onap.org/r/c/sdc/+/134443/8/utils/webseal-simulator/sdc-simulator/chef-repo/cookbooks/sdc-simulator/templates/default/SDC-Simulator-ssl-ini.erb\n\nit can be any jks or p12",
+      "parentUuid": "1d18288a_4a833d21",
+      "range": {
+        "startLine": 56,
+        "startChar": 56,
+        "endLine": 56,
+        "endChar": 59
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
