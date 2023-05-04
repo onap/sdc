@@ -99,7 +99,6 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         this.initToscaGetFunction().subscribe(() => {
             this.isInitialized = true;
         });
-
     }
 
     ngOnChanges(_changes: SimpleChanges): void {
@@ -406,7 +405,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         if (this.property.type === PROPERTY_TYPES.ANY) {
             return true;
         }
-        let validPropertyType = property.type === PROPERTY_TYPES.LIST ? property.schemaType : property.type;
+        let validPropertyType = property.type;
+        let validPropertyTypeSchema = property.type === PROPERTY_TYPES.LIST ? property.schemaType : undefined;
         if (this.typeHasSchema(this.property.type)) {
             if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
                 let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
@@ -417,13 +417,13 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                     }
                     return validPropertyType === childObject.type;
                 }else{
-                    return validPropertyType === this.property.schema.property.type;
+                    return validPropertyType === this.property.schemaType;
                 }
             }
             if (!property.schema || !property.schema.property) {
                 return false;
             }
-            return validPropertyType === this.property.type && this.property.schema.property.type === property.schema.property.type;
+            return validPropertyType === this.property.type && this.property.schemaType === validPropertyTypeSchema;
         }
         if (this.property.schema.property.isDataType && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
             let typeToMatch = (<PropertyDeclareAPIModel> this.property).input.type;

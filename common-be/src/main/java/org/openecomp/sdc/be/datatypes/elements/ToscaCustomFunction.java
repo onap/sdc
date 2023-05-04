@@ -22,19 +22,19 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.gson.Gson;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 public class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParameter {
 
     private String name;
+    private ToscaFunctionType toscaFunctionType;
     private List<ToscaFunctionParameter> parameters = new ArrayList<>();
 
     @Override
@@ -49,9 +49,18 @@ public class ToscaCustomFunction implements ToscaFunction, ToscaFunctionParamete
 
     @Override
     public Object getJsonObjectValue() {
+        if (ToscaFunctionType.GET_INPUT.equals(this.toscaFunctionType)) {
+            Map<String, Object> getInput = parameters.stream().collect(Collectors.toMap(
+                input -> "$" + name,
+                input -> {
+                    Map<String, Object> inputMap = (Map<String, Object>) input.getJsonObjectValue();
+                    return inputMap;
+                }));
+            return getInput;
+        }
         return Map.of(
-                "$" + name,
-                parameters.stream().map(ToscaFunctionParameter::getJsonObjectValue).collect(Collectors.toList())
+            "$" + name,
+            parameters.stream().map(ToscaFunctionParameter::getJsonObjectValue).collect(Collectors.toList())
         );
     }
 

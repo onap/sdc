@@ -1,0 +1,18 @@
+{
+  "type": "CUSTOM",
+  "name": "custom_function_get_input_type",
+  "parameters": [
+    {
+      "propertyUniqueId": "dd0ec4d2-7e74-4d92-af2f-89c7436baa63.controller_actor",
+      "propertyName": "controller_actor",
+      "propertySource": "SELF",
+      "sourceUniqueId": "dd0ec4d2-7e74-4d92-af2f-89c7436baa63",
+      "sourceName": "testService",
+      "functionType": "GET_INPUT",
+      "propertyPathFromSource": [
+        "controller_actor"
+      ],
+      "type": "GET_INPUT"
+    }
+  ]
+}
