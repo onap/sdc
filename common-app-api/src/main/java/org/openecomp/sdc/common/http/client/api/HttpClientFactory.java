@@ -24,14 +24,16 @@ import org.apache.http.client.UserTokenHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class HttpClientFactory {
 
-    private static final Logger logger = Logger.getLogger(HttpClientFactory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HttpClientFactory.class.getName());
     private static final UserTokenHandler userTokenHandler = context -> null;
     private final HttpConnectionMngFactory connectionMngFactory;
 
@@ -40,13 +42,25 @@ public class HttpClientFactory {
     }
 
     HttpClient createClient(String protocol, HttpClientConfigImmutable config) {
-        logger.debug("Create {} client based on {}", protocol, config);
-        ClientCertificate clientCertificate = Constants.HTTPS.equals(protocol) ? config.getClientCertificate() : null;
-        HttpClientConnectionManager connectionManager = connectionMngFactory.getOrCreate(clientCertificate);
-        RequestConfig requestConfig = createClientTimeoutConfiguration(config);
-        CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(requestConfig).setConnectionManager(connectionManager)
-            .setUserTokenHandler(userTokenHandler).setRetryHandler(resolveRetryHandler(config)).build();
-        return new HttpClient(client, config);
+        LOGGER.debug("Create {} client based on {}", protocol, config);
+        final ClientCertificate clientCertificate = Constants.HTTPS.equals(protocol) ? config.getClientCertificate() : null;
+        final HttpClientConnectionManager connectionManager = connectionMngFactory.getOrCreate(clientCertificate);
+        final RequestConfig requestConfig = createClientTimeoutConfiguration(config);
+
+        try {
+            final HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                    .setDefaultRequestConfig(requestConfig)
+                    .setConnectionManager(connectionManager)
+                    .setUserTokenHandler(userTokenHandler)
+                    .setRetryHandler(resolveRetryHandler(config));
+            if (clientCertificate != null) {
+                httpClientBuilder.setSSLContext(JettySSLUtils.getSslContext());
+            }
+            return new HttpClient(httpClientBuilder.build(), config);
+        } catch (Exception e) {
+            LOGGER.error("Failed to createClient", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private HttpRequestRetryHandler resolveRetryHandler(HttpClientConfigImmutable config) {
@@ -55,6 +69,6 @@ public class HttpClientFactory {
 
     private RequestConfig createClientTimeoutConfiguration(HttpClientConfigImmutable config) {
         return RequestConfig.custom().setConnectTimeout(config.getConnectTimeoutMs()).setSocketTimeout(config.getReadTimeoutMs())
-            .setConnectionRequestTimeout(config.getConnectPoolTimeoutMs()).build();
+                .setConnectionRequestTimeout(config.getConnectPoolTimeoutMs()).build();
     }
 }

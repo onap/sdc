@@ -19,60 +19,58 @@
  */
 package org.onap.config.api;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.Properties;
-import javax.net.ssl.SSLContext;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.Properties;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JettySSLUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettySSLUtils.class);
+    private static final String JETTY_BASE = System.getenv("JETTY_BASE");
 
-    private JettySSLUtils() {
-    }
-
-    public static JettySslConfig getSSLConfig() throws IOException {
-        Properties sslProperties = new Properties();
-        String sslPropsPath = System.getenv("JETTY_BASE") + File.separator + "/start.d/ssl.ini";
-        File sslPropsFile = new File(sslPropsPath);
-        try (FileInputStream fis = new FileInputStream(sslPropsFile)) {
+    public static JettySslConfig getSSLConfig() {
+        final Properties sslProperties = new Properties();
+        final String sslPropsPath = JETTY_BASE + "/start.d/ssl.ini";
+        try (final InputStream fis = new FileInputStream(sslPropsPath)) {
             sslProperties.load(fis);
+        } catch (Exception e) {
+            LOGGER.error("Failed to read '{}'", sslPropsPath, e);
         }
         return new JettySslConfig(sslProperties);
     }
 
-    public static SSLContext getSslContext() throws GeneralSecurityException, IOException {
-        JettySslConfig sslProperties = JettySSLUtils.getSSLConfig();
-        KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
-            trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
+    public static SSLContext getSslContext() throws Exception {
+        final JettySslConfig sslProperties = getSSLConfig();
+        final KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
+        try (final InputStream fis = new FileInputStream(sslProperties.getTruststorePath())) {
+            trustStore.load(fis, (sslProperties.getTruststorePass()).toCharArray());
         }
-        KeyStore keystore = KeyStore.getInstance(sslProperties.getKeystoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));) {
-            keystore.load(instream, sslProperties.getKeystorePass().toCharArray());
+
+        final KeyStore keystore = KeyStore.getInstance(sslProperties.getKeystoreType());
+        try (final InputStream fis = new FileInputStream(sslProperties.getKeystorePath())) {
+            keystore.load(fis, sslProperties.getKeystorePass().toCharArray());
         }
         // Trust own CA and all self-signed certs
-        return SSLContexts.custom().loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray())
-            .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
+        return SSLContexts.custom()
+                .loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray())
+                .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
+                .build();
     }
 
+    @AllArgsConstructor
     public static class JettySslConfig {
 
-        static final String JETTY_BASE = System.getenv("JETTY_BASE");
-        static final String KEY_STORE_TYPE_PROPERTY_NAME = "jetty.sslContext.keyStoreType";
-        static final String TRUST_STORE_TYPE_PROPERTY_NAME = "jetty.sslContext.trustStoreType";
-        Properties sslProperties;
-
-        JettySslConfig(Properties sslProperties) {
-            this.sslProperties = sslProperties;
-        }
-
-        public String getJettyBase() {
-            return JettySslConfig.JETTY_BASE;
-        }
+        private final Properties sslProperties;
 
         public String getKeystorePath() {
             return sslProperties.getProperty("jetty.sslContext.keyStorePath");
@@ -83,7 +81,7 @@ public class JettySSLUtils {
         }
 
         public String getKeystoreType() {
-            return sslProperties.getProperty(KEY_STORE_TYPE_PROPERTY_NAME, KeyStore.getDefaultType());
+            return sslProperties.getProperty("jetty.sslContext.keyStoreType", KeyStore.getDefaultType());
         }
 
         public String getTruststorePath() {
@@ -95,10 +93,10 @@ public class JettySSLUtils {
         }
 
         public String getTruststoreType() {
-            return sslProperties.getProperty(TRUST_STORE_TYPE_PROPERTY_NAME, KeyStore.getDefaultType());
+            return sslProperties.getProperty("jetty.sslContext.trustStoreType", KeyStore.getDefaultType());
         }
 
-        public String getKeyStoreManager() {
+        public String getKeyManagerPassword() {
             return sslProperties.getProperty("jetty.sslContext.keyManagerPassword");
         }
 
@@ -110,8 +108,5 @@ public class JettySSLUtils {
             }
         }
 
-        public String getProperty(String key) {
-            return sslProperties.getProperty(key);
-        }
     }
 }

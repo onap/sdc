@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 
 package org.openecomp.sdc.be.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,96 +32,95 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+class DistributionEngineConfigurationTest {
 
-public class DistributionEngineConfigurationTest {
+    @Test
+    void validateBean() {
+        assertThat(DistributionEngineConfiguration.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSettersExcluding("environments", "SSLConfig")
+        ));
+    }
 
-	@Test
-	public void validateBean() {
-		assertThat(DistributionEngineConfiguration.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSettersExcluding("environments")
-		));
-	}
+    @Test
+    void validateDistribNotifServiceArtifactsBean() {
+        assertThat(DistributionEngineConfiguration.DistribNotifServiceArtifacts.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters()
+        ));
+    }
 
-	@Test
-	public void validateDistribNotifServiceArtifactsBean() {
-		assertThat(DistributionEngineConfiguration.DistribNotifServiceArtifacts.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters()
-		));
-	}
+    @Test
+    void validateNotifArtifactTypesBean() {
+        assertThat(DistributionEngineConfiguration.NotifArtifactTypes.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters()
+        ));
+    }
 
-	@Test
-	public void validateNotifArtifactTypesBean() {
-		assertThat(DistributionEngineConfiguration.NotifArtifactTypes.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters()
-		));
-	}
+    @Test
+    void validateNotifArtifactTypesResourceBean() {
+        assertThat(DistributionEngineConfiguration.NotifArtifactTypesResource.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters()
+        ));
+    }
 
-	@Test
-	public void validateNotifArtifactTypesResourceBean() {
-		assertThat(DistributionEngineConfiguration.NotifArtifactTypesResource.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters()
-		));
-	}
+    @Test
+    void validateCreateTopicConfigBean() {
+        assertThat(DistributionEngineConfiguration.CreateTopicConfig.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters(),
+                hasValidBeanToString()
+        ));
+    }
 
-	@Test
-	public void validateCreateTopicConfigBean() {
-		assertThat(DistributionEngineConfiguration.CreateTopicConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters(),
-				hasValidBeanToString()
-		));
-	}
+    @Test
+    void validateEnvironmentConfigBean() {
+        assertThat(DistributionEngineConfiguration.EnvironmentConfig.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters(),
+                hasValidBeanToString()
+        ));
+    }
 
-	@Test
-	public void validateEnvironmentConfigBean() {
-		assertThat(DistributionEngineConfiguration.EnvironmentConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters(),
-				hasValidBeanToString()
-		));
-	}
+    @Test
+    void validateDistributionStatusTopicConfigBean() {
+        assertThat(DistributionEngineConfiguration.DistributionStatusTopicConfig.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters(),
+                hasValidBeanToString()
+        ));
+    }
 
-	@Test
-	public void validateDistributionStatusTopicConfigBean() {
-		assertThat(DistributionEngineConfiguration.DistributionStatusTopicConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters(),
-				hasValidBeanToString()
-		));
-	}
+    @Test
+    void validateDistributionNotificationTopicConfigBean() {
+        assertThat(DistributionEngineConfiguration.DistributionNotificationTopicConfig.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters(),
+                hasValidBeanToString()
+        ));
+    }
 
-	@Test
-	public void validateDistributionNotificationTopicConfigBean() {
-		assertThat(DistributionEngineConfiguration.DistributionNotificationTopicConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters(),
-				hasValidBeanToString()
-		));
-	}
+    @Test
+    void validateComponentArtifactTypesConfigBean() {
+        assertThat(DistributionEngineConfiguration.ComponentArtifactTypesConfig.class, allOf(
+                hasValidBeanConstructor(),
+                hasValidGettersAndSetters()
+        ));
+    }
 
-	@Test
-	public void validateComponentArtifactTypesConfigBean() {
-		assertThat(DistributionEngineConfiguration.ComponentArtifactTypesConfig.class, allOf(
-				hasValidBeanConstructor(),
-				hasValidGettersAndSetters()
-		));
-	}
+    @Test
+    void validateSetGetEnvironments() {
+        final String testEnvironment = "testEnvironment";
+        DistributionEngineConfiguration distributionEngineConfiguration = new DistributionEngineConfiguration();
+        distributionEngineConfiguration.setEnvironments(Collections.singletonList(testEnvironment));
 
-	@Test
-	public void validateSetGetEnvironments() {
-		final String testEnvironment = "testEnvironment";
-		DistributionEngineConfiguration distributionEngineConfiguration = new DistributionEngineConfiguration();
-		distributionEngineConfiguration.setEnvironments(Collections.singletonList(testEnvironment));
+        List<String> response = distributionEngineConfiguration.getEnvironments();
 
-		List<String> response = distributionEngineConfiguration.getEnvironments();
-
-		assertEquals(response.size(), 1);
-		assertEquals(response.get(0), testEnvironment);
-	}
+        assertEquals(1, response.size());
+        assertEquals(testEnvironment, response.get(0));
+    }
 }
