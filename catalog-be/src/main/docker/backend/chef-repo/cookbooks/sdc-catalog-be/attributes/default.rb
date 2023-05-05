@@ -11,11 +11,11 @@ default['disableHttp'] = true
 #|  Jetty                           |
 #|                                  |
 #+----------------------------------+
-
 default['jetty']['dmaap_truststore_pwd'] = "dmaap_truststore_pwd"
+default['jetty']['keystore_path'] = "etc/org.onap.sdc.p12"
 default['jetty']['keystore_pwd'] = "?(kP!Yur![*!Y5!E^f(ZKc31"
 default['jetty']['keymanager_pwd'] = "?(kP!Yur![*!Y5!E^f(ZKc31"
-default['jetty']['truststore_path'] = "#{ENV['JETTY_BASE']}/etc/truststore"
+default['jetty']['truststore_path'] = "etc/org.onap.sdc.trust.jks"
 # TO CHANGE THE TRUSTSTORE CERT THE JVM CONFIGURATION
 # MUST BE ALSO CHANGE IN THE startup.sh FILE
 default['jetty'][:truststore_pwd] = "z+KEj;t+,KN^iimSiS89e#p0"

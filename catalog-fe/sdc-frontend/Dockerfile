@@ -1,4 +1,4 @@
-FROM onap/integration-java11:9.0.0
+FROM onap/integration-java11:10.0.0
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
