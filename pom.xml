@@ -60,7 +60,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>3.4.0</ecomp.version>
         <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
-        <cadi.version>2.1.8</cadi.version>
         <lombok.version>1.18.24</lombok.version>
         <commons-beanutils>1.9.4</commons-beanutils>
         <commons.io.version>2.8.0</commons.io.version>
@@ -80,8 +79,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <ws.rs.version>2.1.1</ws.rs.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
 
-        <jetty.version>9.4.49.v20220914</jetty.version>
-        <jetty-distribution.version>${jetty.version}</jetty-distribution.version>
+        <jetty.version>10.0.14</jetty.version>
+        <jetty-distribution.version>9.4.51.v20230217</jetty-distribution.version>
         <cxf.version>3.4.4</cxf.version>
 
         <org.owasp.esapi.version>2.4.0.0</org.owasp.esapi.version>
@@ -110,8 +109,8 @@ Modifications copyright (c) 2018-2019 Nokia
 
         <!-- Logging start -->
         <!-- logback -->
-        <logback.version>1.2.10</logback.version>
-        <slf4j-api.version>1.7.25</slf4j-api.version>
+        <logback.version>1.2.12</logback.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
         <commons-codec>1.15</commons-codec>
         <commons-logging>1.2</commons-logging>
         <janino.version>3.0.6</janino.version>
@@ -355,6 +354,11 @@ Modifications copyright (c) 2018-2019 Nokia
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-authz-client</artifactId>
             <version>${keycloak.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
@@ -881,6 +885,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
+
                 <docker.skip.run>true</docker.skip.run>
                 <maven.antrun.skip>true</maven.antrun.skip>
                 <swagger.skip>true</swagger.skip>

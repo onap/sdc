@@ -21,8 +21,6 @@ package org.openecomp.sdc.fe.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -42,6 +40,8 @@ import org.openecomp.sdc.exception.InvalidArgumentException;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
+
+import java.io.IOException;
 
 public class PluginStatusBL {
 
@@ -74,23 +74,24 @@ public class PluginStatusBL {
     private boolean hasSecuredPlugins() {
         if (this.getPluginsList() != null) {
             return pluginsConfiguration.getPluginsList().stream()
-                .anyMatch(plugin -> plugin.getPluginDiscoveryUrl().toLowerCase().startsWith("https"));
+                    .anyMatch(plugin -> plugin.getPluginDiscoveryUrl().toLowerCase().startsWith("https"));
         }
         return false;
     }
 
-    private CloseableHttpClient getPooledClient(boolean isSecured) throws GeneralSecurityException, IOException {
+    private CloseableHttpClient getPooledClient(final boolean isSecured) throws Exception {
         final PoolingHttpClientConnectionManager poolingConnManager;
-        if (!isSecured) {
-            poolingConnManager = new PoolingHttpClientConnectionManager();
-        } else {
-            SSLConnectionSocketFactory s = new SSLConnectionSocketFactory(JettySSLUtils.getSslContext(), new NoopHostnameVerifier());
-            Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", new PlainConnectionSocketFactory()).register("https", s).build();
+        if (isSecured) {
+            final SSLConnectionSocketFactory s = new SSLConnectionSocketFactory(JettySSLUtils.getSslContext(), new NoopHostnameVerifier());
+            final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", new PlainConnectionSocketFactory())
+                    .register("https", s).build();
             poolingConnManager = new PoolingHttpClientConnectionManager(registry);
+        } else {
+            poolingConnManager = new PoolingHttpClientConnectionManager();
         }
-        int maxTotal = System.getProperties().containsKey(MAX_CONNECTION_POOL) ? Integer.parseInt(System.getProperty(MAX_CONNECTION_POOL)) : 5;
-        int routeMax = System.getProperties().containsKey(MAX_ROUTE_POOL) ? Integer.parseInt(System.getProperty(MAX_ROUTE_POOL)) : 20;
+        final int maxTotal = System.getProperties().containsKey(MAX_CONNECTION_POOL) ? Integer.parseInt(System.getProperty(MAX_CONNECTION_POOL)) : 5;
+        final int routeMax = System.getProperties().containsKey(MAX_ROUTE_POOL) ? Integer.parseInt(System.getProperty(MAX_ROUTE_POOL)) : 20;
         poolingConnManager.setMaxTotal(maxTotal);
         poolingConnManager.setDefaultMaxPerRoute(routeMax);
         return HttpClients.custom().setConnectionManager(poolingConnManager).setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
@@ -115,9 +116,9 @@ public class PluginStatusBL {
             log.debug("The value returned from getConfig is {}", pluginsConfiguration);
             Integer connectionTimeout = pluginsConfiguration.getConnectionTimeout();
             this.requestConfig = RequestConfig.custom().setSocketTimeout(connectionTimeout).setConnectTimeout(connectionTimeout)
-                .setConnectionRequestTimeout(connectionTimeout).build();
+                    .setConnectionRequestTimeout(connectionTimeout).build();
             Plugin wantedPlugin = pluginsConfiguration.getPluginsList().stream().filter(plugin -> plugin.getPluginId().equals(pluginId)).findAny()
-                .orElse(null);
+                    .orElse(null);
             if (wantedPlugin != null) {
                 result = gson.toJson(checkPluginAvailability(wantedPlugin));
             }

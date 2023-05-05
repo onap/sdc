@@ -21,7 +21,11 @@
  */
 package org.openecomp.sdc.config;
 
+import nl.altindag.ssl.SSLFactory;
+import nl.altindag.ssl.util.JettySslUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.onap.config.api.JettySSLUtils;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.sdc.security.PortalClient;
 import org.openecomp.sdc.be.auditing.impl.ConfigurationProvider;
@@ -29,19 +33,27 @@ import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.filters.FilterConfiguration;
 import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import javax.net.ssl.SSLSessionContext;
+import javax.net.ssl.X509ExtendedKeyManager;
+import javax.net.ssl.X509ExtendedTrustManager;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+
 // @formatter:off
-@Configuration
+@org.springframework.context.annotation.Configuration
 @ComponentScan({
     "org.openecomp.sdc.be.user",
     "org.openecomp.sdc.be.facade.operations",
@@ -73,10 +85,11 @@ public class CatalogBESpringConfig {
 
     private static final int BEFORE_TRANSACTION_MANAGER = 0;
     private final ComponentLocker componentLocker;
+    private final JettySSLUtils.JettySslConfig sslConfig;
 
-    @Autowired
     public CatalogBESpringConfig(ComponentLocker componentLocker) {
         this.componentLocker = componentLocker;
+        sslConfig = JettySSLUtils.getSSLConfig();
     }
 
     @Bean(name = "lifecycleBusinessLogic")
@@ -132,7 +145,36 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public org.openecomp.sdc.be.config.Configuration configuration() {
+    public Configuration configuration() {
         return ConfigurationManager.getConfigurationManager().getConfiguration();
     }
+
+    @Bean
+    public SSLFactory sslFactory() throws IOException {
+        return SSLFactory.builder().withSwappableIdentityMaterial()
+                .withIdentityMaterial(Files.newInputStream(Path.of(sslConfig.getKeystorePath()), StandardOpenOption.READ), sslConfig.getKeystorePass().toCharArray(), sslConfig.getKeystoreType()).withSwappableTrustMaterial()
+                .withTrustMaterial(Files.newInputStream(Path.of(sslConfig.getTruststorePath()), StandardOpenOption.READ), sslConfig.getTruststorePass().toCharArray(), sslConfig.getTruststoreType()).withNeedClientAuthentication()
+                .build();
+    }
+
+    @Bean
+    public SslContextFactory.Server sslContextFactory(SSLFactory sslFactory) {
+        return JettySslUtils.forServer(sslFactory);
+    }
+
+    @Bean
+    public X509ExtendedKeyManager keyManager(SSLFactory sslFactory) throws Exception {
+        return sslFactory.getKeyManager().orElseThrow(Exception::new);
+    }
+
+    @Bean
+    public X509ExtendedTrustManager trustManager(SSLFactory sslFactory) throws Exception {
+        return sslFactory.getTrustManager().orElseThrow(Exception::new);
+    }
+
+    @Bean
+    public SSLSessionContext serverSessionContext(SSLFactory sslFactory) {
+        return sslFactory.getSslContext().getServerSessionContext();
+    }
+
 }
