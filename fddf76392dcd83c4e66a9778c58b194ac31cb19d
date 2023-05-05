@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6e2ce46b_e945d5ec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/config/CatalogBESpringConfig.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-05T10:59:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fb4ac8ac_0ebf93ea",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 49
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "34fefa6e_fc0e58e9",
         "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e38b663_06135ae4",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeProxyServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-05T10:59:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34fefa6e_fc0e58e9",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 5
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7f0bbaca_176effe8",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/SSLProxyServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-05T10:59:21Z",
+      "side": 1,
+      "message": "stopTimeout been removed from jetty 10",
+      "parentUuid": "11fe5f4b_cb12b099",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 49
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7516db6d_a9dcaa97",
         "filename": "catalog-fe/src/main/resources/config/configuration.yaml",
         "patchSetId": 8
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "535ba85f_87b97dbd",
+        "filename": "catalog-fe/src/main/resources/config/configuration.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-05T10:59:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "7516db6d_a9dcaa97",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 17
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b6edd87_5046eafa",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/http/client/api/HttpClientFactory.java",
         "patchSetId": 8
@@ -114,6 +210,30 @@
       "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a37fa171_ada12687",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/http/client/api/HttpClientFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-05T10:59:21Z",
+      "side": 1,
+      "message": "original stacktrace printed by LOGGER",
+      "parentUuid": "2b6edd87_5046eafa",
+      "range": {
+        "startLine": 60,
+        "startChar": 2,
+        "endLine": 63,
+        "endChar": 9
+      },
+      "revId": "fddf76392dcd83c4e66a9778c58b194ac31cb19d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
