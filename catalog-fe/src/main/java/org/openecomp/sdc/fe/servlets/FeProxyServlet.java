@@ -19,13 +19,7 @@
  */
 package org.openecomp.sdc.fe.servlets;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
 import com.google.common.annotations.VisibleForTesting;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Base64;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.client.api.Request;
@@ -43,6 +37,13 @@ import org.openecomp.sdc.fe.config.PluginsConfiguration;
 import org.openecomp.sdc.fe.config.PluginsConfiguration.Plugin;
 import org.openecomp.sdc.fe.impl.LogHandler;
 import org.openecomp.sdc.fe.utils.BeProtocol;
+
+import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class FeProxyServlet extends SSLProxyServlet {
 
@@ -101,7 +102,7 @@ public class FeProxyServlet extends SSLProxyServlet {
         BasicAuthConfig basicAuth = config.getBasicAuth();
         if (basicAuth.isEnabled()) {
             proxyRequest.header(HttpHeader.AUTHORIZATION,
-                "Basic " + Base64.getEncoder().encodeToString((basicAuth.getUserName() + ":" + basicAuth.getUserPass()).getBytes()));
+                    "Basic " + Base64.getEncoder().encodeToString((basicAuth.getUserName() + ":" + basicAuth.getUserPass()).getBytes()));
         }
         super.addProxyHeaders(clientRequest, proxyRequest);
     }
@@ -127,7 +128,7 @@ public class FeProxyServlet extends SSLProxyServlet {
     }
 
     private String getModifiedUrl(Configuration config, PluginsConfiguration pluginConf, String uri, String queryString)
-        throws MalformedURLException {
+            throws MalformedURLException {
         if (config == null) {
             log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "FeProxyServlet getModifiedUrl", "sdc-FE", "failed to retrieve configuration.");
             throw new RuntimeException("failed to read FE configuration");
@@ -153,8 +154,8 @@ public class FeProxyServlet extends SSLProxyServlet {
         } else if (uri.contains(WORKFLOW_CONTEXT)) {
             uri = uri.replace(SDC1_FE_PROXY + WORKFLOW_CONTEXT, WORKFLOW_CONTEXT);
             String workflowPluginURL = pluginConf.getPluginsList().stream()
-                .filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW)).map(Plugin::getPluginDiscoveryUrl).findFirst()
-                .orElse(null);
+                    .filter(plugin -> plugin.getPluginId().equalsIgnoreCase(PLUGIN_ID_WORKFLOW)).map(Plugin::getPluginDiscoveryUrl).findFirst()
+                    .orElse(null);
             java.net.URL workflowURL = new URL(workflowPluginURL);
             protocol = workflowURL.getProtocol();
             host = workflowURL.getHost();
@@ -192,7 +193,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 
     private PluginsConfiguration getPluginConfiguration(HttpServletRequest request) {
         return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-            .getPluginsConfiguration();
+                .getPluginsConfiguration();
     }
 
     private boolean isMsToggleOn(Configuration config) {
@@ -224,7 +225,7 @@ public class FeProxyServlet extends SSLProxyServlet {
                 String facadeSuffix = String.format("%s%s", FACADE_PATH_IDENTIFIER, CATALOG_REQUEST_IDENTIFIER);
                 String nonFacadeUrl = currentURI.replace(facadeSuffix, "rest/v1/screen");
                 redirectValue = getModifiedUrl(config, getPluginConfiguration(request), nonFacadeUrl,
-                    "excludeTypes=VFCMT&excludeTypes=Configuration");
+                        "excludeTypes=VFCMT&excludeTypes=Configuration");
             }
             // Home
             else if (currentURI.endsWith(HOME_REQUEST_IDENTIFIER)) {
@@ -249,10 +250,10 @@ public class FeProxyServlet extends SSLProxyServlet {
                 String facadeSuffix = String.format("%s%s", FACADE_PATH_IDENTIFIER, CATALOG_REQUEST_IDENTIFIER);
                 String nonFacadeUrl = currentURI.replace(facadeSuffix, "rest/v1/screen");
                 redirectValue = getModifiedUrl(config, getPluginConfiguration(request), nonFacadeUrl,
-                    "excludeTypes=VFCMT&excludeTypes=Configuration");
+                        "excludeTypes=VFCMT&excludeTypes=Configuration");
             } else {
                 String message = String
-                    .format("facade is toggled off, Could not rediret url %s with query params %s", currentURI, getQueryString(request));
+                        .format("facade is toggled off, Could not rediret url %s with query params %s", currentURI, getQueryString(request));
                 log.error(message);
                 throw new NotImplementedException(message);
             }
@@ -265,7 +266,7 @@ public class FeProxyServlet extends SSLProxyServlet {
         if (StringUtils.isEmpty(msUrl)) {
             // do that only once
             msUrl = String.format(MS_URL, config.getCatalogFacadeMs().getProtocol(), config.getCatalogFacadeMs().getHost(),
-                config.getCatalogFacadeMs().getPort());
+                    config.getCatalogFacadeMs().getPort());
         }
         StringBuilder url;
         String queryString;
@@ -293,7 +294,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 
     private Configuration getConfiguration(HttpServletRequest request) {
         return ((ConfigurationManager) request.getSession().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-            .getConfiguration();
+                .getConfiguration();
     }
 
     private String getAuthority(String host, String port) {
