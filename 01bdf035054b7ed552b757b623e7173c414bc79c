@@ -22,6 +22,30 @@
       "revId": "01bdf035054b7ed552b757b623e7173c414bc79c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e24c055_7981c3bf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaCommonConfig.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2023-05-05T08:49:37Z",
+      "side": 1,
+      "message": "Yep. Basing this off Vasyls change here - https://gerrit.onap.org/r/c/sdc/+/134443/8/common-app-api/src/main/java/org/openecomp/sdc/be/config/DistributionEngineConfiguration.java",
+      "parentUuid": "33ac8d7c_5657635b",
+      "range": {
+        "startLine": 70,
+        "startChar": 79,
+        "endLine": 70,
+        "endChar": 91
+      },
+      "revId": "01bdf035054b7ed552b757b623e7173c414bc79c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
