@@ -46,6 +46,30 @@
       "revId": "01bdf035054b7ed552b757b623e7173c414bc79c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e152e761_31d30d00",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/kafka/KafkaCommonConfig.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2023-05-05T08:56:19Z",
+      "side": 1,
+      "message": "Ah yes. Should have spotted that. Cheers",
+      "parentUuid": "9e24c055_7981c3bf",
+      "range": {
+        "startLine": 70,
+        "startChar": 79,
+        "endLine": 70,
+        "endChar": 91
+      },
+      "revId": "01bdf035054b7ed552b757b623e7173c414bc79c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
