@@ -20,34 +20,6 @@
 
 package org.openecomp.sdc.webseal.simulator;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import javax.net.ssl.SSLContext;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -74,9 +46,39 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.webseal.simulator.conf.Conf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class SdcProxy extends HttpServlet {
 
@@ -84,7 +86,7 @@ public class SdcProxy extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Set<String> RESERVED_HEADERS =
-        Arrays.stream(ReservedHeaders.values()).map(ReservedHeaders::getValue).collect(Collectors.toSet());
+            Arrays.stream(ReservedHeaders.values()).map(ReservedHeaders::getValue).collect(Collectors.toSet());
     private static final String USER_ID = "USER_ID";
     private static final String HTTP_IV_USER = "HTTP_IV_USER";
     private static final String SDC1 = "/sdc1";
@@ -173,6 +175,13 @@ public class SdcProxy extends HttpServlet {
         String uri = getUri(request, requestParameters);
         HttpRequestBase httpMethod = createHttpMethod(request, methodEnum, uri);
         addHeadersToMethod(httpMethod, user, request);
+
+        try {
+            httpClient = buildRestClient();
+        } catch (Exception e) {
+            LOGGER.error("Failed to buildRestClient", e);
+            throw new RuntimeException(e);
+        }
 
         try (CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpMethod)) {
             response.setStatus(closeableHttpResponse.getStatusLine().getStatusCode());
@@ -378,26 +387,37 @@ public class SdcProxy extends HttpServlet {
 
     private CloseableHttpClient buildRestClient() throws NoSuchAlgorithmException, KeyStoreException {
         final var builder = new SSLContextBuilder();
+        SSLContext sslContext;
+        try {
+            sslContext = JettySSLUtils.getSslContext();
+        } catch (Exception e) {
+            LOGGER.error("Failed to getSslContext", e);
+            throw new RuntimeException(e);
+        }
         builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(SSLContext.getDefault(),
-            NoopHostnameVerifier.INSTANCE);
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("http", new PlainConnectionSocketFactory())
-            .register("https", sslsf)
-            .build();
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+                .register("http", new PlainConnectionSocketFactory())
+                .register("https", sslsf)
+                .build();
         return HttpClients.custom()
-            .setSSLSocketFactory(sslsf)
-            .setConnectionManager(cm)
-            .build();
+                .setSSLSocketFactory(sslsf)
+                .setConnectionManager(new PoolingHttpClientConnectionManager(registry))
+                .build();
     }
 
     @AllArgsConstructor
     @Getter
     enum ReservedHeaders {
-        HTTP_IV_USER(SdcProxy.HTTP_IV_USER), USER_ID(SdcProxy.USER_ID), HTTP_CSP_FIRSTNAME("HTTP_CSP_FIRSTNAME"), HTTP_CSP_EMAIL(
-            "HTTP_CSP_EMAIL"), HTTP_CSP_LASTNAME("HTTP_CSP_LASTNAME"), HTTP_IV_REMOTE_ADDRESS("HTTP_IV_REMOTE_ADDRESS"), HTTP_CSP_WSTYPE(
-            "HTTP_CSP_WSTYPE"), HOST("Host"), CONTENTLENGTH("Content-Length");
+        HTTP_IV_USER(SdcProxy.HTTP_IV_USER),
+        USER_ID(SdcProxy.USER_ID),
+        HTTP_CSP_FIRSTNAME("HTTP_CSP_FIRSTNAME"),
+        HTTP_CSP_EMAIL("HTTP_CSP_EMAIL"),
+        HTTP_CSP_LASTNAME("HTTP_CSP_LASTNAME"),
+        HTTP_IV_REMOTE_ADDRESS("HTTP_IV_REMOTE_ADDRESS"),
+        HTTP_CSP_WSTYPE("HTTP_CSP_WSTYPE"),
+        HOST("Host"),
+        CONTENTLENGTH("Content-Length");
 
         private final String value;
 
