@@ -20,6 +20,7 @@
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
         <ui.version>${project.version}</ui.version>
         <io.github.hakky54.version>7.4.11</io.github.hakky54.version>
+        <jmockit.version>1.35</jmockit.version>
     </properties>
 
     <dependencies>

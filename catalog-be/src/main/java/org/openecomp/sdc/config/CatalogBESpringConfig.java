@@ -47,39 +47,39 @@ import javax.net.ssl.SSLSessionContext;
 import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-
 // @formatter:off
 @org.springframework.context.annotation.Configuration
 @ComponentScan({
-    "org.openecomp.sdc.be.user",
-    "org.openecomp.sdc.be.facade.operations",
-    "org.openecomp.sdc.be.impl",
     "org.openecomp.sdc.be.auditing.impl",
-    "org.openecomp.sdc.be.distribution",
-    "org.openecomp.sdc.be.switchover.detector",
-    "org.openecomp.sdc.be.tosca",
-    "org.openecomp.sdc.be.components.validation",
     "org.openecomp.sdc.be.catalog.impl",
-    "org.openecomp.sdc.be.components.impl",
-    "org.openecomp.sdc.be.components.path",
-    "org.openecomp.sdc.be.components.merge",
-    "org.openecomp.sdc.be.components.csar",
-    "org.openecomp.sdc.be.components.property",
     "org.openecomp.sdc.be.components.attribute",
+    "org.openecomp.sdc.be.components.csar",
+    "org.openecomp.sdc.be.components.impl",
+    "org.openecomp.sdc.be.components.merge",
+    "org.openecomp.sdc.be.components.path",
+    "org.openecomp.sdc.be.components.property",
+    "org.openecomp.sdc.be.components.upgrade",
+    "org.openecomp.sdc.be.components.validation",
     "org.openecomp.sdc.be.csar.security",
     "org.openecomp.sdc.be.datamodel.utils",
-    "org.openecomp.sdc.be.components.upgrade",
+    "org.openecomp.sdc.be.distribution",
     "org.openecomp.sdc.be.externalapi.servlet",
-    "org.openecomp.sdc.be.servlets",
+    "org.openecomp.sdc.be.facade.operations",
     "org.openecomp.sdc.be.filters",
-    "org.openecomp.sdc.be.plugins",
-    "org.openecomp.sdc.be.togglz",
+    "org.openecomp.sdc.be.impl",
     "org.openecomp.sdc.be.model.cache",
-    "org.openecomp.sdc.be.ui.mapper"})
+    "org.openecomp.sdc.be.plugins",
+    "org.openecomp.sdc.be.servlets",
+    "org.openecomp.sdc.be.switchover.detector",
+    "org.openecomp.sdc.be.togglz",
+    "org.openecomp.sdc.be.tosca",
+    "org.openecomp.sdc.be.ui.mapper",
+    "org.openecomp.sdc.be.user"})
 // @formatter:on
 public class CatalogBESpringConfig {
 
@@ -151,10 +151,16 @@ public class CatalogBESpringConfig {
 
     @Bean
     public SSLFactory sslFactory() throws IOException {
-        return SSLFactory.builder().withSwappableIdentityMaterial()
-                .withIdentityMaterial(Files.newInputStream(Path.of(sslConfig.getKeystorePath()), StandardOpenOption.READ), sslConfig.getKeystorePass().toCharArray(), sslConfig.getKeystoreType()).withSwappableTrustMaterial()
-                .withTrustMaterial(Files.newInputStream(Path.of(sslConfig.getTruststorePath()), StandardOpenOption.READ), sslConfig.getTruststorePass().toCharArray(), sslConfig.getTruststoreType()).withNeedClientAuthentication()
-                .build();
+        try (final InputStream identityStream = Files.newInputStream(Path.of(sslConfig.getKeystorePath()), StandardOpenOption.READ);
+             final InputStream trustStoreStream = Files.newInputStream(Path.of(sslConfig.getTruststorePath()), StandardOpenOption.READ)) {
+            return SSLFactory.builder()
+                    .withSwappableIdentityMaterial()
+                    .withIdentityMaterial(identityStream, sslConfig.getKeystorePass().toCharArray(), sslConfig.getKeystoreType())
+                    .withSwappableTrustMaterial()
+                    .withTrustMaterial(trustStoreStream, sslConfig.getTruststorePass().toCharArray(), sslConfig.getTruststoreType())
+                    .withNeedClientAuthentication()
+                    .build();
+        }
     }
 
     @Bean
