@@ -22,6 +22,30 @@
       "revId": "b6d3b577929328439db927b2c50f0b1f24bf2b53",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "996360ce_d01fe28d",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/config/DistributionEngineConfiguration.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-08T08:32:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03b9fa5a_b72f3023",
+      "range": {
+        "startLine": 465,
+        "startChar": 40,
+        "endLine": 465,
+        "endChar": 52
+      },
+      "revId": "b6d3b577929328439db927b2c50f0b1f24bf2b53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
