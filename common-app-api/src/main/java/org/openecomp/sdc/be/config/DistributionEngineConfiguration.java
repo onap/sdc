@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
@@ -458,5 +459,9 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         public String toString() {
             return "ArtifactTypesConfig [info=" + info + ", lifecycle=" + lifecycle + "]";
         }
+    }
+
+    public JettySSLUtils.JettySslConfig getSSLConfig() {
+        return JettySSLUtils.getSSLConfig();
     }
 }

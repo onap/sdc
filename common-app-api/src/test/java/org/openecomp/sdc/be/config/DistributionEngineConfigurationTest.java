@@ -41,7 +41,7 @@ public class DistributionEngineConfigurationTest {
 	public void validateBean() {
 		assertThat(DistributionEngineConfiguration.class, allOf(
 				hasValidBeanConstructor(),
-				hasValidGettersAndSettersExcluding("environments")
+				hasValidGettersAndSettersExcluding("environments", "SSLConfig")
 		));
 	}
 
