@@ -7,6 +7,7 @@ ARG JETTY_FOLDER=/app/jetty
 RUN set -ex && \
     apk update && \
     apk add --no-cache \
+        wget \
         build-base \
         ruby \
         ruby-dev \
@@ -30,7 +31,7 @@ RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 USER onap
 
 #Download jetty
-RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz -c && \
         tar xvz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
