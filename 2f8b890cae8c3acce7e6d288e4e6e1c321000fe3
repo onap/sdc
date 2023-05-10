@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28bd49e9_62474c6f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-10T10:52:56Z",
+      "side": 1,
+      "message": "In the case of a in_range value with tosca functions, the filterConstraint.value appears to be a list with two entries, however, filterConstraint.valueType is a single value.\nWhere get_property is used for one value in the range, and get_attribute is used for the other value, then the single filterConstraint.valueType cannot be correct for both.\nThis can cause the wrong path to be taken in this switch (e.g. going into case GET_PROPERTY for a get_attribute value) resulting an error being thrown when mixing get_property and get_attribute values in an in_range value. The same happens for valid_values",
+      "range": {
+        "startLine": 121,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 50
+      },
+      "revId": "2f8b890cae8c3acce7e6d288e4e6e1c321000fe3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a88de825_4f7cb3de",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 1765,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-10T10:52:56Z",
+      "side": 1,
+      "message": "this assumes the list contains tosca function values, when the list contains literal values (e.g. when setting in_range on a float to [12.34, 23.45]) then a class cast exception is thrown here",
+      "range": {
+        "startLine": 1762,
+        "startChar": 11,
+        "endLine": 1765,
+        "endChar": 87
+      },
+      "revId": "2f8b890cae8c3acce7e6d288e4e6e1c321000fe3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
