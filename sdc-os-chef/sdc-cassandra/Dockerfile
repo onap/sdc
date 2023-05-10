@@ -1,4 +1,4 @@
-FROM cassandra:3.11.12
+FROM cassandra:3.11.15
 
 RUN apt-get -o Acquire::Check-Valid-Until=false update && \
     apt-get -y --no-install-recommends install \
