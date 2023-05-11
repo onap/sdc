@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f7d9d9d7_af9e9ded",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-05-11T10:54:43Z",
+      "side": 1,
+      "message": "sorry but I didn\u0027t get your point here so if doNotExtendBaseType is false we will not execute below part :\n\nif (doNotExtendBaseType) {\n                substitutionMapping.setNode_type(component.getDerivedFromGenericType());\n            }\n\nhowever the else part will be executed and it will set \n\nelse {\n            substitutionMapping.setNode_type(toscaResourceName);\n            }\n\nmay be I am missing something here ?",
+      "parentUuid": "dec40505_76542776",
+      "range": {
+        "startLine": 491,
+        "startChar": 9,
+        "endLine": 493,
+        "endChar": 13
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "347fbb84_0caf6905",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 10
@@ -36,6 +60,30 @@
       "writtenOn": "2023-05-11T08:50:33Z",
       "side": 1,
       "message": "indentation error, always apply formatting to all changes, can be done automatically by IDE",
+      "range": {
+        "startLine": 495,
+        "startChar": 0,
+        "endLine": 496,
+        "endChar": 13
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb8a7f82_521ae077",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-05-11T10:54:43Z",
+      "side": 1,
+      "message": "thanks will do it from next one",
+      "parentUuid": "347fbb84_0caf6905",
       "range": {
         "startLine": 495,
         "startChar": 0,
