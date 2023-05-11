@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dec40505_76542776",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-11T08:50:33Z",
+      "side": 1,
+      "message": "in the case where we reach here, but doNotExtendBaseType is false, then we dont set any node type in the substitiution mapping (becasue we dont enter the below else statement)\n\nId suggest refactoring to extract the logic for determining if we should extend the base type to a new private method and then the code here just becomes:\n        if (doNotExtendBaseType(component)) {\n            substitutionMapping.setNode_type(component.getDerivedFromGenericType());\n        } else {\n            substitutionMapping.setNode_type(toscaResourceName);\n        }",
+      "range": {
+        "startLine": 491,
+        "startChar": 9,
+        "endLine": 493,
+        "endChar": 13
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "347fbb84_0caf6905",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 496,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-11T08:50:33Z",
+      "side": 1,
+      "message": "indentation error, always apply formatting to all changes, can be done automatically by IDE",
+      "range": {
+        "startLine": 495,
+        "startChar": 0,
+        "endLine": 496,
+        "endChar": 13
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c3e7aa7_72607a05",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ElementOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-11T08:50:33Z",
+      "side": 1,
+      "message": "default should be false",
+      "range": {
+        "startLine": 461,
+        "startChar": 0,
+        "endLine": 461,
+        "endChar": 24
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6631764f_a1ffaa26",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ElementOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-11T08:50:33Z",
+      "side": 1,
+      "message": "default should be false",
+      "range": {
+        "startLine": 465,
+        "startChar": 0,
+        "endLine": 465,
+        "endChar": 24
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
