@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "dcf86fd6_a967c88a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-05-11T11:13:45Z",
+      "side": 1,
+      "message": "sorry got it, it is about the if above my bad !!",
+      "parentUuid": "f7d9d9d7_af9e9ded",
+      "range": {
+        "startLine": 491,
+        "startChar": 9,
+        "endLine": 493,
+        "endChar": 13
+      },
+      "revId": "c96c2bfc048cddec0ea7d9c2f81b1bf401f5f94f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "347fbb84_0caf6905",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 10
