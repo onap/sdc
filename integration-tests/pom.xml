@@ -37,7 +37,7 @@ limitations under the License.
 
     <properties>
         <selenium.version>3.141.59</selenium.version>
-        <gecko.driver.version>0.29.0</gecko.driver.version>
+        <gecko.driver.version>0.33.0</gecko.driver.version>
         <!-- SDC Startup parameters -->
         <it.env.name>integration-test</it.env.name>
         <it.cassandra.port>9042</it.cassandra.port>
