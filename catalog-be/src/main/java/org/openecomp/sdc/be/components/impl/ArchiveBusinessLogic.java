@@ -77,6 +77,10 @@ public class ArchiveBusinessLogic {
         User user = accessValidations.userIsAdminOrDesigner(userId, containerComponentType + "_ARCHIVE");
         Either<List<String>, ActionStatus> result = this.archiveOperation.archiveComponent(componentId);
         if (result.isRight()) {
+            ActionStatus status = result.right().value();
+            if (ActionStatus.CANNOT_ARCHIVE_SYSTEM_DEPLOYED_RESOURCES.equals(status)) {
+                throw new ByActionStatusComponentException(result.right().value(), containerComponentType, componentId);
+            }
             throw new ByActionStatusComponentException(result.right().value(), componentId);
         }
         this.auditAction(ArchiveOperation.Action.ARCHIVE, result.left().value(), user, containerComponentType);
