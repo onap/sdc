@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -38,6 +39,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -66,6 +68,11 @@ public class ArchiveOperation extends BaseOperation {
     public Either<List<String>, ActionStatus> archiveComponent(String componentId) {
         final Either<GraphVertex, JanusGraphOperationStatus> vertexResult = this.janusGraphDao.getVertexById(componentId);
         if (vertexResult.isLeft()) {
+            Map<String, Object> metadataJson = vertexResult.left().value().getMetadataJson();
+            String normative = JsonPresentationFields.NORMATIVE.getPresentation();
+            if (MapUtils.isNotEmpty(metadataJson) && metadataJson.containsKey(normative) && (boolean) metadataJson.get(normative)) {
+                return Either.right(ActionStatus.CANNOT_ARCHIVE_SYSTEM_DEPLOYED_RESOURCES);
+            }
             return doAction(ARCHIVE, vertexResult.left().value());
         } else {
             return Either.right(onError(ARCHIVE.name(), componentId, vertexResult.right().value()));

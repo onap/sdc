@@ -2864,3 +2864,12 @@ errors:
         message: "Cannot change substitution node type as properties of the existing type are referenced by properties %1.",
         messageId: "SVC4017"
     }
+
+    #---------SVC4018-----------------------------
+    # %1 - componentType
+    # %2 - component id
+    CANNOT_ARCHIVE_SYSTEM_DEPLOYED_RESOURCES: {
+        code: 409,
+        message: "System deployed %1 cannot be archived. Component: '%2'",
+        messageId: "SVC4018"
+    }
