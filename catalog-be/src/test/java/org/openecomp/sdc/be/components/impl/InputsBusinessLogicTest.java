@@ -179,6 +179,7 @@ public class InputsBusinessLogicTest {
         instanceInputMap.put("someInputId", Collections.singletonList(new ComponentInstanceInput()));
         service.setComponentInstancesInputs(instanceInputMap);
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
+        when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
         when(userAdminMock.getUser(USER_ID, false)).thenReturn(new User());
     }
 

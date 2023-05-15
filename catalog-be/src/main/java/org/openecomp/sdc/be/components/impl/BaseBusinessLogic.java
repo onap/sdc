@@ -375,7 +375,7 @@ public abstract class BaseBusinessLogic {
         }
         // verify component last update user is the current user
         String lastUpdaterUserId = component.getLastUpdaterUserId();
-        if (!userId.equals(lastUpdaterUserId)) {
+        if (!userValidations.isSameUser(userId, lastUpdaterUserId)) {
             log.debug("Current user is not last updater, last updater userId: {}, current user userId: {}", lastUpdaterUserId, userId);
             throw new ByActionStatusComponentException(actionStatus);
         }

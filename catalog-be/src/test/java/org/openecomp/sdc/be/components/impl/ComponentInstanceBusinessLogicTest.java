@@ -715,6 +715,7 @@ class ComponentInstanceBusinessLogicTest {
 
     private void stubMethods() {
         Mockito.lenient().when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
+        Mockito.lenient().when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
         Mockito.lenient().when(componentsUtils
             .convertFromStorageResponse(eq(StorageOperationStatus.GENERAL_ERROR), any(ComponentTypeEnum.class)))
             .thenReturn(ActionStatus.GENERAL_ERROR);

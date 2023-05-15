@@ -160,4 +160,19 @@ public class UserValidationsTest {
 		});
 		Mockito.verify(userAdmin, Mockito.times(1)).getUser(Mockito.anyString());
 	}
+	
+    @Test
+    public void testValidateUserisSame() {
+        String userId = "cs0008";
+        String encryptedSameUser = "eaGi1IQqP9kbgBHuG/pZm9frcXMQUvoQ59rKkiz6+ug=";
+        
+        User user = new User();
+        user.setUserId(userId);
+        user.setStatus(UserStatusEnum.ACTIVE);
+        
+        Mockito.when(userAdmin.getUser(userId)).thenReturn(user);
+        Mockito.when(userAdmin.getUser(encryptedSameUser)).thenReturn(user);
+        
+        assertTrue(testSubject.isSameUser(userId, encryptedSameUser));
+    }
 }
