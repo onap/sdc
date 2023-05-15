@@ -82,4 +82,8 @@ public class UserValidations {
     public User validateUserExists(final User user) {
         return validateUserExists(user.getUserId());
     }
+    
+    public boolean isSameUser(final String userId1, final String userId2) {
+        return validateUserExists(userId1).getUserId().equals(validateUserExists(userId2).getUserId());
+    }
 }
