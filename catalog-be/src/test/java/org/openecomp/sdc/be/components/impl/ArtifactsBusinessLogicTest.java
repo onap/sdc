@@ -2139,6 +2139,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         when(userValidations.validateUserExists(Mockito.eq("userId")))
             .thenReturn(user);
+        when(userValidations.isSameUser(Mockito.eq("userId"), Mockito.eq("userId")))
+            .thenReturn(true);
         when(toscaOperationFacade.getToscaFullElement(any()))
             .thenReturn(Either.left(resource));
         when(artifactToscaOperation.getArtifactById(any(), any(), any(), any()))
@@ -2259,6 +2261,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
         when(userValidations.validateUserExists(eq(user.getUserId())))
             .thenReturn(user);
+        when(userValidations.isSameUser(Mockito.eq("userId"), Mockito.eq("userId")))
+            .thenReturn(true);
         when(toscaOperationFacade.getToscaFullElement(eq(componentId)))
             .thenReturn(Either.left(resource));
         when(artifactToscaOperation.getArtifactById(anyString(), anyString(), any(ComponentTypeEnum.class), anyString()))

@@ -502,6 +502,7 @@ class PolicyBusinessLogicTest {
 
     @Test
     void testDeclarePropertiesAsPoliciesSuccess() {
+        when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.left(resource));
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.unlockComponent(any(), any())).thenReturn(StorageOperationStatus.OK);
@@ -603,6 +604,7 @@ class PolicyBusinessLogicTest {
 
     private void stubValidationSuccess() {
         when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
+        Mockito.lenient().when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(componentSuccessEither);
     }
 

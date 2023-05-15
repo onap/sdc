@@ -46,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -159,6 +160,7 @@ class OutputsBusinessLogicTest {
         instanceOutputMap.put("someOutputId", Collections.singletonList(new ComponentInstanceOutput()));
         service.setComponentInstancesOutputs(instanceOutputMap);
         when(userValidations.validateUserExists(USER_ID)).thenReturn(new User());
+        when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
         when(userAdminMock.getUser(USER_ID, false)).thenReturn(new User());
     }
 
