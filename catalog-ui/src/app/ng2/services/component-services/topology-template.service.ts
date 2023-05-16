@@ -659,7 +659,7 @@ export class TopologyTemplateService {
 
     getDefaultCustomFunction(type='ALL'): Observable<CustomToscaFunction[]> {
         return this.http.get<DefaultCustomFunctions>(this.baseUrl + "customToscaFunctions/" + type)
-        .pipe(map(response => response.defaultCustomToscaFunction ? response.defaultCustomToscaFunction : undefined));
+        .pipe(map(response => response && response.defaultCustomToscaFunction  ? response.defaultCustomToscaFunction : []));
     }
 
 }
