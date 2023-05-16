@@ -97,7 +97,9 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
             final boolean isScalarF = isScalar;
             final ToscaValueConverter innerConverterFinal = innerConverter;
             entrySet.forEach(e -> {
-                convertEntry(innerType, dataTypes, allPropertiesRecursive, toscaMap, isScalarF, innerConverterFinal, e);
+                if (!e.getValue().isJsonNull()) {
+                    convertEntry(innerType, dataTypes, allPropertiesRecursive, toscaMap, isScalarF, innerConverterFinal, e);
+                }
             });
             return toscaMap;
         } catch (JsonParseException e) {
