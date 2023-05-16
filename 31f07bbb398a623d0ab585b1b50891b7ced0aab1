@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db976bb3_700afd59",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/create_cassandra_user.sh.erb",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-16T17:36:04Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to replace with \n\necho \"Going to create $SDC_USER\"\necho \"create role IF NOT EXISTS $SDC_USER with password\u003d\u0027$SDC_PASSWORD\u0027 AND LOGIN \u003d true AND ACCESS TO ALL DATACENTERS;\" | cqlsh -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT\necho \"grant all permissions on all keyspaces to $SDC_USER;\" | cqlsh -u cassandra -p $CS_PASSWORD $CASSANDRA_IP $CASSANDRA_PORT\necho \"cassandra user $SDC_USER successfully created\"",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 10
+      },
+      "revId": "31f07bbb398a623d0ab585b1b50891b7ced0aab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
