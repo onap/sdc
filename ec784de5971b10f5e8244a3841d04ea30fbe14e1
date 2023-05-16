@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "358e0dbf_0debed9a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArchiveBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-16T11:05:21Z",
+      "side": 1,
+      "message": "reuse status from L80",
+      "range": {
+        "startLine": 82,
+        "startChar": 59,
+        "endLine": 82,
+        "endChar": 81
+      },
+      "revId": "ec784de5971b10f5e8244a3841d04ea30fbe14e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
