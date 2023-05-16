@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1e3af586_09a30ef2",
+        "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/create_cassandra_user.sh.erb",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-16T22:36:18Z",
+      "side": 1,
+      "message": "according to https://docs.datastax.com/en/cql-oss/3.x/cql/cql_reference/cqlCreateRole.html\nthis parameter not supported, please remove it",
+      "range": {
+        "startLine": 33,
+        "startChar": 91,
+        "endLine": 33,
+        "endChar": 120
+      },
+      "revId": "31f07bbb398a623d0ab585b1b50891b7ced0aab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "db976bb3_700afd59",
         "filename": "asdctool/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/templates/default/create_cassandra_user.sh.erb",
         "patchSetId": 2
