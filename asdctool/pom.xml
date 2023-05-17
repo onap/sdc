@@ -12,6 +12,10 @@
     <version>1.12.4-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <apache-poi.version>5.2.3</apache-poi.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -265,14 +269,7 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- slf4j + logback -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-api.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
+    <!-- logback -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -654,6 +651,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>${mvn.assembly.version}</version>
         <executions>
           <execution>
             <configuration>
