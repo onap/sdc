@@ -20,13 +20,12 @@
 package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.ZonedDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.common.util.NoHtml;
 
@@ -88,8 +87,7 @@ public class User {
     }
 
     public void setLastLoginTime() {
-        DateTime now = new DateTime(DateTimeZone.UTC);
-        this.lastLoginTime = now.getMillis();
+        this.lastLoginTime = ZonedDateTime.now().toInstant().toEpochMilli();
     }
 
 }

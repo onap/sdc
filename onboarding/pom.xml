@@ -41,7 +41,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven plugin versions -->
-        <mvn.assembly.version>2.1</mvn.assembly.version>
         <mvn.clean.version>2.5</mvn.clean.version>
         <mvn.resource.version>3.1.0</mvn.resource.version>
         <mvn.deploy.version>2.4</mvn.deploy.version>
