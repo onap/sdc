@@ -27,12 +27,12 @@
           <div class="upper-general-fields">
             <div class="name-and-category-fields">
               <div class="i-sdc-form-item" [ngClass]="{'error': false}">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'TYPE_LABEL' | translate}}:</label>
+                <label class="i-sdc-form-label" data-tests-id="type" [ngClass]="{'required': !isViewOnly}">{{'TYPE_LABEL' | translate}}:</label>
                 <span>{{dataType.name}}</span>
               </div>
 
               <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'MODEL_LABEL' | translate}}:</label>
+                <label class="i-sdc-form-label" data-tests-id="type-model" [ngClass]="{'required': !isViewOnly}">{{'MODEL_LABEL' | translate}}:</label>
                 <span *ngIf="isViewOnly">{{dataType.model ? dataType.model : DEFAULT_MODEL_NAME}}</span>
                 <select *ngIf="!isViewOnly" formControlName="model" (change)="onModelChange()">
                   <option *ngFor="let model of models"
@@ -42,14 +42,14 @@
 
 
               <div class="i-sdc-form-item">
-                <label class="i-sdc-form-label" [ngClass]="{'required': !isViewOnly}">{{'DERIVED_FROM_LABEL' | translate}}:</label>
+                <label class="i-sdc-form-label" data-tests-id="type-derivedFrom" [ngClass]="{'required': !isViewOnly}">{{'DERIVED_FROM_LABEL' | translate}}:</label>
                 <span>{{dataType.derivedFromName}}</span>
               </div>
             </div>
           </div>
 
           <div class="i-sdc-form-item description-field">
-            <label class="i-sdc-form-label">{{'DESCRIPTION_LABEL' | translate}}:</label>
+            <label class="i-sdc-form-label" data-tests-id="type-description">{{'DESCRIPTION_LABEL' | translate}}:</label>
             <textarea class="description" #description
                       formControlName="description"
                       [ngClass]="{'view-mode': true}"

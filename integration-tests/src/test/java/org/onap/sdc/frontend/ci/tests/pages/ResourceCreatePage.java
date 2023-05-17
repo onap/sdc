@@ -59,6 +59,13 @@ public class ResourceCreatePage extends ComponentPage {
         waitForElementVisibility(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()));
     }
 
+    public void isDataTypePageLoaded() {
+        waitForElementVisibility(By.xpath(XpathSelector.TYPE.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.TYPE_MODEL.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.TYPE_DERIVED_FROM.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.TYPE_DESCRIPTION.getXpath()));
+    }
+
     public void fillForm(final ResourceCreateData resourceCreateData) {
         fillName(resourceCreateData.getName());
         setModel(resourceCreateData.getModel());
@@ -152,7 +159,11 @@ public class ResourceCreatePage extends ComponentPage {
         VENDOR_NAME_INPUT("vendorName", "//input[@data-tests-id='%s']"),
         VENDOR_RELEASE_INPUT("vendorRelease", "//input[@data-tests-id='%s']"),
         APPROVE_MESSAGE("checkindialog", "//textarea[@data-tests-id='%s']"),
-        VENDOR_MODEL_NUMBER_INPUT("resourceVendorModelNumber", "//input[@data-tests-id='%s']");
+        VENDOR_MODEL_NUMBER_INPUT("resourceVendorModelNumber", "//input[@data-tests-id='%s']"),
+        TYPE("type", "//*[@data-tests-id='%s']"),
+        TYPE_MODEL("type-model", "//*[@data-tests-id='%s']"),
+        TYPE_DERIVED_FROM("type-derivedFrom", "//*[@data-tests-id='%s']"),
+        TYPE_DESCRIPTION("type-description", "//*[@data-tests-id='%s']");
 
         @Getter
         private final String id;
