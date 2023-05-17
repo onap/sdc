@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4fad2758_6b910f14",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T08:47:25Z",
+      "side": 1,
+      "message": "as per previous comment I dont see the need to be this restrictive when the only issue appears to be with quotes and brackets",
+      "range": {
+        "startLine": 629,
+        "startChar": 0,
+        "endLine": 629,
+        "endChar": 86
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f400a48_d2789c27",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T08:47:25Z",
+      "side": 1,
+      "message": "remove comment, its potentially misleading as may not be updated if the validator is updated, and in fact is already out of date",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 73
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7186a51_ec19c8ce",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T08:47:25Z",
+      "side": 1,
+      "message": "I dont think its ok for the string to start with single quote and end with double quote\n\nwhat about \"{\" and \"[\" which I think can also cause the same issue",
+      "range": {
+        "startLine": 566,
+        "startChar": 5,
+        "endLine": 567,
+        "endChar": 80
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
