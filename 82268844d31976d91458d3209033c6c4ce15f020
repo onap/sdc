@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a37d2336_478a5f32",
+        "filename": "catalog-ui/src/app/app.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-05-17T15:15:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fad2758_6b910f14",
+      "range": {
+        "startLine": 629,
+        "startChar": 0,
+        "endLine": 629,
+        "endChar": 86
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f400a48_d2789c27",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "43e0ecc5_877705c8",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-05-17T15:15:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f400a48_d2789c27",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 73
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7186a51_ec19c8ce",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
         "patchSetId": 4
@@ -68,6 +116,30 @@
       "revId": "82268844d31976d91458d3209033c6c4ce15f020",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfdf2028_a127356a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/constraints/constraints.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-05-17T15:15:23Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b7186a51_ec19c8ce",
+      "range": {
+        "startLine": 566,
+        "startChar": 5,
+        "endLine": 567,
+        "endChar": 80
+      },
+      "revId": "82268844d31976d91458d3209033c6c4ce15f020",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
