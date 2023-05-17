@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model;
 
 import static org.openecomp.sdc.be.dao.utils.CollectionUtils.safeGetList;
@@ -27,7 +28,9 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -36,15 +39,8 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue, ToscaPropertyData {
 
     private List<PropertyConstraint> constraints;
-
-    public String getToscaSubPath() {
-        return toscaSubPath;
-    }
-
-    public void setToscaSubPath(String toscaSubPath) {
-        this.toscaSubPath = toscaSubPath;
-    }
-
+    @Getter
+    @Setter
     private String toscaSubPath;
 
     public PropertyDefinition(PropertyDataDefinition p) {
@@ -62,7 +58,7 @@ public class PropertyDefinition extends PropertyDataDefinition implements IOpera
 
     public List<PropertyConstraint> getConstraints() {
         if (CollectionUtils.isEmpty(constraints)) {
-            constraints = deserializePropertyConstraints(findConstraints());
+            setConstraints(deserializePropertyConstraints(findConstraints()));
         }
         return constraints;
     }
