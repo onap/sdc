@@ -489,6 +489,7 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda.time.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
