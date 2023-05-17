@@ -48,14 +48,15 @@ Modifications copyright (c) 2018-2019 Nokia
         <guava.version>30.1-jre</guava.version>
         <janusgraph.version>0.3.3</janusgraph.version>
         <spring.version>5.3.26</spring.version>
-        <spring.boot.version>2.2.13.RELEASE</spring.boot.version>
+        <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+        <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
         <!-- update to 2.36 bring error-->
         <!-- java.lang.NoClassDefFoundError: com/fasterxml/jackson/databind/AnnotationIntrospector$XmlExtensions-->
         <jersey-bom.version>2.34</jersey-bom.version>
         <jakarta.el.version>3.0.4</jakarta.el.version>
 
-        <netty.version>4.1.77.Final</netty.version>
+        <netty.version>4.1.92.Final</netty.version>
         <servlet-api.version>4.0.4</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>3.4.0</ecomp.version>
@@ -64,7 +65,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <commons-beanutils>1.9.4</commons-beanutils>
         <commons.io.version>2.8.0</commons.io.version>
         <commons-configuration>2.8.0</commons-configuration>
-        <apache-poi.version>4.1.0</apache-poi.version>
         <onap.logging.version>1.6.1</onap.logging.version>
         <apache-commons-text.version>1.10.0</apache-commons-text.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
@@ -172,8 +172,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <staging.profile.id>176c31dfe190a</staging.profile.id>
         <!--togglz version-->
         <togglz.version>3.3.3</togglz.version>
-
-        <joda.time.version>2.9.9</joda.time.version>
 
         <!--sdc-security-utils-->
         <security.util.lib.version>1.8.0</security.util.lib.version>
@@ -458,7 +456,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${mvn.assembly.version}</version>
                     <configuration>
                         <tarLongFileMode>posix</tarLongFileMode>
                     </configuration>
