@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76559646_6c2008e1",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/InstancePropertiesValueSetTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "this will fail if the VFC fails to import/certify for some reason, but that is not sufficient to validate that the VFC has been imported correctly. For example some elements may potentially have been lost during the import. \nI think its important to fetch the generated tosca and compare with the imported file to ensure they are the same",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 5
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cdb74fe_a1f46f81",
+        "filename": "integration-tests/src/test/resources/Files/VFCs/1-Custom-DataType.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "replace with something more appropriate",
+      "range": {
+        "startLine": 3,
+        "startChar": 15,
+        "endLine": 3,
+        "endChar": 198
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a83a4776_3de02513",
+        "filename": "integration-tests/src/test/resources/Files/VFCs/1-Custom-DataType.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "replace with something more appropriate",
+      "range": {
+        "startLine": 50,
+        "startChar": 15,
+        "endLine": 51,
+        "endChar": 13
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85166dfd_abd25286",
+        "filename": "integration-tests/src/test/resources/Files/VFCs/1-Custom-DataType.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "should be map",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 16
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42501ddf_9d0c6a1c",
+        "filename": "integration-tests/src/test/resources/Files/VFCs/3-VFC-testNodeComplex.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "replace with something more appropriate",
+      "range": {
+        "startLine": 6,
+        "startChar": 17,
+        "endLine": 6,
+        "endChar": 200
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "411f8218_c17dd090",
+        "filename": "integration-tests/src/test/resources/Files/VFCs/3-VFC-testNodeComplex.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-17T09:41:17Z",
+      "side": 1,
+      "message": "should be map",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 18
+      },
+      "revId": "6a1433dcee627a98e0dc2851ff4dd2cdc3b40139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
