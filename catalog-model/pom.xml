@@ -15,6 +15,7 @@
 
     <properties>
         <awaitility.version>4.0.3</awaitility.version>
+        <joda.time.version>2.12.5</joda.time.version>
     </properties>
 
     <dependencies>
