@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf149e32_1b30f9cd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/PropertyDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-17T16:49:18Z",
+      "side": 1,
+      "message": "replace with @Getter/@Setter",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 5
+      },
+      "revId": "aebe737d5e00c9f786ffee32d7991db619c00602",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
