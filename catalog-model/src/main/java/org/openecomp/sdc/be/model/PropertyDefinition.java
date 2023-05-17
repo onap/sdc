@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model;
 
 import static org.openecomp.sdc.be.dao.utils.CollectionUtils.safeGetList;
@@ -36,15 +37,6 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue, ToscaPropertyData {
 
     private List<PropertyConstraint> constraints;
-
-    public String getToscaSubPath() {
-        return toscaSubPath;
-    }
-
-    public void setToscaSubPath(String toscaSubPath) {
-        this.toscaSubPath = toscaSubPath;
-    }
-
     private String toscaSubPath;
 
     public PropertyDefinition(PropertyDataDefinition p) {
@@ -60,9 +52,17 @@ public class PropertyDefinition extends PropertyDataDefinition implements IOpera
         setConstraints(pd.getConstraints());
     }
 
+    public String getToscaSubPath() {
+        return toscaSubPath;
+    }
+
+    public void setToscaSubPath(String toscaSubPath) {
+        this.toscaSubPath = toscaSubPath;
+    }
+
     public List<PropertyConstraint> getConstraints() {
         if (CollectionUtils.isEmpty(constraints)) {
-            constraints = deserializePropertyConstraints(findConstraints());
+            setConstraints(deserializePropertyConstraints(findConstraints()));
         }
         return constraints;
     }
