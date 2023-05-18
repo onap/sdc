@@ -2547,7 +2547,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw ToscaGetFunctionExceptionSupplier
                 .propertyTypeDiverge(toscaGetFunction.getType(), referredProperty.getType(), property.getType()).get();
         }
-        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
+        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getType()) && !"list".equalsIgnoreCase(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
             throw ToscaGetFunctionExceptionSupplier
                 .propertySchemaDiverge(toscaGetFunction.getType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
         }
