@@ -21,6 +21,7 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -75,13 +77,27 @@ public class ToscaFunctionYamlParsingHandler {
             toscaGetFunction.setSourceName(propertySourceType);
         }
         List<String> propertySourceIndex = functionParameters.subList(1, functionParameters.size());
-        String toscaIndexValue = propertySourceIndex.get((propertySourceIndex.size() - 1));
-        if (propertySourceIndex.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
-            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex.subList(0, (propertySourceIndex.size() - 1)));
-            toscaGetFunction.setToscaIndex(toscaIndexValue);
-        } else {
-            toscaGetFunction.setPropertyPathFromSource(propertySourceIndex);
+        List<String> propertySourcePath = new ArrayList<>();
+        propertySourcePath.add((String)propertySourceIndex.get(0));
+        if (propertySourceIndex.size() > 1 ) {
+            List<Object> indexParsedList = new ArrayList<Object>();
+            List<String> indexObjectList = propertySourceIndex.subList(1,propertySourceIndex.size());
+            boolean loopFlag = true;
+            for (String indexValue : indexObjectList) {
+                if (!indexValue.equalsIgnoreCase("INDEX") && !StringUtils.isNumeric(indexValue) && loopFlag) {
+                    propertySourcePath.add(indexValue);
+                } else {
+                    loopFlag = false;
+                    if (StringUtils.isNumeric(indexValue)) {
+                        indexParsedList.add(Integer.parseInt(indexValue));
+                    } else {
+                        indexParsedList.add(indexValue);
+                    }
+                }
+            }
+            toscaGetFunction.setToscaIndexList(indexParsedList);
         }
+        toscaGetFunction.setPropertyPathFromSource(propertySourcePath);
         final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
         toscaGetFunction.setPropertyName(propertyName);
         return Optional.of(toscaGetFunction);
@@ -106,13 +122,27 @@ public class ToscaFunctionYamlParsingHandler {
             } catch (final ClassCastException ignored) {
                 return Optional.empty();
             }
-            String toscaIndexValue = functionParameters.get((functionParameters.size() - 1));
-            if (functionParameters.size() > 1 && (toscaIndexValue.equalsIgnoreCase("INDEX") || StringUtils.isNumeric(toscaIndexValue))) {
-                toscaGetFunction.setPropertyPathFromSource(functionParameters.subList(0, (functionParameters.size() - 1)));
-                toscaGetFunction.setToscaIndex(toscaIndexValue);
-            } else {
-                toscaGetFunction.setPropertyPathFromSource(functionParameters);
+            List<String> propertySourcePath = new ArrayList<>();
+            propertySourcePath.add((String)functionParameters.get(0));
+            if (functionParameters.size() > 1 ) {
+                List<Object> indexParsedList = new ArrayList<Object>();
+                List<String> indexObjectList = functionParameters.subList(1,functionParameters.size());
+                boolean loopFlag = true;
+                for (String indexValue : indexObjectList) {
+                    if (!indexValue.equalsIgnoreCase("INDEX") && !StringUtils.isNumeric(indexValue) && loopFlag) {
+                        propertySourcePath.add(indexValue);
+                    } else {
+                        loopFlag = false;
+                        if (StringUtils.isNumeric(indexValue)) {
+                            indexParsedList.add(Integer.parseInt(indexValue));
+                        } else {
+                            indexParsedList.add(indexValue);
+                        }
+                    }
+                }
+                toscaGetFunction.setToscaIndexList(indexParsedList);
             }
+            toscaGetFunction.setPropertyPathFromSource(propertySourcePath);
         }
         final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
         toscaGetFunction.setPropertyName(propertyName);
@@ -193,12 +223,11 @@ public class ToscaFunctionYamlParsingHandler {
     }
 
     private Optional<ToscaFunction> handelCustomFunctionGetInputType(ToscaCustomFunction toscaCustomFunction, Object functionValueObj) {
-        if (!(functionValueObj instanceof String)) {
+        if (!(functionValueObj instanceof String) && !(functionValueObj instanceof List)) {
             return Optional.empty();
         }
-        final String parameter = (String) functionValueObj;
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put(ToscaFunctionType.GET_INPUT.getName(), parameter);
+        parameterMap.put(ToscaFunctionType.GET_INPUT.getName(), functionValueObj);
         buildToscaFunctionBasedOnPropertyValue(parameterMap).ifPresent(toscaFunction -> {
             if (toscaFunction instanceof ToscaFunctionParameter) {
                 toscaCustomFunction.addParameter((ToscaFunctionParameter) toscaFunction);
