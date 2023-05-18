@@ -41,12 +41,6 @@
             <version>${jsoup.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
-        </dependency>
-
         <!--JSON and YAML Parsing-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -1208,6 +1202,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>${mvn.assembly.version}</version>
                 <executions>
                     <execution>
                         <id>normatives</id>
