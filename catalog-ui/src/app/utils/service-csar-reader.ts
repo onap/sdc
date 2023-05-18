@@ -20,7 +20,7 @@
 
 import {ServiceCsar, ToscaMetaEntry} from "../models";
 import {load} from 'js-yaml';
-import { ComponentType } from "./constants";
+import {ComponentType} from "./constants";
 
 export class ServiceCsarReader {
 
@@ -35,8 +35,12 @@ export class ServiceCsarReader {
                     this.readToscaMeta(toscaMetaFileContent);
                     const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async("string");
                     this.readServiceMetadata(entryDefinitionFileContent);
-                    const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
-                    this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
+                    if (zip.file(this.serviceCsar.interfaceDefinitionFileName) != null) {
+                        const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
+                        this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
+                    } else {
+                        this.readSubstitutionNodeType(entryDefinitionFileContent);
+                    }
                     resolve(this.serviceCsar);
                 } catch (error) {
                     reject(error);
@@ -60,7 +64,6 @@ export class ServiceCsarReader {
     private readEntryDefinitionFileName() {
         this.serviceCsar.entryDefinitionFileName = this.serviceCsar.toscaMeta.getEntry(ToscaMetaEntry.ENTRY_DEFINITIONS);
     }
-
     private readInterfaceDefinitionFileName() {
         let fileNameArray:Array<string> = this.serviceCsar.entryDefinitionFileName.split(".");
         fileNameArray.splice(fileNameArray.length - 1, 0, "-interface.");
@@ -76,6 +79,11 @@ export class ServiceCsarReader {
         const nodeTypes = load(interfaceDefinitionFileContent).node_types;
         let nodeType = Object.keys(nodeTypes).values().next().value;
         this.serviceCsar.substitutionNodeType = nodeTypes[nodeType]["derived_from"];
+    }
+
+    private readSubstitutionNodeType(entryDefinitionFileContent) {
+        const nodeTypes = load(entryDefinitionFileContent).topology_template.substitution_mappings.node_type;
+        this.serviceCsar.substitutionNodeType = nodeTypes;
     }
 
     private setMetadata = (metadata:object) : void => {
