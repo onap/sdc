@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a9bbed61_96e079cd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-18T12:32:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28db8c75_4a9fd6af",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 18
+      },
+      "revId": "cd82617cb15c30b44c27b4357cd9f4fea80a97f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "78a43974_51bdfea4",
         "filename": "openecomp-be/tools/swagger-ui/pom.xml",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "cd82617cb15c30b44c27b4357cd9f4fea80a97f0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ac91faf_c76ef9ca",
+        "filename": "openecomp-be/tools/swagger-ui/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-18T12:32:16Z",
+      "side": 1,
+      "message": "The \u0027descriptor\u0027 parameter was used in previous versions of the Maven Assembly Plugin to specify an assembly descriptor file. However, starting from version 3.0.0, the plugin introduced a new configuration format that does not rely on the descriptor file anymore.",
+      "parentUuid": "78a43974_51bdfea4",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 38
+      },
+      "revId": "cd82617cb15c30b44c27b4357cd9f4fea80a97f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
