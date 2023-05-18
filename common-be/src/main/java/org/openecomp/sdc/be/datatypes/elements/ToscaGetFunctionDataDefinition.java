@@ -124,8 +124,9 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
         List<Object> propertySourceOneCopy = new ArrayList<>();
         propertySourceOneCopy.add(this.propertyPathFromSource.get(0));
         if (toscaIndex != null) {
-            propertySourceCopy.add(toscaIndex);
-            propertySourceOneCopy.add(toscaIndex);
+            Object toscaIndexValue = StringUtils.isNumeric(toscaIndex.toString()) ? Integer.parseInt(toscaIndex.toString()) : toscaIndex;
+            propertySourceCopy.add(toscaIndexValue);
+            propertySourceOneCopy.add(toscaIndexValue);
         }
         if (this.propertyPathFromSource.size() == 1) {
             return Map.of(this.functionType.getFunctionName(), propertySourceOneCopy);

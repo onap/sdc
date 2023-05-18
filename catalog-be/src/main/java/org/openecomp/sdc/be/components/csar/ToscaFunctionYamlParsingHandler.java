@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -193,12 +195,11 @@ public class ToscaFunctionYamlParsingHandler {
     }
 
     private Optional<ToscaFunction> handelCustomFunctionGetInputType(ToscaCustomFunction toscaCustomFunction, Object functionValueObj) {
-        if (!(functionValueObj instanceof String)) {
+        if (!(functionValueObj instanceof String) && !(functionValueObj instanceof List)) {
             return Optional.empty();
         }
-        final String parameter = (String) functionValueObj;
         Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put(ToscaFunctionType.GET_INPUT.getName(), parameter);
+        parameterMap.put(ToscaFunctionType.GET_INPUT.getName(), functionValueObj);
         buildToscaFunctionBasedOnPropertyValue(parameterMap).ifPresent(toscaFunction -> {
             if (toscaFunction instanceof ToscaFunctionParameter) {
                 toscaCustomFunction.addParameter((ToscaFunctionParameter) toscaFunction);
@@ -210,7 +211,7 @@ public class ToscaFunctionYamlParsingHandler {
     private ToscaFunctionType getCustomFunctionType(String name) {
         List<Configuration.CustomToscaFunction> customFunctions =
             ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultCustomToscaFunctions();
-        if (customFunctions.isEmpty()) {
+        if (CollectionUtils.isEmpty(customFunctions)) {
             return ToscaFunctionType.CUSTOM;
         }
         Optional<Configuration.CustomToscaFunction> optionalFunc = customFunctions.stream().filter(func -> func.getName().equals(name)).findFirst();
