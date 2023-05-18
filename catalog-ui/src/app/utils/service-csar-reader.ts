@@ -20,11 +20,13 @@
 
 import {ServiceCsar, ToscaMetaEntry} from "../models";
 import {load} from 'js-yaml';
-import { ComponentType } from "./constants";
+import {ComponentType} from "./constants";
+import {ElementService} from "../ng2/services/element.service";
 
 export class ServiceCsarReader {
-
+    constructor(private elementService: ElementService) {}
     private serviceCsar = new ServiceCsar();
+    doNotExtendBaseType = false;
 
     public read(serviceCsarBlob: Blob): Promise<ServiceCsar> {
         const jsZip = require("jszip");
@@ -34,9 +36,11 @@ export class ServiceCsarReader {
                     const toscaMetaFileContent = await zip.file("TOSCA-Metadata/TOSCA.meta").async("string");
                     this.readToscaMeta(toscaMetaFileContent);
                     const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async("string");
-                    this.readServiceMetadata(entryDefinitionFileContent);
-                    const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
-                    this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
+                    await this.readServiceMetadata(entryDefinitionFileContent);
+                    if (!this.doNotExtendBaseType) {
+                        const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
+                        this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
+                    }
                     resolve(this.serviceCsar);
                 } catch (error) {
                     reject(error);
@@ -60,16 +64,36 @@ export class ServiceCsarReader {
     private readEntryDefinitionFileName() {
         this.serviceCsar.entryDefinitionFileName = this.serviceCsar.toscaMeta.getEntry(ToscaMetaEntry.ENTRY_DEFINITIONS);
     }
-
     private readInterfaceDefinitionFileName() {
         let fileNameArray:Array<string> = this.serviceCsar.entryDefinitionFileName.split(".");
         fileNameArray.splice(fileNameArray.length - 1, 0, "-interface.");
         this.serviceCsar.interfaceDefinitionFileName = fileNameArray.join("");
     }
 
-    private readServiceMetadata(entryDefinitionFileContent) {
+    private async readServiceMetadata(entryDefinitionFileContent) {
         const metadata = load(entryDefinitionFileContent).metadata;
+        if (this.serviceCsar.serviceMetadata.componentType = ComponentType.SERVICE) {
+            Object.keys(metadata).forEach(variable => {
+                if (variable = "model") {
+                    this.serviceCsar.serviceMetadata.model = metadata[variable];
+                }
+                if (variable = "category") {
+                    this.serviceCsar.serviceMetadata.selectedCategory = metadata[variable];
+                }
+            })
+            let modelName = this.serviceCsar.serviceMetadata.model;
+            let category = this.serviceCsar.serviceMetadata.selectedCategory;
+            this.doNotExtendBaseType =   await this.isDoNotExtendBaseType(modelName, category);
+        }
         this.setMetadata(metadata);
+    }
+
+    private async isDoNotExtendBaseType(modelName: string, categoryName: string): Promise<boolean> {
+        if (categoryName != null && modelName != null) {
+            var res = await this.elementService.getCategoryBaseTypes(categoryName, modelName).toPromise();
+            return  res.doNotExtendBaseType;
+        }
+        return false;
     }
 
     private readServiceSubstitutionNode(interfaceDefinitionFileContent) {

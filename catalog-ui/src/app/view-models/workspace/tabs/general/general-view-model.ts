@@ -284,7 +284,7 @@ export class GeneralViewModel {
                 this.$scope.isShowFileBrowse = true;
                 (<Service>this.$scope.component).ecompGeneratedNaming = true;
                 let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
-                new ServiceCsarReader().read(blob).then(
+                new ServiceCsarReader(this.elementService).read(blob).then(
                     (serviceCsar) => {
                         serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
                         (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
