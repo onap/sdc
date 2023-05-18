@@ -283,7 +283,7 @@ class ToscaFunctionValidatorImplTest {
         final String inputId = String.format("%s.%s", containerComponentId, inputName);
         final String propertyName = "getInputProperty";
         final String propertyId = String.format("%s.%s", containerComponentId, propertyName);
-        final String propertyType = "list";
+        final String propertyType = "map";
         final ComponentInstanceProperty propertyGetInput = createComponentInstanceProperty(
             propertyId,
             "getInputProperty",

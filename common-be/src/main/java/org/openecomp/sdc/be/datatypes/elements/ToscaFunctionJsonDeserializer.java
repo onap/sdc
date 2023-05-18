@@ -113,7 +113,8 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         toscaGetFunction.setSourceUniqueId(getAsTextOrElseNull(node, "sourceUniqueId"));
         toscaGetFunction.setPropertyName(getAsTextOrElseNull(node, "propertyName"));
         toscaGetFunction.setPropertyUniqueId(getAsTextOrElseNull(node, "propertyUniqueId"));
-        toscaGetFunction.setToscaIndex(getNumberAsTextOrElseNull(node, "toscaIndex"));
+        toscaGetFunction.setToscaIndexList(getNumberAsTextOrElseNull(node, "toscaIndexList", context));
+
         final String propertySource = getAsTextOrElseNull(node, "propertySource");
         if (StringUtils.isNotEmpty(propertySource)) {
             final PropertySource propertySource1 = PropertySource.findType(propertySource).orElseThrow(() ->
@@ -146,20 +147,31 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         return jsonNode.asText();
     }
 
-    private Object getNumberAsTextOrElseNull(final JsonNode node, final String fieldName) {
+    private List<Object> getNumberAsTextOrElseNull(final JsonNode node, final String fieldName, final DeserializationContext context) throws JsonMappingException{
+        List<Object> toscaIndexList = new ArrayList<Object>();
         final JsonNode jsonNode = node.get(fieldName);
-        if (jsonNode == null) {
-            return null;
+        if (jsonNode != null) {
+            if (!jsonNode.isArray()) {
+                throw context.instantiationException(ToscaGetFunctionDataDefinition.class, "Expecting an array for toscaIndexList attribute");
+            }
+            for (int index=0;index<jsonNode.size();index++) {
+                String textValue = jsonNode.get(index).asText();
+                if (index%2 == 0) {
+                    if (textValue.equalsIgnoreCase("INDEX")) {
+                        toscaIndexList.add(textValue);
+                    } else {
+                        try {
+                            toscaIndexList.add(Integer.parseInt(textValue));
+                        } catch(Exception e) {
+                            throw context.instantiationException(ToscaGetFunctionDataDefinition.class, "Expecting a valid value for toscaIndex attribute");
+                        }
+                    }
+                } else {
+                    toscaIndexList.add(textValue);
+                }
+            }
         }
-        if (jsonNode.asText().equalsIgnoreCase("INDEX")) {
-            return jsonNode.asText();
-        }
-        try {
-            Integer.parseInt(jsonNode.asText());
-        } catch(Exception e) {
-            return null;
-        }
-        return Integer.parseInt(jsonNode.asText());
+        return toscaIndexList;
     }
 
     private ToscaConcatFunction deserializeConcatFunction(final JsonNode concatFunctionJsonNode,

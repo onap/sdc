@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -206,6 +207,7 @@ class ToscaGetFunctionDataDefinitionTest {
         toscaGetFunction.setPropertySource(propertySource);
         toscaGetFunction.setPropertyPathFromSource(propertyPath);
         toscaGetFunction.setSourceName(sourceName);
+        toscaGetFunction.setToscaIndexList(new ArrayList<>());
         return toscaGetFunction;
     }
 
