@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28db8c75_4a9fd6af",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-18T10:29:35Z",
+      "side": 1,
+      "message": "wrong jira",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 18
+      },
+      "revId": "cd82617cb15c30b44c27b4357cd9f4fea80a97f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78a43974_51bdfea4",
+        "filename": "openecomp-be/tools/swagger-ui/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-18T10:29:35Z",
+      "side": 1,
+      "message": "why do we need a different version here?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 38
+      },
+      "revId": "cd82617cb15c30b44c27b4357cd9f4fea80a97f0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
