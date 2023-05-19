@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b17eef6_df09e8bc",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-19T12:22:03Z",
+      "side": 1,
+      "message": "We still need to read the substitution mapping node type in the case where doNoExtendBaseType is true, but we need to read if from the substitution mapping in the main template file (i.e. in entryDefinitionFileContent), for example:\n\ntopology_template:\n  substitution_mappings:\n    node_type: topology.nodes.testtype\n\nin this case we should set it to topology.nodes.testtype",
+      "range": {
+        "startLine": 40,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 21
+      },
+      "revId": "bb6d4d4c3164306ed25395420cf1d700b6d9da57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bbc3a54_35cd4771",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-19T12:22:03Z",
+      "side": 1,
+      "message": "I dont think we need to make call to backend, can just check if the file exists in the csar with the expected interface definition file name - if so read the sub mapping node from it as today, if not read if from the main file",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 0
+      },
+      "revId": "bb6d4d4c3164306ed25395420cf1d700b6d9da57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
