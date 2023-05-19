@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "900e23fa_76a8da30",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-19T15:27:13Z",
+      "side": 1,
+      "message": "this works fine for tosca functions that are a get_property/get_attribute with 2 elements. \nHowever it doesnt work for get_input, concat, yaml, get_property with more than 2 elments etc as the assumption about the structure of valueList is wrong in these cases.\nThere is already logic in this class for creating the ToscaFunction for properties that covers all the options, perhaps its possible to re-use that",
+      "range": {
+        "startLine": 1292,
+        "startChar": 0,
+        "endLine": 1293,
+        "endChar": 65
+      },
+      "revId": "621d49d5c95a0f16005fcb186f359879c1bad829",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
