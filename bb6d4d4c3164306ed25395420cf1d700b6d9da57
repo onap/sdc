@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "830706d6_c0e46eea",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-05-23T14:48:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b17eef6_df09e8bc",
+      "range": {
+        "startLine": 40,
+        "startChar": 1,
+        "endLine": 43,
+        "endChar": 21
+      },
+      "revId": "bb6d4d4c3164306ed25395420cf1d700b6d9da57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1bbc3a54_35cd4771",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "bb6d4d4c3164306ed25395420cf1d700b6d9da57",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6f21056_1288412f",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 8088
+      },
+      "writtenOn": "2023-05-23T14:48:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1bbc3a54_35cd4771",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 98,
+        "endChar": 0
+      },
+      "revId": "bb6d4d4c3164306ed25395420cf1d700b6d9da57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
