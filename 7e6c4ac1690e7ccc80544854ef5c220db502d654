@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d46450dc_cdc4e1e8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-23T10:27:07Z",
+      "side": 1,
+      "message": "use case only needs category specific metadata",
+      "range": {
+        "startLine": 1028,
+        "startChar": 1,
+        "endLine": 1029,
+        "endChar": 117
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f45168f1_05e39b68",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-23T10:27:07Z",
+      "side": 1,
+      "message": "Can we add detailed documentation of the format here (e.g. equals, greater then etc, delimiter between keyword and value...). Include examples also",
+      "range": {
+        "startLine": 137,
+        "startChar": 2,
+        "endLine": 137,
+        "endChar": 127
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c65c080_cd5221ce",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-23T10:27:07Z",
+      "side": 1,
+      "message": "same here, expand on the documentation so user knows whats supported and how to use. Include examples",
+      "range": {
+        "startLine": 138,
+        "startChar": 7,
+        "endLine": 138,
+        "endChar": 135
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
