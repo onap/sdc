@@ -19,13 +19,14 @@
  */
 package org.openecomp.sdc.be.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum DistributionStatusEnum {
     DISTRIBUTION_NOT_APPROVED("Distribution not approved"), DISTRIBUTED("Distributed");
-    private String value;
-
-    private DistributionStatusEnum(String value) {
-        this.value = value;
-    }
+    private final String value;
 
     public static DistributionStatusEnum findState(String state) {
         for (DistributionStatusEnum distributionStatus : DistributionStatusEnum.values()) {
@@ -36,7 +37,4 @@ public enum DistributionStatusEnum {
         return null;
     }
 
-    public String getValue() {
-        return value;
-    }
 }
