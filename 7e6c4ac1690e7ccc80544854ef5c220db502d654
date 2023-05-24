@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "095ae4b6_2916977e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ElementBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-24T16:31:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d46450dc_cdc4e1e8",
+      "range": {
+        "startLine": 1028,
+        "startChar": 1,
+        "endLine": 1029,
+        "endChar": 117
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f45168f1_05e39b68",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "783cd5f2_aaf4c2f8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-24T16:31:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "f45168f1_05e39b68",
+      "range": {
+        "startLine": 137,
+        "startChar": 2,
+        "endLine": 137,
+        "endChar": 127
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c65c080_cd5221ce",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0188325_af98e080",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-24T16:31:59Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0c65c080_cd5221ce",
+      "range": {
+        "startLine": 138,
+        "startChar": 7,
+        "endLine": 138,
+        "endChar": 135
+      },
+      "revId": "7e6c4ac1690e7ccc80544854ef5c220db502d654",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
