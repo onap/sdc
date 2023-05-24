@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3dc6048c_52c6bff5",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-24T13:22:58Z",
+      "side": 1,
+      "message": "the names of these two methods should make it easy for the user to distinguish between the purpose of each. Id suggest\nreadSubstitutionNodeFromInterfaceDefinitionFile\nreadSubstitutionNodeFromMainTemplateFile",
+      "range": {
+        "startLine": 78,
+        "startChar": 3,
+        "endLine": 84,
+        "endChar": 38
+      },
+      "revId": "75f2bd200b05435f64a2f16805c2e9c9c99bb74a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "495ac8f0_6d6ad3a0",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-05-24T13:22:58Z",
+      "side": 1,
+      "message": "should be singular, i.e. nodeType",
+      "range": {
+        "startLine": 85,
+        "startChar": 14,
+        "endLine": 85,
+        "endChar": 23
+      },
+      "revId": "75f2bd200b05435f64a2f16805c2e9c9c99bb74a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
