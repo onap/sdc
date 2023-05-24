@@ -38,7 +38,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -56,6 +61,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
+import org.openecomp.sdc.be.datatypes.category.CategoryDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
@@ -66,6 +72,7 @@ import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.externalapi.servlet.representation.VersionFilterEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.BaseType;
 import org.openecomp.sdc.be.model.CatalogUpdateTimestamp;
@@ -123,7 +130,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation,
                                 IElementOperation elementOperation, UserBusinessLogic userAdminManager) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
-            artifactToscaOperation);
+                artifactToscaOperation);
         this.elementOperation = elementOperation;
     }
 
@@ -160,7 +167,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<Map<String, List<? extends Component>>, ResponseFormat> convertedToListResponse(
-        Either<Map<String, Set<? extends Component>>, ResponseFormat> setResponse) {
+            Either<Map<String, Set<? extends Component>>, ResponseFormat> setResponse) {
         Map<String, List<? extends Component>> arrayResponse = new HashMap<>();
         if (setResponse.isLeft()) {
             for (Map.Entry<String, Set<? extends Component>> entry : setResponse.left().value().entrySet()) {
@@ -218,10 +225,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                                                                                                           Set<LifecycleStateEnum> lastStateStates) {
         try {
             Either<Set<Resource>, StorageOperationStatus> resources = toscaOperationFacade
-                .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.RESOURCE);
+                    .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.RESOURCE);
             if (resources.isLeft()) {
                 Either<Set<Service>, StorageOperationStatus> services = toscaOperationFacade
-                    .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
+                        .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
                 if (services.isLeft()) {
                     Map<String, Set<? extends Component>> result = new HashMap<>();
                     result.put(SERVICES, services.left().value());
@@ -241,7 +248,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Either<Map<String, Set<? extends Component>>, ResponseFormat> getFollowedProducts(String userId, Set<LifecycleStateEnum> lifecycleStates,
                                                                                               Set<LifecycleStateEnum> lastStateStates) {
         Either<Set<Product>, StorageOperationStatus> products = toscaOperationFacade
-            .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.PRODUCT);
+                .getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.PRODUCT);
         if (products.isLeft()) {
             Map<String, Set<? extends Component>> result = new HashMap<>();
             result.put("products", products.left().value());
@@ -293,16 +300,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (!ValidationUtils.validateCategoryDisplayNameFormat(categoryName)) {
             log.debug("Category display name format is invalid, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
         categoryName = ValidationUtils.normalizeCategoryName4Display(categoryName);
         if (!ValidationUtils.validateCategoryDisplayNameLength(categoryName)) {
             log.debug("Category display name length is invalid, should be from 4 to 25 chars, name {}, componentType {}", categoryName,
-                componentType);
+                    componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -325,7 +332,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (Boolean.FALSE.equals(isCategoryUnique)) {
             log.debug("Category is not unique, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
+                    .getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -333,7 +340,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (createCategoryByType.isRight()) {
             log.debug("Failed to create category, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
+                    .getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
             handleCategoryAuditing(responseFormat, user, origCategoryName, auditingAction, componentType);
             return Either.right(componentsUtils.getResponseFormat(createCategoryByType.right().value()));
         }
@@ -397,7 +404,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         NodeTypeEnum childNodeType = NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(componentTypeEnum, CategoryTypeEnum.SUBCATEGORY);
         CategoryDefinition categoryDefinition;
         Either<CategoryDefinition, ResponseFormat> validateCategoryExists = validateCategoryExists(parentNodeType, parentCategoryId,
-            componentTypeEnum);
+                componentTypeEnum);
         if (validateCategoryExists.isRight()) {
             log.debug("Validation of parent category exists failed, parent categoryId {}", parentCategoryId);
             ResponseFormat responseFormat = validateCategoryExists.right().value();
@@ -409,16 +416,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (!ValidationUtils.validateCategoryDisplayNameFormat(subCategoryName)) {
             log.debug("Sub-category display name format is invalid, name {}, componentType {}", subCategoryName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
         subCategoryName = ValidationUtils.normalizeCategoryName4Display(subCategoryName);
         if (!ValidationUtils.validateCategoryDisplayNameLength(subCategoryName)) {
             log.debug("Sub-category display name length is invalid, should be from 4 to 25 chars, name {}, componentType {}", subCategoryName,
-                componentType);
+                    componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -426,10 +433,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         subCategory.setNormalizedName(normalizedName);
         // Uniqueness under this category
         Either<Boolean, ActionStatus> subCategoryUniqueForCategory = elementOperation
-            .isSubCategoryUniqueForCategory(childNodeType, normalizedName, parentCategoryId);
+                .isSubCategoryUniqueForCategory(childNodeType, normalizedName, parentCategoryId);
         if (subCategoryUniqueForCategory.isRight()) {
             log.debug("Failed to check sub-category uniqueness, parent name {}, subcategory norm name {}, componentType {}", parentCategoryName,
-                normalizedName, componentType);
+                    normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForCategory.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -437,9 +444,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Boolean isSubUnique = subCategoryUniqueForCategory.left().value();
         if (Boolean.FALSE.equals(isSubUnique)) {
             log.debug("Sub-category is not unique for category, parent name {}, subcategory norm name {}, componentType {}", parentCategoryName,
-                normalizedName, componentType);
+                    normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY, componentType, subCategoryName, parentCategoryName);
+                    .getResponseFormat(ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY, componentType, subCategoryName, parentCategoryName);
             handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -455,7 +462,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
         // his subcategory name will be Router-->kUKU.
         Either<SubCategoryDefinition, ActionStatus> subCategoryUniqueForType = elementOperation
-            .getSubCategoryUniqueForType(childNodeType, normalizedName);
+                .getSubCategoryUniqueForType(childNodeType, normalizedName);
         if (subCategoryUniqueForType.isRight()) {
             log.debug("Failed validation of whether similar sub-category exists, normalizedName {} componentType {}", normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForType.right().value());
@@ -469,7 +476,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         subCategory.setName(subCategoryName);
         ///////////////////////////////////////////// Validations end
         Either<SubCategoryDefinition, ActionStatus> createSubCategory = elementOperation
-            .createSubCategory(parentCategoryId, subCategory, childNodeType);
+                .createSubCategory(parentCategoryId, subCategory, childNodeType);
         if (createSubCategory.isRight()) {
             log.debug("Failed to create sub-category, name {}, componentType {}", subCategoryName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(subCategoryUniqueForType.right().value());
@@ -566,7 +573,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // Validate category
         CategoryDefinition categoryDefinition;
         Either<CategoryDefinition, ResponseFormat> validateCategoryExists = validateCategoryExists(grandParentNodeType, grandParentCategoryId,
-            componentTypeEnum);
+                componentTypeEnum);
         if (validateCategoryExists.isRight()) {
             log.debug("Validation of parent category exists failed, parent categoryId {}", grandParentCategoryId);
             ResponseFormat responseFormat = validateCategoryExists.right().value();
@@ -578,7 +585,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         // Validate subcategory
         SubCategoryDefinition subCategoryDefinition;
         Either<SubCategoryDefinition, ResponseFormat> validateSubCategoryExists = validateSubCategoryExists(parentNodeType, parentSubCategoryId,
-            componentTypeEnum);
+                componentTypeEnum);
         if (validateSubCategoryExists.isRight()) {
             log.debug("Validation of parent sub-category exists failed, parent sub-category id {}", parentSubCategoryId);
             ResponseFormat responseFormat = validateSubCategoryExists.right().value();
@@ -590,16 +597,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (!ValidationUtils.validateCategoryDisplayNameFormat(groupingName)) {
             log.debug("Sub-category display name format is invalid, name {}, componentType {}", groupingName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_FORMAT, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
         groupingName = ValidationUtils.normalizeCategoryName4Display(groupingName);
         if (!ValidationUtils.validateCategoryDisplayNameLength(groupingName)) {
             log.debug("Grouping display name length is invalid, should be from 4 to 25 chars, name {}, componentType {}", groupingName,
-                componentType);
+                    componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
+                    .getResponseFormat(ActionStatus.COMPONENT_ELEMENT_INVALID_NAME_LENGTH, componentType, categoryType.getValue());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -607,10 +614,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         grouping.setNormalizedName(normalizedName);
         // Uniqueness under this category
         Either<Boolean, ActionStatus> groupingUniqueForSubCategory = elementOperation
-            .isGroupingUniqueForSubCategory(childNodeType, normalizedName, parentSubCategoryId);
+                .isGroupingUniqueForSubCategory(childNodeType, normalizedName, parentSubCategoryId);
         if (groupingUniqueForSubCategory.isRight()) {
             log.debug("Failed to check grouping uniqueness, parent name {}, grouping norm name {}, componentType {}", parentSubCategoryName,
-                normalizedName, componentType);
+                    normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(groupingUniqueForSubCategory.right().value());
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
@@ -618,9 +625,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         Boolean isGroupingUnique = groupingUniqueForSubCategory.left().value();
         if (Boolean.FALSE.equals(isGroupingUnique)) {
             log.debug("Grouping is not unique for sub-category, parent name {}, grouping norm name {}, componentType {}", parentSubCategoryName,
-                normalizedName, componentType);
+                    normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY, componentType, groupingName, parentSubCategoryName);
+                    .getResponseFormat(ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY, componentType, groupingName, parentSubCategoryName);
             handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, origGroupingName, auditingAction, componentType);
             return Either.right(responseFormat);
         }
@@ -659,7 +666,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         log.debug("Created grouping for component {}, name {}, uniqueId {}", componentType, groupingName, groupingCreated.getUniqueId());
         ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
         handleCategoryAuditing(responseFormat, user, parentCategoryName, parentSubCategoryName, groupingCreated.getName(), auditingAction,
-            componentType);
+                componentType);
         return Either.left(groupingCreated);
     }
 
@@ -709,7 +716,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         User user = validateUserExists(userId);
         // GET resource categories
         Either<List<CategoryDefinition>, ActionStatus> getResourceCategoriesByType = elementOperation
-            .getAllCategories(NodeTypeEnum.ResourceNewCategory, false);
+                .getAllCategories(NodeTypeEnum.ResourceNewCategory, false);
         if (getResourceCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getResourceCategoriesByType.right().value());
             componentsUtils.auditGetCategoryHierarchy(user, ComponentTypeEnum.RESOURCE.getValue(), responseFormat);
@@ -718,7 +725,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         categories.setResourceCategories(getResourceCategoriesByType.left().value());
         // GET service categories
         Either<List<CategoryDefinition>, ActionStatus> getServiceCategoriesByType = elementOperation
-            .getAllCategories(NodeTypeEnum.ServiceNewCategory, false);
+                .getAllCategories(NodeTypeEnum.ServiceNewCategory, false);
         if (getServiceCategoriesByType.isRight()) {
             responseFormat = componentsUtils.getResponseFormat(getServiceCategoriesByType.right().value());
             componentsUtils.auditGetCategoryHierarchy(user, ComponentTypeEnum.SERVICE.getValue(), responseFormat);
@@ -786,12 +793,12 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Either<Boolean, ResponseFormat> validateUserRole(User user, ComponentTypeEnum componentTypeEnum) {
         String role = user.getRole();
         boolean validAdminAction =
-            role.equals(Role.ADMIN.name()) && (componentTypeEnum == ComponentTypeEnum.SERVICE || componentTypeEnum == ComponentTypeEnum.RESOURCE);
+                role.equals(Role.ADMIN.name()) && (componentTypeEnum == ComponentTypeEnum.SERVICE || componentTypeEnum == ComponentTypeEnum.RESOURCE);
         boolean validProductAction = role.equals(Role.PRODUCT_STRATEGIST.name()) && (componentTypeEnum == ComponentTypeEnum.PRODUCT);
         if (!(validAdminAction || validProductAction)) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
             log.debug("User not permitted to perform operation on category, userId = {}, role = {}, componentType = {}", user.getUserId(), role,
-                componentTypeEnum);
+                    componentTypeEnum);
             return Either.right(responseFormat);
         }
         return Either.left(true);
@@ -799,7 +806,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
     private Either<Boolean, ResponseFormat> validateComponentTypeForCategory(ComponentTypeEnum componentType, CategoryTypeEnum categoryType) {
         boolean validResourceAction = componentType == ComponentTypeEnum.RESOURCE && (categoryType == CategoryTypeEnum.CATEGORY
-            || categoryType == CategoryTypeEnum.SUBCATEGORY);
+                || categoryType == CategoryTypeEnum.SUBCATEGORY);
         boolean validServiceAction = componentType == ComponentTypeEnum.SERVICE && categoryType == CategoryTypeEnum.CATEGORY;
         boolean validProductAction = componentType == ComponentTypeEnum.PRODUCT; // can
 
@@ -827,7 +834,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             ResponseFormat responseFormat;
             if (actionStatus == ActionStatus.COMPONENT_CATEGORY_NOT_FOUND) {
                 responseFormat = componentsUtils
-                    .getResponseFormat(actionStatus, componentType.getValue().toLowerCase(), CategoryTypeEnum.CATEGORY.getValue(), "");
+                        .getResponseFormat(actionStatus, componentType.getValue().toLowerCase(), CategoryTypeEnum.CATEGORY.getValue(), "");
             } else {
                 responseFormat = componentsUtils.getResponseFormat(actionStatus);
             }
@@ -845,7 +852,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             ResponseFormat responseFormat;
             if (actionStatus == ActionStatus.COMPONENT_CATEGORY_NOT_FOUND) {
                 responseFormat = componentsUtils
-                    .getResponseFormat(actionStatus, componentType.getValue().toLowerCase(), CategoryTypeEnum.SUBCATEGORY.getValue(), "");
+                        .getResponseFormat(actionStatus, componentType.getValue().toLowerCase(), CategoryTypeEnum.SUBCATEGORY.getValue(), "");
             } else {
                 responseFormat = componentsUtils.getResponseFormat(actionStatus);
             }
@@ -903,7 +910,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(List<OriginTypeEnum> excludeTypes) {
         try {
             return toscaOperationFacade.getCatalogOrArchiveComponents(true, excludeTypes)
-                .bimap(this::groupByComponentType, err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
+                    .bimap(this::groupByComponentType, err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
         } finally {
             janusGraphDao.commit();
         }
@@ -911,7 +918,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
     private Map<String, List<CatalogComponent>> groupByComponentType(List<CatalogComponent> components) {
         Map<String, List<CatalogComponent>> map = components.stream()
-            .collect(Collectors.groupingBy(cmpt -> cmptTypeToString(cmpt.getComponentType())));
+                .collect(Collectors.groupingBy(cmpt -> cmptTypeToString(cmpt.getComponentType())));
         // fixed response for UI!!! UI need to receive always map!
         if (map == null) {
             map = new HashMap<>();
@@ -932,7 +939,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<List<? extends Component>, ResponseFormat> getFilteredCatalogComponents(String assetType, Map<FilterKeyEnum, String> filters,
+    public Either<List<? extends Component>, ResponseFormat> getFilteredCatalogComponents(String assetType, Map<FilterKeyEnum, Object> filters,
                                                                                           String query) {
         ComponentTypeEnum assetTypeEnum = AssetTypeEnum.convertToComponentTypeEnum(assetType);
         if (query != null) {
@@ -940,10 +947,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             if (invalidFilter.isPresent()) {
                 log.debug("getFilteredAssetList: invalid filter key");
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_FILTER_KEY, invalidFilter.get().getName(),
-                    FilterKeyEnum.getValidFiltersByAssetType(assetTypeEnum).toString()));
+                        FilterKeyEnum.getValidFiltersByAssetType(assetTypeEnum).toString()));
             }
         }
-        if (filters == null || filters.isEmpty()) {
+        if (MapUtils.isEmpty(filters)) {
             Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum, null, false);
             if (componentsList.isRight()) {
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentsList.right().value())));
@@ -955,53 +962,81 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (result.isRight()) {
             List<String> params = getErrorResponseParams(filters, assetTypeEnum);
             return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value()), params.get(0), params.get(1), params.get(2)));
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value()), params.get(0), params.get(1), params.get(2)));
         }
-        if (result.left().value().isEmpty()) {// no assets found for requested
-
-            // criteria
+        if (result.left().value().isEmpty()) { // no assets found for requested criteria
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.NO_ASSETS_FOUND, assetType, query));
         }
         return Either.left(result.left().value());
     }
 
-    private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType,
+    private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, Object> filters, ComponentTypeEnum assetType,
                                                                                   boolean inTransaction) {
         Either<List<Component>, StorageOperationStatus> assetResult = Either.left(new LinkedList<>());
         if (assetType == ComponentTypeEnum.RESOURCE) {
             assetResult = getFilteredResources(filters, inTransaction);
         } else if (assetType == ComponentTypeEnum.SERVICE) {
-            assetResult = getFilteredServices(filters, inTransaction);
+            assetResult = getFilteredServices(filters);
         }
         return assetResult;
     }
 
-    private <T extends Component> Either<List<T>, StorageOperationStatus> getFilteredServices(Map<FilterKeyEnum, String> filters,
-                                                                                              boolean inTransaction) {
-        Either<List<T>, StorageOperationStatus> components = null;
-        String categoryName = filters.get(FilterKeyEnum.CATEGORY);
-        String distributionStatus = filters.get(FilterKeyEnum.DISTRIBUTION_STATUS);
-        DistributionStatusEnum distEnum = DistributionStatusEnum.findState(distributionStatus);
-        if (distributionStatus != null && distEnum == null) {
-            filters.remove(FilterKeyEnum.CATEGORY);
-            return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
-        }
-        if (categoryName != null) { // primary filter
-            components = fetchByCategoryOrSubCategoryName(categoryName, NodeTypeEnum.ServiceNewCategory, NodeTypeEnum.Service, inTransaction, null);
-            if (components.isLeft() && distEnum != null) {// secondary filter
-                Predicate<T> statusFilter = p -> ((Service) p).getDistributionStatus() == distEnum;
-                return Either.left(components.left().value().stream().filter(statusFilter).collect(Collectors.toList()));
+    private <T extends Component> Either<List<T>, StorageOperationStatus> getFilteredServices(Map<FilterKeyEnum, Object> filters) {
+        final String distributionStatus = (String) filters.get(FilterKeyEnum.DISTRIBUTION_STATUS);
+        final DistributionStatusEnum distEnum;
+        if (StringUtils.isNotBlank(distributionStatus)) {
+            distEnum = DistributionStatusEnum.findState(distributionStatus);
+            if (distEnum == null) {
+                return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }
-            filters.remove(FilterKeyEnum.DISTRIBUTION_STATUS);
-            return components;
+        } else {
+            distEnum = null;
         }
-        Set<DistributionStatusEnum> distStatusSet = new HashSet<>();
-        distStatusSet.add(distEnum);
-        Either<List<Service>, StorageOperationStatus> servicesWithDistStatus = toscaOperationFacade.getServicesWithDistStatus(distStatusSet, null);
-        if (servicesWithDistStatus.isRight()) { // not found == empty list
+        Either<List<Service>, StorageOperationStatus> components = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE, null, false);
+        if (components.isRight()) { // not found == empty list
             return Either.left(new ArrayList<>());
         }
-        return Either.left((List<T>) servicesWithDistStatus.left().value());
+        final String categoryName = (String) filters.get(FilterKeyEnum.CATEGORY);
+        Predicate<Service> servPredicate = Component::isService;
+        if (StringUtils.isNotBlank(categoryName)) { // primary filter
+            servPredicate = servPredicate.and(
+                    p -> p.getCategories().parallelStream().map(CategoryDataDefinition::getName).collect(Collectors.toList()).contains(categoryName));
+        }
+        if (distEnum != null) {// secondary filter
+            servPredicate = servPredicate.and(p -> p.getDistributionStatus() == distEnum);
+        }
+        List<Service> serviceList = components.left().value().parallelStream().filter(servPredicate).collect(Collectors.toList());
+
+        final String version = (String) filters.get(FilterKeyEnum.VERSION);
+        if (StringUtils.isNotBlank(version)) {
+            serviceList = filterServicesWithVersion(serviceList, version);
+        }
+        final List<String> metadata = (List<String>) filters.get(FilterKeyEnum.METADATA);
+        if (CollectionUtils.isNotEmpty(metadata)) {
+            serviceList = filterServicesWithMetadata(serviceList, metadata);
+        }
+        return Either.left((List<T>) serviceList);
+    }
+
+    private List<Service> filterServicesWithMetadata(final List<Service> serviceList, final List<String> metadata) {
+        Predicate<Service> predicate = Component::isService;
+        final String regex = "[\\w\\.\\- ]";
+        for (final String keyValuePair : metadata) {
+            final Matcher matcher = Pattern.compile("(" + regex + "+)[:=](" + regex + "+)").matcher(keyValuePair);
+            if (matcher.find()) {
+                predicate = predicate.and(service -> matcher.group(2).equals(service.getCategorySpecificMetadata().get(matcher.group(1))));
+            }
+        }
+        return serviceList.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    private List<Service> filterServicesWithVersion(final List<Service> serviceList, final String version) {
+        String trim = version.trim();
+        final Optional<VersionFilterEnum> versionFilter = VersionFilterEnum.getFilter(trim);
+        if (versionFilter.isPresent()) {
+            return versionFilter.get().filter(serviceList, trim);
+        }
+        return serviceList;
     }
 
     public Either<List<? extends Component>, ResponseFormat> getCatalogComponentsByUuidAndAssetType(String assetType, String uuid) {
@@ -1027,7 +1062,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
         Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade
-            .getComponentListByUuid(uuid, additionalPropertiesToMatch);
+                .getComponentListByUuid(uuid, additionalPropertiesToMatch);
         if (componentsListByUuid.isRight()) {
             log.debug("getCatalogComponentsByUuidAndAssetType: " + assetTypeEnum.getValue() + " fetching failed");
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(componentsListByUuid.right().value(), assetTypeEnum);
@@ -1059,30 +1094,28 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     private Optional<NameValuePair> findInvalidFilter(String query, ComponentTypeEnum assetType) {
-        List<NameValuePair> params = URLEncodedUtils.parse(query, StandardCharsets.UTF_8);
-        List<String> validKeys = FilterKeyEnum.getValidFiltersByAssetType(assetType);
-        Predicate<NameValuePair> noMatch = p -> !validKeys.contains(p.getName());
-        return params.stream().filter(noMatch).findAny();
+        return URLEncodedUtils.parse(query, StandardCharsets.UTF_8)
+                .stream().filter(p -> !FilterKeyEnum.getValidFiltersByAssetType(assetType).contains(p.getName())).findAny();
     }
 
-    private List<String> getErrorResponseParams(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType) {
+    private List<String> getErrorResponseParams(Map<FilterKeyEnum, Object> filters, ComponentTypeEnum assetType) {
         List<String> params = new ArrayList<>();
         if (1 == filters.size()) {
             params.add(assetType.getValue().toLowerCase());
             params.add(filters.keySet().iterator().next().getName());
-            params.add(filters.values().iterator().next());
+            params.add((String) filters.values().iterator().next());
         } else {
             params.add(assetType.getValue());
-            params.add(filters.get(FilterKeyEnum.SUB_CATEGORY));
-            params.add(filters.get(FilterKeyEnum.CATEGORY));
+            params.add((String) filters.get(FilterKeyEnum.SUB_CATEGORY));
+            params.add((String) filters.get(FilterKeyEnum.CATEGORY));
         }
         return params;
     }
 
-    public Either<List<Component>, StorageOperationStatus> getFilteredResources(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
-        String subCategoryName = filters.get(FilterKeyEnum.SUB_CATEGORY);
-        String categoryName = filters.get(FilterKeyEnum.CATEGORY);
-        ResourceTypeEnum resourceType = ResourceTypeEnum.getType(filters.get(FilterKeyEnum.RESOURCE_TYPE));
+    public Either<List<Component>, StorageOperationStatus> getFilteredResources(Map<FilterKeyEnum, Object> filters, boolean inTransaction) {
+        String subCategoryName = (String) filters.get(FilterKeyEnum.SUB_CATEGORY);
+        String categoryName = (String) filters.get(FilterKeyEnum.CATEGORY);
+        ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) filters.get(FilterKeyEnum.RESOURCE_TYPE));
         Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> subcategories = null;
         Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategoryData;
         if (categoryName != null) {
@@ -1095,31 +1128,31 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (subCategoryName != null) { // primary filter
             if (categoryName != null) {
                 subCategoryData = validateCategoryHierarcy(subcategories.left().value(), subCategoryName);
-                if (!subCategoryData.isPresent()) {
+                if (subCategoryData.isEmpty()) {
                     return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
                 }
                 return fetchByCategoryOrSubCategoryUid(subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.Resource, inTransaction,
-                    resourceType);
+                        resourceType);
             }
             return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, NodeTypeEnum.Resource, inTransaction,
-                resourceType);
+                    resourceType);
         }
         if (subcategories != null) {
             return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
         }
-        return fetchComponentMetaDataByResourceType(filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
+        return fetchComponentMetaDataByResourceType((String) filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
     }
 
     private Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> getAllSubCategories(String categoryName) {
         Either<CategoryData, StorageOperationStatus> categoryResult = elementOperation
-            .getNewCategoryData(categoryName, NodeTypeEnum.ResourceNewCategory, CategoryData.class);
+                .getNewCategoryData(categoryName, NodeTypeEnum.ResourceNewCategory, CategoryData.class);
         if (categoryResult.isRight()) {
             return Either.right(categoryResult.right().value());
         }
         CategoryData categoryData = categoryResult.left().value();
         Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
-            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), categoryData.getUniqueId(),
-                GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
+                .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), categoryData.getUniqueId(),
+                        GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
         if (childrenNodes.isRight()) {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenNodes.right().value()));
         }
@@ -1129,7 +1162,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private Optional<ImmutablePair<SubCategoryData, GraphEdge>> validateCategoryHierarcy(List<ImmutablePair<SubCategoryData, GraphEdge>> childNodes,
                                                                                          String subCategoryName) {
         Predicate<ImmutablePair<SubCategoryData, GraphEdge>> matchName = p -> p.getLeft().getSubCategoryDataDefinition().getName()
-            .equals(subCategoryName);
+                .equals(subCategoryName);
         return childNodes.stream().filter(matchName).findAny();
     }
 
@@ -1153,10 +1186,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
                                                                                                              ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
         try {
-            Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
+            Class<? extends GraphNode> categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
             Map<String, Object> props = new HashMap<>();
             props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
-            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao.getByCriteria(categoryType, props, categoryClazz);
+            Either<List<GraphNode>, JanusGraphOperationStatus> getCategory = janusGraphGenericDao.getByCriteria(categoryType, props,
+                    (Class<GraphNode>) categoryClazz);
             if (getCategory.isRight()) {
                 return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
             }
@@ -1190,15 +1224,15 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
         GraphVertex categoryVertex = categoryVertexById.left().value();
         Either<List<GraphVertex>, JanusGraphOperationStatus> componentsVertices = janusGraphDao
-            .getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata);
+                .getParentVertices(categoryVertex, EdgeLabelEnum.CATEGORY, JsonParseFlagEnum.ParseMetadata);
         if (componentsVertices.isRight()) {
             JanusGraphOperationStatus status = componentsVertices.right().value();
             log.debug("#collectComponents Failed to get components vertices of category {}, status is {}.", categoryVertex, status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         List<ComponentMetadataDataDefinition> componentsMetadataDataDefinition = componentsVertices.left().value().stream().filter(Objects::nonNull)
-            .filter(componentsVertex -> Objects.nonNull(componentsVertex.getType())).map(ModelConverter::convertToComponentMetadataDataDefinition)
-            .collect(Collectors.toList());
+                .filter(componentsVertex -> Objects.nonNull(componentsVertex.getType())).map(ModelConverter::convertToComponentMetadataDataDefinition)
+                .collect(Collectors.toList());
         for (ComponentMetadataDataDefinition component : componentsMetadataDataDefinition) {
             boolean isHighest = isTrue(component.isHighestVersion());
             boolean isMatchingResourceType = isMatchingByResourceType(neededType, resourceType, component);
@@ -1206,7 +1240,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             boolean isArchived = isTrue(component.isArchived());
             if (isHighest && isMatchingResourceType && !isDeleted && !isArchived) {
                 Either<T, StorageOperationStatus> result = toscaOperationFacade
-                    .getToscaElement(component.getUniqueId(), JsonParseFlagEnum.ParseMetadata);
+                        .getToscaElement(component.getUniqueId(), JsonParseFlagEnum.ParseMetadata);
                 if (result.isRight()) {
                     return Either.right(result.right().value());
                 }
@@ -1232,11 +1266,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends Component> Either<List<T>, StorageOperationStatus> fetchByMainCategory(
-        List<ImmutablePair<SubCategoryData, GraphEdge>> subcategories, boolean inTransaction, ResourceTypeEnum resourceType) {
+            List<ImmutablePair<SubCategoryData, GraphEdge>> subcategories, boolean inTransaction, ResourceTypeEnum resourceType) {
         List<T> components = new ArrayList<>();
         for (ImmutablePair<SubCategoryData, GraphEdge> subCategory : subcategories) {
             Either<List<T>, StorageOperationStatus> fetched = fetchByCategoryOrSubCategoryUid(subCategory.getLeft().getUniqueId(),
-                NodeTypeEnum.Resource, inTransaction, resourceType);
+                    NodeTypeEnum.Resource, inTransaction, resourceType);
             if (fetched.isRight()) {
                 continue;
             }
@@ -1249,12 +1283,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         List<Component> components = null;
         StorageOperationStatus status;
         Wrapper<StorageOperationStatus> statusWrapper = new Wrapper<>();
-        Either<List<Component>, StorageOperationStatus> result;
         try {
             ComponentParametersView fetchUsersAndCategoriesFilter = new ComponentParametersView(
-                Arrays.asList(ComponentFieldsEnum.USERS.getValue(), ComponentFieldsEnum.CATEGORIES.getValue()));
+                    Arrays.asList(ComponentFieldsEnum.USERS.getValue(), ComponentFieldsEnum.CATEGORIES.getValue()));
             Either<List<Component>, StorageOperationStatus> getResources = toscaOperationFacade
-                .fetchMetaDataByResourceType(resourceType, fetchUsersAndCategoriesFilter);
+                    .fetchMetaDataByResourceType(resourceType, fetchUsersAndCategoriesFilter);
             if (getResources.isRight()) {
                 status = getResources.right().value();
                 if (status != StorageOperationStatus.NOT_FOUND) {
@@ -1265,12 +1298,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             } else {
                 components = getResources.left().value();
             }
-            if (!statusWrapper.isEmpty()) {
-                result = Either.right(statusWrapper.getInnerElement());
+            if (statusWrapper.isEmpty()) {
+                return Either.left(components);
             } else {
-                result = Either.left(components);
+                return Either.right(statusWrapper.getInnerElement());
             }
-            return result;
         } finally {
             if (!inTransaction) {
                 janusGraphDao.commit();
@@ -1308,8 +1340,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
      * Fetches default baseType from the template.
      *
      * @param categoryName the category name
-     *
-     *
      * @return defaultBaseType mapped to the corresponding category name.
      */
     public String getDefaultBaseType(final String categoryName) {
