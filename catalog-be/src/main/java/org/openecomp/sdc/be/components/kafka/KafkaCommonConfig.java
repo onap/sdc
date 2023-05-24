@@ -27,13 +27,12 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class KafkaCommonConfig {
-
-    private static final Logger log = LoggerFactory.getLogger(KafkaCommonConfig.class.getName());
 
     private final DistributionEngineConfiguration deConfiguration;
 
@@ -68,12 +67,13 @@ public class KafkaCommonConfig {
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, deConfiguration.getKafkaBootStrapServers());
 
         if("SSL".equals(securityProtocolConfig)) {
-            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, deConfiguration.getSSLConfig().getKeystorePath());
-            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getKeystorePass());
-            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getKeyManagerPassword());
+            final JettySSLUtils.JettySslConfig sslConfig = JettySSLUtils.getSSLConfig();
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, sslConfig.getKeystorePath());
+            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, sslConfig.getKeystorePass());
+            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, sslConfig.getKeyManagerPassword());
             props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "");
-            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, deConfiguration.getSSLConfig().getTruststorePath());
-            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, deConfiguration.getSSLConfig().getTruststorePass());
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, sslConfig.getTruststorePath());
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, sslConfig.getTruststorePass());
         } else {
             props.put(SaslConfigs.SASL_JAAS_CONFIG, getKafkaSaslJaasConfig());
             props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-512");

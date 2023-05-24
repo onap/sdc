@@ -21,6 +21,7 @@ package org.openecomp.sdc.fe.listen;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.openecomp.sdc.common.api.Constants;
@@ -43,22 +44,22 @@ public class FEAppContextListener extends AppContextListener implements ServletC
         super.contextInitialized(context);
         ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
         log.debug("loading configuration from configDir:{} appName:{}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
-        context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
-        PluginStatusBL pbl = new PluginStatusBL();
-        context.getServletContext().setAttribute(Constants.PLUGIN_BL_COMPONENT, pbl);
+        final ServletContext servletContext = context.getServletContext();
+        servletContext.setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
+        servletContext.setAttribute(Constants.PLUGIN_BL_COMPONENT, new PluginStatusBL());
         // Health Check service
-        HealthCheckService hcs = new HealthCheckService(context.getServletContext());
+        HealthCheckService hcs = new HealthCheckService(servletContext);
         hcs.start(configurationManager.getConfiguration().getHealthCheckIntervalInSeconds(HEALTH_CHECHK_INTERVALE));
-        context.getServletContext().setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
+        servletContext.setAttribute(Constants.HEALTH_CHECK_SERVICE_ATTR, hcs);
         // Monitoring service
-        FeMonitoringService fms = new FeMonitoringService(context.getServletContext());
+        FeMonitoringService fms = new FeMonitoringService(servletContext);
         fms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(PROBE_INTERVALE));
         if (configurationManager.getConfiguration() == null) {
             log.debug("ERROR: configuration was not properly loaded");
             return;
         }
         ExecutorService executorPool = Executors.newFixedThreadPool(configurationManager.getConfiguration().getThreadpoolSize());
-        context.getServletContext().setAttribute(Constants.THREAD_EXECUTOR_ATTR, executorPool);
+        servletContext.setAttribute(Constants.THREAD_EXECUTOR_ATTR, executorPool);
         log.debug("After executing {}", this.getClass());
     }
 

@@ -11,13 +11,15 @@ cookbook_file "#{ENV['JETTY_BASE']}/etc/org.onap.sdc.p12" do
    source "org.onap.sdc.p12"
    owner "#{ENV['JETTY_USER']}"
    owner "#{ENV['JETTY_GROUP']}"
-   mode 0755
+   mode 0400
+   not_if { ::File.exist?("#{ENV['JETTY_BASE']}/etc/org.onap.sdc.p12") }
 end
 
 cookbook_file "#{ENV['JETTY_BASE']}/etc/org.onap.sdc.trust.jks" do
    source "org.onap.sdc.trust.jks"
    owner "#{ENV['JETTY_USER']}"
    owner "#{ENV['JETTY_GROUP']}"
-   mode 0755
+   mode 0400
+   not_if { ::File.exist?("#{ENV['JETTY_BASE']}/etc/org.onap.sdc.trust.jks") }
 end
 

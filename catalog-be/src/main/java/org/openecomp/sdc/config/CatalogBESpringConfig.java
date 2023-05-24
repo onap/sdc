@@ -119,7 +119,7 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public CloseableHttpClient httpClientConnectionManager() {
+    public CloseableHttpClient httpClientConnectionManager() throws Exception {
         HttpClientFactory httpClientFactory = new HttpClientFactory();
         return httpClientFactory.createHttpClient();
     }
@@ -140,7 +140,7 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public PortalClient portalClient() throws CipherUtilException {
+    public PortalClient portalClient() throws Exception {
         return new PortalClient(httpClientConnectionManager(), portalConfiguration());
     }
 

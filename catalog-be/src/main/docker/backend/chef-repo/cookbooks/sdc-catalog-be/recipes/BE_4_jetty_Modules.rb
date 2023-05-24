@@ -6,7 +6,7 @@ else
 end
 
 execute "create-jetty-modules" do
-  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,setuid,rewrite"
+  command "java -jar #{ENV['JETTY_HOME']}/start.jar --add-to-start=deploy && java -jar #{ENV['JETTY_HOME']}/start.jar --create-startd --add-to-start=http,https,setuid,rewrite,ssl-reload"
   cwd "#{ENV['JETTY_BASE']}"
   action :run
 end
@@ -32,7 +32,6 @@ template "jetty-rewrite" do
   mode "0644"
 end
 
-
 template "https-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/https.ini"
   source "https-ini.erb"
@@ -41,7 +40,6 @@ template "https-ini" do
   mode "0755"
   variables :https_port => "#{node['BE'][:https_port]}"
 end
-
 
 template "ssl-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/ssl.ini"

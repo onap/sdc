@@ -21,10 +21,12 @@ package org.openecomp.sdc.common.http.config;
 
 import fj.data.Either;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.security.SecurityUtil;
 
 @EqualsAndHashCode
+@Getter
 public class ClientCertificate {
 
     private String keyStore;
@@ -52,17 +54,9 @@ public class ClientCertificate {
         }
     }
 
-    public String getKeyStore() {
-        return keyStore;
-    }
-
     public void setKeyStore(String keyStore) {
         validate(keyStore);
         this.keyStore = keyStore;
-    }
-
-    public String getKeyStorePassword() {
-        return keyStorePassword;
     }
 
     public void setKeyStorePassword(String keyStorePassword) {
@@ -80,7 +74,7 @@ public class ClientCertificate {
 
     private void validate(String str) {
         if (StringUtils.isEmpty(str)) {
-            throw new IllegalArgumentException("ClientCertificate keystore and/or kestorePassword cannot be empty");
+            throw new IllegalArgumentException("ClientCertificate keyStore and/or keyStorePassword cannot be empty");
         }
     }
 }

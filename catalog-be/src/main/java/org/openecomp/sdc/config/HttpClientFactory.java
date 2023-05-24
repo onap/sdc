@@ -20,7 +20,6 @@
 package org.openecomp.sdc.config;
 
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.UserTokenHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -30,14 +29,17 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContexts;
-import org.openecomp.sdc.common.api.Constants;
+import org.onap.config.api.JettySSLUtils;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.http.client.api.HttpClientConfigImmutable;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import static org.openecomp.sdc.common.api.Constants.HTTP;
+import static org.openecomp.sdc.common.api.Constants.HTTPS;
 
 public class HttpClientFactory {
 
@@ -45,44 +47,54 @@ public class HttpClientFactory {
     private static final int DEFAULT_MAX_CONNECTION_PER_ROUTE = 5;
     private static final int VALIDATE_CONNECTION_AFTER_INACTIVITY_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
-    private static final Logger log = Logger.getLogger(HttpClientFactory.class);
-    private static final UserTokenHandler userTokenHandler = context -> null;
 
-    private HttpClientConnectionManager createConnectionManager() {
-        SSLConnectionSocketFactory sslsf = getSslConnectionSocketFactory();
-        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register(Constants.HTTP, PlainConnectionSocketFactory.getSocketFactory()).register(Constants.HTTPS, sslsf).build();
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
+    private HttpClientConnectionManager createConnectionManager() throws Exception {
+        final SSLConnectionSocketFactory sslConnectionSocketFactory = getSslConnectionSocketFactory();
+        final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register(HTTP, PlainConnectionSocketFactory.getSocketFactory())
+                .register(HTTPS, sslConnectionSocketFactory).build();
+        final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
         manager.setMaxTotal(DEFAULT_CONNECTION_POOL_SIZE);
         manager.setDefaultMaxPerRoute(DEFAULT_MAX_CONNECTION_PER_ROUTE);
         manager.setValidateAfterInactivity(VALIDATE_CONNECTION_AFTER_INACTIVITY_MS);
-        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(CONNECT_TIMEOUT_MS).build();
-        manager.setDefaultSocketConfig(socketConfig);
+        manager.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(CONNECT_TIMEOUT_MS).build());
         return manager;
     }
 
-    private SSLConnectionSocketFactory getSslConnectionSocketFactory() {
-        return new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
+    private SSLConnectionSocketFactory getSslConnectionSocketFactory() throws Exception {
+        return new SSLConnectionSocketFactory(JettySSLUtils.getSslContext());
     }
 
     /*
     The difference between this client factory and the one in common api,
     is that this one returns an apache httpclient instance, rather than a custom created custom.
     */
-    public CloseableHttpClient createHttpClient() {
-        int connectTimeoutMs = 5000;
-        int readTimeoutMs = 10000;
-        HttpClientConnectionManager connManager = createConnectionManager();
-        HttpClientConfig httpClientConfig = new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs));
-        HttpClientConfigImmutable immutableHttpClientConfig = new HttpClientConfigImmutable(httpClientConfig);
-        RequestConfig requestConfig = createClientTimeoutConfiguration(immutableHttpClientConfig);
-        return HttpClients.custom().setConnectionManager(connManager).setDefaultRequestConfig(requestConfig).setUserTokenHandler(userTokenHandler)
-            .setRetryHandler(resolveRetryHandler(immutableHttpClientConfig)).build();
+    public CloseableHttpClient createHttpClient() throws Exception {
+        final int connectTimeoutMs = 5000;
+        final int readTimeoutMs = 10000;
+        final HttpClientConfig httpClientConfig = new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs));
+        final HttpClientConfigImmutable immutableHttpClientConfig = new HttpClientConfigImmutable(httpClientConfig);
+        final RequestConfig requestConfig = createClientTimeoutConfiguration(immutableHttpClientConfig);
+        final HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setConnectionManager(createConnectionManager())
+                .setDefaultRequestConfig(requestConfig);
+        final HttpRequestRetryHandler retryHandler = resolveRetryHandler(immutableHttpClientConfig);
+        if (retryHandler != null) {
+            httpClientBuilder.setRetryHandler(retryHandler);
+        }
+        if (HTTPS.equals(ConfigurationManager.getConfigurationManager().getConfiguration().getBeProtocol())) {
+            httpClientBuilder.setSSLContext(JettySSLUtils.getSslContext());
+        }
+
+        return httpClientBuilder.build();
     }
 
-    private RequestConfig createClientTimeoutConfiguration(HttpClientConfigImmutable config) {
-        return RequestConfig.custom().setConnectTimeout(config.getConnectTimeoutMs()).setSocketTimeout(config.getReadTimeoutMs())
-            .setConnectionRequestTimeout(config.getConnectPoolTimeoutMs()).build();
+    private RequestConfig createClientTimeoutConfiguration(final HttpClientConfigImmutable config) {
+        return RequestConfig.custom()
+                .setConnectTimeout(config.getConnectTimeoutMs())
+                .setSocketTimeout(config.getReadTimeoutMs())
+                .setConnectionRequestTimeout(config.getConnectPoolTimeoutMs())
+                .build();
     }
 
     private HttpRequestRetryHandler resolveRetryHandler(HttpClientConfigImmutable config) {

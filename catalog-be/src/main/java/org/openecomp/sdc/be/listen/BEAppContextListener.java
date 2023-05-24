@@ -19,13 +19,6 @@
  */
 package org.openecomp.sdc.be.listen;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.monitoring.BeMonitoringService;
@@ -33,6 +26,14 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.listener.AppContextListener;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
@@ -44,12 +45,13 @@ public class BEAppContextListener extends AppContextListener implements ServletC
         super.contextInitialized(context);
         ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
         log.debug("loading configuration from configDir: {} appName: {}", ExternalConfiguration.getConfigDir(), ExternalConfiguration.getAppName());
-        context.getServletContext().setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
+        final ServletContext servletContext = context.getServletContext();
+        servletContext.setAttribute(Constants.CONFIGURATION_MANAGER_ATTR, configurationManager);
         WebAppContextWrapper webAppContextWrapper = new WebAppContextWrapper();
-        context.getServletContext().setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
-        context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
+        servletContext.setAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR, webAppContextWrapper);
+        servletContext.setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
         // Monitoring service
-        BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
+        BeMonitoringService bms = new BeMonitoringService(servletContext);
         bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
         log.debug("After executing {}", this.getClass());
     }

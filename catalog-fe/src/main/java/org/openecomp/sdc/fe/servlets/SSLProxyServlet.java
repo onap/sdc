@@ -43,7 +43,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
     protected HttpClient createHttpClient() throws ServletException {
         Configuration config = ((ConfigurationManager) getServletConfig().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
                 .getConfiguration();
-        boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
+        boolean isSecureClient = BeProtocol.HTTPS.getProtocolName().equals(config.getBeProtocol());
         HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
         int requestTimeout = config.getRequestTimeout() * 1000;
         if (requestTimeout == 0) {

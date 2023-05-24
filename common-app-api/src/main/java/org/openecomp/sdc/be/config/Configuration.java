@@ -20,14 +20,6 @@
 
 package org.openecomp.sdc.be.config;
 
-import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,6 +27,16 @@ import lombok.ToString;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.openecomp.sdc.common.api.BasicConfiguration;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
+import static org.openecomp.sdc.common.api.Constants.HTTP;
 
 @Getter
 @Setter
@@ -65,7 +67,7 @@ public class Configuration extends BasicConfiguration {
     /**
      * backend protocol. http | https
      */
-    private String beProtocol = "http";
+    private String beProtocol = HTTP;
     private Date released;
     private String version = "1111";
     private String toscaConformanceLevel = "3.0";
@@ -180,23 +182,23 @@ public class Configuration extends BasicConfiguration {
     @Override
     public String toString() {
         return new StringBuilder().append(format("backend host: %s%n", beFqdn)).append(format("backend http port: %s%n", beHttpPort))
-            .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-            .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
-            .append(format("Supported protocols: %s%n", protocols)).append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
-            .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile)).append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
-            .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
-            .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
-            .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
-            .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
-            .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
-            .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
-            .append(format("Supported artifacts types: %s%n", artifacts)).append(format("Supported license types: %s%n", licenseTypes))
-            .append(format("Additional information Maximum number of preoperties: %s%n", additionalInformationMaxNumberOfKeys))
-            .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
-            .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
-            .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
-            .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
-            .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter)).append(format("onboarding: %s%n", onboarding)).toString();
+                .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
+                .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
+                .append(format("Supported protocols: %s%n", protocols)).append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
+                .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile)).append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
+                .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
+                .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
+                .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
+                .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
+                .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
+                .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
+                .append(format("Supported artifacts types: %s%n", artifacts)).append(format("Supported license types: %s%n", licenseTypes))
+                .append(format("Additional information Maximum number of preoperties: %s%n", additionalInformationMaxNumberOfKeys))
+                .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
+                .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
+                .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
+                .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
+                .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter)).append(format("onboarding: %s%n", onboarding)).toString();
     }
 
     public List<String> getGlobalCsarImports() {
@@ -352,7 +354,7 @@ public class Configuration extends BasicConfiguration {
     @ToString
     public static class OnboardingConfig {
 
-        private String protocol = "http";
+        private String protocol = HTTP;
         private String host;
         private Integer port;
         private String getLatestVspPackageUri;
@@ -380,7 +382,7 @@ public class Configuration extends BasicConfiguration {
     @ToString(onlyExplicitlyIncluded = true)
     public static class EcompPortalConfig {
 
-        private String protocol = "https";
+        private String protocol = HTTP;
         private String host;
         private Integer port;
         private String healthCheckUri;

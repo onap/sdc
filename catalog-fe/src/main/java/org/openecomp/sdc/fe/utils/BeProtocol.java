@@ -19,15 +19,13 @@
  */
 package org.openecomp.sdc.fe.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum BeProtocol {
-    HTTP("http"), SSL("ssl");
-    private String protocolName;
+    HTTP("http"), HTTPS("https");
+    private final String protocolName;
 
-    BeProtocol(String protocolName) {
-        this.protocolName = protocolName;
-    }
-
-    public String getProtocolName() {
-        return protocolName;
-    }
-};
+}

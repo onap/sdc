@@ -19,14 +19,14 @@
  */
 package org.openecomp.sdc.be.config;
 
+import org.openecomp.sdc.common.api.BasicConfiguration;
+import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.onap.config.api.JettySSLUtils;
-import org.openecomp.sdc.common.api.BasicConfiguration;
-import org.openecomp.sdc.common.http.config.ExternalServiceConfig;
 
 public class DistributionEngineConfiguration extends BasicConfiguration {
 
@@ -393,7 +393,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         @Override
         public String toString() {
             return "DistributionStatusTopicConfig [pollingIntervalSec=" + pollingIntervalSec + ", fetchTimeSec=" + fetchTimeSec + ", consumerGroup="
-                + consumerGroup + ", consumerId=" + consumerId + "]";
+                    + consumerGroup + ", consumerId=" + consumerId + "]";
         }
     }
 
@@ -430,7 +430,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         @Override
         public String toString() {
             return "DistributionNotificationTopicConfig [maxWaitingAfterSendingSeconds=" + maxWaitingAfterSendingSeconds + ", maxThreadPoolSize="
-                + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
+                    + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
         }
     }
 
@@ -461,7 +461,4 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         }
     }
 
-    public JettySSLUtils.JettySslConfig getSSLConfig() {
-        return JettySSLUtils.getSSLConfig();
-    }
 }

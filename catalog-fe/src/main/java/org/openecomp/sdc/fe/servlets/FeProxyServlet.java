@@ -23,7 +23,6 @@ import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.http.HttpHeader;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -44,6 +43,7 @@ import java.net.URL;
 import java.util.Base64;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class FeProxyServlet extends SSLProxyServlet {
 
@@ -62,7 +62,6 @@ public class FeProxyServlet extends SSLProxyServlet {
     private static final String ARCHIVE_PATH_IDENTIFIER = String.format("%s/archive/", CATALOG_REQUEST_IDENTIFIER);
     private static final String HOME_REQUEST_IDENTIFIER = "/v1/followed";
     private static Logger log = Logger.getLogger(FeProxyServlet.class.getName());
-    private static String msUrl;
 
     @Override
     protected String rewriteTarget(HttpServletRequest request) {
@@ -112,19 +111,9 @@ public class FeProxyServlet extends SSLProxyServlet {
         inHttpRequest(httpRequest);
     }
 
-    private void logFeResponse(HttpServletRequest request, Response proxyResponse) {
-        LogHandler.logFeResponse(request);
-        outHttpResponse(proxyResponse);
-    }
-
     // Extracted for purpose of clear method name, for logback %M parameter
     private void inHttpRequest(HttpServletRequest httpRequest) {
         log.info("{} {} {}", httpRequest.getMethod(), httpRequest.getRequestURI(), httpRequest.getProtocol());
-    }
-
-    // Extracted for purpose of clear method name, for logback %M parameter
-    private void outHttpResponse(Response proxyResponse) {
-        log.info("SC=\"{}\"", proxyResponse.getStatus());
     }
 
     private String getModifiedUrl(Configuration config, PluginsConfiguration pluginConf, String uri, String queryString)
@@ -146,7 +135,7 @@ public class FeProxyServlet extends SSLProxyServlet {
             uri = uri.replace(SDC1_FE_PROXY + DCAED_CONTEXT, DCAED_CONTEXT);
             protocol = config.getBeProtocol();
             host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+            if (BeProtocol.HTTP.getProtocolName().equals(protocol)) {
                 port = config.getBeHttpPort().toString();
             } else {
                 port = config.getBeSslPort().toString();
@@ -165,7 +154,7 @@ public class FeProxyServlet extends SSLProxyServlet {
             uri = uri.replace(SDC1_FE_PROXY, "/sdc2");
             protocol = config.getBeProtocol();
             host = config.getBeHost();
-            if (config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName())) {
+            if (BeProtocol.HTTP.getProtocolName().equals(protocol)) {
                 port = config.getBeHttpPort().toString();
             } else {
                 port = config.getBeSslPort().toString();
@@ -197,23 +186,13 @@ public class FeProxyServlet extends SSLProxyServlet {
     }
 
     private boolean isMsToggleOn(Configuration config) {
-        boolean toggleOn = true;
         final CatalogFacadeMsConfig catalogFacadeMs = config.getCatalogFacadeMs();
-        if (catalogFacadeMs == null) {
-            toggleOn = false;
-            ;
-        } else if (isEmpty(catalogFacadeMs.getHealthCheckUri())) {
-            toggleOn = false;
-        } else if (isEmpty(catalogFacadeMs.getHost())) {
-            toggleOn = false;
-        } else if (isEmpty(catalogFacadeMs.getPath())) {
-            toggleOn = false;
-        } else if (isEmpty(catalogFacadeMs.getProtocol())) {
-            toggleOn = false;
-        } else if (catalogFacadeMs.getPort() == null) {
-            toggleOn = false;
-        }
-        return toggleOn;
+        return catalogFacadeMs != null
+                && isNotEmpty(catalogFacadeMs.getHealthCheckUri())
+                && isNotEmpty(catalogFacadeMs.getHost())
+                && isNotEmpty(catalogFacadeMs.getPath())
+                && isNotEmpty(catalogFacadeMs.getProtocol())
+                && catalogFacadeMs.getPort() != null;
     }
 
     private String handleMsToggleOffRedirect(HttpServletRequest request, Configuration config) throws MalformedURLException {
@@ -262,15 +241,12 @@ public class FeProxyServlet extends SSLProxyServlet {
     }
 
     private String handleMsToggleOnRedirect(HttpServletRequest request, Configuration config) {
-        String currentUrl = request.getRequestURL().toString();
-        if (StringUtils.isEmpty(msUrl)) {
-            // do that only once
-            msUrl = String.format(MS_URL, config.getCatalogFacadeMs().getProtocol(), config.getCatalogFacadeMs().getHost(),
-                    config.getCatalogFacadeMs().getPort());
-        }
+        final String msUrl =
+                String.format(MS_URL, config.getCatalogFacadeMs().getProtocol(), config.getCatalogFacadeMs().getHost(), config.getCatalogFacadeMs().getPort());
         StringBuilder url;
         String queryString;
-        String msPath = config.getCatalogFacadeMs().getPath();
+        final String msPath = config.getCatalogFacadeMs().getPath();
+        final String currentUrl = request.getRequestURL().toString();
         if (currentUrl.endsWith(ARCHIVE_PATH_IDENTIFIER)) {
             url = new StringBuilder(msUrl + msPath + CATALOG_REQUEST_IDENTIFIER);
             queryString = "arc=true";

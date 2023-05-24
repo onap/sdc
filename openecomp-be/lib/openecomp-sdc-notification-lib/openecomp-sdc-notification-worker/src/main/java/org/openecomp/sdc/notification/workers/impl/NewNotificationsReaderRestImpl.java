@@ -46,8 +46,8 @@ public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
     private static final String URL = "http://%s:%d/onboarding-api/v1.0/notifications/worker?";
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(NewNotificationsReaderRestImpl.class);
-    private static String beHost;
-    private static int bePort;
+    private final String beHost;
+    private final int bePort;
 
     public NewNotificationsReaderRestImpl() {
         NotificationConfigurationManager cm = NotificationConfigurationManager.getInstance();

@@ -34,14 +34,13 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-
 public class DistributionEngineConfigurationTest {
 
 	@Test
 	public void validateBean() {
 		assertThat(DistributionEngineConfiguration.class, allOf(
 				hasValidBeanConstructor(),
-				hasValidGettersAndSettersExcluding("environments", "SSLConfig")
+				hasValidGettersAndSettersExcluding("environments")
 		));
 	}
 
@@ -121,7 +120,7 @@ public class DistributionEngineConfigurationTest {
 
 		List<String> response = distributionEngineConfiguration.getEnvironments();
 
-		assertEquals(response.size(), 1);
-		assertEquals(response.get(0), testEnvironment);
+		assertEquals(1, response.size());
+		assertEquals(testEnvironment, response.get(0));
 	}
 }
