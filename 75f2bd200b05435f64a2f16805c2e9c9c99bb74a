@@ -45,6 +45,29 @@
       "revId": "75f2bd200b05435f64a2f16805c2e9c9c99bb74a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9230992f_0402d7ec",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-24T13:49:55Z",
+      "side": 1,
+      "message": "merge L85,86",
+      "range": {
+        "startLine": 85,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 58
+      },
+      "revId": "75f2bd200b05435f64a2f16805c2e9c9c99bb74a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
