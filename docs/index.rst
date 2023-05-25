@@ -25,3 +25,4 @@ SDC Documentation
    dcaedesigner.rst
    workflow.rst
    sdc-helm-validator.rst
+   useradministration.rst
