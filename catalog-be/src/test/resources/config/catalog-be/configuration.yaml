@@ -86,7 +86,7 @@ basicAuth:
   enabled: false
   userName: test
   userPass: test
-  excludedUrls:
+  excludedUrls: '/test1'
 
 cassandraConfig:
     cassandraHosts: ['localhost']
