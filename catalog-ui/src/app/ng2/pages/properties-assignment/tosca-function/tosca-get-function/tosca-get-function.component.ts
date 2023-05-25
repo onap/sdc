@@ -63,6 +63,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     dropdownValuesLabel: string;
     dropDownErrorMsg: string;
     indexListValues:Array<ToscaIndexObject>;
+    parentListTypeFlag : boolean;
 
     private isInitialized: boolean = false;
     private componentMetadata: ComponentMetadata;
@@ -77,6 +78,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.componentMetadata = this.workspaceService.metadata;
         this.indexListValues = [];
+        if (this.property != null) {
+            this.parentListTypeFlag = (this.property.type != PROPERTY_TYPES.LIST && (!this.isComplexType(this.property.type) || (this.isComplexType(this.property.type) 
+                                    && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty && this.property.input.type != PROPERTY_TYPES.LIST)));
+        }
         this.formGroup.valueChanges.subscribe(() => {
             this.formValidation();
         });
@@ -452,8 +457,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         if (this.property.type === PROPERTY_TYPES.ANY) {
             return true;
         }
-        let validPropertyType = (this.property.type != PROPERTY_TYPES.LIST && property.type === PROPERTY_TYPES.LIST) ? property.schema.property.type : property.type;
-        if (this.property.type != PROPERTY_TYPES.LIST && property.type === PROPERTY_TYPES.LIST && this.isComplexType(validPropertyType)) {
+        let validPropertyType = (this.parentListTypeFlag && property.type === PROPERTY_TYPES.LIST) ? property.schema.property.type : property.type;
+        if (this.parentListTypeFlag && property.type === PROPERTY_TYPES.LIST && this.isComplexType(validPropertyType)) {
             let returnFlag : boolean = false;
             const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, validPropertyType);
             if (dataTypeFound && dataTypeFound.properties) {
@@ -555,7 +560,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         this.indexListValues = [];
         let subPropertyDropdownList : Array<PropertyDropdownValue> = [];
         const selectedProperty: PropertyDropdownValue = this.selectedProperty.value;
-        if (selectedProperty.isList) {
+        if (this.parentListTypeFlag && selectedProperty.isList) {
             toscaIndexFlag = true;
             if (selectedProperty.schemaType != null) {
                 nestedToscaFlag = true;

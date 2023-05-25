@@ -22,15 +22,18 @@
  * Created by obarda on 1/27/2016.
  */
 'use strict';
-import { DataTypesMap } from 'app/models';
+import { DataTypesMap, PropertyModel } from 'app/models';
 import { DataTypePropertyModel } from 'app/models/data-type-properties';
 import { DataTypesService } from 'app/services';
 import { ValidationUtils } from 'app/utils';
+import {InstanceFeDetails} from "app/models/instance-fe-details";
 import * as _ from 'lodash';
 
 export interface IDataTypeFieldsStructureScope extends ng.IScope {
     parentFormObj: ng.IFormController;
     dataTypeProperties: DataTypePropertyModel[];
+    parentProperty:PropertyModel;
+    componentInstanceMap: Map<string, InstanceFeDetails>;
     typeName: string;
     valueObjRef: any;
     propertyNameValidationPattern: RegExp;
@@ -43,6 +46,7 @@ export interface IDataTypeFieldsStructureScope extends ng.IScope {
     expanded: boolean;
     dataTypesService: DataTypesService;
     constraints: string[];
+    isService:boolean;
 
     expandAndCollapse(): void;
     getValidationPattern(type: string): RegExp;
@@ -58,12 +62,15 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
     scope = {
         valueObjRef: '=',
         typeName: '=',
+        componentInstanceMap: '=',
+        parentProperty: '=',
         parentFormObj: '=',
         fieldsPrefixName: '=',
         readOnly: '=',
         defaultValue: '@',
         types: '=',
-        expandByDefault: '='
+        expandByDefault: '=',
+        isService: '='
     };
 
     restrict = 'E';
