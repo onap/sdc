@@ -25,10 +25,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.security.AuthenticationCookie;
 import org.onap.sdc.security.IUsersThreadLocalHolder;
 import org.onap.sdc.security.PortalClient;
 import org.onap.sdc.security.RestrictionAccessFilterException;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -41,15 +45,15 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
 
     private static final Logger log = Logger.getLogger(ThreadLocalUtils.class);
     @Autowired
-    PortalClient portalClient;
+    private PortalClient portalClient;
     @Autowired
-    UserBusinessLogic userBusinessLogic;
+    private UserBusinessLogic userBusinessLogic;
 
     @Override
     public void setUserContext(AuthenticationCookie authenticationCookie) {
         UserContext userContext;
         userContext = new UserContext(authenticationCookie.getUserID(), authenticationCookie.getRoles(), authenticationCookie.getFirstName(),
-            authenticationCookie.getLastName());
+                authenticationCookie.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
     }
 
@@ -59,7 +63,7 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
             Set<String> roles = null;
             try {
                 final Optional<String> userRolesFromPortalOptional = portalClient.fetchUserRolesFromPortal(userId);
-                if (userRolesFromPortalOptional.isPresent()){
+                if (userRolesFromPortalOptional.isPresent()) {
                     roles = new HashSet<>(List.of(userRolesFromPortalOptional.get()));
                 }
             } catch (RestrictionAccessFilterException e) {
@@ -74,17 +78,28 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
     }
 
     protected void setUserContextFromDB(HttpServletRequest httpRequest) {
-        String user_id = httpRequest.getHeader(Constants.USER_ID_HEADER);
-        //there are some internal request that have no user_id header e.g. healthcheck
-        if (user_id != null) {
-            updateUserContext(user_id);
-        } else {
-            log.debug("user_id value in req header is null, userContext will not be initialized");
+        String userId = httpRequest.getHeader(Constants.USER_ID_HEADER);
+        final Configuration.BasicAuthConfig basicAuthConf = ConfigurationManager.getConfigurationManager().getConfiguration().getBasicAuth();
+        if (StringUtils.isBlank(userId)) {
+            final String excludedUrls = basicAuthConf.getExcludedUrls();
+            //there are some internal request that have no user_id header e.g. healthcheck
+            if (StringUtils.isBlank(excludedUrls) || !checkForExclusion(excludedUrls, httpRequest.getPathInfo())) {
+                log.info("UserId is empty");
+                userId = "cs0008";
+            } else {
+                log.debug("user_id value in req header is null, userContext will not be initialized");
+                return;
+            }
         }
+        updateUserContext(userId);
     }
 
-    private void updateUserContext(String user_id) {
-        User user = userBusinessLogic.getUser(user_id, false);
+    private boolean checkForExclusion(final String excludedUrls, final String pathInfo) {
+        return Arrays.stream(excludedUrls.split(";")).anyMatch(s -> s.endsWith(pathInfo));
+    }
+
+    private void updateUserContext(String userId) {
+        User user = userBusinessLogic.getUser(userId, false);
         Set<String> roles = new HashSet<>(Arrays.asList(user.getRole()));
         UserContext userContext = new UserContext(user.getUserId(), roles, user.getFirstName(), user.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
