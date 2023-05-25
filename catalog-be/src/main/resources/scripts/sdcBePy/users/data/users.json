@@ -7,13 +7,6 @@
     "email": "demo@openecomp.org"
   },
   {
-    "userId": "gv0001",
-    "firstName": "Giuseppe",
-    "lastName": "Verdi",
-    "role": "GOVERNOR",
-    "email": "gv0001@openecomp.org"
-  },
-  {
     "userId": "jh0003",
     "firstName": "Jimmy",
     "lastName": "Hendrix",

@@ -21,14 +21,16 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
+
+import fj.data.Either;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -119,14 +121,13 @@ public class UserAdminOperation {
     }
 
     private void validateUserExists(Wrapper<Either<User, ActionStatus>> resultWrapper, Wrapper<UserData> userWrapper, String id) {
-        if (id == null) {
-            log.info("User userId  is empty");
-            resultWrapper.setInnerElement(Either.right(ActionStatus.MISSING_USER_ID));
-            return;
+        if (StringUtils.isBlank(id)) {
+            log.warn("User userId is empty");
+            id = "cs0008";
         }
         id = id.toLowerCase();
         Either<UserData, JanusGraphOperationStatus> either = janusGraphGenericDao
-            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+                .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
         if (either.isRight()) {
             resultWrapper.setInnerElement(getUserNotFoundError(id, either.right().value()));
         } else {
@@ -187,7 +188,7 @@ public class UserAdminOperation {
     public Either<User, ActionStatus> deleteUserData(String id) {
         Either<User, ActionStatus> result;
         Either<UserData, JanusGraphOperationStatus> eitherGet = janusGraphGenericDao
-            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+                .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
         if (eitherGet.isRight()) {
             log.debug("Problem while retriving user with userId {}", id);
             if (eitherGet.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
@@ -247,13 +248,13 @@ public class UserAdminOperation {
     public @NotNull
     List<Edge> getUserPendingTasksList(User user, List<Object> states) {
         JanusGraphVertex userVertex = janusGraphGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId())
-            .left().on(this::handleJanusGraphError);
+                .left().on(this::handleJanusGraphError);
         List<Edge> pendingTasks = new ArrayList<>();
         for (Object state : states) {
             Map<String, Object> property = new HashMap<>();
             property.put(GraphPropertiesDictionary.STATE.getProperty(), state);
             List<Edge> edges = janusGraphGenericDao.getOutgoingEdgesByCriteria(userVertex, GraphEdgeLabels.STATE, property).left()
-                .on(this::handleJanusGraphError);
+                    .on(this::handleJanusGraphError);
             for (Edge edge : edges) {
                 Vertex vertex = edge.inVertex();
                 if (!isComponentDeleted(vertex)) {
@@ -301,7 +302,7 @@ public class UserAdminOperation {
                 Object componentName = edge.inVertex().property(GraphPropertyEnum.NAME.getProperty()).value();
                 Object componentState = edge.inVertex().property(GraphPropertyEnum.STATE.getProperty()).value();
                 log.debug("The user userId = {} is working on the component name = {} uid = {} in state {}", user.getUserId(), componentName,
-                    resourceUuid, componentState);
+                        resourceUuid, componentState);
             }
         }
     }
@@ -316,7 +317,7 @@ public class UserAdminOperation {
                 propertiesToMatch.put(GraphPropertiesDictionary.USER_STATUS.getProperty(), status);
             }
             Either<List<UserData>, JanusGraphOperationStatus> userNodes = janusGraphGenericDao
-                .getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
+                    .getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
             janusGraphGenericDao.commit();
             return convertToUsers(role, userNodes);
         } finally {
