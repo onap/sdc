@@ -1292,9 +1292,6 @@ FE-configuration.yaml
             - &HTTP_IV_USER HTTP_IV_USER
             - &iv-user iv-user
         -
-            - &USER_ID USER_ID
-            - &user-id user-id
-        -
             - &HTTP_CSP_ATTUID HTTP_CSP_ATTUID
             - &csp-attuid csp-attuid
         -
@@ -1315,6 +1312,9 @@ FE-configuration.yaml
         -
             - &HTTP_CSP_EMAIL HTTP_CSP_EMAIL
             - &csp-email csp-email
+        -
+            - &USER_ID USER_ID
+            - &user-id user-id
 
     # Frontend configuration version
     version: 1.0
