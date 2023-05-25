@@ -123,7 +123,8 @@ export class TypeListDirective implements ng.IDirective {
     link = (scope:ITypeListScope, element:any, $attr:any) => {
         scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         scope.stringSchema = this.stringSchema;
-        if (scope.valueObjRef.length == 0) {
+        if (scope.valueObjRef == null || scope.valueObjRef.length == 0) {
+            scope.valueObjRef = [];
             scope.valueObjRef.push("");
         }
         scope.showToscaFunction = new Array(scope.valueObjRef.length);
