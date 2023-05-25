@@ -89,7 +89,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
             );
         }
         if (propertySource == PropertySource.SELF) {
-            if (toscaIndexList.size() > 0) {
+            if (CollectionUtils.isNotEmpty(toscaIndexList)) {
                 List<Object> parsedIndexList = new ArrayList<Object>();
                 toscaIndexList.forEach((obj) -> {
                     parsedIndexList.add(StringUtils.isNumeric(obj.toString()) ? Integer.parseInt(obj.toString()) : obj);
@@ -108,7 +108,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
                     String.format("sourceName is required in order to generate the %s from INSTANCE value", functionType.getFunctionName())
                 );
             }
-            if (toscaIndexList.size() > 0) {
+            if (CollectionUtils.isNotEmpty(toscaIndexList)) {
                 List<Object> parsedIndexList = new ArrayList<Object>();
                 toscaIndexList.forEach((obj) -> {
                     parsedIndexList.add(StringUtils.isNumeric(obj.toString()) ? Integer.parseInt(obj.toString()) : obj);
@@ -129,7 +129,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
         List<Object> propertySourceCopy = new ArrayList<Object>(this.propertyPathFromSource);
         List<Object> propertySourceOneCopy = new ArrayList<>();
         propertySourceOneCopy.add(this.propertyPathFromSource.get(0));
-        if (toscaIndexList.size() > 0) {
+        if (CollectionUtils.isNotEmpty(toscaIndexList)) {
             propertySourceCopy.addAll(toscaIndexList);
             propertySourceOneCopy.addAll(toscaIndexList);
         }
