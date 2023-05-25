@@ -166,11 +166,14 @@
                         <div data-ng-if="isTypeDataType">
                             <fields-structure value-obj-ref="myValue"
                                               type-name="editPropertyModel.property.type"
+                                              parent-property="editPropertyModel.property"
+                                              component-instance-map="componentInstanceMap"
                                               parent-form-obj="forms.editForm"
                                               fields-prefix-name="currentPropertyIndex"
                                               read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
                                               default-value="{{getDefaultValue()}}"
                                               types="dataTypes"
+                                              is-service="!componentMetadata.isVfc"
                                               expand-by-default="true"></fields-structure>
 
                         </div>
