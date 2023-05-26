@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -278,7 +279,8 @@ public final class ImportUtils {
         }
     }
 
-    private static List<PropertyConstraint> getPropertyConstraints(final Map<String, Object> propertyValue, final String propertyType, final SchemaDefinition schema) {
+    private static List<PropertyConstraint> getPropertyConstraints(final Map<String, Object> propertyValue, final String propertyType,
+                                                                   final SchemaDefinition schema) {
         final List<Object> propertyFieldConstraints = findCurrentLevelConstraintsElement(propertyValue);
         if (CollectionUtils.isEmpty(propertyFieldConstraints)) {
             return Collections.emptyList();
@@ -288,7 +290,8 @@ public final class ImportUtils {
         }.getType();
         final Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
         for (final Object constraintJson : propertyFieldConstraints) {
-            final PropertyConstraint propertyConstraint = validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson, schema);
+            final PropertyConstraint propertyConstraint =
+                validateAndGetPropertyConstraint(propertyType, constraintType, gson, constraintJson, schema);
             if (propertyConstraint != null) {
                 constraintList.add(propertyConstraint);
             }
@@ -309,7 +312,8 @@ public final class ImportUtils {
         return constraints;
     }
 
-    private static PropertyConstraint validateAndGetPropertyConstraint(String propertyType, Type constraintType, Gson gson, Object constraintJson, SchemaDefinition schema) {
+    private static PropertyConstraint validateAndGetPropertyConstraint(String propertyType, Type constraintType, Gson gson, Object constraintJson,
+                                                                       SchemaDefinition schema) {
         PropertyConstraint propertyConstraint;
         try {
             propertyConstraint = gson.fromJson(gson.toJson(constraintJson), constraintType);
@@ -704,8 +708,8 @@ public final class ImportUtils {
 
     public static boolean containsGetInput(Object propValue) {
         String value = getPropertyJsonStringValue(propValue, ToscaPropertyType.MAP.getType());
-        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName()) && !value.contains(
-            TypeUtils.ToscaTagNamesEnum.CONCAT.getElementName());
+        return value != null && value.contains(TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName()) &&
+            !value.contains(TypeUtils.ToscaTagNamesEnum.CONCAT.getElementName()) && !value.contains("$");
     }
 
     public static String getPropertyJsonStringValue(Object value, String type) {
@@ -743,7 +747,8 @@ public final class ImportUtils {
     }
 
     public enum ResultStatusEnum {
-        ELEMENT_NOT_FOUND, GENERAL_ERROR, OK, INVALID_PROPERTY_DEFAULT_VALUE, INVALID_PROPERTY_TYPE, INVALID_PROPERTY_VALUE, MISSING_ENTRY_SCHEMA_TYPE, INVALID_PROPERTY_NAME, INVALID_ATTRIBUTE_NAME
+        ELEMENT_NOT_FOUND, GENERAL_ERROR, OK, INVALID_PROPERTY_DEFAULT_VALUE, INVALID_PROPERTY_TYPE, INVALID_PROPERTY_VALUE,
+        MISSING_ENTRY_SCHEMA_TYPE, INVALID_PROPERTY_NAME, INVALID_ATTRIBUTE_NAME
     }
 
     public enum ToscaElementTypeEnum {
