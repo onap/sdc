@@ -125,7 +125,11 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
                 final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
                 valuesToValidate = map.values();
             } else {
-                valuesToValidate = Collections.singleton(propertyDefinition.getValue());
+                if (propertyDefinition.getValue() != null) {
+                    valuesToValidate = Collections.singleton(propertyDefinition.getValue());
+                } else {
+                    valuesToValidate = Collections.singleton(propertyDefinition.getDefaultValue());
+                }
             }
             if (propertyDefinition.getSubPropertyToscaFunctions() != null) {
                 propertyDefinition.getSubPropertyToscaFunctions().forEach(subPropToscaFunction -> {
@@ -134,7 +138,9 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
             }
             ToscaType valuesType = getValuesType(toscaType, propertyDefinition.getSchema());
             for (final Object value: valuesToValidate) {
-                validate(valuesType, value.toString());
+                if (value != null) {
+                    validate(valuesType, value.toString());
+                }
             }
         } catch (ConstraintValueDoNotMatchPropertyTypeException exception) {
             throw new ConstraintViolationException("Value cannot be parsed to a list", exception);
