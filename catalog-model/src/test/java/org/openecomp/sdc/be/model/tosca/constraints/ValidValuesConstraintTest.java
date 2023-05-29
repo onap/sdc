@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.tosca.constraints;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
+import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
 
 class ValidValuesConstraintTest {
 
@@ -124,5 +129,165 @@ class ValidValuesConstraintTest {
         List<Object> result = testSubject.getValidValues();
 
         result.forEach(value -> assertTrue(value instanceof String));
+    }
+
+    @Test
+    void testValidateConstraintWithoutDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setType(ToscaType.INTEGER.getType());
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setDefaultValue("2");
+        prop.setType(ToscaType.INTEGER.getType());
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+    @Test
+    void testValidateConstraintWithValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setValue("2");
+        prop.setType(ToscaType.INTEGER.getType());
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithIncorrectDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setDefaultValue("1000");
+        prop.setType(ToscaType.INTEGER.getType());
+
+        assertThrows(ConstraintViolationException.class, () -> {
+            constraint.validate(prop);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithInvalidDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setDefaultValue("A String");
+        prop.setType(ToscaType.INTEGER.getType());
+
+        assertThrows(NumberFormatException.class, () -> {
+            constraint.validate(prop);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithNullProp() {
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+
+        assertThrows(NullPointerException.class, () -> {
+            constraint.validate(null);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithListPropWithDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        PropertyDefinition intProp = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setDefaultValue("[\"2\"]");
+        prop.setType(ToscaType.LIST.getType());
+
+        intProp.setType(ToscaType.INTEGER.getType());
+        schemaDefinition.setProperty(intProp);
+        prop.setSchema(schemaDefinition);
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+    @Test
+    void testValidateConstraintWithListPropWithValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        PropertyDefinition intProp = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setValue("[\"2\"]");
+        prop.setType(ToscaType.LIST.getType());
+
+        intProp.setType(ToscaType.INTEGER.getType());
+        schemaDefinition.setProperty(intProp);
+        prop.setSchema(schemaDefinition);
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+
+    @Test
+    void testValidateConstraintWithMapPropWithDefaultValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        PropertyDefinition intProp = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setDefaultValue("{\"key\": \"2\"}");
+        prop.setType(ToscaType.MAP.getType());
+
+        intProp.setType(ToscaType.INTEGER.getType());
+        schemaDefinition.setProperty(intProp);
+        prop.setSchema(schemaDefinition);
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
+    }
+    @Test
+    void testValidateConstraintWithMapPropWithValue() throws ConstraintValueDoNotMatchPropertyTypeException {
+        PropertyDefinition prop = new PropertyDefinition();
+        PropertyDefinition intProp = new PropertyDefinition();
+        ValidValuesConstraint constraint = createIntegerTestSubject();
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        constraint.initialize(ToscaType.INTEGER, schemaDefinition);
+
+        prop.setValue("{\"key\": \"2\"}");
+        prop.setType(ToscaType.MAP.getType());
+
+        intProp.setType(ToscaType.INTEGER.getType());
+        schemaDefinition.setProperty(intProp);
+        prop.setSchema(schemaDefinition);
+
+        assertDoesNotThrow(() -> {
+            constraint.validate(prop);
+        });
     }
 }
