@@ -120,12 +120,27 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
         try {
             Collection<Object> valuesToValidate;
             if (ToscaType.LIST == toscaType) {
-                valuesToValidate = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                if (propertyDefinition.getValue() != null) {
+                    valuesToValidate = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                } else {
+                    valuesToValidate = ConstraintUtil.parseToCollection(propertyDefinition.getDefaultValue(), new TypeReference<>() {});
+                }
             } else if (ToscaType.MAP == toscaType) {
-                final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                Map<String, Object> map;
+
+                if (propertyDefinition.getValue() != null) {
+                    map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+                } else {
+                    map = ConstraintUtil.parseToCollection(propertyDefinition.getDefaultValue(), new TypeReference<>() {});
+                }
+
                 valuesToValidate = map.values();
             } else {
-                valuesToValidate = Collections.singleton(propertyDefinition.getValue());
+                if (propertyDefinition.getValue() != null) {
+                    valuesToValidate = Collections.singleton(propertyDefinition.getValue());
+                } else {
+                    valuesToValidate = Collections.singleton(propertyDefinition.getDefaultValue());
+                }
             }
             if (propertyDefinition.getSubPropertyToscaFunctions() != null) {
                 propertyDefinition.getSubPropertyToscaFunctions().forEach(subPropToscaFunction -> {
@@ -134,7 +149,9 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
             }
             ToscaType valuesType = getValuesType(toscaType, propertyDefinition.getSchema());
             for (final Object value: valuesToValidate) {
-                validate(valuesType, value.toString());
+                if (value != null) {
+                    validate(valuesType, value.toString());
+                }
             }
         } catch (ConstraintValueDoNotMatchPropertyTypeException exception) {
             throw new ConstraintViolationException("Value cannot be parsed to a list", exception);
