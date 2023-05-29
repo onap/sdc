@@ -140,8 +140,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         let type = this.property.toscaFunction.type;
         if (type == ToscaFunctionType.CUSTOM) {
             let name = (this.property.toscaFunction as ToscaCustomFunction).name;
-            let test = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
-            if (test) {
+            let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
+            if (customToscaFunc) {
                 this.toscaFunctionTypeForm.setValue(name);
             } else {
                 this.toscaFunctionTypeForm.setValue("other");
@@ -160,9 +160,6 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
         this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
-        if (this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) {
-            this.toscaFunctions.push(ToscaFunctionType.CUSTOM);
-        }
         if ((this.property.type === PROPERTY_TYPES.STRING || this.property.type === PROPERTY_TYPES.ANY) && this.overridingType === undefined) {
             this.toscaFunctions.push(ToscaFunctionType.CONCAT);
         }
@@ -189,7 +186,8 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     getCustomFunctionName():string {
         let toscaFunctionType: CustomToscaFunction = this.getCustomToscaFunction();
-        return toscaFunctionType.name;
+        let name = toscaFunctionType.name;
+        return name == 'other' ? '' : name;
     }
 
     getCustomFunctionType():string {

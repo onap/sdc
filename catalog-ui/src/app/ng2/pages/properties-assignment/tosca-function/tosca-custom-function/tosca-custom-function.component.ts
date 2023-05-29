@@ -80,7 +80,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
             this.parameters = [];
         }
         this.fillVariables();
-        if (this.name && this.isDefaultCustomFunction) {
+        if (this.name) {
             this.customFunctionFormName.setValue(this.name);
             this.emitOnValidityChange();
         } else {

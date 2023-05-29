@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.Yaml;
 
 public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction> {
@@ -150,23 +151,25 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         return jsonNode.asText();
     }
 
-    private List<Object> getNumberAsTextOrElseNull(final JsonNode node, final String fieldName, final DeserializationContext context) throws JsonMappingException{
+    private List<Object> getNumberAsTextOrElseNull(final JsonNode node, final String fieldName, final DeserializationContext context)
+        throws JsonMappingException {
         List<Object> toscaIndexList = new ArrayList<Object>();
         final JsonNode jsonNode = node.get(fieldName);
         if (jsonNode != null) {
             if (!jsonNode.isArray()) {
                 throw context.instantiationException(ToscaGetFunctionDataDefinition.class, "Expecting an array for toscaIndexList attribute");
             }
-            for (int index=0;index<jsonNode.size();index++) {
+            for (int index = 0; index < jsonNode.size(); index++) {
                 String textValue = jsonNode.get(index).asText();
-                if (index%2 == 0) {
+                if (index % 2 == 0) {
                     if (textValue.equalsIgnoreCase("INDEX")) {
                         toscaIndexList.add(textValue);
                     } else {
                         try {
                             toscaIndexList.add(Integer.parseInt(textValue));
-                        } catch(Exception e) {
-                            throw context.instantiationException(ToscaGetFunctionDataDefinition.class, "Expecting a valid value for toscaIndex attribute");
+                        } catch (Exception e) {
+                            throw context.instantiationException(ToscaGetFunctionDataDefinition.class,
+                                "Expecting a valid value for toscaIndex attribute");
                         }
                     }
                 } else {
@@ -205,7 +208,7 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
     private ToscaFunctionType getCustomFunctionType(String name) {
         List<Configuration.CustomToscaFunction> customFunctions =
             ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultCustomToscaFunctions();
-        if (customFunctions.isEmpty()) {
+        if (CollectionUtils.isEmpty(customFunctions)) {
             return ToscaFunctionType.CUSTOM;
         }
         Optional<Configuration.CustomToscaFunction> optionalFunc = customFunctions.stream().filter(func -> func.getName().equals(name)).findFirst();
