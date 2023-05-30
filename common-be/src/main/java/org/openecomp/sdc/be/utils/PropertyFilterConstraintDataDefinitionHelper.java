@@ -21,12 +21,16 @@
 
 package org.openecomp.sdc.be.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
@@ -39,7 +43,6 @@ import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
-import org.openecomp.sdc.exception.InvalidArgumentException;
 import org.yaml.snakeyaml.Yaml;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -125,53 +128,103 @@ public class PropertyFilterConstraintDataDefinitionHelper {
 
     private static Optional<ToscaFunction> readLegacyGetPropertyConstraintValue(Map<?, ?> filterValueAsMap, Object toscaFunctionType,
                                                                                 ToscaFunctionType toscaFunctionType1) {
-        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
-        toscaGetFunction.setFunctionType(ToscaGetFunctionType.fromToscaFunctionType(toscaFunctionType1)
-            .orElseThrow(() -> new InvalidArgumentException("Could not convert a ToscaFunctionType to a ToscaGetFunctionType"))
+        final ToscaGetFunctionDataDefinition toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(
+            toscaFunctionType == ToscaFunctionType.GET_PROPERTY ? ToscaGetFunctionType.GET_PROPERTY : ToscaGetFunctionType.GET_ATTRIBUTE
         );
-        final List<String> getFunctionValue;
+        final Object functionValueObj = filterValueAsMap.get(toscaFunctionType1);
+        if (!(functionValueObj instanceof List)) {
+            return Optional.empty();
+        }
+        final List<String> functionParameters;
         try {
-            getFunctionValue = (List<String>) filterValueAsMap.get(toscaFunctionType);
-        } catch (final Exception ignored) {
-            return Optional.of(toscaGetFunction);
+            functionParameters = ((List<Object>) functionValueObj).stream()
+                .map(object -> Objects.toString(object, null))
+                .collect(Collectors.toList());
+        } catch (final ClassCastException ignored) {
+            return Optional.empty();
         }
-        if (!getFunctionValue.isEmpty()) {
-            final Optional<PropertySource> propertySource = PropertySource.findType(getFunctionValue.get(0));
-            if (propertySource.isPresent()) {
-                toscaGetFunction.setPropertySource(propertySource.get());
-            } else {
-                toscaGetFunction.setPropertySource(PropertySource.INSTANCE);
-                toscaGetFunction.setSourceName(getFunctionValue.get(0));
+        if (functionParameters.size() < 2) {
+            return Optional.empty();
+        }
+        final String propertySourceType = functionParameters.get(0);
+        final PropertySource propertySource = PropertySource.findType(propertySourceType).orElse(null);
+        if (propertySource == PropertySource.SELF) {
+            toscaGetFunction.setPropertySource(propertySource);
+        } else {
+            toscaGetFunction.setPropertySource(PropertySource.INSTANCE);
+            toscaGetFunction.setSourceName(propertySourceType);
+        }
+        List<String> propertySourceIndex = functionParameters.subList(1, functionParameters.size());
+        List<String> propertySourcePath = new ArrayList<>();
+        propertySourcePath.add((String)propertySourceIndex.get(0));
+        if (propertySourceIndex.size() > 1 ) {
+            List<Object> indexParsedList = new ArrayList<Object>();
+            List<String> indexObjectList = propertySourceIndex.subList(1,propertySourceIndex.size());
+            boolean loopFlag = true;
+            for (String indexValue : indexObjectList) {
+                if (!indexValue.equalsIgnoreCase("INDEX") && !StringUtils.isNumeric(indexValue) && loopFlag) {
+                    propertySourcePath.add(indexValue);
+                } else {
+                    loopFlag = false;
+                    if (StringUtils.isNumeric(indexValue)) {
+                        indexParsedList.add(Integer.parseInt(indexValue));
+                    } else {
+                        indexParsedList.add(indexValue);
+                    }
+                }
             }
-            final List<String> propertyPathFromSource = getFunctionValue.subList(1, getFunctionValue.size());
-            toscaGetFunction.setPropertyPathFromSource(propertyPathFromSource);
-            toscaGetFunction.setPropertyName(propertyPathFromSource.get(propertyPathFromSource.size() - 1));
+            toscaGetFunction.setToscaIndexList(indexParsedList);
         }
+        toscaGetFunction.setPropertyPathFromSource(propertySourcePath);
+        final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
+        toscaGetFunction.setPropertyName(propertyName);
         return Optional.of(toscaGetFunction);
     }
 
     private static Optional<ToscaFunction> readLegacyGetInputConstraintValue(Map<?, ?> filterValueAsMap, Object toscaFunctionType) {
-        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        final ToscaGetFunctionDataDefinition toscaGetFunction = new ToscaGetFunctionDataDefinition();
         toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
-        final List<String> getFunctionValue;
-        final Object valueAsObject = filterValueAsMap.get(toscaFunctionType);
-        if (valueAsObject instanceof String) {
-            getFunctionValue = List.of((String) valueAsObject);
-        } else if (valueAsObject instanceof List) {
-            try {
-                getFunctionValue = (List<String>) filterValueAsMap.get(toscaFunctionType);
-            } catch (final Exception ignored) {
-                return Optional.empty();
-            }
-        } else {
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        final Object functionValueObj = filterValueAsMap.get(toscaFunctionType);
+        if (!(functionValueObj instanceof List) && !(functionValueObj instanceof String)) {
             return Optional.empty();
         }
-
-        toscaGetFunction.setPropertyPathFromSource(getFunctionValue);
-        if (!getFunctionValue.isEmpty()) {
-            toscaGetFunction.setPropertyName(getFunctionValue.get(getFunctionValue.size() - 1));
+        if (functionValueObj instanceof String) {
+            toscaGetFunction.setPropertyPathFromSource(List.of((String) functionValueObj));
+        } else {
+            final List<String> functionParameters;
+            try {
+                functionParameters = ((List<Object>) functionValueObj).stream()
+                    .map(object -> Objects.toString(object, null))
+                    .collect(Collectors.toList());
+            } catch (final ClassCastException ignored) {
+                return Optional.empty();
+            }
+            List<String> propertySourcePath = new ArrayList<>();
+            propertySourcePath.add((String)functionParameters.get(0));
+            if (functionParameters.size() > 1 ) {
+                List<Object> indexParsedList = new ArrayList<Object>();
+                List<String> indexObjectList = functionParameters.subList(1,functionParameters.size());
+                boolean loopFlag = true;
+                for (String indexValue : indexObjectList) {
+                    if (!indexValue.equalsIgnoreCase("INDEX") && !StringUtils.isNumeric(indexValue) && loopFlag) {
+                        propertySourcePath.add(indexValue);
+                    } else {
+                        loopFlag = false;
+                        if (StringUtils.isNumeric(indexValue)) {
+                            indexParsedList.add(Integer.parseInt(indexValue));
+                        } else {
+                            indexParsedList.add(indexValue);
+                        }
+                    }
+                }
+                toscaGetFunction.setToscaIndexList(indexParsedList);
+            }
+            toscaGetFunction.setPropertyPathFromSource(propertySourcePath);
         }
-        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        final String propertyName = toscaGetFunction.getPropertyPathFromSource().get(toscaGetFunction.getPropertyPathFromSource().size() - 1);
+        toscaGetFunction.setPropertyName(propertyName);
         return Optional.of(toscaGetFunction);
     }
 
