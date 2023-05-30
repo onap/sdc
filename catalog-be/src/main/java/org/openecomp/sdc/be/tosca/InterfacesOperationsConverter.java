@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.tosca;
 
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
@@ -20,28 +21,35 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.json.JSONObject;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -82,6 +90,122 @@ public class InterfacesOperationsConverter {
         this.propertyConvertor = propertyConvertor;
     }
 
+    private static Object getDefaultValue(Map<String, Object> inputValueMap) {
+        Object defaultValue = null;
+        for (Map.Entry<String, Object> operationEntry : inputValueMap.entrySet()) {
+            final Object value = operationEntry.getValue();
+            if (value instanceof Map) {
+                getDefaultValue((Map<String, Object>) value);
+            }
+            final String key = operationEntry.getKey();
+            if (key.equals(DEFAULTP)) {
+                defaultValue = inputValueMap.remove(key);
+            }
+        }
+        return defaultValue;
+    }
+
+    //Remove input type and copy default value directly into the proxy node template from the node type
+    private static void handleOperationInputValue(Map<String, Object> operationsMap, String parentKey) {
+        for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
+            final Object value = operationEntry.getValue();
+            final String key = operationEntry.getKey();
+            if (value instanceof Map) {
+                if (INPUTS.getElementName().equals(parentKey)) {
+                    Object defaultValue = getDefaultValue((Map<String, Object>) value);
+                    operationsMap.put(key, defaultValue);
+                } else {
+                    handleOperationInputValue((Map<String, Object>) value, key);
+                }
+            }
+        }
+    }
+
+    private static String getLastPartOfName(String toscaResourceName) {
+        return toscaResourceName.substring(toscaResourceName.lastIndexOf(DOT) + 1);
+    }
+
+    private static String getInputValue(final OperationInputDefinition input) {
+        if (null != input.getToscaFunction()) {
+            return input.getToscaFunction().getJsonObjectValue().toString();
+        }
+        String inputValue = input.getValue() == null ? input.getToscaDefaultValue() : input.getValue();
+        if (inputValue != null && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
+            Gson gson = new Gson();
+            Map<String, List<String>> consumptionValue = gson.fromJson(inputValue, Map.class);
+            List<String> mappedOutputValue = consumptionValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
+            //Extract the interface name from the interface type
+            String interfaceType = mappedOutputValue.get(1);
+            String interfaceName = interfaceType.substring(interfaceType.lastIndexOf('.') + 1);
+            mappedOutputValue.remove(1);
+            mappedOutputValue.add(1, interfaceName);
+            inputValue = gson.toJson(consumptionValue);
+        } else {
+            String finalInputValue = inputValue;
+            if (inputValue != null &&
+                Arrays.stream(ToscaFunctionType.values()).anyMatch(toscaType -> finalInputValue.contains(toscaType.getName().toUpperCase()))) {
+                inputValue = getInputValuesAsToscaFunction(inputValue);
+            }
+        }
+        return inputValue;
+    }
+
+    private static String getInputValuesAsToscaFunction(String inputValue) {
+        Gson gson = new Gson();
+        Map<String, Object> mapOfValues = gson.fromJson(inputValue, Map.class);
+        for (Entry<String, Object> entry : mapOfValues.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                Map<String, Object> valueMap = (Map<String, Object>) value;
+                if (valueMap.containsKey("type")) {
+                    String type = (String) valueMap.get("type");
+                    Optional<ToscaFunctionType> toscaType = ToscaFunctionType.findType(type);
+                    if (toscaType.isPresent()) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        try {
+                            String json = gson.toJson(value);
+                            ToscaFunction toscaFunction = mapper.readValue(json, ToscaFunction.class);
+                            entry.setValue(toscaFunction.getJsonObjectValue());
+                        } catch (JsonProcessingException e) {
+                            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+                        }
+                    }
+                }
+            }
+        }
+        return String.valueOf(new JSONObject(mapOfValues));
+    }
+
+    private static String getInterfaceType(Component component, String interfaceType) {
+        if (LOCAL_INTERFACE_TYPE.equals(interfaceType)) {
+            return DERIVED_FROM_BASE_DEFAULT + component.getComponentMetadataDefinition().getMetadataDataDefinition().getSystemName();
+        }
+        return interfaceType;
+    }
+
+    private static Map<String, Object> getObjectAsMap(final Object obj) {
+        final Map<String, Object> objectAsMap;
+        if (obj instanceof Map) {
+            objectAsMap = (Map<String, Object>) obj;
+        } else {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final SimpleModule module = new SimpleModule("ToscaPropertyAssignmentSerializer");
+            module.addSerializer(ToscaPropertyAssignment.class, new ToscaPropertyAssignmentJsonSerializer());
+            objectMapper.registerModule(module);
+            if (obj instanceof ToscaInterfaceDefinition) {
+                //Prevent empty field serialization in interface definition
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            }
+            objectAsMap = objectMapper.convertValue(obj, Map.class);
+        }
+
+        final String defaultEntry = DEFAULT.getElementName();
+        if (objectAsMap.containsKey(defaultEntry)) {
+            objectAsMap.put(DEFAULT_HAS_UNDERSCORE, objectAsMap.remove(defaultEntry));
+        }
+        return objectAsMap;
+    }
+
     /**
      * Creates the interface_types element.
      *
@@ -118,93 +242,9 @@ public class InterfacesOperationsConverter {
         return MapUtils.isNotEmpty(toscaInterfaceTypes) ? toscaInterfaceTypes : null;
     }
 
-    private static Object getDefaultValue(Map<String, Object> inputValueMap) {
-        Object defaultValue = null;
-        for (Map.Entry<String, Object> operationEntry : inputValueMap.entrySet()) {
-            final Object value = operationEntry.getValue();
-            if (value instanceof Map) {
-                getDefaultValue((Map<String, Object>) value);
-            }
-            final String key = operationEntry.getKey();
-            if (key.equals(DEFAULTP)) {
-                defaultValue = inputValueMap.remove(key);
-            }
-        }
-        return defaultValue;
-    }
-
-    //Remove input type and copy default value directly into the proxy node template from the node type
-    private static void handleOperationInputValue(Map<String, Object> operationsMap, String parentKey) {
-        for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
-            final Object value = operationEntry.getValue();
-            final String key = operationEntry.getKey();
-            if (value instanceof Map) {
-                if (INPUTS.getElementName().equals(parentKey)) {
-                    Object defaultValue = getDefaultValue((Map<String, Object>) value);
-                    operationsMap.put(key, defaultValue);
-                } else {
-                    handleOperationInputValue((Map<String, Object>) value, key);
-                }
-            }
-        }
-    }
-
-    private static String getLastPartOfName(String toscaResourceName) {
-        return toscaResourceName.substring(toscaResourceName.lastIndexOf(DOT) + 1);
-    }
-
     private boolean isArtifactPresent(final OperationDataDefinition operationDataDefinition) {
         return operationDataDefinition.getImplementation() != null
             && StringUtils.isNotEmpty(operationDataDefinition.getImplementation().getArtifactName());
-    }
-
-    private static String getInputValue(final OperationInputDefinition input) {
-        if (null != input.getToscaFunction()) {
-            return input.getToscaFunction().getJsonObjectValue().toString();
-        }
-        String inputValue = input.getValue() == null ? input.getToscaDefaultValue() : input.getValue();
-        if (inputValue != null && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
-            Gson gson = new Gson();
-            Map<String, List<String>> consumptionValue = gson.fromJson(inputValue, Map.class);
-            List<String> mappedOutputValue = consumptionValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
-            //Extract the interface name from the interface type
-            String interfaceType = mappedOutputValue.get(1);
-            String interfaceName = interfaceType.substring(interfaceType.lastIndexOf('.') + 1);
-            mappedOutputValue.remove(1);
-            mappedOutputValue.add(1, interfaceName);
-            inputValue = gson.toJson(consumptionValue);
-        }
-        return inputValue;
-    }
-
-    private static String getInterfaceType(Component component, String interfaceType) {
-        if (LOCAL_INTERFACE_TYPE.equals(interfaceType)) {
-            return DERIVED_FROM_BASE_DEFAULT + component.getComponentMetadataDefinition().getMetadataDataDefinition().getSystemName();
-        }
-        return interfaceType;
-    }
-
-    private static Map<String, Object> getObjectAsMap(final Object obj) {
-        final Map<String, Object> objectAsMap;
-        if (obj instanceof Map) {
-            objectAsMap = (Map<String, Object>) obj;
-        } else {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            final SimpleModule module = new SimpleModule("ToscaPropertyAssignmentSerializer");
-            module.addSerializer(ToscaPropertyAssignment.class, new ToscaPropertyAssignmentJsonSerializer());
-            objectMapper.registerModule(module);
-            if (obj instanceof ToscaInterfaceDefinition) {
-                //Prevent empty field serialization in interface definition
-                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            }
-            objectAsMap = objectMapper.convertValue(obj, Map.class);
-        }
-
-        final String defaultEntry = DEFAULT.getElementName();
-        if (objectAsMap.containsKey(defaultEntry)) {
-            objectAsMap.put(DEFAULT_HAS_UNDERSCORE, objectAsMap.remove(defaultEntry));
-        }
-        return objectAsMap;
     }
 
     /**
@@ -302,9 +342,10 @@ public class InterfacesOperationsConverter {
         interfaceDefinitionAsMap.putAll(operationsMap);
         toscaInterfaceDefinitions.put(getLastPartOfName(interfaceType), interfaceDefinitionAsMap);
     }
-    
+
     private boolean operationHasAnImplementation(OperationDataDefinition operation) {
-        return operation.getImplementation() != null && StringUtils.isNotEmpty(operation.getImplementation().getArtifactName()) && !operation.getImplementation().getArtifactName().equals("''");
+        return operation.getImplementation() != null && StringUtils.isNotEmpty(operation.getImplementation().getArtifactName()) &&
+            !operation.getImplementation().getArtifactName().equals("''");
     }
 
     private void handleInterfaceOperationImplementation(final Component component, final ComponentInstance componentInstance,

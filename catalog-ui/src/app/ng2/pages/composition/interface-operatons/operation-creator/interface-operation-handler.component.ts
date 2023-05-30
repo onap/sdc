@@ -303,6 +303,9 @@ export class InterfaceOperationHandlerComponent {
         const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
         inputOperationParameter.toscaFunction = null;
         inputOperationParameter.value = changedInput.value;
+        if (inputOperationParameter.subPropertyToscaFunctions) {
+            inputOperationParameter.subPropertyToscaFunctions = undefined;
+        }
         if (changedInput.isToscaFunction()) {
             inputOperationParameter.toscaFunction = changedInput.toscaFunction;
             inputOperationParameter.value = changedInput.toscaFunction.buildValueString();
