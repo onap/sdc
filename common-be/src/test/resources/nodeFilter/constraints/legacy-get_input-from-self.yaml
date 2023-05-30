@@ -1,0 +1,6 @@
+flavour_id:
+  equal:
+    get_input:
+      - SELF
+      - input
+      - subInput

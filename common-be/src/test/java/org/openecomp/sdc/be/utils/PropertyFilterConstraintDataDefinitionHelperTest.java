@@ -77,6 +77,17 @@ class PropertyFilterConstraintDataDefinitionHelperTest {
     }
 
     @Test
+    void convertLegacyConstraintGetInputFromSelfTest() throws IOException {
+        final PropertyFilterConstraintDataDefinition propertyFilterConstraint =
+            PropertyFilterConstraintDataDefinitionHelper.convertLegacyConstraint(readConstraintFile("legacy-get_input-from-self.yaml"));
+        assertPropertyFilterConstraint(propertyFilterConstraint, "flavour_id", null, ConstraintType.EQUAL, FilterValueType.GET_INPUT);
+        assertTrue(propertyFilterConstraint.getValue() instanceof ToscaGetFunctionDataDefinition);
+        final var toscaGetFunction = (ToscaGetFunctionDataDefinition) propertyFilterConstraint.getValue();
+        assertToscaGetFunction(toscaGetFunction, ToscaFunctionType.GET_INPUT, ToscaGetFunctionType.GET_INPUT, PropertySource.SELF,
+            List.of("SELF", "input", "subInput"), "subInput", null);
+    }
+
+    @Test
     void convertLegacyConstraintGetAttributeFromInstanceTest() throws IOException {
         final PropertyFilterConstraintDataDefinition propertyFilterConstraint =
             PropertyFilterConstraintDataDefinitionHelper.convertLegacyConstraint(readConstraintFile("legacy-get_attribute-from-instance.yaml"));

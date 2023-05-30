@@ -415,6 +415,22 @@ public class NodeFilterValidator {
                 }
                 return null;
             }
+            else {
+                if (null != ((PropertyDefinition) sourcePropDefinition).getSchemaProperty()){
+                    if (((PropertyDefinition) sourcePropDefinition).getSchemaProperty().getType().equals(targetType)) {
+                        if (TYPES_WITH_SCHEMA.contains(((PropertyDefinition) sourcePropDefinition).getSchemaProperty().getType())) {
+                            final String sourceSchemaType = sourcePropDefinition.getSchemaType();
+                            final String targetSchemaType = targetPropDefinition.getSchemaType();
+                            if (sourceSchemaType != null && !sourceSchemaType.equals(targetSchemaType)) {
+                                return componentsUtils.getResponseFormat(ActionStatus.SOURCE_TARGET_SCHEMA_MISMATCH,
+                                    targetPropDefinition.getName(), targetSchemaType, sourcePropDefinition.getName(),
+                                    sourceSchemaType);
+                            }
+                        }
+                        return null;
+                    }
+                }
+            }
         }
         else {
             if (sourceType.equalsIgnoreCase("integer")) {
