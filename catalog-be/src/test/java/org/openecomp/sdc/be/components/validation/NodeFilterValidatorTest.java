@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
@@ -52,6 +54,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -139,7 +142,7 @@ class NodeFilterValidatorTest {
             FilterValueType.GET_PROPERTY,
             ConstraintType.EQUAL,
             PropertyFilterTargetType.PROPERTY,
-            createToscaGetFunction("test", PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of("test2"))
+            createToscaGetFunction("test", PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of("test2"), null)
         );
         Either<Boolean, ResponseFormat> actualValidationResult =
             nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint1));
@@ -150,7 +153,7 @@ class NodeFilterValidatorTest {
             FilterValueType.GET_PROPERTY,
             ConstraintType.EQUAL,
             PropertyFilterTargetType.PROPERTY,
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of("Prop1"))
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of("Prop1"), null)
         );
         actualValidationResult =
             nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint2));
@@ -197,6 +200,41 @@ class NodeFilterValidatorTest {
         );
         actualValidationResult = nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(staticFilter4));
         assertTrue(actualValidationResult.isRight());
+    }
+
+    @Test
+    void testValidateComponentFilterWithIndex() {
+        Service service = createService("string", "schema");
+        final var filterConstraint1 = buildFilterConstraintDto(
+            PROPERTY_NAME,
+            FilterValueType.GET_PROPERTY,
+            ConstraintType.EQUAL,
+            PropertyFilterTargetType.PROPERTY,
+            createToscaGetFunction("test", PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME, "alist"), List.of("1"))
+        );
+        Map<String, DataTypeDefinition> data = new HashMap<>();
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        List<PropertyDefinition> properties = new ArrayList<>();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName("alist");
+        propertyDefinition.setType("list");
+
+        SchemaDefinition schemaDefinition = new SchemaDefinition();
+        PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+        schemaProperty.setType("string");
+        schemaDefinition.setProperty(schemaProperty);
+        propertyDefinition.setSchema(schemaDefinition);
+
+        properties.add(propertyDefinition);
+        dataTypeDefinition.setProperties(properties);
+
+        data.put("string", dataTypeDefinition);
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
+
+        Either<Boolean, ResponseFormat> actualValidationResult =
+            nodeFilterValidator.validateSubstitutionFilter(service, Collections.singletonList(filterConstraint1));
+        assertTrue(actualValidationResult.isLeft());
     }
 
     @Test
@@ -309,7 +347,7 @@ class NodeFilterValidatorTest {
     void testValidatePropertyConstraintBrotherSuccess() {
         Service service = createService(ToscaPropertyType.STRING.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(COMPONENT2_ID, PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(COMPONENT2_ID, PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -328,7 +366,7 @@ class NodeFilterValidatorTest {
     void testValidatePropertyConstraintParentSuccess() {
         final var service = createService(ToscaPropertyType.STRING.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -348,7 +386,7 @@ class NodeFilterValidatorTest {
         final Service service = createService(ToscaPropertyType.STRING.getType());
         service.getComponentInstancesProperties().get(COMPONENT2_ID).get(0).setType(ToscaPropertyType.INTEGER.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(COMPONENT2_ID, PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(COMPONENT2_ID, PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -374,7 +412,7 @@ class NodeFilterValidatorTest {
         final Service service = createService(ToscaPropertyType.STRING.getType());
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setType(ToscaPropertyType.INTEGER.getType());
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -405,7 +443,7 @@ class NodeFilterValidatorTest {
             .thenReturn(expectedResponse);
 
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -425,7 +463,7 @@ class NodeFilterValidatorTest {
         Service service = createService(ToscaPropertyType.STRING.getType());
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setName("Prop2");
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
@@ -446,13 +484,15 @@ class NodeFilterValidatorTest {
     protected static ToscaGetFunctionDataDefinition createToscaGetFunction(final String sourceName,
                                                                            final PropertySource propertySource,
                                                                            final ToscaGetFunctionType toscaGetFunctionType,
-                                                                           final List<String> propertyPathFromSource) {
+                                                                           final List<String> propertyPathFromSource,
+                                                                           final List<Object> toscaIndexList) {
         final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
         toscaGetFunction.setFunctionType(toscaGetFunctionType);
         toscaGetFunction.setPropertyPathFromSource(propertyPathFromSource);
         toscaGetFunction.setSourceName(sourceName);
         toscaGetFunction.setPropertySource(propertySource);
         toscaGetFunction.setPropertyName(propertyPathFromSource.get(0));
+        toscaGetFunction.setToscaIndexList(toscaIndexList);
         return toscaGetFunction;
     }
 
@@ -467,7 +507,7 @@ class NodeFilterValidatorTest {
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setSchema(schemaDefinition);
 
         final ToscaGetFunctionDataDefinition toscaGetFunction =
-            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME));
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
         final var filterConstraintDto = buildFilterConstraintDto(
             PROPERTY_NAME,
             FilterValueType.GET_PROPERTY,
