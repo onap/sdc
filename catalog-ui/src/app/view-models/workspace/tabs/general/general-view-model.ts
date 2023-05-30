@@ -930,7 +930,7 @@ export class GeneralViewModel {
                 });
             }
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            this.$scope.component.derivedFromGenericType = (<Service>this.$scope.component).derivedFromGenericType;
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             this.$scope.showBaseTypeVersions = true;
             return
