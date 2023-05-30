@@ -125,7 +125,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                 this.loadPropertyDropdown(() => {
                     this.selectedProperty
                     .setValue(this.propertyDropdownList.find(property => property.propertyName === this.toscaGetFunction.propertyName));
-                    if (this.toscaGetFunction.toscaIndexList.length > 0) {
+                    if (this.toscaGetFunction.toscaIndexList && this.toscaGetFunction.toscaIndexList.length > 0) {
                         let tempSelectedProperty : PropertyDropdownValue = this.selectedProperty.value;
                         this.toscaGetFunction.toscaIndexList.forEach((indexValue: string, index) => {
                             let tempIndexFlag = false;

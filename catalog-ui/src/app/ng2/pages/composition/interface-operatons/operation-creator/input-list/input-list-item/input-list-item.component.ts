@@ -25,6 +25,7 @@ import {SchemaProperty, SchemaPropertyGroupModel} from '../../../../../../../mod
 import {PropertyBEModel} from '../../../../../../../models/properties-inputs/property-be-model';
 import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../../utils/constants';
 import {ToscaFunction} from '../../../../../../../models/tosca-function';
+import {ToscaFunctionType} from "../../../../../../../models/tosca-function-type.enum";
 import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment/tosca-function/tosca-function.component";
 import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
 import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
@@ -48,6 +49,7 @@ export class InputListItemComponent implements OnInit {
   @Input() isMapChild: boolean = false;
   @Input() showToscaFunctionOption: boolean = false;
   @Input() listIndex: number;
+  @Input() subPropertyToscaFunctions: SubPropertyToscaFunctions[];
   @Input() isViewOnly: boolean;
   @Input() allowDeletion: boolean = false;
   @Input() toscaFunction: ToscaFunction;
@@ -94,6 +96,24 @@ export class InputListItemComponent implements OnInit {
         this.valueObjRef[property.name] = null;
       }
     }
+  }
+
+  getToscaFunction(key: any): any {
+    if (this.subPropertyToscaFunctions) {
+      for (let subPropertyToscaFunction of this.subPropertyToscaFunctions) {
+        let found = subPropertyToscaFunction.subPropertyPath.find(value => value === key);
+        if (found) {
+          return subPropertyToscaFunction.toscaFunction;
+        }
+      }
+    }
+    if ((key && this.valueObjRef[key] && this.valueObjRef[key].type)) {
+      const type = this.valueObjRef[key].type;
+      if (type in ToscaFunctionType) {
+        return <ToscaFunction> this.valueObjRef[key];
+      }
+    }
+    return undefined;
   }
 
   isTypeSimple(typeName: string): boolean {
@@ -326,4 +346,9 @@ export class InputListItemComponent implements OnInit {
     return isNaN(number) ? null : number;
   }
 
+}
+
+export interface SubPropertyToscaFunctions {
+  subPropertyPath: string[];
+  toscaFunction: ToscaFunction;
 }
