@@ -19,41 +19,27 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
@@ -68,15 +54,14 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
-import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
-import org.yaml.snakeyaml.Yaml;
 
 class InterfacesOperationsConverterTest {
 
@@ -84,10 +69,9 @@ class InterfacesOperationsConverterTest {
     private static final String INPUT_NAME_PREFIX = "input_";
     private static final String OUTPUT_NAME_PREFIX = "output_";
     private static final String NODE_TYPE_NAME = "test";
-    private final String[] inputTypes = {"string", "integer", "float", "boolean"};
-    private static ObjectMapper mapper;
     private static final Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-
+    private static ObjectMapper mapper;
+    private final String[] inputTypes = {"string", "integer", "float", "boolean"};
     private InterfacesOperationsConverter interfacesOperationsConverter;
 
     @BeforeAll
@@ -112,7 +96,7 @@ class InterfacesOperationsConverterTest {
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("Local");
-        addOperationsToInterface(component, addedInterface, 5, 3, true, false);
+        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -135,7 +119,7 @@ class InterfacesOperationsConverterTest {
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("Local");
-        addOperationsToInterface(component, addedInterface, 5, 3, true, false);
+        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -156,7 +140,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.resource.or.other.resourceName");
 
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -179,7 +163,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedServiceComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.service.or.other.serviceName");
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -196,7 +180,6 @@ class InterfacesOperationsConverterTest {
 
     }
 
-
     @Test
     void testGetInterfaceAsMapServiceProxy() {
         Component component = new Resource();
@@ -204,7 +187,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
         addedInterface.setType("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -225,7 +208,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.resource.or.other.resourceNameNoInputs");
-        addOperationsToInterface(component, addedInterface, 3, 3, false, false);
+        addOperationsToInterface(component, addedInterface, 3, 3, false, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -249,7 +232,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType(addedInterfaceType);
-        addOperationsToInterface(component, addedInterface, 2, 2, true, true);
+        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false);
         addedInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -280,7 +263,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType(addedInterfaceType);
         addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, addedInterface, 2, 2, true, true);
+        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false);
         addedInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -293,7 +276,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition secondInterface = new InterfaceDefinition();
         secondInterface.setType(secondInterfaceType);
         secondInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, secondInterface, 2, 2, true, true);
+        addOperationsToInterface(component, secondInterface, 2, 2, true, true, false);
         secondInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -408,65 +391,8 @@ class InterfacesOperationsConverterTest {
         assertTrue(expectedListOfStringPropValue.contains("value3"));
     }
 
-
-    private void validateInterfaceInputs(final String yaml, final String interfaceName, final Map<String, InputDataDefinition> expectedInputMap) {
-        String fixedMainYaml = yaml;
-        final String nullString = "null";
-        if (fixedMainYaml.startsWith(nullString)) {
-            fixedMainYaml = yaml.substring(nullString.length());
-        }
-        if (fixedMainYaml.endsWith(nullString)) {
-            fixedMainYaml = fixedMainYaml.substring(0, fixedMainYaml.length() - nullString.length());
-        }
-        final Map<String, Object> yamlMap = new Yaml().load(fixedMainYaml);
-        final Map<String, Object> nodeTypesMap = (Map<String, Object>) yamlMap.get(NODE_TYPES.getElementName());
-        final Map<String, Object> node = (Map<String, Object>) nodeTypesMap.get(NODE_TYPE_NAME);
-        final Map<String, Object> interfacesMap = (Map<String, Object>) node.get(INTERFACES.getElementName());
-        final Map<String, Object> interface1 = (Map<String, Object>) interfacesMap.get(interfaceName);
-        final Map<String, Object> actualInputsMap = (Map<String, Object>) interface1.get(INPUTS.getElementName());
-        assertThat(actualInputsMap.keySet(), containsInAnyOrder(expectedInputMap.keySet().toArray()));
-        expectedInputMap.forEach((inputName, inputDataDefinition) -> {
-            final Map<String, Object> actualInput = (Map<String, Object>) actualInputsMap.get(inputName);
-            compareInputYaml(inputName, actualInput, inputDataDefinition);
-        });
-    }
-
-    private void compareInputYaml(final String inputName, final Map<String, Object> actualInput,
-                                  final InputDataDefinition expectedInput) {
-        final String msgFormat = "%s should be equal in input %s";
-        String field = TYPE.getElementName();
-        assertThat(String.format(msgFormat, field, inputName),
-            actualInput.get(field), equalTo(expectedInput.getType()));
-        field = DESCRIPTION.getElementName();
-        assertThat(String.format(msgFormat, field, inputName),
-            actualInput.get(field), equalTo(expectedInput.getDescription()));
-        field = REQUIRED.getElementName();
-        assertThat(String.format(msgFormat, field, inputName),
-            actualInput.get(field), equalTo(expectedInput.getRequired()));
-        field = DEFAULT.getElementName();
-        assertThat(String.format(msgFormat, field, inputName),
-            actualInput.get(field), equalTo(expectedInput.getDefaultValue()));
-    }
-
-    @FunctionalInterface
-    interface MainYamlAssertion extends Function<String, Boolean> {
-
-    }
-
-    private static Function<String, Boolean> all(MainYamlAssertion... fs) {
-        return s -> io.vavr.collection.List.of(fs).map(f -> f.apply(s)).fold(true, (l, r) -> l && r);
-    }
-
-    private static MainYamlAssertion containsNone(String... expected) {
-        return s -> io.vavr.collection.List.of(expected).map(e -> !s.contains(e)).fold(true, (l, r) -> l && r);
-    }
-
-    private static MainYamlAssertion containsAll(String... expected) {
-        return s -> io.vavr.collection.List.of(expected).map(s::contains).fold(true, (l, r) -> l && r);
-    }
-
     private void addOperationsToInterface(Component component, InterfaceDefinition addedInterface, int numOfOps,
-                                          int numOfInputsPerOp, boolean hasInputs, boolean hasOutputs) {
+                                          int numOfInputsPerOp, boolean hasInputs, boolean hasOutputs, boolean addAComplexType) {
 
         addedInterface.setOperations(new HashMap<>());
         for (int i = 0; i < numOfOps; i++) {
@@ -477,7 +403,7 @@ class InterfacesOperationsConverterTest {
             implementation.setArtifactName(i + "_createBPMN.bpmn");
             operation.setImplementation(implementation);
             if (hasInputs) {
-                operation.setInputs(createInputs(component, numOfInputsPerOp));
+                operation.setInputs(createInputs(component, numOfInputsPerOp, addAComplexType));
             }
             if (hasOutputs) {
                 operation.setOutputs(createOutputs(addedInterface.getToscaResourceName(),
@@ -505,8 +431,14 @@ class InterfacesOperationsConverterTest {
         return new InputDataDefinition(propertyDataDefinition);
     }
 
-    private ListDataDefinition<OperationInputDefinition> createInputs(Component component, int numOfInputs) {
+    private ListDataDefinition<OperationInputDefinition> createInputs(Component component, int numOfInputs, boolean addAComplexType) {
         ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
+        if (addAComplexType) {
+            String mappedPropertyName = java.util.UUID.randomUUID() + "." + MAPPED_PROPERTY_NAME + numOfInputs;
+            operationInputDefinitionList.add(
+                createMockComplexOperationInputDefinition(INPUT_NAME_PREFIX + "Complex" + "_" + numOfInputs, mappedPropertyName));
+            numOfInputs -= 1;
+        }
         for (int i = 0; i < numOfInputs; i++) {
             String mappedPropertyName = java.util.UUID.randomUUID() + "." + MAPPED_PROPERTY_NAME + i;
             operationInputDefinitionList.add(createMockOperationInputDefinition(
@@ -554,6 +486,17 @@ class InterfacesOperationsConverterTest {
         return operationInputDefinition;
     }
 
+    private OperationInputDefinition createMockComplexOperationInputDefinition(String name, String id) {
+        OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
+        operationInputDefinition.setName(name);
+        operationInputDefinition.setInputId(id);
+        operationInputDefinition.setType("complexDataType");
+        operationInputDefinition.setRequired(false);
+        operationInputDefinition.setValue(
+            "{\"intProp\":1,\"stringProp\":{\"type\":\"GET_ATTRIBUTE\",\"propertyUniqueId\":\"ac4bc339-56d1-4ea2-9802-2da219a1247a.designer\",\"propertyName\":\"designer\",\"propertySource\":\"SELF\",\"sourceUniqueId\":\"ac4bc339-56d1-4ea2-9802-2da219a1247a\",\"sourceName\":\"service\",\"functionType\":\"GET_ATTRIBUTE\",\"propertyPathFromSource\":[\"designer\"]}}");
+        return operationInputDefinition;
+    }
+
     private OperationOutputDefinition createMockOperationOutputDefinition(String interfaceName, String operationName,
                                                                           String outputName, int index) {
         OperationOutputDefinition operationInputDefinition = new OperationOutputDefinition();
@@ -568,91 +511,6 @@ class InterfacesOperationsConverterTest {
         Map<String, List<String>> toscaDefaultValueMap = new HashMap<>();
         toscaDefaultValueMap.put(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName(), toscaDefaultValues);
         return operationInputDefinition;
-    }
-
-    private void validateOperationInputs(final String mainYaml, int numOfInputsPerOp, String mappedOperationName) {
-        String nodeTypeKey = NODE_TYPE_NAME + ":";
-        String nodeTypesRepresentation = mainYaml.substring(mainYaml.indexOf(nodeTypeKey) + nodeTypeKey.length(),
-            mainYaml.lastIndexOf(MAPPED_PROPERTY_NAME) + MAPPED_PROPERTY_NAME.length()
-                + String.valueOf(numOfInputsPerOp).length());
-        YamlToObjectConverter objectConverter = new YamlToObjectConverter();
-        ToscaNodeType toscaNodeType = objectConverter.convert(nodeTypesRepresentation.getBytes(), ToscaNodeType.class);
-        Map<String, Object> interfaces = toscaNodeType.getInterfaces();
-        for (Map.Entry<String, Object> interfaceEntry : interfaces.entrySet()) {
-            Map<String, Object> interfaceDefinition = mapper.convertValue(interfaceEntry.getValue(), Map.class);
-            final Map<String, Object> operationsMap = interfaceDefinition.entrySet().stream()
-                .filter(entry -> !INPUTS.getElementName().equals(entry.getKey()) &&
-                    !TYPE.getElementName().equals(entry.getKey()))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-            for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
-                Object operationVal = operationEntry.getValue();
-                if (operationVal instanceof Map) {
-                    //Since the inputs are mapped to output operations from only first interface so using that name
-                    validateOperationInputDefinition(interfaces.keySet().iterator().next(), mappedOperationName,
-                        operationVal);
-                }
-            }
-        }
-    }
-
-    private void validateOperationInputDefinition(String interfaceType, String operationName, Object operationVal) {
-        Map<String, Object> operation = mapper.convertValue(operationVal, Map.class);
-        Map<String, Object> inputs = (Map<String, Object>) operation.get("inputs");
-        for (Map.Entry<String, Object> inputEntry : inputs.entrySet()) {
-            String[] inputNameSplit = inputEntry.getKey().split("_");
-            Map<String, Object> inputValueObject = (Map<String, Object>) inputEntry.getValue();
-            validateOperationInputDefinitionDefaultValue(interfaceType, operationName, inputNameSplit[1],
-                Integer.parseInt(inputNameSplit[2]), inputValueObject);
-        }
-    }
-
-
-    private void validateOperationInputDefinitionDefaultValue(String interfaceType, String operationName,
-                                                              String inputType, int index,
-                                                              Map<String, Object> inputValueObject) {
-        if (inputValueObject.containsKey(ToscaFunctions.GET_PROPERTY.getFunctionName())) {
-            String mappedPropertyValue = MAPPED_PROPERTY_NAME + index;
-            List<String> mappedPropertyDefaultValue = (List<String>) inputValueObject
-                .get(ToscaFunctions.GET_PROPERTY.getFunctionName());
-            assertEquals(2, mappedPropertyDefaultValue.size());
-            assertTrue(mappedPropertyDefaultValue.contains(SELF));
-            assertTrue(mappedPropertyDefaultValue.contains(mappedPropertyValue));
-        } else if (inputValueObject.containsKey(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
-            List<String> mappedPropertyDefaultValue = (List<String>) inputValueObject
-                .get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
-            assertEquals(4, mappedPropertyDefaultValue.size());
-            String mappedPropertyValue = OUTPUT_NAME_PREFIX + inputType + "_" + index;
-            assertTrue(mappedPropertyDefaultValue.contains(SELF));
-            assertTrue(mappedPropertyDefaultValue.contains(interfaceType));
-            assertTrue(mappedPropertyDefaultValue.contains(operationName));
-            assertTrue(mappedPropertyDefaultValue.contains(mappedPropertyValue));
-        } else {
-            fail("Invalid Tosca function in default value. Allowed values: " + ToscaFunctions.GET_PROPERTY.getFunctionName() +
-                "/" + ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
-        }
-    }
-
-    private void validateServiceProxyOperationInputs(String mainYaml) {
-        String nodeTypeKey = NODE_TYPE_NAME + ":";
-        String nodeTypesRepresentation = mainYaml.substring(mainYaml.indexOf(nodeTypeKey) + nodeTypeKey.length(),
-            mainYaml.lastIndexOf(MAPPED_PROPERTY_NAME) + MAPPED_PROPERTY_NAME.length());
-        YamlUtil yamlUtil = new YamlUtil();
-        ToscaNodeType toscaNodeType = yamlUtil.yamlToObject(nodeTypesRepresentation, ToscaNodeType.class);
-        for (Object interfaceVal : toscaNodeType.getInterfaces().values()) {
-            Map<String, Object> interfaceDefinition = mapper.convertValue(interfaceVal, Map.class);
-            for (Object operationVal : interfaceDefinition.values()) {
-                if (operationVal instanceof Map) {
-                    Map<String, Object> operation = (Map<String, Object>) mapper.convertValue(operationVal, Map.class);
-                    Map<String, Object> operationInputs = (Map<String, Object>) operation.get("inputs");
-                    for (Object inputValue : operationInputs.values()) {
-                        Map<String, Object> inputValueAsMap = (Map<String, Object>) inputValue;
-                        assertFalse(inputValueAsMap.keySet().contains("type"));
-                        assertFalse(inputValueAsMap.keySet().contains("required"));
-                        assertFalse(inputValueAsMap.keySet().contains("default"));
-                    }
-                }
-            }
-        }
     }
 
     @Test
@@ -682,6 +540,56 @@ class InterfacesOperationsConverterTest {
 
         assertTrue(MapUtils.isNotEmpty(resultMap)
             && resultMap.containsKey("NotLocal"));
+    }
+
+    @Test
+    void testGetInterfaceAsMapWithComplexType() {
+        addComplexTypeToDataTypes();
+        Component component = new Resource();
+        component.setNormalizedName("normalizedComponentName");
+        InterfaceDefinition addedInterface = new InterfaceDefinition();
+        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
+        addedInterface.setType("com.some.resource.or.other.resourceName");
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, true);
+        final String interfaceType = "normalizedComponentName-interface";
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(interfaceType, addedInterface);
+        final var interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), dataTypes, false);
+        assertNotNull(interfacesMap);
+        assertEquals(1, interfacesMap.size());
+        assertTrue(interfacesMap.containsKey("resourceName"));
+        Object resourceName = interfacesMap.get("resourceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(4, ((Map) resourceName).size());
+        assertTrue(resourceName instanceof Map);
+        Map<String, Object> resource = (Map<String, Object>) resourceName;
+        assertTrue(resource.containsKey("name_for_op_0"));
+        Map<String, Object> operation0 = (Map<String, Object>) resource.get("name_for_op_0");
+        assertTrue(operation0.containsKey("inputs"));
+        Map<String, Object> operation0Inputs = (Map<String, Object>) operation0.get("inputs");
+        assertTrue(operation0Inputs.containsKey("input_Complex_2"));
+        Map<String, Object> complexInput = (Map<String, Object>) operation0Inputs.get("input_Complex_2");
+        assertTrue(complexInput.containsKey("stringProp"));
+        Map<String, Object> complexInputStringProp = (Map<String, Object>) complexInput.get("stringProp");
+        assertTrue(complexInputStringProp.containsKey("get_attribute"));
+        List<String> complexInputStringPropToscaFunction = (List<String>) complexInputStringProp.get("get_attribute");
+        assertEquals(2, complexInputStringPropToscaFunction.size());
+        assertEquals("SELF", complexInputStringPropToscaFunction.get(0));
+        assertEquals("designer", complexInputStringPropToscaFunction.get(1));
+    }
+
+    private void addComplexTypeToDataTypes() {
+        PropertyDefinition intProp = new PropertyDefinition();
+        intProp.setType("integer");
+        intProp.setName("intProp");
+        PropertyDefinition stringProp = new PropertyDefinition();
+        stringProp.setType("string");
+        stringProp.setName("stringProp");
+        DataTypeDefinition dataType = new DataTypeDefinition();
+        dataType.setName("complexDataType");
+        dataType.setProperties(new ArrayList<>(Arrays.asList(stringProp, intProp)));
+        dataTypes.put("complexDataType", dataType);
     }
 
     @Test

@@ -33,6 +33,7 @@ export class InputOperationParameter {
     value?: any;
     toscaFunction?: ToscaFunction;
     valid:boolean= true;
+    subPropertyToscaFunctions: any;
 
     constructor(param?: any) {
         if (param) {
@@ -44,6 +45,7 @@ export class InputOperationParameter {
             this.value = param.value;
             this.toscaFunction = param.toscaFunction;
             this.valid = param.valid;
+            this.subPropertyToscaFunctions = param.subPropertyToscaFunctions;
         }
     }
 
