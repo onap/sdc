@@ -929,6 +929,13 @@ export class GeneralViewModel {
                     }
                 });
             }
+            if((<Service>this.$scope.component).derivedFromGenericType) {
+                baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
+                    if(baseTypeObj.toscaResourceName == (<Service>this.$scope.component).derivedFromGenericType) {
+                        baseType = baseTypeObj;
+                    }
+                });
+            }
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
             this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
