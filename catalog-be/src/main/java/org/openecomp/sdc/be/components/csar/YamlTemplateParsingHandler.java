@@ -1288,12 +1288,23 @@ public class YamlTemplateParsingHandler {
         final OperationInputDefinition operationInput
     ) {
         if (value instanceof Map) {
+            final Map<String, Object> valueMap = (Map<String, Object>) value;
             log.debug("Creating interface operation input '{}'", inputName);
             Type type = new TypeToken<LinkedHashMap<String, Object>>() {
             }.getType();
             String stringValue = gson.toJson(value, type);
             if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(value)) {
                 toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) value).ifPresent(operationInput::setToscaFunction);
+            } else {
+                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(valueMap, new ArrayList<>());
+                if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
+                    Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = operationInput.getSubPropertyToscaFunctions();
+                    if (existingSubPropertyToscaFunctions == null) {
+                        operationInput.setSubPropertyToscaFunctions(subPropertyToscaFunctions);
+                    } else {
+                        operationInput.getSubPropertyToscaFunctions().addAll(subPropertyToscaFunctions);
+                    }
+                }
             }
             operationInput.setValue(stringValue);
         }
