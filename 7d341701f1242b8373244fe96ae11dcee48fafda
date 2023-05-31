@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f48dcd0_5f071f6b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-31T15:31:00Z",
+      "side": 1,
+      "message": "not covered by any TC, please add UnitTest to cover",
+      "range": {
+        "startLine": 118,
+        "startChar": 100,
+        "endLine": 158,
+        "endChar": 9
+      },
+      "revId": "7d341701f1242b8373244fe96ae11dcee48fafda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
