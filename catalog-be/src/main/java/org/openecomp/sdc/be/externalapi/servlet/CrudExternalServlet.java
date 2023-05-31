@@ -434,7 +434,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         ResponseFormat responseFormat;
         Response response;
         Either<? extends AssetMetadata, ResponseFormat> resMetadata = assetMetadataUtils
-            .convertToSingleAssetMetadata(resource, request.getRequestURL().toString(), true);
+            .convertToSingleAssetMetadata(resource, request.getRequestURL().toString(), true, null);
         if (resMetadata.isRight()) {
             log.debug("Asset conversion Failed");
             responseFormat = resMetadata.right().value();
