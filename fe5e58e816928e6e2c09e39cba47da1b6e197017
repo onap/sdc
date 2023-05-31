@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0c90dec7_5c81e19b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-05-31T10:38:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ec5434d_b55fa1d6",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 125
+      },
+      "revId": "fe5e58e816928e6e2c09e39cba47da1b6e197017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3755e0c_615fe1c4",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "fe5e58e816928e6e2c09e39cba47da1b6e197017",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05cf94e2_075f371b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/constraints/ValidValuesConstraint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-05-31T10:38:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3755e0c_615fe1c4",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 138
+      },
+      "revId": "fe5e58e816928e6e2c09e39cba47da1b6e197017",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
