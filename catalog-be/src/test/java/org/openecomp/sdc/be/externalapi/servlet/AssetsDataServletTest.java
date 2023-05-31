@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.util.Arrays;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +33,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import fj.data.Either;
 import org.apache.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -97,7 +98,7 @@ class AssetsDataServletTest extends JerseyTest {
     private static final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
     private static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
     private static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito
-        .mock(ComponentInstanceBusinessLogic.class);
+            .mock(ComponentInstanceBusinessLogic.class);
 
 
     @BeforeAll
@@ -110,7 +111,7 @@ class AssetsDataServletTest extends JerseyTest {
 
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
-            .thenReturn(webAppContextWrapper);
+                .thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
 
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
@@ -123,8 +124,8 @@ class AssetsDataServletTest extends JerseyTest {
         when(resource.getSystemName()).thenReturn("mockvfcmt");
         Either<Resource, ResponseFormat> eitherRet = Either.left(resource);
         when(componentsUtils
-            .convertJsonToObjectUsingObjectMapper(Mockito.any(), Mockito.any(), Mockito.eq(Resource.class),
-                Mockito.any(), Mockito.eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherRet);
+                .convertJsonToObjectUsingObjectMapper(Mockito.any(), Mockito.any(), Mockito.eq(Resource.class),
+                        Mockito.any(), Mockito.eq(ComponentTypeEnum.RESOURCE))).thenReturn(eitherRet);
 
         when(webApplicationContext.getBean(ResourceImportManager.class)).thenReturn(resourceImportManager);
         when(webApplicationContext.getBean(ElementBusinessLogic.class)).thenReturn(elementBusinessLogic);
@@ -132,20 +133,20 @@ class AssetsDataServletTest extends JerseyTest {
         when(subCategoryDefinition.getName()).thenReturn("Monitoring Template");
         when(categoryDefinition.getSubcategories()).thenReturn(Arrays.asList(subCategoryDefinition));
         when(elementBusinessLogic.getAllResourceCategories())
-            .thenReturn(Either.left(Arrays.asList(categoryDefinition)));
+                .thenReturn(Either.left(Arrays.asList(categoryDefinition)));
         when(resourceBusinessLogic
-            .createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-            .thenReturn(resource);
+                .createResource(Mockito.eq(resource), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(resource);
         when(webApplicationContext.getBean(AssetMetadataConverter.class)).thenReturn(assetMetadataConverter);
         when(request.isUserInRole(anyString())).thenReturn(true);
 
         Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter)
-            .convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
-                Mockito.eq(true));
+                .convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
+                        Mockito.eq(true), Mockito.eq(null));
 
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            appConfigDir);
+                appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
@@ -166,21 +167,21 @@ class AssetsDataServletTest extends JerseyTest {
 
     private static void mockResponseFormat() {
         when(componentsUtils.getResponseFormat(Mockito.any(ActionStatus.class), Mockito.any(String[].class)))
-            .thenAnswer((Answer<ResponseFormat>) invocation -> {
-                ResponseFormat ret;
-                final ActionStatus actionStatus = invocation.getArgument(0);
-                switch (actionStatus) {
-                    case CREATED: {
-                        ret = new ResponseFormat(HttpStatus.SC_CREATED);
-                        break;
+                .thenAnswer((Answer<ResponseFormat>) invocation -> {
+                    ResponseFormat ret;
+                    final ActionStatus actionStatus = invocation.getArgument(0);
+                    switch (actionStatus) {
+                        case CREATED: {
+                            ret = new ResponseFormat(HttpStatus.SC_CREATED);
+                            break;
+                        }
+                        default: {
+                            ret = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                            break;
+                        }
                     }
-                    default: {
-                        ret = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-                        break;
-                    }
-                }
-                return ret;
-            });
+                    return ret;
+                });
     }
 
 
@@ -188,27 +189,27 @@ class AssetsDataServletTest extends JerseyTest {
     void createVfcmtHappyScenario() {
         final JSONObject createRequest = buildCreateJsonRequest();
         Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON)
-            .header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId")
-            .header(Constants.USER_ID_HEADER, "mockAttID")
-            .post(Entity.json(createRequest.toJSONString()), Response.class);
+                .header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId")
+                .header(Constants.USER_ID_HEADER, "mockAttID")
+                .post(Entity.json(createRequest.toJSONString()), Response.class);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
     }
 
     private static final String BASIC_CREATE_REQUEST = "{\r\n" +
-        "  \"name\": \"VFCMT_1\",\r\n" +
-        "  \"description\": \"VFCMT Description\",\r\n" +
-        "  \"resourceType\" : \"VFCMT\",\r\n" +
-        "  \"category\": \"Template\",\r\n" +
-        "  \"subcategory\": \"Monitoring Template\",\r\n" +
-        "  \"vendorName\" : \"DCAE\",\r\n" +
-        "  \"vendorRelease\" : \"1.0\",\r\n" +
-        "  \"tags\": [\r\n" +
-        "    \"VFCMT_1\"\r\n" +
-        "  ],\r\n" +
-        "  \"icon\" : \"defaulticon\",\r\n" +
-        "  \"contactId\": \"cs0008\"\r\n" +
-        "}";
+            "  \"name\": \"VFCMT_1\",\r\n" +
+            "  \"description\": \"VFCMT Description\",\r\n" +
+            "  \"resourceType\" : \"VFCMT\",\r\n" +
+            "  \"category\": \"Template\",\r\n" +
+            "  \"subcategory\": \"Monitoring Template\",\r\n" +
+            "  \"vendorName\" : \"DCAE\",\r\n" +
+            "  \"vendorRelease\" : \"1.0\",\r\n" +
+            "  \"tags\": [\r\n" +
+            "    \"VFCMT_1\"\r\n" +
+            "  ],\r\n" +
+            "  \"icon\" : \"defaulticon\",\r\n" +
+            "  \"contactId\": \"cs0008\"\r\n" +
+            "}";
 
     private JSONObject buildCreateJsonRequest() {
 
@@ -222,16 +223,16 @@ class AssetsDataServletTest extends JerseyTest {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig()
-            .register(new CrudExternalServlet(componentInstanceBusinessLogic, componentsUtils,
-                servletUtils, resourceImportManager, elementBusinessLogic, assetMetadataConverter,
-                lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
-            .register(new AbstractBinder() {
+                .register(new CrudExternalServlet(componentInstanceBusinessLogic, componentsUtils,
+                        servletUtils, resourceImportManager, elementBusinessLogic, assetMetadataConverter,
+                        lifecycleBusinessLogic, resourceBusinessLogic, serviceBusinessLogic))
+                .register(new AbstractBinder() {
 
-                @Override
-                protected void configure() {
-                    bind(request).to(HttpServletRequest.class);
-                }
-            })
-            .property("contextConfig", context);
+                    @Override
+                    protected void configure() {
+                        bind(request).to(HttpServletRequest.class);
+                    }
+                })
+                .property("contextConfig", context);
     }
 }
