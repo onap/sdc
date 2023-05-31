@@ -50,7 +50,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
@@ -69,6 +68,7 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -164,13 +164,13 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                                     value = "http://127.0.0.1:8080/sdc/v1/catalog/services?metadata=ETSI Version:3.3.1")})
             @QueryParam("metadata") List<String> metadata) throws IOException {
         ResponseFormat responseFormat;
-        String query = request.getQueryString();
-        String requestURI = request.getRequestURI().endsWith("/") ? removeDuplicateSlashSeparator(request.getRequestURI()) : request.getRequestURI();
-        String url = request.getMethod() + " " + requestURI;
+        final String query = request.getQueryString();
+        final String requestURI = request.getRequestURI().endsWith("/") ? removeDuplicateSlashSeparator(request.getRequestURI()) : request.getRequestURI();
+        final String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
-        AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
-        String resourceUrl = query == null ? requestURI : requestURI + "?" + query;
-        DistributionData distributionData = new DistributionData(instanceIdHeader, resourceUrl);
+        final AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
+        final String resourceUrl = query == null ? requestURI : requestURI + "?" + query;
+        final DistributionData distributionData = new DistributionData(instanceIdHeader, resourceUrl);
         // Mandatory
         if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
             log.debug("getAssetList: Missing X-ECOMP-InstanceID header");
@@ -179,7 +179,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             return buildErrorResponse(responseFormat);
         }
         try {
-            Map<FilterKeyEnum, Object> filters = new EnumMap<>(FilterKeyEnum.class);
+            final Map<FilterKeyEnum, Object> filters = new EnumMap<>(FilterKeyEnum.class);
             if (category != null) {
                 filters.put(FilterKeyEnum.CATEGORY, category);
             }
@@ -213,7 +213,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(responseFormat);
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
-                Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
+                final Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
                         .convertToAssetMetadata(componentList.left().value(), requestURI, false, additionalMetadataKeysToInclude);
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
@@ -221,7 +221,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                     getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                     return buildErrorResponse(responseFormat);
                 }
-                Object result = RepresentationUtils.toRepresentation(resMetadata.left().value());
+                final Object result = RepresentationUtils.toRepresentation(sortIfNeed(resMetadata.left().value(), additionalMetadataKeysToInclude));
                 responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
                 getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                 return buildOkResponse(responseFormat, result);
@@ -384,4 +384,13 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     private String removeDuplicateSlashSeparator(String requestUri) {
         return requestUri.substring(0, requestUri.length() - 1);
     }
+
+    private List<? extends AssetMetadata> sortIfNeed(final List<? extends AssetMetadata> assetMetadataList, final List<String> additionalMetadataKeysToInclude) {
+        if (additionalMetadataKeysToInclude.contains("creationDate")) {
+            assetMetadataList.sort((am1, am2) -> ((ServiceAssetDetailedMetadata) am1).getAdditionalRequestedMetadata().get("creationDate")
+                    .compareTo(((ServiceAssetDetailedMetadata) am2).getAdditionalRequestedMetadata().get("creationDate")));
+        }
+        return assetMetadataList;
+    }
+
 }
