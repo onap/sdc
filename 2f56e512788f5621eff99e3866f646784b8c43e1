@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a14935e5_d0696e87",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-31T15:34:35Z",
+      "side": 1,
+      "message": "not covered by any TC, please add UnitTest to cover",
+      "range": {
+        "startLine": 418,
+        "startChar": 12,
+        "endLine": 433,
+        "endChar": 13
+      },
+      "revId": "2f56e512788f5621eff99e3866f646784b8c43e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b3a49e3_fc052c9a",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/PropertyFilterConstraintDataDefinitionHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-31T15:34:35Z",
+      "side": 1,
+      "message": "unsure that covered by any TC",
+      "range": {
+        "startLine": 131,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 55
+      },
+      "revId": "2f56e512788f5621eff99e3866f646784b8c43e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69b9035e_ebd64490",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/PropertyFilterConstraintDataDefinitionHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-05-31T15:34:35Z",
+      "side": 1,
+      "message": "unsure that covered by any TC",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 228,
+        "endChar": 55
+      },
+      "revId": "2f56e512788f5621eff99e3866f646784b8c43e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
