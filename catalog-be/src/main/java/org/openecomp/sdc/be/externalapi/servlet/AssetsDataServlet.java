@@ -96,23 +96,23 @@ import org.springframework.stereotype.Controller;
 public class AssetsDataServlet extends AbstractValidationsServlet {
 
     private static final Logger log = Logger.getLogger(AssetsDataServlet.class);
-    private final ElementBusinessLogic elementBusinessLogic;
+    private final ElementBusinessLogic elementBL;
     private final AssetMetadataConverter assetMetadataConverter;
-    private final ServiceBusinessLogic serviceBusinessLogic;
-    private final ResourceBusinessLogic resourceBusinessLogic;
+    private final ServiceBusinessLogic serviceBL;
+    private final ResourceBusinessLogic resourceBL;
     @Context
     private HttpServletRequest request;
 
     @Inject
     public AssetsDataServlet(ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
-                             ResourceImportManager resourceImportManager, ElementBusinessLogic elementBusinessLogic,
-                             AssetMetadataConverter assetMetadataConverter, ServiceBusinessLogic serviceBusinessLogic,
-                             ResourceBusinessLogic resourceBusinessLogic) {
+                             ResourceImportManager resourceImportManager, ElementBusinessLogic elementBL,
+                             AssetMetadataConverter assetMetadataConverter, ServiceBusinessLogic serviceBL,
+                             ResourceBusinessLogic resourceBL) {
         super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
-        this.elementBusinessLogic = elementBusinessLogic;
+        this.elementBL = elementBL;
         this.assetMetadataConverter = assetMetadataConverter;
-        this.serviceBusinessLogic = serviceBusinessLogic;
-        this.resourceBusinessLogic = resourceBusinessLogic;
+        this.serviceBL = serviceBL;
+        this.resourceBL = resourceBL;
     }
 
     @GET
@@ -136,6 +136,9 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             @Parameter(description = "The filter key (only for resources)") @QueryParam("subCategory") String subCategory,
             @Parameter(description = "The filter key (for resources and services)") @QueryParam("distributionStatus") String distributionStatus,
             @Parameter(description = "The filter key (only for resources)") @QueryParam("resourceType") String resourceType,
+            @Parameter(description = "The filter key (only for services). \n" +
+                    "Keys of additional metadata to additionalMetadataKeysToInclude in the response, not all keys are supported. Supported keys: lastUpdateDate, creationDate, description, uniqueId and category specific metadata keys")
+            @QueryParam("include") List<String> additionalMetadataKeysToInclude,
             @Parameter(description = "The filter key (only for services). \n" +
                     "Syntax: /services?version=(highestMatchingVersionOnly|lessThan|greaterThan|equals)(:=)(value)",
                     examples = {
@@ -202,17 +205,16 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
                 }
                 filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeEnum.name());
             }
-            Either<List<? extends Component>, ResponseFormat> assetTypeData
-                    = elementBusinessLogic.getFilteredCatalogComponents(assetType, filters, query);
-            if (assetTypeData.isRight()) {
+            final Either<List<? extends Component>, ResponseFormat> componentList = elementBL.getFilteredCatalogComponents(assetType, filters, query);
+            if (componentList.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
-                responseFormat = assetTypeData.right().value();
+                responseFormat = componentList.right().value();
                 getComponentsUtils().auditExternalGetAssetList(responseFormat, auditingActionEnum, distributionData, requestId);
                 return buildErrorResponse(responseFormat);
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
                 Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
-                        .convertToAssetMetadata(assetTypeData.left().value(), requestURI, false);
+                        .convertToAssetMetadata(componentList.left().value(), requestURI, false, additionalMetadataKeysToInclude);
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
                     responseFormat = resMetadata.right().value();
@@ -276,8 +278,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             return buildErrorResponse(responseFormat);
         }
         try {
-            Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBusinessLogic
-                    .getCatalogComponentsByUuidAndAssetType(assetType, uuid);
+            final Either<List<? extends Component>, ResponseFormat> assetTypeData = elementBL.getCatalogComponentsByUuidAndAssetType(assetType, uuid);
             if (assetTypeData.isRight()) {
                 log.debug("getAssetList: Asset Fetching Failed");
                 responseFormat = assetTypeData.right().value();
@@ -287,7 +288,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             resourceCommonInfo.setResourceName(assetTypeData.left().value().iterator().next().getName());
             log.debug("getAssetList: Asset Fetching Success");
             Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
-                    .convertToAssetMetadata(assetTypeData.left().value(), requestURI, true);
+                    .convertToAssetMetadata(assetTypeData.left().value(), requestURI, true, null);
             if (resMetadata.isRight()) {
                 log.debug("getAssetList: Asset conversion Failed");
                 responseFormat = resMetadata.right().value();
@@ -307,10 +308,10 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 
     private ComponentBusinessLogic getComponentBLByType(ComponentTypeEnum componentTypeEnum) {
         if (componentTypeEnum.equals(RESOURCE)) {
-            return resourceBusinessLogic;
+            return resourceBL;
         } else {
             // Implementation is the same for any ComponentBusinessLogic
-            return serviceBusinessLogic;
+            return serviceBL;
         }
     }
 

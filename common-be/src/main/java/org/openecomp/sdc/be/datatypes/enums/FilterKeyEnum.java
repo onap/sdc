@@ -17,6 +17,7 @@ package org.openecomp.sdc.be.datatypes.enums;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -28,19 +29,21 @@ public enum FilterKeyEnum {
     CATEGORY("category"),
     VERSION("version"),
     METADATA("metadata"),
+    INCLUDE("include"),
     DISTRIBUTION_STATUS("distributionStatus"),
     NAME_FRAGMENT("nameFragment");
     private final String name;
 
     private static final List<String> RESOURCES_FILTERED = Arrays.asList(
-        RESOURCE_TYPE.getName(),
-        SUB_CATEGORY.getName(),
-        CATEGORY.getName());
+            RESOURCE_TYPE.getName(),
+            SUB_CATEGORY.getName(),
+            CATEGORY.getName());
     private static final List<String> SERVICES_FILTERED = Arrays.asList(
-        CATEGORY.getName(),
-        DISTRIBUTION_STATUS.getName(),
-        VERSION.getName(),
-        METADATA.getName());
+            CATEGORY.getName(),
+            DISTRIBUTION_STATUS.getName(),
+            VERSION.getName(),
+            INCLUDE.getName(),
+            METADATA.getName());
 
     public static List<String> getValidFiltersByAssetType(ComponentTypeEnum assetType) {
         if (assetType == null) {

@@ -20,6 +20,8 @@
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
 import java.util.List;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,4 +32,5 @@ public class ServiceAssetDetailedMetadata extends ServiceAssetMetadata {
     private String lastUpdaterFullName;
     private List<ResourceInstanceMetadata> resources;
     private List<ArtifactMetadata> artifacts;
+    private Map<String, String> additionalRequestedMetadata;
 }
