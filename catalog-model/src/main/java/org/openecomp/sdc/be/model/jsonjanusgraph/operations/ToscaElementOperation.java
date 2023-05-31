@@ -1415,7 +1415,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return isAddToCatalog;
     }
 
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType,
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType,
                                                                                            List<ResourceTypeEnum> excludeTypes,
                                                                                            JsonParseFlagEnum parseFlag) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
@@ -1432,7 +1432,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     // highest + (certified && !highest)
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType,
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType,
                                                                                                           List<ResourceTypeEnum> excludeTypes) {
         long startFetchAllStates = System.currentTimeMillis();
         Either<List<GraphVertex>, JanusGraphOperationStatus> highestNodes = getListOfHighestComponents(componentType, excludeTypes,

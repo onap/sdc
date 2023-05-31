@@ -152,7 +152,7 @@ class AbstractTemplateServletTest extends JerseyTest {
 
         Mockito.doReturn(Either.left(resourceAssetMetadata)).when(assetMetadataConverter)
             .convertToSingleAssetMetadata(Mockito.eq(resource), Mockito.anyString(),
-                Mockito.eq(true));
+                Mockito.eq(true), Mockito.eq(null));
 
         String appConfigDir = "src/test/abstract/config";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
