@@ -19,17 +19,22 @@
  */
 package org.openecomp.sdc.be.ecomp.converters;
 
-import fj.data.Either;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import fj.data.Either;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.distribution.servlet.DistributionCatalogServlet;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceAssetDetailedMetadata;
@@ -46,6 +51,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component("asset-metadata-utils")
 public class AssetMetadataConverter {
 
-    private static final Logger log = Logger.getLogger(DistributionCatalogServlet.class);
+    private static final Logger log = Logger.getLogger(AssetMetadataConverter.class);
     @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
     @Autowired
@@ -63,13 +69,13 @@ public class AssetMetadataConverter {
      * Relative asset’s URL. Should be used in REST GET API to download the asset’s CSAR. https://{serverBaseURL}/{csarPath} can be obtained from (HttpServletRequest)request.getServerName()
      */
     public Either<List<? extends AssetMetadata>, ResponseFormat> convertToAssetMetadata(List<? extends Component> componentList, String serverBaseURL,
-                                                                                        boolean detailed) {
-        if (componentList == null || componentList.isEmpty()) {
+                                                                                        boolean detailed, final List<String> additionalMetadataKeysToInclude) {
+        if (CollectionUtils.isEmpty(componentList)) {
             return Either.left(new LinkedList<>());
         }
         List<AssetMetadata> retResList = new LinkedList<>();
         for (Component curr : componentList) {
-            Either<? extends AssetMetadata, ResponseFormat> resMetaData = convertToSingleAssetMetadata(curr, serverBaseURL, detailed);
+            Either<? extends AssetMetadata, ResponseFormat> resMetaData = convertToSingleAssetMetadata(curr, serverBaseURL, detailed, additionalMetadataKeysToInclude);
             if (resMetaData.isRight()) {
                 return Either.right(resMetaData.right().value());
             }
@@ -79,9 +85,10 @@ public class AssetMetadataConverter {
     }
 
     public <T extends Component> Either<? extends AssetMetadata, ResponseFormat> convertToSingleAssetMetadata(T component, String serverBaseURL,
-                                                                                                              boolean detailed) {
+                                                                                                              boolean detailed,
+                                                                                                              final List<String> additionalMetadataKeysToInclude) {
         ComponentTypeEnum componentType = component.getComponentType();
-        Either<? extends AssetMetadata, ResponseFormat> resMetaData = convertToMetadata(componentType, serverBaseURL, detailed, component);
+        Either<? extends AssetMetadata, ResponseFormat> resMetaData = convertToMetadata(componentType, serverBaseURL, detailed, component, additionalMetadataKeysToInclude);
         if (resMetaData.isRight()) {
             return Either.right(resMetaData.right().value());
         } else {
@@ -90,49 +97,46 @@ public class AssetMetadataConverter {
     }
 
     private Either<? extends AssetMetadata, ResponseFormat> convertToMetadata(ComponentTypeEnum componentType, String serverBaseURL, boolean detailed,
-                                                                              Component curr) {
+                                                                              Component curr,
+                                                                              final List<String> additionalMetadataKeysToInclude) {
         switch (componentType) {
             case RESOURCE:
-                return generateResourceMeatdata(serverBaseURL, detailed, curr);
+                return generateResourceMetadata(serverBaseURL, detailed, curr);
             case SERVICE:
-                return generateServiceMetadata(serverBaseURL, detailed, curr);
+                return generateServiceMetadata(serverBaseURL, detailed, curr, additionalMetadataKeysToInclude);
             default:
-                ResponseFormat responseFormat = componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.COMPONENT_INVALID_CATEGORY);
-                return Either.right(responseFormat);
+                return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.COMPONENT_INVALID_CATEGORY));
         }
     }
 
-    private Either<? extends AssetMetadata, ResponseFormat> generateResourceMeatdata(String serverBaseURL, boolean detailed, Component curr) {
-        AssetMetadata metaData;
-        metaData = createMetadaObject(detailed, curr.getComponentType());
-        metaData = convertToResourceMetadata((ResourceAssetMetadata) metaData, (Resource) curr, serverBaseURL, detailed);
+    private Either<? extends AssetMetadata, ResponseFormat> generateResourceMetadata(String serverBaseURL, boolean detailed, Component curr) {
+        AssetMetadata metaData = createMetadaObject(detailed, curr.getComponentType(), false);
+        convertToResourceMetadata((ResourceAssetMetadata) metaData, (Resource) curr, serverBaseURL, detailed);
         if (detailed) {
-            Either<ResourceAssetDetailedMetadata, StorageOperationStatus> converted = convertToResourceDetailedMetadata(
-                (ResourceAssetDetailedMetadata) metaData, (Resource) curr, serverBaseURL);
+            Either<ResourceAssetDetailedMetadata, StorageOperationStatus> converted = convertToResourceDetailedMetadata((ResourceAssetDetailedMetadata) metaData, (Resource) curr);
             if (converted.isRight()) {
                 ActionStatus storageResponse = componentsUtils.convertFromStorageResponse(converted.right().value(), ComponentTypeEnum.RESOURCE);
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(storageResponse);
-                return Either.right(responseFormat);
+                return Either.right(componentsUtils.getResponseFormat(storageResponse));
             }
         }
         return Either.left(metaData);
     }
 
-    private AssetMetadata createMetadaObject(boolean detailed, ComponentTypeEnum type) {
+    private AssetMetadata createMetadaObject(boolean detailed, ComponentTypeEnum type, boolean additionalMetadataKeysToInclude) {
         AssetMetadata metaData = null;
         switch (type) {
             case SERVICE:
-                if (!detailed) {
-                    metaData = new ServiceAssetMetadata();
-                } else {
+                if (detailed || additionalMetadataKeysToInclude) {
                     metaData = new ServiceAssetDetailedMetadata();
+                } else {
+                    metaData = new ServiceAssetMetadata();
                 }
                 break;
             case RESOURCE:
-                if (!detailed) {
-                    metaData = new ResourceAssetMetadata();
-                } else {
+                if (detailed) {
                     metaData = new ResourceAssetDetailedMetadata();
+                } else {
+                    metaData = new ResourceAssetMetadata();
                 }
                 break;
             default:
@@ -141,39 +145,37 @@ public class AssetMetadataConverter {
         return metaData;
     }
 
-    private Either<? extends AssetMetadata, ResponseFormat> generateServiceMetadata(String serverBaseURL, boolean detailed, Component curr) {
-        AssetMetadata metaData = createMetadaObject(detailed, curr.getComponentType());
-        metaData = convertToServiceAssetMetadata((ServiceAssetMetadata) metaData, (Service) curr, serverBaseURL, detailed);
+    private Either<? extends AssetMetadata, ResponseFormat> generateServiceMetadata(String serverBaseURL, boolean detailed, Component curr, final List<String> additionalMetadataKeysToInclude) {
+        AssetMetadata metaData = createMetadaObject(detailed, curr.getComponentType(), CollectionUtils.isNotEmpty(additionalMetadataKeysToInclude));
+        convertToServiceAssetMetadata((ServiceAssetMetadata) metaData, (Service) curr, serverBaseURL, detailed, additionalMetadataKeysToInclude);
         if (detailed) {
             Either<ServiceAssetDetailedMetadata, StorageOperationStatus> converted = convertToServiceDetailedMetadata(
-                (ServiceAssetDetailedMetadata) metaData, (Service) curr);
+                    (ServiceAssetDetailedMetadata) metaData, (Service) curr);
             if (converted.isRight()) {
                 ActionStatus storageResponse = componentsUtils.convertFromStorageResponse(converted.right().value(), ComponentTypeEnum.RESOURCE);
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(storageResponse);
-                return Either.right(responseFormat);
+                return Either.right(componentsUtils.getResponseFormat(storageResponse));
             }
         }
         return Either.left(metaData);
     }
 
-    private <U extends AssetMetadata, T extends Component> U convertToAsset(U asset, T component, String serverBaseURL, boolean detailed) {
+    private <U extends AssetMetadata, T extends Component> void convertToAsset(U asset, T component, String serverBaseURL, boolean detailed) {
         asset.setUuid(component.getUUID());
         asset.setInvariantUUID(component.getInvariantUUID());
         asset.setName(component.getName());
         asset.setVersion(component.getVersion());
-        if (!detailed) {
-            asset.setToscaModelURL(serverBaseURL + "/" + component.getUUID() + "/toscaModel");
-        } else {
-            String toscaModelUrl = (new String(serverBaseURL)).replace("metadata", "toscaModel");
+        if (detailed) {
+            String toscaModelUrl = serverBaseURL.replace("metadata", "toscaModel");
             asset.setToscaModelURL(toscaModelUrl);
+        } else {
+            asset.setToscaModelURL(serverBaseURL + "/" + component.getUUID() + "/toscaModel");
         }
-        return asset;
     }
 
-    private <T extends ResourceAssetMetadata> T convertToResourceMetadata(T assetToPopulate, Resource resource, String serverBaseURL,
-                                                                          boolean detailed) {
-        assetToPopulate = convertToAsset(assetToPopulate, resource, serverBaseURL, detailed);
-        if (resource.getCategories() != null && !resource.getCategories().isEmpty()) {
+    private <T extends ResourceAssetMetadata> void convertToResourceMetadata(T assetToPopulate, Resource resource, String serverBaseURL,
+                                                                             boolean detailed) {
+        convertToAsset(assetToPopulate, resource, serverBaseURL, detailed);
+        if (CollectionUtils.isNotEmpty(resource.getCategories())) {
             CategoryDefinition categoryDefinition = resource.getCategories().get(0);
             assetToPopulate.setCategory(categoryDefinition.getName());
             assetToPopulate.setSubCategory(categoryDefinition.getSubcategories().get(0).getName());
@@ -181,36 +183,62 @@ public class AssetMetadataConverter {
         assetToPopulate.setResourceType(resource.getResourceType().name());
         assetToPopulate.setLifecycleState(resource.getLifecycleState().name());
         assetToPopulate.setLastUpdaterUserId(resource.getLastUpdaterUserId());
-        return (T) assetToPopulate;
     }
 
-    private <T extends ServiceAssetMetadata> T convertToServiceAssetMetadata(T assetToPopulate, Service service, String serverBaseURL,
-                                                                             boolean detailed) {
-        assetToPopulate = convertToAsset(assetToPopulate, service, serverBaseURL, detailed);
-        if (service.getCategories() != null && !service.getCategories().isEmpty()) {
+    private <T extends ServiceAssetMetadata> void convertToServiceAssetMetadata(T assetToPopulate, Service service, String serverBaseURL,
+                                                                                boolean detailed,
+                                                                                final List<String> additionalMetadataKeysToInclude) {
+        convertToAsset(assetToPopulate, service, serverBaseURL, detailed);
+        if (CollectionUtils.isNotEmpty(service.getCategories())) {
             CategoryDefinition categoryDefinition = service.getCategories().get(0);
             assetToPopulate.setCategory(categoryDefinition.getName());
         }
         assetToPopulate.setLifecycleState(service.getLifecycleState().name());
         assetToPopulate.setLastUpdaterUserId(service.getLastUpdaterUserId());
         assetToPopulate.setDistributionStatus(service.getDistributionStatus().name());
-        return (T) assetToPopulate;
+        if (CollectionUtils.isNotEmpty(additionalMetadataKeysToInclude)) {
+            setAdditionalRequestedMetadata((ServiceAssetDetailedMetadata) assetToPopulate, service, additionalMetadataKeysToInclude);
+        }
+    }
+
+    private void setAdditionalRequestedMetadata(ServiceAssetDetailedMetadata assetToPopulate, Service service, List<String> additionalMetadataKeysToInclude) {
+        final Map<String, String> additionalRequestedMetadata = new HashMap<>();
+        for (final String key : additionalMetadataKeysToInclude) {
+            Object value = null;
+            try {
+                Optional<Method> optionalMethod = Stream.of(service.getClass().getMethods()).filter(method -> method.getName().toLowerCase().equals("get" + key.toLowerCase())).findAny();
+                if (optionalMethod.isPresent()) {
+                    value = optionalMethod.get().invoke(service);
+                }
+            } catch (final Exception e) {
+                log.warn(EcompLoggerErrorCode.DATA_ERROR, AssetMetadataConverter.class.getSimpleName(), "No such field '{}'", key);
+            }
+            if (value == null) {
+                value = service.getCategorySpecificMetadata().get(key);
+            }
+            if (value != null) {
+                additionalRequestedMetadata.put(key, value.toString());
+            }
+        }
+
+        if (MapUtils.isNotEmpty(additionalRequestedMetadata)) {
+            assetToPopulate.setAdditionalRequestedMetadata(additionalRequestedMetadata);
+        }
     }
 
     private <T extends ResourceAssetDetailedMetadata> Either<T, StorageOperationStatus> convertToResourceDetailedMetadata(T assetToPopulate,
-                                                                                                                          Resource resource,
-                                                                                                                          String serverBaseURL) {
+                                                                                                                          Resource resource) {
         List<ComponentInstance> componentInstances = resource.getComponentInstances();
         if (componentInstances != null) {
             Either<List<ResourceInstanceMetadata>, StorageOperationStatus> resourceInstanceMetadata = convertToResourceInstanceMetadata(
-                componentInstances, ComponentTypeEnum.RESOURCE_PARAM_NAME, resource.getUUID());
+                    componentInstances, ComponentTypeEnum.RESOURCE_PARAM_NAME, resource.getUUID());
             if (resourceInstanceMetadata.isRight()) {
                 return Either.right(resourceInstanceMetadata.right().value());
             }
             assetToPopulate.setResources(resourceInstanceMetadata.left().value());
         }
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
-        assetToPopulate = populateResourceWithArtifacts(assetToPopulate, resource, deploymentArtifacts);
+        populateResourceWithArtifacts(assetToPopulate, resource, deploymentArtifacts);
         assetToPopulate.setLastUpdaterFullName(resource.getLastUpdaterFullName());
         assetToPopulate.setToscaResourceName(resource.getToscaResourceName());
         assetToPopulate.setDescription(resource.getDescription());
@@ -222,40 +250,38 @@ public class AssetMetadataConverter {
         List<ComponentInstance> componentInstances = service.getComponentInstances();
         if (componentInstances != null) {
             Either<List<ResourceInstanceMetadata>, StorageOperationStatus> resourceInstanceMetadata = convertToResourceInstanceMetadata(
-                componentInstances, ComponentTypeEnum.SERVICE_PARAM_NAME, service.getUUID());
+                    componentInstances, ComponentTypeEnum.SERVICE_PARAM_NAME, service.getUUID());
             if (resourceInstanceMetadata.isRight()) {
                 return Either.right(resourceInstanceMetadata.right().value());
             }
             assetToPopulate.setResources(resourceInstanceMetadata.left().value());
         }
         Map<String, ArtifactDefinition> deploymentArtifacts = service.getDeploymentArtifacts();
-        assetToPopulate = populateServiceWithArtifacts(assetToPopulate, service, deploymentArtifacts);
+        populateServiceWithArtifacts(assetToPopulate, service, deploymentArtifacts);
         assetToPopulate.setLastUpdaterFullName(service.getLastUpdaterFullName());
         return Either.left(assetToPopulate);
     }
 
-    private <T extends ResourceAssetDetailedMetadata> T populateResourceWithArtifacts(T asset, Resource resource,
-                                                                                      Map<String, ArtifactDefinition> artifacts) {
+    private <T extends ResourceAssetDetailedMetadata> void populateResourceWithArtifacts(T asset, Resource resource,
+                                                                                         Map<String, ArtifactDefinition> artifacts) {
         List<ArtifactMetadata> artifactMetaList = populateAssetWithArtifacts(resource, artifacts);
         asset.setArtifacts(artifactMetaList);
-        return asset;
     }
 
-    private <T extends ServiceAssetDetailedMetadata> T populateServiceWithArtifacts(T asset, Service service,
-                                                                                    Map<String, ArtifactDefinition> artifacts) {
+    private <T extends ServiceAssetDetailedMetadata> void populateServiceWithArtifacts(T asset, Service service,
+                                                                                       Map<String, ArtifactDefinition> artifacts) {
         List<ArtifactMetadata> artifactMetaList = populateAssetWithArtifacts(service, artifacts);
         asset.setArtifacts(artifactMetaList);
-        return asset;
     }
 
     private List<ArtifactMetadata> populateAssetWithArtifacts(Component component, Map<String, ArtifactDefinition> artifacts) {
         List<ArtifactMetadata> artifactMetaList = new LinkedList<>();
-        if (artifacts != null) {
+        if (MapUtils.isNotEmpty(artifacts)) {
             Collection<ArtifactDefinition> artefactDefList = artifacts.values();
             for (ArtifactDefinition artifactDefinition : artefactDefList) {
-                if (artifactDefinition.getEsId() != null && !artifactDefinition.getEsId().isEmpty()) {
+                if (StringUtils.isNotBlank(artifactDefinition.getEsId())) {
                     ArtifactMetadata convertedArtifactMetadata = convertToArtifactMetadata(artifactDefinition,
-                        ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUUID(), null);
+                            ComponentTypeEnum.findParamByType(component.getComponentType()), component.getUUID(), null);
                     artifactMetaList.add(convertedArtifactMetadata);
                 }
             }
@@ -270,11 +296,10 @@ public class AssetMetadataConverter {
         ArtifactMetadata metadata = new ArtifactMetadata();
         metadata.setArtifactName(artifact.getArtifactName());
         metadata.setArtifactType(artifact.getArtifactType());
-        if (resourceInstanceName == null || resourceInstanceName.isEmpty()) {
+        if (StringUtils.isBlank(resourceInstanceName)) {
             metadata.setArtifactURL(String.format(COMPONENT_ARTIFACT_URL, componentType, componentUUID, artifact.getArtifactUUID()));
         } else {
-            metadata.setArtifactURL(
-                String.format(RESOURCE_INSTANCE_ARTIFACT_URL, componentType, componentUUID, resourceInstanceName, artifact.getArtifactUUID()));
+            metadata.setArtifactURL(String.format(RESOURCE_INSTANCE_ARTIFACT_URL, componentType, componentUUID, resourceInstanceName, artifact.getArtifactUUID()));
         }
         metadata.setArtifactDescription(artifact.getDescription());
         metadata.setArtifactTimeout(artifact.getTimeout() != null && artifact.getTimeout() > 0 ? artifact.getTimeout() : null);
@@ -288,7 +313,7 @@ public class AssetMetadataConverter {
     }
 
     private Either<List<ResourceInstanceMetadata>, StorageOperationStatus> convertToResourceInstanceMetadata(
-        List<ComponentInstance> componentInstances, String componentType, String componentUUID) {
+            List<ComponentInstance> componentInstances, String componentType, String componentUUID) {
         List<ResourceInstanceMetadata> retList = new LinkedList<>();
         Map<String, ImmutablePair<String, String>> uuidDuplicatesMap = new HashMap<>();
         for (ComponentInstance componentInstance : componentInstances) {
@@ -322,7 +347,7 @@ public class AssetMetadataConverter {
                 Collection<ArtifactDefinition> values = componentInstance.getDeploymentArtifacts().values();
                 for (ArtifactDefinition artifactDefinition : values) {
                     ArtifactMetadata converted = convertToArtifactMetadata(artifactDefinition, componentType, componentUUID,
-                        componentInstance.getNormalizedName());
+                            componentInstance.getNormalizedName());
                     artifactMetaList.add(converted);
                 }
                 metadata.setArtifacts(artifactMetaList);
