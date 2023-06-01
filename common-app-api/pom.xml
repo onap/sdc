@@ -192,7 +192,16 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jaxb-annotations</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Aspects -->
