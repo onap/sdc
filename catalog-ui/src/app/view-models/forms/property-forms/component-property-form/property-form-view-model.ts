@@ -246,7 +246,7 @@ export class PropertyFormViewModel {
                 this.$scope.myValue = {'': null};
                 break;
             case PROPERTY_TYPES.LIST:
-                this.$scope.myValue = [];
+                this.$scope.myValue = [''];
                 break;
             default:
                 this.$scope.myValue = {};

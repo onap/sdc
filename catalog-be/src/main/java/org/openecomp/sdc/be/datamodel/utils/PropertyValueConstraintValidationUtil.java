@@ -183,7 +183,8 @@ public class PropertyValueConstraintValidationUtil {
         List<PropertyDefinition> propertyDefinitions = dataTypeDefinitionCache.get(propertyDefinition.getType()).getProperties();
         try {
             Map<String, Object> valueMap = MapUtils
-                .emptyIfNull(ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                .emptyIfNull(ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ?
+                    propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<>() {
                 }));
             if (CollectionUtils.isEmpty(propertyDefinitions)) {
                 checkAndEvaluatePrimitiveProperty(propertyDefinition, dataTypeDefinitionCache.get(propertyDefinition.getType()));
@@ -252,7 +253,8 @@ public class PropertyValueConstraintValidationUtil {
                 return CollectionUtils.isNotEmpty(list);
             } else {
                 Map<String, Object> valueMap = MapUtils
-                    .emptyIfNull(ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                    .emptyIfNull(ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ?
+                        propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<>() {
                     }));
                 return MapUtils.isNotEmpty(valueMap);
             }
@@ -295,11 +297,11 @@ public class PropertyValueConstraintValidationUtil {
             .forEach(propertyConstraint -> {
                 try {
                     if (ToscaType.LIST == toscaPropertyType1) {
-                        Collection<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                        Collection<Object> list = ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<>() {
                         });
                         propertyConstraint.validate(list);
                     } else if (ToscaType.MAP == toscaPropertyType1) {
-                        final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+                        final Map<String, Object> map = ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<>() {
                         });
                         propertyConstraint.validate(map);
                     }
@@ -353,7 +355,8 @@ public class PropertyValueConstraintValidationUtil {
             if (propertyDefinition.getSchemaType() == null) {
                 propertyDefinition.setSchema(createStringSchema());
             }
-            final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
+            final Map<String, Object> map = ConstraintUtil.parseToCollection(null != propertyDefinition.getValue() ?
+                propertyDefinition.getValue() : propertyDefinition.getDefaultValue(), new TypeReference<>() {
             });
             evaluateCollectionType(propertyDefinition, map);
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
