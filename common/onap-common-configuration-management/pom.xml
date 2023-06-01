@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.onap.sdc.common</groupId>
         <artifactId>onap-common-lib</artifactId>
-        <version>1.12.4-SNAPSHOT</version>
+        <version>1.13.0</version>
     </parent>
 
 	<modules>

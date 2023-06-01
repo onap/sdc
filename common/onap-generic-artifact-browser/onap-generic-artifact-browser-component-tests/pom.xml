@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.onap.sdc.common</groupId>
     <artifactId>onap-generic-artifact-browser</artifactId>
-    <version>1.12.4-SNAPSHOT</version>
+    <version>1.13.0</version>
   </parent>
 
   <artifactId>onap-generic-artifact-browser-component-tests</artifactId>
