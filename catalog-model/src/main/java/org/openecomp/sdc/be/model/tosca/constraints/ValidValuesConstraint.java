@@ -133,7 +133,6 @@ public class ValidValuesConstraint extends AbstractPropertyConstraint {
                 } else {
                     map = ConstraintUtil.parseToCollection(propertyDefinition.getDefaultValue(), new TypeReference<>() {});
                 }
-
                 valuesToValidate = map.values();
             } else {
                 if (propertyDefinition.getValue() != null) {
