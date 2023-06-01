@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-rest-webapp</artifactId>
-        <version>1.12.4-SNAPSHOT</version>
+        <version>1.13.0</version>
     </parent>
     <modules>
         <module>/action-library-rest-services</module>
