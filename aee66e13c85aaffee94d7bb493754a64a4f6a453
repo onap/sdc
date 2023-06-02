@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "101c788c_a7c2e552",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 931,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-02T10:15:54Z",
+      "side": 1,
+      "message": "I think the below comment can be adressed by removing the change below and instead adding here:\n\n            if ((\u003cService\u003ethis.$scope.component).derivedFromGenericType) {\n                baseTypeResponseList.baseTypes.forEach(baseTypeObj \u003d\u003e {\n                    if(baseTypeObj.toscaResourceName \u003d\u003d (\u003cService\u003ethis.$scope.component).derivedFromGenericType) {\n                        baseType \u003d baseTypeObj;\n                    }\n                });\n            }",
+      "range": {
+        "startLine": 931,
+        "startChar": 0,
+        "endLine": 931,
+        "endChar": 13
+      },
+      "revId": "aee66e13c85aaffee94d7bb493754a64a4f6a453",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5e1f2012_c9aeee7c",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
         "patchSetId": 1
