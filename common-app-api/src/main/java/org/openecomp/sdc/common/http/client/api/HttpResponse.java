@@ -19,12 +19,8 @@
  */
 package org.openecomp.sdc.common.http.client.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-@Getter
-@AllArgsConstructor
 public class HttpResponse<T> {
 
     private final T response;
@@ -32,11 +28,39 @@ public class HttpResponse<T> {
     private final String description;
 
     public HttpResponse(T response, int statusCode) {
-        this(response, statusCode, StringUtils.EMPTY);
+        this.response = response;
+        this.statusCode = statusCode;
+        this.description = StringUtils.EMPTY;
+    }
+
+    public HttpResponse(T response, int statusCode, String description) {
+        this.response = response;
+        this.statusCode = statusCode;
+        this.description = description;
+    }
+
+    public T getResponse() {
+        return response;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public String toString() {
-        return "HttpResponse [response=" + response + ", statusCode=" + statusCode + ", description=" + description + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("HttpResponse [response=");
+        builder.append(response);
+        builder.append(", statusCode=");
+        builder.append(statusCode);
+        builder.append(", description=");
+        builder.append(description);
+        builder.append("]");
+        return builder.toString();
     }
 }

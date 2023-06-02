@@ -39,7 +39,6 @@ public class BEAppContextListener extends AppContextListener implements ServletC
     private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
     private static final Logger log = Logger.getLogger(BEAppContextListener.class);
 
-    @Override
     public void contextInitialized(ServletContextEvent context) {
         super.contextInitialized(context);
         ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());

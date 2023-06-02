@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>catalog-be</artifactId>
@@ -19,7 +19,6 @@
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
         <ui.version>${project.version}</ui.version>
-        <io.github.hakky54.version>7.4.11</io.github.hakky54.version>
     </properties>
 
     <dependencies>
@@ -221,11 +220,11 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
+      <dependency>
+          <groupId>io.micrometer</groupId>
+          <artifactId>micrometer-registry-prometheus</artifactId>
+          <version>${micrometer.version}</version>
+      </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -632,6 +631,7 @@
             <scope>compile</scope>
         </dependency>
 
+
         <!-- CAMBRIA CLIENT for U-EB -->
         <dependency>
             <groupId>com.att.nsa</groupId>
@@ -826,6 +826,31 @@
                 <exclusion>
                     <groupId>javax.jms</groupId>
                     <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- CADI -->
+        <dependency>
+            <groupId>org.onap.aaf.authz</groupId>
+            <artifactId>aaf-cadi-aaf</artifactId>
+            <version>${cadi.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
                 </exclusion>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
@@ -1048,17 +1073,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart-for-jetty</artifactId>
-            <version>${io.github.hakky54.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hakky54</groupId>
-            <artifactId>sslcontext-kickstart</artifactId>
-            <version>${io.github.hakky54.version}</version>
         </dependency>
 
     </dependencies>
