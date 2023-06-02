@@ -71,19 +71,19 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
 
     private buildGetInputFunctionValue(): Object {
         if (this.propertyPathFromSource.length === 1) {
-            if (this.toscaIndexList) {
-                return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], this.toscaIndexList]};
+            if (this.isToscaIndexEmpty()) {
+                return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], ...this.toscaIndexList]};
             }
             return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0]]};
         }
-        return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource, this.toscaIndexList]};
+        return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource, ...this.toscaIndexList]};
     }
 
     private buildFunctionValueWithPropertySource(): Object {
         if (this.propertySource == PropertySource.SELF) {
-            if (this.toscaIndexList) {
+            if (this.isToscaIndexEmpty()) {
                 return {
-                    [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, this.toscaIndexList]
+                    [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, ...this.toscaIndexList]
                 };
             }
             return {
@@ -91,14 +91,18 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
             };
         }
         if (this.propertySource == PropertySource.INSTANCE) {
-            if (this.toscaIndexList) {
+            if (this.isToscaIndexEmpty()) {
                 return {
-                    [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource, this.toscaIndexList]
+                    [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource, ...this.toscaIndexList]
                 };
             }
             return {
                 [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource]
             };
         }
+    }
+
+    private isToscaIndexEmpty(): boolean {
+        return this.toscaIndexList && this.toscaIndexList.length > 0;
     }
 }
