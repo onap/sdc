@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedOutputDefaultValue;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -49,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -238,8 +240,11 @@ class InterfacesOperationsConverterTest {
                 "name_for_op_0"))
             .forEach(operation -> operation.getInputs().getListToscaDataDefinition().stream()
                 .filter(operationInputDefinition -> operationInputDefinition.getName().contains("integer"))
-                .forEach(operationInputDefinition -> operationInputDefinition.setInputId(addedInterfaceType +
-                    ".name_for_op_1.output_integer_1")));
+                .forEach(operationInputDefinition -> {
+                    operationInputDefinition.setInputId(addedInterfaceType + ".name_for_op_1.output_integer_1");
+                    operationInputDefinition.setToscaDefaultValue(
+                        new Gson().toJson(createMappedOutputDefaultValue(SELF, operationInputDefinition.getInputId())));
+                }));
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(addedInterfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
@@ -572,11 +577,12 @@ class InterfacesOperationsConverterTest {
         Map<String, Object> complexInput = (Map<String, Object>) operation0Inputs.get("input_Complex_2");
         assertTrue(complexInput.containsKey("stringProp"));
         Map<String, Object> complexInputStringProp = (Map<String, Object>) complexInput.get("stringProp");
-        assertTrue(complexInputStringProp.containsKey("get_attribute"));
-        List<String> complexInputStringPropToscaFunction = (List<String>) complexInputStringProp.get("get_attribute");
-        assertEquals(2, complexInputStringPropToscaFunction.size());
-        assertEquals("SELF", complexInputStringPropToscaFunction.get(0));
-        assertEquals("designer", complexInputStringPropToscaFunction.get(1));
+        assertTrue(complexInputStringProp.containsKey("type"));
+        assertTrue(ToscaFunctionType.findType((String) complexInputStringProp.get("type")).isPresent());
+        assertTrue(complexInputStringProp.containsKey("propertyName"));
+        assertEquals("designer", complexInputStringProp.get("propertyName"));
+        assertTrue(complexInputStringProp.containsKey("propertySource"));
+        assertEquals("SELF", complexInputStringProp.get("propertySource"));
     }
 
     private void addComplexTypeToDataTypes() {

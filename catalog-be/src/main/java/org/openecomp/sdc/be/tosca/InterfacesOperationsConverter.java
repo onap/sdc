@@ -21,35 +21,27 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONObject;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
-import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -140,40 +132,8 @@ public class InterfacesOperationsConverter {
             mappedOutputValue.remove(1);
             mappedOutputValue.add(1, interfaceName);
             inputValue = gson.toJson(consumptionValue);
-        } else {
-            String finalInputValue = inputValue;
-            if (inputValue != null &&
-                Arrays.stream(ToscaFunctionType.values()).anyMatch(toscaType -> finalInputValue.contains(toscaType.getName().toUpperCase()))) {
-                inputValue = getInputValuesAsToscaFunction(inputValue);
-            }
         }
         return inputValue;
-    }
-
-    private static String getInputValuesAsToscaFunction(String inputValue) {
-        Gson gson = new Gson();
-        Map<String, Object> mapOfValues = gson.fromJson(inputValue, Map.class);
-        for (Entry<String, Object> entry : mapOfValues.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof Map) {
-                Map<String, Object> valueMap = (Map<String, Object>) value;
-                if (valueMap.containsKey("type")) {
-                    String type = (String) valueMap.get("type");
-                    Optional<ToscaFunctionType> toscaType = ToscaFunctionType.findType(type);
-                    if (toscaType.isPresent()) {
-                        ObjectMapper mapper = new ObjectMapper();
-                        try {
-                            String json = gson.toJson(value);
-                            ToscaFunction toscaFunction = mapper.readValue(json, ToscaFunction.class);
-                            entry.setValue(toscaFunction.getJsonObjectValue());
-                        } catch (JsonProcessingException e) {
-                            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
-                        }
-                    }
-                }
-            }
-        }
-        return String.valueOf(new JSONObject(mapOfValues));
     }
 
     private static String getInterfaceType(Component component, String interfaceType) {
