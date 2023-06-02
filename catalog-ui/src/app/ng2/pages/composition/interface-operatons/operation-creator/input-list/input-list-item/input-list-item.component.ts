@@ -30,6 +30,7 @@ import {ToscaFunctionValidationEvent} from "../../../../../properties-assignment
 import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
 import {ToscaTypeHelper} from "app/utils/tosca-type-helper";
 import {CustomToscaFunction} from "../../../../../../../models/default-custom-functions";
+import {SubPropertyToscaFunction} from "../../../../../../../models/sub-property-tosca-function";
 
 @Component({
   selector: 'app-input-list-item',
@@ -49,7 +50,7 @@ export class InputListItemComponent implements OnInit {
   @Input() isMapChild: boolean = false;
   @Input() showToscaFunctionOption: boolean = false;
   @Input() listIndex: number;
-  @Input() subPropertyToscaFunctions: SubPropertyToscaFunctions[];
+  @Input() subPropertyToscaFunctions: SubPropertyToscaFunction[];
   @Input() isViewOnly: boolean;
   @Input() allowDeletion: boolean = false;
   @Input() toscaFunction: ToscaFunction;
@@ -101,16 +102,10 @@ export class InputListItemComponent implements OnInit {
   getToscaFunction(key: any): any {
     if (this.subPropertyToscaFunctions) {
       for (let subPropertyToscaFunction of this.subPropertyToscaFunctions) {
-        let found = subPropertyToscaFunction.subPropertyPath.find(value => value === key);
+        let found = subPropertyToscaFunction.subPropertyPath ? subPropertyToscaFunction.subPropertyPath.find(value => value === key) : false;
         if (found) {
           return subPropertyToscaFunction.toscaFunction;
         }
-      }
-    }
-    if ((key && this.valueObjRef[key] && this.valueObjRef[key].type)) {
-      const type = this.valueObjRef[key].type;
-      if (type in ToscaFunctionType) {
-        return <ToscaFunction> this.valueObjRef[key];
       }
     }
     return undefined;
@@ -346,9 +341,4 @@ export class InputListItemComponent implements OnInit {
     return isNaN(number) ? null : number;
   }
 
-}
-
-export interface SubPropertyToscaFunctions {
-  subPropertyPath: string[];
-  toscaFunction: ToscaFunction;
 }
