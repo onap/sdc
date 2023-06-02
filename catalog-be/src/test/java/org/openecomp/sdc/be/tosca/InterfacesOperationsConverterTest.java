@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -572,11 +573,12 @@ class InterfacesOperationsConverterTest {
         Map<String, Object> complexInput = (Map<String, Object>) operation0Inputs.get("input_Complex_2");
         assertTrue(complexInput.containsKey("stringProp"));
         Map<String, Object> complexInputStringProp = (Map<String, Object>) complexInput.get("stringProp");
-        assertTrue(complexInputStringProp.containsKey("get_attribute"));
-        List<String> complexInputStringPropToscaFunction = (List<String>) complexInputStringProp.get("get_attribute");
-        assertEquals(2, complexInputStringPropToscaFunction.size());
-        assertEquals("SELF", complexInputStringPropToscaFunction.get(0));
-        assertEquals("designer", complexInputStringPropToscaFunction.get(1));
+        assertTrue(complexInputStringProp.containsKey("type"));
+        assertTrue(ToscaFunctionType.findType((String) complexInputStringProp.get("type")).isPresent());
+        assertTrue(complexInputStringProp.containsKey("propertyName"));
+        assertEquals("designer", complexInputStringProp.get("propertyName"));
+        assertTrue(complexInputStringProp.containsKey("propertySource"));
+        assertEquals("SELF", complexInputStringProp.get("propertySource"));
     }
 
     private void addComplexTypeToDataTypes() {
