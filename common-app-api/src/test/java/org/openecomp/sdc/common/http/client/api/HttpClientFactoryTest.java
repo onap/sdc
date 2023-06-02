@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.common.http.client.api;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.sdc.security.SecurityUtil;
 import org.openecomp.sdc.common.http.config.BasicAuthorization;
 import org.openecomp.sdc.common.http.config.ClientCertificate;
@@ -36,15 +36,15 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertNotNull;
 
-@ExtendWith(MockitoExtension.class)
-class HttpClientFactoryTest {
+@RunWith(MockitoJUnitRunner.class)
+public class HttpClientFactoryTest {
 
     @Mock
-    private HttpConnectionMngFactory httpConnectionMngFactory;
+    HttpConnectionMngFactory httpConnectionMngFactory;
 
     @Test
-    void validateNewClientCreationReturnsValidClient() {
-        final HttpClient httpClient = new HttpClientFactory(httpConnectionMngFactory).createClient("Http", prepareTestClientConfigImmutable());
+    public void validateNewClientCreationReturnsValidClient() throws HttpExecuteException {
+        HttpClient httpClient = new HttpClientFactory(httpConnectionMngFactory).createClient("Http",prepareTestClientConfigImmutable());
         assertNotNull(httpClient);
         httpClient.close();
     }

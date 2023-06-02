@@ -38,7 +38,6 @@ public class FEAppContextListener extends AppContextListener implements ServletC
     private static final int PROBE_INTERVALE = 15;
     private static Logger log = Logger.getLogger(FEAppContextListener.class.getName());
 
-    @Override
     public void contextInitialized(ServletContextEvent context) {
         super.contextInitialized(context);
         ConfigurationManager configurationManager = new ConfigurationManager(ExternalConfiguration.getConfigurationSource());
@@ -62,7 +61,6 @@ public class FEAppContextListener extends AppContextListener implements ServletC
         log.debug("After executing {}", this.getClass());
     }
 
-    @Override
     public void contextDestroyed(ServletContextEvent context) {
         ExecutorService executorPool = (ExecutorService) context.getServletContext().getAttribute(Constants.THREAD_EXECUTOR_ATTR);
         if (executorPool != null) {
