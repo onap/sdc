@@ -1,4 +1,4 @@
-# Set the http module option
+#Set the http module option
 if node['disableHttp']
   http_option = "#--module=http"
 else
@@ -18,11 +18,12 @@ template "http-ini" do
   group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables ({
-    :http_option => http_option,
+    :http_option => http_option ,
     :http_port => "#{node['ONBOARDING_BE'][:http_port]}"
   })
-
+   
 end
+
 
 template "https-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/https.ini"
@@ -33,6 +34,7 @@ template "https-ini" do
   variables :https_port => "#{node['ONBOARDING_BE'][:https_port]}"
 end
 
+
 template "ssl-ini" do
   path "#{ENV['JETTY_BASE']}/start.d/ssl.ini"
   source "ssl-ini.erb"
@@ -40,11 +42,9 @@ template "ssl-ini" do
   group "#{ENV['JETTY_GROUP']}"
   mode "0755"
   variables ({
-    :https_port => "#{node['ONBOARDING_BE'][:https_port]}",
-    :jetty_keystore_path => "#{node['jetty'][:keystore_path]}",
-    :jetty_keystore_pwd => "#{node['jetty'][:keystore_pwd]}",
-    :jetty_keymanager_pwd => "#{node['jetty'][:keymanager_pwd]}",
-    :jetty_truststore_path => "#{node['jetty'][:truststore_path]}",
+    :https_port => "#{node['ONBOARDING_BE'][:https_port]}" ,
+    :jetty_keystore_pwd => "#{node['jetty'][:keystore_pwd]}" ,
+    :jetty_keymanager_pwd => "#{node['jetty'][:keymanager_pwd]}" ,
     :jetty_truststore_pwd => "#{node['jetty'][:truststore_pwd]}"
   })
 end

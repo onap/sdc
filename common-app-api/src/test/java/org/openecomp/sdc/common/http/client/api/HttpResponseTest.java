@@ -21,38 +21,38 @@
 package org.openecomp.sdc.common.http.client.api;
 
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-class HttpResponseTest {
+public class HttpResponseTest {
 
     @Test
-    void validateNoDescriptionConstructor() {
+    public void validateNoDescriptionConstructor() {
         final String testResponse = "test response";
 
         HttpResponse<String> httpResponseTest = new HttpResponse<>(testResponse, HttpStatus.SC_OK);
 
-        assertEquals(httpResponseTest.getStatusCode(), HttpStatus.SC_OK);
-        assertEquals(httpResponseTest.getResponse(), testResponse);
-        assertEquals(httpResponseTest.getDescription(), "");
+        assertEquals(httpResponseTest.getStatusCode(),HttpStatus.SC_OK);
+        assertEquals(httpResponseTest.getResponse(),testResponse);
+        assertEquals(httpResponseTest.getDescription(),"");
     }
 
     @Test
-    void validateAllArgsConstructor() {
+    public void validateAllArgsConstructor() {
         final String testResponse = "test response";
         final String testDescription = "test description";
 
         HttpResponse<String> httpResponseTest = new HttpResponse<>(testResponse, HttpStatus.SC_OK, testDescription);
 
-        assertEquals(httpResponseTest.getStatusCode(), HttpStatus.SC_OK);
-        assertEquals(httpResponseTest.getResponse(), testResponse);
-        assertEquals(httpResponseTest.getDescription(), testDescription);
+        assertEquals(httpResponseTest.getStatusCode(),HttpStatus.SC_OK);
+        assertEquals(httpResponseTest.getResponse(),testResponse);
+        assertEquals(httpResponseTest.getDescription(),testDescription);
     }
 
     @Test
-    void validateToStringConstructor() {
+    public void validateToStringConstructor() {
         final String testResponse = "test response";
         final String testDescription = "test description";
 

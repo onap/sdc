@@ -19,12 +19,10 @@
  */
 package org.openecomp.sdc.fe.servlets;
 
+import javax.servlet.ServletException;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.dynamic.HttpClientTransportDynamic;
-import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -32,17 +30,15 @@ import org.openecomp.sdc.fe.utils.BeProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-
 public abstract class SSLProxyServlet extends ProxyServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SSLProxyServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(SSLProxyServlet.class);
 
     @Override
     protected HttpClient createHttpClient() throws ServletException {
         Configuration config = ((ConfigurationManager) getServletConfig().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-                .getConfiguration();
+            .getConfiguration();
         boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
         HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
         int requestTimeout = config.getRequestTimeout() * 1000;
@@ -51,30 +47,22 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         }
         setTimeout(requestTimeout);
         client.setIdleTimeout(requestTimeout);
+        client.setStopTimeout(requestTimeout);
         return client;
     }
 
     private HttpClient getSecureHttpClient() throws ServletException {
-        final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client(true);
-        try {
-            sslContextFactory.setSslContext(JettySSLUtils.getSslContext());
-        } catch (Exception e) {
-            LOGGER.error("Exception thrown while getting SslContext", e);
-            throw new ServletException(e);
-        }
-        final ClientConnector clientConnector = new ClientConnector();
-        clientConnector.setSslContextFactory(sslContextFactory);
-        final HttpClient httpClient = new HttpClient(new HttpClientTransportDynamic(clientConnector));
+        // Instantiate HttpClient with the SslContextFactory
+        final var httpClient = new HttpClient(new SslContextFactory.Client(true));
         // Configure HttpClient, for example:
         httpClient.setFollowRedirects(false);
         // Start HttpClient
         try {
             httpClient.start();
         } catch (Exception x) {
-            LOGGER.error("Exception thrown while starting httpClient", x);
+            log.error("Exception thrown while starting httpClient", x);
             throw new ServletException(x);
         }
         return httpClient;
     }
-
 }

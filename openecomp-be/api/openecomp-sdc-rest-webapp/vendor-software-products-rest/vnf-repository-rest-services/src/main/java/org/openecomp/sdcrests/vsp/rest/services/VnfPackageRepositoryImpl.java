@@ -16,6 +16,24 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
+import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.inject.Named;
+import javax.net.ssl.SSLContext;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.JettySSLUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
@@ -39,20 +57,6 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFile
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
-import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
-
 /**
  * Enables integration API interface with VNF Repository (VNFSDK).
  * <ol>
@@ -73,14 +77,16 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     private static Client trustSSLClient() {
         try {
-            return ClientBuilder.newBuilder()
-                    .sslContext(JettySSLUtils.getSslContext())
-                    .hostnameVerifier((requestedHost, remoteServerSession) -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
-        } catch (final Exception e) {
+            SSLContext sslcontext = JettySSLUtils.getSslContext();
+            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((requestedHost, remoteServerSession)
+                    -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
+
+        } catch (IOException | GeneralSecurityException e) {
             LOGGER.error("Failed to initialize SSL context", e);
         }
         return ClientBuilder.newClient();
     }
+
 
     private final Configuration config;
 
@@ -120,15 +126,15 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     private Response uploadVnfPackage(final String vspId, final String versionId, final String csarId, final byte[] payload) {
         try {
             final OrchestrationTemplateCandidateManager candidateManager = OrchestrationTemplateCandidateManagerFactory.getInstance()
-                    .createInterface();
+                .createInterface();
             final String filename = formatFilename(csarId);
             final String fileExtension = getFileExtension(filename);
             final OnboardPackageInfo onboardPackageInfo = new OnboardPackageInfo(getNetworkPackageName(filename), fileExtension,
-                    ByteBuffer.wrap(payload), OnboardingTypesEnum.getOnboardingTypesEnum(fileExtension));
+                ByteBuffer.wrap(payload), OnboardingTypesEnum.getOnboardingTypesEnum(fileExtension));
             final VspDetails vspDetails = new VspDetails(vspId, getVersion(vspId, versionId));
             final UploadFileResponse response = candidateManager.upload(vspDetails, onboardPackageInfo);
             final UploadFileResponseDto uploadFileResponse = new MapUploadFileResponseToUploadFileResponseDto()
-                    .applyMapping(response, UploadFileResponseDto.class);
+                .applyMapping(response, UploadFileResponseDto.class);
             return Response.ok(uploadFileResponse).build();
         } catch (final Exception e) {
             ErrorCode error = new GeneralErrorBuilder().build();
@@ -166,7 +172,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         if (LOGGER.isErrorEnabled()) {
             String body = response.hasEntity() ? response.readEntity(String.class) : "";
             LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri, response.getStatus(), body,
-                    new CoreException(error));
+                new CoreException(error));
         }
         return generateInternalServerError(error);
     }
