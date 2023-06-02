@@ -72,18 +72,18 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
     private buildGetInputFunctionValue(): Object {
         if (this.propertyPathFromSource.length === 1) {
             if (this.toscaIndexList) {
-                return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], this.toscaIndexList]};
+                return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0], this.getToscaIndex()]};
             }
             return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource[0]]};
         }
-        return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource, this.toscaIndexList]};
+        return {[this.functionType.toLowerCase()]: [this.propertyPathFromSource, this.getToscaIndex()]};
     }
 
     private buildFunctionValueWithPropertySource(): Object {
         if (this.propertySource == PropertySource.SELF) {
             if (this.toscaIndexList) {
                 return {
-                    [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, this.toscaIndexList]
+                    [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource, this.getToscaIndex()]
                 };
             }
             return {
@@ -93,12 +93,16 @@ export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
         if (this.propertySource == PropertySource.INSTANCE) {
             if (this.toscaIndexList) {
                 return {
-                    [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource, this.toscaIndexList]
+                    [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource, this.getToscaIndex()]
                 };
             }
             return {
                 [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource]
             };
         }
+    }
+
+    private getToscaIndex(): string | string[] {
+        return this.toscaIndexList.length === 1 ? this.toscaIndexList[0] : this.toscaIndexList;
     }
 }
