@@ -36,7 +36,6 @@ import {DataTypeModel} from "../../../../../models/data-types";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {CustomToscaFunction} from "../../../../../models/default-custom-functions";
-import {ToscaFunctionType} from "../../../../../models/tosca-function-type.enum";
 
 @Component({
     selector: 'operation-handler',
@@ -303,9 +302,7 @@ export class InterfaceOperationHandlerComponent {
         const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
         inputOperationParameter.toscaFunction = null;
         inputOperationParameter.value = changedInput.value;
-        if (inputOperationParameter.subPropertyToscaFunctions) {
-            inputOperationParameter.subPropertyToscaFunctions = undefined;
-        }
+        inputOperationParameter.subPropertyToscaFunctions = changedInput.subPropertyToscaFunctions;
         if (changedInput.isToscaFunction()) {
             inputOperationParameter.toscaFunction = changedInput.toscaFunction;
             inputOperationParameter.value = changedInput.toscaFunction.buildValueString();

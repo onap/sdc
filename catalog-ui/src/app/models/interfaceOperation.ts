@@ -23,6 +23,7 @@ import {ArtifactModel} from "./artifacts";
 import {SchemaPropertyGroupModel} from "./schema-property";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
 import {ToscaFunction} from "./tosca-function";
+import {SubPropertyToscaFunction} from "./sub-property-tosca-function";
 
 export class InputOperationParameter {
     name: string;
@@ -32,8 +33,8 @@ export class InputOperationParameter {
     toscaDefaultValue?: string;
     value?: any;
     toscaFunction?: ToscaFunction;
+    subPropertyToscaFunctions: SubPropertyToscaFunction[];
     valid:boolean= true;
-    subPropertyToscaFunctions: any;
 
     constructor(param?: any) {
         if (param) {
