@@ -5,6 +5,122 @@
 Release Notes
 =============
 
+Version: 1.13.0
+===============
+
+:Release Date: 2023-06-02
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC London release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4517 <https://jira.onap.org/browse/SDC-4517>`_ - Support INDEX in node filter tosca functions
+*  `SDC-4442 <https://jira.onap.org/browse/SDC-4442>`_ - Support TOSCA functions in operation inputs
+*  `SDC-4506 <https://jira.onap.org/browse/SDC-4506>`_ - Support import of service with no substitution mapping node type
+*  `SDC-4505 <https://jira.onap.org/browse/SDC-4505>`_ - Support index in tosca functions (nested lists)
+*  `SDC-4493 <https://jira.onap.org/browse/SDC-4493>`_ - UI support for default custom function names with get_input structure
+*  `SDC-4497 <https://jira.onap.org/browse/SDC-4497>`_ - Disabling archive functionality for normatives
+*  `SDC-4395 <https://jira.onap.org/browse/SDC-4395>`_ - Support additional operands for node filters
+*  `SDC-4435 <https://jira.onap.org/browse/SDC-4435>`_ - Enable using substitution mapping type directly
+*  `SDC-4472 <https://jira.onap.org/browse/SDC-4472>`_ - Stringbuilder support for INDEX token on all functions
+*  `SDC-4473 <https://jira.onap.org/browse/SDC-4473>`_ - UI support for default custom function names
+*  `SDC-4479 <https://jira.onap.org/browse/SDC-4479>`_ - Support service import with custom tosca functions
+*  `SDC-4469 <https://jira.onap.org/browse/SDC-4469>`_ - Support definition of custom tosca function names through configuration
+*  `SDC-4477 <https://jira.onap.org/browse/SDC-4477>`_ - VFC Property default value enforced forced to comply with restraints
+*  `SDC-4474 <https://jira.onap.org/browse/SDC-4474>`_ - Sort data type drop down lists in add property
+*  `SDC-4466 <https://jira.onap.org/browse/SDC-4466>`_ - UI support for custom functions
+*  `SDC-4455 <https://jira.onap.org/browse/SDC-4455>`_ - Backend support for custom functions
+
+
+**Bug Fixes**
+
+*  `SDC-4518 <https://jira.onap.org/browse/SDC-4518>`_ - Actual sub mapping node not used during import
+*  `SDC-4515 <https://jira.onap.org/browse/SDC-4515>`_ - Error when adding valid_values constraint to int property
+*  `SDC-4523 <https://jira.onap.org/browse/SDC-4523>`_ - Formatting error for operation input of complex type
+*  `SDC-4475 <https://jira.onap.org/browse/SDC-4475>`_ - Adding certain characters into property default value causes VFC to break
+*  `SDC-4510 <https://jira.onap.org/browse/SDC-4510>`_ - Bug fixes on tosca function
+*  `SDC-4512 <https://jira.onap.org/browse/SDC-4512>`_ - Various bugs related to custom tosca functions
+*  `SDC-4511 <https://jira.onap.org/browse/SDC-4511>`_ - Not possible to edit property following import service with custom tosca function
+*  `SDC-4508 <https://jira.onap.org/browse/SDC-4508>`_ - Remove need for USER_ID header
+*  `SDC-4503 <https://jira.onap.org/browse/SDC-4503>`_ - Invalid json being set on propertyConstraints
+*  `SDC-4509 <https://jira.onap.org/browse/SDC-4509>`_ - NPE when using concat TOSCA function
+*  `SDC-4507 <https://jira.onap.org/browse/SDC-4507>`_ - Service with custom functions not importing correctly
+*  `SDC-4500 <https://jira.onap.org/browse/SDC-4500>`_ - Error in console when no default custom tosca functions
+*  `SDC-4502 <https://jira.onap.org/browse/SDC-4502>`_ - Error in handling of operation input of complex type
+*  `SDC-4468 <https://jira.onap.org/browse/SDC-4468>`_ - SVC4301 RESTRICTED_OPERATION on service composition
+*  `SDC-4482 <https://jira.onap.org/browse/SDC-4482>`_ - Fix complex list/map entries in composition view
+*  `SDC-4481 <https://jira.onap.org/browse/SDC-4481>`_ - Fix constraints on custom datatype not formatted correctly in CSAR
+
+
+**Tasks**
+
+*  `SDC-4525 <https://jira.onap.org/browse/SDC-4525>`_ - Exclude outdated transitive dependencies com.fasterxml.jackson.
+*  `SDC-4519 <https://jira.onap.org/browse/SDC-4519>`_ - Update vulnerable dependencies
+*  `SDC-4504 <https://jira.onap.org/browse/SDC-4504>`_ - Update vulnerable dependencies
+*  `SDC-4496 <https://jira.onap.org/browse/SDC-4496>`_ - Update outdated gecko.driver
+*  `SDC-4495 <https://jira.onap.org/browse/SDC-4495>`_ - Add retry option to wget commands
+*  `SDC-4494 <https://jira.onap.org/browse/SDC-4494>`_ - Update Cassandra to 3.11.15
+*  `SDC-4467 <https://jira.onap.org/browse/SDC-4467>`_ - Preparation for JDK17
+*  `SDC-4470 <https://jira.onap.org/browse/SDC-4470>`_ - Upgrade vulnerable dependency
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.12.5
 ===============
 
