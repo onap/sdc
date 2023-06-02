@@ -23,9 +23,12 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {InputOperationParameter} from "../../../../../../models/interfaceOperation";
 import {DataTypeModel} from "../../../../../../models/data-types";
 import {DerivedPropertyType} from "../../../../../../models/properties-inputs/property-be-model";
+import {SubPropertyToscaFunction} from "../../../../../../models/sub-property-tosca-function";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
+import {ToscaFunction} from "../../../../../../models/tosca-function";
 import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";
+import {ToscaFunctionType} from 'app/models/tosca-function-type.enum';
 
 @Component({
   selector: 'input-list',
@@ -121,6 +124,9 @@ export class InputListComponent {
 
   onValueChange($event: any) {
     const inputOperationParameter = this._inputs.find(input => input.name == $event.name);
+    if (!inputOperationParameter.subPropertyToscaFunctions) {
+      inputOperationParameter.subPropertyToscaFunctions = [];
+    }
     if (inputOperationParameter) {
       inputOperationParameter.valid = true;
       if ($event.isToscaFunction) {
@@ -128,14 +134,42 @@ export class InputListComponent {
         if (!inputOperationParameter.toscaFunction) {
           inputOperationParameter.valid = false;
         }
+      } else if (this.isTypeComplex(inputOperationParameter.type)) {
+        this.setComplexType($event, inputOperationParameter);
       } else {
         inputOperationParameter.value = $event.value;
         inputOperationParameter.toscaFunction = null;
       }
+    }
       this.inputsValidityChangeEvent.emit(this._inputs.every(input => input.valid === true));
       this.inputValueChangeEvent.emit(new InputOperationParameter(inputOperationParameter));
-    }
   }
+
+  private setComplexType ($event, inputOperationParameter): void {
+    _.forEach($event.value, (value, key) => {
+      let subPropertyToscaFunction = inputOperationParameter.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction =>
+        this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, [key])
+      );
+      let valueKeys = value instanceof Object ? Object.keys(value) : undefined;
+      if (value && value.type && value.type in ToscaFunctionType) {
+        if (!subPropertyToscaFunction){
+          subPropertyToscaFunction = new SubPropertyToscaFunction();
+          inputOperationParameter.subPropertyToscaFunctions.push(subPropertyToscaFunction);
+        }
+        subPropertyToscaFunction.toscaFunction = value;
+        $event.value[key] = (value as ToscaFunction).buildValueObject();
+        let array: string[] = [];
+        array.push(key)
+        subPropertyToscaFunction.subPropertyPath = array;
+      } else if (subPropertyToscaFunction && (!valueKeys || !valueKeys.every(value => value.toUpperCase() in ToscaFunctionType))) {
+        inputOperationParameter.subPropertyToscaFunctions.splice(inputOperationParameter.subPropertyToscaFunctions.indexOf(subPropertyToscaFunction), 1)
+      }
+    })
+}
+
+  private areEqual(array1: string[], array2: string[]): boolean {
+    return array1 && array2 && array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
+}
 
   onDelete(inputName: string) {
     this.inputDeleteEvent.emit(inputName);
