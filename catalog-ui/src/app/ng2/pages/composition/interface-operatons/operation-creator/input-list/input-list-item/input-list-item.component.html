@@ -109,6 +109,7 @@
                 [isViewOnly]="isViewOnly"
                 [showToscaFunctionOption]="showToscaFunctionOption"
                 [allowDeletion]="allowDeletion"
+                [componentInstanceMap]="componentInstanceMap"
                 (onValueChange)="onPropertyValueChange($event)">
             </app-input-list-item>
           </ng-container>
@@ -137,6 +138,7 @@
               [isListChild]="true"
               [isViewOnly]="isViewOnly"
               [allowDeletion]="allowDeletion"
+              [componentInstanceMap]="componentInstanceMap"
               (onValueChange)="onPropertyValueChange($event)"
               (onChildListItemDelete)="onListItemDelete($event)">
           </app-input-list-item>
@@ -169,6 +171,7 @@
               [nestingLevel]="nestingLevel + 1"
               [isViewOnly]="isViewOnly"
               [allowDeletion]="allowDeletion"
+              [componentInstanceMap]="componentInstanceMap"
               (onValueChange)="onPropertyValueChange($event)"
               (onDelete)="onMapKeyDelete($event)">
           </app-input-list-item>

@@ -29,7 +29,7 @@ import {TranslateService} from '../../../../../shared/translator/translate.servi
 import {ToscaFunction} from '../../../../../../models/tosca-function';
 import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
 import {CustomToscaFunction} from "../../../../../../models/default-custom-functions";
-import {SubPropertyToscaFunctions} from "./input-list-item/input-list-item.component";
+import {SubPropertyToscaFunction} from "../../../../../../models/sub-property-tosca-function";
 
 @Component({selector: 'app-input-list-item', template: ''})
 class InputListItemStubComponent {
@@ -37,7 +37,7 @@ class InputListItemStubComponent {
   @Input() type: DataTypeModel;
   @Input() dataTypeMap: any;
   @Input() valueObjRef: any;
-  @Input() subPropertyToscaFunctions: SubPropertyToscaFunctions[];
+  @Input() subPropertyToscaFunctions: SubPropertyToscaFunction[];
   @Input() schema: any;
   @Input() allowDeletion: any;
   @Input() isViewOnly: boolean;
