@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2022-2023 Nordix Foundation. All rights reserved.
+ * Copyright (C) 2022 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,20 @@ package org.openecomp.sdc.be.components.kafka;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import org.apache.kafka.common.KafkaException;
+import org.junit.jupiter.api.Test;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
 import java.util.Collections;
+import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,16 +43,11 @@ import java.util.Set;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 
-@SetEnvironmentVariable(key = "SASL_JAAS_CONFIG", value = "org.apache.kafka.common.security.scram.ScramLoginModule required username=admin password=admin-secret;")
 public class SdcKafkaConsumerTest {
 
     @Test
