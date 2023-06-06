@@ -24,11 +24,8 @@ RUN apt-get update --allow-releaseinfo-change &&  \
     ruby-dev \
     libffi-dev \
     libxml2-dev && \
-    gem install public_suffix -v 4.0.7 --no-document && \
-    gem install multipart-post -v 2.2.0 --no-document && \
-    gem install etc -v 1.3.0 --no-document && \
-    gem install bundler -v 2.3.26 --no-document && \
-    gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
+    gem update --system --no-document && \
+    gem install --no-update-sources public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
     apt-get update -y && apt-get remove bash -y --allow-remove-essential && \
     apt-get install -y binutils && apt-get clean && gem cleanup
 
