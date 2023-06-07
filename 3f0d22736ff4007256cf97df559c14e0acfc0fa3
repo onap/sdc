@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc576824_4a1a0ad0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/InterfacesOperationsConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-07T09:46:34Z",
+      "side": 1,
+      "message": "covered code removed, https://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Acatalog-be%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fbe%2Ftosca%2FInterfacesOperationsConverter.java\n\nwould be nice to cover \u0027if\u0027-branch",
+      "range": {
+        "startLine": 125,
+        "startChar": 8,
+        "endLine": 135,
+        "endChar": 9
+      },
+      "revId": "3f0d22736ff4007256cf97df559c14e0acfc0fa3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
