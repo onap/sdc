@@ -82,7 +82,6 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             if (!this.isInitialized) {
                 return;
             }
-            this.emitValidityChange();
             if (this.formGroup.valid) {
                 this.onValidFunction.emit(this.toscaFunctionForm.value);
             }
@@ -111,12 +110,12 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             let keyToFind = [this.compositionMapKey];
             let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind));
 
-                if (subPropertyToscaFunction){
-	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
-                    this.toscaFunctionForm.setValue(this.toscaFunction);
-                    this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
-                }
-                return;
+            if (subPropertyToscaFunction){
+                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                this.toscaFunctionForm.setValue(this.toscaFunction);
+                this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
+            }
+            return;
         }
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");

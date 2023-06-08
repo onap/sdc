@@ -15,7 +15,7 @@
   -->
     
 <div class="dt-list">
-    <div data-ng-repeat="i in getNumber(valueObjRef.length) track by $index" class="dt-list-item">
+    <div data-ng-if="valueObjRef.length > 0" data-ng-repeat="i in getNumber(valueObjRef.length) track by $index" class="dt-list-item">
         <span class="delete-dt-list-item" data-ng-click="deleteListItem($index)"></span>
         <div data-ng-if="isSchemaTypeDataType">
             <fields-structure value-obj-ref="valueObjRef[$index]"
