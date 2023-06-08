@@ -473,7 +473,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         if (this.typeHasSchema(this.property.type)) {
             if ((this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel> this.property).input instanceof DerivedFEProperty) || this.compositionMap) {
                 let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
-                let childSchemaType = this.property.schemaType != null ? this.property.schemaType : childObject.type;
+                let childSchemaType = (this.property != null && this.property.schemaType != null) ? this.property.schemaType : childObject.type;
                 if(this.isComplexType(childSchemaType) && !this.compositionMap){
                     if (childObject.type == PROPERTY_TYPES.MAP && childObject.isChildOfListOrMap) {
                         return validPropertyType === PROPERTY_TYPES.STRING;
@@ -488,11 +488,14 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             }
             return validPropertyType === this.property.type && this.property.schema.property.type === property.schema.property.type;
         }
-        if (this.property.schema.property.isDataType && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
+        if ((this.property.schema.property.isDataType || this.isComplexType(this.property.type)) && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
             let typeToMatch = (<PropertyDeclareAPIModel> this.property).input.type;
             let childObject : DerivedFEProperty = (<DerivedFEProperty>(<PropertyDeclareAPIModel> this.property).input);
             if (childObject.type == PROPERTY_TYPES.MAP && childObject.isChildOfListOrMap) {
                 typeToMatch = PROPERTY_TYPES.STRING;
+            }
+            if ((typeToMatch === PROPERTY_TYPES.LIST || typeToMatch === PROPERTY_TYPES.MAP) && (<PropertyDeclareAPIModel> this.property).input.schema.property.type && this.compositionMap && !isNaN(Number(this.compositionMapKey))) {
+                typeToMatch = (<PropertyDeclareAPIModel> this.property).input.schema.property.type;
             }
             return validPropertyType === typeToMatch;
         }

@@ -71,6 +71,7 @@ import { FileUtils } from '../utils/file-utils';
 import { ValidationUtils } from '../utils/validation-utils';
 import {ReqAndCapabilitiesService} from "../ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service";
 import {ToscaArtifactService} from "../ng2/services/tosca-artifact.service";
+import { PropertiesUtils } from 'app/ng2/pages/properties-assignment/services/properties.utils';
 
 const moduleName: string = 'Sdc.Services';
 const serviceModule: ng.IModule = angular.module(moduleName, []);
@@ -133,3 +134,4 @@ serviceModule.service('ElementService', downgradeInjectable(ElementService));
 serviceModule.service('ModelService', downgradeInjectable(ModelService));
 serviceModule.service('ImportVSPService', downgradeInjectable(ImportVSPService));
 serviceModule.service('ToscaArtifactService', downgradeInjectable(ToscaArtifactService));
+serviceModule.service('PropertiesUtils', downgradeInjectable(PropertiesUtils));
