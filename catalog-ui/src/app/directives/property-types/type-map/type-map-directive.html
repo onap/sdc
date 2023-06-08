@@ -41,7 +41,7 @@
         </div>
         <div data-ng-if="!isSchemaTypeDataType" class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid)}">
             <label class="i-sdc-form-label required">Value</label>
-            <form class="temp-form" data-ng-if="isService">
+            <form class="temp-form" data-ng-if="isService && complexToscapath == null">
                 <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/>
                 Value
                 <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" ng-disabled="mapKeys[$index] == '' || mapKeys[$index] == null"/>
@@ -120,7 +120,7 @@
     </div>
     <div class="add-map-item" data-ng-class="{'schema-data-type':isSchemaTypeDataType}" data-ng-if="showAddBtn">
         <div class="add-btn" data-tests-id="add-map-item"
-             data-ng-class="{'disabled': readOnly || !schemaProperty.type || mapKeys.indexOf('')>-1 || !isMapKeysUnique}"
+             data-ng-class="{'disabled': readOnly || !isMapKeysUnique}"
              data-ng-click="addMapItemFields()" title="{{'PROPERTY_EDIT_MAP_ADD_ITEM' | translate}}">Add</div>
     </div>
 </div>

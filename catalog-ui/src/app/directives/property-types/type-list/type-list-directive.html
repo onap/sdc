@@ -15,12 +15,13 @@
   -->
     
 <div class="dt-list">
-    <div data-ng-repeat="i in getNumber(valueObjRef.length) track by $index" class="dt-list-item">
+    <div data-ng-if="valueObjRef.length > 0" data-ng-repeat="i in getNumber(valueObjRef.length) track by $index" class="dt-list-item">
         <span class="delete-dt-list-item" data-ng-click="deleteListItem($index)"></span>
         <div data-ng-if="isSchemaTypeDataType">
             <fields-structure value-obj-ref="valueObjRef[$index]"
                             type-name="schemaProperty.type"
                             parent-form-obj="parentFormObj"
+                            parent-property="parentProperty"
                             fields-prefix-name="fieldsPrefixName+''+$index"
                             types="types"
                             read-only="readOnly"></fields-structure>
@@ -28,7 +29,7 @@
         <div data-ng-if="!isSchemaTypeDataType">
             <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}"
                 ng-if="schemaProperty.type !== 'map'">
-                <form class="temp-form" data-ng-if="isService">
+                <form class="temp-form" data-ng-if="isService && complexToscapath == null">
                     <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index] == false}}" data-ng-click="onEnableTosca(false,$index)"/> 
                     Value
                     <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}-{{$index}}" data-ng-checked="{{showToscaFunction[$index]}}" data-ng-click="onEnableTosca(true,$index)" /> 
