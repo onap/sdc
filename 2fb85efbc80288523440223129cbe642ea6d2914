@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3ad7aa0e_7ce896e3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8fcd8df3_26870935",
+      "range": {
+        "startLine": 135,
+        "startChar": 37,
+        "endLine": 135,
+        "endChar": 82
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "92f2fa8c_c0cafe27",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ecfb97e_8cf337d2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92f2fa8c_c0cafe27",
+      "range": {
+        "startLine": 136,
+        "startChar": 37,
+        "endLine": 136,
+        "endChar": 74
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3cf139b6_71d51b6a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae36f3e0_b4b43c60",
+      "range": {
+        "startLine": 137,
+        "startChar": 37,
+        "endLine": 137,
+        "endChar": 82
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12401406_3d970193",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 8
@@ -91,6 +163,30 @@
       "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7be601cf_ae13a580",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12401406_3d970193",
+      "range": {
+        "startLine": 138,
+        "startChar": 37,
+        "endLine": 138,
+        "endChar": 74
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "12f1a566_e18b09a7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0501ba9b_e86884b1",
+      "range": {
+        "startLine": 139,
+        "startChar": 38,
+        "endLine": 139,
+        "endChar": 53
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1ff67967_a7a70119",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 8
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "d639d35e_d2b2e210",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ff67967_a7a70119",
+      "range": {
+        "startLine": 144,
+        "startChar": 36,
+        "endLine": 144,
+        "endChar": 132
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7509edf1_377c08aa",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
         "patchSetId": 8
@@ -160,6 +304,30 @@
       "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7649efe8_8fb649ec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-08T15:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7509edf1_377c08aa",
+      "range": {
+        "startLine": 155,
+        "startChar": 37,
+        "endLine": 155,
+        "endChar": 52
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
