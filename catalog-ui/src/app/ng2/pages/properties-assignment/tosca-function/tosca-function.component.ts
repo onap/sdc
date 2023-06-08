@@ -82,7 +82,6 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             if (!this.isInitialized) {
                 return;
             }
-            this.emitValidityChange();
             if (this.formGroup.valid) {
                 this.onValidFunction.emit(this.toscaFunctionForm.value);
             }
@@ -111,12 +110,23 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
             let keyToFind = [this.compositionMapKey];
             let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind));
 
-                if (subPropertyToscaFunction){
-	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
-                    this.toscaFunctionForm.setValue(this.toscaFunction);
-                    this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
+            if (subPropertyToscaFunction){
+                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                this.toscaFunctionForm.setValue(this.toscaFunction);
+                let type = this.toscaFunction.type;
+                if (type == ToscaFunctionType.CUSTOM) {
+                    let name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
+                    let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
+                    if (customToscaFunc) {
+                        this.toscaFunctionTypeForm.setValue(name);
+                    } else {
+                        this.toscaFunctionTypeForm.setValue("other");
+                    }
+                } else {
+                    this.toscaFunctionTypeForm.setValue(type);
                 }
-                return;
+            }
+            return;
         }
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
@@ -127,7 +137,18 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
                 if (subPropertyToscaFunction){
 	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
                     this.toscaFunctionForm.setValue(this.toscaFunction);
-                    this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
+                    let type = this.toscaFunction.type;
+                    if (type == ToscaFunctionType.CUSTOM) {
+                        let name = (subPropertyToscaFunction.toscaFunction as ToscaCustomFunction).name;
+                        let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
+                        if (customToscaFunc) {
+                            this.toscaFunctionTypeForm.setValue(name);
+                        } else {
+                            this.toscaFunctionTypeForm.setValue("other");
+                        }
+                    } else {
+                        this.toscaFunctionTypeForm.setValue(type);
+                    }
                 }
                 return;
             }
@@ -259,6 +280,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         } else {
             this.toscaFunctionForm.setValue(undefined);
         }
+        this.emitValidityChange();
     }
 
     onGetFunctionValidityChange(validationEvent: ToscaGetFunctionValidationEvent): void {
@@ -267,6 +289,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         } else {
             this.toscaFunctionForm.setValue(undefined);
         }
+        this.emitValidityChange();
     }
 
     onYamlFunctionValidityChange(validationEvent: YamlFunctionValidationEvent): void {
