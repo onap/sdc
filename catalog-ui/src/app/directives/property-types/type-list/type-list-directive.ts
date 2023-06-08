@@ -47,6 +47,7 @@ export interface ITypeListScope extends ng.IScope {
     constraints:string[];
     types:DataTypesMap;
     isService:boolean;
+    complexToscapath: string;
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -85,7 +86,8 @@ export class TypeListDirective implements ng.IDirective {
         maxLength: '=',
         constraints: '=',
         types: '=',
-        isService: '='
+        isService: '=',
+        complexToscapath: '='
     };
 
     restrict = 'E';
@@ -123,22 +125,26 @@ export class TypeListDirective implements ng.IDirective {
     link = (scope:ITypeListScope, element:any, $attr:any) => {
         scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         scope.stringSchema = this.stringSchema;
-        if (scope.valueObjRef == null || scope.valueObjRef.length == 0) {
+        if ((scope.valueObjRef == null || scope.valueObjRef.length == 0) && scope.complexToscapath == null) {
             scope.valueObjRef = [];
             scope.valueObjRef.push("");
         }
-        scope.showToscaFunction = new Array(scope.valueObjRef.length);
-        scope.valueObjRef.forEach((value, index) => {
-            scope.showToscaFunction[index] = false;
-            let key : string = index.toString();
-            if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) != -1) {
-                        scope.showToscaFunction[index] = true;
-                    }
-                });
-            }
-        });
+        if (scope.valueObjRef != null && scope.valueObjRef.length > 0) {
+            scope.showToscaFunction = new Array(scope.valueObjRef.length);
+            scope.valueObjRef.forEach((value, index) => {
+                scope.showToscaFunction[index] = false;
+                if (scope.parentProperty.subPropertyToscaFunctions != null) {
+                    let key : string = index.toString();
+                    scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
+                        if (SubPropertyToscaFunction.subPropertyPath.toString() == key) {
+                            scope.showToscaFunction[index] = true;
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+        
         //reset valueObjRef when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
             scope.isSchemaTypeDataType = this.DataTypesService.isDataTypeForSchemaType(scope.schemaProperty);
@@ -174,6 +180,7 @@ export class TypeListDirective implements ng.IDirective {
                 }
             }
             scope.valueObjRef.push(newVal);
+            scope.showToscaFunction = scope.showToscaFunction || [];
             scope.showToscaFunction.push(false);
             scope.listNewItem.value = "";
         };
@@ -214,7 +221,7 @@ export class TypeListDirective implements ng.IDirective {
                 if (scope.parentProperty.subPropertyToscaFunctions != null) {
                     let subToscaFunctionList : Array<SubPropertyToscaFunction> = [];
                     scope.parentProperty.subPropertyToscaFunctions.forEach((SubPropertyToscaFunction, index) => {
-                        if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) == -1) {
+                        if (SubPropertyToscaFunction.subPropertyPath.toString() != key) {
                             subToscaFunctionList.push(SubPropertyToscaFunction);
                         }
                     });
@@ -226,21 +233,26 @@ export class TypeListDirective implements ng.IDirective {
         scope.onGetToscaFunction = (toscaGetFunction: ToscaGetFunction, index:number): void => {
             let key:string = index.toString();
             if (scope.parentProperty.subPropertyToscaFunctions != null) {
+                let toscaFlag : boolean = true;
                 scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) != -1) {
+                    if (SubPropertyToscaFunction.subPropertyPath.toString() == key) {
                         SubPropertyToscaFunction.toscaFunction = toscaGetFunction;
+                        toscaFlag = false;
                         return;
                     }
                 });
-
+                if (toscaFlag) {
+                    let subPropertyToscaFunction = new SubPropertyToscaFunction();
+                    subPropertyToscaFunction.toscaFunction = toscaGetFunction;
+                    subPropertyToscaFunction.subPropertyPath = [key];
+                    scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
+                }
+            } else {  
+                let subPropertyToscaFunction = new SubPropertyToscaFunction();
+                subPropertyToscaFunction.toscaFunction = toscaGetFunction;
+                subPropertyToscaFunction.subPropertyPath = [key];
+                scope.parentProperty.subPropertyToscaFunctions = [subPropertyToscaFunction];
             }
-            if (scope.parentProperty.subPropertyToscaFunctions == null){
-                scope.parentProperty.subPropertyToscaFunctions = [];
-            }
-            let subPropertyToscaFunction = new SubPropertyToscaFunction();
-            subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-            subPropertyToscaFunction.subPropertyPath = [key];
-            scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
         }
 
     };
