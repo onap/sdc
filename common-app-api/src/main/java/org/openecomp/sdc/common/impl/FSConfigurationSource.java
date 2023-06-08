@@ -23,6 +23,7 @@ package org.openecomp.sdc.common.impl;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
@@ -35,17 +36,11 @@ import org.openecomp.sdc.exception.YamlConversionException;
  *
  * @author esofer
  */
+@AllArgsConstructor
 public class FSConfigurationSource implements ConfigurationSource {
 
-    private final YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
     private final ConfigFileChangeListener changeListener;
     private final String appConfigDir;
-
-    public FSConfigurationSource(ConfigFileChangeListener changeListener, String appConfigDir) {
-        super();
-        this.changeListener = changeListener;
-        this.appConfigDir = appConfigDir;
-    }
 
     /**
      * convert camel case string to list of words separated by "-" where each word is in lower case format. For example, MyClass will be calculated to
@@ -71,7 +66,7 @@ public class FSConfigurationSource implements ConfigurationSource {
         final String configFileName = calculateFileName(className);
         T object;
         try {
-            object = yamlToObjectConverter.convert(this.appConfigDir, className, configFileName);
+            object = (new YamlToObjectConverter()).convert(this.appConfigDir, className, configFileName);
         } catch (final YamlConversionException e) {
             final String errorMsg = String.format("Could not load '%s' in '%s' for class '%s'", configFileName, appConfigDir, className);
             throw new LoadConfigurationException(errorMsg, e);
@@ -83,9 +78,8 @@ public class FSConfigurationSource implements ConfigurationSource {
     }
 
     public <T> void addWatchConfiguration(Class<T> className, ConfigurationListener configurationListener) {
-        String configFileName = calculateFileName(className);
-        if (configurationListener != null) {
-            changeListener.register(configFileName, configurationListener);
+        if (configurationListener != null && changeListener != null) {
+            changeListener.register(calculateFileName(className), configurationListener);
         }
     }
 }

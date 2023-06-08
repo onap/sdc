@@ -58,7 +58,6 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
     private void loadConfigurationFiles() {
         loadConfigurationClass(Configuration.class);
         loadConfigurationClass(ErrorConfiguration.class);
-        loadConfigurationClass(Neo4jErrorsConfiguration.class);
         loadConfigurationClass(EcompErrorConfiguration.class);
         loadConfigurationClass(DistributionEngineConfiguration.class);
     }
@@ -78,8 +77,8 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
         configurations.put(getKey(clazz), object);
     }
 
-    private <T> String getKey(Class<T> class1) {
-        return class1.getSimpleName();
+    private <T> String getKey(Class<T> clazz) {
+        return clazz.getSimpleName();
     }
 
     public Configuration getConfiguration() {
@@ -96,10 +95,6 @@ public class ConfigurationManager implements FileChangeCallback, IEcompConfigura
 
     public void setErrorConfiguration(ErrorConfiguration configuration) {
         configurations.put(getKey(ErrorConfiguration.class), configuration);
-    }
-
-    public Neo4jErrorsConfiguration getNeo4jErrorsConfiguration() {
-        return (Neo4jErrorsConfiguration) configurations.get(getKey(Neo4jErrorsConfiguration.class));
     }
 
     @Override
