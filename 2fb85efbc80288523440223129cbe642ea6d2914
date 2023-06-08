@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fcd8df3_26870935",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "Reword to: \"The category to filter the result set on\"",
+      "range": {
+        "startLine": 135,
+        "startChar": 37,
+        "endLine": 135,
+        "endChar": 82
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92f2fa8c_c0cafe27",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "\"The sub category to filter the result set on. Only applicable when assetType \u003d resources\"",
+      "range": {
+        "startLine": 136,
+        "startChar": 37,
+        "endLine": 136,
+        "endChar": 74
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae36f3e0_b4b43c60",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "\"The distribution status to filter the result set on\"",
+      "range": {
+        "startLine": 137,
+        "startChar": 37,
+        "endLine": 137,
+        "endChar": 82
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12401406_3d970193",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "\"The resource type to filter the result set on. Only applicable when assetType \u003d resources\"",
+      "range": {
+        "startLine": 138,
+        "startChar": 37,
+        "endLine": 138,
+        "endChar": 74
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0501ba9b_e86884b1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "Reword to \"The version(s) to filter the result set on\"",
+      "range": {
+        "startLine": 139,
+        "startChar": 38,
+        "endLine": 139,
+        "endChar": 53
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ff67967_a7a70119",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "I think it would be standard to put just the value of the parameter being described here instead of the full url, i.e. \"highestMatchingVersionOnly:true\".\nSame comment for other examples",
+      "range": {
+        "startLine": 144,
+        "startChar": 36,
+        "endLine": 144,
+        "endChar": 132
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7509edf1_377c08aa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/AssetsDataServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-08T14:55:08Z",
+      "side": 1,
+      "message": "reword to \"The keys of the metadata to include in the entries in the result set. Only applicable when assetType \u003d services\"",
+      "range": {
+        "startLine": 155,
+        "startChar": 37,
+        "endLine": 155,
+        "endChar": 52
+      },
+      "revId": "2fb85efbc80288523440223129cbe642ea6d2914",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
