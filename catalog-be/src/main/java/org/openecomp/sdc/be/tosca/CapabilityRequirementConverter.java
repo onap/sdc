@@ -749,8 +749,9 @@ public class CapabilityRequirementConverter {
                 logger.debug("Failed to get an origin component with uniqueId {}", instance.getActualComponentUid());
                 result = Either.right(false);
             } else {
-                result = Either.left(getOriginRes.left().value());
-                componentsCache.put(getOriginRes.left().value().getUniqueId(), getOriginRes.left().value());
+                final Component component = getOriginRes.left().value();
+                result = Either.left(component);
+                componentsCache.put(component.getUniqueId(), component);
             }
         }
         return result;
