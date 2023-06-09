@@ -22,6 +22,7 @@
 
 package org.openecomp.sdc.be.tosca;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -91,6 +92,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -126,7 +128,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     private static final String RESOURCE_NAME = "resource";
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final String LOCAL_INTERFACE_TYPE = "Local";
-    public static final String UNIQUE_ID = "1L";
+    private static final String UNIQUE_ID = "1L";
 
     @InjectMocks
     private ToscaExportHandler testSubject;
@@ -178,7 +180,8 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     void setUpMock() {
         MockitoAnnotations.openMocks(this);
         doReturn(new ToscaProperty()).when(propertyConvertor).convertProperty(any(), any(), eq(PROPERTY));
-        doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter).getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean());
+        doReturn(new HashMap<String, Object>()).when(interfacesOperationsConverter)
+                .getInterfacesMap(any(), isNull(), anyMap(), anyMap(), anyBoolean());
     }
 
     private Resource getNewResource() {
@@ -193,13 +196,13 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         dataType.setName("dataTypeName");
         dataType.setDerivedFromName("tosca.datatypes.Root");
         PropertyDataDefinition propData = new PropertyDataDefinitionBuilder()
-            .setName("property")
-            .setType("type")
-            .build();
+                .setName("property")
+                .setType("type")
+                .build();
         List<PropertyDataDefinition> propDataList = Arrays.asList(propData);
         dataType.setPropertiesData(propDataList);
         List<PropertyDefinition> propList = propDataList.stream().map(PropertyDefinition::new)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
         dataType.setProperties(propList);
         dataTypes.add(dataType);
 
@@ -255,9 +258,9 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         // default test when component is Resource
         result = testSubject.exportComponent(component);
@@ -265,7 +268,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         component = getNewService();
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Service.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
         // default test when component is Service
@@ -282,14 +285,14 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
         // default test when convertInterfaceNodeType is right
         result = testSubject.exportComponentInterface(component, false);
         assertNotNull(result);
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // default test when convertInterfaceNodeType is left
         result = testSubject.exportComponentInterface(component, false);
@@ -324,14 +327,14 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         component.setToscaResourceName(RESOURCE_NAME);
 
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         // when convertRequirements is called, make it return the same value as 3rd (index=2) argument.
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenAnswer(i -> Either.left(i.getArgument(2)));
+                any(ToscaNodeType.class))).thenAnswer(i -> Either.left(i.getArgument(2)));
 
         final var result = testSubject.convertInterfaceNodeType(new HashMap<String, Component>(), component,
-            new ToscaTemplate(TOSCA_VERSION), new HashMap<String, ToscaNodeType>(), false);
+                new ToscaTemplate(TOSCA_VERSION), new HashMap<String, ToscaNodeType>(), false);
         assertNotNull(result);
         assertTrue(result.isLeft());
         Map<String, ToscaNodeType> nodeTypeMap = result.left().value().getNode_types();
@@ -452,10 +455,10 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         substitutionMappingMap.put("key", array);
 
         when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(),
-            any(Component.class))).thenReturn(Either.left(substitutionMappingMap));
+                any(Component.class))).thenReturn(Either.left(substitutionMappingMap));
 
         when(capabilityRequirementConverter.convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
@@ -493,11 +496,11 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         substitutionMappingMap.put("key", array);
 
         when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(), any(Component.class)))
-            .thenReturn(Either.left(substitutionMappingMap));
+                .thenReturn(Either.left(substitutionMappingMap));
 
         when(capabilityRequirementConverter
-            .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
@@ -544,7 +547,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         component.setToscaArtifacts(toscaArtifacts);
 
         when(toscaOperationFacade.getToscaFullElement(any(String.class)))
-            .thenReturn(Either.left(component));
+                .thenReturn(Either.left(component));
 
         Resource baseType = getNewResource();
         Map<String, ArtifactDefinition> baseTypeToscaArtifacts = new HashMap<>();
@@ -608,10 +611,10 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
         // default test
         result = Deencapsulation
-            .invoke(testSubject, "convertNodeType", new HashMap<>(), component, toscaNode, nodeTypes);
+                .invoke(testSubject, "convertNodeType", new HashMap<>(), component, toscaNode, nodeTypes);
         assertNotNull(result);
     }
 
@@ -627,14 +630,14 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // default test
         result = Deencapsulation.invoke(testSubject, "convertInterfaceNodeType", new HashMap<>(), component, toscaNode
-            , nodeTypes, false);
+                , nodeTypes, false);
         assertNotNull(result);
     }
 
@@ -648,28 +651,28 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         Either<ToscaTemplate, ToscaError> result;
 
         when(
-            capabilityRequirementConverter
-                .convertCapabilities(anyMap(), any(Resource.class), anyMap()))
-            .thenReturn(new HashMap<>());
+                capabilityRequirementConverter
+                        .convertCapabilities(anyMap(), any(Resource.class), anyMap()))
+                .thenReturn(new HashMap<>());
 
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // default test
         result = Deencapsulation
-            .invoke(testSubject, "convertReqCapAndTypeName", new HashMap<>(), component, toscaNode, nodeTypes,
-                toscaNodeType, dataTypes);
+                .invoke(testSubject, "convertReqCapAndTypeName", new HashMap<>(), component, toscaNode, nodeTypes,
+                        toscaNodeType, dataTypes);
         assertNotNull(result);
 
         component = new Service();
 
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Service.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // test when component is service
         result = Deencapsulation
-            .invoke(testSubject, "convertReqCapAndTypeName", new HashMap<>(), component, toscaNode, nodeTypes,
-                toscaNodeType, dataTypes);
+                .invoke(testSubject, "convertReqCapAndTypeName", new HashMap<>(), component, toscaNode, nodeTypes,
+                        toscaNodeType, dataTypes);
         assertNotNull(result);
     }
 
@@ -753,12 +756,12 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(capabilityRequirementConverter.getOriginComponent(anyMap(), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(capabilityRequirementConverter
-            .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
-            .thenReturn(Either.left(new ToscaNodeTemplate()));
+                .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
+                .thenReturn(Either.left(new ToscaNodeTemplate()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class), any(ToscaNodeType.class)))
-            .thenReturn(Either.left(new ToscaNodeType()));
+                .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
@@ -768,11 +771,11 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         final String[] array = {"value1", "value2"};
         substitutionMappingMap.put("key", array);
         when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(), any(Component.class)))
-            .thenReturn(Either.left(substitutionMappingMap));
+                .thenReturn(Either.left(substitutionMappingMap));
 
         when(capabilityRequirementConverter
-            .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         // default test
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
@@ -997,12 +1000,12 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(capabilityRequirementConverter.getOriginComponent(anyMap(), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(capabilityRequirementConverter
-            .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
-            .thenReturn(Either.left(new ToscaNodeTemplate()));
+                .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
+                .thenReturn(Either.left(new ToscaNodeTemplate()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class), any(ToscaNodeType.class)))
-            .thenReturn(Either.left(new ToscaNodeType()));
+                .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
@@ -1019,11 +1022,11 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         final String[] array = {"value1", "value2"};
         substitutionMappingMap.put("key", array);
         when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(), any(Component.class)))
-            .thenReturn(Either.left(substitutionMappingMap));
+                .thenReturn(Either.left(substitutionMappingMap));
 
         when(capabilityRequirementConverter
-            .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
+                .thenReturn(Either.left(Collections.emptyMap()));
 
         // default test
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(newResource);
@@ -1067,12 +1070,12 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(capabilityRequirementConverter.getOriginComponent(anyMap(), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(capabilityRequirementConverter
-            .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
-            .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
+                .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
+                .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // default test
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
@@ -1123,7 +1126,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         // default test
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
@@ -1150,7 +1153,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         reldef.setToNode("node");
         List<CapabilityRequirementRelationship> relationships = new ArrayList<>();
         CapabilityRequirementRelationship relationship = new CapabilityRequirementRelationship();
-        relationship.setRelation(new RelationshipInfo());
+        relationship.setRelation(new RelationshipInfo("requirement", new RelationshipImpl()));
         relationships.add(relationship);
         reldef.setRelationships(relationships);
         resourceInstancesRelations.add(reldef);
@@ -1162,13 +1165,16 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         artifactList.put("assettoscatemplate", artifact);
         component.setArtifacts(artifactList);
         component.setToscaArtifacts(artifactList);
+        component.setRequirements(Collections.singletonMap("mock", Collections.singletonList(new RequirementDefinition())));
 
         ComponentInstance instance = new ComponentInstance();
         instance.setUniqueId("id");
         instance.setComponentUid("id");
         instance.setOriginType(OriginTypeEnum.VF);
+        Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
+        requirements.put("mock1", Collections.singletonList(new RequirementDefinition()));
+        instance.setRequirements(requirements);
         componentInstances.add(instance);
-        component.setComponentInstances(componentInstances);
 
         component.setComponentInstancesInputs(componentInstancesInputs);
         component.setComponentInstances(componentInstances);
@@ -1178,9 +1184,9 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         // default test
         final Either<ToscaRepresentation, ToscaError> result = testSubject.exportComponent(component);
@@ -1219,8 +1225,8 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         componentInstances.add(instance);
         container.setComponentInstances(componentInstances);
         when(toscaOperationFacade.getToscaElement(any(String.class),
-            any(ComponentParametersView.class)))
-            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+                any(ComponentParametersView.class)))
+                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
         assertTrue(result.isRight());
     }
@@ -1238,10 +1244,10 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         container.setComponentInstances(componentInstances);
 
         when(toscaOperationFacade.getToscaElement(any(String.class),
-            any(ComponentParametersView.class)))
-            .thenReturn(Either.left(new Resource()));
+                any(ComponentParametersView.class)))
+                .thenReturn(Either.left(new Resource()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
         result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
         assertTrue(result.isRight());
     }
@@ -1266,7 +1272,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         proxyResource.setInterfaces(proxyInterfaces);
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(proxyResource));
         when(interfacesOperationsConverter.addInterfaceTypeElement(any(Component.class), anyList()))
-            .thenReturn(Collections.singletonMap(LOCAL_INTERFACE_TYPE, new HashMap<>()));
+                .thenReturn(Collections.singletonMap(LOCAL_INTERFACE_TYPE, new HashMap<>()));
 
         result = Deencapsulation.invoke(testSubject, "createProxyInterfaceTypes", container);
         assertNotNull(result);
@@ -1288,7 +1294,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         container.setComponentInstances(componentInstances);
 
         when(toscaOperationFacade.getLatestByName("serviceProxy", null))
-            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         // test when getLatestByName return is right
         result = Deencapsulation.invoke(testSubject, "createProxyNodeTypes", componentCache, container);
@@ -1316,10 +1322,10 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         containerService.setComponentInstances(componentInstances);
 
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
-            .thenReturn(Either.left(Collections.emptyMap()));
+                .thenReturn(Either.left(Collections.emptyMap()));
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Service.class),
-            any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
+                any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
         ToscaTemplate toscaNode = new ToscaTemplate("1_1");
 
@@ -1347,8 +1353,8 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         parameterView.setIgnoreCategories(false);
 
         when(toscaOperationFacade.getToscaElement(any(String.class),
-            any(ComponentParametersView.class)))
-            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+                any(ComponentParametersView.class)))
+                .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
@@ -1369,7 +1375,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // default test
         result = Deencapsulation.invoke(testSubject, "createProxyNodeType", componentCache, origComponent,
-            proxyComponent, instance);
+                proxyComponent, instance);
         assertNotNull(result);
     }
 
@@ -1385,7 +1391,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // default test
         result = Deencapsulation.invoke(testSubject, "convertComponentInstanceRequirements", component,
-            componentInstance, relations, nodeTypeTemplate, originComponent, componentCache);
+                componentInstance, relations, nodeTypeTemplate, originComponent, componentCache);
         assertNotNull(result);
 
         RequirementCapabilityRelDef reldef = new RequirementCapabilityRelDef();
@@ -1405,7 +1411,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // test when filteredRElations ins't empty
         result = Deencapsulation.invoke(testSubject, "convertComponentInstanceRequirements", component,
-            componentInstance, relations, nodeTypeTemplate, originComponent, componentCache);
+                componentInstance, relations, nodeTypeTemplate, originComponent, componentCache);
         assertNotNull(result);
     }
 
@@ -1426,15 +1432,15 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         final List<ComponentInstance> instancesList = new ArrayList<>();
         instancesList.add(fromInstance);
         String expectedError = String
-            .format("Failed to find a relation from the node %s to the node %s", fromInstance.getName(),
-                relationshipDefinition.getToNode());
-        assertThrows(ToscaExportException.class, () ->
-            Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
-                instancesList, relationshipDefinition, new HashMap<>()), expectedError);
+                .format("Failed to find a relation from the node %s to the node %s", fromInstance.getName(),
+                        relationshipDefinition.getToNode());
+        assertDoesNotThrow(() ->
+                Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
+                        instancesList, relationshipDefinition, new HashMap<>()), expectedError);
 
         try {
             Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
-                instancesList, relationshipDefinition, new HashMap<>());
+                    instancesList, relationshipDefinition, new HashMap<>());
         } catch (Exception e) {
             assertTrue(e instanceof ToscaExportException);
             assertEquals(expectedError, e.getMessage());
@@ -1458,25 +1464,25 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         relationshipDefinition.setToNode(fromInstanceUid);
 
         expectedError = String
-            .format("Failed to find a requirement with uniqueId %s on a component with uniqueId %s",
-                relation.getRequirementUid(), fromOriginComponent.getUniqueId());
+                .format("Failed to find a requirement with uniqueId %s on a component with uniqueId %s",
+                        relation.getRequirementUid(), fromOriginComponent.getUniqueId());
 
         assertThrows(ToscaExportException.class, () ->
-            Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
-                instancesList, relationshipDefinition, new HashMap<>()), expectedError);
+                Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
+                        instancesList, relationshipDefinition, new HashMap<>()), expectedError);
 
         requirementDefinition.setName(requirementName);
 
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         expectedError = String.format(
-            "Failed to build substituted name for the requirement %s. "
-                + "Failed to get an origin component with uniqueId %s",
-            requirementName, fromInstance.getActualComponentUid());
+                "Failed to build substituted name for the requirement %s. "
+                        + "Failed to get an origin component with uniqueId %s",
+                requirementName, fromInstance.getActualComponentUid());
         assertThrows(ToscaExportException.class, () -> Deencapsulation
-            .invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
-                relationshipDefinition, new HashMap<>()), expectedError);
+                .invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
+                        relationshipDefinition, new HashMap<>()), expectedError);
 
         final Component toOriginComponent = new Resource();
         final Map<String, List<CapabilityDefinition>> capabilityMap = new HashMap<>();
@@ -1490,7 +1496,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         capabilityMap.put(capabilityName, Collections.singletonList(capabilityDefinition));
         toOriginComponent.setCapabilities(capabilityMap);
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-            .thenReturn(Either.left(toOriginComponent));
+                .thenReturn(Either.left(toOriginComponent));
 
         requirementDefinition.setCapability(capabilityName);
         relation.setCapability("wrong");
@@ -1499,13 +1505,13 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         requirementDefinition.setPath(new ArrayList<>());
 
         expectedError = String
-            .format("Failed to find a capability with name %s on a component with uniqueId %s",
-                relation.getCapability(), fromOriginComponent.getUniqueId());
+                .format("Failed to find a capability with name %s on a component with uniqueId %s",
+                        relation.getCapability(), fromOriginComponent.getUniqueId());
 
         assertThrows(ToscaExportException.class, () -> Deencapsulation
-                .invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
-                    relationshipDefinition, new HashMap<>()),
-            expectedError);
+                        .invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
+                                relationshipDefinition, new HashMap<>()),
+                expectedError);
     }
 
     @Test
@@ -1556,24 +1562,24 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         toOriginComponent.setCapabilities(capabilityMap);
 
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-            .thenReturn(Either.left(toOriginComponent));
+                .thenReturn(Either.left(toOriginComponent));
         final String builtCapabilityName = "builtCapabilityName";
         when(
-            capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq(capabilityName), eq(
-                    capabilityPreviousName), any()))
-            .thenReturn(Either.left(builtCapabilityName));
+                capabilityRequirementConverter
+                        .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq(capabilityName), eq(
+                                capabilityPreviousName), any()))
+                .thenReturn(Either.left(builtCapabilityName));
 
         final String builtRequirementName = "builtRequirementName";
         when(
-            capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq(requirementName), eq(
-                    requirementPreviousName), any()))
-            .thenReturn(Either.left(builtRequirementName));
+                capabilityRequirementConverter
+                        .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq(requirementName), eq(
+                                requirementPreviousName), any()))
+                .thenReturn(Either.left(builtRequirementName));
 
         final Map<String, ToscaTemplateRequirement> actualRequirementMap =
-            Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
-                instancesList, relationshipDefinition, componentCache);
+                Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
+                        instancesList, relationshipDefinition, componentCache);
         assertNotNull(actualRequirementMap);
         assertFalse(actualRequirementMap.isEmpty());
         assertTrue(actualRequirementMap.containsKey(builtRequirementName));
@@ -1583,10 +1589,10 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         //to toOriginComponent not found
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
-            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         assertThrows(ToscaExportException.class, () -> Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent,
-            instancesList, relationshipDefinition, componentCache));
+                instancesList, relationshipDefinition, componentCache));
     }
 
     @Test
@@ -1635,21 +1641,21 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         fromOriginComponent.setCapabilities(capabilities);
 
         when(toscaOperationFacade.getToscaElement(any(String.class),
-            any(ComponentParametersView.class))).thenReturn(Either.left(fromOriginComponent));
+                any(ComponentParametersView.class))).thenReturn(Either.left(fromOriginComponent));
 
         when(
-            capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), any(Component.class), anyList(), anyString(), anyString(), any()))
-            .thenReturn(Either.right(false));
+                capabilityRequirementConverter
+                        .buildSubstitutedName(anyMap(), any(Component.class), anyList(), anyString(), anyString(), any()))
+                .thenReturn(Either.right(false));
 
         final String expectedErrorMsg =
-            String.format("Failed to build a substituted capability name for the capability "
-                    + "with name %s on a component with uniqueId %s",
-                cap.getRequirement(), fromOriginComponent.getUniqueId());
+                String.format("Failed to build a substituted capability name for the capability "
+                                + "with name %s on a component with uniqueId %s",
+                        cap.getRequirement(), fromOriginComponent.getUniqueId());
 
         assertThrows(ToscaExportException.class, () ->
-            Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
-                rel, componentCache), expectedErrorMsg);
+                Deencapsulation.invoke(testSubject, "buildRequirement", fromInstance, fromOriginComponent, instancesList,
+                        rel, componentCache), expectedErrorMsg);
     }
 
     @Test
@@ -1671,19 +1677,19 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         reqAndRelationshipPair.setRequirement("req");
 
         when(
-            capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("cap"), anyString(), any()))
-            .thenReturn(Either.left("buildCapNameRes"));
+                capabilityRequirementConverter
+                        .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("cap"), anyString(), any()))
+                .thenReturn(Either.left("buildCapNameRes"));
 
         when(
-            capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("req"), anyString(), any()))
-            .thenReturn(Either.left("buildReqNameRes"));
+                capabilityRequirementConverter
+                        .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("req"), anyString(), any()))
+                .thenReturn(Either.left("buildReqNameRes"));
 
         // default test
         final Map<String, ToscaTemplateRequirement> requirementMap =
-            Deencapsulation.invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent,
-                capability, requirement, capabilityRequirementRelationship, toInstance, componentCache);
+                Deencapsulation.invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent,
+                        capability, requirement, capabilityRequirementRelationship, toInstance, componentCache);
         assertNotNull(requirementMap);
         assertFalse(requirementMap.isEmpty());
         assertTrue(requirementMap.containsKey("buildReqNameRes"));
@@ -1710,13 +1716,13 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         final String builtCapabilityOrRequirementName = "builtCapabilityOrRequirementName";
         when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("cap"), any(), any()))
-            .thenReturn(Either.left(builtCapabilityOrRequirementName));
+                .thenReturn(Either.left(builtCapabilityOrRequirementName));
         when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("req"), any(), any()))
-            .thenReturn(Either.left(builtCapabilityOrRequirementName));
+                .thenReturn(Either.left(builtCapabilityOrRequirementName));
 
         final Map<String, ToscaTemplateRequirement> requirementMap = Deencapsulation
-            .invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent, capability, requirement,
-                capabilityRequirementRelationship, toInstance, componentCache);
+                .invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent, capability, requirement,
+                        capabilityRequirementRelationship, toInstance, componentCache);
         assertNotNull(requirementMap);
         assertFalse(requirementMap.isEmpty());
         assertTrue(requirementMap.containsKey(builtCapabilityOrRequirementName));
@@ -1739,7 +1745,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // test return false
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
-            reqAndRelationshipPair, requirement, fromInstanceId);
+                reqAndRelationshipPair, requirement, fromInstanceId);
         assertFalse(result);
     }
 
@@ -1756,7 +1762,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // default test return true
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToRelation", originComponent,
-            reqAndRelationshipPair, requirement, fromInstanceId);
+                reqAndRelationshipPair, requirement, fromInstanceId);
         assertTrue(result);
     }
 
@@ -1774,7 +1780,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // default test
         result = Deencapsulation.invoke(testSubject, "isRequirementBelongToOwner", reqAndRelationshipPair, requirement,
-            fromInstanceId, originComponent);
+                fromInstanceId, originComponent);
         assertFalse(result);
     }
 
@@ -1795,11 +1801,11 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         final Either<Map<String, String[]>, ToscaError> expectedResult = Either.right(ToscaError.NODE_TYPE_CAPABILITY_ERROR);
         when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(componentCache, component))
-            .thenReturn(expectedResult);
+                .thenReturn(expectedResult);
 
         // default test return isRight
         final Either<Map<String, String[]>, ToscaError> actualResult =
-            Deencapsulation.invoke(testSubject, "convertSubstitutionMappingCapabilities", component, componentCache);
+                Deencapsulation.invoke(testSubject, "convertSubstitutionMappingCapabilities", component, componentCache);
         assertNotNull(actualResult);
         assertEquals(expectedResult, actualResult);
     }
@@ -1816,7 +1822,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         // default test
         result = Deencapsulation
-            .invoke(testSubject, "convertCapabilities", new HashMap<>(), component, nodeType, dataTypes);
+                .invoke(testSubject, "convertCapabilities", new HashMap<>(), component, nodeType, dataTypes);
         assertNotNull(result);
     }
 

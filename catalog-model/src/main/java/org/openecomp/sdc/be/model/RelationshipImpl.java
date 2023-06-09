@@ -19,20 +19,15 @@
  */
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class RelationshipImpl {
 
     private String type;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return "RelationshipImpl [type=" + type + "]";
-    }
 }
