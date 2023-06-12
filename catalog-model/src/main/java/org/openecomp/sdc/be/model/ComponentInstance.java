@@ -85,6 +85,10 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
         }
         this.interfaces.put(interfaceName, interfaceDefinition);
     }
+    
+    public List<PropertyDefinition> getProperties() {
+        return properties == null ? Collections.emptyList() : properties; 
+    }
 
     //supportability log method return map of component metadata teddy.h
     public Map<String, String> getComponentMetadataForSupportLog() {
