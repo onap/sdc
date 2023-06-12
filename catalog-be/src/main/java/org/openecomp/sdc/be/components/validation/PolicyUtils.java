@@ -131,9 +131,9 @@ public class PolicyUtils {
         try {
             int beginIndex = policyName.lastIndexOf(GROUP_POLICY_NAME_DELIMETER) + GROUP_POLICY_NAME_DELIMETER.length();
             String counterStr = policyName.substring(beginIndex, endIndex);
-            counter = Integer.valueOf(counterStr) + 1;
+            counter = Integer.parseInt(counterStr) + 1;
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            log.error("#extractNextPolicyCounter - An error occurred when attempting to extract counter from policy name [{}]. ", policyName, e);
+            log.warn("#extractNextPolicyCounter - Cannot extract counter from policy name [{}]. ", policyName, e);
         }
         return counter;
     }
@@ -160,13 +160,7 @@ public class PolicyUtils {
     }
 
     private static boolean isUpdatedField(String oldField, String newField) {
-        boolean isUpdatedField = false;
-        if (isEmpty(oldField) && isNotEmpty(newField)) {
-            isUpdatedField = true;
-        } else if (isNotEmpty(oldField) && isNotEmpty(newField) && !oldField.equals(newField)) {
-            isUpdatedField = true;
-        }
-        return isUpdatedField;
+        return (isEmpty(oldField) && isNotEmpty(newField)) || (isNotEmpty(oldField) && isNotEmpty(newField) && !oldField.equals(newField));
     }
 
     private static void logImmutableFieldUpdateWarning(String oldValue, String newValue, JsonPresentationFields field) {
