@@ -1,0 +1,137 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: ETSI NFV SOL 001 Root node type definitions version 2.5.1
+
+node_types:
+  tosca.nodes.Root:
+    description: The TOSCA Node Type all other TOSCA base Node Types derive from
+    attributes:
+      tosca_id:
+        type: string
+      tosca_name:
+        type: string
+      state:
+        type: string
+    capabilities:
+      feature:
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+  tosca.nodes.nfv.testWithConstraints:
+    derived_from: tosca.nodes.Root
+    properties:
+      string_prop_with_c:
+        type: string
+        constraints:
+          - valid_values:
+              - abc
+              - def
+  tosca.nodes.nfv.testNodeSimple:
+    derived_from: tosca.nodes.Root
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+  tosca.nodes.nfv.testNodeComplex:
+    derived_from: tosca.nodes.Root
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      complex_prop:
+        type: tosca.datatypes.testDataTypeComplex
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_complex_prop:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.testDataTypeComplex
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+      map_complex_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: tosca.datatypes.testDataTypeComplex
