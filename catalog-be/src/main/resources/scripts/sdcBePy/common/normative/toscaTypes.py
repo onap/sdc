@@ -1,6 +1,6 @@
 import json
 import zipfile
-
+import os
 import pycurl
 
 from sdcBePy.common.errors import ResourceCreationError
@@ -48,6 +48,8 @@ def _create_normatives_type(file_dir, sdc_be_proxy, types, update_version):
     results = []
     response_codes = _get_response_code()
     for normative_type in types:
+        if not os.path.exists(file_dir):
+            break
         result = _send_request(sdc_be_proxy, file_dir, normative_type, update_version)
         results.append(result)
         if result[1] is None or result[1] not in response_codes:
