@@ -1,0 +1,222 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: test model types definitions
+
+data_types:
+  tosca.datatypes.test.testDataTypeSimple:
+    derived_from: tosca.datatypes.Root
+    description: A simple data type used for testing
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+  tosca.datatypes.test.testDataTypeComplex:
+    derived_from: tosca.datatypes.Root
+    description: A complex data type used for testing
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      complex_prop:
+        type: tosca.datatypes.test.testDataTypeSimple
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_complex_prop:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.test.testDataTypeSimple
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+      map_complex_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: tosca.datatypes.test.testDataTypeSimple
+node_types:
+  tosca.nodes.test.testWithConstraints:
+    derived_from: tosca.nodes.Root
+    properties:
+      string_prop_with_c:
+        type: string
+        constraints:
+          - valid_values:
+              - abc
+              - def
+  tosca.nodes.test.testNodeSimple:
+    derived_from: tosca.nodes.Root
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+  tosca.nodes.test.testNodeComplex:
+    derived_from: tosca.nodes.Root
+    properties:
+      str_prop:
+        type: string
+        required: true
+      int_prop:
+        type: integer
+        required: true
+      timestamp_prop:
+        type: timestamp
+        required: true
+      boolean_prop:
+        type: boolean
+        required: true
+      float_prop:
+        type: float
+        required: true
+      json_prop:
+        type: json
+        required: true
+      complex_prop:
+        type: tosca.datatypes.test.testDataTypeComplex
+      list_str_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+      list_int_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: integer
+      list_complex_prop:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.test.testDataTypeComplex
+      list_map_prop:
+        type: list
+        required: true
+        entry_schema:
+          type: map
+      map_str_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+      map_int_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: integer
+      map_complex_prop:
+        type: map
+        required: true
+        entry_schema:
+          type: tosca.datatypes.test.testDataTypeComplex

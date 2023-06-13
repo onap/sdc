@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<project name="stack_overflow">
+    <target name ="BE-configuration">
+        <echo>********** Replacing BE-configuration to add TEST service config *************</echo>
+        <replaceregexp file="integration-tests-init/BE-configuration.yaml.erb" match="serviceBaseNodeTypes:">
+            <substitution expression="serviceBaseNodeTypes:${line.separator}  TEST service:${line.separator}    required: true${line.separator}    baseTypes:${line.separator}      - tosca.nodes.nfv.testNodeComplex${line.separator}    doNotExtendBaseType: true"/>
+        </replaceregexp>
+    </target>
+</project>
