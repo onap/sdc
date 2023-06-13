@@ -71,5 +71,4 @@ class NodeTypeClient:
             error_msg = "Failed to import node types '{}'".format(node_type_yaml_path)
             logger.log(error_msg, response_buffer.getvalue())
             raise Exception(error_msg)
-        logger.log("Failed to import node types '{}'".format(node_type_yaml_path))
 
