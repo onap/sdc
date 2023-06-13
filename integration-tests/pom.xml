@@ -52,6 +52,7 @@ limitations under the License.
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
+        <it.test-model.disabled>true</it.test-model.disabled>
         <it.helm-validator.version>1.3.1</it.helm-validator.version>
 
         <!-- parser-->
@@ -439,6 +440,49 @@ limitations under the License.
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-normatives</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                integration-tests-init/chef-repo/cookbooks/sdc-integration-tests-setup/files/default
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>normatives.tar.gz</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-sdc-be-py</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                integration-tests-init/
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${project.parent.basedir}/integration-tests/src/main/resources/
+                                    </directory>
+                                    <includes>
+                                        <include>scripts/sdcBePy/**</include>
+                                        <inculde>scripts/setup.py</inculde>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -516,6 +560,53 @@ limitations under the License.
                             <portNames>
                                 <portName>sdc.it.docker.cassandra.port</portName>
                             </portNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${mvn.assembly.version}</version>
+                <executions>
+                    <execution>
+                        <id>normatives</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>normatives</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/normatives.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean.test.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>
+                                        integration-tests-init/chef-repo/cookbooks/sdc-integration-tests-setup/files/default
+                                    </directory>
+                                    <followSymlinks>false</followSymlinks>
+                                    <includes>
+                                        <include>normatives.tar.gz</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
                         </configuration>
                     </execution>
                 </executions>
@@ -875,7 +966,6 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
-
                         <image>
                             <name>selenium/standalone-firefox:${it.ui.firefox.version}</name>
                             <alias>firefox-standalone</alias>
@@ -946,9 +1036,59 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+                        <image>
+                            <name>${docker.namespace}/sdc-integration-tests-init</name>
+                            <alias>integration-tests-init</alias>
+                            <build>
+                                <cleanup>try</cleanup>
+                                <dockerFileDir>${project.basedir}/integration-tests-init</dockerFileDir>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>
+                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                    </tag>
+                                    <tag>
+                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                                    </tag>
+                                </tags>
+                            </build>
+                            <run>
+                                <skip>${it.test-model.disabled}</skip>
+                                <dependsOn>
+                                    <container>sdc-backend-init</container>
+                                </dependsOn>
+                                <env>
+                                    <ENVNAME>${it.env.name}</ENVNAME>
+                                </env>
+                                <hostname>integration-tests-init</hostname>
+                                <volumes>
+                                    <bind>
+                                        <volume>
+                                            ${it.chef.config}:/home/onap/chef-solo/environments
+                                        </volume>
+                                    </bind>
+                                </volumes>
+                                <wait>
+                                    <time>660000</time>
+                                    <log>Chef Client finished</log>
+                                </wait>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>sdc-network</name>
+                                    <alias>sdc-integration-tests-init</alias>
+                                </network>
+                            </run>
+                        </image>
                     </images>
                 </configuration>
                 <executions>
+                    <execution>
+                        <id>docker-build-for-it</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>docker-start-for-it</id>
                         <phase>pre-integration-test</phase>
@@ -965,7 +1105,6 @@ limitations under the License.
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -973,7 +1112,6 @@ limitations under the License.
                     <skip>true</skip>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -1021,12 +1159,14 @@ limitations under the License.
             <properties>
                 <surefire.skip.tests>true</surefire.skip.tests>
                 <skipTest>false</skipTest>
+                <it.test-model.disabled>false</it.test-model.disabled>
             </properties>
         </profile>
         <profile>
             <id>integration-tests-with-helm-validator</id>
             <properties>
                 <it.helm-validator.disabled>false</it.helm-validator.disabled>
+                <it.test-model.disabled>false</it.test-model.disabled>
             </properties>
             <build>
                 <plugins>

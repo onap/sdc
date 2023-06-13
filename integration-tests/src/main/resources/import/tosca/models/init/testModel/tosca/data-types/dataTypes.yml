@@ -1,0 +1,135 @@
+tosca.datatypes.Root:
+  description: The TOSCA root Data Type all other TOSCA base Data Types derive from
+integer:
+  derived_from: tosca.datatypes.Root
+string:
+  derived_from: tosca.datatypes.Root
+timestamp:
+  derived_from: tosca.datatypes.Root
+boolean:
+  derived_from: tosca.datatypes.Root
+float:
+  derived_from: tosca.datatypes.Root
+range:
+  derived_from: tosca.datatypes.Root
+list:
+  derived_from: tosca.datatypes.Root
+map:
+  derived_from: tosca.datatypes.Root
+json:
+  derived_from: tosca.datatypes.Root
+scalar-unit:
+  derived_from: tosca.datatypes.Root
+scalar-unit.size:
+  derived_from: scalar-unit
+scalar-unit.time:
+  derived_from: scalar-unit
+scalar-unit.frequency:
+  derived_from: scalar-unit
+scalar-unit.bitrate:
+  derived_from: scalar-unit
+tosca.datatypes.testDataTypeSimple:
+  derived_from: tosca.datatypes.Root
+  description: A simple data type used for testing
+  properties:
+    str_prop:
+      type: string
+      required: true
+    int_prop:
+      type: integer
+      required: true
+    timestamp_prop:
+      type: timestamp
+      required: true
+    boolean_prop:
+      type: boolean
+      required: true
+    float_prop:
+      type: float
+      required: true
+    json_prop:
+      type: json
+      required: true
+    list_str_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    list_int_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    list_map_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: map
+    map_str_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: string
+    map_int_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: integer
+tosca.datatypes.testDataTypeComplex:
+  derived_from: tosca.datatypes.Root
+  description: A complex data type used for testing
+  properties:
+    str_prop:
+      type: string
+      required: true
+    int_prop:
+      type: integer
+      required: true
+    timestamp_prop:
+      type: timestamp
+      required: true
+    boolean_prop:
+      type: boolean
+      required: true
+    float_prop:
+      type: float
+      required: true
+    json_prop:
+      type: json
+      required: true
+    complex_prop:
+      type: tosca.datatypes.testDataTypeSimple
+    list_str_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    list_int_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    list_complex_prop:
+      type: list
+      entry_schema:
+        type: tosca.datatypes.testDataTypeSimple
+    list_map_prop:
+      type: list
+      required: true
+      entry_schema:
+        type: map
+    map_str_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: string
+    map_int_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: integer
+    map_complex_prop:
+      type: map
+      required: true
+      entry_schema:
+        type: tosca.datatypes.testDataTypeSimple
