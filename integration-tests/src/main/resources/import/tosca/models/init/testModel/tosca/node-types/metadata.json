@@ -1,0 +1,91 @@
+{
+  "nodeMetadataList": [
+    {
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.Root",
+      "name": "Root",
+      "model": "TEST MODEL",
+      "description": "The TOSCA Node Type all other TOSCA base Node Types derive from",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Abstract"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Root",
+        "tosca.nodes.Root"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.nfv.testWithConstraints",
+      "name": "TestWithConstraints",
+      "model": "TEST MODEL",
+      "description": "A vfc used for testing constraints",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "TestWithConstraints"
+      ]
+    },
+    {
+      "payloadName": "testNodeSimple.yml",
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.nfv.testNodeSimple",
+      "name": "TestNodeSimple",
+      "model": "TEST MODEL",
+      "description": "A vfc used for testing simple data types",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "TestNodeSimple"
+      ]
+    },
+    {
+      "payloadName": "testNodeComplex.yml",
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.nfv.testNodeComplex",
+      "name": "TestNodeComplex",
+      "model": "TEST MODEL",
+      "description": "A vfc used for testing complex data types",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "TestNodeComplex"
+      ]
+    }
+  ]
+}
