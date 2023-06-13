@@ -1,0 +1,7 @@
+services:
+    Mobility:
+      name: "TEST service"
+      icons: ['network_l_1-3']
+      models: [
+          "TEST MODEL"
+      ]
