@@ -604,17 +604,17 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     indexTokenChange(indexObject : ToscaIndexObject): void {
-        if ((indexObject.indexValue).toLowerCase() === 'index') {
+        if ((indexObject.indexValue).toLowerCase() === 'index' ) {
             this.formValidation();
-            return;
         }
         let indexTokenValue = Number(indexObject.indexValue);
-        if (isNaN(indexTokenValue)) {
-            indexObject.indexValue = "0";
+        const error = document.getElementById('error');
+        if (isNaN(indexTokenValue) && (indexObject.indexValue).toLowerCase() !== 'index') {
+            error.textContent='Invalid index value';
+        } else {
+            error.textContent='';
             this.formValidation();
-            return;
         }
-        this.formValidation();
     }
 
     showPropertySourceDropdown(): boolean {
@@ -633,6 +633,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         return this.formGroup.get('selectedProperty') as FormControl;
     }
 
+    onChangeIndexValue(index: ToscaIndexObject, value: any) {
+        this.indexTokenChange(index);
+    }
 }
 
 export interface PropertyDropdownValue {
