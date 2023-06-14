@@ -22,6 +22,15 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.0.84</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>togglz-rest-services</artifactId>
@@ -220,11 +229,11 @@
             </exclusions>
         </dependency>
 
-      <dependency>
-          <groupId>io.micrometer</groupId>
-          <artifactId>micrometer-registry-prometheus</artifactId>
-          <version>${micrometer.version}</version>
-      </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -1183,6 +1192,9 @@
                                         <exclude>
                                             src/test/resources/artifacts/pnfSoftwareInformation/**
                                         </exclude>
+                                        <exclude>
+                                            src/test/resources/yamlValidation/noValid/**
+                                        </exclude>
                                     </excludes>
                                 </validationSet>
                                 <validationSet>
@@ -1514,7 +1526,8 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init</image>
+                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init
+                                    </image>
                                 </configuration>
                             </execution>
 
@@ -1533,7 +1546,8 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init</image>
+                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init
+                                    </image>
                                 </configuration>
                             </execution>
                         </executions>
