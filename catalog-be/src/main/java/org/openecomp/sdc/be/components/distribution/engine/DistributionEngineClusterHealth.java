@@ -32,6 +32,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PreDestroy;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -65,7 +67,7 @@ public class DistributionEngineClusterHealth {
     private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
     private Map<String, AtomicBoolean> envNamePerStatus = null;
     private ScheduledFuture<?> scheduledFuture = null;
-    
+
     protected void init(final String publicApiKey) {
         logger.trace("Enter init method of DistributionEngineClusterHealth");
         Long reconnectIntervalConfig = ConfigurationManager.getConfigurationManager().getConfiguration()
@@ -153,40 +155,28 @@ public class DistributionEngineClusterHealth {
         }
     }
 
-    public enum HealthCheckInfoResult {
-        OK(new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null,
-            ClusterStatusDescription.OK.getDescription())), UNAVAILABLE(
-            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
-                ClusterStatusDescription.UNAVAILABLE.getDescription())), NOT_CONFIGURED(
-            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
-                ClusterStatusDescription.NOT_CONFIGURED.getDescription())), DISABLED(
-            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null,
-                ClusterStatusDescription.DISABLED.getDescription())), UNKNOWN(
-            new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null,
-                ClusterStatusDescription.UNKNOWN.getDescription()));
-        private HealthCheckInfo healthCheckInfo;
-
-        HealthCheckInfoResult(HealthCheckInfo healthCheckInfo) {
-            this.healthCheckInfo = healthCheckInfo;
-        }
-
-        public HealthCheckInfo getHealthCheckInfo() {
-            return healthCheckInfo;
-        }
+    @AllArgsConstructor
+    @Getter
+    private enum HealthCheckInfoResult {
+        // @formatter:off
+        OK              (new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())),
+        UNAVAILABLE     (new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())),
+        NOT_CONFIGURED  (new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())),
+        DISABLED        (new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription())),
+        UNKNOWN         (new HealthCheckInfo(Constants.HC_COMPONENT_DISTRIBUTION_ENGINE, HealthCheckStatus.UNKNOWN, null, ClusterStatusDescription.UNKNOWN.getDescription()));
+        // @formatter:on
+        private final HealthCheckInfo healthCheckInfo;
     }
 
-    public enum ClusterStatusDescription {
-        OK("OK"), UNAVAILABLE("U-EB cluster is not available"), NOT_CONFIGURED("U-EB cluster is not configured"), DISABLED(
-            "DE is disabled in configuration"), UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
-        private String desc;
-
-        ClusterStatusDescription(String desc) {
-            this.desc = desc;
-        }
-
-        public String getDescription() {
-            return desc;
-        }
+    @AllArgsConstructor
+    @Getter
+    private enum ClusterStatusDescription {
+        OK("OK"),
+        UNAVAILABLE("U-EB cluster is not available"),
+        NOT_CONFIGURED("U-EB cluster is not configured"),
+        DISABLED("DE is disabled in configuration"),
+        UNKNOWN("U-EB cluster is currently unknown (try again in few minutes)");
+        private final String description;
     }
 
     /**
@@ -199,11 +189,12 @@ public class DistributionEngineClusterHealth {
      */
     public class HealthCheckScheduledTask implements Runnable {
 
+        @Getter
         List<UebHealthCheckCall> healthCheckCalls = new ArrayList<>();
         /**
          * executor for the query itself
          */
-        ExecutorService healthCheckExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+        private final ExecutorService healthCheckExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 return new Thread(r, "UEB-Health-Check-Thread");
@@ -298,8 +289,5 @@ public class DistributionEngineClusterHealth {
             return result;
         }
 
-        public List<UebHealthCheckCall> getHealthCheckCalls() {
-            return healthCheckCalls;
-        }
     }
 }

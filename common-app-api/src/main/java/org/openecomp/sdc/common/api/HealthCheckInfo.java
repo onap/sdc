@@ -20,7 +20,17 @@
 package org.openecomp.sdc.common.api;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class HealthCheckInfo {
 
     private String healthCheckComponent;
@@ -37,65 +47,5 @@ public class HealthCheckInfo {
         this.description = description;
     }
 
-    public HealthCheckInfo(String healthCheckComponent, HealthCheckStatus healthCheckStatus, String version, String description,
-                           List<HealthCheckInfo> componentsInfo) {
-        super();
-        this.healthCheckComponent = healthCheckComponent;
-        this.healthCheckStatus = healthCheckStatus;
-        this.version = version;
-        this.description = description;
-        this.componentsInfo = componentsInfo;
-    }
-
-    public HealthCheckInfo() {
-        super();
-    }
-
-    public String getHealthCheckComponent() {
-        return healthCheckComponent;
-    }
-
-    public void setHealthCheckComponent(String healthCheckComponent) {
-        this.healthCheckComponent = healthCheckComponent;
-    }
-
-    public HealthCheckStatus getHealthCheckStatus() {
-        return healthCheckStatus;
-    }
-
-    public void setHealthCheckStatus(HealthCheckStatus healthCheckStatus) {
-        this.healthCheckStatus = healthCheckStatus;
-    }
-
-    public List<HealthCheckInfo> getComponentsInfo() {
-        return componentsInfo;
-    }
-
-    public void setComponentsInfo(List<HealthCheckInfo> componentsInfo) {
-        this.componentsInfo = componentsInfo;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return "HealthCheckInfo [healthCheckComponent=" + healthCheckComponent + ", healthCheckStatus=" + healthCheckStatus + ", version=" + version
-            + ", description=" + description + ", componentsInfo=" + componentsInfo + "]";
-    }
-
-    public enum HealthCheckStatus {UP, DOWN, UNKNOWN;}
+    public enum HealthCheckStatus {UP, DOWN, UNKNOWN}
 }
