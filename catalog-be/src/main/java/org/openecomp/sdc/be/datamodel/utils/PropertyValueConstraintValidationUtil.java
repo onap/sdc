@@ -182,9 +182,9 @@ public class PropertyValueConstraintValidationUtil {
     private void evaluateComplexTypeProperties(PropertyDefinition propertyDefinition) {
         List<PropertyDefinition> propertyDefinitions = dataTypeDefinitionCache.get(propertyDefinition.getType()).getProperties();
         try {
-            Map<String, Object> valueMap = MapUtils
-                .emptyIfNull(ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {
-                }));
+            String propValue = propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue();
+            Map<String, Object> valueMap = MapUtils.emptyIfNull(ConstraintUtil.parseToCollection(propValue, new TypeReference<>() {}));
+
             if (CollectionUtils.isEmpty(propertyDefinitions)) {
                 checkAndEvaluatePrimitiveProperty(propertyDefinition, dataTypeDefinitionCache.get(propertyDefinition.getType()));
             } else {
