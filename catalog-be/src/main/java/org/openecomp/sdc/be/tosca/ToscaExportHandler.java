@@ -1792,6 +1792,10 @@ public class ToscaExportHandler {
             ConstraintType.MAX_LENGTH.getType().equals(filterConstraint.getOperator().getType())) {
                 filterConstraint.setValue(Integer.valueOf(String.valueOf(filterConstraint.getValue())));
         }
+        if (doesTypeNeedConvertingToBoolean(filterConstraint.getOriginalType())) {
+            filterConstraint.setValue(ToscaType.getToscaType(filterConstraint.getOriginalType()).convert(
+                String.valueOf(filterConstraint.getValue())));
+        }
         return Map.of(filterConstraint.getOperator().getType(), filterConstraint.getValue());
     }
 
@@ -1800,6 +1804,10 @@ public class ToscaExportHandler {
             return false;
         }
         return ToscaType.INTEGER.getType().equals(propertyType) || ToscaType.FLOAT.getType().equals(propertyType);
+    }
+
+    private static boolean doesTypeNeedConvertingToBoolean(String propertyType) {
+        return ToscaType.BOOLEAN.getType().equals(propertyType);
     }
 
     private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {

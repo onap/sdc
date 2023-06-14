@@ -62,10 +62,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.exception.ToscaExportException;
@@ -773,6 +778,126 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
         assertNotNull(toscaRepresentationToscaErrorEither);
 
+    }
+
+    @Test
+    void testConvertWithBooleanNodeFilterWhenComponentIsService() {
+        final Component component = getNewService();
+        final List<ComponentInstance> componentInstances = new ArrayList<>();
+        final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
+        final Map<String, Component> componentCache = new HashMap<>();
+        final Map<String, List<ComponentInstanceInput>> componentInstancesInputs = new HashMap<>();
+        final Map<String, CINodeFilterDataDefinition> componentInstanceNodeFilters = new HashMap<>();
+        CINodeFilterDataDefinition nodeFilter = new CINodeFilterDataDefinition();
+        PropertyFilterDataDefinition prop = new PropertyFilterDataDefinition();
+        prop.setName("nodeFilterPropBoolean");
+        prop.setType("boolean");
+        PropertyFilterConstraintDataDefinition constr = new PropertyFilterConstraintDataDefinition();
+        constr.setPropertyName(prop.getName());
+        constr.setOperator(ConstraintType.EQUAL);
+        constr.setValue("true");
+        constr.setOriginalType("boolean");
+        prop.setConstraints(List.of(constr));
+        ListDataDefinition<PropertyFilterDataDefinition> lstDataDef = new ListDataDefinition<>();
+        lstDataDef.add(prop);
+        nodeFilter.setProperties(lstDataDef);
+        final List<ComponentInstanceInput> inputs = new ArrayList<>();
+        final ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
+        componentInstanceInput.setUniqueId("uuid");
+        inputs.add(componentInstanceInput);
+        componentInstancesInputs.put("uuid", inputs);
+        componentInstanceNodeFilters.put("uuid", nodeFilter);
+        final List<RequirementCapabilityRelDef> resourceInstancesRelations = new ArrayList<>();
+        final RequirementCapabilityRelDef reldef = new RequirementCapabilityRelDef();
+        reldef.setFromNode("node");
+        resourceInstancesRelations.add(reldef);
+        component.setComponentInstancesRelations(resourceInstancesRelations);
+
+        final ComponentInstance instance = new ComponentInstance();
+        instance.setNodeFilter(nodeFilter);
+        instance.setUniqueId("id");
+        instance.setComponentUid("uid");
+        instance.setOriginType(OriginTypeEnum.ServiceProxy);
+        final List<GroupInstance> groupInstances = new ArrayList<>();
+        final GroupInstance groupInst = new GroupInstance();
+        final List<String> artifacts = new ArrayList<>();
+        artifacts.add("artifact");
+        groupInst.setArtifacts(artifacts);
+        groupInst.setType("type");
+        groupInstances.add(groupInst);
+        instance.setGroupInstances(groupInstances);
+
+        final List<PropertyDefinition> properties = new ArrayList<>();
+        properties.add(new PropertyDefinition());
+        instance.setProperties(properties);
+
+        instance.setUniqueId("uuid");
+        instance.setDescription("desc");
+        instance.setSourceModelUid("sourceModelUid");
+
+        componentInstances.add(instance);
+
+        component.setComponentInstances(componentInstances);
+        component.setNodeFilterComponents(componentInstanceNodeFilters);
+        component.setComponentInstancesInputs(componentInstancesInputs);
+
+        component.setInvariantUUID("uuid");
+        component.setUUID("uuid");
+        component.setDescription("desc");
+        component.setUniqueId("uid");
+
+        componentCache.put("uid", component);
+
+        final List<ComponentInstanceProperty> componentInstanceProperties = new ArrayList<>();
+        componentInstanceProperties.add(new ComponentInstanceProperty());
+
+        componentInstancesProperties.put("uuid", componentInstanceProperties);
+        component.setComponentInstancesProperties(componentInstancesProperties);
+
+        final Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes = new HashMap<>();
+        final List<ComponentInstanceAttribute> componentInstanceAttributes = new ArrayList<>();
+        final ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setDefaultValue("def value");
+        componentInstanceAttributes.add(componentInstanceAttribute);
+
+        componentInstancesAttributes.put("uuid", componentInstanceAttributes);
+        component.setComponentInstancesAttributes(componentInstancesAttributes);
+
+        ComponentInstanceProperty cip = new ComponentInstanceProperty();
+        cip.setInstanceUniqueId("id");
+
+        List<ComponentInstanceProperty> list = new ArrayList<>();
+        list.add(cip);
+
+        componentInstancesProperties.put("id", list);
+        component.setComponentInstancesProperties(componentInstancesProperties);
+
+        when(capabilityRequirementConverter.getOriginComponent(anyMap(), any(ComponentInstance.class))).thenReturn(Either.left(component));
+        when(capabilityRequirementConverter
+            .convertComponentInstanceCapabilities(any(ComponentInstance.class), anyMap(), any(ToscaNodeTemplate.class)))
+            .thenReturn(Either.left(new ToscaNodeTemplate()));
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
+        when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class), any(ToscaNodeType.class)))
+            .thenReturn(Either.left(new ToscaNodeType()));
+        when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
+        when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(getNewResource()));
+
+        final Map<String, String[]> substitutionMappingMap = new HashMap<>();
+        final String[] array = {"value1", "value2"};
+        substitutionMappingMap.put("key", array);
+        when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(), any(Component.class)))
+            .thenReturn(Either.left(substitutionMappingMap));
+
+        when(capabilityRequirementConverter
+            .convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
+            .thenReturn(Either.left(Collections.emptyMap()));
+
+        // default test
+        final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
+        assertNotNull(toscaRepresentationToscaErrorEither);
     }
 
     @Test
