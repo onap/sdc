@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+data_types:
+  datatype_test:
+    derived_from: tosca.datatypes.Root
+    properties:
+      pr_2:
+        type: map
+        entry_schema:
+          type:
