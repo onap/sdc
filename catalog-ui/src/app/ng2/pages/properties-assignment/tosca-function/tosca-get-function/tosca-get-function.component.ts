@@ -133,7 +133,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                             let tempIndexValue = "0";
                             let tempIndexProperty = tempSelectedProperty;
                             let subPropertyDropdownList : Array<PropertyDropdownValue> = [];
-                            if (index%2 == 0) {
+                            if (!isNaN(Number(indexValue)) || indexValue.toLowerCase() === 'index') {
                                 tempIndexFlag = true;
                                 tempIndexValue = indexValue;
                                 tempSelectedProperty = null;
@@ -143,6 +143,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                                         const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, tempIndexProperty.schemaType);
                                         this.addPropertiesToDropdown(dataTypeFound.properties, subPropertyDropdownList);
                                         tempSelectedProperty = subPropertyDropdownList.find(property => property.propertyName === this.toscaGetFunction.toscaIndexList[index+1])
+                                        if (tempSelectedProperty == null && this.toscaGetFunction.toscaIndexList[index+2]) {
+                                            tempSelectedProperty = subPropertyDropdownList.find(property => property.propertyName === this.toscaGetFunction.toscaIndexList[index+2])
+                                        }
                                     }
                                 }
                                 let tempIndexValueMap : ToscaIndexObject = {indexFlag : tempIndexFlag, nestedFlag : tempNestedFlag, indexValue: tempIndexValue, indexProperty: tempSelectedProperty, subPropertyArray: subPropertyDropdownList};
@@ -182,7 +185,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             this.indexListValues.forEach((indexObject : ToscaIndexObject) => {
                 indexAndProperty.push(indexObject.indexValue);
                 if(indexObject.nestedFlag && indexObject.indexProperty != null) {
-                    indexAndProperty.push(indexObject.indexProperty.propertyName);
+                    indexAndProperty.push(...indexObject.indexProperty.propertyPath);
                 }
             });
             toscaGetFunction.toscaIndexList = indexAndProperty;
@@ -465,6 +468,16 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                 dataTypeFound.properties.forEach(dataTypeProperty => {
                     if (this.hasSameType(dataTypeProperty)) {
                         returnFlag =  true;
+                    }
+                    if (!returnFlag && this.isComplexType(dataTypeProperty.type)) {
+                        const nestedDataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, dataTypeProperty.type);
+                        if (nestedDataTypeFound && nestedDataTypeFound.properties) {
+                            nestedDataTypeFound.properties.forEach( nestedDateTypeProperty => {
+                                if (this.hasSameType(nestedDateTypeProperty)) {
+                                    returnFlag =  true;
+                                }
+                            });
+                        }
                     }
                 });
             }
