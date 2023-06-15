@@ -1,0 +1,85 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+data_types:
+  datatype_test:
+    derived_from: tosca.datatypes.Root
+    properties:
+      pr_1:
+        type: map
+        entry_schema:
+          type: boolean
+      pr_2:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - equal: fgh
+      pr_3:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - greater_than: a
+      pr_4:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - greater_or_equal: b
+      pr_5:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - less_than: z
+      pr_6:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - less_or_equal: y
+      pr_7:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - in_range:
+              - bb
+              - yy
+      pr_8:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - valid_values:
+              - dd
+              - rr
+      pr_9:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - length: 3
+      pr_10:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - min_length: 3
+      pr_11:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - min_length: 3
+      pr_12:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - max_length: 3
+      pr_13:
+        type: string
+        description: Globally unique identifier of the VNFD
+        required: true
+        constraints:
+          - pattern: '[a-z]'

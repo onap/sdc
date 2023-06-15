@@ -22,6 +22,15 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.0.84</version>
+            <scope>test</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>togglz-rest-services</artifactId>
@@ -42,6 +51,11 @@
 
         <!--JSON and YAML Parsing-->
         <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.0.84</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
@@ -57,7 +71,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -220,11 +233,11 @@
             </exclusions>
         </dependency>
 
-      <dependency>
-          <groupId>io.micrometer</groupId>
-          <artifactId>micrometer-registry-prometheus</artifactId>
-          <version>${micrometer.version}</version>
-      </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -1182,6 +1195,9 @@
                                     <excludes>
                                         <exclude>
                                             src/test/resources/artifacts/pnfSoftwareInformation/**
+                                        </exclude>
+                                        <exclude>
+                                            src/test/resources/yamlValidation/noValid/**
                                         </exclude>
                                     </excludes>
                                 </validationSet>
