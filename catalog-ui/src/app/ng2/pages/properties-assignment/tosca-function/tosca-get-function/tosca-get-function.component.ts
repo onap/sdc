@@ -466,6 +466,16 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
                     if (this.hasSameType(dataTypeProperty)) {
                         returnFlag =  true;
                     }
+                    if (!returnFlag && this.isComplexType(dataTypeProperty.type)) {
+                        const nestedDataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, dataTypeProperty.type);
+                        if (nestedDataTypeFound && nestedDataTypeFound.properties) {
+                            nestedDataTypeFound.properties.forEach( nestedDateTypeProperty => {
+                                if (this.hasSameType(nestedDateTypeProperty)) {
+                                    returnFlag =  true;
+                                }
+                            });
+                        }
+                    }
                 });
             }
             return returnFlag;
