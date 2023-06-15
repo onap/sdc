@@ -159,23 +159,15 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             if (!jsonNode.isArray()) {
                 throw context.instantiationException(ToscaGetFunctionDataDefinition.class, "Expecting an array for toscaIndexList attribute");
             }
-            for (int index = 0; index < jsonNode.size(); index++) {
-                String textValue = jsonNode.get(index).asText();
-                if (index % 2 == 0) {
-                    if (textValue.equalsIgnoreCase("INDEX")) {
-                        toscaIndexList.add(textValue);
-                    } else {
-                        try {
-                            toscaIndexList.add(Integer.parseInt(textValue));
-                        } catch (Exception e) {
-                            throw context.instantiationException(ToscaGetFunctionDataDefinition.class,
-                                "Expecting a valid value for toscaIndex attribute");
-                        }
-                    }
+
+            jsonNode.forEach(nodeValue -> {
+                String indexValue = nodeValue.asText();
+                if (StringUtils.isNumeric(indexValue)) {
+                    toscaIndexList.add(Integer.parseInt(indexValue));
                 } else {
-                    toscaIndexList.add(textValue);
+                    toscaIndexList.add(indexValue);
                 }
-            }
+            });
         }
         return toscaIndexList;
     }
