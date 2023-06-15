@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/example.json",
+  "title": "Root Schema",
+  "type": "object",
+  "default": {},
+  "required": [
+    "tosca_definitions_version",
+    "data_types"
+  ],
+  "properties": {
+    "tosca_definitions_version": {
+      "title": "The tosca_definitions_version Schema",
+      "type": "string",
+      "default": ""
+    },
+    "data_types": {
+      "title": "The data_types Schema",
+      "type": "object",
+      "default": {},
+      "required": [],
+      "additionalProperties": {
+        "title": "The additionalProperties Schema",
+        "type": "object",
+        "default": {},
+        "required": [
+          "derived_from",
+          "properties"
+        ],
+        "properties": {
+          "derived_from": {
+            "title": "The derived_from Schema",
+            "type": "string",
+            "default": ""
+          },
+          "properties": {
+            "title": "The properties Schema",
+            "type": "object",
+            "default": {},
+            "required": [],
+            "additionalProperties": {
+              "title": "The additionalProperties Schema",
+              "type": "object",
+              "default": {},
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "title": "The type Schema",
+                  "type": "string",
+                  "default": ""
+                },
+                "description": {
+                  "title": "The description Schema",
+                  "type": "string",
+                  "default": ""
+                },
+                "default": {
+                  "title": "The default Schema",
+                  "type": [
+                    "string",
+                    "integer",
+                    "boolean",
+                    "number"
+                  ],
+                  "default": ""
+                },
+                "required": {
+                  "title": "The required Schema",
+                  "type": "boolean",
+                  "default": false
+                },
+                "status": {
+                  "title": "The status Schema",
+                  "type": "string",
+                  "default": ""
+                },
+                "constraints": {
+                  "title": "The constraints Schema",
+                  "type": [
+                    "array"
+                  ],
+                  "default": {}
+                },
+                "entry_schema": {
+                  "title": "The entry_schema Schema",
+                  "type": "object",
+                  "default": {},
+                  "properties": {
+                    "type": {
+                      "title": "The type Schema",
+                      "type": [
+                        "string",
+                        "integer",
+                        "boolean",
+                        "number"
+                      ],
+                      "default": ""
+                    }
+                  }
+                }
+              },
+              "if": {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "map",
+                      "list"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "entry_schema"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
