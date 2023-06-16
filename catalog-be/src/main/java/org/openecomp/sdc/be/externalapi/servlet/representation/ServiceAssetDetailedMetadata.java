@@ -19,9 +19,10 @@
  */
 package org.openecomp.sdc.be.externalapi.servlet.representation;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter

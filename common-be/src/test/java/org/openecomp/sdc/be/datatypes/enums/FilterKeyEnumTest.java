@@ -44,7 +44,7 @@ class FilterKeyEnumTest {
         assertFalse(result.contains(VERSION.getName()));
         result = FilterKeyEnum.getValidFiltersByAssetType(ComponentTypeEnum.SERVICE);
         assertNotNull(result);
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
         assertTrue(result.contains(CATEGORY.getName()));
         assertFalse(result.contains(RESOURCE_TYPE.getName()));
         result = FilterKeyEnum.getValidFiltersByAssetType(ComponentTypeEnum.SERVICE_INSTANCE);
