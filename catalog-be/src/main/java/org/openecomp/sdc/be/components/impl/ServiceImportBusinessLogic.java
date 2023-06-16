@@ -488,6 +488,9 @@ public class ServiceImportBusinessLogic {
                 Map<String, Object> combinedMappedToscaTemplate =
                     getNewChangesToToscaTemplate(newMappedToscaTemplate, (Map<String, Object>) existingMappedToscaTemplate.getValue());
                 if (!combinedMappedToscaTemplate.equals(existingMappedToscaTemplate.getValue())) {
+                    if (latestResource.getComponentMetadataDefinition().getMetadataDataDefinition().isNormative()) {
+                        nodeTypeDefinition.getNodeTypeMetadata().setNormative(true);
+                    }
                     existingMappedToscaTemplate.setValue(combinedMappedToscaTemplate);
                     nodeTypeDefinition.setMappedNodeType(existingMappedToscaTemplate);
                     namesOfNodeTypesToCreate.add(nodeTypeDefinition);
