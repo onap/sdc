@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ee842fb3_46bf3c03",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/converters/AssetMetadataConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-16T21:05:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fede178_04d3638b",
+      "range": {
+        "startLine": 129,
+        "startChar": 15,
+        "endLine": 133,
+        "endChar": 17
+      },
+      "revId": "ace58b61b21350b67ead15b5a4554ab5e6b82b16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1f879165_4e3cc202",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/representation/ServiceAssetDetailedMetadata.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "ace58b61b21350b67ead15b5a4554ab5e6b82b16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3519558_ddcd948c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/representation/ServiceAssetDetailedMetadata.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-16T21:05:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f879165_4e3cc202",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 60
+      },
+      "revId": "ace58b61b21350b67ead15b5a4554ab5e6b82b16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
