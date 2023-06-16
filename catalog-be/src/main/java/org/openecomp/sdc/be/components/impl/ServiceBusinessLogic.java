@@ -46,6 +46,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -1242,21 +1243,56 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
             return currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
         }
-        List<String> updatedPropNames = updatedProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
-        List<String> propNamesToBeRemoved = currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
-        propNamesToBeRemoved.removeIf(updatedPropNames::contains);
+        
+        Map<String, PropertyDefinition> currentPropsMap = currentProps.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+        Map<String, PropertyDefinition> updatedPropsMap = updatedProps.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+
+        List<String> propNamesToBeRemoved = new ArrayList<>();
+        for (String currentPropertyName: currentPropsMap.keySet()) {
+            if (updatedPropsMap.containsKey(currentPropertyName)) {
+                if (!haveSameType(currentPropsMap.get(currentPropertyName), updatedPropsMap.get(currentPropertyName))) {
+                    propNamesToBeRemoved.add(currentPropertyName);
+                } 
+            } else {
+                propNamesToBeRemoved.add(currentPropertyName);
+            }
+        }
+        
         return propNamesToBeRemoved;
     }
-
-    private List<PropertyDefinition> getSubstitutionNodePropertiesToBeAdded(Service currentService, Service serviceUpdate) {
-        List<PropertyDefinition> currentProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(currentService, null).getProperties());
-        List<PropertyDefinition> updatedProps = ListUtils.emptyIfNull(fetchDerivedFromGenericType(serviceUpdate, null).getProperties());
-        if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
-            return updatedProps;
+    
+    private boolean haveSameType(final PropertyDefinition property1, final PropertyDefinition property2){
+        if (property1.getType().equals("list")) {
+            return property2.getType().equals("list") && property1.getSchema().equals(property2.getSchema());
         }
-        Set<String> currentPropNames = currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toSet());
-        updatedProps.removeIf(prop -> currentPropNames.contains(prop.getName()));
-        return updatedProps;
+        if (property1.getType().equals("map")) {
+            return property2.getType().equals("map") && property1.getSchema().equals(property2.getSchema());
+        }
+        return property1.getType().equals(property2.getType());
+    }
+    
+    private List<PropertyDefinition> getSubstitutionNodePropertiesToBeAdded(Service currentService, Service serviceUpdate) {
+        List<PropertyDefinition> propsInCurrentVersion = ListUtils.emptyIfNull(fetchDerivedFromGenericType(currentService, null).getProperties());
+        List<PropertyDefinition> propsInUpdatedVersion = ListUtils.emptyIfNull(fetchDerivedFromGenericType(serviceUpdate, null).getProperties());
+        if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
+            return propsInUpdatedVersion;
+        }
+        
+        Map<String, PropertyDefinition> mapOfPropsInCurrentVersion = propsInCurrentVersion.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+        Map<String, PropertyDefinition> mapOfPropsInUpdatedVersion = propsInUpdatedVersion.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+        
+        List<PropertyDefinition> propsToBeAdded = new ArrayList<>();
+        for (Entry<String, PropertyDefinition> propertyInUpdatedVersion: mapOfPropsInUpdatedVersion.entrySet()) {
+            if (mapOfPropsInCurrentVersion.containsKey(propertyInUpdatedVersion.getKey())) {
+                if (!haveSameType(mapOfPropsInCurrentVersion.get(propertyInUpdatedVersion.getKey()), propertyInUpdatedVersion.getValue())) {
+                    propsToBeAdded.add(propertyInUpdatedVersion.getValue());
+                } 
+            } else {
+                propsToBeAdded.add(propertyInUpdatedVersion.getValue());
+            }
+        }
+                
+        return propsToBeAdded;
     }
 
 
