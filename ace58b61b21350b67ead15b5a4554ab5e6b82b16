@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fede178_04d3638b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/ecomp/converters/AssetMetadataConverter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-16T15:59:53Z",
+      "side": 1,
+      "message": "ServiceAssetMetadata should be used when additionalMetadataKeysToInclude is supplied.",
+      "range": {
+        "startLine": 129,
+        "startChar": 15,
+        "endLine": 133,
+        "endChar": 17
+      },
+      "revId": "ace58b61b21350b67ead15b5a4554ab5e6b82b16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f879165_4e3cc202",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/externalapi/servlet/representation/ServiceAssetDetailedMetadata.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-16T15:59:53Z",
+      "side": 1,
+      "message": "move to ServiceAssetMetadata",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 60
+      },
+      "revId": "ace58b61b21350b67ead15b5a4554ab5e6b82b16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
