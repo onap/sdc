@@ -19,33 +19,31 @@
  */
 package org.openecomp.sdc.be.components.kafka;
 
+import com.google.gson.JsonSyntaxException;
+import fj.data.Either;
+import org.apache.kafka.common.KafkaException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
+import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
+import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
+import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import com.google.gson.JsonSyntaxException;
-import org.apache.kafka.common.KafkaException;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
-import fj.data.Either;
-import java.util.List;
-
-import org.openecomp.sdc.be.components.distribution.engine.CambriaErrorResponse;
-import org.openecomp.sdc.be.components.distribution.engine.NotificationDataImpl;
-import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
-import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
-
-
 @ExtendWith(MockitoExtension.class)
-public class KafkaHandlerTest {
+class KafkaHandlerTest {
 
     @Mock
     private SdcKafkaConsumer mockSdcKafkaConsumer;
@@ -55,26 +53,28 @@ public class KafkaHandlerTest {
 
     private KafkaHandler kafkaHandler;
 
+    @BeforeEach
+    void setup() {
+        kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
+    }
+
     @Test
-    public void testIsKafkaActiveTrue(){
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
+    void testIsKafkaActiveTrue() {
         assertTrue(kafkaHandler.isKafkaActive());
     }
 
     @Test
-    public void testIsKafkaActiveFalse(){
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
+    void testIsKafkaActiveFalse() {
         kafkaHandler.setKafkaActive(false);
         assertFalse(kafkaHandler.isKafkaActive());
     }
 
     @Test
-    public void testFetchFromTopicSuccess(){
+    void testFetchFromTopicSuccess() {
         String testTopic = "testTopic";
         List<String> mockedReturnedMessages = new ArrayList<>();
         mockedReturnedMessages.add("message1");
         mockedReturnedMessages.add("message2");
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         when(mockSdcKafkaConsumer.poll(any())).thenReturn(mockedReturnedMessages);
         Either<Iterable<String>, CambriaErrorResponse> response = kafkaHandler.fetchFromTopic(testTopic);
         Iterable<String> actualReturnedMessages = response.left().value();
@@ -83,9 +83,8 @@ public class KafkaHandlerTest {
     }
 
     @Test
-    public void testFetchFromTopicFail(){
+    void testFetchFromTopicFail() {
         String testTopic = "testTopic";
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         when(mockSdcKafkaConsumer.poll(any())).thenThrow(new KafkaException());
         Either<Iterable<String>, CambriaErrorResponse> response = kafkaHandler.fetchFromTopic(testTopic);
         CambriaErrorResponse responseValue = response.right().value();
@@ -94,9 +93,8 @@ public class KafkaHandlerTest {
     }
 
     @Test
-    public void testSendNotificationSuccess(){
+    void testSendNotificationSuccess() {
         String testTopic = "testTopic";
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         INotificationData testData = new NotificationDataImpl();
         CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
         assertEquals(response.getOperationStatus(), CambriaOperationStatus.OK);
@@ -104,9 +102,8 @@ public class KafkaHandlerTest {
     }
 
     @Test
-    public void testSendNotificationKafkaException(){
+    void testSendNotificationKafkaException() {
         String testTopic = "testTopic";
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         INotificationData testData = new NotificationDataImpl();
         doThrow(KafkaException.class).when(mockSdcKafkaProducer).send(any(), any());
         CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
@@ -115,9 +112,8 @@ public class KafkaHandlerTest {
     }
 
     @Test
-    public void testSendNotificationJsonSyntaxException(){
+    void testSendNotificationJsonSyntaxException() {
         String testTopic = "testTopic";
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         INotificationData testData = new NotificationDataImpl();
         doThrow(JsonSyntaxException.class).when(mockSdcKafkaProducer).send(any(), any());
         CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
@@ -126,9 +122,8 @@ public class KafkaHandlerTest {
     }
 
     @Test
-    public void testSendNotificationFlushException(){
+    void testSendNotificationFlushException() {
         String testTopic = "testTopic";
-        KafkaHandler kafkaHandler = new KafkaHandler(mockSdcKafkaConsumer, mockSdcKafkaProducer, true);
         INotificationData testData = new NotificationDataImpl();
         doThrow(KafkaException.class).when(mockSdcKafkaProducer).flush();
         CambriaErrorResponse response = kafkaHandler.sendNotification(testTopic, testData);
