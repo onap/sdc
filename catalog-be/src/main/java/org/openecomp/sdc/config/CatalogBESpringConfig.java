@@ -58,6 +58,7 @@ import org.springframework.core.annotation.Order;
     "org.openecomp.sdc.be.components.csar",
     "org.openecomp.sdc.be.components.property",
     "org.openecomp.sdc.be.components.attribute",
+    "org.openecomp.sdc.be.components.kafka",
     "org.openecomp.sdc.be.csar.security",
     "org.openecomp.sdc.be.datamodel.utils",
     "org.openecomp.sdc.be.components.upgrade",
