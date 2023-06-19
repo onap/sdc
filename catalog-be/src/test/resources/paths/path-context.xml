@@ -21,49 +21,49 @@ Modifications copyright (c) 2018 Nokia
 ================================================================================
 -->
 <beans xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.springframework.org/schema/beans"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade"
-        id="tosca-operation-facade"/>
+          id="tosca-operation-facade"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient"
-        id="janusgraph-client"/>
+          id="janusgraph-client"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock"
-        id="artifact-cassandra-dao"/>
+          id="artifact-cassandra-dao"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock"
-        id="audit-cassandra-dao"/>
+          id="audit-cassandra-dao"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock"
-        id="feature_toggle_dao"/>
+          id="feature_toggle_dao"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.EnvironmentCassandraDaoMock"
-        id="operational-environment-dao"/>
+          id="operational-environment-dao"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.SdcSchemaFilesCassandraDaoMock"
-        id="sdc-schema-files-cassandra-dao"/>
+          id="sdc-schema-files-cassandra-dao"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.ToscaModelImportCassandraDaoMock"
-        id="tosca-model-import-cassandra-dao"/>
+          id="tosca-model-import-cassandra-dao"/>
     <bean class="org.openecomp.sdc.be.client.onboarding.impl.OnboardingClientImpl"
-        id="onboarding-client"/>
+          id="onboarding-client"/>
     <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducer" id="dmaapProducer"/>
     <bean class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth" id="dmaapProducerHealth"/>
     <bean class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic"
-        id="lifecycleBusinessLogic"/>
+          id="lifecycleBusinessLogic"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"
-        id="distributionEngine"/>
+          id="distributionEngine"/>
     <bean class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock"
-        id="forwardingPathValidator"/>
+          id="forwardingPathValidator"/>
     <bean class="org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator"
-        id="attributeDeclarationOrchestrator"/>
-    <bean
-        class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
+          id="attributeDeclarationOrchestrator"/>
+    <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
     <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceAttributeDeclarator"/>
+    <bean class="org.openecomp.sdc.be.components.kafka.KafkaHandler"/>
     <context:annotation-config/>
     <context:component-scan
-        base-package="
+            base-package="
         org.openecomp.sdc.be.dao.janusgraph,
         org.openecomp.sdc.be.model.jsonjanusgraph,
    		org.openecomp.sdc.be.model.operations.impl,
@@ -80,6 +80,7 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.components.csar,
 	  	org.openecomp.sdc.be.impl,
         org.openecomp.sdc.be.tosca,
+        org.openecomp.sdc.be.components.kafka,
         org.openecomp.sdc.be.dao.impl">
     </context:component-scan>
 
