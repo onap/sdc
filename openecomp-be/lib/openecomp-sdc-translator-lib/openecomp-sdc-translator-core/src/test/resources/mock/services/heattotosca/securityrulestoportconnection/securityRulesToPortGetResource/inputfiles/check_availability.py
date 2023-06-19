@@ -15,20 +15,20 @@ PARSER.add_argument("ScribeIP", type=str,
                     help="The Stage the application is currently in")
 ARGS = PARSER.parse_args()
 
-print "Begining check availability check!"
+print("Beginning check availability check!")
 isConnected = False
 while isConnected is False:
     try:
         sys.stdout.write('.')
         sleep(2)
         if requests.get(conductor_url.format(ARGS.ScribeIP),
-                        headers={'Connection': 'close'}).status_code is 200 and requests.get(
+                        headers={'Connection': 'close'}).status_code == 200 and requests.get(
             check_api.format(ARGS.ScribeIP,
                              headers={'Connection': 'close'}),
             auth=requests.auth.HTTPBasicAuth(check_user,
-                                             check_password)).status_code is 200:
+                                             check_password)).status_code == 200:
             isConnected = True
     except requests.exceptions.ConnectionError as e:
         sleep(2)
 
-print 'Conductor and Scribe are ready!'
+print('Conductor and Scribe are ready!')

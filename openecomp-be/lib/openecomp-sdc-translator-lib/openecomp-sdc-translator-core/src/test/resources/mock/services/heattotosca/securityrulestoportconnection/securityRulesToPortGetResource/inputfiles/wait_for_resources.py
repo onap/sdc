@@ -16,9 +16,9 @@ def parse_json_file(json_path):
 
 def check_network_interfaces():
     for interface in netifaces.interfaces():
-        if(sys.platform != 'win32' or netifaces.ifaddresses(interface)[-1000][0]['addr'] != '00:00:00:00:00:00:00:e0'):
+        if sys.platform != 'win32' or netifaces.ifaddresses(interface)[-1000][0]['addr'] != '00:00:00:00:00:00:00:e0':
             while 2 not in netifaces.ifaddresses(interface).keys() and 23 not in netifaces.ifaddresses(interface).keys():
-                print "Still waiting for interface:", interface
+                print("Still waiting for interface:", interface)
                 time.sleep(TIME_INTERVAL)
 
 
@@ -29,7 +29,7 @@ def check_connectivity():
         ping_str = "ping -n 1 "
 
     while os.system(ping_str + component_ip) != 0:
-        print "No connectivity to", component_ip, "waiting", TIME_INTERVAL, "seconds"
+        print("No connectivity to", component_ip, "waiting", TIME_INTERVAL, "seconds")
         time.sleep(TIME_INTERVAL)
 
 
@@ -51,7 +51,7 @@ def check_cinder_mounts():
         cinder_attached = os.popen("wmic diskdrive get DeviceID | find /i \"PHYSICALDRIVE\" | find /V \"0\" /C").read()
 
     while (int(cinder_attached) < cinder_count) and (cinder_count != 0):
-        print "Missing a cinder mount, waiting", TIME_INTERVAL, "seconds"
+        print("Missing a cinder mount, waiting", TIME_INTERVAL, "seconds")
         time.sleep(TIME_INTERVAL)
 
         if sys.platform.startswith('linux'):
@@ -62,7 +62,7 @@ def check_cinder_mounts():
                 "wmic diskdrive get DeviceID | find /i \"PHYSICALDRIVE\" | find /V \"0\" /C").read()
 
         if int(cinder_attached) == cinder_count:
-            print "All cinder are attached and ready to be formatted and mounted"
+            print("All cinder are attached and ready to be formatted and mounted")
 
 
 def main():
@@ -72,7 +72,7 @@ def main():
     if component_ip is not None:
         check_connectivity()
 
-    print "All resources are ready"
+    print("All resources are ready")
 
 
 if __name__ == "__main__":

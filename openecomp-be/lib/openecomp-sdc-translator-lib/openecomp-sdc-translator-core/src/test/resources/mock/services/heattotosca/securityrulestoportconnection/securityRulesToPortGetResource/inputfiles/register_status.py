@@ -12,7 +12,6 @@ from socket import getfqdn
 import sys
 from time import time
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("scribe_ip", type=str,
                     help="The IP where the Scribe can be reached.")
@@ -88,22 +87,24 @@ def build_add_json():
     ADD_COMPONENT_BODY["OAM_IP"] = OAM_DIRECT_IP
 
     for interface in netifaces.interfaces():
-        ADD_COMPONENT_BODY["machineNetworkInterfaces"].append({"name": interface, "value": netifaces.ifaddresses(interface)[2][0]['addr']})
+        ADD_COMPONENT_BODY["machineNetworkInterfaces"].append(
+            {"name": interface, "value": netifaces.ifaddresses(interface)[2][0]['addr']})
 
-    if PROBE_ID is not "":
-        ADD_COMPONENT_BODY["machineID"] = REGION + '_' + TENANT + '_' +\
-            CLUSTER_NAME + '_' + MACHINE_NAME + '_' + PROBE_ID
+    if PROBE_ID != "":
+        ADD_COMPONENT_BODY["machineID"] = REGION + '_' + TENANT + '_' + \
+                                          CLUSTER_NAME + '_' + MACHINE_NAME + '_' + PROBE_ID
     else:
-        ADD_COMPONENT_BODY["machineID"] = REGION + '_' + TENANT + '_' +\
-            CLUSTER_NAME + '_' + MACHINE_NAME
+        ADD_COMPONENT_BODY["machineID"] = REGION + '_' + TENANT + '_' + \
+                                          CLUSTER_NAME + '_' + MACHINE_NAME
     return ADD_COMPONENT_BODY
 
 
 def send_postage(p_url, p_url_user, p_url_password, p_json_data):
     json_header = {'Content-type': 'application/json'}
-    request = requests.post(p_url, json.dumps(p_json_data), json_header, auth=requests.auth.HTTPBasicAuth(p_url_user, p_url_password))
-    print request.status_code
-    if (request.status_code != 200):
+    request = requests.post(p_url, json.dumps(p_json_data), json_header,
+                            auth=requests.auth.HTTPBasicAuth(p_url_user, p_url_password))
+    print(request.status_code)
+    if request.status_code != 200:
         sys.exit(1)
     return request.status_code
 
@@ -118,9 +119,10 @@ def post_add_machine():
     read_metadata()
     return send_postage(add_machine_ip, user, password, build_add_json())
 
+
 if args.stage is None and args.status is None and args.description is None:
-    print "adding machine"
-    print post_add_machine()
+    print("adding machine")
+    print(post_add_machine())
 else:
-    print "logging health"
-    print post_health()
+    print("logging health")
+    print(post_health())

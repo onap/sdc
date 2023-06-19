@@ -6,7 +6,6 @@ from socket import getfqdn
 from sys import platform
 from time import sleep
 
-
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument("manager_ip", help="The IPv4 Address where one can read the MaveriQConductor.")
 PARSER.add_argument("--mockupfile", type=str, help="The path of the json mockupfile to use.")
@@ -43,7 +42,7 @@ def check_availability():
     is_connected = False
     while is_connected is False:
         try:
-            if requests.get(URL_AVAIL, headers={'Connection': 'close'}).status_code is 200:
+            if requests.get(URL_AVAIL, headers={'Connection': 'close'}).status_code == 200:
                 is_connected = True
             sleep(2)
         except requests.exceptions.ConnectionError:
@@ -90,8 +89,9 @@ def main():
 
         # Perform any replacement needed.
         json_data = multiple_replace(regex_dict, json_data)
-        print json_data
+        print(json_data)
         check_availability()
         return post_request(p_json_data=json_data, p_headers=HEADERS)
 
-print main()
+
+print(main())
