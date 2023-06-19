@@ -309,7 +309,7 @@ export class PropertiesAssignmentComponent {
     }
 
     disablePropertyValue = () : boolean => {
-        if (this.component.isService() && this.doNotExtendBaseType){
+        if (this.component.isService() && this.doNotExtendBaseType && this.isSelf()){
             return true;
         }
         return false;
