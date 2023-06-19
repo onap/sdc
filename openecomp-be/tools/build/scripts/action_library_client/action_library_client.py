@@ -147,6 +147,7 @@ class FinalizeStatus(object):
 
 class ArgsDict(dict):
     """A dict which makes attributes accessible as properties."""
+
     def __getattr__(self, attr):
         return self[attr]
 
@@ -221,33 +222,33 @@ class ArgumentParser(object):
     def usage():
         """Print usage message."""
         print("" +
-            "Usage: action_library_client.py [--help] [--url <url>] [--in <filename>]\n" +
-            "                                 [--out <filename>] [--config <filename>]\n" +
-            "                                 [--log <filename>] [--uuid <uuid>]\n" +
-            "                                 [--curl] [--dryrun] [--verbose] [--version]\n" +
-            "                                 [--list | --create | --update= | --delete |\n" +
-            "                                  --checkout | --undocheckout | --checkin | --submit]\n" +
-            "\n" +
-            "Optional arguments:\n" +
-            "  --help                Show this help message and exit\n" +
-            "  --url <url>           REST endpoint URL\n" +
-            "  --in <filename>       Path to JSON input file (else STDIN)\n" +
-            "  --out <filename>      Path to JSON output file (else STDOUT or logfile)\n" +
-            "  --config <filename>   Path to configuration file\n" +
-            "  --log <filename>      Path to logfile (else STDOUT)\n" +
-            "  --uuid <uuid>         Action UUID, (=='actionInvariantUUID')\n" +
-            "  --curl                Use curl transport impl\n" +
-            "  --dryrun              Describe what will happen, execute nothing\n" +
-            "  --verbose             Verbose diagnostic output\n" +
-            "  --version             Print script version and exit\n" +
-            "  --list                List actions\n" +
-            "  --create              Create new action (requires --in)\n" +
-            "  --update              Update existing action (requires --uuid, --in)\n" +
-            "  --delete              Delete existing action (requires --uuid)\n" +
-            "  --checkout            Create minor version candidate (requires --uuid)\n" +
-            "  --undocheckout        Discard minor version candidate (requires --uuid)\n" +
-            "  --checkin             Create minor version from candidate (requires --uuid)\n" +
-            "  --submit              Create next major version (requires --uuid)")
+              "Usage: action_library_client.py [--help] [--url <url>] [--in <filename>]\n" +
+              "                                 [--out <filename>] [--config <filename>]\n" +
+              "                                 [--log <filename>] [--uuid <uuid>]\n" +
+              "                                 [--curl] [--dryrun] [--verbose] [--version]\n" +
+              "                                 [--list | --create | --update= | --delete |\n" +
+              "                                  --checkout | --undocheckout | --checkin | --submit]\n" +
+              "\n" +
+              "Optional arguments:\n" +
+              "  --help                Show this help message and exit\n" +
+              "  --url <url>           REST endpoint URL\n" +
+              "  --in <filename>       Path to JSON input file (else STDIN)\n" +
+              "  --out <filename>      Path to JSON output file (else STDOUT or logfile)\n" +
+              "  --config <filename>   Path to configuration file\n" +
+              "  --log <filename>      Path to logfile (else STDOUT)\n" +
+              "  --uuid <uuid>         Action UUID, (=='actionInvariantUUID')\n" +
+              "  --curl                Use curl transport impl\n" +
+              "  --dryrun              Describe what will happen, execute nothing\n" +
+              "  --verbose             Verbose diagnostic output\n" +
+              "  --version             Print script version and exit\n" +
+              "  --list                List actions\n" +
+              "  --create              Create new action (requires --in)\n" +
+              "  --update              Update existing action (requires --uuid, --in)\n" +
+              "  --delete              Delete existing action (requires --uuid)\n" +
+              "  --checkout            Create minor version candidate (requires --uuid)\n" +
+              "  --undocheckout        Discard minor version candidate (requires --uuid)\n" +
+              "  --checkin             Create minor version from candidate (requires --uuid)\n" +
+              "  --submit              Create next major version (requires --uuid)")
 
 
 ###############################################################################
@@ -533,7 +534,7 @@ class CURLRESTClient(IRESTClient):
         """Debug curl command, for diags and dryrun."""
         buf = ""
         for token in cmd:
-            if token is "curl" or token.startswith("-"):
+            if token == "curl" or token.startswith("-"):
                 buf = "{0}{1} ".format(buf, token)
             else:
                 buf = "{0}\"{1}\" ".format(buf, token)
@@ -556,7 +557,7 @@ class CURLRESTClient(IRESTClient):
             try:
                 separator = output.index("\r\n\r\n{")
                 self.logger.debug("HTTP preamble:\n{0}".format(output[:separator]))
-                json_body = json.loads(output[(separator+4):])
+                json_body = json.loads(output[(separator + 4):])
                 self.log_json_response(method, json_body)
                 return json_body
             except ValueError:

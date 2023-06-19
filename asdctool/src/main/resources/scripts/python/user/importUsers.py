@@ -4,6 +4,7 @@ from StringIO import StringIO
 import json
 import copy
 
+
 #####################################################################################################################################################################################
 #																																		       									 	#
 # Import all users from a given file																										   										#
@@ -18,210 +19,209 @@ import copy
 
 
 def importUsers(scheme, beHost, bePort, users, adminUser):
-	
-	result = []	
+    result = []
 
-	for user in users:
-			
-		#print("Going to add user " + user['userId'])
-	
-		getRes = getUser(scheme, beHost, bePort, user)	
-		userId = getRes[0]
-		error = getRes[1]
-		#print error
-		if ( error != None and error == 404 ):
-			res = createUser(scheme, beHost, bePort, user ,adminUser)			
-			result.append(res)			
-		else:
-			if ( error == 200 ):
-				curResult = (userId, 409)
-				result.append(curResult)	
-			else:
-				result.append(getRes)
+    for user in users:
 
-	return result				
+        # print("Going to add user " + user['userId'])
+
+        getRes = getUser(scheme, beHost, bePort, user)
+        userId = getRes[0]
+        error = getRes[1]
+        # print error
+        if error is not None and error == 404:
+            res = createUser(scheme, beHost, bePort, user, adminUser)
+            result.append(res)
+        else:
+            if error == 200:
+                curResult = (userId, 409)
+                result.append(curResult)
+            else:
+                result.append(getRes)
+
+    return result
 
 
 def convertUsersToCreationObject(users):
+    cloneUsers = copy.deepcopy(users)
+    for user in cloneUsers:
+        # print user
+        if user.get('fullName') is not None:
+            del user['fullName']
+    # user['userId'] = user['userId'] + '1'
+    # print user
 
-	cloneUsers  = copy.deepcopy(users)
-	for user in cloneUsers:
-		#print user	
-		if (user.get('fullName') != None):
-			del user['fullName']
-		#user['userId'] = user['userId'] + '1'
-		#print user
+    return cloneUsers
 
-	return cloneUsers
 
 def getUser(scheme, beHost, bePort, user):
+    userId = user['userId']
+    try:
+        buffer = StringIO()
+        c = pycurl.Curl()
 
-	userId = user['userId']
-	try:
-		buffer = StringIO()
-		c = pycurl.Curl()
+        # print type(userId)
+        url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
+        c.setopt(c.URL, url)
 
-		#print type(userId)
-		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user/' + str(userId)
-		c.setopt(c.URL, url)
+        # adminHeader = 'USER_ID: ' + adminUser
+        c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json'])
+        c.setopt(c.WRITEFUNCTION, lambda x: None)
 
-		#adminHeader = 'USER_ID: ' + adminUser
-		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json'])
-		c.setopt(c.WRITEFUNCTION, lambda x: None)
+        if scheme == 'https':
+            c.setopt(pycurl.SSL_VERIFYPEER, 0)
+            c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
-		if scheme == 'https':
-			c.setopt(pycurl.SSL_VERIFYPEER, 0)
-			c.setopt(pycurl.SSL_VERIFYHOST, 0)
+        res = c.perform()
 
-		res = c.perform()
-					
-		#print("Before get response code")	
-		httpRes = c.getinfo(c.RESPONSE_CODE)
-		#print("After get response code")	
-		responseCode = c.getinfo(c.RESPONSE_CODE)
-		
-		#print('Status: ' + str(responseCode))
+        # print("Before get response code")
+        httpRes = c.getinfo(c.RESPONSE_CODE)
+        # print("After get response code")
+        responseCode = c.getinfo(c.RESPONSE_CODE)
 
-		c.close()
+        # print('Status: ' + str(responseCode))
 
-		return (userId, httpRes)
+        c.close()
 
-	except Exception as inst:
-		print(inst)
-		return (userId, None)				
+        return userId, httpRes
 
-		
+    except Exception as inst:
+        print(inst)
+        return userId, None
+
 
 def createUser(scheme, beHost, bePort, user, adminUser):
+    userId = user['userId']
+    try:
+        buffer = StringIO()
+        c = pycurl.Curl()
 
-	userId = user['userId']
-	try:
-		buffer = StringIO()
-		c = pycurl.Curl()
+        url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
+        c.setopt(c.URL, url)
+        c.setopt(c.POST, 1)
 
-		url = scheme + '://' + beHost + ':' + bePort + '/sdc2/rest/v1/user'
-		c.setopt(c.URL, url)
-		c.setopt(c.POST, 1)		
+        adminHeader = 'USER_ID: ' + adminUser
+        c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', adminHeader])
 
-		adminHeader = 'USER_ID: ' + adminUser
-		c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json', adminHeader])
+        data = json.dumps(user)
+        c.setopt(c.POSTFIELDS, data)
 
-		data = json.dumps(user)
-		c.setopt(c.POSTFIELDS, data)	
+        c.setopt(c.WRITEFUNCTION, lambda x: None)
 
-		c.setopt(c.WRITEFUNCTION, lambda x: None)
+        if scheme == 'https':
+            c.setopt(pycurl.SSL_VERIFYPEER, 0)
+            c.setopt(pycurl.SSL_VERIFYHOST, 0)
 
-		if scheme == 'https':
-			c.setopt(pycurl.SSL_VERIFYPEER, 0)
-			c.setopt(pycurl.SSL_VERIFYHOST, 0)
+        # print("before perform")
+        res = c.perform()
+		# print(res)
 
-		#print("before perform")	
-		res = c.perform()
-        #print(res)
-	
-		#print("Before get response code")	
-		httpRes = c.getinfo(c.RESPONSE_CODE)
-		#print("After get response code")	
-		responseCode = c.getinfo(c.RESPONSE_CODE)
-		
-		#print('Status: ' + str(responseCode))
+        # print("Before get response code")
+        httpRes = c.getinfo(c.RESPONSE_CODE)
+        # print("After get response code")
+        responseCode = c.getinfo(c.RESPONSE_CODE)
 
-		c.close()
+        # print('Status: ' + str(responseCode))
 
-		return (userId, httpRes)
+        c.close()
 
-	except Exception as inst:
-		print(inst)
-		return (userId, None)				
+        return userId, httpRes
+
+    except Exception as inst:
+        print(inst)
+        return userId, None
 
 
 def errorAndExit(errorCode, errorDesc):
-	if ( errorCode > 0 ):
-		print("status=" + str(errorCode) + ". " + errorDesc) 
-	else:
-		print("status=" + str(errorCode))
-	sys.exit(errorCode)
-	
+    if errorCode > 0:
+        print("status=" + str(errorCode) + ". " + errorDesc)
+    else:
+        print("status=" + str(errorCode))
+    sys.exit(errorCode)
+
+
 def usage():
-	print sys.argv[0], '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]'
+    print(sys.argv[0],
+          '[optional -s <scheme> | --scheme=<scheme>, default http] [-i <be host> | --ip=<be host>] [-p <be port> | --port=<be port> ] [-f <input file> | --ifile=<input file> ]')
+
 
 def main(argv):
-	print 'Number of arguments:', len(sys.argv), 'arguments.'
+    print('Number of arguments:', len(sys.argv), 'arguments.')
 
-	beHost = 'localhost' 
-	bePort = '8080'
-	inputfile = None 
-	scheme = 'http'
-	adminUser = 'jh0003'
+    beHost = 'localhost'
+    bePort = '8080'
+    inputfile = None
+    scheme = 'http'
+    adminUser = 'jh0003'
 
-	try:
-		opts, args = getopt.getopt(argv,"i:p:f:h:s:",["ip=","port=","ifile=","scheme="])
-	except getopt.GetoptError:
-		usage()
-		errorAndExit(2, 'Invalid input')
-		 
-	for opt, arg in opts:
-	#print opt, arg
-		if opt == '-h':
-			usage()                        
-			sys.exit(3)
-		elif opt in ("-i", "--ip"):
-			beHost = arg
-		elif opt in ("-p", "--port"):
-			bePort = arg
-		elif opt in ("-f", "--ifile"):
-			inputfile = arg
-		elif opt in ("-s", "--scheme"):
-			scheme = arg
+    try:
+        opts, args = getopt.getopt(argv, "i:p:f:h:s:", ["ip=", "port=", "ifile=", "scheme="])
+    except getopt.GetoptError:
+        usage()
+        errorAndExit(2, 'Invalid input')
 
-	print 'scheme =',scheme,', be host =',beHost,', be port =', bePort,', users file =',inputfile
-	
-	if ( inputfile == None ):
-		usage()
-		sys.exit(3)
+    for opt, arg in opts:
+        # print opt, arg
+        if opt == '-h':
+            usage()
+            sys.exit(3)
+        elif opt in ("-i", "--ip"):
+            beHost = arg
+        elif opt in ("-p", "--port"):
+            bePort = arg
+        elif opt in ("-f", "--ifile"):
+            inputfile = arg
+        elif opt in ("-s", "--scheme"):
+            scheme = arg
 
-	print 'Input file is ', inputfile
+    print('scheme =', scheme, ', be host =', beHost, ', be port =', bePort, ', users file =', inputfile)
 
-	usersFile = open(inputfile)
+    if inputfile == None:
+        usage()
+        sys.exit(3)
 
-	json_data = json.load(usersFile)
+    print('Input file is ', inputfile)
 
-	#print json_data
+    usersFile = open(inputfile)
 
-	cloneUsers = convertUsersToCreationObject(json_data)
+    json_data = json.load(usersFile)
 
-	activeUsers = filter(lambda x: x['status'] == 'ACTIVE', cloneUsers)
+    # print json_data
 
-	#print activeUsers
+    cloneUsers = convertUsersToCreationObject(json_data)
 
-	resultTable = importUsers(scheme, beHost, bePort, activeUsers, adminUser)
+    activeUsers = filter(lambda x: x['status'] == 'ACTIVE', cloneUsers)
 
-	g = lambda x: x[1] != 201 and x[1] != 409
+    # print activeUsers
 
-	result = filter(g, resultTable)
+    resultTable = importUsers(scheme, beHost, bePort, activeUsers, adminUser)
 
-	if ( len(result) > 0 ):
-		#print("ERROR: Failed to load the users " + ', '.join(map(lambda x: x[0],result)))
-		errorAndExit(3, "Failed to load the users " + ', '.join(map(lambda x: x[0],result)))	
+    g = lambda x: x[1] != 201 and x[1] != 409
 
-	g = lambda x: x[1] == 409
-	result = filter(g, resultTable)
+    result = filter(g, resultTable)
 
-	print("-------------------------------------------")
-	print("Existing users: " + ', '.join(map(lambda x: x[0],result)))
+    if (len(result) > 0):
+        # print("ERROR: Failed to load the users " + ', '.join(map(lambda x: x[0],result)))
+        errorAndExit(3, "Failed to load the users " + ', '.join(map(lambda x: x[0], result)))
 
-	result = filter(lambda x: x[1] == 201, resultTable)
-	if ( len(result) == 0 ):
-		print("-------------------------------------------")
-		print("No NEW user was loaded. All users are already exist")
-		print("-------------------------------------------")
-	else:
-		print("-------------------------------------------")
-		print("Loaded users: " + ', '.join(map(lambda x: x[0],result)))
-		print("-------------------------------------------")
+    g = lambda x: x[1] == 409
+    result = filter(g, resultTable)
 
-	errorAndExit(0, None)
+    print("-------------------------------------------")
+    print("Existing users: " + ', '.join(map(lambda x: x[0], result)))
+
+    result = filter(lambda x: x[1] == 201, resultTable)
+    if len(result) == 0:
+        print("-------------------------------------------")
+        print("No NEW user was loaded. All users are already exist")
+        print("-------------------------------------------")
+    else:
+        print("-------------------------------------------")
+        print("Loaded users: " + ', '.join(map(lambda x: x[0], result)))
+        print("-------------------------------------------")
+
+    errorAndExit(0, None)
 
 
 if __name__ == "__main__":
-        main(sys.argv[1:])
+    main(sys.argv[1:])

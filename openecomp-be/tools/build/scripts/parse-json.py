@@ -41,17 +41,19 @@ from collections import OrderedDict
 
 
 def readJsonFile(file, type):
-  with open(file, 'r') as f:
-     data = json.load(f, object_pairs_hook=OrderedDict)
-     return data[type]
+    with open(file, 'r') as f:
+        data = json.load(f, object_pairs_hook=OrderedDict)
+        return data[type]
+
 
 def printJsonTypeEntries(jsonData):
-        for i in jsonData.keys():
-                print jsonData[i] + ';'
+    for i in jsonData.keys():
+        print(jsonData[i] + ';')
 
 
 def usage():
-    print 'parseJsonFile.py [-f <json-file> & -t <cql-type: drop|create|insert|update|select]'
+    print('parseJsonFile.py [-f <json-file> & -t <cql-type: drop|create|insert|update|select]')
+
 
 def main(argv):
     action = ''
