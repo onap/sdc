@@ -15,6 +15,7 @@
                          org.openecomp.sdc.be.externalapi.servlet,
                          org.openecomp.sdc.be.components.scheduledtasks,
                          org.openecomp.sdc.be.facade.operations,
+                         org.openecomp.sdc.be.components.kafka,
                          org.openecomp.sdc.be.components.impl">
   </context:component-scan>
 
@@ -23,7 +24,7 @@
   <bean class="org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig"/>
   <bean class="org.openecomp.sdc.config.CatalogBESpringConfig"/>
   <bean class="org.openecomp.sdc.config.MicrometerSpringConfig"/>
-
+  <bean class="org.openecomp.sdc.be.components.kafka.KafkaHandler"/>
 
   <aop:config>
     <aop:aspect id="lockAspect" ref="componentLockAspect">

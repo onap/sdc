@@ -19,18 +19,10 @@
  */
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -44,15 +36,29 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component("distributionEngine")
 public class DistributionEngine implements IDistributionEngine {
 
     private static final Logger logger = Logger.getLogger(DistributionEngine.class.getName());
     private static final Pattern FQDN_PATTERN = Pattern.compile(
-        "^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*(:[0-9]{2,4})*$",
-        Pattern.CASE_INSENSITIVE);
+            "^([A-Z0-9]|[A-Z0-9][A-Z0-9\\-]{0,61}[A-Z0-9])(\\.([A-Z0-9]|[A-Z0-9][A-Z0-9\\-]{0,61}[A-Z0-9]))*(:[0-9]{2,4})*$",
+            Pattern.CASE_INSENSITIVE);
     @Autowired
     private EnvironmentsEngine environmentsEngine;
+    @Autowired
+    @Setter
+    private KafkaHandler kafkaHandler;
     @Resource
     private DistributionNotificationSender distributionNotificationSender;
     @Resource
@@ -83,7 +89,7 @@ public class DistributionEngine implements IDistributionEngine {
     private void init() {
         logger.trace("Enter init method of DistributionEngine");
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
-            .getDistributionEngineConfiguration();
+                .getDistributionEngineConfiguration();
         boolean startDistributionEngine = distributionEngineConfiguration.isStartDistributionEngine();
         logger.debug("Distribution engine activation parameter is {}", startDistributionEngine);
         if (!startDistributionEngine) {
@@ -94,7 +100,7 @@ public class DistributionEngine implements IDistributionEngine {
         boolean isValidConfig = validateConfiguration(distributionEngineConfiguration);
         if (!isValidConfig) {
             BeEcompErrorManager.getInstance()
-                .logBeUebSystemError(DistributionEngineInitTask.INIT_DISTRIBUTION_ENGINE_FLOW, "validate distribution configuration in init phase");
+                    .logBeUebSystemError(DistributionEngineInitTask.INIT_DISTRIBUTION_ENGINE_FLOW, "validate distribution configuration in init phase");
             this.distributionEngineClusterHealth.setHealthCheckUebConfigurationError();
             return;
         }
@@ -133,13 +139,16 @@ public class DistributionEngine implements IDistributionEngine {
      */
     protected boolean validateConfiguration(DistributionEngineConfiguration deConfiguration) {
         String methodName = "validateConfiguration";
-        boolean result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers");
-        result = isValidParam(deConfiguration.getEnvironments(), methodName, "environments") && result;
-        result = isValidParam(deConfiguration.getUebPublicKey(), methodName, "uebPublicKey") && result;
-        result = isValidParam(deConfiguration.getUebSecretKey(), methodName, "uebSecretKey") && result;
+        boolean result = isValidParam(deConfiguration.getEnvironments(), methodName, "environments");
+
+        if (!kafkaHandler.isKafkaActive()) {
+            result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers") && result;
+            result = isValidParam(deConfiguration.getUebPublicKey(), methodName, "uebPublicKey") && result;
+            result = isValidParam(deConfiguration.getUebSecretKey(), methodName, "uebSecretKey") && result;
+            result = isValidObject(deConfiguration.getCreateTopic(), methodName, "createTopic") && result;
+        }
         result = isValidParam(deConfiguration.getDistributionNotifTopicName(), methodName, "distributionNotifTopicName") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopicName(), methodName, "distributionStatusTopicName") && result;
-        result = isValidObject(deConfiguration.getCreateTopic(), methodName, "createTopic") && result;
         result = isValidObject(deConfiguration.getDistributionStatusTopic(), methodName, "distributionStatusTopic") && result;
         result = isValidObject(deConfiguration.getInitMaxIntervalSec(), methodName, "initMaxIntervalSec") && result;
         result = isValidObject(deConfiguration.getInitRetryIntervalSec(), methodName, "initRetryIntervalSec") && result;
@@ -251,13 +260,13 @@ public class DistributionEngine implements IDistributionEngine {
     public ActionStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envId, String envName,
                                       User modifier) {
         logger.debug(
-            "Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}",
-            distributionId, service.getUUID(), service.getUniqueId(), envName, service.getLastUpdaterUserId(), modifier);
+                "Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}",
+                distributionId, service.getUUID(), service.getUniqueId(), envName, service.getLastUpdaterUserId(), modifier);
         String topicName = buildTopicName(envName);
         ActionStatus notifyServiceStatus = Optional.ofNullable(environmentsEngine.getEnvironmentById(envId)).map(EnvironmentMessageBusData::new).map(
-            messageBusData -> distributionNotificationSender
-                .sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
-            .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
+                        messageBusData -> distributionNotificationSender
+                                .sendNotification(topicName, distributionId, messageBusData, notificationData, service, modifier))
+                .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
         logger.debug("Finish notifyService. status is {}", notifyServiceStatus);
         return notifyServiceStatus;
     }
@@ -274,7 +283,7 @@ public class DistributionEngine implements IDistributionEngine {
         if (status != StorageOperationStatus.OK) {
             String envErrorDec = getEnvironmentErrorDescription(status);
             BeEcompErrorManager.getInstance().logBeDistributionEngineSystemError(DistributionNotificationSender.DISTRIBUTION_NOTIFICATION_SENDING,
-                "Environment name " + envName + " is not available. Reason : " + envErrorDec);
+                    "Environment name " + envName + " is not available. Reason : " + envErrorDec);
         }
         return status;
     }

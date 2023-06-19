@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.components.health.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.kafka.KafkaHandler;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
@@ -176,7 +177,7 @@ import org.springframework.web.context.WebApplicationContext;
 @org.springframework.stereotype.Component("serviceBusinessLogic")
 public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
-    static final String IS_VALID = "isValid";
+    private static final String IS_VALID = "isValid";
     private static final String THE_SERVICE_WITH_SYSTEM_NAME_LOCKED = "The service with system name {} locked. ";
     private static final String FAILED_TO_LOCK_SERVICE_RESPONSE_IS = "Failed to lock service {}. Response is {}. ";
     private static final String AUDIT_BEFORE_SENDING_RESPONSE = "audit before sending response";
@@ -196,6 +197,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceCategoryValidator serviceCategoryValidator;
     private final ServiceValidator serviceValidator;
     private final GroupBusinessLogic groupBusinessLogic;
+    private final KafkaHandler kafkaHandler;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
@@ -214,7 +216,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation,
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
-                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator) {
+                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator, KafkaHandler kafkaHandler) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -229,6 +231,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceCategoryValidator = serviceCategoryValidator;
         this.serviceValidator = serviceValidator;
         this.groupBusinessLogic = groupBusinessLogic;
+        this.kafkaHandler = kafkaHandler;
     }
 
     @Autowired
@@ -1730,22 +1733,24 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             log.trace("Update environment name to be {} instead of {}", configuredEnvName, envName);
             envName = configuredEnvName;
         }
-        // DE194021
-        ServletContext servletContext = request.getSession().getServletContext();
-        boolean isDistributionEngineUp = getHealthCheckBL(servletContext).isDistributionEngineUp(); // DE
-        if (!isDistributionEngineUp) {
-            BeEcompErrorManager.getInstance().logBeSystemError("Distribution Engine is DOWN");
-            log.debug("Distribution Engine is DOWN");
-            response = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-            return Either.right(response);
+        if (!kafkaHandler.isKafkaActive()) {
+            // DE194021
+            ServletContext servletContext = request.getSession().getServletContext();
+            boolean isDistributionEngineUp = getHealthCheckBL(servletContext).isDistributionEngineUp(); // DE
+            if (!isDistributionEngineUp) {
+                BeEcompErrorManager.getInstance().logBeSystemError("Distribution Engine is DOWN");
+                log.debug("Distribution Engine is DOWN");
+                response = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+                return Either.right(response);
+            }
         }
         Either<Service, StorageOperationStatus> serviceRes = toscaOperationFacade.getToscaElement(serviceId);
         if (serviceRes.isRight()) {
             log.debug("failed retrieving service");
             response = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
             componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-                new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()), ResourceVersionInfo.newBuilder().build(), did);
+                    new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()), ResourceVersionInfo.newBuilder().build(), did);
             return Either.right(response);
         }
         Service service = serviceRes.left().value();
@@ -1756,7 +1761,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (service.getLifecycleState() != LifecycleStateEnum.CERTIFIED) {
             log.info("service {} is  not available for distribution. Should be in certified state", service.getUniqueId());
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(), service.getName());
+                    .getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(), service.getName());
             return Either.right(responseFormat);
         }
         String dcurrStatus = service.getDistributionStatus().name();
@@ -1767,7 +1772,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envName, user);
             if (notifyServiceResponse == ActionStatus.OK) {
                 Either<Service, ResponseFormat> updateStateRes = updateDistributionStatusForActivation(service, user,
-                    DistributionStatusEnum.DISTRIBUTED);
+                        DistributionStatusEnum.DISTRIBUTED);
                 if (updateStateRes.isLeft() && updateStateRes.left().value() != null) {
                     updatedService = updateStateRes.left().value();
                     updatedStatus = updatedService.getDistributionStatus().name();
@@ -1786,13 +1791,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
         } else {
             response = componentsUtils
-                .getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
+                    .getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
             result = Either.right(response);
         }
         componentsUtils.auditComponent(response, user, service, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-            new ResourceCommonInfo(service.getName(), ComponentTypeEnum.SERVICE.getValue()),
-            ResourceVersionInfo.newBuilder().distributionStatus(dcurrStatus).build(),
-            ResourceVersionInfo.newBuilder().distributionStatus(updatedStatus).build(), null, null, did);
+                new ResourceCommonInfo(service.getName(), ComponentTypeEnum.SERVICE.getValue()),
+                ResourceVersionInfo.newBuilder().distributionStatus(dcurrStatus).build(),
+                ResourceVersionInfo.newBuilder().distributionStatus(updatedStatus).build(), null, null, did);
         return result;
     }
 
