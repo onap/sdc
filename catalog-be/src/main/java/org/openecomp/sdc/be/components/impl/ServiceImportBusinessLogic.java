@@ -2293,13 +2293,17 @@ public class ServiceImportBusinessLogic {
                     //Inputs
                     ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
                     mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
-                    component.getProperties()
-                        .forEach(property -> instanceInputs.getListToscaDataDefinition().stream()
-                            .filter(instanceInput -> instanceInput.getToscaFunction() instanceof ToscaGetFunctionDataDefinition &&
-                                property.getName().equals(instanceInput.getToscaFunction() != null ?
-                                ((ToscaGetFunctionDataDefinition) instanceInput.getToscaFunction()).getPropertyName() : null))
-                            .forEach(oldInput -> oldInput.setType(property.getType()))
-                    );
+                    if (null != instanceInputs) {
+                        component.getProperties()
+                            .forEach(property -> instanceInputs.getListToscaDataDefinition().stream()
+                                .filter(instanceInput ->
+                                    instanceInput.getToscaFunction() instanceof ToscaGetFunctionDataDefinition &&
+                                        property.getName().equals(instanceInput.getToscaFunction() != null ?
+                                            ((ToscaGetFunctionDataDefinition) instanceInput.getToscaFunction()).getPropertyName() :
+                                            null))
+                                .forEach(oldInput -> oldInput.setType(property.getType()))
+                            );
+                    }
                     templateOperation.setInputs(instanceInputs);
                     //Implementation
                     templateOperation.setImplementation(instanceOperation.getImplementation());

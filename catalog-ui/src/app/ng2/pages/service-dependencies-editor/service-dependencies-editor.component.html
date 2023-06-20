@@ -77,6 +77,7 @@
                     <tosca-function [property]="selectedProperty"
                                     [overridingType] = "isLengthOperator() ? overridingType : undefined"
                                     [componentInstanceMap]="componentInstanceMap"
+                                    [customToscaFunctions]="customToscaFunctions"
                                     [allowClear]="false"
                                     (onValidityChange)="onToscaFunctionValidityChange($event)"
                     >
@@ -103,6 +104,7 @@
                             <tosca-function [property]="selectedProperty"
                                             [inToscaFunction]="val"
                                             [componentInstanceMap]="componentInstanceMap"
+                                            [customToscaFunctions]="customToscaFunctions"
                                             [allowClear]="false"
                                             (onValidityChange)="onToscaRangeFunctionListValidityChange($event, valueIndex)"
                             >
@@ -123,6 +125,7 @@
                             <tosca-function [property]="selectedProperty"
                                             [inToscaFunction]="val"
                                             [componentInstanceMap]="componentInstanceMap"
+                                            [customToscaFunctions]="customToscaFunctions"
                                             [allowClear]="false"
                                             (onValidityChange)="onToscaFunctionListValidityChange($event, valueIndex)"
                             >
