@@ -49,6 +49,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
     @Input() propertyType: string;
     @Input() propertySchemaType: string = undefined;
     @Input() isDefaultCustomFunction: boolean;
+    @Input() overridingType: PROPERTY_TYPES;
     @Output() onValidFunction: EventEmitter<ToscaCustomFunction> = new EventEmitter<ToscaCustomFunction>();
     @Output() onValidityChange: EventEmitter<ToscaCustomFunctionValidationEvent> = new EventEmitter<ToscaCustomFunctionValidationEvent>();
 
@@ -194,7 +195,7 @@ export class ToscaCustomFunctionComponent implements OnInit {
     createProperty(value?: any): PropertyBEModel {
         const property = new PropertyBEModel();
         if (this.type === this.GET_INPUT) {
-            property.type = this.propertyType;
+            property.type = this.overridingType ? this.overridingType.toString() : this.propertyType;
             if (this.propertySchemaType) {
                 property.schemaType = this.propertySchemaType;
             }
