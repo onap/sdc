@@ -24,6 +24,7 @@ import {ToscaConcatFunction} from "../models/tosca-concat-function";
 import {ToscaGetFunction} from "../models/tosca-get-function";
 import {YamlFunction} from "../models/yaml-function";
 import {ToscaFunction} from "../models/tosca-function";
+import {ToscaCustomFunction} from "../models/tosca-custom-function";
 
 export class ToscaFunctionHelper {
 
@@ -41,6 +42,8 @@ export class ToscaFunctionHelper {
                 return new ToscaGetFunction(value);
             case ToscaFunctionType.YAML:
                 return new YamlFunction(value);
+            case ToscaFunctionType.CUSTOM:
+                return new ToscaCustomFunction(value);
             case ToscaFunctionType.STRING:
                 return <ToscaFunction> {
                     type: ToscaFunctionType.STRING,

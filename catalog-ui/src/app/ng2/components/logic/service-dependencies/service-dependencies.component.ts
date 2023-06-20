@@ -30,6 +30,7 @@ import {CompositionService} from "../../../pages/composition/composition.service
 import {FilterConstraint} from "app/models/filter-constraint";
 import {PropertyFilterConstraintUi} from "../../../../models/ui-models/property-filter-constraint-ui";
 import {ConstraintOperatorType, FilterConstraintHelper} from "../../../../utils/filter-constraint-helper";
+import {CustomToscaFunction} from "../../../../models/default-custom-functions";
 
 export enum SourceType {
     STATIC = 'static',
@@ -99,6 +100,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     properties: string = ToscaFilterConstraintType.PROPERTIES;
     private componentInstancesConstraints: FilterConstraint[] = [];
     isEditable: boolean;
+    customToscaFunctions: Array<CustomToscaFunction>;
 
     @Input() readonly: boolean;
     @Input() compositeService: ComponentMetadata;
@@ -138,10 +140,22 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             this.parentServiceInputs = result.inputs;
             this.parentServiceProperties = result.properties;
         });
+        this.initCustomToscaFunctions();
         this.loadNodeFilter();
         this.translateService.languageChangedObservable.subscribe((lang) => {
             I18nTexts.translateTexts(this.translateService);
         });
+    }
+
+    private initCustomToscaFunctions() {
+        if (!this.customToscaFunctions) {
+            this.customToscaFunctions = [];
+            this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+                for (let customFunction of data) {
+                    this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+                }
+            });
+        }
     }
 
     ngOnChanges(changes): void {
@@ -264,6 +278,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
                     'parentServiceInputs': this.parentServiceInputs,
                     'parentServiceProperties': this.parentServiceProperties,
                     'selectedInstanceProperties': this.selectedInstanceProperties,
+                    'customToscaFunctions': this.customToscaFunctions,
                     'filterType': FilterType.PROPERTY,
                 }
             );
@@ -298,6 +313,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     }
 
     createNodeFilter = (constraintType: string): void => {
+        this.customToscaFunctions = this.modalInstance.instance.dynamicContent.instance.customToscaFunctions;
         this.isLoading = true;
         this.topologyTemplateService.createServiceFilterConstraints(
             this.compositeService.uniqueId,
@@ -372,9 +388,11 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
                 'parentServiceInputs': this.parentServiceInputs,
                 'parentServiceProperties': this.parentServiceProperties,
                 'selectedInstanceProperties': this.selectedInstanceProperties,
+                'customToscaFunctions': this.customToscaFunctions,
                 'filterType': FilterType.PROPERTY
             }
         );
+
         this.modalInstance.instance.open();
     }
 
