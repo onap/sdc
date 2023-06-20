@@ -72,6 +72,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
   @Input() capabilityNameAndPropertiesMap: Map<string, PropertyModel[]>;
   @Input() filterType: FilterType;
   @Input() filterConstraint: PropertyFilterConstraintUi;
+  @Input() customToscaFunctions: Array<CustomToscaFunction>;
   //output
   currentRule: PropertyFilterConstraintUi;
 
@@ -100,7 +101,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
   selectedProperty: PropertyFEModel;
   selectedSourceType: string;
   componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
-  customToscaFunctions: Array<CustomToscaFunction>;
+
   capabilityDropdownList: DropdownValue[] = [];
   validValuesToscaFunctionList: ToscaFunction[];
   rangeToscaFunctionList: ToscaFunction[];
@@ -133,13 +134,15 @@ export class ServiceDependenciesEditorComponent implements OnInit {
   }
 
   private initCustomToscaFunctions() {
-    this.customToscaFunctions = [];
-    this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
-        for (let customFunction of data) {
-            this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
-        }
-    });
-}
+      if (!this.customToscaFunctions) {
+          this.customToscaFunctions = [];
+          this.topologyTemplateService.getDefaultCustomFunction().toPromise().then((data) => {
+              for (let customFunction of data) {
+                  this.customToscaFunctions.push(new CustomToscaFunction(customFunction));
+              }
+          });
+      }
+ }
 
   private initCapabilityDropdown(): void {
     if (this.filterType == FilterType.CAPABILITY) {

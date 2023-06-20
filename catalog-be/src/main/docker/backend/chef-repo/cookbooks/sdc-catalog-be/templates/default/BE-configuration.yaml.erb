@@ -1298,3 +1298,11 @@ dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
 
 #Space separated list of permitted ancestors
 permittedAncestors: <%= @permittedAncestors %>
+
+defaultCustomToscaFunctions:
+  -
+    name: get_input_ext
+    type: get_input
+  -
+    name: juel
+    type: custom
