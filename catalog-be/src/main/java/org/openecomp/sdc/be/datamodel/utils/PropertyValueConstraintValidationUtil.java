@@ -143,6 +143,7 @@ public class PropertyValueConstraintValidationUtil {
 
     private void evaluateConstraintsOnProperty(PropertyDefinition propertyDefinition) {
         ToscaType toscaType = ToscaType.isValidType(propertyDefinition.getType());
+        String value = propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue();
         if (!isValueAToscaFunction(propertyDefinition) && CollectionUtils.isNotEmpty(propertyDefinition.getConstraints())) {
             for (PropertyConstraint propertyConstraint : propertyDefinition.getConstraints()) {
                 try {
@@ -155,10 +156,11 @@ public class PropertyValueConstraintValidationUtil {
                 }
             }
         } else if (!isValueAToscaFunction(propertyDefinition) && ToscaType.isPrimitiveType(propertyDefinition.getType())
-                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(
-                    propertyDefinition.getValue() != null ? propertyDefinition.getValue() : propertyDefinition.getDefaultValue())) {
+                && !propertyDefinition.isToscaFunction() && !toscaType.isValidValue(value)) {
             errorMessages.add(String.format("Unsupported value provided for %s property supported value type is %s.",
                 getCompletePropertyName(propertyDefinition), toscaType.getType()));
+        } else if (propertyDefinition.isRequired() && StringUtils.isEmpty(value)) {
+            errorMessages.add(String.format("Property %s is required. Please enter a value.", getCompletePropertyName(propertyDefinition)));
         }
     }
 
@@ -215,7 +217,8 @@ public class PropertyValueConstraintValidationUtil {
                     }
                 }
                 if (ToscaType.isPrimitiveType(prop.getType())) {
-                    newPropertyWithValue = copyPropertyWithNewValue(prop, String.valueOf(valueMap.get(prop.getName())), prop.getName());
+                    String value = valueMap.get(prop.getName()) == null ? null : String.valueOf(valueMap.get(prop.getName()));
+                    newPropertyWithValue = copyPropertyWithNewValue(prop, value, prop.getName());
                     if (isPropertyToEvaluate(newPropertyWithValue)) {
                         evaluateConstraintsOnProperty(newPropertyWithValue);
                     }
