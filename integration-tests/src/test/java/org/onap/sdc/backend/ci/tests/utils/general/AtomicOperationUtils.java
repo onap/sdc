@@ -84,6 +84,8 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.GeneralUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
 
 import java.io.File;
@@ -104,6 +106,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public final class AtomicOperationUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomicOperationUtils.class);
 
     private static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
 
@@ -169,6 +172,8 @@ public final class AtomicOperationUtils {
             }
             return Either.right(resourceResp);
         } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to createResourceByType", e);
             throw new AtomicOperationException(e);
         }
     }
@@ -191,6 +196,8 @@ public final class AtomicOperationUtils {
             }
             return Either.right(resourceResp);
         } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to createResourceByResourceDetails", e);
             throw new AtomicOperationException(e);
         }
     }
@@ -1079,7 +1086,7 @@ public final class AtomicOperationUtils {
     }
 
     private Either<RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service,
-                                                                                                             Boolean validateState) {
+                                                                                                              Boolean validateState) {
 
         try {
             ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);
