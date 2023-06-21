@@ -22,6 +22,30 @@
       "revId": "61d0e8a2167732cef4e025137e6f824db28e2758",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09b5bc89_6bd58109",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vfc/properties/VFCFloatTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-06-21T16:13:33Z",
+      "side": 1,
+      "message": "The reason I wrote the tests in this way is due to the fact we have encountered a number of bugs recently around setting properties and constraints. \nTherefore I thought it necessary to do a more extensive suite of tests",
+      "parentUuid": "d21aec05_0feeed19",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 48
+      },
+      "revId": "61d0e8a2167732cef4e025137e6f824db28e2758",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
