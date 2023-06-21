@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91083bca_4755a8c2",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/ErrorModal.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-21T22:16:12Z",
+      "side": 1,
+      "message": "*  Copyright (C) 2023 Nordix Foundation",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "c7d85e6ec5df1eb8f80ac48694531a7ca17aa474",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "039fe0c9_edf44d95",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/ImportTypePage.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-21T22:16:12Z",
+      "side": 1,
+      "message": "*  Copyright (C) 2023 Nordix Foundation",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "c7d85e6ec5df1eb8f80ac48694531a7ca17aa474",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c527be9e_8ca9f4a4",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/component/workspace/CompositionPropertiesAttributesTab.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-21T22:16:12Z",
+      "side": 1,
+      "message": "*  Copyright (C) 2023 Nordix Foundation",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "c7d85e6ec5df1eb8f80ac48694531a7ca17aa474",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "824bed57_5f25f729",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vfc/properties/VFCIntTests.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-21T22:16:12Z",
+      "side": 1,
+      "message": "*  Copyright (C) 2023 Nordix Foundation",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 27
+      },
+      "revId": "c7d85e6ec5df1eb8f80ac48694531a7ca17aa474",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
