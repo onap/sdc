@@ -84,6 +84,8 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.GeneralUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
 
 import java.io.File;
@@ -104,6 +106,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public final class AtomicOperationUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtomicOperationUtils.class);
 
     private static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
 
@@ -169,6 +172,8 @@ public final class AtomicOperationUtils {
             }
             return Either.right(resourceResp);
         } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to createResourceByType", e);
             throw new AtomicOperationException(e);
         }
     }
@@ -191,6 +196,8 @@ public final class AtomicOperationUtils {
             }
             return Either.right(resourceResp);
         } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to createResourceByResourceDetails", e);
             throw new AtomicOperationException(e);
         }
     }
@@ -365,55 +372,61 @@ public final class AtomicOperationUtils {
     public Pair<Component, RestResponse> changeComponentState(Component component, UserRoleEnum userRole, LifeCycleStatesEnum targetState,
                                                               Boolean validateState) throws Exception {
 
-        Boolean isValidationFailed = false;
-        RestResponse lifeCycleStatesResponse = null;
-        User defaultUser;
+        try {
+            Boolean isValidationFailed = false;
+            RestResponse lifeCycleStatesResponse = null;
+            User defaultUser;
 
-        LifeCycleStatesEnum currentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
+            LifeCycleStatesEnum currentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
 
-        if (currentCompState == targetState) {
-            component = getComponentObject(component, userRole);
-            return Pair.of(component, null);
-        }
-        String componentType = component.getComponentType().getValue();
-        ArrayList<String> lifeCycleStatesEnumList = new ArrayList<>();
-        if (currentCompState.equals(LifeCycleStatesEnum.CHECKIN) && targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
-            lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
-            lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
-        } else {
-            lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
-            lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
-            lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFY.toString());
-        }
-        for (int i = 0; i < lifeCycleStatesEnumList.size(); i++) {
-            if (lifeCycleStatesEnumList.get(i).equals(currentCompState.name())) {
-                int a;
-                a = (i == lifeCycleStatesEnumList.size() - 1) ? 0 : i + 1;
-                for (int n = a; n < lifeCycleStatesEnumList.size(); n++) {
-                    defaultUser = new ElementFactory().getDefaultUser(userRole);
-                    lifeCycleStatesResponse = new LifecycleRestUtils().changeComponentState(component, defaultUser,
-                            LifeCycleStatesEnum.findByState(lifeCycleStatesEnumList.get(n)));
-                    if (lifeCycleStatesResponse.getErrorCode() != new LifecycleRestUtils().STATUS_CODE_SUCCESS) {
-                        isValidationFailed = true;
-                    }
-                    if (lifeCycleStatesEnumList.get(n).equals(targetState.toString()) || isValidationFailed) {
-                        break;
+            if (currentCompState == targetState) {
+                component = getComponentObject(component, userRole);
+                return Pair.of(component, null);
+            }
+            String componentType = component.getComponentType().getValue();
+            ArrayList<String> lifeCycleStatesEnumList = new ArrayList<>();
+            if (currentCompState.equals(LifeCycleStatesEnum.CHECKIN) && targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
+                lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
+                lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
+            } else {
+                lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKOUT.toString());
+                lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CHECKIN.toString());
+                lifeCycleStatesEnumList.add(LifeCycleStatesEnum.CERTIFY.toString());
+            }
+            for (int i = 0; i < lifeCycleStatesEnumList.size(); i++) {
+                if (lifeCycleStatesEnumList.get(i).equals(currentCompState.name())) {
+                    int a;
+                    a = (i == lifeCycleStatesEnumList.size() - 1) ? 0 : i + 1;
+                    for (int n = a; n < lifeCycleStatesEnumList.size(); n++) {
+                        defaultUser = new ElementFactory().getDefaultUser(userRole);
+                        lifeCycleStatesResponse = new LifecycleRestUtils().changeComponentState(component, defaultUser,
+                                LifeCycleStatesEnum.findByState(lifeCycleStatesEnumList.get(n)));
+                        if (lifeCycleStatesResponse.getErrorCode() != new LifecycleRestUtils().STATUS_CODE_SUCCESS) {
+                            isValidationFailed = true;
+                        }
+                        if (lifeCycleStatesEnumList.get(n).equals(targetState.toString()) || isValidationFailed) {
+                            break;
+                        }
                     }
                 }
             }
-        }
-        Component componentJavaObject = getComponentObject(component, userRole);
+            Component componentJavaObject = getComponentObject(component, userRole);
 
-        if (validateState && isValidationFailed) {
-            assertTrue("change state to [" + targetState.getState() + "] failed" + lifeCycleStatesResponse.getResponse(), false);
+            if (validateState && isValidationFailed) {
+                assertTrue("change state to [" + targetState.getState() + "] failed" + lifeCycleStatesResponse.getResponse(), false);
+                return Pair.of(componentJavaObject, lifeCycleStatesResponse);
+            }
+
+            if (isValidationFailed) {
+                return Pair.of(componentJavaObject, lifeCycleStatesResponse);
+            }
+
             return Pair.of(componentJavaObject, lifeCycleStatesResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("Failed to changeComponentState", e);
+            throw new RuntimeException(e);
         }
-
-        if (isValidationFailed) {
-            return Pair.of(componentJavaObject, lifeCycleStatesResponse);
-        }
-
-        return Pair.of(componentJavaObject, lifeCycleStatesResponse);
     }
 
     public RestResponse distributeService(Component component, Boolean validateState) throws Exception {
@@ -1079,7 +1092,7 @@ public final class AtomicOperationUtils {
     }
 
     private Either<RestResponse, Map<String, List<DistributionMonitorObject>>> getSortedDistributionStatusMap(Service service,
-                                                                                                             Boolean validateState) {
+                                                                                                              Boolean validateState) {
 
         try {
             ServiceDistributionStatus serviceDistributionObject = DistributionUtils.getLatestServiceDistributionObject(service);

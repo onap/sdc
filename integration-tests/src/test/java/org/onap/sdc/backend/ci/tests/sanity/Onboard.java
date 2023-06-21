@@ -52,7 +52,7 @@ public class Onboard extends ComponentBaseTest {
 	private String makeDistributionValue;
 	private String makeToscaValidationValue;
 	@Rule
-	public static final TestName name = new TestName();
+	private final TestName name = new TestName();
 
 	@Parameters({ "makeDistribution" })
 	@BeforeMethod
@@ -67,7 +67,6 @@ public class Onboard extends ComponentBaseTest {
 		makeToscaValidationValue = makeToscaValidationReadValue;
 		logger.info("makeToscaValidationReadValue - > " + makeToscaValidationValue);
 	}
-
 
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
