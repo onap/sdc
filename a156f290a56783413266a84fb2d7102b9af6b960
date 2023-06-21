@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "762daef0_3e720793",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vfc/properties/VFCFloatTests.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-21T22:16:58Z",
+      "side": 1,
+      "message": "*  Copyright (C) 2023 Nordix Foundation",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "a156f290a56783413266a84fb2d7102b9af6b960",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
