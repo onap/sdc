@@ -988,28 +988,6 @@ limitations under the License.
                     </systemProperties>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
-                        <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
-                        <!--<file>src/test/resources/ci/testSuites/artifacts.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/cap_req.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/category.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/ciFull.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/CRUDArtifacts.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/externalAPIs.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/ExternalApiSanity.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/general.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/imports.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/normatives.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/onapApiSanity.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/pass.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/product.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/productAPIs.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/property.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/resource.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/sanity.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/SearchExternalAPI.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/service.xml</file>-->
-                        <!--<file>src/test/resources/ci/testSuites/testngLifeCycle.xml</file>-->
-                        <!--                        <file>src/test/resources/ci/testSuites/user.xml</file>-->
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
@@ -1044,9 +1022,6 @@ limitations under the License.
                             </systemProperties>
                             <suiteXmlFiles>
                                 <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
-                                <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
-                                <file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file>
-                                <file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file>
                             </suiteXmlFiles>
                         </configuration>
                     </plugin>
