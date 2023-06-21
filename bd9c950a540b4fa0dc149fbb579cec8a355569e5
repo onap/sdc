@@ -22,6 +22,30 @@
       "revId": "bd9c950a540b4fa0dc149fbb579cec8a355569e5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10187ef5_e3308565",
+        "filename": "integration-tests/integration-tests-init/chef-repo/cookbooks/sdc-integration-tests-setup/recipes/2_import_Normatives.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-06-21T15:09:07Z",
+      "side": 1,
+      "message": "The tar is created from what\u0027s present int integration-tests/src/main/resources/import/ so if you wanted to add other models you would add the files there",
+      "parentUuid": "530f8e5f_5621cca6",
+      "range": {
+        "startLine": 25,
+        "startChar": 13,
+        "endLine": 25,
+        "endChar": 42
+      },
+      "revId": "bd9c950a540b4fa0dc149fbb579cec8a355569e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
