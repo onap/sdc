@@ -77,11 +77,11 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         String filePath = FileHandling.getFilePath(folder);
 
         // import Resource
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(resourceTypeEnum, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(resourceTypeEnum, getUser());
         ResourceUIUtils.importVfc(resourceMetaData, filePath, fileName, getUser());
 
         // get resourceUUID from BE
-        String resourceUUID = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1").getUUID();
+        String resourceUUID = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1").getUUID();
 
         // 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -99,7 +99,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
             ArtifactUIUtils.validateExistArtifactOnDeploymentInformationPage(deploymentArtifact.getArtifactLabel(), null, "1", deploymentArtifact.getArtifactType(), true, true, true, false);
 
             // Verify that uploaded correct file by download artifact via external api
-            RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE.toString());
+            RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE.toString());
             File file = new File(deploymentArtifact.getFilepath() + deploymentArtifact.getFilename());
 
             String readFileToString = FileUtils.readFileToString(file);
@@ -116,7 +116,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
 
             // Verify that updated correct file by download artifact via external api
             artifactUUID = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.UUID.getValue() + deploymentArtifact.getArtifactLabel()).getText();
-            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE.toString());
+            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE.toString());
             file = new File(deploymentArtifact.getFilepath() + "CP.yml");
             readFileToString = FileUtils.readFileToString(file);
             Assert.assertEquals(restResponse.getResponse(), readFileToString);
@@ -153,7 +153,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         String filePath = FileHandling.getFilePath(folder);
 
         // import Resource
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(resourceTypeEnum, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(resourceTypeEnum, getUser());
         ResourceUIUtils.importVfc(resourceMetaData, filePath, fileName, getUser());
 
         // 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
@@ -172,7 +172,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
         // 4. Create VF.
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         // 5. Click on composition.
@@ -210,7 +210,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         String filePath = FileHandling.getFilePath(folder);
 
         // 1. Create VF.
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(resourceMetaData, getUser());
 
         // 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
@@ -229,7 +229,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
         // 4. Create service.
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         // 5. Click on composition.

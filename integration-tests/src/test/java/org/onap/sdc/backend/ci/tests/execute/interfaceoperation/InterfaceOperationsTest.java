@@ -63,7 +63,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     private static final TestName name = new TestName();
     private static final String INTERFACES = "interfaces";
     private static final String TOSCA_PRESENTATION = "toscaPresentation";
-    private static final User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+    private static final User user = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
     private static final String WORKFLOW_ID_STR = "WorkflowId";
     private static final String WORKFLOW_VERSION_ID_STR = "workflowVersionId";
     private static final String WORKFLOW_ASSOCIATION_TYPE_NONE_STR = "NONE";
@@ -82,7 +82,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     public static void init() throws Exception {
         // Create default service
         Either<Service, RestResponse> createDefaultServiceEither =
-                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
         if (createDefaultServiceEither.isRight()) {
             fail("Error creating default service");
         }
@@ -90,7 +90,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         // Create default resource
         Either<Resource, RestResponse> createDefaultResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
         if (createDefaultResourceEither.isRight()) {
             fail("Error creating default resource");
         }
@@ -98,7 +98,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         // Create default PNF resource
         Either<Resource, RestResponse> createDefaultPNFResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
         if (createDefaultPNFResourceEither.isRight()) {
             fail("Error creating default pnf resource");
         }
@@ -301,7 +301,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test
     public void testCreateOperationWithLocalInterfaceAndDownloadArtifact() throws Exception{
         Either<Service, RestResponse> createDefaultServiceEither =
-                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
         if (createDefaultServiceEither.isRight()) {
             fail("Error creating default service");
         }
@@ -320,11 +320,11 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         Assert.assertEquals(responseCode, expectedCode);
 
         service = ResponseParser.convertServiceResponseToJavaObject(
-                ServiceRestUtils.getServiceToscaArtifacts(service.getUniqueId()).getResponse());
+                new ServiceRestUtils().getServiceToscaArtifacts(service.getUniqueId()).getResponse());
         service.setUniqueId(serviceUniqueId);
         service.setComponentType(ComponentTypeEnum.SERVICE);
         service.setLastUpdaterUserId(user.getUserId());
-        Either<String, RestResponse> responseEither = AtomicOperationUtils
+        Either<String, RestResponse> responseEither = new AtomicOperationUtils()
                 .getComponenetArtifactPayload(service, "assettoscacsar");
 
         Assert.assertTrue(responseEither.isLeft());

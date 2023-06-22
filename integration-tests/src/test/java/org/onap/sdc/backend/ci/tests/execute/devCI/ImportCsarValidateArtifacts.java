@@ -72,11 +72,11 @@ public class ImportCsarValidateArtifacts extends ComponentBaseTest {
 	@Test(dataProvider = "happyArts")
 	public void createResourceFromCsarArtsHappy(String artifactName) throws Exception {
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(artifactName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
@@ -87,11 +87,11 @@ public class ImportCsarValidateArtifacts extends ComponentBaseTest {
 	@Test(dataProvider = "negativeArts")
 	public void createResourceFromCsarArtsNegative(String artifactName) throws Exception {
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(artifactName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		assertTrue(createResource.getErrorCode() != 201 && createResource.getErrorCode() != 500);
 
 	}

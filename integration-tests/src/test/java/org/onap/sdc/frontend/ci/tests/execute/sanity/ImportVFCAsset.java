@@ -79,7 +79,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void importVFCTest() throws Exception {
         String fileName = "importVFC_VFC1.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
     }
@@ -87,12 +87,12 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void importDuplicateVFCTest() throws Exception {
         String fileName = "importVFC_VFC2.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
         ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
-        ResourceReqDetails atomicResourceMetaDataDup = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        ResourceReqDetails atomicResourceMetaDataDup = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_INFRASTRUCTURE, getUser());
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaDataDup, filePath, fileName, getUser());
@@ -109,7 +109,7 @@ public class ImportVFCAsset extends SetupCDTest {
         String fileName = "importVFC_VFC3.yml";
         String customFileName = "Heat-File 1.yaml";
 
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, customFileName, getUser());
@@ -124,7 +124,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void validContactAfterCreateVFCTest() throws Exception {
         String fileName = "importVFC_VFC4.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -136,7 +136,7 @@ public class ImportVFCAsset extends SetupCDTest {
         String fileName = "importVFC_VFC5.yml";
         String userIdUpdated = "up1234";
 
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
         ResourceUIUtils.defineUserId(userIdUpdated);
@@ -146,7 +146,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void addUpdateDeleteDeploymentArtifactToVFCTest() throws Exception {
         String fileName = "importVFC_VFC6.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -176,7 +176,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void addUpdateDeletePlaceholdersInformationalArtifactVFCTest() throws Exception {
         String fileName = "importVFC_VFC7.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -224,7 +224,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void addSimplePropertiesToVFCTest() throws Exception {
         String fileName = "importVFC_VFC8.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -241,7 +241,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void updateAfterCheckoutNewSimplePropertiesVFCTest() throws Exception {
         String fileName = "importVFC_VFC16.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -274,7 +274,7 @@ public class ImportVFCAsset extends SetupCDTest {
     public void checkinCheckoutChangeDeleteVersionVFCTest(String customfileName) throws Exception {
         setLog(customfileName);
 
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, customfileName, getUser());
 
@@ -296,7 +296,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void certificationVFCTest() throws Exception {
         String fileName = "importVFC_VFC10.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -317,7 +317,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void activityLogVFCTest() throws Exception {
         String fileName = "importVFC_VFC11.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -337,7 +337,7 @@ public class ImportVFCAsset extends SetupCDTest {
     public void removeFileFromGeneralPageVFCTest() throws Exception {
         String fileName = "importVFC_VFC12.yml";
 
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfcNoCreate(atomicResourceMetaData, filePath, fileName, getUser());
 
@@ -354,7 +354,7 @@ public class ImportVFCAsset extends SetupCDTest {
     @Test
     public void maxLengthGeneralInformationVFCTest() throws Exception {
         String fileName = "importVFC_VFC13.yml";
-        atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
+        atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                 ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
         ResourceUIUtils.fillMaxValueResourceGeneralInformationPage(atomicResourceMetaData);

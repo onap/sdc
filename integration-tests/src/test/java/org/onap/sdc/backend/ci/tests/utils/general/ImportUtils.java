@@ -37,11 +37,11 @@ public class ImportUtils {
 		// Config config;
 		// config = Utils.getConfig();
 		//
-		// importReqDetails = ElementFactory.getDefaultImportResource();
+		// importReqDetails = new ElementFactory().getDefaultImportResource();
 		// User sdncUserDetails =
-		// ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		// new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		// ResourceReqDetails resourceDetails =
-		// ElementFactory.getDefaultResource();
+		// new ElementFactory().getDefaultResource();
 		// String sourceDir = config.getResourceConfigDir();
 		// String testResourcesPath = sourceDir + File.separator + workDir;
 		// final String workDir = "importToscaResourceByCreateUrl";

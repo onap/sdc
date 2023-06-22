@@ -48,13 +48,13 @@ public class ReqCap {
 	public static Map<String, ImmutablePair<Map<String, List<CapabilityDefinition>>, Map<String, List<RequirementDefinition>>>> expectedContInstReqCap;
 
 	public static void verifyVFReqCap(String componentId) throws Exception {
-		RestResponse restResponse = ResourceRestUtils.getResource(componentId);
+		RestResponse restResponse = new ResourceRestUtils().getResource(componentId);
 		Resource resource = ResponseParser.parseToObject(restResponse.getResponse(), Resource.class);
 		verifyReqCap(resource);
 	}
 
 	public static void verifyServiceReqCap(String componentId, User sdncDesignerDetails) throws Exception {
-		RestResponse restResponse = ServiceRestUtils.getService(componentId, sdncDesignerDetails);
+		RestResponse restResponse = new ServiceRestUtils().getService(componentId, sdncDesignerDetails);
 		Service service = ResponseParser.parseToObject(restResponse.getResponse(), Service.class);
 		verifyReqCap(service);
 	}
@@ -212,7 +212,7 @@ public class ReqCap {
 	public static void addCompInstReqCapToExpected(ComponentInstance componentInstance,
 			ComponentTypeEnum containerComponentType, User sdncDesignerDetails) throws Exception {
 
-		sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		sdncDesignerDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		String uniqueId = componentInstance.getUniqueId();
 		String name = componentInstance.getName();
 		String originComponentId = componentInstance.getComponentUid();
@@ -220,12 +220,12 @@ public class ReqCap {
 		ComponentTypeEnum compInstType = getCompInstTypeByContainerType(containerComponentType);
 		Component component = null;
 		if (compInstType == ComponentTypeEnum.RESOURCE) {
-			getResponse = ResourceRestUtils.getResource(sdncDesignerDetails, originComponentId);
-			ResourceRestUtils.checkSuccess(getResponse);
+			getResponse = new ResourceRestUtils().getResource(sdncDesignerDetails, originComponentId);
+			new ResourceRestUtils().checkSuccess(getResponse);
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
 		} else if (compInstType == ComponentTypeEnum.SERVICE) {
-			getResponse = ServiceRestUtils.getService(originComponentId, sdncDesignerDetails);
-			ResourceRestUtils.checkSuccess(getResponse);
+			getResponse = new ServiceRestUtils().getService(originComponentId, sdncDesignerDetails);
+			new ResourceRestUtils().checkSuccess(getResponse);
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Service.class);
 		} else {
 			Assert.fail("Unsupported type - " + containerComponentType);
@@ -489,10 +489,10 @@ public class ReqCap {
 		RestResponse getResponse = null;
 		Component component = null;
 		if (componentDetails instanceof Resource) {
-			getResponse = ResourceRestUtils.getResource(sdncAdminDetails, componentDetails.getUniqueId());
+			getResponse = new ResourceRestUtils().getResource(sdncAdminDetails, componentDetails.getUniqueId());
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
 		} else if (componentDetails instanceof Service) {
-			getResponse = ServiceRestUtils.getService((componentDetails.getUniqueId()), sdncAdminDetails);
+			getResponse = new ServiceRestUtils().getService((componentDetails.getUniqueId()), sdncAdminDetails);
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Service.class);
 		} else if (componentDetails instanceof Product) {
 			getResponse = ProductRestUtils.getProduct(componentDetails.getUniqueId(), sdncAdminDetails.getUserId());
@@ -500,7 +500,7 @@ public class ReqCap {
 		} else {
 			Assert.fail("Unsupported type of componentDetails - " + componentDetails.getClass().getSimpleName());
 		}
-		ResourceRestUtils.checkSuccess(getResponse);
+		new ResourceRestUtils().checkSuccess(getResponse);
 		int numberOfActualRIs = component.getComponentInstances() != null ? component.getComponentInstances().size()
 				: 0;
 		int numberOfActualRelations = component.getComponentInstancesRelations() != null
@@ -523,7 +523,7 @@ public class ReqCap {
 	private static RestResponse createComponentInstance(Component containerDetails, Component compInstOriginDetails,
 			User modifier, ComponentTypeEnum containerComponentTypeEnum, boolean isHighestLevel)
 			throws IOException, Exception {
-		ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory
+		ComponentInstanceReqDetails resourceInstanceReqDetails = new ElementFactory()
 				.getComponentInstance(compInstOriginDetails);
 		RestResponse createResourceInstanceResponse = ComponentInstanceRestUtils.createComponentInstance(
 				resourceInstanceReqDetails, modifier, containerDetails.getUniqueId(), containerComponentTypeEnum);
@@ -552,7 +552,7 @@ public class ReqCap {
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, user,
 				containerDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
-		ResourceRestUtils.checkSuccess(associateInstances);
+		new ResourceRestUtils().checkSuccess(associateInstances);
 		deleteAssociatedFromExpected(requirementDef);
 		return associateInstances;
 	}
@@ -585,7 +585,7 @@ public class ReqCap {
 
 		RestResponse dissociateInstances = ComponentInstanceRestUtils.dissociateInstances(requirementDef, user,
 				containerDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
-		ResourceRestUtils.checkSuccess(dissociateInstances);
+		new ResourceRestUtils().checkSuccess(dissociateInstances);
 		addDissociatedToExpected(requirementDef);
 	}
 

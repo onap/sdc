@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
 
 public class SimultaneousApiTest extends ComponentBaseTest {
 
-	protected static ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+	protected static ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 
 	@Rule
 	public static TestName name = new TestName();
@@ -46,7 +46,7 @@ public class SimultaneousApiTest extends ComponentBaseTest {
 	static String userFirstName = "Kot";
 	static String userLastName = "Matroskin";
 	static String email = "km2000@intl.sdc.com";
-	static String role = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN).getRole();
+	static String role = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN).getRole();
 
 	public static class WorkerThread implements Runnable {
 		CountDownLatch countDownLatch;
@@ -61,8 +61,8 @@ public class SimultaneousApiTest extends ComponentBaseTest {
 		public void run() {
 			System.out.println("**** Thread started " + threadIndex);
 			try {
-				RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-						ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+				RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+						new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 				String id = ResponseParser.getUniqueIdFromResponse(createResource);
 				// System.out.println("**** Thread " + threadIndex + " create
 				// resource status " + createResource.getErrorCode() + " id = "

@@ -81,7 +81,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@BeforeMethod
 	public void init() throws Exception {
-		property = ElementFactory.getDefaultProperty();
+		property = new ElementFactory().getDefaultProperty();
 		body = property.propertyToJsonString();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
@@ -221,7 +221,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 			throws Exception {
 		User sdncUserDetails = new User(firstName, lastName, cspUserId, email, role, null);
 
-		User adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User adminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		UserRestUtils.createUser(sdncUserDetails, adminUser);
 
 		return sdncUserDetails;
@@ -245,7 +245,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 		// TODO delete by name
 		// deleteResource(UniqueIdBuilder.buildResourceUniqueId(resourceName,
 		// "0.1"), sdncUserDetails.getUserId());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncUserDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue(createResource.getErrorCode().intValue() == 201);
 		String resourceId = ResponseParser.getUniqueIdFromResponse(createResource);
 		resourceDetails.setUniqueId(resourceId);

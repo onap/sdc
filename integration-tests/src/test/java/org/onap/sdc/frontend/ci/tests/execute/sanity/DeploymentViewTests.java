@@ -68,7 +68,7 @@ public class DeploymentViewTests extends SetupCDTest {
         setLog(baseFileName);
 //		getExtendTest().setDescription(baseFileName);
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToDeploymentViewScreen();
@@ -91,7 +91,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateMinusGroupFlowVF_NEW.csar";
         String updateFileName = "baseUpdateFlowVF_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -117,7 +117,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateFlowVF_NEW.csar";
         String updateFileName = "baseUpdateMinusGroupFlowVF_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", EXPECTED_NUMBER_OF_GROUPS));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -156,7 +156,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String updateFileName = "baseUpdateAddGroupNoMembersUpdateFlow_NEW.csar";
         String updateFileName2 = "baseUpdateFlowVF_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -184,7 +184,7 @@ public class DeploymentViewTests extends SetupCDTest {
     public void deploymentScreenDCAEAssetImportCSARWithArtifactSection_TC1368282_1_Test() throws Exception {
         String baseFileName = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", EXPECTED_NUMBER_OF_GROUPS));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -197,7 +197,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
         String updateFileName = "baseUpdateFlowOneArtifactToGroup_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", EXPECTED_NUMBER_OF_GROUPS));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -217,7 +217,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
         String updateFileName = "baseUpdateFlowOneArtifactToGroup_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 3 artifacts in every group ", EXPECTED_NUMBER_OF_GROUPS));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, updateFileName, getUser());
 
@@ -237,7 +237,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateFlowTwoArtifactsToGroup_NEW.csar";
         String updateFileName = "baseUpdateMixedArtifacts_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups, should be 4 artifacts in every group ", EXPECTED_NUMBER_OF_GROUPS));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 
@@ -257,7 +257,7 @@ public class DeploymentViewTests extends SetupCDTest {
         String baseFileName = "baseUpdateMinusGroupFlowVF_NEW.csar";
         String updateFileName = "baseUpdateFlowVF_NEW.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating resource with %s groups ", 2));
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, baseFileName, getUser());
 //		SetupCDTest.getExtendTest().log(Status.INFO, String.format("Validating %s group version, should be %s ", moduleRowText, metaDataFromUI.get(moduleRowText.split("\\.\\.")[1])));

@@ -68,7 +68,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 	// Keep
 	@Test
 	public void updateResourceMetadataSuccess() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		sdncModifierDetails.setUserId("jh0003");
 		RestResponse restResponse = createResourceForUpdate(sdncModifierDetails);
 		Resource resourceRespJavaObject = ResponseParser
@@ -123,7 +123,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 	}
 
 	protected void deleteResource(String resourceUniqueId, String httpCspUserId) throws Exception {
-		RestResponse res = ResourceRestUtils.deleteResource(resourceUniqueId, httpCspUserId);
+		RestResponse res = new ResourceRestUtils().deleteResource(resourceUniqueId, httpCspUserId);
 
 		// System.out.println("Delete resource was finished with response: " +
 		// res.getErrorCode());
@@ -134,7 +134,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = getResourceObj();
 
 		// create resource
-		return ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		return new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 	}
 
@@ -209,7 +209,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 			httpget.addHeader(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 
 			httpget.addHeader(HttpHeaderEnum.USER_ID.getValue(),
-					ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+					new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 
 			// System.out.println("Executing request " +
 			// httpget.getRequestLine());
@@ -235,7 +235,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 
 	@Test
 	public void updateResourceMetadata_methodNotAllowed() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		Config config = Utils.getConfig();
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
@@ -274,13 +274,13 @@ public class ResourceApiTest extends ComponentBaseTest {
 
 	@Test
 	public void validateResourceNameTest() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		sdncModifierDetails.setUserId("jh0003");
 
 		ResourceReqDetails resourceDetails = getResourceObj();
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		Resource resourceRespJavaObject = ResponseParser
 				.convertResourceResponseToJavaObject(restResponse.getResponse());
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -343,7 +343,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 		}
 
 		// Delete resource
-		ResourceRestUtils.deleteResource(resourceDetails, sdncModifierDetails, "0.1");
+		new ResourceRestUtils().deleteResource(resourceDetails, sdncModifierDetails, "0.1");
 
 	}
 
@@ -354,7 +354,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 	// for (int i = 0; i < 100; i++) {
 	// ResourceReqDetails resourceDetails = defineResourse_Benny(i);
 	//
-	// ResourceRestUtils.createResource(resourceDetails,
+	// new ResourceRestUtils().createResource(resourceDetails,
 	// UserUtils.getDesignerDetails());
 	// // resourceUtils.deleteResource(resourceDetails,
 	// UserUtils.getDesignerDetails(), "0.1");

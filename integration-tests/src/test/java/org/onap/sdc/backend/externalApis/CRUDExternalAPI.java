@@ -219,17 +219,17 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         int numberOfArtifact = 0;
 
         // get artifact data
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, false);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, false);
 
         // create component/s & upload artifact via external api
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
             component = getComponentWithResourceInstanceInTargetLifeCycleState(chosenLifeCycleState, resourceTypeEnum);
-            restResponse = uploadArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
+            restResponse = uploadArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
             component = getNewerVersionOfComponent(component, chosenLifeCycleState);
             numberOfArtifact = (component.getComponentInstances().get(0).getDeploymentArtifacts() == null ? 0 : component.getComponentInstances().get(0).getDeploymentArtifacts().size());
         } else {
             component = getComponentInTargetLifeCycleState(componentTypeEnum.toString(), UserRoleEnum.DESIGNER, chosenLifeCycleState, resourceTypeEnum);
-            restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
+            restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
             component = updateComponentDetailsByLifeCycleState(chosenLifeCycleState, component);
             numberOfArtifact = component.getDeploymentArtifacts().size();
         }
@@ -240,7 +240,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         Assert.assertEquals(numberOfArtifact, deploymentArtifacts.keySet().size(), "Expected that number of deployment artifacts will be increase by one.");
 
         // Download the uploaded artifact via external API
-        downloadResourceDeploymentArtifactExternalAPI(component, deploymentArtifacts.get(responseArtifact.getArtifactLabel()), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentTypeEnum);
+        downloadResourceDeploymentArtifactExternalAPI(component, deploymentArtifacts.get(responseArtifact.getArtifactLabel()), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentTypeEnum);
         return component;
     }
 
@@ -254,7 +254,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
      */
     public Component updateComponentDetailsByLifeCycleState(LifeCycleStatesEnum chosenLifeCycleState, Component component) throws Exception {
         if (LifeCycleStatesEnum.CHECKOUT.equals(chosenLifeCycleState)) {
-            component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+            component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         } else {
             component = getNewerVersionOfComponent(component, chosenLifeCycleState);
         }
@@ -263,7 +263,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
     // Upload artifact via external API + Check auditing for upload operation + Check response of external API
     public RestResponse uploadArtifactOfRIIncludingValiditionOfAuditAndResponseCode(Component component, ComponentInstance componentInstance, User sdncModifierDetails, ArtifactReqDetails artifactReqDetails, Integer expectedResponseCode) throws Exception {
-        RestResponse restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, component.getComponentInstances().get(0));
+        RestResponse restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, component.getComponentInstances().get(0));
 
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
@@ -278,18 +278,18 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             component = getComponentInTargetLifeCycleState(ComponentTypeEnum.SERVICE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
 
             Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, null);
-            AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+            new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
 
             // Add artifact to service if asked for certification request - must be at least one artifact for the flow
 //			if((LifeCycleStatesEnum.CERTIFICATIONREQUEST == lifeCycleStatesEnum) || (LifeCycleStatesEnum.STARTCERTIFICATION == lifeCycleStatesEnum)) {
 //			}
-            AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, component, UserRoleEnum.DESIGNER, true, true).left().value();
-            component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
+            new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, component, UserRoleEnum.DESIGNER, true, true).left().value();
+            component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
         } else {
             component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
             Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, resourceTypeEnum);
-            AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-            component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
+            new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+            component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
         }
         return component;
     }
@@ -321,9 +321,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             String resourceUniqueID = component.getUniqueId();
 
             if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-                resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
+                resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
             } else {
-                resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
+                resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
             }
 
             String resourceNewVersion = resourceDetails.getVersion();
@@ -338,9 +338,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             Assert.assertNotEquals(resourceUniqueID, resourceNewUniqueID, "Expected that resource will have new unique ID.");
         } else {
             if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-                resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+                resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
             } else {
-                resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+                resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
             }
         }
         return resourceDetails;
@@ -352,9 +352,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         RestResponse restResponse;
 
         if (componentTypeEnum == ComponentTypeEnum.RESOURCE_INSTANCE) {
-            restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(component.getUUID(), component.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
+            restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(component.getUUID(), component.getComponentInstances().get(0).getNormalizedName(), artifactDefinition.getArtifactUUID(), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
         } else {
-            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(component.getUUID(), artifactDefinition.getArtifactUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
+            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(component.getUUID(), artifactDefinition.getArtifactUUID(), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
         }
 
         Integer responseCode = restResponse.getErrorCode();
@@ -584,48 +584,48 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ArtifactReqDetails artifactReqDetails;
 
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
 
             resourceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.SERVICE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
             resourceDetails = getComponentWithResourceInstanceInTargetLifeCycleState(chosenLifeCycleState, null);
             componentResourceInstanceDetails = resourceDetails.getComponentInstances().get(0);
         } else {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
             resourceDetails = getComponentInTargetLifeCycleState(componentTypeEnum.toString(), UserRoleEnum.DESIGNER, chosenLifeCycleState, null);
         }
 
 
         switch (uploadArtifactTestType) {
             case "uploadArtifactWithInvalidTypeToLong":
-                uploadArtifactWithInvalidTypeToLong(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidTypeToLong(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidTypeEmpty":
-                uploadArtifactWithInvalidTypeEmpty(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidTypeEmpty(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidCheckSum":
-                uploadArtifactWithInvalidCheckSum(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidCheckSum(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidNameToLong":
-                uploadArtifactWithInvalidNameToLong(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidNameToLong(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidNameEmpty":
-                uploadArtifactWithInvalidNameEmpty(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidNameEmpty(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidLabelToLong":
-                uploadArtifactWithInvalidLabelToLong(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidLabelToLong(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidLabelEmpty":
-                uploadArtifactWithInvalidLabelEmpty(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidLabelEmpty(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidDescriptionToLong":
-                uploadArtifactWithInvalidDescriptionToLong(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidDescriptionToLong(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithInvalidDescriptionEmpty":
-                uploadArtifactWithInvalidDescriptionEmpty(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithInvalidDescriptionEmpty(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
             case "uploadArtifactWithSameLabel":
             default:
-                uploadArtifactWithSameLabel(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+                uploadArtifactWithSameLabel(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
                 break;
         }
     }
@@ -637,7 +637,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED.name());
         List<String> variables = asList(artifactReqDetails.getArtifactType());
 
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -648,7 +648,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED.name());
         List<String> variables = asList(artifactReqDetails.getArtifactType());
 
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -657,7 +657,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
                                                      ComponentInstance componentResourceInstanceDetails) throws Exception {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_INVALID_MD5.name());
         List<String> variables = asList();
-        uploadArtifactWithInvalidCheckSumOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactWithInvalidCheckSumOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables);
     }
 
@@ -667,7 +667,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
         List<String> variables = asList("artifact name", "255");
         artifactReqDetails.setArtifactName("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -678,7 +678,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         List<String> variables = asList();
 
         artifactReqDetails.setArtifactName("");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -690,7 +690,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
         List<String> variables = asList("artifact label", "255");
         artifactReqDetails.setArtifactLabel("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -701,7 +701,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_DATA.name());
         List<String> variables = asList("artifact label");
         artifactReqDetails.setArtifactLabel("");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -712,7 +712,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
         List<String> variables = asList("artifact description", "256");
         artifactReqDetails.setDescription("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -724,7 +724,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_DATA.name());
         List<String> variables = asList("artifact description");
         artifactReqDetails.setDescription("");
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -734,9 +734,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
         RestResponse restResponse = null;
         if (componentResourceInstanceDetails != null) {
-            restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+            restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
         } else {
-            restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfTheAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails);
+            restResponse = ArtifactRestUtils.externalAPIUploadArtifactOfTheAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails);
 
         }
 
@@ -744,9 +744,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_EXIST.name());
 
         List<String> variables = asList(artifactDefinition.getArtifactDisplayName());
-        ArtifactReqDetails artifactReqDetailsSameLabel = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_EVENT.toString(), true, false);
+        ArtifactReqDetails artifactReqDetailsSameLabel = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_EVENT.toString(), true, false);
         artifactReqDetailsSameLabel.setArtifactLabel(artifactReqDetails.getArtifactLabel());
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetailsSameLabel, componentResourceInstanceDetails, errorInfo, variables, null, false);
     }
 
@@ -770,9 +770,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
                                                                                                              ComponentInstance componentResourceInstanceDetails, ErrorInfo errorInfo, List<String> variables) throws Exception {
         RestResponse restResponse;
         if (componentResourceInstanceDetails != null) {
-            restResponse = ArtifactRestUtils.externalAPIUploadArtifactWithInvalidCheckSumOfComponentInstanceOnAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+            restResponse = ArtifactRestUtils.externalAPIUploadArtifactWithInvalidCheckSumOfComponentInstanceOnAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
         } else {
-            restResponse = ArtifactRestUtils.externalAPIUploadArtifactWithInvalidCheckSumOfTheAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails);
+            restResponse = ArtifactRestUtils.externalAPIUploadArtifactWithInvalidCheckSumOfTheAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails);
 
         }
         // validate response code
@@ -825,12 +825,12 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ArtifactReqDetails artifactReqDetails;
 
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
 
             resourceDetails = getComponentWithResourceInstanceInTargetLifeCycleState(lifeCycleStatesEnum, null);
             componentResourceInstanceDetails = resourceDetails.getComponentInstances().get(0);
         } else {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
 
             resourceDetails = getComponentInTargetLifeCycleState(componentTypeEnum.toString(), UserRoleEnum.DESIGNER, lifeCycleStatesEnum, null);
         }
@@ -838,7 +838,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
         List<String> variables = asList();
 
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, ElementFactory.getDefaultUser(userRoleEnum),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, new ElementFactory().getDefaultUser(userRoleEnum),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, lifeCycleStatesEnum, true);
 
     }
@@ -862,7 +862,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ArtifactReqDetails artifactReqDetails;
 
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.DCAE_INVENTORY_DOC.toString(), true, false);
 
             resourceDetails = getComponentWithResourceInstanceInTargetLifeCycleState(LifeCycleStatesEnum.CHECKIN, null);
             componentResourceInstanceDetails = resourceDetails.getComponentInstances().get(0);
@@ -870,7 +870,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             resourceDetails.setUUID("12345");
             componentResourceInstanceDetails.setNormalizedName("12345");
         } else {
-            artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.getType(), true, false);
+            artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.getType(), true, false);
 
             resourceDetails = getComponentInTargetLifeCycleState(componentTypeEnum.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, null);
 
@@ -884,7 +884,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(componentTypeError);
         List<String> variables = asList(resourceDetails.getUUID());
 
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, LifeCycleStatesEnum.CHECKIN, false);
     }
 
@@ -900,14 +900,14 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         getExtendTest().log(Status.INFO, String.format("componentTypeEnum: %s", componentTypeEnum));
         ComponentInstance componentResourceInstanceDetails = null;
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("Abcd", ArtifactTypeEnum.OTHER.toString(), true, false);
         Component resourceDetails = getComponentInTargetLifeCycleState(componentTypeEnum.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, null);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
         List<String> variables = asList(resourceDetails.getName(), resourceDetails.getComponentType().toString().toLowerCase(), resourceDetails.getLastUpdaterFullName().split(" ")[0],
                 resourceDetails.getLastUpdaterFullName().split(" ")[1], resourceDetails.getLastUpdaterUserId());
 
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 artifactReqDetails, componentResourceInstanceDetails, errorInfo, variables, LifeCycleStatesEnum.STARTCERTIFICATION, true);
     }
 
@@ -955,7 +955,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // for certify version check that previous version exist, and that it artifact can be download + checksum
         if (lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFY)) {
             // Download the uploaded artifact via external API
-            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.SERVICE);
+            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.SERVICE);
         }
     }
 
@@ -1002,7 +1002,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // for certify version check that previous version exist, and that it artifact can be download + checksum
         if (lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFY)) {
             // Download the uploaded artifact via external API
-            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE);
+            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE);
         }
     }
 
@@ -1081,7 +1081,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // for certify version check that previous version exist, and that it artifact can be download + checksum
         if (lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFY)) {
             // Download the uploaded artifact via external API
-            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE);
+            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE);
         }
     }
 
@@ -1100,12 +1100,12 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         getExtendTest().log(Status.INFO, String.format("resourceTypeEnum: %s", resourceTypeEnum));
 
         Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, resourceTypeEnum);
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
-        resourceInstanceDetails = AtomicOperationUtils.changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
+        resourceInstanceDetails = new AtomicOperationUtils().changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         Component component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-        component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+        component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         Map<String, ArtifactDefinition> deploymentArtifacts;
@@ -1151,7 +1151,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // for certify version check that previous version exist, and that it artifact can be download + checksum
         if (chosenLifeCycleState.equals(LifeCycleStatesEnum.CERTIFY)) {
             // Download the uploaded artifact via external API
-            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE_INSTANCE);
+            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE_INSTANCE);
         }
     }
 
@@ -1226,7 +1226,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // for certify version check that previous version exist, and that it artifact can be download + checksum
         if (chosenLifeCycleState.equals(LifeCycleStatesEnum.CERTIFY)) {
             // Download the uploaded artifact via external API
-            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE_INSTANCE);
+            downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(component, artifactType, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), ComponentTypeEnum.RESOURCE_INSTANCE);
         }
     }
 
@@ -1302,10 +1302,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         List<String> variables = asList(invalidArtifactUUID);
 
         if (componentTypeEnum.equals(ComponentTypeEnum.RESOURCE_INSTANCE)) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, invalidArtifactUUID, errorInfo, variables, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, invalidArtifactUUID, errorInfo, variables, null, true);
 
         }
@@ -1320,7 +1320,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER.name());
 
             variables = asList("invalidNormalizedName", ComponentTypeEnum.RESOURCE_INSTANCE.getValue().toLowerCase(), ComponentTypeEnum.SERVICE.getValue(), component.getName());
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, variables, LifeCycleStatesEnum.CHECKIN, true);
         } else {
             component.setUUID("invalidComponentUUID");
@@ -1328,7 +1328,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESOURCE_NOT_FOUND.name());
             variables = asList("null");
 
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, variables, LifeCycleStatesEnum.CHECKIN, false);
         }
         performClean();
@@ -1346,8 +1346,8 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         getExtendTest().log(Status.INFO, String.format("componentTypeEnum: %s, artifactType: %s", componentTypeEnum, artifactType));
         Component component = uploadArtifactOnAssetViaExternalAPI(componentTypeEnum, LifeCycleStatesEnum.CHECKIN, artifactType, null);
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
-        List<String> variables = asList(component.getName(), component.getComponentType().toString().toLowerCase(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getFirstName(),
-                ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getLastName(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getUserId());
+        List<String> variables = asList(component.getName(), component.getComponentType().toString().toLowerCase(), new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getFirstName(),
+                new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getLastName(), new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getUserId());
         updateArtifactOnAssetViaExternalAPI(component, componentTypeEnum, LifeCycleStatesEnum.STARTCERTIFICATION, artifactType, errorInfo, variables, UserRoleEnum.DESIGNER);
 
     }
@@ -1438,30 +1438,30 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             component = uploadArtifactOnAssetViaExternalAPI(componentTypeEnum, LifeCycleStatesEnum.CHECKIN, artifactType, null);
         }
 
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
 
         switch (uploadArtifactTestType) {
             case "updateArtifactWithInvalidCheckSum":
-                updateArtifactWithInvalidCheckSum(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidCheckSum(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidNameToLong":
-                updateArtifactWithInvalidNameToLong(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidNameToLong(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidNameEmpty":
-                updateArtifactWithInvalidNameEmpty(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidNameEmpty(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidLabelToLong":
-                updateArtifactWithInvalidLabelToLong(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidLabelToLong(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidLabelEmpty":
-                updateArtifactWithInvalidLabelEmpty(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidLabelEmpty(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidDescriptionToLong":
-                updateArtifactWithInvalidDescriptionToLong(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidDescriptionToLong(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
             case "updateArtifactWithInvalidDescriptionEmpty":
             default:
-                updateArtifactWithInvalidDescriptionEmpty(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
+                updateArtifactWithInvalidDescriptionEmpty(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactType, componentInstance);
                 break;
         }
 
@@ -1471,10 +1471,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 ////		// invalid type
 ////		String artifactType = artifactReqDetails.getArtifactType();
 ////		artifactReqDetails.setArtifactType("invalidType");
-////		restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+////		restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
 ////		// empty type
 ////		artifactReqDetails.setArtifactType("");
-////		restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
+////		restResponse = uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentResourceInstanceDetails);
 ////		artifactReqDetails.setArtifactType(artifactType);
 ///////////////////////////////////////////////////////////////////////////////			
     }
@@ -1491,7 +1491,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidNameToLong(Component component, User sdncModifierDetails, String artifactType,
                                                        ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
@@ -1499,10 +1499,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         artifactReqDetails.setArtifactName("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
 
         }
@@ -1512,7 +1512,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidNameEmpty(Component component, User sdncModifierDetails, String artifactType,
                                                       ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_ARTIFACT_NAME.name());
@@ -1520,10 +1520,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         artifactReqDetails.setArtifactName("");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
 
         }
@@ -1534,17 +1534,17 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidLabelToLong(Component component, User sdncModifierDetails, String artifactType,
                                                         ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         artifactReqDetails.setArtifactLabel("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, null, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, null, null, true);
 
         }
@@ -1555,17 +1555,17 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidLabelEmpty(Component component, User sdncModifierDetails, String artifactType,
                                                        ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         artifactReqDetails.setArtifactLabel("");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, null, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, null, null, true);
 
         }
@@ -1575,7 +1575,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidDescriptionToLong(Component component, User sdncModifierDetails, String artifactType,
                                                               ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.EXCEEDS_LIMIT.name());
@@ -1583,10 +1583,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         artifactReqDetails.setDescription("invalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeinvalGGfdsiofhdsouhfoidshfoidshoifhsdoifhdsouihfdsofhiufdsghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidTypeghiufghodhfioudsgafodsgaiofudsghifudsiugfhiufawsouipfhgawseiupfsadiughdfsoiuhgfaighfpasdghfdsaqgfdsgdfgidType");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
 
         }
@@ -1614,7 +1614,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     protected void updateArtifactWithInvalidDescriptionEmpty(Component component, User sdncModifierDetails, String artifactType,
                                                              ComponentInstance componentInstance) throws Exception {
 
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = getFirstArtifactUuidFromComponent(component);
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_DATA.name());
@@ -1622,10 +1622,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         artifactReqDetails.setDescription("");
 
         if (componentInstance != null) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactReqDetails, artifactUUID, errorInfo, variables, null, true);
         }
     }
@@ -1638,7 +1638,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         String componentVersionBeforeUpdate = null;
 
         // get updated artifact data
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         componentVersionBeforeUpdate = component.getVersion();
 
         Map<String, ArtifactDefinition> deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
@@ -1649,22 +1649,22 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         String artifactVersionBeforeUpdate = deploymentArtifacts.get(artifactName).getArtifactVersion();
         int numberOfArtifact = deploymentArtifacts.size();
 
-        ArtifactReqDetails updateArtifactReqDetails = ElementFactory.getArtifactByType(ArtifactTypeEnum.SNMP_POLL.name(), ArtifactTypeEnum.SNMP_POLL.name(), true, true);
+        ArtifactReqDetails updateArtifactReqDetails = new ElementFactory().getArtifactByType(ArtifactTypeEnum.SNMP_POLL.name(), ArtifactTypeEnum.SNMP_POLL.name(), true, true);
         updateArtifactReqDetails.setPayload("dGVzdA==");
 
         // create component/s & upload artifact via external api
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(userRoleEnum),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(userRoleEnum),
                     component.getComponentInstances().get(0), updateArtifactReqDetails, artifactUUID, errorInfo, variables, chosenLifeCycleState, true);
         } else {
-            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(userRoleEnum),
+            updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(userRoleEnum),
                     null, updateArtifactReqDetails, artifactUUID, errorInfo, variables, chosenLifeCycleState, true);
         }
 
         if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-            component = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+            component = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
         } else {
-            component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+            component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
         }
 
         // Get list of deployment artifact + download them via external API
@@ -1698,7 +1698,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // validate response code
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, errorInfo.getCode(), "Response code is not correct.");
-        component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+        component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
@@ -1708,7 +1708,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     // And download artifact of component which starts with ci
     protected RestResponse downloadResourceDeploymentArtifactExternalAPIAndComparePayLoadOfArtifactType(Component component, String artifactType, User sdncModifierDetails, ComponentTypeEnum componentTypeEnum) throws IOException, Exception {
         // Download the uploaded artifact via external API
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("abcd", artifactType, true, false);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("abcd", artifactType, true, false);
         String artifactName = null;
         for (String key : component.getDeploymentArtifacts().keySet()) {
             if (key.startsWith("ci")) {
@@ -1737,7 +1737,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
     // get deploymentArtifact of asset and artifactType -> generate new artifact that can be updated on the asset
     protected ArtifactReqDetails getUpdatedArtifact(Map<String, ArtifactDefinition> deploymentArtifacts, String artifactType) throws IOException, Exception {
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
 
         for (String key : deploymentArtifacts.keySet()) {
             if (key.startsWith("ci")) {
@@ -1762,7 +1762,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         String componentVersionBeforeUpdate = null;
 
         // get updated artifact data
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", artifactType, true, true);
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", artifactType, true, true);
         String artifactUUID = null;
         Map<String, ArtifactDefinition> deploymentArtifacts;
         deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
@@ -1779,16 +1779,16 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             }
         }
 
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         componentVersionBeforeUpdate = component.getVersion();
         deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
         numberOfArtifact = deploymentArtifacts.size();
 
         // create component/s & upload artifact via external api
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            restResponse = updateArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID, 200);
+            restResponse = updateArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID, 200);
         } else {
-            restResponse = updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID, 200);
+            restResponse = updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID, 200);
         }
 
         ArtifactDefinition responseArtifact = ResponseParser.convertArtifactDefinitionResponseToJavaObject(restResponse.getResponse());
@@ -1806,7 +1806,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         }
 
         // Download the uploaded artifact via external API
-        downloadResourceDeploymentArtifactExternalAPI(component, deploymentArtifacts.get(responseArtifact.getArtifactLabel()), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentTypeEnum);
+        downloadResourceDeploymentArtifactExternalAPI(component, deploymentArtifacts.get(responseArtifact.getArtifactLabel()), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, componentTypeEnum);
 
         return component;
     }
@@ -1814,7 +1814,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
     // Update artifact via external API + Check auditing for upload operation + Check response of external API
     protected RestResponse updateArtifactOfRIIncludingValiditionOfAuditAndResponseCode(Component component, ComponentInstance componentInstance, User sdncModifierDetails, ArtifactReqDetails artifactReqDetails, String artifactUUID, Integer expectedResponseCode) throws Exception {
-        RestResponse restResponse = ArtifactRestUtils.externalAPIUpdateArtifactOfComponentInstanceOnAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, component.getComponentInstances().get(0), artifactUUID);
+        RestResponse restResponse = ArtifactRestUtils.externalAPIUpdateArtifactOfComponentInstanceOnAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, component.getComponentInstances().get(0), artifactUUID);
 
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
@@ -1825,7 +1825,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
     // Update artifact via external API + Check auditing for upload operation + Check response of external API
     protected RestResponse updateArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(Component component, User sdncModifierDetails, ArtifactReqDetails artifactReqDetails, String artifactUUID, Integer expectedResponseCode) throws Exception {
-        RestResponse restResponse = ArtifactRestUtils.externalAPIUpdateArtifactOfTheAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID);
+        RestResponse restResponse = ArtifactRestUtils.externalAPIUpdateArtifactOfTheAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, artifactUUID);
 
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
@@ -2142,15 +2142,15 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         List<String> variables = asList();
 
         if (componentTypeEnum.equals(ComponentTypeEnum.RESOURCE_INSTANCE)) {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(userRoleEnum),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(userRoleEnum),
                     component.getComponentInstances().get(0), artifactUUID, errorInfo, variables, lifeCycleStatesEnum, true);
         } else {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(userRoleEnum),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(userRoleEnum),
                     null, artifactUUID, errorInfo, variables, lifeCycleStatesEnum, true);
         }
 
         //TODO
-//		downloadResourceDeploymentArtifactExternalAPI(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, componentTypeEnum);
+//		downloadResourceDeploymentArtifactExternalAPI(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, componentTypeEnum);
     }
 
 
@@ -2186,10 +2186,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         List<String> variables = asList(invalidArtifactUUID);
 
         if (componentTypeEnum.equals(ComponentTypeEnum.RESOURCE_INSTANCE)) {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), invalidArtifactUUID, errorInfo, variables, null, true);
         } else {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, invalidArtifactUUID, errorInfo, variables, null, true);
 
         }
@@ -2198,7 +2198,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             component.getComponentInstances().get(0).setNormalizedName("invalidNormalizedName");
             errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER.name());
             variables = asList("invalidNormalizedName", ComponentTypeEnum.RESOURCE_INSTANCE.getValue().toLowerCase(), ComponentTypeEnum.SERVICE.getValue(), component.getName());
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactUUID, errorInfo, variables, LifeCycleStatesEnum.CHECKIN, true);
         } else {
             component.setUUID("invalidComponentUUID");
@@ -2208,7 +2208,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
                 errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.SERVICE_NOT_FOUND.name());
             }
             variables = asList("invalidComponentUUID");
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactUUID, errorInfo, variables, LifeCycleStatesEnum.CHECKIN, false);
         }
 
@@ -2226,7 +2226,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     public void deleteArtifactOnAssetWhichInInvalidStateForUploading(ComponentTypeEnum componentTypeEnum, String artifactType) throws Exception {
         getExtendTest().log(Status.INFO, String.format("componentTypeEnum: %s, artifactType: %s", componentTypeEnum, artifactType));
         Component component = uploadArtifactOnAssetViaExternalAPI(componentTypeEnum, LifeCycleStatesEnum.CHECKOUT, artifactType, null);
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 
         Map<String, ArtifactDefinition> deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
         String artifactUUID = null;
@@ -2238,14 +2238,14 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         }
         // Invalid artifactUUID
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
-        List<String> variables = asList(component.getName(), component.getComponentType().toString().toLowerCase(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getFirstName(),
-                ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getLastName(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getUserId());
+        List<String> variables = asList(component.getName(), component.getComponentType().toString().toLowerCase(), new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getFirstName(),
+                new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getLastName(), new ElementFactory().getDefaultUser(UserRoleEnum.TESTER).getUserId());
 
         if (componentTypeEnum.equals(ComponentTypeEnum.RESOURCE_INSTANCE)) {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     component.getComponentInstances().get(0), artifactUUID, errorInfo, variables, null, true);
         } else {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                     null, artifactUUID, errorInfo, variables, null, true);
 
         }
@@ -2268,12 +2268,12 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         getExtendTest().log(Status.INFO, String.format("resourceTypeEnum: %s", resourceTypeEnum));
 
         Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, resourceTypeEnum);
-        ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
-        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
-        resourceInstanceDetails = AtomicOperationUtils.changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        ArtifactReqDetails artifactReqDetails = new ElementFactory().getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
+        uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
+        resourceInstanceDetails = new AtomicOperationUtils().changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         Component component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-        component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+        component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         Map<String, ArtifactDefinition> deploymentArtifacts;
@@ -2286,7 +2286,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             }
         }
         List<String> variables = asList(artifactUUID);
-        deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+        deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
                 component.getComponentInstances().get(0), artifactUUID, errorInfo, variables, null, true);
     }
 
@@ -2313,9 +2313,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     // delete artifact via external API + check audit & response code
     protected Component deleteArtifactOnAssetViaExternalAPI(Component component, ComponentTypeEnum componentTypeEnum, LifeCycleStatesEnum chosenLifeCycleState) throws Exception {
         String artifactName = null;
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         if (!LifeCycleStatesEnum.CHECKOUT.equals(chosenLifeCycleState)) {
-            component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+            component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         } else {
             component = getNewerVersionOfComponent(component, chosenLifeCycleState);
         }
@@ -2341,9 +2341,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 
         // create component/s & upload artifact via external api
         if (ComponentTypeEnum.RESOURCE_INSTANCE == componentTypeEnum) {
-            deleteArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, 200);
+            deleteArtifactOfRIIncludingValiditionOfAuditAndResponseCode(component, component.getComponentInstances().get(0), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, 200);
         } else {
-            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, 200);
+            deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, 200);
         }
 
         component = updateComponentDetailsByLifeCycleState(chosenLifeCycleState, component);
@@ -2365,31 +2365,31 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             Assert.assertEquals(String.format("%.1f", (Double.parseDouble(componentVersionBeforeDelete) + 0.1)), component.getVersion(), "Expected that non check-out component version will increase by 0.1.");
         }
 
-        downloadResourceDeploymentArtifactExternalAPI(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, componentTypeEnum);
+        downloadResourceDeploymentArtifactExternalAPI(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID, componentTypeEnum);
 
         return component;
     }
 
     // Delete artifact via external API + Check auditing for upload operation + Check response of external API
     protected RestResponse deleteArtifactOfRIIncludingValiditionOfAuditAndResponseCode(Component component, ComponentInstance componentInstance, User sdncModifierDetails, String artifactUUID, Integer expectedResponseCode) throws Exception {
-        RestResponse restResponse = ArtifactRestUtils.externalAPIDeleteArtifactOfComponentInstanceOnAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentInstances().get(0), artifactUUID);
+        RestResponse restResponse = ArtifactRestUtils.externalAPIDeleteArtifactOfComponentInstanceOnAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentInstances().get(0), artifactUUID);
 
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, expectedResponseCode, "Response code is not correct.");
-//		component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+//		component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
 
     // Delete artifact via external API + Check auditing for upload operation + Check response of external API
     protected RestResponse deleteArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(Component component, User sdncModifierDetails, String artifactUUID, Integer expectedResponseCode) throws Exception {
-        RestResponse restResponse = ArtifactRestUtils.externalAPIDeleteArtifactOfTheAsset(component, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID);
+        RestResponse restResponse = ArtifactRestUtils.externalAPIDeleteArtifactOfTheAsset(component, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), artifactUUID);
 
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, expectedResponseCode, "Response code is not correct.");
-//		component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+//		component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
@@ -2399,9 +2399,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         RestResponse restResponse;
 
         if (componentTypeEnum == ComponentTypeEnum.RESOURCE_INSTANCE) {
-            restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(component.getUUID(), component.getComponentInstances().get(0).getNormalizedName(), artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
+            restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(component.getUUID(), component.getComponentInstances().get(0).getNormalizedName(), artifactUUID, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
         } else {
-            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(component.getUUID(), artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
+            restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(component.getUUID(), artifactUUID, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), component.getComponentType().toString());
         }
 
         Integer responseCode = restResponse.getErrorCode();
@@ -2420,17 +2420,17 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             if (resourceTypeEnum == null) {
                 resourceTypeEnum = ResourceTypeEnum.VF;
             }
-            Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
+            Either<Resource, RestResponse> createdResource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
             resourceDetails = createdResource.left().value();
-            resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
+            resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
         } else {
-            Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(creatorUser, true);
+            Either<Service, RestResponse> createdResource = new AtomicOperationUtils().createDefaultService(creatorUser, true);
             resourceDetails = createdResource.left().value();
             // Add artifact to service if asked for certifcationrequest - must be at least one artifact for the flow
             if ((LifeCycleStatesEnum.CERTIFICATIONREQUEST == targetLifeCycleState) || (LifeCycleStatesEnum.STARTCERTIFICATION == targetLifeCycleState)) {
-                AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetails, UserRoleEnum.DESIGNER, true, true).left().value();
+                new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetails, UserRoleEnum.DESIGNER, true, true).left().value();
             }
-            resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
+            resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
         }
         return resourceDetails;
     }

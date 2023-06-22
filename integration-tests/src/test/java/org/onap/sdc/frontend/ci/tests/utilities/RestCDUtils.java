@@ -70,7 +70,7 @@ public class RestCDUtils {
             RestResponse getResourceResponse = null;
             String resourceUniqueId = resource.getUniqueId();
             if (resourceUniqueId != null) {
-                getResourceResponse = ResourceRestUtils.getResource(resourceUniqueId);
+                getResourceResponse = new ResourceRestUtils().getResource(resourceUniqueId);
                 if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                     ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
                     System.out.println(succeedGetResourceMsg);
@@ -78,7 +78,7 @@ public class RestCDUtils {
                 return getResourceResponse;
             }
             JSONObject getResourceJSONObject = null;
-            getResourceResponse = ResourceRestUtils.getResourceByNameAndVersion(user.getUserId(), resource.getName(), resource.getVersion());
+            getResourceResponse = new ResourceRestUtils().getResourceByNameAndVersion(user.getUserId(), resource.getName(), resource.getVersion());
             if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(resource, getResourceResponse);
                 ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
@@ -96,7 +96,7 @@ public class RestCDUtils {
         final int threadSleepTime = 3500;
         try {
             Thread.sleep(threadSleepTime);
-            RestResponse getServiceResponse = ServiceRestUtils.getServiceByNameAndVersion(user, service.getName(),
+            RestResponse getServiceResponse = new ServiceRestUtils().getServiceByNameAndVersion(user, service.getName(),
                 service.getVersion());
             if (getServiceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(service, getServiceResponse);
@@ -124,14 +124,14 @@ public class RestCDUtils {
     }
 
     public static Map<String, List<Component>> getCatalogAsMap() throws IOException {
-        User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+        User defaultAdminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
         RestResponse catalog = CatalogRestUtils.getCatalog(defaultAdminUser.getUserId());
         return ResponseParser.convertCatalogResponseToJavaObject(catalog.getResponse());
     }
 
     public static Map<String, List<CategoryDefinition>> getCategories() throws Exception {
 
-        User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+        User defaultAdminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
         Map<String, List<CategoryDefinition>> map = new HashMap<>();
 
@@ -152,31 +152,31 @@ public class RestCDUtils {
 
         System.out.println("going to delete all created components...");
 
-        User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+        User defaultAdminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
         final String userId = defaultAdminUser.getUserId();
 
         List<Component> resourcesArrayList = map.get("resources");
-        List<String> collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(ElementFactory.getResourcePrefix())).
+        List<String> collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(new ElementFactory().getResourcePrefix())).
             map(e -> e.getUniqueId()).
             collect(Collectors.toList());
         for (String uId : collect) {
-            ResourceRestUtils.markResourceToDelete(uId, userId);
+            new ResourceRestUtils().markResourceToDelete(uId, userId);
 
         }
-        ResourceRestUtils.deleteMarkedResources(userId);
+        new ResourceRestUtils().deleteMarkedResources(userId);
 
         resourcesArrayList = map.get("services");
         collect = resourcesArrayList.stream().
             filter(e -> e != null).
             filter(e -> e.getName() != null).
-            filter(s -> s.getName().startsWith(ElementFactory.getServicePrefix())).
+            filter(s -> s.getName().startsWith(new ElementFactory().getServicePrefix())).
             filter(e -> e.getUniqueId() != null).
             map(e -> e.getUniqueId()).
             collect(Collectors.toList());
         for (String uId : collect) {
-            ServiceRestUtils.markServiceToDelete(uId, userId);
+            new ServiceRestUtils().markServiceToDelete(uId, userId);
         }
-        ServiceRestUtils.deleteMarkedServices(userId);
+        new ServiceRestUtils().deleteMarkedServices(userId);
 
     }
 
