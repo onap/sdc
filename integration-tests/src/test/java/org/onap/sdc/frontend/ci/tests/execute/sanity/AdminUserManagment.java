@@ -204,9 +204,9 @@ public class AdminUserManagment extends SetupCDTest {
         UserRoleEnum userRole = UserRoleEnum.DESIGNER;
         AdminWorkspaceUIUtilies.createNewUser(newUser.getUserId(), userRole);
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, newUser);
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, newUser);
         ExtentTestActions.log(Status.INFO, "Creating a new VF named " + resourceMetaData.getName() + " with the user " + newUser.getUserId());
-        RestResponse createResourceResp = ResourceRestUtils.createResource(resourceMetaData, newUser);
+        RestResponse createResourceResp = new ResourceRestUtils().createResource(resourceMetaData, newUser);
         Assert.assertEquals(createResourceResp.getErrorCode().intValue(), HttpStatus.SC_CREATED, "Did not succeed to create a VF");
 
         UserRoleEnum updatedUserRole = UserRoleEnum.TESTER;

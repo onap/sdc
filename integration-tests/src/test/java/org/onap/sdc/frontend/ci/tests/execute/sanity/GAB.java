@@ -60,7 +60,7 @@ public class GAB extends SetupCDTest {
     public void addPmDictionaryDeploymentArtifactToPnfAndCheckMagnifierTest() throws Exception {
         final int expectedHeaderSize = 10;
         final int expectedRowSize = 3;
-        ResourceReqDetails pnfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
+        ResourceReqDetails pnfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
         ResourceUIUtils.createPNF(pnfMetaData, getUser());
         GeneralPageElements.getLeftMenu().moveToDeploymentArtifactScreen();
         ArtifactInfo art1 = new ArtifactInfo(pnfFilePath, "pmDictionary.yml", "desc", "artifactpm", "PM_DICTIONARY");
@@ -72,7 +72,7 @@ public class GAB extends SetupCDTest {
     public void addVesEventsDeploymentArtifactToVfAndCheckMagnifierTest() throws Exception {
         final int expectedHeaderSize = 4;
         final int expectedRowSize = 3;
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
         GeneralPageElements.getLeftMenu().moveToDeploymentArtifactScreen();
         ArtifactInfo art1 = new ArtifactInfo(vnfFilePath, "vesEvent.yml", "desc", "artifactfault", "VES_EVENTS");

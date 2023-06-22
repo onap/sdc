@@ -209,7 +209,7 @@ public class ServiceVerificator {
     }
 
     public static List<String> getAllVFModuleCustomizationUUIDs(ServiceReqDetails service) throws Exception {
-        Service serviceObj = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service.getName(), service.getVersion());
+        Service serviceObj = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service.getName(), service.getVersion());
         List<String> customizationUUIDList = serviceObj.getComponentInstances().get(0).getGroupInstances().stream().
                 map(e -> e.getCustomizationUUID()).
                 collect(Collectors.toList());
@@ -218,7 +218,7 @@ public class ServiceVerificator {
     }
 
     public static String getVFModulePropertyValue(ServiceReqDetails service, String propertyName, String moduleName) throws Exception {
-        Service serviceObj = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service.getName(), service.getVersion());
+        Service serviceObj = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service.getName(), service.getVersion());
         List<GroupInstance> groupInstances = serviceObj.getComponentInstances().get(0).getGroupInstances();
         List<GroupInstanceProperty> groupInstancesProperties = groupInstances.stream().
                 filter(e -> e.getName().equals(moduleName)).

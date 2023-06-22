@@ -83,7 +83,7 @@ ElementsChanges extends SetupCDTest {
     // Test#1 Jira issue 6324
     @Test
     public void DeleteComponent() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         ServiceReqDetails serviceMetadata = PathUtilities.createService(getUser());
@@ -110,7 +110,7 @@ ElementsChanges extends SetupCDTest {
     // Test#3 Jira issue 6364
     @Test
     public void ManualUpdateVF() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         ServiceReqDetails serviceMetadata = PathUtilities.createService(getUser());
@@ -124,7 +124,7 @@ ElementsChanges extends SetupCDTest {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SUBMIT_NEW_VSP_VERSION_DESCRIPTION.getValue());
 
         // VendorSoftwareProductObject v = new VendorSoftwareProductObject();
-        //VendorSoftwareProductRestUtils.uploadHeatPackage(filePath,fullCompositionFile,v,getUser());
+        //new VendorSoftwareProductRestUtils().uploadHeatPackage(filePath,fullCompositionFile,v,getUser());
 //upload new heat +commit submit
         //go to home
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
@@ -139,14 +139,14 @@ ElementsChanges extends SetupCDTest {
 
     @Test
     public void UpdateComponent() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, VMMEFile);
 
     }
 
     @Test
     public void UpdateComponentWithouForwarder() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vsp_v2_description = "change description for version 2";
         VendorSoftwareProductObject vendorSoftwareProductObject = getToPathServiceVersions(resourceReqDetails, filePath, WithPort, vsp_v2_description, withoutPort, getUser());
 
@@ -219,7 +219,7 @@ ElementsChanges extends SetupCDTest {
         //////////////////////
 
         // start flow
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vsp_v2_description = "change description for version 2";
         VendorSoftwareProductObject vendorSoftwareProductObject = getToPathServiceVersions(resourceReqDetails, filePath, HSSFile, vsp_v2_description, fullCompositionFile, getUser());
 
@@ -287,7 +287,7 @@ ElementsChanges extends SetupCDTest {
         //////////////////////
 
         // start flow
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vsp_v2_description = "change description for version 2";
         VendorSoftwareProductObject vendorSoftwareProductObject = getToPathServiceVersions(resourceReqDetails, filePath, HSSFile, vsp_v2_description, fullCompositionFile, getUser());
 
@@ -360,7 +360,7 @@ ElementsChanges extends SetupCDTest {
         //////////////////////
 
         // start flow
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vsp_v2_description = "change description for version 2";
         VendorSoftwareProductObject vendorSoftwareProductObject = getToPathServiceVersions(resourceReqDetails, filePath, HSSFile, vsp_v2_description, fullCompositionFile, getUser());
 
@@ -434,7 +434,7 @@ ElementsChanges extends SetupCDTest {
         //////////////////////
 
         // start flow
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vsp_v2_description = "change description for version 2";
         VendorSoftwareProductObject vendorSoftwareProductObject = getToPathServiceVersions(resourceReqDetails, filePath, HSSFile, vsp_v2_description, fullCompositionFile, getUser());
 
@@ -583,7 +583,7 @@ ElementsChanges extends SetupCDTest {
     public List<String> onboardAndCertifyMultipleVFs(String filePath, List<String> vnfFiles) throws Exception {
         List<String> VFNames = new ArrayList<>();
         for (int i = 0; i < vnfFiles.size(); i++) {
-            ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+            ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
             VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFiles.get(i), getUser());
             VFNames.add(i, vendorSoftwareProductObject.getName());
             DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();
@@ -608,7 +608,7 @@ ElementsChanges extends SetupCDTest {
 
     public ServiceReqDetails getToComplexService(String filepath, String vnfFile) throws Exception {
         // create & certify  VF
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filepath, vnfFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         ServiceReqDetails serviceMetadata1 = PathUtilities.createService(getUser());
@@ -667,7 +667,7 @@ ElementsChanges extends SetupCDTest {
         assertEquals("did not succeed to update vsp", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 
         // commit & submit vsp
-        VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
+        new VendorSoftwareProductRestUtils().prepareVspForUse(user, vendorSoftwareProduct, false);
 
         // update VF
         HomePage.showVspRepository();
@@ -696,14 +696,14 @@ ElementsChanges extends SetupCDTest {
         vendorSoftwareProduct.setComponentId(newItemVersion.right.getItemId());
 
         // upload new heat
-        RestResponse uploadHeatPackage = VendorSoftwareProductRestUtils.uploadHeatPackage(filepath, vnfFileV3, vendorSoftwareProduct, user);
+        RestResponse uploadHeatPackage = new VendorSoftwareProductRestUtils().uploadHeatPackage(filepath, vnfFileV3, vendorSoftwareProduct, user);
         assertEquals("did not succeed to upload HEAT package", HttpStatus.SC_OK, uploadHeatPackage.getErrorCode().intValue());
 
-        RestResponse validateUpload = VendorSoftwareProductRestUtils.validateUpload(vendorSoftwareProduct, user);
+        RestResponse validateUpload = new VendorSoftwareProductRestUtils().validateUpload(vendorSoftwareProduct, user);
         assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), HttpStatus.SC_OK, validateUpload.getErrorCode().intValue());
 
         // commit & submit vsp
-        VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
+        new VendorSoftwareProductRestUtils().prepareVspForUse(user, vendorSoftwareProduct, false);
 
         // update VF
         HomePage.showVspRepository();

@@ -94,13 +94,13 @@ public class Vf extends SetupCDTest {
     @Test
     public void vfcLinkedToComputeInVfFlow() throws Exception {
         String fileName = "vFW_VFC2.yml";
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
             ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 
-            ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+            ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
             ResourceUIUtils.createVF(vfMetaData, getUser());
 
             DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -117,14 +117,14 @@ public class Vf extends SetupCDTest {
             vfMetaData.setVersion("0.1");
             VfVerificator.verifyLinkCreated(vfMetaData, getUser(), 1);
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
 
     @Test
     public void addUpdateDeleteDeploymentArtifactToVfTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -155,7 +155,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void addUpdateDeleteInformationalArtifact() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
@@ -188,13 +188,13 @@ public class Vf extends SetupCDTest {
         }
 
         String fileName = "vFW_VFC.yml";
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
             ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
-            ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+            ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
             ResourceUIUtils.createVF(vfMetaData, getUser());
 
             ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -217,7 +217,7 @@ public class Vf extends SetupCDTest {
                 AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -230,11 +230,11 @@ public class Vf extends SetupCDTest {
         CanvasElement vfcElement = null;
         String fileName = "vFW_VFC3.yml";
         try {
-            atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+            atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
             ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
-            vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+            vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
             ResourceUIUtils.createVF(vfMetaData, getUser());
             ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
             vfCanvasManager = CanvasManager.getCanvasManager();
@@ -257,7 +257,7 @@ public class Vf extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(vfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -266,7 +266,7 @@ public class Vf extends SetupCDTest {
     @Test
     public void addAllInformationalArtifactPlaceholdersInVfTest() throws Exception {
 
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
@@ -280,7 +280,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void verifyToscaArtifactsExist() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         final int numOfToscaArtifacts = 2;
@@ -297,7 +297,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void vfCertificationTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         String vfName = vfMetaData.getName();
@@ -315,7 +315,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void deleteVfCheckedoutTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         GeneralPageElements.clickTrashButtonAndConfirm();
@@ -326,7 +326,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void revertVfMetadataTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceReqDetails vfRevertDetails = new ResourceReqDetails();
@@ -345,7 +345,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void addDeploymentArtifactInCompositionScreenTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -363,7 +363,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void addDeploymentArtifactAndVerifyInCompositionScreen() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -385,7 +385,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void checkoutVfTest() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
@@ -408,7 +408,7 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void deleteInstanceFromVfCanvas() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -424,13 +424,13 @@ public class Vf extends SetupCDTest {
 
     @Test
     public void changeInstanceNameInVfTest() throws Exception {
-        final ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        final ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
-        Resource containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
-        Resource computeObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Compute", "1.0");
-        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(computeObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
-        containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
-        String intanceWithUpdatedName  = AtomicOperationUtils.updateComponentInstanceName("newName", containerObject, componentInstanceDetails.getName(), getUser(), true).getRight().getName();
+        Resource containerObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        Resource computeObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Compute", "1.0");
+        ComponentInstance componentInstanceDetails = new AtomicOperationUtils().addComponentInstanceToComponentContainer(computeObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        containerObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        String intanceWithUpdatedName  = new AtomicOperationUtils().updateComponentInstanceName("newName", containerObject, componentInstanceDetails.getName(), getUser(), true).getRight().getName();
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         assertEquals(intanceWithUpdatedName, "newName");
     }
@@ -439,11 +439,11 @@ public class Vf extends SetupCDTest {
     public void submitVfForTestingWithNonCertifiedAsset() throws Exception {
         String fileName = "vFW_VFC4.yml";
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
         ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -458,13 +458,13 @@ public class Vf extends SetupCDTest {
             String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
             AssertJUnit.assertTrue(errorMessage.contains(checkUIResponseOnError));
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
     @Test
     public void isDisabledAndReadOnlyInCheckin() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
         ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
         GeneralUIUtils.findComponentAndClick(vfMetaData.getName());
@@ -484,17 +484,17 @@ public class Vf extends SetupCDTest {
     @Test
     public void exportToscaWithModulePropertiesVFTest() throws Exception {
         String vnfFile = "1-Vf-zrdm5bpxmc02-092017-(MOBILITY)_v2.0.zip";
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
         String vspName = vendorSoftwareProductObject.getName();
         ResourceGeneralPage.clickSubmitForTestingButton(vspName);
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
         VfModuleVerificator.validateSpecificModulePropertiesFromRequest(resource);
     }
 
     @Test
     public void canvasTestJS() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();

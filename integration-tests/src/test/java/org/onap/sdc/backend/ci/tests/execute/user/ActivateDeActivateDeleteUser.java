@@ -72,7 +72,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 
 	@BeforeMethod
 	public void init() {
-		sdncAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		sdncAdminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 	}
 
@@ -449,7 +449,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 	public void resourceAccessibility() throws Exception {
 
 		User sdncUserDetails = getDefaultUserDetails();
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource("tosca.nodes.newresource4test4",
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource("tosca.nodes.newresource4test4",
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003");
 		String resourceBaseVersion = "0.1";
 
@@ -467,12 +467,12 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 			// resource---------------------------------------------------------------------------------
 
 			// create resource
-			RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncUserDetails);
+			RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncUserDetails);
 			assertEquals("Check response code after create", 201, createResponse.getErrorCode().intValue());
 
 			Resource createdResource = ResponseParser.convertResourceResponseToJavaObject(createResponse.getResponse());
 
-			RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncUserDetails,
+			RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncUserDetails,
 					createdResource.getUniqueId());
 			assertEquals("Check response code after get", 200, resourceGetResponse.getErrorCode().intValue());
 
@@ -551,7 +551,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 	public void resourceAccessibilityOnImport() throws Exception {
 
 		User sdncUserDetails = getDefaultUserDetails();
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource("importResource4test",
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource("importResource4test",
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, "jh0003");
 		resourceDetails.addCategoryChain(ResourceCategoryEnum.GENERIC_DATABASE.getCategory(),
 				ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory());
@@ -572,7 +572,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 			// resource---------------------------------------------------------------------------------
 
 			// import new resource with CERTIFIED state
-			User importer = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN2);
+			User importer = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN2);
 			RestResponse importResponse = ImportRestUtils.importResourceByName(resourceDetails, importer);
 
 			assertNotNull("check response object is not null after create user", importResponse);

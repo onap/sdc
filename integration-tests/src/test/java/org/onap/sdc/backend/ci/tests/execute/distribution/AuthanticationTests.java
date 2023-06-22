@@ -83,10 +83,10 @@ public class AuthanticationTests extends ComponentBaseTest {
 
 	@BeforeMethod
 	public void setup() throws Exception {
-		resourceDetails = ElementFactory.getDefaultResource();
-		serviceDetails = ElementFactory.getDefaultService();
-		sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		sdncAdminUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		resourceDetails = new ElementFactory().getDefaultResource();
+		serviceDetails = new ElementFactory().getDefaultService();
+		sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		sdncAdminUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		createComponents();
 		consumerDataDefinition = createConsumer();
@@ -117,15 +117,15 @@ public class AuthanticationTests extends ComponentBaseTest {
 	}
 
 	protected void createComponents() throws Exception {
-		RestResponse response = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
-		ServiceRestUtils.checkCreateResponse(response);
+		RestResponse response = new ServiceRestUtils().createService(serviceDetails, sdncUserDetails);
+		new ServiceRestUtils().checkCreateResponse(response);
 	}
 
 	@Test(dataProvider = "getServiceDepArtType", description = "mumu")
 	public void downloadServiceArtifactSuccessWithAutantication(String serviceDepArtType) throws Exception {
 		String serviceUniqueId = serviceDetails.getUniqueId();
 
-		ArtifactReqDetails artifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(serviceDepArtType);
+		ArtifactReqDetails artifactDetails = new ElementFactory().getDefaultDeploymentArtifactForType(serviceDepArtType);
 
 		RestResponse addArtifactResponse = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails,
 				sdncUserDetails, serviceUniqueId, ArtifactRestUtils.calculateChecksum(artifactDetails));
@@ -158,7 +158,7 @@ public class AuthanticationTests extends ComponentBaseTest {
 	public void downloadServiceArtifactWithOutAutantication(String serviceDepArtType) throws Exception {
 		String serviceUniqueId = serviceDetails.getUniqueId();
 
-		ArtifactReqDetails artifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(serviceDepArtType);
+		ArtifactReqDetails artifactDetails = new ElementFactory().getDefaultDeploymentArtifactForType(serviceDepArtType);
 
 		RestResponse addArtifactResponse = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails,
 				sdncUserDetails, serviceUniqueId, ArtifactRestUtils.calculateChecksum(artifactDetails));

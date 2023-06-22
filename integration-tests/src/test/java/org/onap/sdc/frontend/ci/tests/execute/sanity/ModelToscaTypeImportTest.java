@@ -155,7 +155,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
     }
 
     private void fillVfMetaData(final ResourceCreateData vf) {
-        vf.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
+        vf.setRandomName(new ElementFactory().getResourcePrefix() + "-VF");
         vf.setCategory(ResourceCategoryEnum.GENERIC_ABSTRACT.getSubCategory());
         vf.setTagList(Arrays.asList(vf.getName()));
         vf.setDescription("Test");

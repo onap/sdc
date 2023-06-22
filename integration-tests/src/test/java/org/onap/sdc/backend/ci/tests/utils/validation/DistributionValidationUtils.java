@@ -73,7 +73,7 @@ public class DistributionValidationUtils {
 
 	public static void validateDistributedArtifactsByAudit(Service service, List<String> distributionStatusList) throws Exception, IOException, ParseException {
 		String distributionID;
-		AtomicOperationUtils.distributeService(service, true);
+		new AtomicOperationUtils().distributeService(service, true);
 		distributionID = DistributionUtils.getLatestServiceDistributionObject(service).getDistributionID();
 		if(distributionID != null){
 			Map<String, String> expectedArtifactsMapOfDistributedService = DistributionUtils.getArtifactsMapOfDistributedService(service);

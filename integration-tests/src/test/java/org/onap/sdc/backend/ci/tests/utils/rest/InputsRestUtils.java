@@ -91,7 +91,7 @@ public class InputsRestUtils extends BaseRestUtils {
 		//services/{componentId}/inputs
 		String url = String.format(Urls.GET_COMPONENT_INPUTS, config.getCatalogBeHost(), config.getCatalogBePort(),
 				component.getUniqueId());
-		return sendGet(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+		return sendGet(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class InputsRestUtils extends BaseRestUtils {
 						ComponentTypeEnum.findParamByType(parentComponent.getComponentType()),
 						parentComponent.getUniqueId(), componentInstance.getUniqueId(),
 						componentInstance.getComponentUid());
-		return sendGet(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+		return sendGet(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class InputsRestUtils extends BaseRestUtils {
 		//{componentType}/{componentId}/delete/{inputId}/input
 		String url = String.format(Urls.DELETE_INPUT_BY_ID, config.getCatalogBeHost(), config.getCatalogBePort(),
 				componentType, componentId, inputUniqueId);
-		return sendDelete(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+		return sendDelete(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 	}
 
 }

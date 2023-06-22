@@ -72,7 +72,7 @@ public class CreatePath extends SetupCDTest {
     // Test#1 Jira issue 5610
     @Test
     public void AssertPathButtons() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         getToPathFlow(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
@@ -84,7 +84,7 @@ public class CreatePath extends SetupCDTest {
     // Test#2 Jira issue 5441
     @Test
     public void CreatePathTestSanity() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         Pair<String, ServiceReqDetails> pair = getToPathFlow(resourceReqDetails, filePath, fullCompositionFile);
         String vspName = pair.left;
         String serviceName = pair.right.getName();
@@ -96,7 +96,7 @@ public class CreatePath extends SetupCDTest {
     // Test#3 Jira issue 5611
     @Test
     public void CreatePathCheckIO() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         String serviceName = PathUtilities.createService(getUser()).getName();
@@ -116,7 +116,7 @@ public class CreatePath extends SetupCDTest {
     // Test#4 Jira issue 5441
     @Test
     public void CreateMultiplePaths() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         Pair<String, ServiceReqDetails> pair = getToPathFlow(resourceReqDetails, filePath, HSSFile);
         String vspName = pair.left;
         PathUtilities.createPath("Test4_path1", vspName);
@@ -153,7 +153,7 @@ public class CreatePath extends SetupCDTest {
     // Test#7 Jira issue 5441
     @Test
     public void CreatePathExtendedTest() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         runCreateExtendedPathFlow(resourceReqDetails, filePath, fullCompositionFile);
     }
 
@@ -180,7 +180,7 @@ public class CreatePath extends SetupCDTest {
     public List<String> onboardAndCertifyMultipleVFs(String filePath, List<String> vnfFiles) throws Exception {
         List<String> VFNames = new ArrayList<>();
         for (int i = 0; i < vnfFiles.size(); i++) {
-            ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+            ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
             VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFiles.get(i), getUser());
             VFNames.add(i, vendorSoftwareProductObject.getName());
             DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();

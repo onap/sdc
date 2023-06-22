@@ -51,7 +51,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
     // Create service without resource instance and without deployment artifacts and verify it can submit for testing
     @Test
     public void createServiceWithoutRIAndArtifacts() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         //TODO Andrey should click on certify button
         ResourceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
@@ -62,7 +62,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
     // Create service with VL resource instance and without deployment artifacts and verify it can submit for testing
     @Test
     public void createServiceWithVlAndWithoutArtfiacts() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -78,7 +78,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
     // Create service with VF with informational artifacts and verify it can submit for testing
     @Test
     public void createServiceWithInformationalArtifacts() throws Exception {
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(resourceMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
@@ -99,7 +99,7 @@ public class RemoveRestrictionOfDeploymentArtifacts extends SetupCDTest {
 		TesterOperationPage.certifyComponent(resourceMetaData.getName());
 		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();

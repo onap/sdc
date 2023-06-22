@@ -275,7 +275,7 @@ public class ImportRestUtils extends BaseRestUtils {
 			throws FileNotFoundException, IOException, ClientProtocolException {
 		User user = new User(UserRoleEnum.ADMIN.getFirstName(), UserRoleEnum.ADMIN.getLastName(),
 				UserRoleEnum.ADMIN.getUserId(), null, null, null);
-		RestResponse deleteResponse = ResourceRestUtils.deleteResourceByNameAndVersion(user, current.getNormativeName(),
+		RestResponse deleteResponse = new ResourceRestUtils().deleteResourceByNameAndVersion(user, current.getNormativeName(),
 				"1.0");
 		if (deleteResponse.getErrorCode() == 200) {
 			return true;

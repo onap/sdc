@@ -39,7 +39,7 @@ public class FeProxyTest extends ComponentBaseTest {
 
 	@Test
 	public void testFeProxy() throws Exception {
-		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User defaultUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		RestResponse allCategoriesTowardsFe = CategoryRestUtils.getAllCategoriesTowardsFe(defaultUser,
 				BaseRestUtils.RESOURCE_COMPONENT_TYPE);
 		AssertJUnit.assertEquals("Check response code after get categories towards FE", 200,

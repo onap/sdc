@@ -71,7 +71,7 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 
 	@Test
 	public void undoCheckOutAfterCreate() throws Exception {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undo checkout product", 200, lcsResponse.getErrorCode().intValue());
 
@@ -92,7 +92,7 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 	public void undoCheckOutNotExist() throws Exception {
 		String notExistId = "1234";
 		expectedProduct.setUniqueId(notExistId);
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undo checkout product", 404, lcsResponse.getErrorCode().intValue());
 		expectedProduct.setName(notExistId);
@@ -106,11 +106,11 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 
 	@Test
 	public void undoCheckOutNotInCheckout() throws Exception {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin product", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undo checkout product", 409, lcsResponse.getErrorCode().intValue());
 
@@ -136,19 +136,19 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 	}
 
 	private void undoCheckOutProductSuccess(User user, boolean isAdmin) throws Exception, FileNotFoundException {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin product", 200, lcsResponse.getErrorCode().intValue());
 
 		// Checking undo checkout of admin even if not state owner
 		User checkoutUser = isAdmin ? productManager1 : user;
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, checkoutUser,
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, checkoutUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkout product", 200, lcsResponse.getErrorCode().intValue());
 		Product productToBeUndone = ResponseParser.parseToObjectUsingMapper(lcsResponse.getResponse(), Product.class);
 
-		lcsResponse = LifecycleRestUtils.changeProductState(productToBeUndone, user, LifeCycleStatesEnum.UNDOCHECKOUT);
+		lcsResponse = new LifecycleRestUtils().changeProductState(productToBeUndone, user, LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undo checkout product", 200, lcsResponse.getErrorCode().intValue());
 
 		// Verify version was removed
@@ -170,16 +170,16 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 	}
 
 	private void undoCheckOutProductRestricted(User undoCheckoutUser) throws Exception, FileNotFoundException {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin product", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkout product", 200, lcsResponse.getErrorCode().intValue());
 		Product productToBeUndone = ResponseParser.parseToObjectUsingMapper(lcsResponse.getResponse(), Product.class);
 
-		lcsResponse = LifecycleRestUtils.changeProductState(productToBeUndone, undoCheckoutUser,
+		lcsResponse = new LifecycleRestUtils().changeProductState(productToBeUndone, undoCheckoutUser,
 				LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undocheckout product", 409, lcsResponse.getErrorCode().intValue());
 
@@ -191,16 +191,16 @@ public class ProductUndoCheckoutTest extends ProductLifecycleTest {
 	}
 
 	private void undoCheckOutProductForbidden(User undoCheckoutUser) throws Exception, FileNotFoundException {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin product", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkout product", 200, lcsResponse.getErrorCode().intValue());
 		Product productToBeUndone = ResponseParser.parseToObjectUsingMapper(lcsResponse.getResponse(), Product.class);
 
-		lcsResponse = LifecycleRestUtils.changeProductState(productToBeUndone, undoCheckoutUser,
+		lcsResponse = new LifecycleRestUtils().changeProductState(productToBeUndone, undoCheckoutUser,
 				LifeCycleStatesEnum.UNDOCHECKOUT);
 		assertEquals("Check response code after undocheckout product", 403, lcsResponse.getErrorCode().intValue());
 		String[] auditParameters = new String[] { productToBeUndone.getName(), "product",

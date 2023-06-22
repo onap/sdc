@@ -80,7 +80,7 @@ public class CustomizationUUID extends SetupCDTest {
         ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 
         List customizationUUIDs = new ArrayList<String>();
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
 
@@ -123,7 +123,7 @@ public class CustomizationUUID extends SetupCDTest {
         ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 
         List customizationUUIDs = new ArrayList<>();
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -179,7 +179,7 @@ public class CustomizationUUID extends SetupCDTest {
         ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 
         List customizationUUIDs = new ArrayList<>();
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -219,7 +219,7 @@ public class CustomizationUUID extends SetupCDTest {
         ResourceReqDetails vfMetaData = createNewResourceWithArtifactCertifyState();
 
         List customizationUUIDs = new ArrayList<>();
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -264,7 +264,7 @@ public class CustomizationUUID extends SetupCDTest {
     }
 
     public ResourceReqDetails createNewResourceWithArtifactCertifyState() throws Exception {
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();

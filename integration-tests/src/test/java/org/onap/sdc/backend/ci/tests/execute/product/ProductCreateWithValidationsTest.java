@@ -62,7 +62,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductSuccessValidation() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -86,7 +86,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNotByPmUser() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		normalizedName = productReqDetails.getName().toLowerCase();
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productStrategistUser1);
@@ -104,11 +104,11 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNotByAsdcUser() throws Exception {
-		User nonAsdcUser = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
+		User nonAsdcUser = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
 		nonAsdcUser.setUserId("bt750k");
 		nonAsdcUser.setFirstName(null);
 		nonAsdcUser.setLastName(null);
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		normalizedName = productReqDetails.getName().toLowerCase();
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, nonAsdcUser);
@@ -126,11 +126,11 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductUserIdIsEmpty() throws Exception {
-		User nonAsdcUser = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
+		User nonAsdcUser = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
 		nonAsdcUser.setUserId("");
 		nonAsdcUser.setFirstName(null);
 		nonAsdcUser.setLastName(null);
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		normalizedName = productReqDetails.getName().toLowerCase();
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, nonAsdcUser);
@@ -148,7 +148,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNameValidationLessThanMinCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Pro");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -166,7 +166,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductNameValidationMaxLength() throws Exception {
 		// Max length = 25
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 //		productReqDetails.setName("Qwertyuiop1234567890asdfA");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -191,7 +191,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test
 	public void createProductNameValidationExceedMaxLength() throws Exception {
 		// Max length = 25
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Qwertyuiop1234567890asdfAa");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -210,7 +210,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNameValidationEmptyName() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -229,7 +229,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductNameAlreadyExist() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -257,7 +257,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNameValidationNameIsNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName(null);
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -275,7 +275,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// DE193857
 	@Test (enabled = false)
 	public void createProductNameValidationAllowedCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Ci_2@3:4& m=n+b-u.j-u'g#b"); // Bug @:&=+'#
 		normalizedName = "ci234mnbujugb";
 		String expectedProductName = "Ci_2@3:4& M=n+b-u.j-u'g#b";
@@ -304,7 +304,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// DE193857
 	@Test
 	public void createProductNameValidationREmoveExtraNonAlphanumericChars() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Ci____222----333......asd");
 //		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
@@ -334,7 +334,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 				'\\', ',', '$' };
 		for (int i = 0; i < invalidChars.length; i++) {
 			DbUtils.deleteFromEsDbByPattern("_all");
-			ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+			ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 			productReqDetails.setName("abc" + invalidChars[i]);
 			RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 			assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -355,7 +355,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	public void createProductFullNameContainSpecialCharacters() throws Exception {
 		char invalidChars[] = { '~', '!', '%', '^', '*', '(', ')', '"', '{', '}', '[', ']', '?', '>', '<', '/', '|',
 				'\\', ',', '$' };
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		for (int i = 0; i < invalidChars.length; i++) {
 			DbUtils.deleteFromEsDbByPattern("_all");
 			productReqDetails.setFullName("abc" + invalidChars[i]);
@@ -372,7 +372,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// Already enabled = false
 	@Test
 	public void createProductNameValidationRemoveSpaceFromBeginning() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("         Ciertyuiop1234567890asdfA");
 //		productReqDetails.setTags(Arrays.asList(productReqDetails.getName().trim()));
 		normalizedName = productReqDetails.getName().trim().toLowerCase();
@@ -398,7 +398,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// Already enabled = false
 	@Test
 	public void createProductNameValidationRemoveSpaceFromTheEnd() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Ciertyuiop1234567890asdfA        ");
 //		productReqDetails.setTags(Arrays.asList(productReqDetails.getName().trim()));
 		normalizedName = productReqDetails.getName().trim().toLowerCase();
@@ -423,7 +423,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNameValidationStartWithNumber() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("1Qwert");
 //		productReqDetails.setTags(Arrays.asList(productReqDetails.getName().trim()));
 		normalizedName = productReqDetails.getName().trim().toLowerCase();
@@ -450,7 +450,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNameValidationStartWithNonAlphaNumeric() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("_Qwert");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName().trim()));
 		normalizedName = productReqDetails.getName().trim().toLowerCase();
@@ -469,7 +469,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductNameValidationFirstLetterOfKeyWordsCapitalized() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		// productReqDetails.setTags(Arrays.asList("abba"));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -500,7 +500,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductFullNameValidationIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setFullName("");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -516,7 +516,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductFullNameValidationIsNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setFullName("");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -533,7 +533,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test
 	public void createProductFullNameLessThanMinLength() throws Exception {
 		// Min is 4 characters
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setFullName("abc");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -550,7 +550,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductFullNameHasMinLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -575,7 +575,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductFullNameHasMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -601,7 +601,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductFullNameExceedMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -622,7 +622,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductFullNameRemoveExtraSpaces() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -648,7 +648,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductDescriptionValidationIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setDescription("");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -664,7 +664,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductDescriptionValidationIsNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setDescription(null);
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_INVALID_CONTENT,
@@ -680,7 +680,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductDescriptionValidCharacters01() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -706,7 +706,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductDescriptionValidCharacters02() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -732,7 +732,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductDescriptionInValidCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -751,7 +751,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductDescriptionRemoveSpacesFromBeginning() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -777,7 +777,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductDescriptionRemoveSpacesFromTheEnd() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -803,7 +803,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductDescriptionMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -829,7 +829,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductDescriptionExceedMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("Abba");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -849,7 +849,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductTagIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setName("Product");
 		productReqDetails.setTags(Arrays.asList(""));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -868,7 +868,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// DE192351
 	@Test // (enabled = false)
 	public void createProductTagValidationAllowedCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName(), "Acde2@3:4& m=n+b-u.j-u'g#b"));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -892,7 +892,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductTagsNameValidationProductNameIsNotInTag() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 //		productReqDetails.setName("Qwertyuiop1234567890asdfA");
 		productReqDetails.setTags(Arrays.asList("Abc"));
 		normalizedName = productReqDetails.getName().trim().toLowerCase();
@@ -911,7 +911,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductSingleTagMaxLength() throws Exception {
 		// SingleTagMaxLength = 50
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(
 				Arrays.asList(productReqDetails.getName(), "Abba1234567890asdfghjkl123zxcvbnm432asdfgh12345678"));
@@ -936,7 +936,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductSingleTagExceedMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(
 				Arrays.asList(productReqDetails.getName(), "Axbba1234567890asdfghjkl123zxcvbnm432asdfgh12345678"));
@@ -956,7 +956,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test (enabled = false)
 	public void createProductAllTagsMaxLength() throws Exception {
 		// AllTagsMaxLength = 1024
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(
 				Arrays.asList(productReqDetails.getName(), "Abba1234567890asdfghjkl123zxcvbnm432asdfgh12345601",
@@ -1001,7 +1001,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test
 	public void createProductAllTagsExceedMaxLength() throws Exception {
 		// AllTagsMaxLength = 1024
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(
 				Arrays.asList(productReqDetails.getName(), "Abba1234567890asdfghjkl123zxcvbnm432asdfgh12345601",
@@ -1039,7 +1039,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductDuplicateTagRemoved() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName(), productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1064,7 +1064,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductContactsIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1083,7 +1083,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductContactsInvalidFormat() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1102,7 +1102,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductConvertContactsToLowerCase() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1128,7 +1128,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductContactsDoexNotContainTheProductCreator() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1153,7 +1153,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductContactsNotAllowedAsdcUsers() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1173,7 +1173,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductContactsNotAsdcUser() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1"); // Bug @:&=+'#
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase();
@@ -1193,7 +1193,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductProjectCodeIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1212,7 +1212,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductProjectCodeIsNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1231,7 +1231,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductProjectCodeIsNotNumeric() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1251,7 +1251,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductProjectCodeHasnMinCharacters() throws Exception {
 		// Min =5
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1276,7 +1276,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductProjectCodeHasnMaxCharacters() throws Exception {
 		// Max =10
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1301,7 +1301,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductProjectCodeExceedMaxCharacters() throws Exception {
 		// Max =10
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1321,7 +1321,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	@Test // (enabled = false)
 	public void createProductProjectCodeLessThanMinCharacters() throws Exception {
 		// Max =10
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1340,7 +1340,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIconIsEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1359,7 +1359,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIconIsNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1378,7 +1378,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIconMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1402,7 +1402,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIconExceedMaxLength() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1421,7 +1421,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIconAllowedCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1445,7 +1445,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test (enabled = false)
 	public void createProductIconInValidCharacters() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1471,7 +1471,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIsActiveisEmpty() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1496,7 +1496,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIsActiveisNull() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1522,7 +1522,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIsActiveisFalse() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1546,7 +1546,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductIsActiveisHasInvalidValue() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1566,7 +1566,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test // (enabled = false)
 	public void createProductIsActiveisTrue() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		// productReqDetails.setName("CIProduct1");
 		productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		normalizedName = productReqDetails.getName().toLowerCase().replaceAll("\\s+", "");
@@ -1592,7 +1592,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	// DE192424
 	@Test // (enabled = false)
 	public void createProductNameValidationNormalizationNameWithSpaces() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 //		productReqDetails.setName("Abba Emma");
 		// productReqDetails.setName("abba emma");
 		// productReqDetails.setTags(Arrays.asList("abba emma"));
@@ -1657,7 +1657,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 	///////////////////////////////////////////////////////
 	@Test
 	public void createProductSuccessFlow() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_CREATED,
 				createProduct.getErrorCode().intValue());
@@ -1676,7 +1676,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductSetIsActive() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setActive("true");
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_CREATED,
@@ -1696,7 +1696,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNoIcon() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setIcon(null);
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_MISSING_DATA,
@@ -1706,7 +1706,7 @@ public class ProductCreateWithValidationsTest extends ProductBaseTest {
 
 	@Test
 	public void createProductNoProjectCode() throws Exception {
-		ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+		ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 		productReqDetails.setProjectCode(null);
 		RestResponse createProduct = ProductRestUtils.createProduct(productReqDetails, productManager1);
 		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_MISSING_DATA,

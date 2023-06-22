@@ -125,7 +125,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "vfcList")
     public void importAndCertifyVfc(final String rootFolder, final String vfcFilename) {
         setLog(vfcFilename);
-        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String resourceName = new ElementFactory().addRandomSuffixToName(new ElementFactory().getResourcePrefix());
         final CreateVfcFlow createVfcFlow = createVFC(rootFolder + vfcFilename, resourceName);
         vfcs.stream().filter(vfc -> vfc.getName().startsWith(resourceName)).findFirst().orElseThrow(
             () -> new UiTestFlowRuntimeException(String.format("VFCs List should contain a VFC with the expected name %s", resourceName)));
@@ -509,7 +509,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     private ResourceCreateData createVfFormData() {
         vfResourceCreateData = new ResourceCreateData();
-        vfResourceCreateData.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
+        vfResourceCreateData.setRandomName(new ElementFactory().getResourcePrefix() + "-VF");
         vfResourceCreateData.setCategory(ResourceCategoryEnum.GENERIC_ABSTRACT.getSubCategory());
         vfResourceCreateData.setTagList(Arrays.asList(vfResourceCreateData.getName(), "createVF"));
         vfResourceCreateData.setDescription("aDescription");

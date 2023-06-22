@@ -45,32 +45,32 @@ public class OnbordingDataProviders {
     @DataProvider(name = "randomVNF_List", parallel = false)
     private static Object[][] randomVnfList() throws Exception {
         int randomElementNumber = NUMBER_OF_RANDOMLY_ONBOARD_VNF; //how many VNFs to onboard randomly
-        List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
+        List<String> fileNamesFromFolder = new OnboardingUtils().getVnfNamesFileListExcludeToscaParserFailure();
         List<String> newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
         return provideData(newRandomFileNamesFromFolder, filepath);
     }
 
     @DataProvider(name = "VNF_List", parallel = true)
     private static Object[][] VnfList() throws Exception {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.VNF);
         return provideData(fileNamesFromFolder, filepath);
     }
 
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.CNF);
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
     @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
     private static Object[][] cnfForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         return provideData(fileNamesFromFolder, FileHandling.getCnfForHelmValidatorRepositoryPath());
     }
 
     @DataProvider(name = "CNF_With_Warning_Helm_Validator_List", parallel = true)
     private static Object[][] cnfWithWarningForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(PackageTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesWithWarningsFileList(PackageTypeEnum.CNF_HELM);
         Object[][] objects = provideData(fileNamesFromFolder,
             FileHandling.getCnfWithWarningForHelmValidatorRepositoryPath());
         return objects;
@@ -78,13 +78,13 @@ public class OnbordingDataProviders {
 
     @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
     private static Object[][] invalidCnfForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getInvalidXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         return provideData(fileNamesFromFolder, FileHandling.getInvalidCnfForHelmValidatorRepositoryPath());
     }
 
     @DataProvider(name = "Invalid_CNF_List", parallel = true)
     private static Object[][] invalidCnfList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getInvalidXnfNamesFileList(PackageTypeEnum.CNF);
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
@@ -100,7 +100,7 @@ public class OnbordingDataProviders {
         objectArr[1] = new Object[] {"1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip",
                 "2-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0_Added2TestParameters.zip"};
 
-        filteredArObject = OnboardingUtils.filterObjectArrWithExcludedVnfs(objectArr);
+        filteredArObject = new OnboardingUtils().filterObjectArrWithExcludedVnfs(objectArr);
 
         return filteredArObject;
 
@@ -110,7 +110,7 @@ public class OnbordingDataProviders {
     @DataProvider(name = "Single_Vsp_Test_Csar", parallel = true)
     private static Object[][] singleVspTestCsar() throws Exception {
 
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.VNF);
         if (!fileNamesFromFolder.contains(VSP_VGW_CSAR)) {
             Assert.fail("Vsp Test file is not exits in the path");
         }
