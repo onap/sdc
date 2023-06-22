@@ -23,6 +23,7 @@
   <div [formGroup]="formGroup">
     <div>
       <textarea class="yaml-text-area"
+                data-tests-id="yaml-text-area"
                 [formControl]="yamlValueForm"
                 [class.input-error]="yamlValueForm.invalid && (yamlValueForm.dirty || yamlValueForm.touched)"></textarea>
       <div *ngIf="yamlValueForm.invalid && (yamlValueForm.dirty || yamlValueForm.touched)">

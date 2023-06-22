@@ -1,0 +1,92 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  org.openecomp.resource.IntVFC:
+    derived_from: tosca.nodes.Root
+    description: aDescription
+    properties:
+      LessIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - less_than: 200
+      GreaterIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - greater_than: 1
+      GEIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - greater_or_equal: 125
+      ComplexProp:
+        default:
+          float_prop: 125.5
+          string_prop: Default String
+          int_prop: 125
+        type: testing.simple.data.type
+        required: false
+      validValueIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - valid_values:
+          - 1
+          - 125
+          - 300
+      EqualIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - equal: 125
+      int_prop_1:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+      int_prop_2:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+      int_prop_3:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+      inRangeIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - in_range:
+          - 1
+          - 300
+      LEIntProp:
+        default: 125
+        type: integer
+        description: default integer type property description
+        required: false
+        constraints:
+        - less_or_equal: 125
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+    attributes:
+      tosca_name:
+        type: string
+      state:
+        type: string
+      tosca_id:
+        type: string

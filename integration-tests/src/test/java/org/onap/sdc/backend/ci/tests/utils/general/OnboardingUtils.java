@@ -242,6 +242,17 @@ public class OnboardingUtils {
 	}
 
 	/**
+	 * Returns Type files from src/test/resources/Files/Types directory
+	 * @return a list of Type files
+	 */
+	public static List<String> getTypeFilenameList() {
+		final String filepath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.TYPE);
+		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".yml");
+		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".yaml"));
+		return fileNamesListFromFolder;
+	}
+
+	/**
 	 * @return
 	 * The method returns VNF names list from Files directory under sdc-vnfs repository excluding zip files that known as failed in tosca parser
 	 */
