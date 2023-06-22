@@ -218,15 +218,15 @@ public class VFCArtifacts extends SetupCDTest {
         String vnfFile = "2016-043_vsaegw_fdnt_30_1607_e2e.zip";
         String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = new VendorSoftwareProductRestUtils().createVSP(resourceMetaData, vnfFile, filePath, getUser(),
             vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
 //		VendorSoftwareProductObject resourceMeta = createVSP.right;
         String vspid = createVSP.getVspId();
-        VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
-        VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
+        new VendorSoftwareProductRestUtils().addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
+        new VendorSoftwareProductRestUtils().prepareVspForUse(getUser(), createVSP, true);
 
         String downloadDirectory = getWindowTest().getDownloadDirectory();
         String csarFile = vspid + ".csar";
@@ -253,14 +253,14 @@ public class VFCArtifacts extends SetupCDTest {
         String snmpPollFile = "vprobes-vLB.zip";
         String updatedSnmpPollFile = "vprobes-vLBAgent.zip";
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = new VendorSoftwareProductRestUtils().createVSP(resourceMetaData, vnfFile, filePath, getUser(),
             vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
         String vspid = createVSP.getVspId();
-        String monitoringComponentId = VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpPollFile, null, createVSP, getUser());
-        VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
+        String monitoringComponentId = new VendorSoftwareProductRestUtils().addVFCArtifacts(filePath, snmpPollFile, null, createVSP, getUser());
+        new VendorSoftwareProductRestUtils().prepareVspForUse(getUser(), createVSP, true);
 
         String downloadDirectory = getWindowTest().getDownloadDirectory();
         String csarFile = vspid + ".csar";
@@ -270,7 +270,7 @@ public class VFCArtifacts extends SetupCDTest {
         OnboardingUiUtils.importVSP(createVSP);
         ResourceGeneralPage.clickCertifyButton(vspName);
 
-        VendorSoftwareProductRestUtils.updateVspWithVfcArtifacts(filePath, updatedSnmpPollFile, null, monitoringComponentId, getUser(), createVSP);
+        new VendorSoftwareProductRestUtils().updateVspWithVfcArtifacts(filePath, updatedSnmpPollFile, null, monitoringComponentId, getUser(), createVSP);
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
         HomePage.showVspRepository();
         OnboardingUiUtils.updateVSP(createVSP);
@@ -293,14 +293,14 @@ public class VFCArtifacts extends SetupCDTest {
         String snmpFile = "vprobes-vLB.zip";
         String updatedSnmpFile = "vprobes-vLB-Modified.zip";
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceMetaData, vnfFile, filePath, getUser(),
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
+        VendorSoftwareProductObject createVSP = new VendorSoftwareProductRestUtils().createVSP(resourceMetaData, vnfFile, filePath, getUser(),
             vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
         String vspid = createVSP.getVspId();
-        String monitoringId = VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
-        VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
+        String monitoringId = new VendorSoftwareProductRestUtils().addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
+        new VendorSoftwareProductRestUtils().prepareVspForUse(getUser(), createVSP, true);
 
         String downloadDirectory = getWindowTest().getDownloadDirectory();
         String csarFile = vspid + ".csar";
@@ -317,7 +317,7 @@ public class VFCArtifacts extends SetupCDTest {
         }
 
         ResourceGeneralPage.clickCertifyButton(vspName);
-        VendorSoftwareProductRestUtils.updateVspWithVfcArtifacts(filePath, updatedSnmpFile, null, monitoringId, getUser(), createVSP);
+        new VendorSoftwareProductRestUtils().updateVspWithVfcArtifacts(filePath, updatedSnmpFile, null, monitoringId, getUser(), createVSP);
         DownloadManager.downloadCsarByNameFromVSPRepository(vspName, vspid);
         HomePage.showVspRepository();
         OnboardingUiUtils.updateVSP(createVSP);

@@ -108,10 +108,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		defaultResource.setVersion(String.format("%.1f",0.1));
 		ResourceAssetStructure parsedCreatedResponse = gson.fromJson(restResponse.getResponse(), ResourceAssetStructure.class);
 		
-		restResponse = LifecycleRestUtils.checkInResource(parsedCreatedResponse.getUuid(), defaultUser);
+		restResponse = new LifecycleRestUtils().checkInResource(parsedCreatedResponse.getUuid(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)STATUS_CODE_CREATED, "Fail to check in.");
 		
-		Component resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, defaultResource.getName(), defaultResource.getVersion());
+		Component resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, defaultResource.getName(), defaultResource.getVersion());
 		Assert.assertEquals(resourceDetails.getLifecycleState().toString(), LifeCycleStatesEnum.CHECKIN.getComponentState().toString(), "Life cycle state not changed.");
 		
 		/*// auditing verification
@@ -121,10 +121,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.RESOURCES);	
 		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	
-		restResponse = LifecycleRestUtils.checkOutResource(parsedCreatedResponse.getUuid(), defaultUser);
+		restResponse = new LifecycleRestUtils().checkOutResource(parsedCreatedResponse.getUuid(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)STATUS_CODE_CREATED, "Fail to check out.");
 		
-		resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, defaultResource.getName(), String.format("%.1f", Double.parseDouble(defaultResource.getVersion()) + 0.1));
+		resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, defaultResource.getName(), String.format("%.1f", Double.parseDouble(defaultResource.getVersion()) + 0.1));
 		Assert.assertEquals(resourceDetails.getLifecycleState().toString(), LifeCycleStatesEnum.CHECKOUT.getComponentState().toString(), "Life cycle state not changed.");
 		
 		/*// auditing verification
@@ -145,13 +145,13 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		
 		Component resourceDetails = null;
-		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdComponent = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetails = createdComponent.left().value();
 		
-		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), defaultUser);
+		RestResponse restResponse = new LifecycleRestUtils().checkInService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)STATUS_CODE_CREATED, "Fail to check in.");
 		
-		resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceDetails.getName(), resourceDetails.getVersion());
+		resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceDetails.getName(), resourceDetails.getVersion());
 		Assert.assertEquals(resourceDetails.getLifecycleState().toString(), LifeCycleStatesEnum.CHECKIN.getComponentState().toString(), "Life cycle state not changed.");
 		
 		/*// auditing verification
@@ -161,10 +161,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultChangeAssetLifeCycleExternalAPI(resourceDetails, defaultUser, LifeCycleStatesEnum.CHECKIN, AssetTypeEnum.SERVICES);	
 		AuditValidationUtils.validateAuditExternalChangeAssetLifeCycle(expectedResourceAuditJavaObject, action.getName(), body);*/
 	
-		restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), defaultUser);
+		restResponse = new LifecycleRestUtils().checkOutService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)STATUS_CODE_CREATED, "Fail to check out.");
 		
-		resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceDetails.getName(), String.format("%.1f", Double.parseDouble(resourceDetails.getVersion()) + 0.1));
+		resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceDetails.getName(), String.format("%.1f", Double.parseDouble(resourceDetails.getVersion()) + 0.1));
 		Assert.assertEquals(resourceDetails.getLifecycleState().toString(), LifeCycleStatesEnum.CHECKOUT.getComponentState().toString(), "Life cycle state not changed.");
 		
 		/*// auditing verification
@@ -208,26 +208,26 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		if(assetTypeEnum.equals(AssetTypeEnum.SERVICES)) {
 			
 			if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CHECKIN)) {
-				restResponse = LifecycleRestUtils.checkInService(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().checkInService(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CHECKOUT)) {
-				restResponse = LifecycleRestUtils.checkOutService(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().checkOutService(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
-				restResponse = LifecycleRestUtils.certificationRequestService(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().certificationRequestService(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-				restResponse = LifecycleRestUtils.startTestingService(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().startTestingService(assetUUID, defaultUser);
 			}
 				
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.SERVICE_NOT_FOUND.name());
 		} else {
 			
 			if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CHECKIN)) {
-				restResponse = LifecycleRestUtils.checkInResource(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().checkInResource(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CHECKOUT)) {
-				restResponse = LifecycleRestUtils.checkOutResource(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().checkOutResource(assetUUID, defaultUser);
 			/*} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.CERTIFICATIONREQUEST)) {
-				restResponse = LifecycleRestUtils.certificationRequestResource(assetUUID, defaultUser);
+				restResponse = new LifecycleRestUtils().certificationRequestResource(assetUUID, defaultUser);
 			} else if(lifeCycleStatesEnum.equals(LifeCycleStatesEnum.STARTCERTIFICATION)) {
-				restResponse = LifecycleRestUtils.startTestingResource(assetUUID, defaultUser);*/
+				restResponse = new LifecycleRestUtils().startTestingResource(assetUUID, defaultUser);*/
 			}
 			
 			errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESOURCE_NOT_FOUND.name());
@@ -255,8 +255,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	// US849997 - Story [BE]: External API for asset lifecycle - checkout
 	@Test(dataProvider="invalidUserCheckinForCheckedOutService")
 	public void invalidUserCheckinForCheckedOutService(User defaultUser) throws Exception {
-		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), defaultUser);
+		Component resourceDetails = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		RestResponse restResponse = new LifecycleRestUtils().checkInService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -278,10 +278,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckinForCheckedInService")
 	public void invalidUserCheckinForCheckedInService(User defaultUser) throws Exception {
 		Component resourceDetails = null;
-		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdComponent = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetails = createdComponent.left().value();
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), defaultUser);
+		resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		RestResponse restResponse = new LifecycleRestUtils().checkInService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -303,8 +303,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckoutForCheckedOutService")
 	public void invalidUserCheckoutForCheckedOutService(User defaultUser) throws Exception {
 
-		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), defaultUser);
+		Component resourceDetails = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		RestResponse restResponse = new LifecycleRestUtils().checkOutService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -325,9 +325,9 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	// US849997 - Story [BE]: External API for asset lifecycle - checkout
 	@Test(dataProvider="invalidUserCheckoutForCheckedInService")
 	public void invalidUserCheckoutForCheckedInService(User defaultUser) throws Exception {
-		Component resourceDetails = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		RestResponse restResponse = LifecycleRestUtils.checkOutService(resourceDetails.getUUID(), defaultUser);
+		Component resourceDetails = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		RestResponse restResponse = new LifecycleRestUtils().checkOutService(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -349,8 +349,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckinForCheckedOutResource")
 	public void invalidUserCheckinForCheckedOutResource(User defaultUser) throws Exception {
 
-		Component resourceDetails = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), defaultUser);
+		Component resourceDetails = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -372,11 +372,11 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckinForCheckedInResource")
 	public void invalidUserCheckinForCheckedInResource(User defaultUser) throws Exception {
 		Component resourceDetails = null;
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetails = createdComponent.left().value();
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), defaultUser);
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 	}
 	
@@ -397,8 +397,8 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckoutForCheckedOutResource")
 	public void invalidUserCheckoutForCheckedOutResource(User defaultUser) throws Exception {
 
-		Component resourceDetails = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), defaultUser);
+		Component resourceDetails = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
+		RestResponse restResponse = new LifecycleRestUtils().checkOutResource(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -420,10 +420,10 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	@Test(dataProvider="invalidUserCheckoutForCheckedInResource")
 	public void invalidUserCheckoutForCheckedInResource(User defaultUser) throws Exception {
 
-		Component resourceDetails = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Component resourceDetails = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true).left().value();
+		resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
-		RestResponse restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), defaultUser);
+		RestResponse restResponse = new LifecycleRestUtils().checkOutResource(resourceDetails.getUUID(), defaultUser);
 		Assert.assertEquals(restResponse.getErrorCode(), RESTRICTED_OPERATION, "Expected for restricted operation.");
 		
 	}
@@ -456,19 +456,19 @@ public class AssetLifeCycle extends ComponentBaseTest {
 				currState, status, actionStatus, user, operationUser));
 		
 		
-		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdComponent = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		Component service = createdComponent.left().value();
 		
-		service = AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, initState, true).getLeft();
+		service = new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, initState, true).getLeft();
 		
 		RestResponse restResponse = null;
 		
 		if(targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
-			restResponse = LifecycleRestUtils.checkOutService(service.getUUID(), user);
+			restResponse = new LifecycleRestUtils().checkOutService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
-			restResponse = LifecycleRestUtils.checkInService(service.getUUID(), user);
+			restResponse = new LifecycleRestUtils().checkInService(service.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
-			restResponse = LifecycleRestUtils.certifyService(service.getUUID(), user);
+			restResponse = new LifecycleRestUtils().certifyService(service.getUUID(), user);
 		}
 		
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)errorCode, "Expected that response code will be equal.");
@@ -511,19 +511,19 @@ public class AssetLifeCycle extends ComponentBaseTest {
 				+ " preState: %s, currState: %s, status: %s, actionStatus: %s, user: %s, operationUser: %s", initState, targetState, errorCode, preState,
 				currState, status, actionStatus, user, operationUser));
 
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
 		
-		resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, initState, true).getLeft();
+		resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, UserRoleEnum.DESIGNER, initState, true).getLeft();
 		
 		RestResponse restResponse = null;
 		
 		if(targetState.equals(LifeCycleStatesEnum.CHECKOUT)) {
-			restResponse = LifecycleRestUtils.checkOutResource(resourceDetails.getUUID(), user);
+			restResponse = new LifecycleRestUtils().checkOutResource(resourceDetails.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CHECKIN)) {
-			restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), user);
+			restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), user);
 		} else if(targetState.equals(LifeCycleStatesEnum.CERTIFY)) {
-			restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), user);
+			restResponse = new LifecycleRestUtils().certifyResource(resourceDetails.getUUID(), user);
 		}
 		
 		Assert.assertEquals(restResponse.getErrorCode(), (Integer)errorCode, "Expected that response code will be equal.");
@@ -540,49 +540,49 @@ public class AssetLifeCycle extends ComponentBaseTest {
 /*	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void BasicFlowForResourceSubmitForTestingStartTesting() throws Exception {
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Certification request
-		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 	}*/
 	
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void BasicFlowForServiceSubmitForTestingStartTesting() throws Exception {
-		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdComponent = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Certification request
-		restResponse = LifecycleRestUtils.certificationRequestService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certificationRequestService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Start testing
-		restResponse = LifecycleRestUtils.startTestingService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
+		restResponse = new LifecycleRestUtils().startTestingService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
 	}
 	
 	/*// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void specialCaseInvalidFlowForVfcmtSubmitForTesting() throws Exception {
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Certification request
-		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 	}*/
 	
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void specialCaseInvalidFlowForVfcmtStartTesting() throws Exception {
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Certification request
-		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
+		restResponse = new LifecycleRestUtils().startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
 	}
 	
@@ -598,35 +598,35 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void BasicFlowForResourceCertify() throws Exception {
-		Either<Resource, RestResponse> createdComponent = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdComponent = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		/*// Certification request
-		restResponse = LifecycleRestUtils.certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certificationRequestResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Start testing
-		restResponse = LifecycleRestUtils.startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));*/
+		restResponse = new LifecycleRestUtils().startTestingResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));*/
 		
 		// Certify
-		restResponse = LifecycleRestUtils.certifyResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certifyResource(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 	}
 		
 	// US824692 - Story [BE]: External API for asset lifecycle - submit for test / start testing
 	@Test
 	public void BasicFlowForServiceCertify() throws Exception {
-		Either<Service, RestResponse> createdComponent = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdComponent = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		Component resourceDetails = createdComponent.left().value();
-		RestResponse restResponse = LifecycleRestUtils.checkInService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse restResponse = new LifecycleRestUtils().checkInService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Certification request
-		restResponse = LifecycleRestUtils.certificationRequestService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		restResponse = new LifecycleRestUtils().certificationRequestService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		
 		// Start testing
-		restResponse = LifecycleRestUtils.startTestingService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
+		restResponse = new LifecycleRestUtils().startTestingService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
 		// Certify
-		restResponse = LifecycleRestUtils.certifyService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
+		restResponse = new LifecycleRestUtils().certifyService(resourceDetails.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.TESTER));
 		
 	}
 	
@@ -652,7 +652,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		ResourceAssetStructure parsedCreatedResponse = gson.fromJson(restResponse.getResponse(), ResourceAssetStructure.class);
 		
 		// 2. Using search external API with resourceType=VFCMT to retrieve VFCMT.
-		restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
+		restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
 		BaseRestUtils.checkSuccess(restResponse);
 		ResourceAssetStructure dataOutOfSearchResponseForResourceName = ResponseParser.getDataOutOfSearchExternalAPIResponseForResourceName(restResponse.getResponse(), parsedCreatedResponse.getName());
 		Assert.assertEquals(parsedCreatedResponse.getUuid(), dataOutOfSearchResponseForResourceName.getUuid(), "Created resourceUUID not equal to search retrieve resourceUUID.");
@@ -664,14 +664,14 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(resourceAssetMetadata.getUuid(), parsedCreatedResponse.getUuid(), "Created resourceUUID not equal to getSpecificMetadata resourceUUID.");
 		
 		// 4. Upload artifact via upload artifact external API.
-		Component initComponentVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), parsedCreatedResponse.getVersion());
+		Component initComponentVersion = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), parsedCreatedResponse.getVersion());
 		ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", "OTHER", true, false);
 		RestResponse uploadArtifactRestResponse = ArtifactRestUtils.externalAPIUploadArtifactOfTheAsset(initComponentVersion, defaultUser, artifactReqDetails);
 		BaseRestUtils.checkSuccess(uploadArtifactRestResponse);
 
 		ArtifactDefinition responseArtifact = ResponseParser.convertArtifactDefinitionResponseToJavaObject(uploadArtifactRestResponse.getResponse());
 //		ArtifactDefinition responseArtifact = ArtifactRestUtils.getArtifactDataFromJson(uploadArtifactRestResponse.getResponse());
-		initComponentVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), parsedCreatedResponse.getVersion());
+		initComponentVersion = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), parsedCreatedResponse.getVersion());
 		
 		// 5. Update artifact via external API.
 		CRUDExternalAPI crudExternalAPI = new CRUDExternalAPI();
@@ -679,7 +679,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 	
 		
 		// 6. Use external API to checkin the VFCMT.
-		RestResponse checkInRestResponse = LifecycleRestUtils.checkInResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse checkInRestResponse = new LifecycleRestUtils().checkInResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(checkInRestResponse);
 		parsedCreatedResponse = gson.fromJson(checkInRestResponse.getResponse(), ResourceAssetStructure.class);
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "0.1", "Expect that version will not change.");
@@ -687,7 +687,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
 		// 7. Then checkout the VFCMT via external API.
-		RestResponse checkOutRestResponse = LifecycleRestUtils.checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse checkOutRestResponse = new LifecycleRestUtils().checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(checkOutRestResponse);
 		parsedCreatedResponse = gson.fromJson(checkOutRestResponse.getResponse(), ResourceAssetStructure.class);
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "0.2", "Expect that version will change to 0.2.");
@@ -695,18 +695,18 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
 		// 8. The minor version must be incremented, the invariantUUID, and UUID must stay the same, the uniqueId should be changed, the artifacts from first version exists on the new version.
-		Component newComponentVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), String.format("%.1f", Double.parseDouble(parsedCreatedResponse.getVersion())));
+		Component newComponentVersion = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), String.format("%.1f", Double.parseDouble(parsedCreatedResponse.getVersion())));
 		Assert.assertEquals(newComponentVersion.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		Assert.assertEquals(newComponentVersion.getUUID(), initComponentVersion.getUUID(), "Expected that UUID will not change.");
 		Assert.assertNotEquals(newComponentVersion.getUniqueId(), initComponentVersion.getUniqueId(), "Expected that uniqueId will change.");
 		Assert.assertTrue(newComponentVersion.getDeploymentArtifacts().keySet().contains(responseArtifact.getArtifactLabel()), "Expected that artifact from first version exists on the new version.");
 		
 		// 9. The previous version remains untouched, the highest version flag on the first version is false, all information (metadata / artifacts) are the same on the first version.
-		initComponentVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), String.format("%.1f", Double.parseDouble("0.1")));
+		initComponentVersion = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, parsedCreatedResponse.getName(), String.format("%.1f", Double.parseDouble("0.1")));
 		Assert.assertEquals(initComponentVersion.isHighestVersion(), (Boolean)false, "Expected that highest version flag on first version is false.");
 		
 		// 10. Check in via external API.
-		checkInRestResponse = LifecycleRestUtils.checkInResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		checkInRestResponse = new LifecycleRestUtils().checkInResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(checkInRestResponse);
 		parsedCreatedResponse = gson.fromJson(checkInRestResponse.getResponse(), ResourceAssetStructure.class);
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "0.2", "Expect that version will not change.");
@@ -714,7 +714,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
 		// 11. Certify via external API.
-		RestResponse certifyRestResponse = LifecycleRestUtils.certifyResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse certifyRestResponse = new LifecycleRestUtils().certifyResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(certifyRestResponse);
 		parsedCreatedResponse = gson.fromJson(certifyRestResponse.getResponse(), ResourceAssetStructure.class);
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "1.0", "Expect that version will change to 1.0");
@@ -722,7 +722,7 @@ public class AssetLifeCycle extends ComponentBaseTest {
 		Assert.assertEquals(parsedCreatedResponse.getInvariantUUID(), initComponentVersion.getInvariantUUID(), "Expected that invariantUUID will not change.");
 		
 		// 12. Check out via external API.
-		checkOutRestResponse = LifecycleRestUtils.checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		checkOutRestResponse = new LifecycleRestUtils().checkOutResource(initComponentVersion.getUUID(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(checkOutRestResponse);
 		parsedCreatedResponse = gson.fromJson(checkOutRestResponse.getResponse(), ResourceAssetStructure.class);
 		Assert.assertEquals(parsedCreatedResponse.getVersion(), "1.1", "Expect that version will change to 1.1");

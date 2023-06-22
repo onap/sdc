@@ -109,7 +109,7 @@ public class VfArtifacts extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         String vspName = vsp.getName();
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
         List<HeatWithParametersDefinition> envFilesList = ArtifactBusinessLogic.extractHeatWithParametersDefinition(deploymentArtifacts);
 //		create env file and update it
@@ -133,7 +133,7 @@ public class VfArtifacts extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         String vspName = vsp.getName();
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
         List<HeatWithParametersDefinition> envFilesList = ArtifactBusinessLogic.extractHeatWithParametersDefinition(deploymentArtifacts);
         if (envFilesList.size() > 0) {
@@ -157,7 +157,7 @@ public class VfArtifacts extends SetupCDTest {
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         String vspName = vsp.getName();
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
         List<HeatWithParametersDefinition> envFilesList = ArtifactBusinessLogic.extractHeatWithParametersDefinition(deploymentArtifacts);
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.StepsEnum.COMPOSITION.getValue());
@@ -260,7 +260,7 @@ public class VfArtifacts extends SetupCDTest {
         String downloadDirPath = SetupCDTest.getConfig().getDownloadAutomationFolder();
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vendorSoftwareProductObject.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vendorSoftwareProductObject.getName(), "0.1");
         Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
         List<HeatWithParametersDefinition> envFilesList = ArtifactBusinessLogic.extractHeatWithParametersDefinition(deploymentArtifacts);
 
@@ -281,7 +281,7 @@ public class VfArtifacts extends SetupCDTest {
                 DeploymentArtifactPage.clickSaveEnvParameters();
                 GeneralUIUtils.waitForLoader();
                 ExtentTestActions.log(Status.INFO, String.format("Going to get the %s updated resource ...", vendorSoftwareProductObject.getName()));
-                resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vendorSoftwareProductObject.getName(), "0.1");
+                resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vendorSoftwareProductObject.getName(), "0.1");
                 deploymentArtifacts = resource.getDeploymentArtifacts();
                 Map<String, List<HeatWithParametersDefinition>> envFilesListupdated = new HashMap<>();
                 ExtentTestActions.log(Status.INFO, String.format("Mapping the %s artifact parameters ...", artifactName));

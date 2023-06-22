@@ -97,7 +97,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	}
 
 	public void verifyVFReqCap(String componentId) throws Exception {
-		RestResponse restResponse = ResourceRestUtils.getResource(componentId);
+		RestResponse restResponse = new ResourceRestUtils().getResource(componentId);
 		Resource resource = ResponseParser.parseToObject(restResponse.getResponse(), Resource.class);
 		verifyReqCap(resource);
 	}
@@ -273,12 +273,12 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		ComponentTypeEnum compInstType = getCompInstTypeByContainerType(containerComponentType);
 		Component component = null;
 		if (compInstType == ComponentTypeEnum.RESOURCE) {
-			getResponse = ResourceRestUtils.getResource(sdncDesignerDetails, originComponentId);
-			ResourceRestUtils.checkSuccess(getResponse);
+			getResponse = new ResourceRestUtils().getResource(sdncDesignerDetails, originComponentId);
+			new ResourceRestUtils().checkSuccess(getResponse);
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
 		} else if (compInstType == ComponentTypeEnum.SERVICE) {
 			getResponse = ServiceRestUtils.getService(originComponentId, sdncDesignerDetails);
-			ResourceRestUtils.checkSuccess(getResponse);
+			new ResourceRestUtils().checkSuccess(getResponse);
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Service.class);
 		} else {
 			Assert.fail("Unsupported type - " + containerComponentType);
@@ -511,7 +511,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		RestResponse getResponse = null;
 		Component component = null;
 		if (componentDetails instanceof ResourceReqDetails) {
-			getResponse = ResourceRestUtils.getResource(sdncAdminDetails, componentDetails.getUniqueId());
+			getResponse = new ResourceRestUtils().getResource(sdncAdminDetails, componentDetails.getUniqueId());
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
 		} else if (componentDetails instanceof ServiceReqDetails) {
 			getResponse = ServiceRestUtils.getService((ServiceReqDetails) componentDetails, sdncAdminDetails);
@@ -522,7 +522,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		} else {
 			Assert.fail("Unsupported type of componentDetails - " + componentDetails.getClass().getSimpleName());
 		}
-		ResourceRestUtils.checkSuccess(getResponse);
+		new ResourceRestUtils().checkSuccess(getResponse);
 		int numberOfActualRIs = component.getComponentInstances() != null ? component.getComponentInstances().size() : 0;
 		int numberOfActualRelations = component.getComponentInstancesRelations() != null ? component.getComponentInstancesRelations().size() : 0;
 		assertEquals("Check number of RIs meet the expected number", numberOfRIs, numberOfActualRIs);
@@ -559,8 +559,8 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 
 	// Create Atomic resource ( VFC/CP/VL)
 	protected void createAtomicResource(ResourceReqDetails resourceDetails) throws Exception {
-		RestResponse createResourceResponse = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails);
-		ResourceRestUtils.checkCreateResponse(createResourceResponse);
+		RestResponse createResourceResponse = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails);
+		new ResourceRestUtils().checkCreateResponse(createResourceResponse);
 
 	}
 
@@ -570,8 +570,8 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	}
 
 	protected void createVF(ResourceReqDetails resourceDetails, User sdncModifier) throws Exception {
-		RestResponse createVfResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifier);
-		ResourceRestUtils.checkCreateResponse(createVfResponse);
+		RestResponse createVfResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifier);
+		new ResourceRestUtils().checkCreateResponse(createVfResponse);
 	}
 
 	protected void createService(ServiceReqDetails serviceDetails) throws Exception {
@@ -580,7 +580,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 
 	protected void createService(ServiceReqDetails serviceDetails, User sdncModifier) throws Exception {
 		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifier);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 	}
 
 	protected void createProduct(ProductReqDetails productDetails) throws Exception {
@@ -589,13 +589,13 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 
 	protected void createProduct(ProductReqDetails productDetails, User sdncModifier) throws Exception {
 		RestResponse createProductResponse = ProductRestUtils.createProduct(productDetails, sdncModifier);
-		ResourceRestUtils.checkCreateResponse(createProductResponse);
+		new ResourceRestUtils().checkCreateResponse(createProductResponse);
 	}
 
 	protected RestResponse associateComponentInstancesForService(RequirementCapabilityRelDef requirementDef, ComponentReqDetails containerDetails, User user) throws IOException {
 
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(requirementDef, user, containerDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
-		ResourceRestUtils.checkSuccess(associateInstances);
+		new ResourceRestUtils().checkSuccess(associateInstances);
 		deleteAssociatedFromExpected(requirementDef);
 
 		return associateInstances;
@@ -657,7 +657,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 	protected void dissociateComponentInstancesForService(RequirementCapabilityRelDef requirementDef, ComponentReqDetails containerDetails, User user) throws IOException {
 
 		RestResponse dissociateInstances = ComponentInstanceRestUtils.dissociateInstances(requirementDef, user, containerDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
-		ResourceRestUtils.checkSuccess(dissociateInstances);
+		new ResourceRestUtils().checkSuccess(dissociateInstances);
 		addDissociatedToExpected(requirementDef);
 	}
 
@@ -666,13 +666,13 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		String requirementName = "binding";
 		String capType = "tosca.capabilities.network.Bindable";
 		RestResponse getResourceResponse = ComponentRestUtils.getComponentRequirmentsCapabilities(user, component);
-		ResourceRestUtils.checkSuccess(getResourceResponse);
+		new ResourceRestUtils().checkSuccess(getResourceResponse);
 		CapReqDef capReqDef = ResponseParser.parseToObject(getResourceResponse.getResponse(), CapReqDef.class);
 		List<CapabilityDefinition> capList = capReqDef.getCapabilities().get(capType);
 		List<RequirementDefinition> reqList = capReqDef.getRequirements().get(capType);
 		RequirementCapabilityRelDef reqCapRelation = ElementFactory.getReqCapRelation(cpCompInstId, cpReqFulfillerCompInstId, cpCompInstId, cpReqFulfillerOwnerId, capType, requirementName, capList, reqList);
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(reqCapRelation, user, component.getUniqueId(), containerCompType);
-		ResourceRestUtils.checkSuccess(associateInstances);
+		new ResourceRestUtils().checkSuccess(associateInstances);
 	}
 
 	protected void consumeVlCapability(ComponentReqDetails component, String vlCapConsumerCompInstId, String vlCompInstId, String vlCapConsumerOwnerId, User user, ComponentTypeEnum containerCompType) throws IOException {
@@ -680,13 +680,13 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		String requirementName = "link";
 		String capType = "tosca.capabilities.network.Linkable";
 		RestResponse getResourceResponse = ComponentRestUtils.getComponentRequirmentsCapabilities(user, component);
-		ResourceRestUtils.checkSuccess(getResourceResponse);
+		new ResourceRestUtils().checkSuccess(getResourceResponse);
 		CapReqDef capReqDef = ResponseParser.parseToObject(getResourceResponse.getResponse(), CapReqDef.class);
 		List<CapabilityDefinition> capList = capReqDef.getCapabilities().get(capType);
 		List<RequirementDefinition> reqList = capReqDef.getRequirements().get(capType);
 		RequirementCapabilityRelDef reqCapRelation = ElementFactory.getReqCapRelation(vlCapConsumerCompInstId, vlCompInstId, vlCapConsumerOwnerId, vlCompInstId, capType, requirementName, capList, reqList);
 		RestResponse associateInstances = ComponentInstanceRestUtils.associateInstances(reqCapRelation, user, component.getUniqueId(), containerCompType);
-		ResourceRestUtils.checkSuccess(associateInstances);
+		new ResourceRestUtils().checkSuccess(associateInstances);
 	}
 
 	private void addDissociatedToExpected(RequirementCapabilityRelDef requirementDef) {

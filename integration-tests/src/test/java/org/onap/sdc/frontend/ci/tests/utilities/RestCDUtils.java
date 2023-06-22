@@ -70,7 +70,7 @@ public class RestCDUtils {
             RestResponse getResourceResponse = null;
             String resourceUniqueId = resource.getUniqueId();
             if (resourceUniqueId != null) {
-                getResourceResponse = ResourceRestUtils.getResource(resourceUniqueId);
+                getResourceResponse = new ResourceRestUtils().getResource(resourceUniqueId);
                 if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                     ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
                     System.out.println(succeedGetResourceMsg);
@@ -78,7 +78,7 @@ public class RestCDUtils {
                 return getResourceResponse;
             }
             JSONObject getResourceJSONObject = null;
-            getResourceResponse = ResourceRestUtils.getResourceByNameAndVersion(user.getUserId(), resource.getName(), resource.getVersion());
+            getResourceResponse = new ResourceRestUtils().getResourceByNameAndVersion(user.getUserId(), resource.getName(), resource.getVersion());
             if (getResourceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(resource, getResourceResponse);
                 ExtentTestActions.log(Status.INFO, succeedGetResourceMsg);
@@ -160,10 +160,10 @@ public class RestCDUtils {
             map(e -> e.getUniqueId()).
             collect(Collectors.toList());
         for (String uId : collect) {
-            ResourceRestUtils.markResourceToDelete(uId, userId);
+            new ResourceRestUtils().markResourceToDelete(uId, userId);
 
         }
-        ResourceRestUtils.deleteMarkedResources(userId);
+        new ResourceRestUtils().deleteMarkedResources(userId);
 
         resourcesArrayList = map.get("services");
         collect = resourcesArrayList.stream().

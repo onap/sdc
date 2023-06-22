@@ -171,7 +171,7 @@ public class PNF extends SetupCDTest {
                 AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -217,7 +217,7 @@ public class PNF extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(pnfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }

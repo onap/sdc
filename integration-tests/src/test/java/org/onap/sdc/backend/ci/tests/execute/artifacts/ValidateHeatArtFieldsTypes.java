@@ -70,7 +70,7 @@ public class ValidateHeatArtFieldsTypes extends ComponentBaseTest {
 		sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		resourceDetails = ElementFactory.getDefaultResource();
 
-		RestResponse response = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails);
+		RestResponse response = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails);
 		AssertJUnit.assertTrue("create request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 201);
 

@@ -143,7 +143,7 @@ public class ImportDCAE extends SetupCDTest {
             resourceMetaData.setVersion("0.1");
             VfVerificator.verifyLinkCreated(resourceMetaData, getUser(), 1);
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -235,7 +235,7 @@ public class ImportDCAE extends SetupCDTest {
                 assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -280,7 +280,7 @@ public class ImportDCAE extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(vfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -567,7 +567,7 @@ public class ImportDCAE extends SetupCDTest {
             String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
             Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 

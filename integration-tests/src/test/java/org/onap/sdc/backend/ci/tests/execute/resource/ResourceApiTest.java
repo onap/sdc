@@ -123,7 +123,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 	}
 
 	protected void deleteResource(String resourceUniqueId, String httpCspUserId) throws Exception {
-		RestResponse res = ResourceRestUtils.deleteResource(resourceUniqueId, httpCspUserId);
+		RestResponse res = new ResourceRestUtils().deleteResource(resourceUniqueId, httpCspUserId);
 
 		// System.out.println("Delete resource was finished with response: " +
 		// res.getErrorCode());
@@ -134,7 +134,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = getResourceObj();
 
 		// create resource
-		return ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		return new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 	}
 
@@ -280,7 +280,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = getResourceObj();
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		Resource resourceRespJavaObject = ResponseParser
 				.convertResourceResponseToJavaObject(restResponse.getResponse());
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -343,7 +343,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 		}
 
 		// Delete resource
-		ResourceRestUtils.deleteResource(resourceDetails, sdncModifierDetails, "0.1");
+		new ResourceRestUtils().deleteResource(resourceDetails, sdncModifierDetails, "0.1");
 
 	}
 
@@ -354,7 +354,7 @@ public class ResourceApiTest extends ComponentBaseTest {
 	// for (int i = 0; i < 100; i++) {
 	// ResourceReqDetails resourceDetails = defineResourse_Benny(i);
 	//
-	// ResourceRestUtils.createResource(resourceDetails,
+	// new ResourceRestUtils().createResource(resourceDetails,
 	// UserUtils.getDesignerDetails());
 	// // resourceUtils.deleteResource(resourceDetails,
 	// UserUtils.getDesignerDetails(), "0.1");

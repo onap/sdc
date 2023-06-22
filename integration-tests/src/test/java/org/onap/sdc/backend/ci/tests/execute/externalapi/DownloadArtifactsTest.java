@@ -222,7 +222,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 	private Service createServiceWithRIsWithArtifacts() throws Exception {
 		serviceDetails_02.setUniqueId(serviceDetails_01.getUniqueId());
 		createTreeCheckedinVFInstances();
-		LifecycleRestUtils.changeResourceState(resourceDetailsCP_01, sdncDesignerDetails, "0.1",
+		new LifecycleRestUtils().changeResourceState(resourceDetailsCP_01, sdncDesignerDetails, "0.1",
 				LifeCycleStatesEnum.CHECKIN);
 		createVFInstanceAndAtomicResourceInstanceWithoutCheckin(resourceDetailsVF_01, resourceDetailsCP_01,
 				sdncDesignerDetails);
@@ -236,13 +236,13 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 	private void createTreeCheckedinVFInstances() throws Exception {
 		RestResponse createFirstVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_01,
 				sdncDesignerDetails);
-		ResourceRestUtils.checkCreateResponse(createFirstVFInstResp);
+		new ResourceRestUtils().checkCreateResponse(createFirstVFInstResp);
 		RestResponse createSecondVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_02,
 				sdncDesignerDetails);
-		ResourceRestUtils.checkCreateResponse(createSecondVFInstResp);
+		new ResourceRestUtils().checkCreateResponse(createSecondVFInstResp);
 		RestResponse createThirdVFInstResp = createCheckedinVFInstance(serviceDetails_01, resourceDetailsVF_03,
 				sdncDesignerDetails);
-		ResourceRestUtils.checkCreateResponse(createThirdVFInstResp);
+		new ResourceRestUtils().checkCreateResponse(createThirdVFInstResp);
 	}
 
 	private Component getComponentAndValidateRIs(ComponentReqDetails componentDetails, int numberOfRIs,
@@ -251,7 +251,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 		RestResponse getResponse = null;
 		Component component = null;
 		if (componentDetails instanceof ResourceReqDetails) {
-			getResponse = ResourceRestUtils.getResource(sdncAdminDetails, componentDetails.getUniqueId());
+			getResponse = new ResourceRestUtils().getResource(sdncAdminDetails, componentDetails.getUniqueId());
 			component = ResponseParser.parseToObjectUsingMapper(getResponse.getResponse(), Resource.class);
 		} else if (componentDetails instanceof ServiceReqDetails) {
 			getResponse = ServiceRestUtils.getService((ServiceReqDetails) componentDetails, sdncAdminDetails);
@@ -262,7 +262,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 		} else {
 			Assert.fail("Unsupported type of componentDetails - " + componentDetails.getClass().getSimpleName());
 		}
-		ResourceRestUtils.checkSuccess(getResponse);
+		new ResourceRestUtils().checkSuccess(getResponse);
 		int numberOfActualRIs = component.getComponentInstances() != null ? component.getComponentInstances().size()
 				: 0;
 		int numberOfActualRelations = component.getComponentInstancesRelations() != null
@@ -277,9 +277,9 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 	private void createVFInstanceAndAtomicResourceInstanceWithoutCheckin(ResourceReqDetails vf,
 			ResourceReqDetails atomicResource, User user) throws Exception {
 		RestResponse createVFInstance = createVFInstance(serviceDetails_01, vf, user);
-		ResourceRestUtils.checkCreateResponse(createVFInstance);
+		new ResourceRestUtils().checkCreateResponse(createVFInstance);
 		RestResponse atomicInstanceForService = createAtomicInstanceForService(serviceDetails_01, atomicResource, user);
-		ResourceRestUtils.checkCreateResponse(atomicInstanceForService);
+		new ResourceRestUtils().checkCreateResponse(atomicInstanceForService);
 	}
 
 	private RestResponse createCheckedinVFInstance(ServiceReqDetails containerDetails,
@@ -312,13 +312,13 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 
 	private void changeResourceLifecycleState(ResourceReqDetails resourceDetails, String userUserId,
 			LifeCycleStatesEnum lifeCycleStates) throws Exception {
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDetails, userUserId, lifeCycleStates);
-		LifecycleRestUtils.checkLCS_Response(response);
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDetails, userUserId, lifeCycleStates);
+		new LifecycleRestUtils().checkLCS_Response(response);
 	}
 
 	private void createAtomicResource(ResourceReqDetails resourceDetails) throws Exception {
-		RestResponse createResourceResponse = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails);
-		ResourceRestUtils.checkCreateResponse(createResourceResponse);
+		RestResponse createResourceResponse = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails);
+		new ResourceRestUtils().checkCreateResponse(createResourceResponse);
 
 	}
 
@@ -328,8 +328,8 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 	}
 
 	private void createVF(ResourceReqDetails resourceDetails, User sdncModifier) throws Exception {
-		RestResponse createVfResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifier);
-		ResourceRestUtils.checkCreateResponse(createVfResponse);
+		RestResponse createVfResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifier);
+		new ResourceRestUtils().checkCreateResponse(createVfResponse);
 	}
 
 	private void createService(ServiceReqDetails serviceDetails) throws Exception {
@@ -338,7 +338,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 
 	private void createService(ServiceReqDetails serviceDetails, User sdncModifier) throws Exception {
 		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifier);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 	}
 
 	private void importVfWithArtifacts(ImportReqDetails resourceDetailsVF_01) throws Exception {
@@ -350,7 +350,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 
 		resourceDetailsVF_01.setPayloadName(payloadName);
 		resourceDetailsVF_01.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetailsVF_01, sdncDesignerDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetailsVF_01, sdncDesignerDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 	}
 

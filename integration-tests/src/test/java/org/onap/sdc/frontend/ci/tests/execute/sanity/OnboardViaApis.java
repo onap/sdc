@@ -38,7 +38,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtillViaApis;
+import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtilsViaApis;
 import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.slf4j.LoggerFactory;
@@ -95,47 +95,47 @@ public class OnboardViaApis {
     public void updateVSPFullScenario(String filepath, String vnfFile) throws Exception {
         //CREATE DATA REQUIRED FOR TEST
         boolean skipReport = true;
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(sdncDesignerDetails1);
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1,
+        VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, sdncDesignerDetails1,
             vendorLicenseModel);
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService(); //getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         // TEST START
 
-        VendorLicenseModelRestUtils.updateVendorLicense(vendorLicenseModel, sdncDesignerDetails1, false);
-        VendorLicenseModelRestUtils.validateVlmExist(vendorLicenseModel.getVendorId(), vendorLicenseModel.getVersion(), sdncDesignerDetails1);
+        new VendorLicenseModelRestUtils().updateVendorLicense(vendorLicenseModel, sdncDesignerDetails1, false);
+        new VendorLicenseModelRestUtils().validateVlmExist(vendorLicenseModel.getVendorId(), vendorLicenseModel.getVersion(), sdncDesignerDetails1);
 
         // Update the VSP With the VLM new version and submit the VSP
-        vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject,
+        vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().updateVSPWithNewVLMParameters(vendorSoftwareProductObject,
             vendorLicenseModel, sdncDesignerDetails1);
-        VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        new VendorSoftwareProductRestUtils().validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
         System.out.println(distributeAndValidateService);
     }
 
     public Service runOnboardViaApisOnly(ServiceReqDetails serviceReqDetails, ResourceReqDetails resourceReqDetails, String filepath, String vnfFile) throws Exception {
 
-        VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filepath, vnfFile, sdncDesignerDetails1);
+        VendorSoftwareProductObject vendorSoftwareProductObject = new OnboardingUtilsViaApis().createVspViaApis(resourceReqDetails, filepath, vnfFile, sdncDesignerDetails1);
         vendorSoftwareProductObject.setName(vendorSoftwareProductObject.getName());
 
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         return service;
     }
 

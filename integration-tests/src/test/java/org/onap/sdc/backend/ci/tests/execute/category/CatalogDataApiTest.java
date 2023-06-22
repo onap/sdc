@@ -101,7 +101,7 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 	@Test
 	public void getCatalogData() throws Exception {
 
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails1, user, "0.1",
+		RestResponse checkInResponse = new LifecycleRestUtils().changeResourceState(resourceDetails1, user, "0.1",
 				LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertEquals("check in operation failed", 200, checkInResponse.getErrorCode().intValue());
 
@@ -122,13 +122,13 @@ public class CatalogDataApiTest extends ComponentBaseTest {
 	}
 
 	protected void deleteResource(String resourceUniqueId, String httpCspUserId) throws Exception {
-		RestResponse deleteResourceResponse = ResourceRestUtils.deleteResource(resourceUniqueId, httpCspUserId);
+		RestResponse deleteResourceResponse = new ResourceRestUtils().deleteResource(resourceUniqueId, httpCspUserId);
 
 	}
 
 	protected RestResponse createResource(User user, ResourceReqDetails resourceDetails) throws Exception {
 		deleteResource(resourceDetails.getName(), user.getUserId());
-		return ResourceRestUtils.createResource(resourceDetails, user);
+		return new ResourceRestUtils().createResource(resourceDetails, user);
 	}
 
 	protected ResourceReqDetails buildResourceDetails(User user, String resourceName) {

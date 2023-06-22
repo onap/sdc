@@ -216,7 +216,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 		ComponentInstance pmaaServer = resource.getComponentInstances().stream()
@@ -249,7 +249,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csar_1");
-		RestResponse checkinState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkinState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(checkinState);
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
 				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(),
@@ -257,13 +257,13 @@ public class ExportToscaTest extends ComponentBaseTest {
 		
 		//2 create service
 		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 		Service service = ResponseParser.parseToObjectUsingMapper(createServiceResponse.getResponse(), Service.class);
 
 		//3 create vf instance in service
 		ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(createdResource);
 		RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, sdncModifierDetails, service);
-		ResourceRestUtils.checkCreateResponse(createComponentInstance);
+		new ResourceRestUtils().checkCreateResponse(createComponentInstance);
 		
 		RestResponse getService = ServiceRestUtils.getService(service.getUniqueId());
 		BaseRestUtils.checkSuccess(getService);

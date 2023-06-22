@@ -133,7 +133,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 				serviceResponse.getErrorCode().intValue());
 
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		AssertJUnit.assertEquals("Check response code after creating resource", 201,
 				createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
@@ -379,7 +379,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 		String auditAction = "DArtifactDownload";
 
 		ExpectedDistDownloadAudit expectedDistDownloadAudit = new ExpectedDistDownloadAudit(auditAction,
-				ResourceRestUtils.ecomp, encodeUrlForDownload(relativeUrl), "200", "OK");
+				new ResourceRestUtils().ecomp, encodeUrlForDownload(relativeUrl), "200", "OK");
 		AuditValidationUtils.validateAudit(expectedDistDownloadAudit, auditAction);
 	}
 
@@ -442,7 +442,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 	@Test
 	public void downloadResourceArtifact_ResourceVersionNotFound() throws Exception {
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
@@ -478,7 +478,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test
 	public void downloadResourceArtifact_ServiceNameNotFound() throws Exception {
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
 		download_serviceNameNotFound_inner("notExistingServiceName", serviceBaseVersion, resource.getName(),
@@ -489,7 +489,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test
 	public void downloadResourceArtifact_ServiceVersionNotFound() throws Exception {
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
 

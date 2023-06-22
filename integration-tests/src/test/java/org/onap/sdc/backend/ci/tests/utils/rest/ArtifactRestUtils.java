@@ -498,7 +498,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	public static RestResponse updateInformationalArtifactToResource(ArtifactReqDetails artifactDetails, User sdncModifierDetails, String resourceUid, String checksum) throws IOException {
 		Config config = Utils.getConfig();
 		if (artifactDetails.getArtifactGroupType()!=null && artifactDetails.getArtifactGroupType().equals("DEPLOYMENT")){
-			RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceUid );
+			RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails, resourceUid );
 			Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 			Map<String, ArtifactDefinition> deploymentArtifacts = resourceRespJavaObject.getDeploymentArtifacts();
 			ArtifactDefinition artifactDefinition = deploymentArtifacts.get(artifactDetails.getArtifactLabel());
@@ -515,7 +515,7 @@ public class ArtifactRestUtils extends BaseRestUtils {
 	public static RestResponse uploadArtifactToPlaceholderOnResource(ArtifactReqDetails artifactDetails, User sdncModifierDetails, String resourceUid, String placeHolderLabel) throws IOException {
 		Config config = Utils.getConfig();
 		if (artifactDetails.getArtifactLabel() != null && !artifactDetails.getArtifactLabel().isEmpty()){
-			RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceUid );
+			RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails, resourceUid );
 			Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 			Map<String, ArtifactDefinition> deploymentArtifacts = resourceRespJavaObject.getDeploymentArtifacts();
 			ArtifactDefinition artifactDefinition = deploymentArtifacts.get(artifactDetails.getArtifactLabel());

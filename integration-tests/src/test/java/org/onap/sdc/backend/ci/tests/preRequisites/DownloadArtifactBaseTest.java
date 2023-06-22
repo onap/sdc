@@ -74,7 +74,7 @@ public class DownloadArtifactBaseTest extends ComponentBaseTest {
 
 	protected void createComponents() throws Exception {
 
-		RestResponse response = ResourceRestUtils.createResource(downloadResourceDetails, sdncUserDetails);
+		RestResponse response = new ResourceRestUtils().createResource(downloadResourceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue("create request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 201);
 		AssertJUnit.assertNotNull("resource uniqueId is null:", downloadResourceDetails.getUniqueId());

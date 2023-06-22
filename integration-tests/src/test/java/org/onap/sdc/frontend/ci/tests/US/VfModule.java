@@ -87,9 +87,9 @@ public class VfModule extends SetupCDTest {
         getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
         System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(),
+        VendorSoftwareProductObject createVendorSoftwareProduct = new VendorSoftwareProductRestUtils().createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(),
             vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
         //
@@ -145,7 +145,7 @@ public class VfModule extends SetupCDTest {
         latestFilefromDir = org.onap.sdc.frontend.ci.tests.utilities.FileHandling.getLastModifiedFileNameFromDir();
 
 //		verification
-        Service service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
+        Service service = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
         ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(latestFilefromDir);
 
 //		compare number of vf modules defined in HEAT.meta file vs Service TOSCA yaml

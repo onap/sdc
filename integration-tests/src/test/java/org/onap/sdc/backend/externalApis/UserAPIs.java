@@ -242,10 +242,10 @@ public class UserAPIs extends ComponentBaseTest {
 			BaseRestUtils.checkSuccess(pushUser);
 			
 			UserRoleEnum.DESIGNER.setUserId(ecompUser.getLoginId());
-			resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+			resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 			
 		} finally {
-			ResourceRestUtils.deleteResource(resource.getUniqueId(), adminUser.getUserId());
+			new ResourceRestUtils().deleteResource(resource.getUniqueId(), adminUser.getUserId());
 			deleteUser(ecompUser.getLoginId());
 		}
 		
@@ -270,7 +270,7 @@ public class UserAPIs extends ComponentBaseTest {
 			BaseRestUtils.checkSuccess(pushUser);
 			
 			UserRoleEnum.DESIGNER.setUserId(ecompUser.getLoginId());
-			resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+			resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 			
 			int sizeBeforeChange = getAllusersList().size();
 			
@@ -297,7 +297,7 @@ public class UserAPIs extends ComponentBaseTest {
 			Assert.assertEquals(sizeBeforeChange, sizeAfterChange, "Expected that list will not change.");
 			
 		} finally {
-			ResourceRestUtils.deleteResource(resource.getUniqueId(), adminUser.getUserId());
+			new ResourceRestUtils().deleteResource(resource.getUniqueId(), adminUser.getUserId());
 			deleteUser(ecompUser.getLoginId());
 		}
 	}
@@ -322,8 +322,8 @@ public class UserAPIs extends ComponentBaseTest {
 			int sizeBeforeChange = getAllusersList().size();
 			UserRoleEnum.DESIGNER.setUserId(ecompUser.getLoginId());
 			
-			resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-			AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true);
+			resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+			new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true);
 			
 			
 			//update role
@@ -337,7 +337,7 @@ public class UserAPIs extends ComponentBaseTest {
 			BaseRestUtils.checkSuccess(pushUserRoles);
 			
 			UserRoleEnum.TESTER.setUserId(ecompUser.getLoginId());
-			AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.TESTER, LifeCycleStatesEnum.STARTCERTIFICATION, true);
+			new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.TESTER, LifeCycleStatesEnum.STARTCERTIFICATION, true);
 			
 			//deactivate user
 			ecompRole = new EcompRole();;
@@ -352,7 +352,7 @@ public class UserAPIs extends ComponentBaseTest {
 			Assert.assertEquals(sizeBeforeChange, sizeAfterChange, "Expected that list will not change.");
 			
 		} finally {
-			ResourceRestUtils.deleteResource(resource.getUniqueId(), adminUser.getUserId());
+			new ResourceRestUtils().deleteResource(resource.getUniqueId(), adminUser.getUserId());
 			deleteUser(ecompUser.getLoginId());
 		}
 	}*/
@@ -377,8 +377,8 @@ public class UserAPIs extends ComponentBaseTest {
 			
 			UserRoleEnum.DESIGNER.setUserId(ecompUser.getLoginId());
 			
-			resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-			AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true);
+			resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+			new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true);
 			
 			
 			//update role
@@ -392,7 +392,7 @@ public class UserAPIs extends ComponentBaseTest {
 			BaseRestUtils.checkSuccess(pushUserRoles);
 			
 		} finally {
-			ResourceRestUtils.deleteResource(resource.getUniqueId(), adminUser.getUserId());
+			new ResourceRestUtils().deleteResource(resource.getUniqueId(), adminUser.getUserId());
 			deleteUser(ecompUser.getLoginId());
 		}
 	}

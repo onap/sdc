@@ -124,7 +124,7 @@ ElementsChanges extends SetupCDTest {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.SUBMIT_NEW_VSP_VERSION_DESCRIPTION.getValue());
 
         // VendorSoftwareProductObject v = new VendorSoftwareProductObject();
-        //VendorSoftwareProductRestUtils.uploadHeatPackage(filePath,fullCompositionFile,v,getUser());
+        //new VendorSoftwareProductRestUtils().uploadHeatPackage(filePath,fullCompositionFile,v,getUser());
 //upload new heat +commit submit
         //go to home
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.MainMenuButtons.ONBOARD_BUTTON.getValue());
@@ -667,7 +667,7 @@ ElementsChanges extends SetupCDTest {
         assertEquals("did not succeed to update vsp", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 
         // commit & submit vsp
-        VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
+        new VendorSoftwareProductRestUtils().prepareVspForUse(user, vendorSoftwareProduct, false);
 
         // update VF
         HomePage.showVspRepository();
@@ -696,14 +696,14 @@ ElementsChanges extends SetupCDTest {
         vendorSoftwareProduct.setComponentId(newItemVersion.right.getItemId());
 
         // upload new heat
-        RestResponse uploadHeatPackage = VendorSoftwareProductRestUtils.uploadHeatPackage(filepath, vnfFileV3, vendorSoftwareProduct, user);
+        RestResponse uploadHeatPackage = new VendorSoftwareProductRestUtils().uploadHeatPackage(filepath, vnfFileV3, vendorSoftwareProduct, user);
         assertEquals("did not succeed to upload HEAT package", HttpStatus.SC_OK, uploadHeatPackage.getErrorCode().intValue());
 
-        RestResponse validateUpload = VendorSoftwareProductRestUtils.validateUpload(vendorSoftwareProduct, user);
+        RestResponse validateUpload = new VendorSoftwareProductRestUtils().validateUpload(vendorSoftwareProduct, user);
         assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), HttpStatus.SC_OK, validateUpload.getErrorCode().intValue());
 
         // commit & submit vsp
-        VendorSoftwareProductRestUtils.prepareVspForUse(user, vendorSoftwareProduct, false);
+        new VendorSoftwareProductRestUtils().prepareVspForUse(user, vendorSoftwareProduct, false);
 
         // update VF
         HomePage.showVspRepository();

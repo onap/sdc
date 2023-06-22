@@ -146,7 +146,7 @@ public class ProductRestUtils extends BaseRestUtils {
 	public static RestResponse changeProductLifeCycle(Product product, User userModifier, LifeCycleStatesEnum lifeCycle)
 			throws Exception {
 		String checkinComment = "my comment";
-		RestResponse changeLifeCycleResponse = LifecycleRestUtils.changeProductState(product, userModifier, lifeCycle,
+		RestResponse changeLifeCycleResponse = new LifecycleRestUtils().changeProductState(product, userModifier, lifeCycle,
 				checkinComment);
 		if (changeLifeCycleResponse.getErrorCode() == STATUS_CODE_SUCCESS) {
 			product.setLastUpdaterUserId(userModifier.getUserId());

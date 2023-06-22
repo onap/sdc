@@ -192,8 +192,8 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 	}
 
 	protected void validateMyComputeResource(String uid, String resourceName, String resourceVersion, String expectedState) throws ClientProtocolException, IOException {
-		RestResponse resourceResponse = ResourceRestUtils.getResource(uid);
-		ResourceRestUtils.checkSuccess(resourceResponse);
+		RestResponse resourceResponse = new ResourceRestUtils().getResource(uid);
+		new ResourceRestUtils().checkSuccess(resourceResponse);
 		String testComputeYml = resourceResponse.getResponse();
 
 		// Either<String, Boolean> eitherMyCompute = getResource(resourceName,
@@ -214,8 +214,8 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 	}
 
 	protected void validateMyComputeResourceAfterUpdate(String uid, String resourceName, String resourceVersion, String expectedState) throws ClientProtocolException, IOException {
-		RestResponse resourceResponse = ResourceRestUtils.getResource(uid);
-		ResourceRestUtils.checkSuccess(resourceResponse);
+		RestResponse resourceResponse = new ResourceRestUtils().getResource(uid);
+		new ResourceRestUtils().checkSuccess(resourceResponse);
 		String testComputeYml = resourceResponse.getResponse();
 
 		// Either<String, Boolean> eitherMyCompute = getResource(resourceName,
@@ -461,7 +461,7 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 	}
 
 	protected static Either<String, Boolean> getResource(String name, String version) throws IOException {
-		RestResponse resource = ResourceRestUtils.getResourceByNameAndVersion(UserRoleEnum.DESIGNER.getUserId(), name, version);
+		RestResponse resource = new ResourceRestUtils().getResourceByNameAndVersion(UserRoleEnum.DESIGNER.getUserId(), name, version);
 		if (resource.getErrorCode() == ImportRestUtils.STATUS_CODE_GET_SUCCESS) {
 			return Either.left(resource.getResponse());
 			// return Either.right(true);

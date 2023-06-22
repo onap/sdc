@@ -101,7 +101,7 @@ public class VfAPI extends SetupCDTest {
     private ResourceReqDetails createVFviaAPI() {
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating VF %s", vfMetaData.getName()));
-        AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+        new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
         return vfMetaData;
     }
 
@@ -141,15 +141,15 @@ public class VfAPI extends SetupCDTest {
 
         try {
             //Create VFC via API
-            Resource vfc = AtomicOperationUtils.importResource(filePath, fileName).left().value();
+            Resource vfc = new AtomicOperationUtils().importResource(filePath, fileName).left().value();
             atomicResourceMetaData.setName(vfc.getName());
 
             //Certify VFC via API
-            vfc = (Resource) AtomicOperationUtils.changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+            vfc = (Resource) new AtomicOperationUtils().changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
             //Create VF via API
             ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-            AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+            new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
 
             //Go to Catalog and find the created VF
             CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -169,7 +169,7 @@ public class VfAPI extends SetupCDTest {
             vfMetaData.setVersion("0.1");
             VfVerificator.verifyLinkCreated(vfMetaData, getUser(), 1);
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -248,11 +248,11 @@ public class VfAPI extends SetupCDTest {
 
         try {
             //Create VFC via API
-            Resource vfc = AtomicOperationUtils.importResource(filePath, fileName).left().value();
+            Resource vfc = new AtomicOperationUtils().importResource(filePath, fileName).left().value();
             atomicResourceMetaData.setName(vfc.getName());
 
             //Certify VFC via API
-            vfc = (Resource) AtomicOperationUtils.changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+            vfc = (Resource) new AtomicOperationUtils().changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
             //Create VF via API
             ResourceReqDetails vfMetaData = createVFviaAPI();
@@ -281,7 +281,7 @@ public class VfAPI extends SetupCDTest {
                 AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 	
@@ -330,7 +330,7 @@ public class VfAPI extends SetupCDTest {
 		}
 			
 		finally{
-			ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+			new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
 		}
 		
 	}*/
@@ -467,10 +467,10 @@ public class VfAPI extends SetupCDTest {
     public void vfCertificationTestApi() throws Exception {
         //Create VF via API
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-        Resource vf = AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+        Resource vf = new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
 
         //Certify  VF via API
-        vf = (Resource) AtomicOperationUtils.changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        vf = (Resource) new AtomicOperationUtils().changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         //Go to Catalog and find the created VF
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -656,15 +656,15 @@ public class VfAPI extends SetupCDTest {
 		ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 		
 		//Create VFC via API
-		Resource vfc = AtomicOperationUtils.importResource(filePath, fileName).left().value();
+		Resource vfc = new AtomicOperationUtils().importResource(filePath, fileName).left().value();
 		atomicResourceMetaData.setName(vfc.getName());
 		
 		//Submit VFC for testing via API
-		vfc = (Resource) AtomicOperationUtils.changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+		vfc = (Resource) new AtomicOperationUtils().changeComponentState(vfc, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
 
 		//Create VF via API
 		ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-		AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
 		
 		//Go to Catalog and find the created VF
 		CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -686,7 +686,7 @@ public class VfAPI extends SetupCDTest {
 			AssertJUnit.assertTrue(errorMessage.contains(checkUIResponseOnError));	
 		}
 		finally{
-			ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+			new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
 		}
 	}*/
 
@@ -694,10 +694,10 @@ public class VfAPI extends SetupCDTest {
     public void isDisabledAndReadOnlyInCheckinApi() throws Exception {
         //Create VF via API
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-        Resource vf = AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+        Resource vf = new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
 
         //Check in  VF via API
-        vf = (Resource) AtomicOperationUtils.changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        vf = (Resource) new AtomicOperationUtils().changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Go to Catalog and find the created VF
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -722,10 +722,10 @@ public class VfAPI extends SetupCDTest {
 
         //Create VF via API
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
-        Resource vf = AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+        Resource vf = new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
 
         //Check in  VF via API
-        vf = (Resource) AtomicOperationUtils.changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        vf = (Resource) new AtomicOperationUtils().changeComponentState(vf, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Find the created VF on Home page
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
@@ -751,7 +751,7 @@ public class VfAPI extends SetupCDTest {
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
         String vspName = vsp.getName();
         ResourceGeneralPage.clickCertifyButton(vspName);
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
         VfModuleVerificator.validateSpecificModulePropertiesFromRequest(resource);
     }
 

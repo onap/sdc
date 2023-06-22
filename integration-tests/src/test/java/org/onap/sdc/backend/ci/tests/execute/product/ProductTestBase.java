@@ -82,7 +82,7 @@ public class ProductTestBase extends ProductBaseTest {
 
 	protected void createComponents() throws Exception {
 
-		RestResponse response = ResourceRestUtils.createResource(downloadResourceDetails, sdncUserDetails);
+		RestResponse response = new ResourceRestUtils().createResource(downloadResourceDetails, sdncUserDetails);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", downloadResourceDetails.getUniqueId());
 
@@ -94,11 +94,11 @@ public class ProductTestBase extends ProductBaseTest {
 				response.getErrorCode() == 200);
 
 		// certified resource
-		response = LifecycleRestUtils.certifyResource(downloadResourceDetails);
+		response = new LifecycleRestUtils().certifyResource(downloadResourceDetails);
 		assertTrue("certify resource request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
-		response = ResourceRestUtils.getResource(downloadResourceDetails.getUniqueId());
+		response = new ResourceRestUtils().getResource(downloadResourceDetails.getUniqueId());
 		assertTrue("response code is not 200, returned: " + response.getErrorCode(), response.getErrorCode() == 200);
 		resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 
@@ -113,7 +113,7 @@ public class ProductTestBase extends ProductBaseTest {
 		assertTrue("response code is not 201, returned: " + response.getErrorCode(), response.getErrorCode() == 201);
 
 		// certified service
-		response = LifecycleRestUtils.certifyService(serviceDetails);
+		response = new LifecycleRestUtils().certifyService(serviceDetails);
 		assertTrue("certify service request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 

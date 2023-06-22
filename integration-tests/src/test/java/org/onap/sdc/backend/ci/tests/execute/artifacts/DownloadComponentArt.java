@@ -109,8 +109,8 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	@BeforeMethod
 	public void init() throws Exception{
 		sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		Resource resourceObj = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		Service serviceObj = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceObj = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		Service serviceObj = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		
 		
 		resourceDetails = new ResourceReqDetails(resourceObj); 
@@ -124,9 +124,9 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	@Test
 	public void downloadArtifactFromResourceViaExternalAPI() throws Exception {
 		Resource resourceDetailsVF;
-		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdResource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = createdResource.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
+		ArtifactDefinition heatArtifact = new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
 		resourceDetails = new ResourceReqDetails(resourceDetailsVF); 
 		
 		String resourceUUID = resourceDetailsVF.getUUID();
@@ -169,9 +169,9 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	@Test
 	public void downloadArtifactFromResourceViaExternalAPINegativeTest() throws Exception {
 		Resource resourceDetailsVF;
-		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdResource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = createdResource.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
+		ArtifactDefinition heatArtifact = new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
 		resourceDetails = new ResourceReqDetails(resourceDetailsVF); 
 		
 		String resourceUUID = resourceDetailsVF.getUUID();
@@ -196,10 +196,10 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	public void downloadArtifactFromServiceViaExternalAPI() throws Exception {
 		
 		Service resourceDetailsService;
-		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdResource = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetailsService = createdResource.left().value();
 		
-		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsService, UserRoleEnum.DESIGNER, true, true).left().value();
+		ArtifactDefinition heatArtifact = new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsService, UserRoleEnum.DESIGNER, true, true).left().value();
 
 		String resourceUUID = resourceDetailsService.getUUID();
 		String artifactUUID = heatArtifact.getArtifactUUID();
@@ -245,18 +245,18 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	@Test
 	public void downloadArtifactOfComponentInstanceFromServiceViaExternalAPI() throws Exception {
 		
-		Either<Resource, RestResponse> resourceDetailsVF_01e = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> resourceDetailsVF_01e = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetailsVF_01 = resourceDetailsVF_01e.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF_01, UserRoleEnum.DESIGNER, true, true).left().value();
+		ArtifactDefinition heatArtifact = new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF_01, UserRoleEnum.DESIGNER, true, true).left().value();
 
-		resourceDetailsVF_01 = AtomicOperationUtils.changeComponentState(resourceDetailsVF_01, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resourceDetailsVF_01 = new AtomicOperationUtils().changeComponentState(resourceDetailsVF_01, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
 		Service resourceDetailsService;
-		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createdResource = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetailsService = createdResource.left().value();
 		
 		
-		ComponentInstance resourceDetailsVF1ins_01 = AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceDetailsVF_01, resourceDetailsService, UserRoleEnum.DESIGNER, true).left().value();
+		ComponentInstance resourceDetailsVF1ins_01 = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceDetailsVF_01, resourceDetailsService, UserRoleEnum.DESIGNER, true).left().value();
 		
 		
 		System.out.println("-----");
@@ -493,7 +493,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		int status = response.getErrorCode();
 		AssertJUnit.assertEquals("add informational artifact request returned status: " + response.getErrorCode(), 200, status);
 
-		RestResponse resourceResp = ResourceRestUtils.getResource(resourceDetails.getUniqueId());
+		RestResponse resourceResp = new ResourceRestUtils().getResource(resourceDetails.getUniqueId());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(resourceResp.getResponse());
 		AssertJUnit.assertNotNull(resource);
 
