@@ -22,10 +22,12 @@ package org.onap.sdc.frontend.ci.tests.flow;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory.getConfig;
 
 import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Setter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
@@ -50,7 +52,14 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
-        toscaArtifactsPage = componentPage.goToToscaArtifacts();
+
+        // Check if passed pageObject is the TOSCA artifact page
+        if (componentPage instanceof ToscaArtifactsPage) {
+            toscaArtifactsPage = (ToscaArtifactsPage) componentPage;
+        } else {
+            toscaArtifactsPage = componentPage.goToToscaArtifacts();
+        }
+
         toscaArtifactsPage.isLoaded();
 
         toscaArtifactsPage.clickOnDownload("Tosca Template");
@@ -73,5 +82,17 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
         final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
         fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);
         return FileHandling.getLastModifiedFileNameFromDir();
+    }
+
+    /**
+     * Downloads Tosca Template file
+     *
+     * @return the tosca template yaml file
+     * @throws Exception
+     */
+    public Map<?, ?> downloadToscaTemplate(PageObject pageObject) throws Exception {
+        final ToscaArtifactsPage toscaArtifactsPage = (ToscaArtifactsPage) run(pageObject).get();
+        return FileHandling.parseYamlFile(getConfig().getDownloadAutomationFolder()
+            .concat(java.io.File.separator).concat(toscaArtifactsPage.getDownloadedArtifactList().get(0)));
     }
 }

@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2023 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,28 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.backend.ci.tests.datatypes.enums;
+package org.onap.sdc.frontend.ci.tests.pages;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.openqa.selenium.WebDriver;
 
-@AllArgsConstructor
-@Getter
-public enum PackageTypeEnum {
+public class ImportTypePage extends AbstractPageObject {
 
-    CNF("CNF"),
-    CNF_HELM("CNF_HELM"),
-    ETSI("ETSI"),
-    PNF("PNF"),
-    VFC("VFC"),
-    VNF("VNF"),
-    ASD("ASD"),
-    TYPE("Type");
+    private final TopNavComponent topNavComponent;
+    private final ResourceWorkspaceTopBarComponent workspaceTopBarComponent;
 
-    private String value;
+    public ImportTypePage(final WebDriver webDriver) {
+        super(webDriver);
+        topNavComponent = new TopNavComponent(webDriver);
+        workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
+    }
+
+    @Override
+    public void isLoaded() {
+        topNavComponent.isLoaded();
+//        workspaceTopBarComponent.isLoaded();
+    }
+
+    public void clickOnCreate() {
+        workspaceTopBarComponent.clickOnCreate();
+    }
 }
