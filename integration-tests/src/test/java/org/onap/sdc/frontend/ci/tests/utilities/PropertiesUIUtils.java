@@ -21,9 +21,12 @@
 package org.onap.sdc.frontend.ci.tests.utilities;
 
 import com.aventstack.extentreports.Status;
+import javax.annotation.Nullable;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.PropertyTypeEnum;
 import org.onap.sdc.frontend.ci.tests.pages.PropertiesPage;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openqa.selenium.WebElement;
 
 import java.util.HashMap;
@@ -60,7 +63,7 @@ public class PropertiesUIUtils {
         return propertyvalues;
     }
 
-    public static void vlidateProperties(Map<String, String> propertyValues) throws InterruptedException {
+    public static void validateProperties(Map<String, String> propertyValues) throws InterruptedException {
         WebElement name = GeneralUIUtils.getWebElementByTestID(propertyValues.get("name"));
         name.getText().equalsIgnoreCase(propertyValues.get("name"));
         WebElement defaultValue = GeneralUIUtils.getWebElementByTestID(propertyValues.get("name"));
@@ -77,7 +80,74 @@ public class PropertiesUIUtils {
         PropertiesPage.getPropertyPopup().selectPropertyType(property.getType());
         PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getDescription());
         PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getValue());
-        PropertiesPage.getPropertyPopup().clickSave();
+        PropertiesPage.getPropertyPopup().clickSave(property.getName());
+    }
+
+    public static void addNewProperty(String propertyName, String propertyType,
+                                    @Nullable String propertyDescription, @Nullable String propertyDefaultValue) throws InterruptedException {
+        GeneralUIUtils.ultimateWait();
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding new %s property", propertyName));
+        PropertiesPage.clickAddPropertyArtifact();
+        PropertiesPage.getPropertyPopup().insertPropertyName(propertyName);
+        PropertiesPage.getPropertyPopup().selectPropertyType(propertyType);
+
+        if (propertyDescription != null) {
+            PropertiesPage.getPropertyPopup().insertPropertyDescription(propertyDescription);
+        }
+
+        if (propertyDefaultValue != null) {
+            PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(propertyDefaultValue);
+        }
+
+        PropertiesPage.getPropertyPopup().clickSave(propertyName);
+    }
+
+    public static void addNewPropertyWithConstraint(PropertyTypeEnum property, ConstraintType constraintType, String constraintValue) throws InterruptedException {
+        GeneralUIUtils.ultimateWait();
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding new %s property with constraints", property.name()));
+        PropertiesPage.clickAddPropertyArtifact();
+        PropertiesPage.getPropertyPopup().insertPropertyName(property.getName());
+        PropertiesPage.getPropertyPopup().selectPropertyType(property.getType());
+        PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getDescription());
+        PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getValue());
+        PropertiesPage.getPropertyPopup().clickAddConstraint();
+        PropertiesPage.getPropertyPopup().setConstraintType(constraintType);
+        PropertiesPage.getPropertyPopup().setConstraintValue(constraintValue);
+        PropertiesPage.getPropertyPopup().clickSave(property.getName());
+    }
+
+    public static void addNewPropertyWithInRangeConstraint(PropertyTypeEnum property, String minConstraintValue, String maxConstraintValue) throws InterruptedException {
+        GeneralUIUtils.ultimateWait();
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding new %s property with constraints", property.name()));
+        PropertiesPage.clickAddPropertyArtifact();
+        PropertiesPage.getPropertyPopup().insertPropertyName(property.getName());
+        PropertiesPage.getPropertyPopup().selectPropertyType(property.getType());
+        PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getDescription());
+        PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getValue());
+        PropertiesPage.getPropertyPopup().clickAddConstraint();
+        PropertiesPage.getPropertyPopup().setConstraintType(ConstraintType.IN_RANGE);
+        PropertiesPage.getPropertyPopup().setMinConstraintValue(minConstraintValue);
+        PropertiesPage.getPropertyPopup().setMaxConstraintValue(maxConstraintValue);
+        PropertiesPage.getPropertyPopup().clickSave(property.getName());
+    }
+
+    public static void addNewPropertyWithValidValuesConstraint(PropertyTypeEnum property, String[] validValues) throws InterruptedException {
+        GeneralUIUtils.ultimateWait();
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding new %s property with constraints", property.name()));
+        PropertiesPage.clickAddPropertyArtifact();
+        PropertiesPage.getPropertyPopup().insertPropertyName(property.getName());
+        PropertiesPage.getPropertyPopup().selectPropertyType(property.getType());
+        PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getDescription());
+        PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getValue());
+        PropertiesPage.getPropertyPopup().clickAddConstraint();
+        PropertiesPage.getPropertyPopup().setConstraintType(ConstraintType.VALID_VALUES);
+
+        for (int i = 0; i <= validValues.length - 1; i++) {
+            PropertiesPage.getPropertyPopup().clickAddValidValue();
+            PropertiesPage.getPropertyPopup().setValidConstraintValue(validValues[i], i);
+        }
+
+        PropertiesPage.getPropertyPopup().clickSave(property.getName());
     }
 
     public static void updateProperty(PropertyTypeEnum property) throws InterruptedException {
@@ -85,13 +155,13 @@ public class PropertiesUIUtils {
         PropertiesPage.clickOnProperty(property.getName());
         PropertiesPage.getPropertyPopup().insertPropertyDescription(property.getUpdateDescription());
         PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(property.getUpdateValue());
-        PropertiesPage.getPropertyPopup().clickSave();
+        PropertiesPage.getPropertyPopup().clickSave(property.getName());
     }
 
-    public static void changePropertyDefaultValueInComposition(String propertyName, String defaultValue) throws InterruptedException {
+    public static void changePropertyDefaultValueInComposition(String propertyName, String defaultValue) throws InterruptedException{
         GeneralUIUtils.clickOnElementByTestId(propertyName);
         PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(defaultValue);
-        PropertiesPage.getPropertyPopup().clickSave();
+        PropertiesPage.getPropertyPopup().clickSave(propertyName);
     }
 
 }
