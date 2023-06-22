@@ -218,7 +218,7 @@ public class CompositionPage extends GeneralPageElements {
         return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue() + fileName);
     }
 
-    public static void setSingleProperty(String propertyDataTestID, String propertyValue) {
+    public static void setSingleProperty(String propertyDataTestID, String propertyValue) throws InterruptedException {
         WebElement findElement = GeneralUIUtils.getWebElementByTestID(propertyDataTestID);
         findElement.click();
         PropertiesPage.getPropertyPopup().insertPropertyDefaultValue(propertyValue);
