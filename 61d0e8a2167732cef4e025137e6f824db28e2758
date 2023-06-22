@@ -46,6 +46,30 @@
       "revId": "61d0e8a2167732cef4e025137e6f824db28e2758",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "132fb223_e5c5bfc2",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vfc/properties/VFCFloatTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-22T08:41:54Z",
+      "side": 1,
+      "message": "thats not in the scope of the story this commit is supposed to address. \nIf there are areas, such as you mention here, that you feel need addressing then you should create a separate story for those with the scope defined in the jira",
+      "parentUuid": "09b5bc89_6bd58109",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 48
+      },
+      "revId": "61d0e8a2167732cef4e025137e6f824db28e2758",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
