@@ -97,7 +97,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 		response = ResourceRestUtils.createResource(resourceDetailsVFC, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsVFC.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsVFC, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsVFC, sdncDesignerDetails1,
 				resourceDetailsVFC.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -109,7 +109,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 		response = ResourceRestUtils.createResource(resourceDetailsCP, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsCP.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsCP, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsCP, sdncDesignerDetails1,
 				resourceDetailsCP.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -117,7 +117,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 		response = ResourceRestUtils.createResource(resourceDetailsVL, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsVL.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsVL, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsVL, sdncDesignerDetails1,
 				resourceDetailsVL.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -132,7 +132,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 	protected void createVFWithCertifiedResourceInstance(ResourceReqDetails resourceDetails,
 			ComponentInstanceReqDetails resourceInstanceReqDetails) throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDetails, sdncDesignerDetails1,
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncDesignerDetails1,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after CHECKOUT", 200, response.getErrorCode().intValue());
 

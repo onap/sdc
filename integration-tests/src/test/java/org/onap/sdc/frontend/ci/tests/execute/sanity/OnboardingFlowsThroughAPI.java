@@ -136,19 +136,19 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Create Resource: " + resourceReqDetails.getName());
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         getExtendTest().log(Status.INFO, "Certify the Resource: " + resourceReqDetails.getName());
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         getExtendTest().log(Status.INFO, "Add VF to service");
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, "Certify the service");
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, "Start distributing the service");
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, "Service distributed");
         assertTrue("Distribution of service " + service.getName() + " failed", distributeAndValidateService);
 
@@ -163,19 +163,19 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Create new resource: " + resourceReqDetails.getName());
         resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         getExtendTest().log(Status.INFO, "Certify the resource");
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create new service: " + serviceReqDetails.getName());
-        service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         getExtendTest().log(Status.INFO, "Add VF to service");
-        addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, "Certify the service");
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, "Start distributing the service");
-        distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, "Service distributed");
         assertTrue("Distribution of service " + service.getName() + " failed", distributeAndValidateService);
     }
@@ -195,32 +195,32 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
             vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         assertTrue("Distribution of service " + service.getName() + " failed", distributeAndValidateService);
 
 //		update resource to v2.0
         String updateVnfFile = newRandomFileNamesFromFolder.get(1);
         getExtendTest().log(Status.INFO, "Going to update VNF with file " + vnfFile);
         VendorSoftwareProductRestUtils.updateVendorSoftwareProductToNextVersion(vendorSoftwareProductObject, sdncDesignerDetails, filePath, updateVnfFile);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         resourceReqDetails.setUniqueId(resource.getUniqueId());
         resourceReqDetails.setVersion(resource.getVersion());
-        resource = AtomicOperationUtils.updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = new AtomicOperationUtils().updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-        distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         assertTrue("Distribution of service " + service.getName() + " failed", distributeAndValidateService);
     }
 
@@ -265,7 +265,7 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Create VF " + resourceReqDetails.getName());
         Resource resource_v1 = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         getExtendTest().log(Status.INFO, "Certify VF " + resourceReqDetails.getName());
-        AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 //		Update VSP to v2.0 wih the zip from v1.0, update VSP name
         getExtendTest().log(Status.INFO, "Update VSP to version 2.0");
@@ -317,27 +317,27 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Create VF " + resourceReqDetails.getName());
         Resource resource_v1 = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
         getExtendTest().log(Status.INFO, "Certify VF " + resourceReqDetails.getName());
-        resource_v1 = (Resource) AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource_v1 = (Resource) new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		3. Update VSP to v2.0
         getExtendTest().log(Status.INFO, "Update VSP to version 2.0");
         VendorSoftwareProductRestUtils.updateVendorSoftwareProductToNextVersion(vendorSoftwareProductObject, sdncDesignerDetails1, filePath, vnfFile);
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
 //		4. Update the VF with v2.0 of the VSP
         getExtendTest().log(Status.INFO, "Checkout VF v1.1");
-        resource_v1 = (Resource) AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource_v1 = (Resource) new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         resourceReqDetails.setUniqueId(resource_v1.getUniqueId());
         resourceReqDetails.setVersion("1.1");
         resourceReqDetails.setCsarVersion("2.0");
         getExtendTest().log(Status.INFO, "Update VF to v2.0");
-        resource_v1 = AtomicOperationUtils.updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
+        resource_v1 = new AtomicOperationUtils().updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
         getExtendTest().log(Status.INFO, "Certify VF");
-        Resource resource_v2 = (Resource) AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource_v2 = (Resource) new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		5. Update VSP to v3.0 wih the zip from v1.0
         getExtendTest().log(Status.INFO, "Update VSP to version 3.0");
         VendorSoftwareProductRestUtils.updateVendorSoftwareProductToNextVersion(vendorSoftwareProductObject, sdncDesignerDetails1, false);
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
         getExtendTest().log(Status.INFO, "Checkout VF v2.1");
-        resource_v1 = (Resource) AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource_v1 = (Resource) new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         resourceReqDetails.setUniqueId(resource_v1.getUniqueId());
         resourceReqDetails.setVersion("2.1");
         resourceReqDetails.setCsarVersion("3.0");
@@ -345,18 +345,18 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         ResourceRestUtils.updateResource(resourceReqDetails, sdncDesignerDetails1, resource_v1.getUniqueId());
 //		6. Update VF to v3.0
         getExtendTest().log(Status.INFO, "Certify VF");
-        Resource resource_v3 = (Resource) AtomicOperationUtils.changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource_v3 = (Resource) new AtomicOperationUtils().changeComponentState(resource_v1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		7. Compare versions v1.0 and v3.0 - should be the same
 //      TODO: Shay add resource comparison.
 //		8. Add each of the versions to service, certify - OK
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails1);
         getExtendTest().log(Status.INFO, "Create Service " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, "Add vf's v1 & v2 to service");
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource_v1, service, UserRoleEnum.DESIGNER, true);
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer1 = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource_v3, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource_v1, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer1 = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource_v3, service, UserRoleEnum.DESIGNER, true);
         getExtendTest().log(Status.INFO, "Certify Service");
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         System.out.println("");
     }
 
@@ -376,20 +376,20 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //		3. Create Service add to it the certified VF and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Certify the Service"));
 //		4. Distribute the Service v1.0
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
 //		5. Update VSP to v2.0
@@ -399,23 +399,23 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
 //		6. Update the VF with v2.0 of the VSP and certify the VF
         getExtendTest().log(Status.INFO, String.format("Checkout the VF %s v1.1 ", resourceReqDetails.getName()));
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         resourceReqDetails.setUniqueId(resource.getUniqueId());
         resourceReqDetails.setVersion("1.1");
         resourceReqDetails.setCsarVersion("2.0");
         getExtendTest().log(Status.INFO, String.format("Upgrade the VF %s v1.1 with the new VSP %s v2.0 ", resourceReqDetails.getName(), vendorSoftwareProductObject.getName()));
-        resource = AtomicOperationUtils.updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
+        resource = new AtomicOperationUtils().updateResource(resourceReqDetails, sdncDesignerDetails, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Certify the VF to v2.0"));
-        Resource resource_v2 = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource_v2 = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		7. Update the Service with the VFi version 2.0
         getExtendTest().log(Status.INFO, String.format("Checkout the Service v1.1"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Change the instance of the VF in the service to VFi v2.0"));
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
         getExtendTest().log(Status.INFO, String.format("Certify the Service to v2.0"));
-        service = (org.openecomp.sdc.be.model.Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (org.openecomp.sdc.be.model.Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		8. Distribute the service v2.0
-        distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -439,20 +439,20 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //		2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //		3. Create Service add to it the certified VF and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Certify the Service"));
 //		4. Distribute the Service v1.0
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -474,20 +474,20 @@ public class OnboardingFlowsThroughAPI extends SetupCDTest {
 //			2. Create VF, certify - v1.0 is created
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //			3. Create Service add to it the certified VF and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Certify the Service"));
 //			4. Distribute the Service v1.0
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }

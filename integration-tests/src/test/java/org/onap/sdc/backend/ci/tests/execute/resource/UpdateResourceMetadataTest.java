@@ -705,13 +705,13 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // check-in Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(updatedResourceDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(updatedResourceDetails,
                 sdncModifierDetails, resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         // String resourceCertifyVersion = "0.1";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(updatedResourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(updatedResourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -948,7 +948,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN); // NOT_CERTIFIED_CHECKIN
         assertNotNull("check response object is not null after checkout resource", checkoutResource);
         assertNotNull("check error code exists in response after checkIn resource", checkoutResource.getErrorCode());
@@ -996,28 +996,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1065,13 +1065,13 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         // String resourceCertifyVersion = "0.1";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1125,28 +1125,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1193,28 +1193,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1266,28 +1266,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1330,28 +1330,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1396,28 +1396,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1464,28 +1464,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -2332,7 +2332,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN); // NOT_CERTIFIED_CHECKIN
         assertEquals("Check response code after checkin resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -2350,7 +2350,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkinResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkinResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT); // NOT_CERTIFIED_CHECKIN
         assertNotNull("check response object is not null after checkout resource", checkoutResource);
         assertNotNull("check error code exists in response after checkIn resource", checkoutResource.getErrorCode());
@@ -2522,9 +2522,9 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(newResourceType);
-        restResponse = LifecycleRestUtils.certifyResource(resourceDetails);
+        restResponse = new LifecycleRestUtils().certifyResource(resourceDetails);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
-        restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
         currentResourceJavaObject = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
@@ -2551,7 +2551,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(resourceType);
-        restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
 
@@ -2580,7 +2580,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         Resource currentResourceJavaObject = ResponseParser
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
-        restResponse = LifecycleRestUtils.certifyResource(resourceDetails);
+        restResponse = new LifecycleRestUtils().certifyResource(resourceDetails);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
 
         resourceDetails.setResourceType(resourceType);

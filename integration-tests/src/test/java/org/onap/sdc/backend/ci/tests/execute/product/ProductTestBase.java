@@ -94,7 +94,7 @@ public class ProductTestBase extends ProductBaseTest {
 				response.getErrorCode() == 200);
 
 		// certified resource
-		response = LifecycleRestUtils.certifyResource(downloadResourceDetails);
+		response = new LifecycleRestUtils().certifyResource(downloadResourceDetails);
 		assertTrue("certify resource request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
@@ -113,7 +113,7 @@ public class ProductTestBase extends ProductBaseTest {
 		assertTrue("response code is not 201, returned: " + response.getErrorCode(), response.getErrorCode() == 201);
 
 		// certified service
-		response = LifecycleRestUtils.certifyService(serviceDetails);
+		response = new LifecycleRestUtils().certifyService(serviceDetails);
 		assertTrue("certify service request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 

@@ -98,7 +98,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         HomePage.showVspRepository();
         OnboardingUiUtils.importVSP(createVSP);
         resourceMetaData.setVersion("0.1");
-        Resource vfResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
+        Resource vfResource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
 
         Map<String, Object> artifacts = getArtifactsOfComponentAndComponentsInstance(vfResource);
 

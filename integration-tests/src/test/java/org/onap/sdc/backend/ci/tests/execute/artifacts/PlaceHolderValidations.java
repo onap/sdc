@@ -84,16 +84,16 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 				.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT_NET.getType());
 		heatVolArtifactDetails = ElementFactory
 				.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT_VOL.getType());
-		Resource resourceObject = AtomicOperationUtils
+		Resource resourceObject = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
 		resourceDetails1 = new ResourceReqDetails(resourceObject);
-		resourceObject = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
+		resourceObject = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
 				.left().value();
 		resourceVF = new ResourceReqDetails(resourceObject);
-		resourceObject = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true)
+		resourceObject = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true)
 				.left().value();
 		resourceCP = new ResourceReqDetails(resourceObject);
-		resourceObject = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VL, UserRoleEnum.DESIGNER, true)
+		resourceObject = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VL, UserRoleEnum.DESIGNER, true)
 				.left().value();
 		resourceVL = new ResourceReqDetails(resourceObject);
 	}
@@ -121,7 +121,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 			assertNull(artifact.getEsId());
 		}
 
-		componentResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncDesignerDetails1,
+		componentResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncDesignerDetails1,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		component = ResponseParser.convertResourceResponseToJavaObject(componentResponse.getResponse());
 		toscaArtifacts = component.getToscaArtifacts();
@@ -158,7 +158,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 		componentGetResponse = ResourceRestUtils.getResource(resourceVL, sdncDesignerDetails1);
 		components.add(ResponseParser.convertResourceResponseToJavaObject(componentGetResponse.getResponse()));
 
-		Service service = AtomicOperationUtils
+		Service service = new AtomicOperationUtils()
 				.createServiceByCategory(ServiceCategoriesEnum.MOBILITY, UserRoleEnum.DESIGNER, true).left().value();
 		componentGetResponse = ServiceRestUtils.getService(service.getUniqueId(),
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
@@ -267,10 +267,10 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 			artType = iter;
 			verifyDepArtPlaceHoldersByType(artType);
 		}
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
 		assertTrue("expected response code in CHECKIN 200", restResponseResource.getErrorCode() == 200);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails1,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails1,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("expected response code in CHECKOUT 200", restResponseResource.getErrorCode() == 200);
 
@@ -382,9 +382,9 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 				.convertArtifactDefinitionResponseToJavaObject(addInformationalArtifactToResource.getResponse());
 		ArtifactDefinition artDef1 = fillArtDefFromResponse(artifactDefinitionResponseJavaObject);
 
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails2,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails2,
 				LifeCycleStatesEnum.CHECKOUT);
 
 		// update with different user artifact
@@ -434,9 +434,9 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 				.convertArtifactDefinitionResponseToJavaObject(addInformationalArtifactToResource.getResponse());
 		ArtifactDefinition artDef1 = fillArtDefFromResponse(artifactDefinitionResponseJavaObject);
 
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails2,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails2,
 				LifeCycleStatesEnum.CHECKOUT);
 
 		// update with different user artifact
@@ -495,7 +495,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 	@Test
 	public void checkServiceSecurityTemplateInformationalArtifactsCreation() throws IOException, Exception {
 
-		Either<Service, RestResponse> createServiceResponse = AtomicOperationUtils
+		Either<Service, RestResponse> createServiceResponse = new AtomicOperationUtils()
 				.createServiceByCategory(ServiceCategoriesEnum.MOBILITY, UserRoleEnum.DESIGNER, true);
 		Map<String, ArtifactDefinition> artifacts = null;
 		ArtifactDefinition securitytemplate = null;
@@ -514,7 +514,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 	@Test
 	public void checkResourceSecurityTemplateInformationalArtifactsCreation() throws IOException, Exception {
 
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.CONTAINER_APPLICATION, ResourceCategoryEnum.APPLICATION_L4_BORDER,
 				UserRoleEnum.DESIGNER, true).left().value();
 		Map<String, ArtifactDefinition> artifacts = resource.getArtifacts();
@@ -527,7 +527,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 	@Test
 	public void serviceSecurityTemplateInformationalArtifact() throws IOException, Exception {
 		String artifactPlaceHolder = "servicesecuritytemplate";
-		Service service = AtomicOperationUtils
+		Service service = new AtomicOperationUtils()
 				.createServiceByCategory(ServiceCategoriesEnum.MOBILITY, UserRoleEnum.DESIGNER, true).left().value();
 		Map<String, ArtifactDefinition> artifacts = service.getArtifacts();
 		ArtifactDefinition securitytemplate = artifacts.get(artifactPlaceHolder);
@@ -551,7 +551,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 	@Test
 	public void resourceSecurityTemplateInformationalArtifacts() throws IOException, Exception {
 		String artifactPlaceHolder = "resourcesecuritytemplate";
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.CONTAINER_APPLICATION, ResourceCategoryEnum.APPLICATION_L4_BORDER,
 				UserRoleEnum.DESIGNER, true).left().value();
 		Map<String, ArtifactDefinition> artifacts = resource.getArtifacts();

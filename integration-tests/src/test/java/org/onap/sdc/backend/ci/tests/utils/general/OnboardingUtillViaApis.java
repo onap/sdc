@@ -58,20 +58,20 @@ public class OnboardingUtillViaApis {
 	}
 	
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		return resource;
 
 	}
 	
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails, UserRoleEnum userRole) throws Exception {
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, userRole, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, userRole, true).left().value();
 		return resource;
 
 	}
 	
 	public static void downloadToscaCsarToDirectory(Component component, File file) {
 		try {
-			Either<String, RestResponse> componentToscaArtifactPayload = AtomicOperationUtils.getComponenetArtifactPayload(component, "assettoscacsar");
+			Either<String, RestResponse> componentToscaArtifactPayload = new AtomicOperationUtils().getComponenetArtifactPayload(component, "assettoscacsar");
 			if(componentToscaArtifactPayload.left().value() != null){
 				convertPayloadToFile(componentToscaArtifactPayload.left().value(), file);
 			}

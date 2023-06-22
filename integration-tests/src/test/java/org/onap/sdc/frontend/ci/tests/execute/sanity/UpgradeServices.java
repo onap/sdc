@@ -114,8 +114,8 @@ public class UpgradeServices extends SetupCDTest {
                 pmcElement, connectionWizardPopUpObject); //link elements, assign values to properties and save map of values for later validation
         certifyServiceInUI(service1);
         service1.setVersion("1.0");
-        service1 = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion());
-        String vf1CustUuidOrig = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service1 = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion());
+        String vf1CustUuidOrig = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service1, vfElementVmme1.getElementNameOnCanvas(), true).getCustomizationUUID();
 
         //7. Create Service2. Service composition - add VFi. Start certifying Service2 ("certification in progress" stage)
@@ -125,9 +125,9 @@ public class UpgradeServices extends SetupCDTest {
         CanvasManager canvasManager2 = createCanvasManager(service2);
         CanvasElement vfElementVmme2 = canvasManager2.createElementOnCanvas(vfResource.getName());
         getExtendTest().log(Status.INFO, "Start service certification");
-        AtomicOperationUtils.changeComponentState(service2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
-        service2 = AtomicOperationUtils.getServiceObject(service2.getUniqueId());
-        String vf2CustUuidOrig = AtomicOperationUtils.getServiceComponentInstanceByName(
+        new AtomicOperationUtils().changeComponentState(service2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+        service2 = new AtomicOperationUtils().getServiceObject(service2.getUniqueId());
+        String vf2CustUuidOrig = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service2, vfElementVmme2.getElementNameOnCanvas(), true).getCustomizationUUID();
 
         //8. Create Service3. Service composition - add VFi. Leave service in "checked out" state
@@ -136,8 +136,8 @@ public class UpgradeServices extends SetupCDTest {
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         CanvasManager canvasManager3 = createCanvasManager(service3);
         CanvasElement vfElementVmme3 = canvasManager3.createElementOnCanvas(vfResource.getName());
-        service3 = AtomicOperationUtils.getServiceObject(service3.getUniqueId()); //updated
-        String vf3CustUuidOrig = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service3 = new AtomicOperationUtils().getServiceObject(service3.getUniqueId()); //updated
+        String vf3CustUuidOrig = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service3, vfElementVmme3.getElementNameOnCanvas(), true).getCustomizationUUID();
 
         //9. VF - checkout, save, click "certify"
@@ -168,8 +168,8 @@ public class UpgradeServices extends SetupCDTest {
 
         //13. Verify that VFi CustomizationID is different
         service1.setVersion("1.1");
-        service1 = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion()); //updated
-        String vf1CustUuidUpd = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service1 = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion()); //updated
+        String vf1CustUuidUpd = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service1, vfElementVmme1.getElementNameOnCanvas(), true).getCustomizationUUID();
         Assert.assertTrue(!vf1CustUuidOrig.equals(vf1CustUuidUpd));
 
@@ -188,8 +188,8 @@ public class UpgradeServices extends SetupCDTest {
         CanvasManager canvasManager5 = CanvasManager.getCanvasManager();
         canvasManager5.clickOnCanvaElement(vfElementVmme2);
         ServiceVerificator.verifyResourceInstanceVersionUI("1.0");
-        service2 = AtomicOperationUtils.getServiceObject(service2.getUniqueId()); //updated
-        String vf2CustUuidUpd = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service2 = new AtomicOperationUtils().getServiceObject(service2.getUniqueId()); //updated
+        String vf2CustUuidUpd = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service2, vfElementVmme2.getElementNameOnCanvas(), true).getCustomizationUUID();
         Assert.assertTrue(vf2CustUuidOrig.equals(vf2CustUuidUpd));
 
@@ -202,8 +202,8 @@ public class UpgradeServices extends SetupCDTest {
         CanvasManager canvasManager6 = CanvasManager.getCanvasManager();
         canvasManager6.clickOnCanvaElement(vfElementVmme3);
         ServiceVerificator.verifyResourceInstanceVersionUI("1.0");
-        service3 = AtomicOperationUtils.getServiceObject(service3.getUniqueId()); //updated
-        String vf3CustUuidUpd = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service3 = new AtomicOperationUtils().getServiceObject(service3.getUniqueId()); //updated
+        String vf3CustUuidUpd = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service3, vfElementVmme3.getElementNameOnCanvas(), true).getCustomizationUUID();
         Assert.assertTrue(vf3CustUuidOrig.equals(vf3CustUuidUpd));
 
@@ -230,7 +230,7 @@ public class UpgradeServices extends SetupCDTest {
         //1. Create Service1, certify
         Service service1 = createService();
         getExtendTest().log(Status.INFO, "Certify Service1");
-        AtomicOperationUtils.changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         String serviceName = service1.getName();
         String serviceInvUUID = service1.getInvariantUUID();
         String serviceUUIDv1 = service1.getUUID();
@@ -269,7 +269,7 @@ public class UpgradeServices extends SetupCDTest {
         CanvasManager canvasManager2 = createCanvasManager(service2);
         CanvasElement vfElement1 = canvasManager2.createElementOnCanvas(vfMetaData.getName());
         getExtendTest().log(Status.INFO, "Certify Service2");
-        AtomicOperationUtils.changeComponentState(service2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(service2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         //6. Create Service3, add VFi to Service3, leave Service3 in checked-out state
         Service service3 = createService();
@@ -278,9 +278,9 @@ public class UpgradeServices extends SetupCDTest {
         CanvasElement vfElement2 = canvasManager3.createElementOnCanvas(vfMetaData.getName());
 
         //7. Check out and certify Service1 (keep new UUID)
-        AtomicOperationUtils.changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-        service1 = AtomicOperationUtils.getServiceObject(service1.getUniqueId());
+        new AtomicOperationUtils().changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(service1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service1 = new AtomicOperationUtils().getServiceObject(service1.getUniqueId());
         String serviceUUIDv2 = service1.getUUID();
 
         //8. Open Service1 and click “Upgrade Services” button
@@ -335,9 +335,9 @@ public class UpgradeServices extends SetupCDTest {
         CanvasElement sourceElement = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
         Map<String, String> capPropValues1 = portMirrioringConfigurationObject.getCapPropValues();
         certifyServiceInUI(service1);
-        service1 = AtomicOperationUtils.getServiceObject(service1.getUniqueId());
+        service1 = new AtomicOperationUtils().getServiceObject(service1.getUniqueId());
         String serviceSourceName = portMirrioringConfigurationObject.getServiceElementVmmeSourceName().getElementNameOnCanvas();
-        String sourceUuidOrig = AtomicOperationUtils.getServiceComponentInstanceByName(
+        String sourceUuidOrig = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service1, serviceSourceName, true).getCustomizationUUID();
 
         //2. Create Service2, add source service to it
@@ -347,9 +347,9 @@ public class UpgradeServices extends SetupCDTest {
         CanvasElement serviceSourceElement = canvasManager1.createElementOnCanvas(serviceSource.getName());
 
         //3. Checkout and certify serviceSource
-        AtomicOperationUtils.changeComponentState(serviceSource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(serviceSource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-        serviceSource = AtomicOperationUtils.getServiceObject(serviceSource.getUniqueId());
+        new AtomicOperationUtils().changeComponentState(serviceSource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(serviceSource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        serviceSource = new AtomicOperationUtils().getServiceObject(serviceSource.getUniqueId());
 
         //4. Open Service2, click Update button
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
@@ -381,8 +381,8 @@ public class UpgradeServices extends SetupCDTest {
 
         //9. Verify that CustomizationUUID of service source instance is changed
         service1.setVersion("1.1"); //updated
-        service1 = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion());
-        String sourceUuidUpd = AtomicOperationUtils.getServiceComponentInstanceByName(
+        service1 = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, service1.getName(), service1.getVersion());
+        String sourceUuidUpd = new AtomicOperationUtils().getServiceComponentInstanceByName(
                 service1, serviceSourceName, true).getCustomizationUUID();
         Assert.assertTrue(!sourceUuidOrig.equals(sourceUuidUpd));
 
@@ -414,7 +414,7 @@ public class UpgradeServices extends SetupCDTest {
     private Service createService() throws Exception {
         ServiceReqDetails serviceReqDetails1 = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service " + serviceReqDetails1.getName());
-        return AtomicOperationUtils.createCustomService(serviceReqDetails1, UserRoleEnum.DESIGNER, true).left().value();
+        return new AtomicOperationUtils().createCustomService(serviceReqDetails1, UserRoleEnum.DESIGNER, true).left().value();
     }
 
     private ResourceReqDetails createPnfAndCertify() throws Exception {
@@ -433,7 +433,7 @@ public class UpgradeServices extends SetupCDTest {
             vendorLicenseModel, null);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource vfResource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        vfResource = (Resource) AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        vfResource = (Resource) new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         return vfResource;
     }
 
@@ -447,7 +447,7 @@ public class UpgradeServices extends SetupCDTest {
     private ResourceReqDetails createVFviaAPI(ResourceCategoryEnum resourceCategory) {
         ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, resourceCategory, getUser());
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating VF %s", vfMetaData.getName()));
-        AtomicOperationUtils.createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
+        new AtomicOperationUtils().createResourceByResourceDetails(vfMetaData, UserRoleEnum.DESIGNER, true).left().value();
         return vfMetaData;
     }
 

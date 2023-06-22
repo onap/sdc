@@ -100,7 +100,7 @@ public abstract class ComponentBaseTest {
         config = Utils.getConfig();
         myContext = context;
         ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);
-        AtomicOperationUtils.createDefaultConsumer(true);
+        new AtomicOperationUtils().createDefaultConsumer(true);
         performClean();
     }
 

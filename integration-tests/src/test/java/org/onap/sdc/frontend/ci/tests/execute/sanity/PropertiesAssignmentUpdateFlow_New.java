@@ -127,8 +127,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Certify  VF via API
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 
         HomePage.navigateToHomePage();
@@ -219,8 +219,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Certify  VF via API
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         //Update VF
         HomePage.navigateToHomePage();
@@ -268,12 +268,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), origValue);
 
         //Check in VF, create Service and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF inputs in Service properties, add or edit properties values
@@ -282,9 +282,9 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Checkout and check in VF, change VFi version on Service to 0.2
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Service - Validate properties values
         viewServiceProperties(serviceReqDetails);
@@ -315,12 +315,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), propertyValue);
 
         //Check in VF, create Service and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF inputs in Service properties, delete property value
@@ -329,9 +329,9 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Checkout and check in VF, change VFi version on Service to 0.2
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Service - Validate properties values
         viewServiceProperties(serviceReqDetails);
@@ -356,12 +356,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
         //Check in VF, create Service and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF inputs in Service properties, add or edit property value
@@ -373,9 +373,9 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentPage.clickOnSaveButton();
 
         //Checkout and check in VF, change VFi version on Service to 0.2
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Service - Validate property value
         viewServiceProperties(serviceReqDetails);
@@ -411,12 +411,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), propertyValue);
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF input in Service properties, declare it as service input
@@ -427,7 +427,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                 PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, update input value and check in - v0.2
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         viewVfInputs(resourceReqDetails);
         PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildDeclaredInputField(componentName, propertyName),
@@ -436,8 +436,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceReqDetails.getName());
 
         //Change resource version on service
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Validate that service contains property with "get_input" value and input with the updated value
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
@@ -470,12 +470,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF input in Service properties, declare it as service input
@@ -492,12 +492,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                         updValue);
 
 //        //Checkout VF and check in - v0.2
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
 //        //Change resource version on service
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
 //        //Validate that service contains property with "get_input" value and input with the updated value
         viewServiceProperties(serviceReqDetails);
@@ -536,12 +536,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), propertyValue);
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF input in Service properties, declare it as service input
@@ -552,7 +552,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                 PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, update input value and check in - v0.2
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         viewVfInputs(resourceReqDetails);
         PropertiesAssignmentPage.deletePropertyValue(PropertyNameBuilder.buildDeclaredInputField(componentName, propertyName));
@@ -560,8 +560,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceReqDetails.getName());
 
         //Change resource version on service
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Validate that service contains property with "get_input" value and input with the updated value
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
@@ -598,12 +598,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), "");
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF input in Service properties, declare it as service input
@@ -614,7 +614,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                 PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), "");
 
         //Checkout VF, update input value and check in - v0.2
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         viewVfInputs(resourceReqDetails);
         PropertiesAssignmentPage.editPropertyValue(PropertyNameBuilder.buildDeclaredInputField(componentName, propertyName), propertyValue);
@@ -622,8 +622,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceReqDetails.getName());
 
         //Change resource version on service
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Validate that service contains property with "get_input" value and input with the updated value
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
@@ -663,12 +663,12 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         PropertiesAssignmentVerificator.validatePropertyValue(PropertyNameBuilder.buildInputField(inputName), propertyValue);
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
 
         //Find the VF input in Service properties, declare it as service input
@@ -679,7 +679,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
                 PropertyNameBuilder.buildServiceDeclaredFieldVfLevel(componentInstance, componentName, propertyName), propertyValue);
 
         //Checkout VF, delete input  and check in - v0.2
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         viewVfInputs(resourceReqDetails);
         PropertiesAssignmentPage.clickOnDeleteInputButton();
@@ -687,8 +687,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         ResourceGeneralPage.clickCheckinButton(resourceReqDetails.getName());
 
         //Change resource version on service
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
-        AtomicOperationUtils.changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "0.2");
+        new AtomicOperationUtils().changeComponentInstanceVersion(service, componentInstance, resource, UserRoleEnum.DESIGNER, true);
 
         //Validate that service property and input are deleted
         GeneralUIUtils.findComponentAndClick(serviceReqDetails.getName());
@@ -751,7 +751,7 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         CompositionPage.changeComponentVersion(vfCanvasManager, vfcElement, "0.2");
         VfVerificator.verifyInstanceVersion(vfMetaData, getUser(), atomicResourceMetaData.getName(), "0.2");
 
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), "0.1");
         List<ComponentInstance> components = resource.getComponentInstances();
         String normalizedName = components.get(0).getNormalizedName();
         CompositionPage.moveToPropertiesScreen();
@@ -809,10 +809,10 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
 
         //Check in VF and add VFi to Service
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, "Create Service: " + serviceReqDetails.getName());
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(
                 serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         GeneralUIUtils.findComponentAndClick(service.getName());
@@ -829,8 +829,8 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         DeploymentArtifactPage.clickSaveEnvParameters();
 
         //Checkout and check in VF - v0.2
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Change VFi version on Service canvas - v0.2
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
@@ -848,14 +848,14 @@ public class PropertiesAssignmentUpdateFlow_New extends SetupCDTest {
         DeploymentArtifactPage.clickCloseEnvParameters();
 
         //Check out VF, delete heatparam value, check in VF - v0.3
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.findComponentAndClick(resource.getName());
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
         DeploymentArtifactPage.clickEditEnvArtifact(artifactName);
         DeploymentArtifactPage.clickOnDeleteHeatParamValue(heatParamName);
         DeploymentArtifactPage.clickSaveEnvParameters();
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
         //Change VFi version on Service canvas - v0.3
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();

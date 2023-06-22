@@ -222,7 +222,7 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 	private Service createServiceWithRIsWithArtifacts() throws Exception {
 		serviceDetails_02.setUniqueId(serviceDetails_01.getUniqueId());
 		createTreeCheckedinVFInstances();
-		LifecycleRestUtils.changeResourceState(resourceDetailsCP_01, sdncDesignerDetails, "0.1",
+		new LifecycleRestUtils().changeResourceState(resourceDetailsCP_01, sdncDesignerDetails, "0.1",
 				LifeCycleStatesEnum.CHECKIN);
 		createVFInstanceAndAtomicResourceInstanceWithoutCheckin(resourceDetailsVF_01, resourceDetailsCP_01,
 				sdncDesignerDetails);
@@ -312,8 +312,8 @@ public class DownloadArtifactsTest extends ComponentBaseTest {
 
 	private void changeResourceLifecycleState(ResourceReqDetails resourceDetails, String userUserId,
 			LifeCycleStatesEnum lifeCycleStates) throws Exception {
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDetails, userUserId, lifeCycleStates);
-		LifecycleRestUtils.checkLCS_Response(response);
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDetails, userUserId, lifeCycleStates);
+		new LifecycleRestUtils().checkLCS_Response(response);
 	}
 
 	private void createAtomicResource(ResourceReqDetails resourceDetails) throws Exception {

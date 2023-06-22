@@ -101,12 +101,12 @@ public class OnboardViaApis {
             vendorLicenseModel);
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService(); //getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         // TEST START
 
         VendorLicenseModelRestUtils.updateVendorLicense(vendorLicenseModel, sdncDesignerDetails1, false);
@@ -116,7 +116,7 @@ public class OnboardViaApis {
         vendorSoftwareProductObject = VendorSoftwareProductRestUtils.updateVSPWithNewVLMParameters(vendorSoftwareProductObject,
             vendorLicenseModel, sdncDesignerDetails1);
         VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails1);
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
         System.out.println(distributeAndValidateService);
     }
@@ -128,14 +128,14 @@ public class OnboardViaApis {
 
         resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         return service;
     }
 

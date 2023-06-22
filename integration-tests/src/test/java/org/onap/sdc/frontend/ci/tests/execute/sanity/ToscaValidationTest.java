@@ -123,20 +123,20 @@ public class ToscaValidationTest extends SetupCDTest {
 //--------------------------VF--------------------------------
 //		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
         Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 //--------------------------SERVICE--------------------------------
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 //--------------------------getProperties set values and declare--------------------
-        Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
+        Component componentObject = new AtomicOperationUtils().getComponentObject(service, UserRoleEnum.DESIGNER);
         Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
         setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
         PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         Map<String, VfModuleDefinition> expectedVfModulesDefinitionObject = createExpectedVfModuleDefinitionObject(resource, service, listTypeHeatMetaDefinition);
 
         File serviceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
@@ -192,26 +192,26 @@ public class ToscaValidationTest extends SetupCDTest {
         expectedToscaMainDefinition = addGenericPropertiesToToscaDefinitionObject(expectedToscaMainDefinition, genericPropName);
         ToscaDefinition toscaExpectedMainServiceDefinition = new ToscaDefinition(expectedToscaMainDefinition);
 //--------------------------VF--------------------------------
-        Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 
 //--------------------------SERVICE--------------------------------
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 
 //--------------------------getProperties set values and declare--------------------
 
-        Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
+        Component componentObject = new AtomicOperationUtils().getComponentObject(service, UserRoleEnum.DESIGNER);
         Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
         setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
         PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         File ServiceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
         OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
         ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + ServiceCsarFileName));
@@ -689,7 +689,7 @@ public class ToscaValidationTest extends SetupCDTest {
     }
 
     public static ToscaDefinition addGenericInputsToToscaObject(ToscaDefinition toscaDefinition, String genericName) throws Exception {
-        Resource genericResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, genericName, "1.0");
+        Resource genericResource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, genericName, "1.0");
         ToscaTopologyTemplateDefinition topologyTemplate = toscaDefinition.getTopology_template();
         Map<String, ToscaInputsTopologyTemplateDefinition> newInput = new HashMap<>();
         for (PropertyDefinition property : genericResource.getProperties()) {
@@ -746,7 +746,7 @@ public class ToscaValidationTest extends SetupCDTest {
 
     public static Map<String, String> convertResourceNodeTemplateMetadataToMap(ComponentInstance componentInstance) throws Exception {
 
-        Resource resource = AtomicOperationUtils.getResourceObject(componentInstance.getComponentUid());
+        Resource resource = new AtomicOperationUtils().getResourceObject(componentInstance.getComponentUid());
         Map<String, String> metadata = new HashMap<>();
 
         metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.CATEGORY.value, resource.getCategories().get(0).getName());
@@ -860,7 +860,7 @@ public class ToscaValidationTest extends SetupCDTest {
 		toscaMainAmdocsDefinition = addGenericPropertiesToToscaDefinitionObject(toscaMainAmdocsDefinition, GENERIC_VF);
 
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 

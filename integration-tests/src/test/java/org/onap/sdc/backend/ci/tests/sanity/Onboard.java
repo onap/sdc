@@ -130,26 +130,26 @@ public class Onboard extends ComponentBaseTest {
 		ExtentTestActions.log(Status.INFO, String.format("Create %s %s From VSP", resourceTypeEnum.getValue(), resourceReqDetails.getName()));
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER);
 		ExtentTestActions.log(Status.INFO, String.format("Certify %s", resourceTypeEnum.getValue()));
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		//--------------------------SERVICE--------------------------------	
 		ServiceReqDetails serviceReqDetails = OnboardingUtillViaApis.prepareServiceDetailsBeforeCreate(user);
 		ExtentTestActions.log(Status.INFO, String.format("Create Service %s", serviceReqDetails.getName()));
-		Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 		ExtentTestActions.log(Status.INFO, String.format("Add %s to Service", resourceTypeEnum.getValue()));
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
 		addComponentInstanceToComponentContainer.left().value();
 		ExtentTestActions.log(Status.INFO,"Certify Service");
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		if (makeDistributionValue.equals("true")) {
 			ExtentTestActions.log(Status.INFO, "Distribute Service");
-			AtomicOperationUtils.distributeService(service, true);
+			new AtomicOperationUtils().distributeService(service, true);
 		}
 
 		if (makeToscaValidationValue.equals("true")) {
 			ExtentTestActions.log(Status.INFO, "Start tosca validation");
-			AtomicOperationUtils.toscaValidation(service ,packageFileName);
+			new AtomicOperationUtils().toscaValidation(service ,packageFileName);
 		}
 
 		ExtentTestActions.log(Status.INFO, String.format("The onboarding process for '%s' finished with success", packageFileName));

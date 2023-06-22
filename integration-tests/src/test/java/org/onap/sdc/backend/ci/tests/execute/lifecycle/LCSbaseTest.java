@@ -167,45 +167,45 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
     }
 
     public static RestResponse certifyResource(ResourceReqDetails resourceDetails, User user) throws Exception {
-/*		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+/*		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
                 LifeCycleStatesEnum.CHECKIN);
 		// if (restResponseResource.getErrorCode() == 200){
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		// }else
 		// return restResponseResource;
 		sdncTesterDeatails1 = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
 		if (restResponseResource.getErrorCode() == 200) {
-			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+			restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
 					sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		} else
 			return restResponseResource;
 		if (restResponseResource.getErrorCode() == 200) {
-			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+			restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
 					sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.CERTIFY);
 		}
 		return restResponseResource;*/
-        return LifecycleRestUtils.changeResourceState(resourceDetails,
+        return new LifecycleRestUtils().changeResourceState(resourceDetails,
                 sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.CERTIFY);
     }
 
     public static RestResponse certifyService(ServiceReqDetails serviceDetails, User user) throws Exception {
-        RestResponse restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, user,
+        RestResponse restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, user,
                 LifeCycleStatesEnum.CHECKIN);
         // if (restResponseService.getErrorCode() == 200){
-        restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, user,
+        restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, user,
                 LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         // }else
         // return restResponseService;
 
         sdncTesterDeatails1 = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
         if (restResponseService.getErrorCode() == 200) {
-            restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, sdncTesterDeatails1,
+            restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncTesterDeatails1,
                     LifeCycleStatesEnum.STARTCERTIFICATION);
         } else
             return restResponseService;
         if (restResponseService.getErrorCode() == 200) {
-            restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, sdncTesterDeatails1,
+            restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncTesterDeatails1,
                     LifeCycleStatesEnum.CERTIFY);
         }
         return restResponseService;
@@ -229,7 +229,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
             Resource resourceRespJavaObject = ResponseParser
                     .convertResourceResponseToJavaObject(prevResponse.getResponse());
             if (resourceRespJavaObject.getLifecycleState().equals(LifecycleStateEnum.CERTIFIED)) {
-                RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+                RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
                         user.getUserId(), LifeCycleStatesEnum.CHECKOUT);
             }
         }
@@ -237,10 +237,10 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
         RestResponse restResponseResource = null;
         for (int i = 0; i < (version - 1); i++) {
 
-            restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, null,
+            restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, null,
                     LifeCycleStatesEnum.CHECKIN, checkinComentJson);
             if (restResponseResource.getErrorCode() == 200) {
-                restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+                restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
                         LifeCycleStatesEnum.CHECKOUT);
                 if (restResponseResource.getErrorCode() == 200) {
 
@@ -252,7 +252,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
 
         }
 
-        restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, null,
+        restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, null,
                 LifeCycleStatesEnum.CHECKIN, checkinComentJson);
         assertEquals("Check response code ", 200, restResponseResource.getErrorCode().intValue());
         return restResponseResource;

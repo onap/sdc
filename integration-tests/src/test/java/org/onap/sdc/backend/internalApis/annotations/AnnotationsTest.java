@@ -81,7 +81,7 @@ public class AnnotationsTest extends ComponentBaseTest {
     public void whenExportingToscaOfTopologyTemplate_annotationTypeYamlExist_sourceAnnotationExist() throws Exception {
         User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
         ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType("exportToscaAnnotationsYml", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, sdncModifierDetails.getUserId(), ResourceTypeEnum.VF.toString());
-        Resource createdVF = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Resource createdVF = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
         ToscaAnnotationsTypesDefinition toscaAnnotations = ToscaTypesDefinitionUtils.getToscaAnnotationsFromCsar(createdVF, sdncModifierDetails);
         assertTrue(toscaAnnotations.getAnnotation_types().containsKey(ToscaAnnotationsTypesDefinition.SOURCE_ANNOTATION));
     }
@@ -89,25 +89,25 @@ public class AnnotationsTest extends ComponentBaseTest {
     @Test
     public void whenDeclaringAnInputFromPropertyWhichOriginatedFromInputWithAnnotation_copyAnnotationsToNewInput() throws Exception {
         Resource vfWithAnnotationsV1 = importAnnotationsCsarAndCheckIn();
-        Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-        ComponentInstance createdCmptInstance = AtomicOperationUtils.addComponentInstanceToComponentContainer(vfWithAnnotationsV1, service).left().value();
-        Service fetchedService = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+        ComponentInstance createdCmptInstance = new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfWithAnnotationsV1, service).left().value();
+        Service fetchedService = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
         List<ComponentInstanceInput> declaredProps = declareProperties(fetchedService, createdCmptInstance, PROPS_TO_DECLARE);
         verifyAnnotationsOnDeclaredInputs(vfWithAnnotationsV1, fetchedService, declaredProps);
-        Service serviceAfterPropertyDeclaration = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service serviceAfterPropertyDeclaration = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
         deleteDeclaredInputsAndVerifySuccess(serviceAfterPropertyDeclaration);
     }
 
     @Test
     public void onChangeVersion_copyAnnotationsFromNewVspToServiceInputs() throws Exception {
         Resource vfWithAnnotationsV1 = importAnnotationsCsarAndCheckIn();
-        Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-        ComponentInstance createdCmptInstance = AtomicOperationUtils.addComponentInstanceToComponentContainer(vfWithAnnotationsV1, service).left().value();
-        Service fetchedService = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+        ComponentInstance createdCmptInstance = new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfWithAnnotationsV1, service).left().value();
+        Service fetchedService = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
         declareProperties(fetchedService, createdCmptInstance, PROPS_TO_DECLARE);
 
         Resource vfWithAnnotationsV2 = updateAnnotationsCsarAndCheckIn(vfWithAnnotationsV1);
-        Pair<Component, ComponentInstance> changeVersionRes = AtomicOperationUtils.changeComponentInstanceVersion(service, createdCmptInstance, vfWithAnnotationsV2, UserRoleEnum.DESIGNER, true).left().value();
+        Pair<Component, ComponentInstance> changeVersionRes = new AtomicOperationUtils().changeComponentInstanceVersion(service, createdCmptInstance, vfWithAnnotationsV2, UserRoleEnum.DESIGNER, true).left().value();
         Component serviceAfterChangeVersion = changeVersionRes.getKey();
         ComponentInstance newInstance = changeVersionRes.getRight();
         List<ComponentInstanceInput> declaredProps = getInstanceProperties(serviceAfterChangeVersion, newInstance.getUniqueId(), PROPS_TO_DECLARE);
@@ -132,7 +132,7 @@ public class AnnotationsTest extends ComponentBaseTest {
             RestResponse deleteInputResponse = InputsRestUtils.deleteInputFromComponent(service, declaredInput.getUniqueId());
             BaseValidationUtils.checkSuccess(deleteInputResponse);
         }
-        Service fetchedService = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service fetchedService = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
         assertThat(fetchedService.getInputs()).isNullOrEmpty();
     }
 
@@ -162,7 +162,7 @@ public class AnnotationsTest extends ComponentBaseTest {
     }
 
     private Map<String, InputDefinition> getCreatedInputsByProperty(Component service, List<ComponentInstanceInput> declaredProps) throws Exception {
-        Service fetchedService = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service fetchedService = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
         List<InputDefinition> inputs = fetchedService.getInputs();
         return filterInputsCreatedByDeclaringFromProperties(declaredProps, inputs);
     }
@@ -174,15 +174,15 @@ public class AnnotationsTest extends ComponentBaseTest {
     }
 
     private Resource importAnnotationsCsarAndCheckIn() throws Exception {
-        Resource annotationsVF = AtomicOperationUtils.importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, CSAR_WITH_ANNOTATIONS_V1, SRIOV_PATH);
-        AtomicOperationUtils.changeComponentState(annotationsVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+        Resource annotationsVF = new AtomicOperationUtils().importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, CSAR_WITH_ANNOTATIONS_V1, SRIOV_PATH);
+        new AtomicOperationUtils().changeComponentState(annotationsVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
         return annotationsVF;
     }
 
     private Resource updateAnnotationsCsarAndCheckIn(Resource vfToUpdate) throws Exception {
-        AtomicOperationUtils.changeComponentState(vfToUpdate, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true);
-        Resource annotationsVfV2 = AtomicOperationUtils.updateResourceFromCsar(vfToUpdate, UserRoleEnum.DESIGNER, CSAR_WITH_ANNOTATIONS_V2, SRIOV_PATH);
-        AtomicOperationUtils.changeComponentState(annotationsVfV2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+        new AtomicOperationUtils().changeComponentState(vfToUpdate, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true);
+        Resource annotationsVfV2 = new AtomicOperationUtils().updateResourceFromCsar(vfToUpdate, UserRoleEnum.DESIGNER, CSAR_WITH_ANNOTATIONS_V2, SRIOV_PATH);
+        new AtomicOperationUtils().changeComponentState(annotationsVfV2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
         return annotationsVfV2;
     }
 

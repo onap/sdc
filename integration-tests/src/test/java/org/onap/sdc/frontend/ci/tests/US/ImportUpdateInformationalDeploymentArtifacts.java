@@ -62,7 +62,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
 
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         List<String> snmpPollArtifactList = Stream
                 .of("base_cgi_frwl.mib", "base_vIECCF_volume.yml", "node_userdata_script.sh", "vendor-license-model.xml")
@@ -118,7 +118,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
         ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         resource.getComponentInstances().forEach(e -> {
 
@@ -155,7 +155,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
         ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         resource.getComponentInstances().forEach(e -> {
 
@@ -183,7 +183,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
         ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         resource.getComponentInstances().forEach(e -> {
 
