@@ -46,7 +46,7 @@ public abstract class ProductLifecycleTest extends ProductBaseTest {
 
 	@BeforeMethod
 	public void init() throws Exception {
-		ProductReqDetails defaultProduct = ElementFactory.getDefaultProduct(defaultCategories);
+		ProductReqDetails defaultProduct = new ElementFactory().getDefaultProduct(defaultCategories);
 		RestResponse createProduct = ProductRestUtils.createProduct(defaultProduct, productManager1);
 		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_CREATED,
 				createProduct.getErrorCode().intValue());

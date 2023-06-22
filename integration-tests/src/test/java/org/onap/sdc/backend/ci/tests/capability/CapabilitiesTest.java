@@ -43,8 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils.getResourceObject;
-import static org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils.getServiceObject;
 import static org.testng.AssertJUnit.fail;
 
 public class CapabilitiesTest extends ComponentBaseTest {
@@ -58,11 +56,11 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @BeforeTest
     public void init() throws Exception {
-        user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        user = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
         // Create default service
         Either<Service, RestResponse> createDefaultServiceEither =
-                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
         if (createDefaultServiceEither.isRight()) {
             fail("Error creating default service");
         }
@@ -70,7 +68,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
         // Create default resource
         Either<Resource, RestResponse> createDefaultResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
         if (createDefaultResourceEither.isRight()) {
             fail("Error creating default resource");
         }
@@ -78,7 +76,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
         // Create default PNF resource
         Either<Resource, RestResponse> createDefaultPNFResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
         if (createDefaultPNFResourceEither.isRight()) {
             fail("Error creating default pnf resource");
         }
@@ -109,7 +107,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "updateCapabilityOnServiceTest")
     public void getCapabilityFromServiceTest() throws Exception {
-        Service serviceObject = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service serviceObject = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = serviceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -122,7 +120,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "getCapabilityFromServiceTest")
     public void deleteCapabilityFromServiceTest() throws Exception {
-        Service serviceObject = AtomicOperationUtils.getServiceObject(service.getUniqueId());
+        Service serviceObject = new AtomicOperationUtils().getServiceObject(service.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = serviceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -196,7 +194,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "updateCapabilityOnVfTest")
     public void getCapabilityFromVfTest() throws Exception {
-        Resource resourceObject = AtomicOperationUtils.getResourceObject(resource.getUniqueId());
+        Resource resourceObject = new AtomicOperationUtils().getResourceObject(resource.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = resourceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -209,7 +207,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "getCapabilityFromVfTest")
     public void deleteCapabilityFromVfTest() throws Exception {
-        Resource resourceObject = AtomicOperationUtils.getResourceObject(resource.getUniqueId());
+        Resource resourceObject = new AtomicOperationUtils().getResourceObject(resource.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = resourceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -284,7 +282,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "updateCapabilityOnPnfTest")
     public void getCapabilityFromPnfTest() throws Exception {
-        Resource pnfResourceObject = AtomicOperationUtils.getResourceObject(pnfResource.getUniqueId());
+        Resource pnfResourceObject = new AtomicOperationUtils().getResourceObject(pnfResource.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = pnfResourceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -297,7 +295,7 @@ public class CapabilitiesTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "getCapabilityFromPnfTest")
     public void deleteCapabilityFromPnfTest() throws Exception {
-        Resource pnfResourceObject = AtomicOperationUtils.getResourceObject(pnfResource.getUniqueId());
+        Resource pnfResourceObject = new AtomicOperationUtils().getResourceObject(pnfResource.getUniqueId());
 
         List<org.openecomp.sdc.be.model.CapabilityDefinition> capabilityDefinitionList = pnfResourceObject.getCapabilities()
                 .values().stream().flatMap(Collection::stream).collect(Collectors.toList());

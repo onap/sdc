@@ -43,12 +43,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceRestUtils extends BaseRestUtils {
-	private static Logger logger = LoggerFactory.getLogger(ServiceRestUtils.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ServiceRestUtils.class);
 	// ****** CREATE *******
 
-	private static Gson gson = new Gson();
-
-	public static RestResponse deleteService(String serviceName, String version, User sdncModifierDetails)
+	public RestResponse deleteService(String serviceName, String version, User sdncModifierDetails)
 			throws IOException {
 
 		Config config = Utils.getConfig();
@@ -61,7 +59,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return sendDelete;
 	}
 	
-	public static RestResponse markServiceToDelete(String resourceId, String userId) throws IOException {
+	public RestResponse markServiceToDelete(String resourceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
@@ -71,7 +69,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 
 	}
 
-	public static RestResponse deleteServiceById(String serviceId, String userId) throws IOException {
+	public RestResponse deleteServiceById(String serviceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
@@ -80,18 +78,18 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return sendDelete;
 	}
 
-	public static void deleteMarkedServices(String userId) throws IOException {
+	public void deleteMarkedServices(String userId) throws IOException {
 		String url;
 		Config config = Utils.getConfig();
 		url = String.format(Urls.DELETE_MARKED_SERVICES, config.getCatalogBeHost(), config.getCatalogBePort());
 		sendDelete(url, userId);
 	}
 
-	public static RestResponse createService(ServiceReqDetails service, User user) throws Exception {
+	public RestResponse createService(ServiceReqDetails service, User user) throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort());
-		String serviceBodyJson = gson.toJson(service);
+		String serviceBodyJson = new Gson().toJson(service);
 
 		logger.debug("Send POST request to create service: {}", url);
 		logger.debug("Service body: {}", serviceBodyJson);
@@ -111,11 +109,11 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return res;
 	}
 
-	public static RestResponse updateService(ServiceReqDetails service, User user) throws Exception {
+	public RestResponse updateService(ServiceReqDetails service, User user) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.UPDATE_SERVICE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
 				service.getUniqueId());
-		String serviceBodyJson = gson.toJson(service);
+		String serviceBodyJson = new Gson().toJson(service);
 
 		logger.debug("Send PUT request to create service: {}", url);
 		logger.debug("Service body: {}", serviceBodyJson);
@@ -129,22 +127,22 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return res;
 	}
 
-	public static RestResponse getService(String serviceId) throws IOException {
+	public RestResponse getService(String serviceId) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
-		return getServiceFromUrl(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), false);
+		return getServiceFromUrl(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), false);
 	}
 
-    public static RestResponse getServiceToscaArtifacts(String serviceId) throws IOException {
+    public RestResponse getServiceToscaArtifacts(String serviceId) throws IOException {
 
         Config config = Utils.getConfig();
         String url = String.format(Urls.GET_INSTANCE_TOSCA_ARTIFACTS, config.getCatalogBeHost(),
                 config.getCatalogBePort(), "services", serviceId);
-        return getServiceFromUrl(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), false);
+        return getServiceFromUrl(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), false);
     }
 
-	public static RestResponse getService(ServiceReqDetails serviceReqDetails, User sdncModifierDetails)
+	public RestResponse getService(ServiceReqDetails serviceReqDetails, User sdncModifierDetails)
 			throws IOException {
 
 		Config config = Utils.getConfig();
@@ -153,14 +151,14 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return getServiceFromUrl(url, sdncModifierDetails, false);
 	}
 
-	public static RestResponse getService(String serviceId, User sdncModifierDetails) throws IOException {
+	public RestResponse getService(String serviceId, User sdncModifierDetails) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
 		return getServiceFromUrl(url, sdncModifierDetails, false);
 	}
 
-	public static RestResponse getServiceByNameAndVersion(User sdncModifierDetails, String serviceName,
+	public RestResponse getServiceByNameAndVersion(User sdncModifierDetails, String serviceName,
 			String serviceVersion) throws IOException {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_SERVICE_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
@@ -168,7 +166,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return getServiceFromUrl(url, sdncModifierDetails, false);
 	}
 
-	public static RestResponse getServiceFromUrl(String url, User sdncModifierDetails, boolean isCached)
+	public RestResponse getServiceFromUrl(String url, User sdncModifierDetails, boolean isCached)
 			throws IOException {
 		Map<String, String> headersMap = prepareHeadersMap(sdncModifierDetails, isCached);
 		HttpRequest http = new HttpRequest();
@@ -179,7 +177,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return sendGetServerRequest;
 	}
 
-	public static Map<String, String> prepareHeadersMap(User sdncModifierDetails, boolean isCached) {
+	public Map<String, String> prepareHeadersMap(User sdncModifierDetails, boolean isCached) {
 		Map<String, String> headersMap = new HashMap<>();
 		if (isCached)
 			headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), cacheControlHeader);
@@ -190,36 +188,36 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return headersMap;
 	}
 
-	public static RestResponse approveServiceDistribution(String serviceId, String userId) throws Exception {
+	public RestResponse approveServiceDistribution(String serviceId, String userId) throws Exception {
 		return changeServiceDistributionState(serviceId, userId, Urls.APPROVE_DISTRIBUTION);
 	}
 
-	public static RestResponse rejectServiceDistribution(String serviceId, String userId) throws Exception {
+	public RestResponse rejectServiceDistribution(String serviceId, String userId) throws Exception {
 		return changeServiceDistributionState(serviceId, userId, Urls.REJECT_DISTRIBUTION);
 	}
 
 	// Benny
-	public static RestResponse rejectServiceDistribution(String serviceId, String userId, String comment)
+	public RestResponse rejectServiceDistribution(String serviceId, String userId, String comment)
 			throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.REJECT_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(),
 				serviceId);
-		String userBodyJson = gson.toJson(comment);
+		String userBodyJson = new Gson().toJson(comment);
 		return sendPost(url, userBodyJson, userId, acceptHeaderData);
 
 	}
 
-	private static RestResponse changeServiceDistributionState(String serviceId, String userId, String distributionUrl)
+	private RestResponse changeServiceDistributionState(String serviceId, String userId, String distributionUrl)
 			throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(distributionUrl, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
 		String defComment = "{ userRemarks : \"this is an test\" }";
-		String userBodyJson = gson.toJson(defComment);
+		String userBodyJson = new Gson().toJson(defComment);
 		return sendPost(url, userBodyJson, userId, acceptHeaderData);
 
 	}
 
-	public static RestResponse getServiceLatestVersionList(User sdncModifierDetails) throws IOException {
+	public RestResponse getServiceLatestVersionList(User sdncModifierDetails) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_SERVICE_lATEST_VERSION, config.getCatalogBeHost(),
@@ -229,12 +227,12 @@ public class ServiceRestUtils extends BaseRestUtils {
 
 	}
 
-	public static RestResponse createServiceByHttpMethod(ServiceReqDetails serviceDetails, User sdncModifierDetails,
+	public RestResponse createServiceByHttpMethod(ServiceReqDetails serviceDetails, User sdncModifierDetails,
 			String method, String urls) throws IOException {
 		Map<String, String> headersMap = prepareHeadersMap(sdncModifierDetails, true);
 
 		Config config = Utils.getConfig();
-		String serviceBodyJson = gson.toJson(serviceDetails);
+		String serviceBodyJson = new Gson().toJson(serviceDetails);
 		HttpRequest http = new HttpRequest();
 		String url = String.format(urls, config.getCatalogBeHost(), config.getCatalogBePort());
 		// TODO: ADD AUTHENTICATION IN REQUEST
@@ -248,7 +246,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 
 	}
 
-	public static RestResponse deleteServiceByNameAndVersion(User sdncModifierDetails, String serviceName,
+	public RestResponse deleteServiceByNameAndVersion(User sdncModifierDetails, String serviceName,
 			String serviceVersion) throws IOException {
 		Config config = Utils.getConfig();
 
@@ -264,7 +262,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return deleteResponse;
 	}
 
-	public static RestResponse getFollowed(User user) throws Exception {
+	public RestResponse getFollowed(User user) throws Exception {
 		Config config = Utils.getConfig();
 
 		HttpRequest httpRequest = new HttpRequest();
@@ -281,7 +279,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return getResourceNotAbstarctResponse;
 	}
 
-	public static JSONArray getListArrayFromRestResponse(RestResponse restResponse) {
+	public JSONArray getListArrayFromRestResponse(RestResponse restResponse) {
 		String json = restResponse.getResponse();
 		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
 		JSONArray servicesArray = (JSONArray) jsonResp.get("services");
@@ -291,7 +289,7 @@ public class ServiceRestUtils extends BaseRestUtils {
 		return servicesArray;
 	}
 	
-	public static RestResponse getDistributionServiceList(Service service, User user) throws IOException {
+	public RestResponse getDistributionServiceList(Service service, User user) throws IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.DISTRIBUTION_SERVICE_LIST, config.getCatalogBeHost(), config.getCatalogBePort(), service.getUUID());

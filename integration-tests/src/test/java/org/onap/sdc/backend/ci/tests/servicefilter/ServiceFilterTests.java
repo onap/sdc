@@ -56,22 +56,22 @@ public class ServiceFilterTests extends ComponentBaseTest {
 
     @BeforeTest
     public void init() throws Exception {
-        user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        user = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
         ServiceReqDetails internalService;
         //Create External Service
-        externalService = ElementFactory.getDefaultService();
+        externalService = new ElementFactory().getDefaultService();
         externalService.setName("ExternalService" + Math.random());
-        ServiceRestUtils.createService(externalService, user);
+        new ServiceRestUtils().createService(externalService, user);
 
         //Create Internal Service
-        internalService = ElementFactory.getDefaultService();
+        internalService = new ElementFactory().getDefaultService();
         internalService.setName("InternalService" + Math.random());
-        ServiceRestUtils.createService(internalService, user);
+        new ServiceRestUtils().createService(internalService, user);
 
         //Add property services
         //#PropertyOne
-        PropertyReqDetails propertyReqDetails = ElementFactory.getDefaultStringProperty();
+        PropertyReqDetails propertyReqDetails = new ElementFactory().getDefaultStringProperty();
         propertyReqDetails.setName("StringProp1");
         String body = propertyReqDetails.propertyToJsonString();
         PropertyRestUtils.createServiceProperty(externalService.getUniqueId(), body, user);
@@ -83,7 +83,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
         response = PropertyRestUtils.createServiceProperty(internalService.getUniqueId(), body, user);
 
         //CheckIn internal Service
-        response = LifecycleRestUtils.changeServiceState(internalService, user, "0.1",
+        response = new LifecycleRestUtils().changeServiceState(internalService, user, "0.1",
                 LifeCycleStatesEnum.CHECKIN,
                 "{\"userRemarks\":\"CheckIn\"}");
         BaseRestUtils.checkSuccess(response);
@@ -92,7 +92,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
         }
         //Make internal service as component instance
         componentInstanceReqDetails =
-                ElementFactory.getDefaultComponentInstance(internalService.getUniqueId(), "ServiceProxy");
+                new ElementFactory().getDefaultComponentInstance(internalService.getUniqueId(), "ServiceProxy");
         response = ComponentInstanceRestUtils.createComponentInstance(componentInstanceReqDetails,
                 user, externalService.getUniqueId(), ComponentTypeEnum.SERVICE);
         BaseRestUtils.checkCreateResponse(response);
@@ -110,7 +110,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
     @Test
     public void createServiceFilter() throws Exception {
         //Add Service Filter
-        ServiceFilterDetails serviceFilterDetails = ElementFactory.getDefaultEqualOperatorFilter("StringProp1", "value");
+        ServiceFilterDetails serviceFilterDetails = new ElementFactory().getDefaultEqualOperatorFilter("StringProp1", "value");
         RestResponse restResponse = ServiceFilterUtils.createServiceFilter(externalService.getUniqueId(),
                 componentInstanceReqDetails.getUniqueId(), serviceFilterDetails, user);
         logger.info("CreateServiceFilter Response Code:" + restResponse.getErrorCode());
@@ -121,7 +121,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
     public void updateServiceFilter() throws Exception {
         //Update Service Filter
         ServiceFilterDetails serviceFilterDetails =
-                ElementFactory.getDefaultEqualOperatorFilter("StringProp1", "updated");
+                new ElementFactory().getDefaultEqualOperatorFilter("StringProp1", "updated");
         RestResponse restResponse = ServiceFilterUtils.updateServiceFilter(externalService.getUniqueId(),
                 componentInstanceReqDetails.getUniqueId(), Collections.singletonList(serviceFilterDetails),  user);
         logger.info("UpdateServiceFilter Response Code:" + restResponse.getErrorCode());

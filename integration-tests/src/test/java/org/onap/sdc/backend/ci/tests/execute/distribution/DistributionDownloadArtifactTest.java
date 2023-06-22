@@ -91,13 +91,13 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	//
 	// resourceBaseVersion = "0.1";
 	// serviceBaseVersion = "0.1";
-	// designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-	// adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+	// designerUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+	// adminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 	// resourceDetails =
-	// ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+	// new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 	// NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS,
 	// adminUser);
-	// serviceDetails = ElementFactory.getDefaultService();
+	// serviceDetails = new ElementFactory().getDefaultService();
 	// serviceUniqueId = "svc_" + serviceDetails.getName().toLowerCase() + "." +
 	// serviceBaseVersion;
 	// artifactInterfaceType = "standard";
@@ -109,11 +109,11 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 		resourceBaseVersion = "0.1";
 		serviceBaseVersion = "0.1";
-		designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		resourceDetails = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		designerUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		adminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
+		resourceDetails = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, adminUser);
-		serviceDetails = ElementFactory.getDefaultService();
+		serviceDetails = new ElementFactory().getDefaultService();
 		serviceUniqueId = "svc_" + serviceDetails.getName().toLowerCase() + "." + serviceBaseVersion;
 		artifactInterfaceType = "standard";
 		artifactOperationName = "start";
@@ -128,17 +128,17 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test
 	public void downloadResourceArtifactSuccess() throws Exception {
 		// Create service
-		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
+		RestResponse serviceResponse = new ServiceRestUtils().createService(serviceDetails, designerUser);
 		AssertJUnit.assertEquals("Check response code after creating resource", 201,
 				serviceResponse.getErrorCode().intValue());
 
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		AssertJUnit.assertEquals("Check response code after creating resource", 201,
 				createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
 
-		ArtifactReqDetails artifactDetails = ElementFactory
+		ArtifactReqDetails artifactDetails = new ElementFactory()
 				.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
 		// Setting the name to be with space
 		artifactDetails.setArtifactName("test artifact file.yaml");
@@ -318,12 +318,12 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test(enabled = true)
 	public void downloadServiceArtifactSuccess() throws Exception {
 		// Create service
-		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
+		RestResponse serviceResponse = new ServiceRestUtils().createService(serviceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, serviceResponse.getErrorCode().intValue());
 		serviceUniqueId = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse())
 				.getUniqueId();
 
-		ArtifactReqDetails artifactDetails = ElementFactory.getDefaultDeploymentArtifactForType("MURANO_PKG");
+		ArtifactReqDetails artifactDetails = new ElementFactory().getDefaultDeploymentArtifactForType("MURANO_PKG");
 
 		RestResponse addArtifactResponse = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails,
 				designerUser, serviceUniqueId, ArtifactRestUtils.calculateMD5Header(artifactDetails));
@@ -379,7 +379,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 		String auditAction = "DArtifactDownload";
 
 		ExpectedDistDownloadAudit expectedDistDownloadAudit = new ExpectedDistDownloadAudit(auditAction,
-				ResourceRestUtils.ecomp, encodeUrlForDownload(relativeUrl), "200", "OK");
+				new ResourceRestUtils().ecomp, encodeUrlForDownload(relativeUrl), "200", "OK");
 		AuditValidationUtils.validateAudit(expectedDistDownloadAudit, auditAction);
 	}
 
@@ -442,7 +442,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 
 	@Test
 	public void downloadResourceArtifact_ResourceVersionNotFound() throws Exception {
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
@@ -478,7 +478,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test
 	public void downloadResourceArtifact_ServiceNameNotFound() throws Exception {
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
 		download_serviceNameNotFound_inner("notExistingServiceName", serviceBaseVersion, resource.getName(),
@@ -489,12 +489,12 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	@Test
 	public void downloadResourceArtifact_ServiceVersionNotFound() throws Exception {
 		// Create resource
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, createResource.getErrorCode().intValue());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
 
 		// Create service
-		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
+		RestResponse serviceResponse = new ServiceRestUtils().createService(serviceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, serviceResponse.getErrorCode().intValue());
 		serviceUniqueId = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse())
 				.getUniqueId();
@@ -513,7 +513,7 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	public void downloadServiceArtifact_ServiceVersionNotFound() throws Exception {
 
 		// Create service
-		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
+		RestResponse serviceResponse = new ServiceRestUtils().createService(serviceDetails, designerUser);
 		assertEquals("Check response code after creating resource", 201, serviceResponse.getErrorCode().intValue());
 		serviceUniqueId = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse())
 				.getUniqueId();

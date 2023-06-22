@@ -58,20 +58,20 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 
 	@BeforeMethod
 	public void beforeProductTest() throws IOException, Exception {
-		productStrategistUser1 = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
-		productStrategistUser2 = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST2);
-		productStrategistUser3 = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST3);
-		productManager1 = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
-		productManager2 = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER2);
-		adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		productStrategistUser1 = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
+		productStrategistUser2 = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST2);
+		productStrategistUser3 = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST3);
+		productManager1 = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1);
+		productManager2 = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_MANAGER2);
+		adminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
+		designerUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		createDefaultChain();
 	}
 
 	private void createDefaultChain() throws Exception {
-		CategoryDefinition productCategoryDefinition = ElementFactory.getDefaultCategory();
-		SubCategoryDefinition productSubCategoryDefinition = ElementFactory.getDefaultSubCategory();
-		GroupingDefinition productGroupingDefinition = ElementFactory.getDefaultGroup();
+		CategoryDefinition productCategoryDefinition = new ElementFactory().getDefaultCategory();
+		SubCategoryDefinition productSubCategoryDefinition = new ElementFactory().getDefaultSubCategory();
+		GroupingDefinition productGroupingDefinition = new ElementFactory().getDefaultGroup();
 		productCategoryDefinition.addSubCategory(productSubCategoryDefinition);
 		productSubCategoryDefinition.addGrouping(productGroupingDefinition);
 		List<CategoryDefinition> definitionsList = new ArrayList<>();
@@ -120,7 +120,7 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 
 	// Category1->Subcategory1->[Grouping1, Grouping11]
 	protected List<CategoryDefinition> addSecondGroupingToDefaultCategory() throws Exception {
-		GroupingDefinition productGroupingDefinition = ElementFactory.getDefaultGroup();
+		GroupingDefinition productGroupingDefinition = new ElementFactory().getDefaultGroup();
 		productGroupingDefinition.setName("Grouping11");
 		defaultCategories.get(0).getSubcategories().get(0).addGrouping(productGroupingDefinition);
 		return createCategoriesChain(defaultCategories);
@@ -129,13 +129,13 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 	// Category1->[Subcategory1->[Grouping1,
 	// Grouping11],Subcategory2->[Grouping12]]
 	protected List<CategoryDefinition> addSubcategoryAndGroupingToDefaultCategory() throws Exception {
-		GroupingDefinition groupingDefinition1 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition1 = new ElementFactory().getDefaultGroup();
 		groupingDefinition1.setName("Grouping11");
 		defaultCategories.get(0).getSubcategories().get(0).addGrouping(groupingDefinition1);
 
-		SubCategoryDefinition subCategory2 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory2 = new ElementFactory().getDefaultSubCategory();
 		subCategory2.setName("Subcategory2");
-		GroupingDefinition groupingDefinition2 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition2 = new ElementFactory().getDefaultGroup();
 		groupingDefinition2.setName("Grouping12");
 		subCategory2.addGrouping(groupingDefinition2);
 		defaultCategories.get(0).addSubCategory(subCategory2);
@@ -148,30 +148,30 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 	// Category3->[Subcategory1->[Grouping11],Subcategory2->[Grouping11,
 	// Grouping22]]]
 	protected List<CategoryDefinition> addManyGroupingsDiffCategories() throws Exception {
-		CategoryDefinition category2 = ElementFactory.getDefaultCategory();
+		CategoryDefinition category2 = new ElementFactory().getDefaultCategory();
 		category2.setName("Category2");
-		CategoryDefinition category3 = ElementFactory.getDefaultCategory();
+		CategoryDefinition category3 = new ElementFactory().getDefaultCategory();
 		category3.setName("Category3");
-		SubCategoryDefinition subCategory1 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory1 = new ElementFactory().getDefaultSubCategory();
 		subCategory1.setName("Subcategory1");
-		SubCategoryDefinition subCategory2 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory2 = new ElementFactory().getDefaultSubCategory();
 		subCategory2.setName("Subcategory2");
-		SubCategoryDefinition subCategory1_2 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory1_2 = new ElementFactory().getDefaultSubCategory();
 		subCategory1_2.setName("Subcategory1");
-		SubCategoryDefinition subCategory2_2 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory2_2 = new ElementFactory().getDefaultSubCategory();
 		subCategory2_2.setName("Subcategory2");
-		SubCategoryDefinition subCategory1_3 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory1_3 = new ElementFactory().getDefaultSubCategory();
 		subCategory1_3.setName("Subcategory1");
-		SubCategoryDefinition subCategory2_3 = ElementFactory.getDefaultSubCategory();
+		SubCategoryDefinition subCategory2_3 = new ElementFactory().getDefaultSubCategory();
 		subCategory2_3.setName("Subcategory2");
 
-		GroupingDefinition groupingDefinition1 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition1 = new ElementFactory().getDefaultGroup();
 		groupingDefinition1.setName("Grouping1");
-		GroupingDefinition groupingDefinition11 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition11 = new ElementFactory().getDefaultGroup();
 		groupingDefinition11.setName("Grouping11");
-		GroupingDefinition groupingDefinition12 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition12 = new ElementFactory().getDefaultGroup();
 		groupingDefinition12.setName("Grouping12");
-		GroupingDefinition groupingDefinition22 = ElementFactory.getDefaultGroup();
+		GroupingDefinition groupingDefinition22 = new ElementFactory().getDefaultGroup();
 		groupingDefinition22.setName("Grouping22");
 
 		defaultCategories.get(0).getSubcategories().get(0).addGrouping(groupingDefinition11);

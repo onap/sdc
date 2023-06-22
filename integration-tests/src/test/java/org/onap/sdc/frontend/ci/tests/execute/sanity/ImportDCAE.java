@@ -90,7 +90,7 @@ public class ImportDCAE extends SetupCDTest {
 
         // update Resource
         ResourceReqDetails updatedResource = new ResourceReqDetails();
-        updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
+        updatedResource.setName(new ElementFactory().getResourcePrefix() + "UpdatedName" + resourceMetaData.getName());
         updatedResource.setDescription("kuku");
         updatedResource.setVendorName("updatedVendor");
         updatedResource.setVendorRelease("updatedRelease");
@@ -112,7 +112,7 @@ public class ImportDCAE extends SetupCDTest {
         final int expectedNumberOfComponentInstances = 4;
         String fileName = "importVFC_VFC14.yml";
         ResourceReqDetails atomicResourceMetaData =
-                ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(
+                new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(
                         ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT,
                         ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 
@@ -143,7 +143,7 @@ public class ImportDCAE extends SetupCDTest {
             resourceMetaData.setVersion("0.1");
             VfVerificator.verifyLinkCreated(resourceMetaData, getUser(), 1);
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -208,7 +208,7 @@ public class ImportDCAE extends SetupCDTest {
         }
 
         String fileName = "importVFC_VFC15.yml";
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
@@ -235,7 +235,7 @@ public class ImportDCAE extends SetupCDTest {
                 assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -247,7 +247,7 @@ public class ImportDCAE extends SetupCDTest {
         CanvasElement vfcElement = null;
         String fileName = "importVFC_VFC16.yml";
         try {
-            atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+            atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
             //TODO Andrey changed to click on checkIn button
             ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
@@ -280,7 +280,7 @@ public class ImportDCAE extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(vfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -548,7 +548,7 @@ public class ImportDCAE extends SetupCDTest {
     public void submitDCAEAssetForTestingWithNonCertifiedAsset() throws Exception {
         String fileName = "importVFC_VFC17.yml";
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
         //TODO Andrey changed to click on checkIn button
         ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
@@ -567,7 +567,7 @@ public class ImportDCAE extends SetupCDTest {
             String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
             Assert.assertTrue(errorMessage.contains(checkUIResponseOnError));
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -594,7 +594,7 @@ public class ImportDCAE extends SetupCDTest {
     @Test
     public void removeFileFromGeneralPageDCAEAssetTest() throws Exception {
         String fileName2 = SERVICE_INPUT_TEST_VF2_CSAR;
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsarNoCreate(resourceMetaData, filePath, fileName2, getUser());
         GeneralPageElements.clickDeleteFile();
 
@@ -644,7 +644,7 @@ public class ImportDCAE extends SetupCDTest {
     @Test
     public void badFileDCAEAssetTest() throws Exception {
         String customFileName = "badVF.csar";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         try {
             ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, customFileName, getUser());
             assert (false);
@@ -665,7 +665,7 @@ public class ImportDCAE extends SetupCDTest {
 
     public ResourceReqDetails createDCAEAsset() throws Exception {
         String fileName2 = SERVICE_INPUT_TEST_VF2_CSAR;
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
         resourceMetaData.setVersion("0.1");
         return resourceMetaData;

@@ -51,7 +51,7 @@ public class NewArtifactTypeGuide extends SetupCDTest {
     public void crudGuideInformationArtifactForVf() throws Exception {
         String filePath = FileHandling.getFilePath(folder);
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(resourceMetaData, getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();
@@ -85,7 +85,7 @@ public class NewArtifactTypeGuide extends SetupCDTest {
     public void crudGuideInformationArtifactForVfc() throws Exception {
         String filePath = FileHandling.getFilePath(folder);
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VFC, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VFC, getUser());
         ResourceUIUtils.importVfc(resourceMetaData, filePath, "guidevFW_VFC.yml", getUser());
 
         ResourceGeneralPage.getLeftMenu().moveToInformationalArtifactScreen();

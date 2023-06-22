@@ -52,7 +52,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtillViaApis;
+import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtilsViaApis;
 import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 
@@ -70,29 +70,29 @@ public class PortMirroringUtils {
 
     public static ServiceContainer createServiceFromHeatFile(String filePath, String vnfFile) throws Throwable {
 //1. Import VSP v1.0
-        User sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails1);
+        User sdncDesignerDetails1 = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(sdncDesignerDetails1);
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
             .getVendorLicenseName()));
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1,
+        VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().createVendorSoftwareProduct(resourceReqDetails, vnfFile, filePath, sdncDesignerDetails1,
             vendorLicenseModel);
 //        VendorSoftwareProductObject vendorSoftwareProductObject = OnboardViaApis.fillVendorSoftwareProductObjectWithMetaData(vnfFile, createVendorSoftwareProduct);
 //2. Create VF, certify - v1.0 is created
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //3. Create Service add to it the certified VF and certify the Service v1.0
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Certify the Service"));
 
         return new ServiceContainer(service, resource, vendorSoftwareProductObject, vendorLicenseModel);
@@ -101,9 +101,9 @@ public class PortMirroringUtils {
     public static Resource generatePNFAndUpdateInput(String resourceName, String vendorModelNumber, User user) throws Exception {
         Resource resource = getresourcebytype(ResourceTypeEnum.PNF, resourceName, vendorModelNumber);
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating pnf %s and certify it", resource.getName()));
-        Component componentObject = AtomicOperationUtils.getComponentObject(resource, UserRoleEnum.DESIGNER);
+        Component componentObject = new AtomicOperationUtils().getComponentObject(resource, UserRoleEnum.DESIGNER);
         updateResourceInputViaAPI(user, componentObject, "physicalProbe", "nf_role");
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         return resource;
     }
 
@@ -115,8 +115,8 @@ public class PortMirroringUtils {
     }
 
     public static Resource getresourcebytype(ResourceTypeEnum resourceTypeEnum, String resourceName, String vendorModelNumber) {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResourceByType(resourceTypeEnum, resourceName, ResourceCategoryEnum.NETWORK_L2_3_INFRASTRUCTURE, resourceName, vendorModelNumber);
-        return AtomicOperationUtils.createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResourceByType(resourceTypeEnum, resourceName, ResourceCategoryEnum.NETWORK_L2_3_INFRASTRUCTURE, resourceName, vendorModelNumber);
+        return new AtomicOperationUtils().createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
     }
 
     public static String createproxyinstanceservicename(String serviceName, String instanceId) {
@@ -132,11 +132,11 @@ public class PortMirroringUtils {
         ServiceContainer serviceContainerVprobe_Collector = PortMirroringUtils.createServiceFromHeatFile(filePath, PortMirroringEnum.VPROBE_ZIP.getValue());
 
         // create service
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         //ServiceUIUtils.createService(serviceMetadata, getUser());
 
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Creating container %s: ", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         String vmmeSourceName = serviceContainerVmme_Source.getService().getName();
         String vprobeSourceName = serviceContainerVprobe_Collector.getService().getName();

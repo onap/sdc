@@ -72,7 +72,7 @@ public class PathUtilities {
     }
 
     public static ServiceReqDetails createService(User user) throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         GeneralUIUtils.ultimateWait();
@@ -269,9 +269,9 @@ public class PathUtilities {
     }
 
     public static Pair<RestResponse, ServiceReqDetails> getServiceIDByNameAndVersion(String serviceName, String version) throws Exception {
-        User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
-        RestResponse restResponse = ServiceRestUtils.getServiceByNameAndVersion(sdncUserDetails, serviceName, version);
+        RestResponse restResponse = new ServiceRestUtils().getServiceByNameAndVersion(sdncUserDetails, serviceName, version);
         ServiceReqDetails service = new ServiceReqDetails();
         service.setName(serviceName);
         service.setUniqueId(ResponseParser.getUniqueIdFromResponse(restResponse));
@@ -282,7 +282,7 @@ public class PathUtilities {
 
     public static RestResponse createServiceAPI(User sdncUserDetails, ServiceReqDetails serviceDetails) throws Exception {
         String serviceBaseVersion = "0.1";
-        RestResponse restResponse = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
+        RestResponse restResponse = new ServiceRestUtils().createService(serviceDetails, sdncUserDetails);
         assertEquals("Check API response code for CreateServiceAPI call", HttpStatus.SC_CREATED, restResponse.getErrorCode().intValue());
         return restResponse;
     }
@@ -290,13 +290,13 @@ public class PathUtilities {
     public static RestResponse getServiceAPI(User sdncUserDetails, ServiceReqDetails serviceDetails) throws Exception {
         String serviceBaseVersion = "0.1";
         // choose user
-        // User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+        // User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
         // create serviceDetails
-        // ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
+        // ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService();
 
         // get service
-        RestResponse restResponse = ServiceRestUtils.getServiceByNameAndVersion(sdncUserDetails, serviceDetails.getName(),
+        RestResponse restResponse = new ServiceRestUtils().getServiceByNameAndVersion(sdncUserDetails, serviceDetails.getName(),
                 serviceBaseVersion);
         assertEquals("Check API response code for GetServiceAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 
@@ -308,7 +308,7 @@ public class PathUtilities {
     }
 
     public static RestResponse getServiceForwardingPathsAPI(String serviceName) throws Exception {
-        User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+        User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
         // get service
         Pair<RestResponse, ServiceReqDetails> servicePaths = getServiceIDByNameAndVersion(serviceName, "0.1");
@@ -332,7 +332,7 @@ public class PathUtilities {
     }
 
     public static RestResponse getServicePathLinkMapAPI(String serviceName) throws Exception {
-        User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
         // get service
         Pair<RestResponse, ServiceReqDetails> servicePaths = getServiceIDByNameAndVersion(serviceName, "0.1");
@@ -357,7 +357,7 @@ public class PathUtilities {
     }
 
     public static Pair<RestResponse, ServiceReqDetails> getServicePathsAPI(String serviceName) throws Exception {
-        User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
         // get service
         Pair<RestResponse, ServiceReqDetails> servicePaths = getServiceIDByNameAndVersion(serviceName, "0.1");
 

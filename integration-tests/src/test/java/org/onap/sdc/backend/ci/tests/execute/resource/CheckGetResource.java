@@ -34,7 +34,7 @@ public class CheckGetResource {
 		try {
 
 			System.out.println("dddd");
-			RestResponse getResource = ResourceRestUtils.getResource("96eb6583-2822-448b-a284-bfc144fa627e");
+			RestResponse getResource = new ResourceRestUtils().getResource("96eb6583-2822-448b-a284-bfc144fa627e");
 
 			Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
 

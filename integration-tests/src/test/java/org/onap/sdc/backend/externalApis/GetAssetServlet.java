@@ -62,8 +62,8 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class GetAssetServlet extends ComponentBaseTest {
 
-	protected User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-	protected User sdncAdminUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+	protected User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+	protected User sdncAdminUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 	protected ConsumerDataDefinition consumerDataDefinition;
 
 	@Rule
@@ -74,7 +74,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 //	@BeforeMethod
 //	public void setup() throws Exception {
 //
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //
 //	}
 
@@ -83,51 +83,51 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 //		CassandraUtils.truncateAllKeyspaces();
 		List<String> expectedAssetNamesList = new ArrayList<>();
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		Resource resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());
 
-/*		resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-		resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+/*		resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+		resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
 		expectedAssetNamesList.add(resourceDetails.getName());*/
 
 		System.out.println("6 VF resources were created");
@@ -142,7 +142,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		AssetRestUtils.checkComponentTypeInObjectList(resourceAssetList, ComponentTypeEnum.RESOURCE);
 
 	/*	// Validate audit message
-		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_ASSET_LIST);
+		ExpectedExternalAudit expectedAssetListAudit = new ElementFactory().getDefaultAssetListAudit(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_ASSET_LIST);
 		Map <AuditingFieldsKey, String> body = new HashMap<>();
         body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
         AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_ASSET_LIST.getName(), body);*/
@@ -154,61 +154,61 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 //		CassandraUtils.truncateAllKeyspaces();
 		List<String> expectedAssetNamesList = new ArrayList<>();
-		ArtifactReqDetails artifactDetails = ElementFactory.getArtifactByType(ArtifactTypeEnum.OTHER, ArtifactTypeEnum.OTHER, true);
+		ArtifactReqDetails artifactDetails = new ElementFactory().getArtifactByType(ArtifactTypeEnum.OTHER, ArtifactTypeEnum.OTHER, true);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		Service service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService();
+		Service service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
 		BaseRestUtils.checkSuccess(addInformationalArtifactToService);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
 		BaseRestUtils.checkSuccess(addInformationalArtifactToService);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
 		BaseRestUtils.checkSuccess(addInformationalArtifactToService);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
-		serviceDetails = ElementFactory.getDefaultService();
-		service = AtomicOperationUtils.createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
-		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
+		serviceDetails = new ElementFactory().getDefaultService();
+		service = new AtomicOperationUtils().createCustomService(serviceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(artifactDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), service.getUniqueId());
 		BaseRestUtils.checkSuccess(addInformationalArtifactToService);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
 		expectedAssetNamesList.add(serviceDetails.getName());
 
 		System.out.println("7 Services were created");
@@ -221,7 +221,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		Utils.compareArrayLists(getActualAssetNamesList, expectedAssetNamesList, "Element");
 
 		/*// Validate audit message
-		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(AssetTypeEnum.SERVICES, AuditingActionEnum.GET_ASSET_LIST);
+		ExpectedExternalAudit expectedAssetListAudit = new ElementFactory().getDefaultAssetListAudit(AssetTypeEnum.SERVICES, AuditingActionEnum.GET_ASSET_LIST);
 		Map <AuditingFieldsKey, String> body = new HashMap<>();
         body.put(AuditingFieldsKey.AUDIT_RESOURCE_URL, expectedAssetListAudit.getRESOURCE_URL());
         AuditValidationUtils.validateExternalAudit(expectedAssetListAudit, AuditingActionEnum.GET_ASSET_LIST.getName(), body);*/
@@ -241,10 +241,10 @@ public class GetAssetServlet extends ComponentBaseTest {
 		byte[] fromUiDownload;
 		String fileName;
 		try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-			ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
-			resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+			ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, sdncUserDetails);
+			resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 			assetResponse = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
-			resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+			resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 			String artId = resource.getToscaArtifacts().get("assettoscacsar").getEsId();
 			String url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), resource.getUniqueId(), artId);
 			HttpGet httpGet = createGetRequest(url);

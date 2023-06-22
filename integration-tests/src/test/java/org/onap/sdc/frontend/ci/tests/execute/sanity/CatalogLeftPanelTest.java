@@ -181,7 +181,7 @@ public class CatalogLeftPanelTest extends SetupCDTest {
     @Test(priority = 1)
     public void lastUpdatedService() throws Exception {
         // create service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.clickCheckinButton(serviceMetadata.getName());
@@ -194,7 +194,7 @@ public class CatalogLeftPanelTest extends SetupCDTest {
     @Test(priority = 17)
     public void lastUpdatedResource() throws Exception {
         // create resource
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
 
         ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
@@ -207,7 +207,7 @@ public class CatalogLeftPanelTest extends SetupCDTest {
     @Test(priority = 5)
     public void fromCatalogCheckout() throws Exception {
         // create resource
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
         ResourceGeneralPage.clickCheckinButton(vfMetaData.getName());
 
@@ -219,7 +219,7 @@ public class CatalogLeftPanelTest extends SetupCDTest {
 
     @Test
     public void keepSearchResultsInCatalogAfterBrowserBack() throws Exception {
-        ResourceReqDetails resourceMetadata = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceMetadata = new ElementFactory().getDefaultResource();
         ResourceUIUtils.createVF(resourceMetadata, getUser());
         ResourceGeneralPage.clickCheckinButton(resourceMetadata.getName());
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
