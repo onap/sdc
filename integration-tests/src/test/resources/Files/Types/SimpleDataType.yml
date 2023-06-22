@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+data_types:
+  testing.simple.data.type:
+    derived_from: tosca.datatypes.Root
+    description: Simple Data Type
+    properties:
+      string_prop:
+        type: string
+        default: "Default String"
+        required: false
+      int_prop:
+        type: integer
+        default: 125
+        required: false
+      float_prop:
+        type: float
+        default: 125.5
+        required: false

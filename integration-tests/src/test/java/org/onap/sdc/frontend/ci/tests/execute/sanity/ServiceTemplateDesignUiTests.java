@@ -529,7 +529,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         return createVfcFlow;
     }
 
-    private ResourceCreateData createVfcFormData(final String resourceName) {
+    public ResourceCreateData createVfcFormData(final String resourceName) {
         final ResourceCreateData vfcCreateData = new ResourceCreateData();
         vfcCreateData.setRandomName(resourceName);
         vfcCreateData.setCategory(ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS.getSubCategory());
