@@ -1892,7 +1892,7 @@ public class GroupingTest extends CategoriesBaseTest {
 
 	@Test
 	public void createProductGroupHttpCspUserIdIsEmpty() throws Exception {
-		User sdncPS = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
+		User sdncPS = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
 		sdncPS.setUserId("");
 		RestResponse createGroupingRest = CategoryRestUtils.createGrouping(productGroupingDefinition,
 				productSubCategoryDefinition, productCategoryDefinition, sdncPS, PRODUCT_COMPONENT_TYPE);
@@ -1921,7 +1921,7 @@ public class GroupingTest extends CategoriesBaseTest {
 
 	@Test
 	public void createProductGroupHttpCspUserIdIsNull() throws Exception {
-		User sdncPS = ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
+		User sdncPS = new ElementFactory().getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1);
 		sdncPS.setUserId(null);
 		RestResponse createGroupingRest = CategoryRestUtils.createGrouping(productGroupingDefinition,
 				productSubCategoryDefinition, productCategoryDefinition, sdncPS, PRODUCT_COMPONENT_TYPE);

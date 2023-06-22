@@ -33,9 +33,9 @@ public class SampleDataProvider {
 	@DataProvider
 	public static Object[][] getResourceByType(ITestContext context) throws IOException, Exception {
 		return new Object[][] {
-				{ AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true) },
-				{ AtomicOperationUtils.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true) },
-				{ AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VL, UserRoleEnum.DESIGNER, true) } };
+				{ new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true) },
+				{ new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true) },
+				{ new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VL, UserRoleEnum.DESIGNER, true) } };
 	}
 
 }

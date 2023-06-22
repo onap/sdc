@@ -87,47 +87,47 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
     }
 
     public void initializeMembers() throws IOException, Exception {
-        resourceDetails = ElementFactory.getDefaultResource();
+        resourceDetails = new ElementFactory().getDefaultResource();
         // resourceDetails =
-        // ElementFactory.getDefaultResource("myNewResource1234567890",
+        // new ElementFactory().getDefaultResource("myNewResource1234567890",
         // NormativeTypesEnum.ROOT, ResourceServiceCategoriesEnum.ROUTERS,
         // UserRoleEnum.DESIGNER.getUserId());
-        resourceDetails1 = ElementFactory.getDefaultResource("secondResource", NormativeTypesEnum.ROOT);
-        serviceDetails = ElementFactory.getDefaultService();
-		serviceDetails2 = ElementFactory.getDefaultService("newTestService2", ServiceCategoriesEnum.MOBILITY, "al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
-        serviceDetailsEmpty = ElementFactory.getDefaultService("newEmptyService", ServiceCategoriesEnum.MOBILITY,
+        resourceDetails1 = new ElementFactory().getDefaultResource("secondResource", NormativeTypesEnum.ROOT);
+        serviceDetails = new ElementFactory().getDefaultService();
+		serviceDetails2 = new ElementFactory().getDefaultService("newTestService2", ServiceCategoriesEnum.MOBILITY, "al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
+        serviceDetailsEmpty = new ElementFactory().getDefaultService("newEmptyService", ServiceCategoriesEnum.MOBILITY,
 				"al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
-        serviceDetailsEmpty2 = ElementFactory.getDefaultService("newEmptyService2", ServiceCategoriesEnum.MOBILITY,
+        serviceDetailsEmpty2 = new ElementFactory().getDefaultService("newEmptyService2", ServiceCategoriesEnum.MOBILITY,
 				"al1976", ServiceInstantiationType.A_LA_CARTE.getValue());
-        sdncDesignerDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-        sdncDesignerDetails2 = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER2);
-        sdncTesterDeatails1 = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
-        sdncAdminDetails1 = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-        heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
-        heatNetArtifactDetails = ElementFactory
+        sdncDesignerDetails1 = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+        sdncDesignerDetails2 = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER2);
+        sdncTesterDeatails1 = new ElementFactory().getDefaultUser(UserRoleEnum.TESTER);
+        sdncAdminDetails1 = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
+        heatArtifactDetails = new ElementFactory().getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
+        heatNetArtifactDetails = new ElementFactory()
                 .getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT_NET.getType());
-        heatVolArtifactDetails = ElementFactory
+        heatVolArtifactDetails = new ElementFactory()
                 .getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT_VOL.getType());
-        componentInstanceReqDetails = ElementFactory.getDefaultComponentInstance();
-        resourceInstanceReqDetails2 = ElementFactory.getDefaultComponentInstance();
+        componentInstanceReqDetails = new ElementFactory().getDefaultComponentInstance();
+        resourceInstanceReqDetails2 = new ElementFactory().getDefaultComponentInstance();
 
     }
 
     protected void createComponents() throws Exception {
 
-        RestResponse response = ResourceRestUtils.createResource(resourceDetails1, sdncDesignerDetails1);
+        RestResponse response = new ResourceRestUtils().createResource(resourceDetails1, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("resource uniqueId is null:", resourceDetails1.getUniqueId());
 
-        response = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails1);
+        response = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("resource uniqueId is null:", resourceDetails.getUniqueId());
 
-        response = ServiceRestUtils.createService(serviceDetails, sdncDesignerDetails1);
+        response = new ServiceRestUtils().createService(serviceDetails, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("service uniqueId is null:", serviceDetails.getUniqueId());
 
-        ArtifactReqDetails heatArtifactDetails = ElementFactory
+        ArtifactReqDetails heatArtifactDetails = new ElementFactory()
                 .getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
         response = ArtifactRestUtils.addInformationalArtifactToResource(heatArtifactDetails, sdncDesignerDetails1,
                 resourceDetails.getUniqueId());
@@ -145,7 +145,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
                 serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
         assertTrue("response code is not 201, returned: " + response.getErrorCode(), response.getErrorCode() == 201);
 
-        response = ServiceRestUtils.createService(serviceDetails2, sdncDesignerDetails1);
+        response = new ServiceRestUtils().createService(serviceDetails2, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("service uniqueId is null:", serviceDetails2.getUniqueId());
 
@@ -154,11 +154,11 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
                 serviceDetails2.getUniqueId(), ComponentTypeEnum.SERVICE);
         assertTrue("response code is not 201, returned: " + response.getErrorCode(), response.getErrorCode() == 201);
 
-        response = ServiceRestUtils.createService(serviceDetailsEmpty, sdncDesignerDetails1);
+        response = new ServiceRestUtils().createService(serviceDetailsEmpty, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("service uniqueId is null:", serviceDetailsEmpty.getUniqueId());
 
-        response = ServiceRestUtils.createService(serviceDetailsEmpty2, sdncDesignerDetails1);
+        response = new ServiceRestUtils().createService(serviceDetailsEmpty2, sdncDesignerDetails1);
         assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
         assertNotNull("service uniqueId is null:", serviceDetailsEmpty2.getUniqueId());
 
@@ -167,45 +167,45 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
     }
 
     public static RestResponse certifyResource(ResourceReqDetails resourceDetails, User user) throws Exception {
-/*		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+/*		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
                 LifeCycleStatesEnum.CHECKIN);
 		// if (restResponseResource.getErrorCode() == 200){
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		// }else
 		// return restResponseResource;
-		sdncTesterDeatails1 = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
+		sdncTesterDeatails1 = new ElementFactory().getDefaultUser(UserRoleEnum.TESTER);
 		if (restResponseResource.getErrorCode() == 200) {
-			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+			restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
 					sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		} else
 			return restResponseResource;
 		if (restResponseResource.getErrorCode() == 200) {
-			restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+			restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
 					sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.CERTIFY);
 		}
 		return restResponseResource;*/
-        return LifecycleRestUtils.changeResourceState(resourceDetails,
+        return new LifecycleRestUtils().changeResourceState(resourceDetails,
                 sdncTesterDeatails1.getUserId(), LifeCycleStatesEnum.CERTIFY);
     }
 
     public static RestResponse certifyService(ServiceReqDetails serviceDetails, User user) throws Exception {
-        RestResponse restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, user,
+        RestResponse restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, user,
                 LifeCycleStatesEnum.CHECKIN);
         // if (restResponseService.getErrorCode() == 200){
-        restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, user,
+        restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, user,
                 LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         // }else
         // return restResponseService;
 
-        sdncTesterDeatails1 = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
+        sdncTesterDeatails1 = new ElementFactory().getDefaultUser(UserRoleEnum.TESTER);
         if (restResponseService.getErrorCode() == 200) {
-            restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, sdncTesterDeatails1,
+            restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncTesterDeatails1,
                     LifeCycleStatesEnum.STARTCERTIFICATION);
         } else
             return restResponseService;
         if (restResponseService.getErrorCode() == 200) {
-            restResponseService = LifecycleRestUtils.changeServiceState(serviceDetails, sdncTesterDeatails1,
+            restResponseService = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncTesterDeatails1,
                     LifeCycleStatesEnum.CERTIFY);
         }
         return restResponseService;
@@ -229,7 +229,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
             Resource resourceRespJavaObject = ResponseParser
                     .convertResourceResponseToJavaObject(prevResponse.getResponse());
             if (resourceRespJavaObject.getLifecycleState().equals(LifecycleStateEnum.CERTIFIED)) {
-                RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails,
+                RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails,
                         user.getUserId(), LifeCycleStatesEnum.CHECKOUT);
             }
         }
@@ -237,10 +237,10 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
         RestResponse restResponseResource = null;
         for (int i = 0; i < (version - 1); i++) {
 
-            restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, null,
+            restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, null,
                     LifeCycleStatesEnum.CHECKIN, checkinComentJson);
             if (restResponseResource.getErrorCode() == 200) {
-                restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user.getUserId(),
+                restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user.getUserId(),
                         LifeCycleStatesEnum.CHECKOUT);
                 if (restResponseResource.getErrorCode() == 200) {
 
@@ -252,7 +252,7 @@ public abstract class LCSbaseTest extends ComponentBaseTest {
 
         }
 
-        restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, null,
+        restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, null,
                 LifeCycleStatesEnum.CHECKIN, checkinComentJson);
         assertEquals("Check response code ", 200, restResponseResource.getErrorCode().intValue());
         return restResponseResource;

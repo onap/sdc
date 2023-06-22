@@ -188,7 +188,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
     @Test
     public void importVfArtifactsDeploymentArtifactsArtifactNameToLong() throws Exception {
         String folder = "US825779";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         String fileName = "DeploymentArtifactWithLongName.csar";
 
@@ -206,7 +206,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
     @Test(enabled = true)
     public void importVfArtifactsInformationalArtifactsArtifactNameToLong() throws Exception {
         String folder = "US825779";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         String fileName = "InformationArtifactWithLongName.csar";
 
@@ -456,7 +456,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
         String folder = "US824719";
         String filePath = FileHandling.getFilePath(folder);
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
 
         String updatedCsarFileName = "UpdateTC1444533.csar";
@@ -507,7 +507,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 
     public void importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(String fileName, String folder, List<ArtifactInfo> deploymentArtifacts, List<ArtifactInfo> informationalArtifacts) throws Exception {
         String filePath = FileHandling.getFilePath(folder);
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
 
         validateDeploymentArtifactPage(deploymentArtifacts, null);

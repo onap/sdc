@@ -53,7 +53,7 @@ public class Annotation extends SetupCDTest {
     @Test
     public void importCsarWithAnnotationVerifyDownloadYmlContainsAnnotationSection() throws Exception {
         String fileName = "SIROV_annotations_VSP.csar";
-        ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF,
+        ResourceReqDetails vfMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF,
                 NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.importVfFromCsar(vfMetaData, filePath, fileName, getUser());
         getExtendTest().log(Status.INFO, "Csar with annotations imported successfully.");

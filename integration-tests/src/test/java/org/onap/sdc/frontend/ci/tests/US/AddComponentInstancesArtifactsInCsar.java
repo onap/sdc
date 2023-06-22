@@ -81,24 +81,24 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
     // TC1521795 - VF CSAR - The Flow
     @Test
     public void vfAndServiceCsarTheFlow() throws Exception {
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         String vnfFile = "FDNT.zip";
         String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(),
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
+        VendorSoftwareProductObject createVSP = new VendorSoftwareProductRestUtils().createVSP(resourceReqDetails, vnfFile, filePath, getUser(),
             vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
-        VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
-        VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
+        new VendorSoftwareProductRestUtils().addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
+        new VendorSoftwareProductRestUtils().prepareVspForUse(getUser(), createVSP, true);
 
         HomePage.showVspRepository();
         OnboardingUiUtils.importVSP(createVSP);
         resourceMetaData.setVersion("0.1");
-        Resource vfResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
+        Resource vfResource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
 
         Map<String, Object> artifacts = getArtifactsOfComponentAndComponentsInstance(vfResource);
 
@@ -139,7 +139,6 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         }
     }
 
-
     private void compareArtifacts(Object artifactFromJavaObject, Object artifactsFromFileStructure) {
         Map<String, List<String>> artifactsMap = (Map<String, List<String>>) artifactFromJavaObject;
         List<HeatMetaFirstLevelDefinition> artifactsList = (List<HeatMetaFirstLevelDefinition>) artifactsFromFileStructure;
@@ -163,7 +162,6 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
             Assert.assertEquals(artifacts.size(), 0, "Expected that all artifacts equal. There is artifacts which not equal: " + artifacts.toString());
         }
     }
-
 
     public Map<String, Object> getArtifactsOfResourceInstance(List<ImmutablePair<ComponentInstance, ArtifactDefinition>> riList) {
         Map<String, Object> artifacts = new HashMap<>();
@@ -280,7 +278,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         ArtifactReqDetails artifactReqDetails = getRandomArtifact();
         Random random = new Random();
         int randInt = random.nextInt(component.getComponentInstances().size());
-        User defaultUser = ElementFactory.getDefaultUser(getRole());
+        User defaultUser = new ElementFactory().getDefaultUser(getRole());
         ComponentInstance componentInstance = component.getComponentInstances().get(randInt);
 
         RestResponse uploadArtifactRestResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(component, defaultUser, artifactReqDetails, componentInstance);
@@ -298,7 +296,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         ArtifactReqDetails artifactReqDetails = getRandomVfcArtifact();
         Random random = new Random();
         int randInt = random.nextInt(resource.getComponentInstances().size());
-        User defaultUser = ElementFactory.getDefaultUser(getRole());
+        User defaultUser = new ElementFactory().getDefaultUser(getRole());
         ComponentInstance componentInstance = resource.getComponentInstances().get(randInt);
 
         RestResponse uploadArtifactRestResponse = ArtifactRestUtils.externalAPIUploadArtifactOfComponentInstanceOnAsset(resource, defaultUser, artifactReqDetails, componentInstance);
@@ -329,7 +327,7 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
 
     public ArtifactReqDetails getRandomArtifact(List<String> artifactType) throws Exception {
         Random random = new Random();
-        return ElementFactory.getArtifactByType("ci", artifactType.get(random.nextInt(artifactType.size())), true, false);
+        return new ElementFactory().getArtifactByType("ci", artifactType.get(random.nextInt(artifactType.size())), true, false);
     }
 
 }

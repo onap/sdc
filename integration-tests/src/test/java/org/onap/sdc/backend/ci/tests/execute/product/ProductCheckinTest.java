@@ -61,7 +61,7 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	public void checkInProductByCreator() throws Exception {
 
 		String checkinComment = "good checkin";
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN, checkinComment);
 		assertEquals("Check response code after checkin resource", 200, checkInResponse.getErrorCode().intValue());
 		Product checkedInProduct = ResponseParser.parseToObjectUsingMapper(checkInResponse.getResponse(),
@@ -81,18 +81,18 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	public void checkInProductByPM() throws Exception {
 
 		String checkinComment = "good checkin";
-		RestResponse response = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse response = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN, checkinComment);
 		assertEquals("Check response code after checkin resource", 200, response.getErrorCode().intValue());
 
 		User checkoutUser = productManager2;
-		response = LifecycleRestUtils.changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
+		response = new LifecycleRestUtils().changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkin resource", 200, response.getErrorCode().intValue());
 		expectedProduct = ResponseParser.parseToObjectUsingMapper(response.getResponse(), Product.class);
 
 		DbUtils.cleanAllAudits();
 		checkinComment = "good checkin no 2";
-		response = LifecycleRestUtils.changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKIN,
+		response = new LifecycleRestUtils().changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKIN,
 				checkinComment);
 		assertEquals("Check response code after checkin resource", 200, response.getErrorCode().intValue());
 
@@ -116,7 +116,7 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	public void checkInProductByAdmin() throws Exception {
 
 		String checkinComment = "good checkin";
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, adminUser,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, adminUser,
 				LifeCycleStatesEnum.CHECKIN, checkinComment);
 		assertEquals("Check response code after checkin resource", 200, checkInResponse.getErrorCode().intValue());
 		Product checkedInProduct = ResponseParser.parseToObjectUsingMapper(checkInResponse.getResponse(),
@@ -138,7 +138,7 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	@Test
 	public void checkInProductByPMNotOwner() throws Exception {
 
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager2,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager2,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 403, checkInResponse.getErrorCode().intValue());
 		String[] auditParameters = new String[] { expectedProduct.getName(), "product", productManager1.getFirstName(),
@@ -153,7 +153,7 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	@Test
 	public void checkInProductByPsRoleNotAllowed() throws Exception {
 
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productStrategistUser1,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productStrategistUser1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 409, checkInResponse.getErrorCode().intValue());
 		ExpectedProductAudit expectedProductAudit = Convertor.constructFieldsForAuditValidation(expectedProduct,
@@ -167,7 +167,7 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 	public void checkInProductNotExist() throws Exception {
 		String notExisitingUuid = "1234";
 		expectedProduct.setUniqueId(notExisitingUuid);
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 404, checkInResponse.getErrorCode().intValue());
 		String[] auditParameters = new String[] { "", "product" };
@@ -181,11 +181,11 @@ public class ProductCheckinTest extends ProductLifecycleTest {
 
 	@Test
 	public void checkInProductAlreadyCheckedIn() throws Exception {
-		RestResponse checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1,
+		RestResponse checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 200, checkInResponse.getErrorCode().intValue());
 		DbUtils.cleanAllAudits();
-		checkInResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager2,
+		checkInResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager2,
 				LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 409, checkInResponse.getErrorCode().intValue());
 		String[] auditParameters = new String[] { expectedProduct.getName(), "product", productManager1.getFirstName(),

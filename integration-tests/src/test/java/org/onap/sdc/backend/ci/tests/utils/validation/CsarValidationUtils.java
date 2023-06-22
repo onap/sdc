@@ -419,7 +419,7 @@ public class CsarValidationUtils {
 		// expectedToscaResourceName.equals(resource.getToscaResourceName()));
 		//
 		// RestResponse getResourceResponse =
-		// ResourceRestUtils.getResource(resource.getUniqueId());
+		// new ResourceRestUtils().getResource(resource.getUniqueId());
 		// Resource getResource =
 		// ResponseParser.parseToObjectUsingMapper(getResourceResponse.getResponse(),
 		// Resource.class);

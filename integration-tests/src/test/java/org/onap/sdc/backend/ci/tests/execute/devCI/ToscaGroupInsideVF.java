@@ -37,36 +37,36 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 
 		// String csar = getCsar();
 		// parseCsar(csar);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID("VF_RI2_G6_withArtifacts");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
-		Component resourceObject = AtomicOperationUtils
+		Component resourceObject = new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource vfManual = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
+		Resource vfManual = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceObject, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils
+		new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CANCELCERTIFICATION, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
 
@@ -77,11 +77,11 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 
 		// String csar = getCsar();
 		// parseCsar(csar);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID("sofer");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
@@ -92,36 +92,36 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 
 		// String csar = getCsar();
 		// parseCsar(csar);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID("VSPPackage");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
-		Component resourceObject = AtomicOperationUtils
+		Component resourceObject = new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource vfManual = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
+		Resource vfManual = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceObject, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils
+		new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CANCELCERTIFICATION, true)
 				.getLeft();
-		AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
 	}
@@ -130,11 +130,11 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	public void createResourceFromCsarHappy() throws Exception {
 		// String csarUUID = "VF_RI2_G2_withArtifacts";
 		String csarUUID = "VF_RI2_G1_Invalid";
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 		CsarValidationUtils.validateCsarVfArtifact(csarUUID, resource);
@@ -143,11 +143,11 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void createResourceFromCsarWithProperty() throws Exception {
 		String csarUUID = "VF_RI2_G4_withArtifacts";
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 		CsarValidationUtils.validateCsarVfArtifact(csarUUID, resource);
@@ -160,18 +160,18 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		// String csarUUID = "nested3";
 
 		// String csarUUID = "VF_RI2_G1_Invalid_WithArtifacts";
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		RestResponse copyRes = copyCsarRest(sdncModifierDetails, "VF_RI2_G4_withArtifacts_a.csar",
 				"VF_RI2_G4_withArtifacts.csar");
 		BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
@@ -182,8 +182,8 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		resourceDetails.setName(resource.getName());
 		// resourceDetails.setVendorName("Govnuk");
 		// resourceDetails.setDescription("Other");
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -207,25 +207,25 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	public void UpdateCsarWithSameCsarDifferentMetadata() throws Exception {
 
 		// User sdncModifierDetails =
-		// ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		// new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		// RestResponse copyRes =
 		// copyCsarRest(sdncModifierDetails,"VF_RI2_G4_withArtifacts_a.csar","VF_RI2_G4_withArtifacts.csar");
 		// BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
 		resourceDetails.setName(resource.getName());
 		resourceDetails.setVendorName("Govnuk");
 		resourceDetails.setDescription("Other");
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -249,23 +249,23 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	public void UpdateCsarWithSameCsar() throws Exception {
 
 		// User sdncModifierDetails =
-		// ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		// new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		// RestResponse copyRes =
 		// copyCsarRest(sdncModifierDetails,"VF_RI2_G4_withArtifacts_a.csar","VF_RI2_G4_withArtifacts.csar");
 		// BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
 		resourceDetails.setName(resource.getName());
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -288,26 +288,26 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void UpdateCsarCertifiedVfWithSameCsar() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		RestResponse copyRes = copyCsarRest(sdncModifierDetails, "VF_RI2_G4_withArtifacts_a.csar",
 				"VF_RI2_G4_withArtifacts.csar");
 		BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		Pair<Component, RestResponse> changeComponentState = AtomicOperationUtils.changeComponentState(resource,
+		Pair<Component, RestResponse> changeComponentState = new AtomicOperationUtils().changeComponentState(resource,
 				UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		resource = (Resource) changeComponentState.getLeft();
 
 		resourceDetails.setName(resource.getName());
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -330,17 +330,17 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void UpdateCsarDifferentTosca() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		RestResponse copyRes = copyCsarRest(sdncModifierDetails, "VF_RI2_G4_withArtifacts_a.csar",
 				"VF_RI2_G4_withArtifacts.csar");
 		BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
@@ -349,8 +349,8 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		BaseRestUtils.checkSuccess(copyRes);
 
 		resourceDetails.setName(resource.getName());
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -373,17 +373,17 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void UpdateCsarDifferentToscaAndArtifacts() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		RestResponse copyRes = copyCsarRest(sdncModifierDetails, "VF_RI2_G4_withArtifacts_a.csar",
 				"VF_RI2_G4_withArtifacts.csar");
 		BaseRestUtils.checkSuccess(copyRes);
 		String csarUUID = "VF_RI2_G4_withArtifacts.csar";
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
@@ -392,8 +392,8 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		BaseRestUtils.checkSuccess(copyRes);
 
 		resourceDetails.setName(resource.getName());
-		RestResponse createResource2 = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource2 = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource2);
 		Resource resource2 = ResponseParser.parseToObjectUsingMapper(createResource2.getResponse(), Resource.class);
 
@@ -416,93 +416,93 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void migration() throws Exception {
 		String csarUUID = "VF_RI2_G4_withArtifacts";
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setCsarUUID(csarUUID);
 		resourceDetails.setName("Resource1");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 
 		resourceDetails.setName("Resource2");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
 		resourceDetails.setName("Resource3");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		resourceDetails.setName("Resource4");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
 		resourceDetails.setName("Resource5");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
 		resourceDetails.setName("Resource6");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true)
 				.getLeft();
 
 		resourceDetails.setName("Resource7");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		createResource = new ResourceRestUtils().createResource(resourceDetails,
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
 

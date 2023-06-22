@@ -28,6 +28,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.onap.sdc.backend.ci.tests.execute.lifecycle.LCSbaseTest;
+import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.*;
@@ -45,7 +46,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils.*;
 import static org.testng.Assert.assertNull;
 
 public class GroupsTest extends ComponentBaseTest {
@@ -64,13 +64,13 @@ public class GroupsTest extends ComponentBaseTest {
 	
 	@Test
 	public void importResourceWitIncorrectCapabilityNameTest() throws Exception {
-		RestResponse createResource = getCreateResourceRestResponse(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "incorrect_cap.csar", csarsFilePath);
+		RestResponse createResource = new AtomicOperationUtils().getCreateResourceRestResponse(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "incorrect_cap.csar", csarsFilePath);
 		BaseRestUtils.checkErrorResponse(createResource, ActionStatus.MISSING_CAPABILITIES,(Lists.newArrayList("vlan_assignment1")).toString(), "group", "x_group");
 	}
 	
 	@Test
 	public void importResourceWithoutCapabilitiesTest() throws Exception {
-		Resource resource =  importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "without_caps.csar", csarsFilePath);
+		Resource resource =  new AtomicOperationUtils().importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "without_caps.csar", csarsFilePath);
 		validateComponentGroupCapabilityPropertyValue(resource, null);
 	}
 	
@@ -82,7 +82,7 @@ public class GroupsTest extends ComponentBaseTest {
 
 	@Test
 	public void supportGroupsWithCapabilitiesServiceLevelTest() throws Exception {
-		Resource resource = importCertifiedResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "VLANTaggingFromAmdox1303_2018.csar", csarsFilePath);
+		Resource resource = new AtomicOperationUtils().importCertifiedResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, "VLANTaggingFromAmdox1303_2018.csar", csarsFilePath);
         CapReqDef caps = ComponentInstanceRestUtils.getInstancesCapabilitiesRequirements(resource, UserRoleEnum.DESIGNER.getUserId());
 		validateVlanAssignmentGroupCapabilitiesInvisible(caps.getCapabilities());
 
@@ -117,40 +117,40 @@ public class GroupsTest extends ComponentBaseTest {
     }
 
     private Service createCertifiedServiceWithProxyInstances(ServiceCategoriesEnum category, Service service1, Service service2) throws Exception {
-        Either<Service, RestResponse> createServiceRes = createServiceByCategory(category, UserRoleEnum.DESIGNER, true);
+        Either<Service, RestResponse> createServiceRes = new AtomicOperationUtils().createServiceByCategory(category, UserRoleEnum.DESIGNER, true);
         assertTrue(createServiceRes.isLeft());
-        Either<ComponentInstance, RestResponse> result = addComponentInstanceToComponentContainer(service1, createServiceRes.left().value());
+        Either<ComponentInstance, RestResponse> result = new AtomicOperationUtils().addComponentInstanceToComponentContainer(service1, createServiceRes.left().value());
         assertTrue(result.isLeft());
-        result = addComponentInstanceToComponentContainer(service2, createServiceRes.left().value());
+        result = new AtomicOperationUtils().addComponentInstanceToComponentContainer(service2, createServiceRes.left().value());
         assertTrue(result.isLeft());
         return certifyService(createServiceRes);
     }
 
     private Service createCertifiedServiceWithInstance(ServiceCategoriesEnum category, Resource resource) throws Exception {
-        Either<Service, RestResponse> createServiceRes = createServiceByCategory(category, UserRoleEnum.DESIGNER, true);
+        Either<Service, RestResponse> createServiceRes = new AtomicOperationUtils().createServiceByCategory(category, UserRoleEnum.DESIGNER, true);
         assertTrue(createServiceRes.isLeft());
-        Either<ComponentInstance, RestResponse> result = addComponentInstanceToComponentContainer(resource, createServiceRes.left().value());
+        Either<ComponentInstance, RestResponse> result = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, createServiceRes.left().value());
         assertTrue(result.isLeft());
         return certifyService(createServiceRes);
     }
 
     private Service certifyService(Either<Service, RestResponse> serviceProxy1) throws Exception {
-        Service service = getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceProxy1.left().value().getName(), "0.1" );
+        Service service = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceProxy1.left().value().getName(), "0.1" );
         assertNotNull(service);
         ServiceReqDetails serviceReqDetails = new ServiceReqDetails(service);
-        RestResponse restResponseService = LCSbaseTest.certifyService(serviceReqDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+        RestResponse restResponseService = LCSbaseTest.certifyService(serviceReqDetails, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
         assertTrue(restResponseService.getErrorCode()==200);
-        return getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceProxy1.left().value().getName(), "1.0" );
+        return new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceProxy1.left().value().getName(), "1.0" );
     }
 
     private static Resource updateResource(Resource resource, String csarFileName) throws Exception {
-		Resource updatedResource = updateResourceFromCsar(resource, UserRoleEnum.DESIGNER, csarFileName, csarsFilePath);
+		Resource updatedResource = new AtomicOperationUtils().updateResourceFromCsar(resource, UserRoleEnum.DESIGNER, csarFileName, csarsFilePath);
 		validateComponentGroupCapabilityPropertyValue(updatedResource, "new_value");
 		return updatedResource;
 	}
 
 	private static Resource importResource(String csarFileName) throws Exception {
-		Resource resource = importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, csarFileName, csarsFilePath);
+		Resource resource = new AtomicOperationUtils().importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, csarFileName, csarsFilePath);
 		validateComponentGroupCapabilityPropertyValue(resource, "success");
 		return resource;
 	}

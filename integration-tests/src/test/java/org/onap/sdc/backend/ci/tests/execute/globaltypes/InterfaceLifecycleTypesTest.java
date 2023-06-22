@@ -44,7 +44,7 @@ public class InterfaceLifecycleTypesTest extends ComponentBaseTest {
 
   @BeforeMethod
   public void init() {
-    headersMap.put(HttpHeaderEnum.USER_ID.getValue(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+    headersMap.put(HttpHeaderEnum.USER_ID.getValue(), new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
   }
 
   @Test

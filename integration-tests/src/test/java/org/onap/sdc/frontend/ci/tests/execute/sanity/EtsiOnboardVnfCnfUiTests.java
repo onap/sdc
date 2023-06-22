@@ -87,7 +87,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "etsiVnfCnfOnboardPackages", dependsOnMethods = "createVlm")
     public void onboardEtsiVnfCnfFlow(final String rootFolder, final String vnfFile) {
         setLog(vnfFile);
-        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String resourceName = new ElementFactory().addRandomSuffixToName(new ElementFactory().getResourcePrefix());
         runOnboardEtsiVnfCnf(resourceName, rootFolder, vnfFile);
         runDistribution(resourceName);
     }
@@ -165,7 +165,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
 
     private ServiceCreateData createServiceFormData() {
         final ServiceCreateData serviceCreateData = new ServiceCreateData();
-        serviceCreateData.setRandomName(ElementFactory.addRandomSuffixToName(ElementFactory.getServicePrefix()));
+        serviceCreateData.setRandomName(new ElementFactory().addRandomSuffixToName(new ElementFactory().getServicePrefix()));
         serviceCreateData.setModel(ModelName.DEFAULT_MODEL_NAME.getName());
         serviceCreateData.setCategory(ServiceCategoriesEnum.E2E_SERVICE.getValue());
         serviceCreateData.setDescription("aDescription");
