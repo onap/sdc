@@ -130,7 +130,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void getResourceLatestVersion() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -152,7 +152,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void getFollowedResources() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -176,7 +176,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void lifeCycleChekInRequest() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -192,11 +192,11 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void lifeCycleChekOutRequest() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("change LC state to CHECKOUT, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -209,11 +209,11 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	/*@Test
 	public void lifeCycleRequestForCertification() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertTrue("change LC state to CERTIFICATIONREQUEST, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);

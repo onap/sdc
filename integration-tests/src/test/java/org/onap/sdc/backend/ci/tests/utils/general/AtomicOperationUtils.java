@@ -394,9 +394,9 @@ public final class AtomicOperationUtils {
                 a = (i == lifeCycleStatesEnumList.size() - 1) ? 0 : i + 1;
                 for (int n = a; n < lifeCycleStatesEnumList.size(); n++) {
                     defaultUser = ElementFactory.getDefaultUser(userRole);
-                    lifeCycleStatesResponse = LifecycleRestUtils.changeComponentState(component, defaultUser,
+                    lifeCycleStatesResponse = new LifecycleRestUtils().changeComponentState(component, defaultUser,
                         LifeCycleStatesEnum.findByState(lifeCycleStatesEnumList.get(n)));
-                    if (lifeCycleStatesResponse.getErrorCode() != LifecycleRestUtils.STATUS_CODE_SUCCESS) {
+                    if (lifeCycleStatesResponse.getErrorCode() != new LifecycleRestUtils().STATUS_CODE_SUCCESS) {
                         isValidationFailed = true;
                     }
                     if (lifeCycleStatesEnumList.get(n).equals(targetState.toString()) || isValidationFailed) {
@@ -429,10 +429,10 @@ public final class AtomicOperationUtils {
         ServiceReqDetails serviceDetails = new ServiceReqDetails(service);
         RestResponse distributionService = null;
 
-        RestResponse approveDistribution = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, governotUser, "approveService",
+        RestResponse approveDistribution = new LifecycleRestUtils().changeDistributionStatus(serviceDetails, null, governotUser, "approveService",
             DistributionStatusEnum.DISTRIBUTED);
         if (approveDistribution.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS) {
-            distributionService = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, opsUser, "approveService",
+            distributionService = new LifecycleRestUtils().changeDistributionStatus(serviceDetails, null, opsUser, "approveService",
                 DistributionStatusEnum.DISTRIBUTED);
         }
 

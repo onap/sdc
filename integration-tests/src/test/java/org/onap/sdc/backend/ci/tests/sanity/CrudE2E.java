@@ -176,7 +176,7 @@ public class CrudE2E extends ComponentBaseTest {
 
 		//////// certify VF1 - failed due to uncertified CP instance ////////
 
-		/*RestResponse changeVfStateFailed = LifecycleRestUtils.changeComponentState(resourceDetailsVF_01, designer, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		/*RestResponse changeVfStateFailed = new LifecycleRestUtils().changeComponentState(resourceDetailsVF_01, designer, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		Resource resResourceDetailsVF_01 = (Resource) resourceDetailsVF_01;
 		variablesAsList = Arrays.asList(resResourceDetailsVF_01.getResourceType().toString(), resourceDetailsCP_01.getName());
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name(), variablesAsList, changeVfStateFailed.getResponse());*/
@@ -206,7 +206,7 @@ public class CrudE2E extends ComponentBaseTest {
 
 		//////// certify service1 - failed due to uncertified instances ////////
 		designer = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		/*RestResponse changeServicetStateFailed = LifecycleRestUtils.changeComponentState(defaultService1, designer, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		/*RestResponse changeServicetStateFailed = new LifecycleRestUtils().changeComponentState(defaultService1, designer, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		variablesAsList = Arrays.asList(defaultService1.getComponentType().toString().toLowerCase(), resourceDetailsVF_01.getName());
 		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name(), variablesAsList, changeServicetStateFailed.getResponse());
 */

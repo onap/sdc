@@ -83,7 +83,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
         response = PropertyRestUtils.createServiceProperty(internalService.getUniqueId(), body, user);
 
         //CheckIn internal Service
-        response = LifecycleRestUtils.changeServiceState(internalService, user, "0.1",
+        response = new LifecycleRestUtils().changeServiceState(internalService, user, "0.1",
                 LifeCycleStatesEnum.CHECKIN,
                 "{\"userRemarks\":\"CheckIn\"}");
         BaseRestUtils.checkSuccess(response);

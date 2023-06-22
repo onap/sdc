@@ -121,7 +121,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 			assertNull(artifact.getEsId());
 		}
 
-		componentResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncDesignerDetails1,
+		componentResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncDesignerDetails1,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		component = ResponseParser.convertResourceResponseToJavaObject(componentResponse.getResponse());
 		toscaArtifacts = component.getToscaArtifacts();
@@ -267,10 +267,10 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 			artType = iter;
 			verifyDepArtPlaceHoldersByType(artType);
 		}
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
 		assertTrue("expected response code in CHECKIN 200", restResponseResource.getErrorCode() == 200);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails1,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails1,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("expected response code in CHECKOUT 200", restResponseResource.getErrorCode() == 200);
 
@@ -382,9 +382,9 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 				.convertArtifactDefinitionResponseToJavaObject(addInformationalArtifactToResource.getResponse());
 		ArtifactDefinition artDef1 = fillArtDefFromResponse(artifactDefinitionResponseJavaObject);
 
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails2,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails2,
 				LifeCycleStatesEnum.CHECKOUT);
 
 		// update with different user artifact
@@ -434,9 +434,9 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 				.convertArtifactDefinitionResponseToJavaObject(addInformationalArtifactToResource.getResponse());
 		ArtifactDefinition artDef1 = fillArtDefFromResponse(artifactDefinitionResponseJavaObject);
 
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1,
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1,
 				sdncDesignerDetails1, LifeCycleStatesEnum.CHECKIN);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails1, sdncDesignerDetails2,
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails1, sdncDesignerDetails2,
 				LifeCycleStatesEnum.CHECKOUT);
 
 		// update with different user artifact
