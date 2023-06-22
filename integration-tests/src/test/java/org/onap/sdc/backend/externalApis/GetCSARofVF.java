@@ -61,7 +61,7 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@BeforeMethod
 	public void setup() throws Exception {
 
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //		CassandraUtils.truncateAllKeyspaces();
 		
 
@@ -71,7 +71,7 @@ public class GetCSARofVF extends ComponentBaseTest {
 	public void getResourceToscaModelCheckOutState() throws Exception {
 
 
-		Resource resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.RESOURCES, resource.getUUID());
@@ -89,9 +89,9 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@Test
 	public void getResourceToscaModelCheckInState() throws Exception {
 		
-		Resource resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
-		AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.RESOURCES, resource.getUUID());
@@ -107,9 +107,9 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@Test
 	public void getRsourceToscaModelCertifyState() throws Exception {
 		
-		Resource resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
-		AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.RESOURCES, resource.getUUID());
@@ -126,7 +126,7 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@Test
 	public void getServiceToscaModelCheckOutState() throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID());
@@ -141,9 +141,9 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@Test
 	public void getServiceToscaModelCheckInState() throws Exception {
 		
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		
-		AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID());
@@ -158,9 +158,9 @@ public class GetCSARofVF extends ComponentBaseTest {
 	@Test
 	public void getServiceToscaModelCertifyState() throws Exception {
 		
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, service, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, service, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		
 //		HttpResponse componentToscaModel = AssetRestUtils.getComponentToscaModel(AssetTypeEnum.RESOURCES, resource.getUUID());
 		File toscaModelCsarFile = AssetRestUtils.getToscaModelCsarFile(AssetTypeEnum.SERVICES, service.getUUID());

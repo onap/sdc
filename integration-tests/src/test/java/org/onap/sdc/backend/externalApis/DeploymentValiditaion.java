@@ -190,7 +190,7 @@ public class DeploymentValiditaion extends ComponentBaseTest {
 		getExtendTest().log(Status.INFO, "List of Data Types:");
 		getExtendTest().log(Status.INFO, listOfDataTypes.toString());
 
-		Resource resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		PropertyReqDetails defaultProperty = ElementFactory.getDefaultListProperty();
 
 		defaultProperty.setPropertyDefaultValue(null);
@@ -199,7 +199,7 @@ public class DeploymentValiditaion extends ComponentBaseTest {
 			defaultProperty.setName(dataType);
 			System.out.println("Adding proporty with data type: ----> " + dataType);
 			getExtendTest().log(Status.INFO, "Adding proporty with data type: ----> " + dataType);
-			AtomicOperationUtils.addCustomPropertyToResource(defaultProperty, resource, UserRoleEnum.DESIGNER, true);
+			new AtomicOperationUtils().addCustomPropertyToResource(defaultProperty, resource, UserRoleEnum.DESIGNER, true);
 		}
 
 		listOfDataTypes.forEach(System.out::println);

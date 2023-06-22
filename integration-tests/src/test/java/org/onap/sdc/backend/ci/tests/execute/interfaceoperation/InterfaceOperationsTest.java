@@ -82,7 +82,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     public static void init() throws Exception {
         // Create default service
         Either<Service, RestResponse> createDefaultServiceEither =
-                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
         if (createDefaultServiceEither.isRight()) {
             fail("Error creating default service");
         }
@@ -90,7 +90,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         // Create default resource
         Either<Resource, RestResponse> createDefaultResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
         if (createDefaultResourceEither.isRight()) {
             fail("Error creating default resource");
         }
@@ -98,7 +98,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
 
         // Create default PNF resource
         Either<Resource, RestResponse> createDefaultPNFResourceEither =
-                AtomicOperationUtils.createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.PNF, UserRoleEnum.DESIGNER, true);
         if (createDefaultPNFResourceEither.isRight()) {
             fail("Error creating default pnf resource");
         }
@@ -301,7 +301,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
     @Test
     public void testCreateOperationWithLocalInterfaceAndDownloadArtifact() throws Exception{
         Either<Service, RestResponse> createDefaultServiceEither =
-                AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+                new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
         if (createDefaultServiceEither.isRight()) {
             fail("Error creating default service");
         }
@@ -324,7 +324,7 @@ public class InterfaceOperationsTest extends ComponentBaseTest {
         service.setUniqueId(serviceUniqueId);
         service.setComponentType(ComponentTypeEnum.SERVICE);
         service.setLastUpdaterUserId(user.getUserId());
-        Either<String, RestResponse> responseEither = AtomicOperationUtils
+        Either<String, RestResponse> responseEither = new AtomicOperationUtils()
                 .getComponenetArtifactPayload(service, "assettoscacsar");
 
         Assert.assertTrue(responseEither.isLeft());

@@ -81,7 +81,7 @@ public class MIBsArtifactsOnResourceInstance extends SetupCDTest {
         ResourceUIUtils.importVfc(resourceMetaData, filePath, fileName, getUser());
 
         // get resourceUUID from BE
-        String resourceUUID = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1").getUUID();
+        String resourceUUID = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1").getUUID();
 
         // 2. Upload MIBs artifacts - SNMP_TRAP & SNMP_POLL.
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();

@@ -620,7 +620,7 @@ public class Service extends SetupCDTest {
 
         ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         // update group property max_vf_module_instances of VF Module to 100
         List<GroupDefinition> groups = resource.getGroups();
@@ -632,7 +632,7 @@ public class Service extends SetupCDTest {
 //						List<PropertyDataDefinition> propertyList = new ArrayList<>();
 //						propertyList.add(property);
 //                        todo pass to method correct object instaed of value for custom json
-                        AtomicOperationUtils.updateGroupPropertyOnResource("100", resource, group.getUniqueId(), user, true);
+                        new AtomicOperationUtils().updateGroupPropertyOnResource("100", resource, group.getUniqueId(), user, true);
                         break;
                     }
                 }

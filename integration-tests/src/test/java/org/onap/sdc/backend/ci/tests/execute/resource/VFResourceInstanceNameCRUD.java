@@ -101,22 +101,22 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 		// heatArtifactDetails =
 		// ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
 
-		Either<Resource, RestResponse> resourceDetailsCP_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsCP_01e = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(resourceDetailsCP_01e.left().value(), UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsCP_01e.left().value(), UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CHECKIN, true);
 		resourceDetailsCP = new ResourceReqDetails(resourceDetailsCP_01e.left().value());
-		Either<Resource, RestResponse> resourceDetailsVL_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVL_01e = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VL, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(resourceDetailsVL_01e.left().value(), UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsVL_01e.left().value(), UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CHECKIN, true);
 		resourceDetailsVL = new ResourceReqDetails(resourceDetailsVL_01e.left().value());
-		Either<Resource, RestResponse> resourceDetailsVF_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVF_01e = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = new ResourceReqDetails(resourceDetailsVF_01e.left().value());
-		Either<Resource, RestResponse> resourceDetailsVFC_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVFC_01e = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(resourceDetailsVFC_01e.left().value(), UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsVFC_01e.left().value(), UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CHECKIN, true);
 		resourceDetailsVFC = new ResourceReqDetails(resourceDetailsVFC_01e.left().value());
 
@@ -387,14 +387,14 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 		updatedResourceDetails.setTags(tags);
 		Gson gson = new Gson();
 		String updatedResourceBodyJson = gson.toJson(updatedResourceDetails);
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDet, sdncDesignerDetails1,
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDet, sdncDesignerDetails1,
 				resourceDet.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("change LS state to CHECKOUT, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 		response = ResourceRestUtils.updateResourceMetadata(updatedResourceBodyJson, sdncDesignerDetails1,
 				updatedResourceDetails.getUniqueId());
 		assertEquals("Check response code after updateresource name", 200, response.getErrorCode().intValue());
-		response = LifecycleRestUtils.changeResourceState(updatedResourceDetails, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(updatedResourceDetails, sdncDesignerDetails1,
 				resourceDet.getVersion(), LifeCycleStatesEnum.CHECKIN);
 
 		return updatedResourceDetails;
@@ -407,7 +407,7 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 	// User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 	// Resource updatedResourceDetails = resourceDet;
 	// RestResponse response =
-	// LifecycleRestUtils.changeComponentState(updatedResourceDetails,
+	// new LifecycleRestUtils().changeComponentState(updatedResourceDetails,
 	// defaultUser, LifeCycleStatesEnum.CHECKOUT, "state changed");
 	// assertTrue("change LS state to CHECKOUT, returned status:" +
 	// response.getErrorCode(),response.getErrorCode() == 200);
@@ -424,7 +424,7 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 	// assertEquals("Check response code after updateresource name", 200,
 	// response.getErrorCode().intValue());
 	// response =
-	// LifecycleRestUtils.changeComponentState(updatedResourceDetails,
+	// new LifecycleRestUtils().changeComponentState(updatedResourceDetails,
 	// defaultUser, LifeCycleStatesEnum.CHECKIN, "state changed");
 	// assertEquals("Check response code after updateresource name", 200,
 	// response.getErrorCode().intValue());
@@ -436,7 +436,7 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 	private void createVFWithCertifiedResourceInstance(ResourceReqDetails resourceDetails,
 			ComponentInstanceReqDetails resourceInstanceReqDetails) throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDetails, sdncDesignerDetails1,
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncDesignerDetails1,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after CHECKOUT", 200, response.getErrorCode().intValue());
 
@@ -447,7 +447,7 @@ public class VFResourceInstanceNameCRUD extends ComponentBaseTest {
 				resourceDetails.getUniqueId());
 		assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		response = LifecycleRestUtils.certifyResource(resourceDetails);
+		response = new LifecycleRestUtils().certifyResource(resourceDetails);
 		assertEquals("Check response code after CERTIFY request", 200, response.getErrorCode().intValue());
 
 		resourceVF = convertResourceGetResponseToJavaObject(resourceDetailsVF);

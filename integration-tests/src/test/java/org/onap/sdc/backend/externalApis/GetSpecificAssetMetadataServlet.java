@@ -49,7 +49,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 
 //	@BeforeMethod
 //	public void setup() throws Exception {
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //	}
 
 	// get specific asset metadata
@@ -58,7 +58,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -73,11 +73,11 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
 		resourceVF = ResponseParser.parseToObjectUsingMapper(ResourceRestUtils.getResource(resourceVF.getUniqueId()).getResponse(), Resource.class);
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
@@ -93,21 +93,21 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataWithNonCertifiedResourceInstancesSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resource3 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource3 = (Resource) new AtomicOperationUtils().changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER, true);
 
 		// certify resource2 and add to VF(VF with resource2 0.1, 1.0 and 1.1
 		// versions)
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
 		resourceVF = ResponseParser.parseToObjectUsingMapper(ResourceRestUtils.getResource(resourceVF.getUniqueId()).getResponse(), Resource.class);
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
@@ -123,22 +123,22 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	/*@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesVfInSubmitForTestingSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resource3 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource3 = (Resource) new AtomicOperationUtils().changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER, true);
 
 		// certify resource2 and add to VF(VF with resource2 1.0, 2.0 and 3.0
 		// versions)
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -153,22 +153,22 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesVfInStartCertificationSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resource3 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource3 = (Resource) new AtomicOperationUtils().changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
 
 		// certify resource2 and add to VF(VF with resource2 1.0, 2.0 and 3.0
 		// versions)
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -183,22 +183,22 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getResourceAssetMetadataWithResourceInstancesCertifiedVFSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resource3 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource3 = (Resource) new AtomicOperationUtils().changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
 
 		// certify resource2 and add to VF(VF with resource2 1.0, 2.0 and 3.0
 		// versions)
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -213,17 +213,17 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	/*@Test // (enabled = false)
 	public void getResourceAssetMetadataWithNonCertifiedResourceInstancesAndArtifactsSuccess() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resource2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource2 = (Resource) AtomicOperationUtils.changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		Resource resource3 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		resource3 = (Resource) AtomicOperationUtils.changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource2 = (Resource) new AtomicOperationUtils().changeComponentState(resource2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resource3 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		resource3 = (Resource) new AtomicOperationUtils().changeComponentState(resource3, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource2, resourceVF, UserRoleEnum.DESIGNER,	true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource3, resourceVF, UserRoleEnum.DESIGNER,	true);
 
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF, UserRoleEnum.DESIGNER, true, true);
 		resourceVF = ResponseParser.parseToObjectUsingMapper(ResourceRestUtils.getResource(resourceVF.getUniqueId()).getResponse(), Resource.class);
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.RESOURCES, resourceVF.getUUID());
@@ -241,7 +241,7 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getServiceAssetMetadataSuccess() throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.SERVICES, service.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);
@@ -256,11 +256,11 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getServiceAssetMetadataWithResourceInstancesSuccess() throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
 		service = ResponseParser.parseToObjectUsingMapper(ServiceRestUtils.getService(service.getUniqueId(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER)).getResponse(),Service.class);
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.SERVICES, service.getUUID());
@@ -277,21 +277,21 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getServiceAssetMetadataWithNonCertifiedResourceInstancesWithArtifactsSuccess() throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
-		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
-		resourceVF2 = (Resource) AtomicOperationUtils.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		Resource resourceVF2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
+		resourceVF2 = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
-		resourceVF = (Resource) AtomicOperationUtils
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
+		resourceVF = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
 
 		// service with 0.1, 0.1 and 1.0 RIs versions
 		service = ResponseParser.parseToObjectUsingMapper(ServiceRestUtils.getService(service.getUniqueId(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER)).getResponse(), Service.class);
@@ -311,26 +311,26 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	public void getServiceAssetMetadataWithCertifiedResourceInstancesAndArtifactsOnRIsAndServiceSuccess()
 			throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
-		resourceVF2 = (Resource) AtomicOperationUtils.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
+		resourceVF2 = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
 
 		// service with resourceVF 1.0(1 art), 2.0(2 art) versions and
 		// resourceVF2 1.0(1 art), service 1 artifact version
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, service, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, service, UserRoleEnum.DESIGNER, true, true);
 		service = ResponseParser.parseToObjectUsingMapper(ServiceRestUtils.getService(service.getUniqueId(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER)).getResponse(), Service.class);
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.SERVICES, service.getUUID());
@@ -347,27 +347,27 @@ public class GetSpecificAssetMetadataServlet extends ComponentBaseTest {
 	@Test // (enabled = false)
 	public void getServiceAssetMetadataWithResourceInstancesServiceInSubmitForTestingSuccess() throws Exception {
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Resource resourceVF2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.APPC_CONFIG, resourceVF2, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, resourceVF, UserRoleEnum.DESIGNER, true, true);
+		resourceVF = (Resource) new AtomicOperationUtils().changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
 
 		// service with resourceVF 1.0(1 art), 2.0(2 art) versions and
 		// resourceVF2 1.0(1 art), service 1 artifact version
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, service, UserRoleEnum.DESIGNER, true, true);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.MODEL_INVENTORY_PROFILE, service, UserRoleEnum.DESIGNER, true, true);
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		RestResponse assetResponse = AssetRestUtils.getAssetMetadataByAssetTypeAndUuid(true, AssetTypeEnum.SERVICES, service.getUUID());
 		BaseRestUtils.checkSuccess(assetResponse);

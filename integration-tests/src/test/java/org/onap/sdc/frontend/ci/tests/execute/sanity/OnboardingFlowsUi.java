@@ -427,9 +427,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        Service containerObject = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
-        Resource instanceObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
-        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        Service containerObject = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+        Resource instanceObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
+        ComponentInstance componentInstanceDetails = new AtomicOperationUtils().addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
 
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
 

@@ -453,7 +453,7 @@ public class AssetRestUtils extends BaseRestUtils {
 									+ resourceInstanceAssetStructure.getResoucreType(),
 							componentInstance.getOriginType().toString()
 									.equals(resourceInstanceAssetStructure.getResoucreType()));
-					Resource resource = AtomicOperationUtils.getResourceObject(componentInstance.getComponentUid());
+					Resource resource = new AtomicOperationUtils().getResourceObject(componentInstance.getComponentUid());
 					assertTrue("Expected RI asset resourceUUID is " + resource.getUUID() + " actual: " + resourceInstanceAssetStructure.getResourceUUID(),
 							resource.getUUID().equals(resourceInstanceAssetStructure.getResourceUUID()));
 					validateArtifactMetadata(componentInstance.getDeploymentArtifacts(),
@@ -578,7 +578,7 @@ public class AssetRestUtils extends BaseRestUtils {
 		List<String> assetNamesList = new ArrayList<>();
 		for (Entry<String, String> entry : resourceAssetList.entrySet()) {
 			System.out.println("fetch data---->"+entry.getKey()+entry.getValue());
-			Resource resourceObjectByNameAndVersion = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, entry.getKey(), entry.getValue());
+			Resource resourceObjectByNameAndVersion = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, entry.getKey(), entry.getValue());
 		    	assetNamesList.add(resourceObjectByNameAndVersion.getToscaResourceName());
 		    
 		}

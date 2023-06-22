@@ -527,7 +527,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	// pointer exception in line:
 	// commented out till fixing
 	protected Resource certifyResource(User user, ResourceReqDetails resource, String resourceVersion, int numberOfAI) throws IOException {
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkInResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
 
 		AssertJUnit.assertNotNull("check response object is not null after create user", checkInResponse);
 		AssertJUnit.assertNotNull("check error code exists in response after create user", checkInResponse.getErrorCode());
@@ -543,7 +543,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		 * AssertJUnit.assertEquals("check size of additional information", numberOfAI, resourceAfterOperation.getAdditionalInformation().get(0). getParameters().size());
 		 *//*
 
-		RestResponse req4certResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse req4certResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 
 		AssertJUnit.assertNotNull("check response object is not null after create user", req4certResponse);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, req4certResponse.getErrorCode().intValue());
@@ -562,7 +562,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		user.setUserId(UserRoleEnum.TESTER.getUserId());
 		// start certification
 
-		RestResponse startCertResourceResponse3 = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCertResourceResponse3 = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		AssertJUnit.assertNotNull("check response object is not null after create user", startCertResourceResponse3);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, startCertResourceResponse3.getErrorCode().intValue());
 
@@ -578,7 +578,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		// certify
 
-		RestResponse certifyResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY);
+		RestResponse certifyResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertNotNull("check response object is not null after create user", certifyResponse);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, certifyResponse.getErrorCode().intValue());
 
@@ -591,7 +591,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	}
 
 	protected Resource certifyService(User user, ServiceReqDetails service, String resourceVersion) throws Exception {
-		RestResponse checkInResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkInResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
 
 		AssertJUnit.assertNotNull("check response object is not null after create user", checkInResponse);
 		AssertJUnit.assertNotNull("check error code exists in response after create user", checkInResponse.getErrorCode());
@@ -601,7 +601,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		AssertJUnit.assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().size());
 		AssertJUnit.assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().get(0).getParameters().size());
 
-		RestResponse req4certResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse req4certResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 
 		AssertJUnit.assertNotNull("check response object is not null after create user", req4certResponse);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, req4certResponse.getErrorCode().intValue());
@@ -614,7 +614,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		user.setUserId(UserRoleEnum.TESTER.getUserId());
 		// start certification
 
-		RestResponse startCertResourceResponse3 = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCertResourceResponse3 = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		AssertJUnit.assertNotNull("check response object is not null after create user", startCertResourceResponse3);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, startCertResourceResponse3.getErrorCode().intValue());
 
@@ -624,7 +624,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		// certify
 
-		RestResponse certifyResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CERTIFY);
+		RestResponse certifyResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertNotNull("check response object is not null after create user", certifyResponse);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200, certifyResponse.getErrorCode().intValue());
 
@@ -1145,7 +1145,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		String resourceVersion = "0.1";
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 
 		assertNotNull("check response object is not null after create property", checkInResponse);
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
@@ -1153,7 +1153,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		resourceVersion = "0.2";
 
-		RestResponse checkOutResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
+		RestResponse checkOutResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
 
 		resourceId = ResponseParser.getUniqueIdFromResponse(checkOutResponse);
 		resource.setUniqueId(resourceId);
@@ -1172,11 +1172,11 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		assertNotNull("check error code exists in response after create property", createProperty.getErrorCode());
 		assertEquals("Check response code after create property", 409, createProperty.getErrorCode().intValue());
 
-		RestResponse checkUndoOutResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.UNDOCHECKOUT, null);
+		RestResponse checkUndoOutResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.UNDOCHECKOUT, null);
 
 		resourceVersion = "0.1";
 
-		checkOutResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
+		checkOutResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
 		resourceId = ResponseParser.getUniqueIdFromResponse(checkOutResponse);
 		resource.setUniqueId(resourceId);
 
@@ -1232,15 +1232,15 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		// resourceUtils.addResourceMandatoryArtifacts(user,
 		// createResourceResponse);
 
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 
 		assertNotNull("check response object is not null after create property", checkInResponse);
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
 		assertEquals("Check response code after create property", 200, checkInResponse.getErrorCode().intValue());
 
-		/*RestResponse changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST, null);
-		changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION, null);*/
-		RestResponse changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY, null);
+		/*RestResponse changeStateResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST, null);
+		changeStateResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION, null);*/
+		RestResponse changeStateResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CERTIFY, null);
 
 		assertNotNull("check response object is not null after create property", checkInResponse);
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
@@ -1251,7 +1251,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		resourceVersion = "1.0";
 
-		changeStateResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
+		changeStateResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
 		resourceId = ResponseParser.getUniqueIdFromResponse(changeStateResponse);
 		resource.setUniqueId(resourceId);
 
@@ -1305,7 +1305,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		String resourceVersion = "0.1";
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 
 		assertNotNull("check response object is not null after create property", checkInResponse);
 		assertNotNull("check error code exists in response after create property", checkInResponse.getErrorCode());
@@ -1313,7 +1313,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		resourceVersion = "0.2";
 
-		RestResponse checkOutResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
+		RestResponse checkOutResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
 
 		serviceId = ResponseParser.convertServiceResponseToJavaObject(checkOutResponse.getResponse()).getUniqueId();
 		service.setUniqueId(serviceId);
@@ -1332,11 +1332,11 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		assertNotNull("check error code exists in response after create property", createProperty.getErrorCode());
 		assertEquals("Check response code after create property", 409, createProperty.getErrorCode().intValue());
 
-		RestResponse checkUndoOutResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.UNDOCHECKOUT, null);
+		RestResponse checkUndoOutResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.UNDOCHECKOUT, null);
 
 		resourceVersion = "0.1";
 
-		checkOutResponse = LifecycleRestUtils.changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
+		checkOutResponse = new LifecycleRestUtils().changeServiceState(service, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT, null);
 		serviceId = ResponseParser.convertServiceResponseToJavaObject(checkOutResponse.getResponse()).getUniqueId();
 		service.setUniqueId(serviceId);
 
@@ -1785,7 +1785,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 			assertEquals("Check response code after create property", 201, createProperty.getErrorCode().intValue());
 
 			resource.setUniqueId(resourceId);
-			RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
+			RestResponse checkInResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKIN);
 
 			assertNotNull("check response object is not null after create user", checkInResponse);
 			assertNotNull("check error code exists in response after create user", checkInResponse.getErrorCode());
@@ -1795,7 +1795,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 			assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().size());
 			assertEquals("check size of additional information", 1, resourceAfterOperation.getAdditionalInformation().get(0).getParameters().size());
 
-			RestResponse checkOutResponse = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT);
+			RestResponse checkOutResponse = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT);
 
 			assertNotNull("check response object is not null after create user", checkOutResponse);
 			assertNotNull("check error code exists in response after create user", checkOutResponse.getErrorCode());
@@ -1829,7 +1829,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 			user.setUserId(UserRoleEnum.DESIGNER.getUserId());
 			resource.setUniqueId(certifiedResource.getUniqueId());
-			RestResponse checkOutResponseAfterCertify = LifecycleRestUtils.changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT);
+			RestResponse checkOutResponseAfterCertify = new LifecycleRestUtils().changeResourceState(resource, user, resourceVersion, LifeCycleStatesEnum.CHECKOUT);
 
 			assertNotNull("check response object is not null after create user", checkOutResponseAfterCertify);
 			assertNotNull("check error code exists in response after create user", checkOutResponseAfterCertify.getErrorCode());
@@ -1849,7 +1849,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	// String resourceVersion) throws Exception {
 	//
 	// RestResponse checkInResponse =
-	// LifecycleRestUtils.changeServiceState(service, user, resourceVersion,
+	// new LifecycleRestUtils().changeServiceState(service, user, resourceVersion,
 	// LifeCycleStates.CHECKIN);
 	//
 	// assertNotNull("check response object is not null after create user",
@@ -1870,7 +1870,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	// createAndAddCertResourceToService(service, user);
 	//
 	// RestResponse req4certResponse =
-	// LifecycleRestUtils.changeServiceState(service, user, resourceVersion,
+	// new LifecycleRestUtils().changeServiceState(service, user, resourceVersion,
 	// LifeCycleStates.CERTIFICATIONREQUEST);
 	//
 	// assertNotNull("check response object is not null after create user",
@@ -1890,7 +1890,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	//
 	// //start certification
 	// RestResponse startCertResourceResponse3 =
-	// LifecycleRestUtils.changeServiceState(service, user, resourceVersion,
+	// new LifecycleRestUtils().changeServiceState(service, user, resourceVersion,
 	// LifeCycleStates.STARTCERTIFICATION);
 	// assertNotNull("check response object is not null after create user",
 	// startCertResourceResponse3);
@@ -1907,7 +1907,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 	// //certify
 	//
 	// RestResponse certifyResponse =
-	// LifecycleRestUtils.changeServiceState(service, user, resourceVersion,
+	// new LifecycleRestUtils().changeServiceState(service, user, resourceVersion,
 	// LifeCycleStates.CERTIFY);
 	// assertNotNull("check response object is not null after create user",
 	// certifyResponse);
@@ -1943,17 +1943,17 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 
 		// certified resource
 		// response = LCSbaseTest.certifyResource(resourceDetails);
-		RestResponse restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CHECKIN);
+		RestResponse restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CHECKIN);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
-		/*restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		/*restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncTesterUser, LifeCycleStatesEnum.STARTCERTIFICATION);
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncTesterUser, LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);*/
-		restResponseResource = LifecycleRestUtils.changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFY);
+		restResponseResource = new LifecycleRestUtils().changeResourceState(resourceDetails, user, LifeCycleStatesEnum.CERTIFY);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
 
 		// add resource instance with HEAT deployment artifact to the service
-		restResponseResource = LifecycleRestUtils.changeServiceState(serviceDetails, user, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		restResponseResource = new LifecycleRestUtils().changeServiceState(serviceDetails, user, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("certify resource request returned status:" + restResponseResource.getErrorCode(), response.getErrorCode() == 200);
 		resourceInstanceReqDetails.setComponentUid(resourceDetails.getUniqueId());
 		response = ComponentInstanceRestUtils.createComponentInstance(resourceInstanceReqDetails, user, serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);

@@ -81,7 +81,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 
 //	@BeforeMethod
 //	public synchronized void init() throws Exception{
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //	}
 	
 	

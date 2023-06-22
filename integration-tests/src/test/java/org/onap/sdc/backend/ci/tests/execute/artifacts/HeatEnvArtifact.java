@@ -58,7 +58,7 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csarHeatEnv.csar");
 		assertNotNull(createdResource);
 
-		RestResponse certifyState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse certifyState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(certifyState);
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);
@@ -110,7 +110,7 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csarHeatNoEnv.csar");
 		assertNotNull(createdResource);
 
-		RestResponse certifyState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse certifyState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(certifyState);
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);

@@ -91,9 +91,9 @@ public class PortMirroring extends SetupCDTest {
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 2);
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Service is certified"));
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         AssertJUnit.assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -112,20 +112,20 @@ public class PortMirroring extends SetupCDTest {
         ServiceReqDetails serviceReqDetailsCollector = ElementFactory.getDefaultService();
         serviceReqDetailsCollector.setServiceType(PortMirroringEnum.SERVICE_TYPE.getValue());
         getExtendTest().log(Status.INFO, String.format("Creating collector service %s (PNF container)", serviceReqDetailsCollector.getName()));
-        Service serviceCollector = AtomicOperationUtils.createCustomService(serviceReqDetailsCollector, UserRoleEnum.DESIGNER, true).left().value();
+        Service serviceCollector = new AtomicOperationUtils().createCustomService(serviceReqDetailsCollector, UserRoleEnum.DESIGNER, true).left().value();
 
         getExtendTest().log(Status.INFO, String.format("Adding pnf's: %s,%s,%s to service %s", resourceCisco.getName(), resourceAPCON1.getName(), resourceAPCON2.getName(), serviceCollector.getName()));
 
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceCisco, serviceCollector, UserRoleEnum.DESIGNER, true, "80", "80");
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceAPCON1, serviceCollector, UserRoleEnum.DESIGNER, true, "80", "200");
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceAPCON2, serviceCollector, UserRoleEnum.DESIGNER, true, "200", "200");
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceCisco, serviceCollector, UserRoleEnum.DESIGNER, true, "80", "80");
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceAPCON1, serviceCollector, UserRoleEnum.DESIGNER, true, "80", "200");
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceAPCON2, serviceCollector, UserRoleEnum.DESIGNER, true, "200", "200");
 
-        serviceCollector = (Service) AtomicOperationUtils.changeComponentState(serviceCollector, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        serviceCollector = (Service) new AtomicOperationUtils().changeComponentState(serviceCollector, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         // create container service
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         String vmmeSourceName = serviceContainerVmme_Source.getService().getName();
         String collectorServiceName = serviceCollector.getName();
@@ -173,9 +173,9 @@ public class PortMirroring extends SetupCDTest {
 
         // Distribute the Port Mirroning Configuration By Policy
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Service is certified"));
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         AssertJUnit.assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -184,7 +184,7 @@ public class PortMirroring extends SetupCDTest {
     public void deletePMCPLink() throws Throwable {
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         String filePath = FileHandling.getPortMirroringRepositoryPath();
         ServiceContainer serviceContainerVmme_Source = PortMirroringUtils.createServiceFromHeatFile(filePath, "2016-227_vmme_vmme_30_1610_e2e.zip");
@@ -248,7 +248,7 @@ public class PortMirroring extends SetupCDTest {
 
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         GeneralUIUtils.findComponentAndClick(service.getName());
@@ -270,7 +270,7 @@ public class PortMirroring extends SetupCDTest {
 
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         GeneralUIUtils.findComponentAndClick(service.getName());
@@ -295,7 +295,7 @@ public class PortMirroring extends SetupCDTest {
 
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         GeneralUIUtils.findComponentAndClick(service.getName());
@@ -411,10 +411,10 @@ public class PortMirroring extends SetupCDTest {
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 2);
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         getExtendTest().log(Status.INFO, String.format("Checkout Port Mirroring Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.ultimateWait();
@@ -433,10 +433,10 @@ public class PortMirroring extends SetupCDTest {
         ServiceVerificator.verifyLinkCreated(serviceReqDetails, getUser(), 0);
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         getExtendTest().log(Status.INFO, String.format("Service is certified"));
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         AssertJUnit.assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -449,16 +449,16 @@ public class PortMirroring extends SetupCDTest {
         CanvasElement vmmeCanvasElement = portMirrioringConfigurationObject.getServiceElementVmmeSourceName();
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         Service serviceContainerVmme_Source = portMirrioringConfigurationObject.getServiceContainerVmme_Source();
         getExtendTest().log(Status.INFO, String.format("Checkout the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Going to certify the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         getExtendTest().log(Status.INFO, String.format("Checkout Port Mirroring Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.ultimateWait();
@@ -471,10 +471,10 @@ public class PortMirroring extends SetupCDTest {
         CompositionPage.changeComponentVersion(canvasManager, vmmeCanvasElement, "2.0", false);
 
         getExtendTest().log(Status.INFO, String.format("Going to certify the Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         getExtendTest().log(Status.INFO, String.format("Service is certified"));
-        Boolean distributeAndValidateService = AtomicOperationUtils.distributeAndValidateService(service);
+        Boolean distributeAndValidateService = new AtomicOperationUtils().distributeAndValidateService(service);
         getExtendTest().log(Status.INFO, String.format("Distribute and validate the Service"));
         AssertJUnit.assertTrue("Distribution status is " + distributeAndValidateService, distributeAndValidateService);
     }
@@ -484,7 +484,7 @@ public class PortMirroring extends SetupCDTest {
 
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
         getExtendTest().log(Status.INFO, String.format("Creating container service %s", serviceReqDetails.getName()));
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
         String filePath = FileHandling.getPortMirroringRepositoryPath();
         ServiceContainer serviceContainerVmme_Source = PortMirroringUtils.createServiceFromHeatFile(filePath, "2016-227_vmme_vmme_30_1610_e2e.zip");
@@ -543,9 +543,9 @@ public class PortMirroring extends SetupCDTest {
         Service serviceContainerVmme_Source = portMirrioringConfigurationObject.getServiceContainerVmme_Source();
 
         getExtendTest().log(Status.INFO, String.format("Checkout the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Going to certify the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.ultimateWait();
@@ -579,9 +579,9 @@ public class PortMirroring extends SetupCDTest {
 
 
         getExtendTest().log(Status.INFO, String.format("Checkout the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Going to certify the vmme Service"));
-        serviceContainerVmme_Source = (Service) AtomicOperationUtils.changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        serviceContainerVmme_Source = (Service) new AtomicOperationUtils().changeComponentState(serviceContainerVmme_Source, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtonsFromInsideFrame.HOME_BUTTON.getValue()).click();
         GeneralUIUtils.ultimateWait();

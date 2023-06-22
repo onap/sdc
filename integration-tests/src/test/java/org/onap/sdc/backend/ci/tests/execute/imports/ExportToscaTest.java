@@ -249,7 +249,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csar_1");
-		RestResponse checkinState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkinState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(checkinState);
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
 				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(),

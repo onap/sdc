@@ -145,7 +145,7 @@ public class VfModule extends SetupCDTest {
         latestFilefromDir = org.onap.sdc.frontend.ci.tests.utilities.FileHandling.getLastModifiedFileNameFromDir();
 
 //		verification
-        Service service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
+        Service service = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
         ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(latestFilefromDir);
 
 //		compare number of vf modules defined in HEAT.meta file vs Service TOSCA yaml

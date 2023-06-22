@@ -45,28 +45,28 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
-		Component resourceObject = AtomicOperationUtils
+		Component resourceObject = new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource vfManual = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
+		Resource vfManual = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceObject, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils
+		new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CANCELCERTIFICATION, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
 
@@ -100,28 +100,28 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 
-		Component resourceObject = AtomicOperationUtils
+		Component resourceObject = new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		Resource vfManual = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
+		Resource vfManual = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, vfManual, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().changeComponentState(vfManual, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceObject, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfManual, service, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils
+		new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
-		AtomicOperationUtils
+		new AtomicOperationUtils()
 				.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CANCELCERTIFICATION, true)
 				.getLeft();
-		AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
+		new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true)
 				.getLeft();
 
 	}
@@ -301,7 +301,7 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		Pair<Component, RestResponse> changeComponentState = AtomicOperationUtils.changeComponentState(resource,
+		Pair<Component, RestResponse> changeComponentState = new AtomicOperationUtils().changeComponentState(resource,
 				UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		resource = (Resource) changeComponentState.getLeft();
 
@@ -430,13 +430,13 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
 		resourceDetails.setName("Resource3");
@@ -445,11 +445,11 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		resourceDetails.setName("Resource4");
@@ -458,15 +458,15 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 
 		resourceDetails.setName("Resource5");
@@ -475,13 +475,13 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 
 		resourceDetails.setName("Resource6");
@@ -490,7 +490,7 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true)
 				.getLeft();
 
@@ -500,9 +500,9 @@ public class ToscaGroupInsideVF extends ComponentBaseTest {
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-		resource = (Resource) AtomicOperationUtils
+		resource = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFICATIONREQUEST, true)
 				.getLeft();
 

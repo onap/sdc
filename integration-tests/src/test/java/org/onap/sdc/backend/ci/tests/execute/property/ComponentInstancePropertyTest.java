@@ -93,7 +93,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 		// verify property
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, actualPropertyList);
 		assertTrue("check list size failed, expected 3", actualPropertyList.size() == 3);
 
@@ -111,20 +111,20 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 		// verify property
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 	}
@@ -138,36 +138,36 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// four resource
-		Resource cp = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
+		Resource cp = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
 				NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		PropertyReqDetails cpStringProperty = ElementFactory.getDefaultStringProperty();
 		cpStringProperty.setName("Different Name");
 		cpStringProperty.setPropertyDefaultValue("Different value from default");
-		AtomicOperationUtils.addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
-		cp = AtomicOperationUtils.getResourceObject(cp, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		cp = new AtomicOperationUtils().getResourceObject(cp, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(cp, expectedPropertyList);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, vfResource, UserRoleEnum.DESIGNER, true).left().value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, cp, expectedPropertyList,
 				vfResource);
 		// verify property
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 	}
@@ -180,21 +180,21 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CERTIFY, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 		// verify property
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
@@ -210,27 +210,27 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		// verify property
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 	}
@@ -241,34 +241,34 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 	@Test
 	public void nestedVfResourceProperty3LevelsUpdateFirstLevelProperty() throws Exception {
 		// first res
-		basicVFC = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		basicVFC = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addDefaultPropertyToResource(PropertyTypeEnum.STRING, basicVFC, UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		new AtomicOperationUtils().changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 
 		vfc1FromBasicVFC = createResourceWithPropertyDerivedFromOtherResource(
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 
 		// verify property
@@ -285,7 +285,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
@@ -302,32 +302,32 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		basicVFC = createResourceWithProperty(ElementFactory.getDefaultStringProperty(), LifeCycleStatesEnum.CERTIFY);
 
 		// second resource
-		vfc1FromBasicVFC = AtomicOperationUtils.createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
+		vfc1FromBasicVFC = new AtomicOperationUtils().createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
 				basicVFC, ResourceCategoryEnum.APPLICATION_L4_BORDER, UserRoleEnum.DESIGNER, true).left().value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addCustomPropertyToResource(ElementFactory.getDefaultIntegerProperty(), vfc1FromBasicVFC,
 						UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(vfc1FromBasicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
+		new AtomicOperationUtils().changeComponentState(vfc1FromBasicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
 				true);
 
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 
 		// verify property
@@ -346,7 +346,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 						+ " ,but was " + updatePropertyValueOnResourceInstance.getErrorCode(),
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
@@ -365,29 +365,29 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 
 		// third resource
-		vfc2FromVfc1 = AtomicOperationUtils.createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
+		vfc2FromVfc1 = new AtomicOperationUtils().createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
 				vfc1FromBasicVFC, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addCustomPropertyToResource(ElementFactory.getDefaultBooleanProperty(), vfc2FromVfc1,
 						UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(vfc2FromVfc1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN,
+		new AtomicOperationUtils().changeComponentState(vfc2FromVfc1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN,
 				true);
 
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 
 		// verify property
@@ -404,7 +404,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
@@ -428,23 +428,23 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -464,38 +464,38 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 		PropertyReqDetails propDetails = ElementFactory.getDefaultBooleanProperty();
 		propDetails.setName(newBooleanPropName);
 		propDetails.setPropertyDefaultValue(newBooleanPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
 		propDetails = ElementFactory.getDefaultStringProperty();
 		propDetails.setName(newStringPropName);
 		propDetails.setPropertyDefaultValue(newStringPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
 		propDetails = ElementFactory.getDefaultIntegerProperty();
 		propDetails.setName(newIntegerPropName);
 		propDetails.setPropertyDefaultValue(newIntegerPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(propDetails, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfResource, expectedPropertyList);
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -515,41 +515,41 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// four resource
-		Resource cp = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
+		Resource cp = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
 				NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		PropertyReqDetails cpStringProperty = ElementFactory.getDefaultStringProperty();
 		cpStringProperty.setName("Different Name");
 		cpStringProperty.setPropertyDefaultValue("Different value from default");
-		AtomicOperationUtils.addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
-		cp = AtomicOperationUtils.getResourceObject(cp, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		cp = new AtomicOperationUtils().getResourceObject(cp, UserRoleEnum.DESIGNER);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(cp, expectedPropertyList);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, vfResource, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, cp, expectedPropertyList,
 				vfResource);
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -569,29 +569,29 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		// expectedPropertyList =
 		// PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1,
 		// expectedPropertyList);
 
 		// four resource
-		Resource cp = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
+		Resource cp = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
 				NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		PropertyReqDetails cpStringProperty = ElementFactory.getDefaultStringProperty();
 		cpStringProperty.setName("Different Name");
 		cpStringProperty.setPropertyDefaultValue("Different value from default");
-		AtomicOperationUtils.addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
-		cp = AtomicOperationUtils.getResourceObject(cp, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		cp = new AtomicOperationUtils().getResourceObject(cp, UserRoleEnum.DESIGNER);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
@@ -600,16 +600,16 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				null);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(cp, expectedPropertyList);
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, service, UserRoleEnum.DESIGNER, true).left().value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -632,30 +632,30 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1, expectedPropertyList);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		// verify property
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
 
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnResource(componentInstDetails, vfc2FromVfc1, expectedPropertyList,
 				vfResource);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -666,20 +666,20 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				null);
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -698,35 +698,35 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 		PropertyReqDetails newProp = ElementFactory.getDefaultStringProperty();
 		newProp.setName(newStringPropName);
 		newProp.setPropertyDefaultValue(newStringPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
 		actualPropertyList = new ArrayList<ComponentInstanceProperty>();
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -747,12 +747,12 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
 
@@ -760,27 +760,27 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		PropertyReqDetails newProp = ElementFactory.getDefaultStringProperty();
 		newProp.setName(newStringPropName);
 		newProp.setPropertyDefaultValue(newStringPropValue);
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
 		actualPropertyList = new ArrayList<ComponentInstanceProperty>();
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -795,7 +795,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -816,48 +816,48 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 	public void serviceNestedVfResourceProperty3LevelsAndSelfVfPropertyUpdateVfInheritance1LevelProperty()
 			throws Exception {
 
-		basicVFC = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		basicVFC = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addDefaultPropertyToResource(PropertyTypeEnum.STRING, basicVFC, UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		new AtomicOperationUtils().changeComponentState(basicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		vfc1FromBasicVFC = createResourceWithPropertyDerivedFromOtherResource(
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		// verify property
 		PropertyReqDetails newProp = ElementFactory.getDefaultStringProperty();
 		newProp.setName(newStringPropName);
 		newProp.setPropertyDefaultValue(newStringPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
 		actualPropertyList = new ArrayList<ComponentInstanceProperty>();
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -872,7 +872,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -894,23 +894,23 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 			throws Exception {
 
 		basicVFC = createResourceWithProperty(ElementFactory.getDefaultStringProperty(), LifeCycleStatesEnum.CERTIFY);
-		vfc1FromBasicVFC = AtomicOperationUtils.createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
+		vfc1FromBasicVFC = new AtomicOperationUtils().createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
 				basicVFC, ResourceCategoryEnum.APPLICATION_L4_BORDER, UserRoleEnum.DESIGNER, true).left().value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addCustomPropertyToResource(ElementFactory.getDefaultIntegerProperty(), vfc1FromBasicVFC,
 						UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(vfc1FromBasicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
+		new AtomicOperationUtils().changeComponentState(vfc1FromBasicVFC, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
 				true);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
 
@@ -918,24 +918,24 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		PropertyReqDetails newProp = ElementFactory.getDefaultStringProperty();
 		newProp.setName(newStringPropName);
 		newProp.setPropertyDefaultValue(newStringPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
 		actualPropertyList = new ArrayList<ComponentInstanceProperty>();
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -950,7 +950,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		ComponentInstanceProperty actualUpdatedPropDetails = PropertyRestUtils
@@ -972,45 +972,45 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		basicVFC = createResourceWithProperty(ElementFactory.getDefaultStringProperty(), LifeCycleStatesEnum.CERTIFY);
 		vfc1FromBasicVFC = createResourceWithPropertyDerivedFromOtherResource(
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
+		vfc2FromVfc1 = new AtomicOperationUtils().createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
 				vfc1FromBasicVFC, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
-		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = AtomicOperationUtils
+		Either<ComponentInstanceProperty, RestResponse> propDetailsToUpdate = new AtomicOperationUtils()
 				.addCustomPropertyToResource(ElementFactory.getDefaultBooleanProperty(), vfc2FromVfc1,
 						UserRoleEnum.DESIGNER, true);
 		String propNameToUpdate = propDetailsToUpdate.left().value().getName();
 		String propTypeToUpdate = propDetailsToUpdate.left().value().getType();
-		AtomicOperationUtils.changeComponentState(vfc2FromVfc1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN,
+		new AtomicOperationUtils().changeComponentState(vfc2FromVfc1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN,
 				true);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		// verify property
 		PropertyReqDetails newProp = ElementFactory.getDefaultStringProperty();
 		newProp.setName(newStringPropName);
 		newProp.setPropertyDefaultValue(newStringPropValue);
-		AtomicOperationUtils.addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(newProp, vfResource, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
 		actualPropertyList = new ArrayList<ComponentInstanceProperty>();
 		expectedPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(vfResource, expectedPropertyList,
 				null);
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -1025,7 +1025,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -1049,31 +1049,31 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CHECKIN, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		// expectedPropertyList =
 		// PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1,
 		// expectedPropertyList);
 
 		// four resource
-		Resource cp = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
+		Resource cp = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
 				NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		PropertyReqDetails cpStringProperty = ElementFactory.getDefaultStringProperty();
 		cpStringProperty.setName("Different Name");
 		cpStringProperty.setPropertyDefaultValue("Different value from default");
-		AtomicOperationUtils.addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
-		cp = AtomicOperationUtils.getResourceObject(cp, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		cp = new AtomicOperationUtils().getResourceObject(cp, UserRoleEnum.DESIGNER);
 		// create VF + add RI
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, vfResource, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
@@ -1082,21 +1082,21 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				null);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(cp, expectedPropertyList);
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, service, UserRoleEnum.DESIGNER, true).left().value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		// service = AtomicOperationUtils.getServiceObject(service,
+		// service = new AtomicOperationUtils().getServiceObject(service,
 		// UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
@@ -1116,7 +1116,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -1139,31 +1139,31 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				ElementFactory.getDefaultIntegerProperty(), LifeCycleStatesEnum.CERTIFY, basicVFC);
 		vfc2FromVfc1 = createResourceWithPropertyDerivedFromOtherResource(ElementFactory.getDefaultBooleanProperty(),
 				LifeCycleStatesEnum.CERTIFY, vfc1FromBasicVFC);
-		vfc2FromVfc1 = AtomicOperationUtils.getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
+		vfc2FromVfc1 = new AtomicOperationUtils().getResourceObject(vfc2FromVfc1, UserRoleEnum.DESIGNER);
 		// expectedPropertyList =
 		// PropertyRestUtils.addResourcePropertiesToList(vfc2FromVfc1,
 		// expectedPropertyList);
 
 		// four resource
-		Resource cp = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
+		Resource cp = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP,
 				NormativeTypesEnum.NETWORK, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		PropertyReqDetails cpStringProperty = ElementFactory.getDefaultStringProperty();
 		cpStringProperty.setName("Different Name");
 		cpStringProperty.setPropertyDefaultValue("Different value from default");
-		AtomicOperationUtils.addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		new AtomicOperationUtils().addCustomPropertyToResource(cpStringProperty, cp, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().changeComponentState(cp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		// create VF + add RI
-		cp = AtomicOperationUtils.getResourceObject(cp, UserRoleEnum.DESIGNER);
-		vfResource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		cp = new AtomicOperationUtils().getResourceObject(cp, UserRoleEnum.DESIGNER);
+		vfResource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		ComponentInstance componentInstDetails = AtomicOperationUtils
+		ComponentInstance componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfc2FromVfc1, vfResource, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, vfResource, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		vfResource = AtomicOperationUtils.getResourceObject(vfResource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(vfResource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		vfResource = new AtomicOperationUtils().getResourceObject(vfResource, UserRoleEnum.DESIGNER);
 
 		// Service
 		expectedPropertyList = new ArrayList<ComponentInstanceProperty>();
@@ -1172,21 +1172,21 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 				null);
 		expectedPropertyList = PropertyRestUtils.addResourcePropertiesToList(cp, expectedPropertyList);
 
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		componentInstDetails = AtomicOperationUtils
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vfResource, service, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		componentInstDetails = AtomicOperationUtils
+		componentInstDetails = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp, service, UserRoleEnum.DESIGNER, true).left().value();
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		PropertyRestUtils.updatePropertyListWithPathOnComponentInstance(componentInstDetails, service,
 				expectedPropertyList);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
 		PropertyRestUtils.comparePropertyLists(expectedPropertyList, actualPropertyList, false);
 
@@ -1205,7 +1205,7 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 		assertTrue("expected updatePropertyValueOnResourceInstance response code: " + BaseRestUtils.STATUS_CODE_SUCCESS,
 				updatePropertyValueOnResourceInstance.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
-		service = AtomicOperationUtils.getServiceObject(service, UserRoleEnum.DESIGNER);
+		service = new AtomicOperationUtils().getServiceObject(service, UserRoleEnum.DESIGNER);
 
 		actualPropertyList = new ArrayList<>();
 		actualPropertyList = PropertyRestUtils.addComponentInstPropertiesToList(service, actualPropertyList, null);
@@ -1228,27 +1228,27 @@ public class ComponentInstancePropertyTest extends ComponentBaseTest {
 
 	protected Resource createResourceWithPropertyDerivedFromOtherResource(PropertyReqDetails propertyReqDetails,
 			LifeCycleStatesEnum state, Resource derivedFromResource) throws Exception {
-		Resource resource = AtomicOperationUtils.createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
+		Resource resource = new AtomicOperationUtils().createResourcesByCustomNormativeTypeAndCatregory(ResourceTypeEnum.VFC,
 				derivedFromResource, ResourceCategoryEnum.APPLICATION_L4_BORDER, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		if (propertyReqDetails != null) {
-			AtomicOperationUtils.addCustomPropertyToResource(propertyReqDetails, resource, UserRoleEnum.DESIGNER, true);
+			new AtomicOperationUtils().addCustomPropertyToResource(propertyReqDetails, resource, UserRoleEnum.DESIGNER, true);
 		}
-		AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, state, true);
-		return AtomicOperationUtils.getResourceObject(resource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, state, true);
+		return new AtomicOperationUtils().getResourceObject(resource, UserRoleEnum.DESIGNER);
 		// return resource;
 	}
 
 	protected Resource createResourceWithProperty(PropertyReqDetails propertyReqDetails, LifeCycleStatesEnum state)
 			throws Exception {
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_ABSTRACT, UserRoleEnum.DESIGNER, true).left()
 				.value();
 		if (propertyReqDetails != null) {
-			AtomicOperationUtils.addCustomPropertyToResource(propertyReqDetails, resource, UserRoleEnum.DESIGNER, true);
+			new AtomicOperationUtils().addCustomPropertyToResource(propertyReqDetails, resource, UserRoleEnum.DESIGNER, true);
 		}
-		AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, state, true);
-		return AtomicOperationUtils.getResourceObject(resource, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, state, true);
+		return new AtomicOperationUtils().getResourceObject(resource, UserRoleEnum.DESIGNER);
 	}
 
 }

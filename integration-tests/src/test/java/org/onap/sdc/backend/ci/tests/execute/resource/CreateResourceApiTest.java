@@ -1975,7 +1975,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(invariantUUIDcreation, invariantUUIDupdating);
 
 		// Do checkin
-		RestResponse restResponseCheckin = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCheckin = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(restResponseCheckin);
 		Resource checkinResource = ResponseParser
@@ -1986,7 +1986,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.1");
 
 		// Do checkout
-		RestResponse restResponseCheckout = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCheckout = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		BaseRestUtils.checkSuccess(restResponseCheckout);
 		Resource ResourceResource = ResponseParser
@@ -1997,7 +1997,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");
 
 		/*// do certification request
-		RestResponse restResponseCertificationRequest = LifecycleRestUtils.changeResourceState(resourceDetails,
+		RestResponse restResponseCertificationRequest = new LifecycleRestUtils().changeResourceState(resourceDetails,
 				sdncUserDetails, resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		BaseRestUtils.checkSuccess(restResponseCertificationRequest);
 		Resource certificationRequestResource = ResponseParser
@@ -2008,7 +2008,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");
 
 		// start certification
-		RestResponse restResponseStartCertification = LifecycleRestUtils.changeResourceState(resourceDetails,
+		RestResponse restResponseStartCertification = new LifecycleRestUtils().changeResourceState(resourceDetails,
 				sdncUserDetails, resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		BaseRestUtils.checkSuccess(restResponseStartCertification);
 		Resource startCertificationRequestResource = ResponseParser
@@ -2019,7 +2019,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");*/
 
 		// certify
-		RestResponse restResponseCertify = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCertify = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		BaseRestUtils.checkSuccess(restResponseCertify);
 		Resource certifyResource = ResponseParser
@@ -2079,37 +2079,37 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		RestResponse restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		RestResponse restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);*/
 		// certify
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser, LifeCycleStatesEnum.CERTIFY);
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser, LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		// update resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		resourceDetails.setDescription("updatedDescription");
@@ -2120,48 +2120,48 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// checkout resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// cancel certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.CANCELCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// failure
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.FAILCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// upload artifact
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		ArtifactReqDetails artifactDetails = ElementFactory.getDefaultArtifact();
 		ArtifactRestUtils.addInformationalArtifactToResource(artifactDetails, designerUser,
@@ -2170,7 +2170,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		// create instance
