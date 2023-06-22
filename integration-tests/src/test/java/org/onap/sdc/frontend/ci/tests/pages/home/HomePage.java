@@ -26,7 +26,10 @@ import static org.hamcrest.core.Is.is;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum.Dashboard;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
+import org.onap.sdc.frontend.ci.tests.pages.ImportTypePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
@@ -106,6 +109,18 @@ public class HomePage extends AbstractPageObject {
         return new ResourceCreatePage(webDriver);
     }
 
+    public void clickOnImportType() {
+        hoverToImportArea().findElement(By.xpath(XpathSelector.IMPORT_TYPE_BTN.getXpath())).click();
+    }
+
+    public ImportTypePage clickOnImportType(String fullFilename) {
+        clickOnImportType();
+        // TODO: Add option to change type
+        findElement(By.xpath(XpathSelector.IMPORT_TYPE_FILE_BTN.getXpath())).sendKeys(fullFilename);
+        findElement(By.xpath(XpathSelector.IMPORT.getXpath())).click();
+        return new ImportTypePage(webDriver);
+    }
+
     private void clickOnImport(final By locator, final String fullFileName) {
         hoverToImportArea().findElement(locator).sendKeys(fullFileName);
     }
@@ -182,6 +197,9 @@ public class HomePage extends AbstractPageObject {
         ADD_PNF_BTN("createPNFButton", "//*[@data-tests-id='%s']"),
         ADD_CR_BTN("createCRButton", "//*[@data-tests-id='%s']"),
         IMPORT_VFC_BTN("fileimportVFCbutton", "//*[@data-tests-id='%s']"),
+        IMPORT_TYPE_BTN(Dashboard.IMPORT_TYPE.getValue(), "//*[@data-tests-id='%s']"),
+        IMPORT_TYPE_FILE_BTN(Dashboard.IMPORT_TYPE_FILE.getValue(), "//*[@data-tests-id='%s']"),
+        IMPORT(Dashboard.IMPORT.getValue(), "//*[@data-tests-id='%s']"),
         ADD_BUTTONS_AREA("AddButtonsArea", "//*[@data-tests-id='%s']"),
         IMPORT_BUTTONS_AREA("importButtonsArea", "//*[@data-tests-id='%s']"),
         COMPONENT("//*[@data-tests-id='%s']");
