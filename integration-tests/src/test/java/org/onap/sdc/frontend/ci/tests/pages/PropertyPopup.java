@@ -56,6 +56,35 @@ public class PropertyPopup {
         propertyNameField.sendKeys(name);
     }
 
+    public void setConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting constraint value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ConstraintEnum.VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setMinConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting min value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(ConstraintEnum.MIN_VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setMaxConstraintValue(String value) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting max value: %s ", value));
+        WebElement constraintValueField = GeneralUIUtils.getWebElementByTestID(ConstraintEnum.MAX_VALUE.getValue());
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
+    public void setValidConstraintValue(String value, int inputField) {
+        SetupCDTest.getExtendTest().log(Status.INFO, String.format("Setting valid value: %s ", value));
+        List<WebElement> constraintValueFields = GeneralUIUtils.getInputElements(ConstraintEnum.VALID_VALUE.getValue());
+        WebElement constraintValueField = constraintValueFields.get(inputField);
+        constraintValueField.clear();
+        constraintValueField.sendKeys(value);
+    }
+
     /**
      * Set the default value to be a TOSCA Function
      * @param toscaFunction 
@@ -132,6 +161,22 @@ public class PropertyPopup {
     public void clickAdd() {
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesPopupEnum.ADD.getValue());
         //GeneralUIUtils.ultimateWait();
+    }
+
+    public void clickAddConstraint() {
+        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ConstraintEnum.ADD.getValue());
+    }
+
+    public void clickAddValidValue() {
+        GeneralUIUtils.clickOnElementByTestId(ConstraintEnum.ADD_VALID_VALUE.getValue());
+    }
+
+    public void clickDeleteValidValue() {
+        GeneralUIUtils.clickOnElementByTestId(ConstraintEnum.DELETE_VALID_VALUE.getValue());
+    }
+
+    public void setConstraintType(ConstraintType constraintType) {
+        GeneralUIUtils.getSelectList(constraintType.getType(), ConstraintEnum.TYPE.getValue());
     }
 
     public void clickSave() throws InterruptedException {
