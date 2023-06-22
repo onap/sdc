@@ -80,10 +80,10 @@ public abstract class SimpleOneRsrcOneServiceTest extends ComponentBaseTest {
 
 	protected void createComponents() throws Exception {
 
-		RestResponse response = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails);
+		RestResponse response = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 
-		response = ServiceRestUtils.createService(serviceDetails, sdncDesignerDetails);
+		response = new ServiceRestUtils().createService(serviceDetails, sdncDesignerDetails);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 
 	}

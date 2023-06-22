@@ -40,8 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils.getServiceObject;
-
 public class RequirementsTest extends ComponentBaseTest {
     @Rule
     public static final TestName name = new TestName();
@@ -54,7 +52,7 @@ public class RequirementsTest extends ComponentBaseTest {
         user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
         component = ElementFactory.getDefaultService();
         component.setName("comp_req" + Math.random());
-        ServiceRestUtils.createService(component, user);
+        new ServiceRestUtils().createService(component, user);
     }
 
     @Test
@@ -81,7 +79,7 @@ public class RequirementsTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "updateRequirementTest")
     public void getRequirementTest() throws Exception {
-        Service service = AtomicOperationUtils.getServiceObject(component.getUniqueId());
+        Service service = new AtomicOperationUtils().getServiceObject(component.getUniqueId());
 
         List<RequirementDefinition> requirementDefinitionList = service.getRequirements().values()
                 .stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -94,7 +92,7 @@ public class RequirementsTest extends ComponentBaseTest {
 
     @Test(dependsOnMethods = "getRequirementTest")
     public void deleteRequirementTest() throws Exception {
-        Service service = AtomicOperationUtils.getServiceObject(component.getUniqueId());
+        Service service = new AtomicOperationUtils().getServiceObject(component.getUniqueId());
 
         List<RequirementDefinition> requirementDefinitionList = service.getRequirements().values()
                 .stream().flatMap(Collection::stream).collect(Collectors.toList());

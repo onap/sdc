@@ -75,7 +75,7 @@ public class ImportCsarValidateArtifacts extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
 		resourceDetails.setCsarUUID(artifactName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -90,7 +90,7 @@ public class ImportCsarValidateArtifacts extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
 		resourceDetails.setCsarUUID(artifactName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
 				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		assertTrue(createResource.getErrorCode() != 201 && createResource.getErrorCode() != 500);
 

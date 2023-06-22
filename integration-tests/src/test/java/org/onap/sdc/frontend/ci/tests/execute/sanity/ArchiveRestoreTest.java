@@ -22,37 +22,37 @@ package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
 import com.aventstack.extentreports.Status;
 import fj.data.Either;
+import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
+import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
+import org.onap.sdc.backend.ci.tests.datatypes.VendorLicenseModel;
+import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
+import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
+import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtilsViaApis;
+import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.TopMenuButtonsEnum;
+import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.GeneralPageElements;
+import org.onap.sdc.frontend.ci.tests.pages.GovernorOperationPage;
 import org.onap.sdc.frontend.ci.tests.pages.HomePage;
 import org.onap.sdc.frontend.ci.tests.pages.OpsOperationPage;
+import org.onap.sdc.frontend.ci.tests.utilities.CatalogUIUtilitis;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.HomeUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.ResourceUIUtils;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
-import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
-import org.onap.sdc.frontend.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.VendorLicenseModel;
-import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.LifeCycleStatesEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
-import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
-import org.onap.sdc.frontend.ci.tests.pages.GovernorOperationPage;
-import org.onap.sdc.frontend.ci.tests.utilities.CatalogUIUtilitis;
-import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.HomeUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.ResourceUIUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtillViaApis;
-import org.onap.sdc.backend.ci.tests.utils.general.VendorLicenseModelRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtils;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertTrue;
@@ -60,7 +60,6 @@ import static org.testng.AssertJUnit.assertTrue;
 public class ArchiveRestoreTest extends SetupCDTest {
 
     private User sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-
 
     @Test
     public void updateVSP_WhenVF_Archived() throws Throwable {
@@ -70,24 +69,24 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
 //      1. Import VSP v1.0
         String filePath = FileHandling.getUpdateVSPVnfRepositoryPath();
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
-            .getVendorLicenseName()));
+                .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
-            vendorLicenseModel, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+                vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //		3. Create Service add to it the certified VF and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
 //		4. archive VF(1.0)
@@ -97,9 +96,9 @@ public class ArchiveRestoreTest extends SetupCDTest {
         GeneralPageElements.clickSubmitForTestingButtonErrorCase(service.getName());
 //		6. Update VSP to v2.0 - onboard level
         getExtendTest().log(Status.INFO, "Upgrading the VSP with new file: " + vnfFile2);
-        VendorSoftwareProductRestUtils.updateVendorSoftwareProductToNextVersion(vendorSoftwareProductObject, sdncDesignerDetails, filePath, vnfFile2);
+        new VendorSoftwareProductRestUtils().updateVendorSoftwareProductToNextVersion(vendorSoftwareProductObject, sdncDesignerDetails, filePath, vnfFile2);
         getExtendTest().log(Status.INFO, String.format("Validating VSP %s upgrade to version 2.0: ", vnfFile2));
-        VendorSoftwareProductRestUtils.validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails);
+        new VendorSoftwareProductRestUtils().validateVspExist(vendorSoftwareProductObject, sdncDesignerDetails);
 //		7. Update the VF from VSP when it archived  and restore - via UI
         getExtendTest().log(Status.INFO, String.format("Going to update VF %s with VSP v2.0", resourceReqDetails.getName()));
         CompositionPage.moveToHomeScreen();
@@ -120,28 +119,28 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
 //      1. Import VSP v1.0
         String filePath = FileHandling.getUpdateVSPVnfRepositoryPath();
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
-            .getVendorLicenseName()));
+                .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
-            vendorLicenseModel, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+                vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
 //      3. Archive VSP (onboarding page-Amdocs side)
         getExtendTest().log(Status.INFO, String.format("Going to archive component OB side: %s", resource.getName()));
-        VendorSoftwareProductRestUtils.archiveVendorSoftwareProduct(vendorSoftwareProductObject, sdncDesignerDetails);
+        new VendorSoftwareProductRestUtils().archiveVendorSoftwareProduct(vendorSoftwareProductObject, sdncDesignerDetails);
         getExtendTest().log(Status.INFO, String.format("Succeed to archive component %s, OB side", resource.getName()));
 //      4. chekout resource and check that VF is archived
         CatalogUIUtilitis.clickTopMenuButton(TopMenuButtonsEnum.CATALOG);
         HomeUtils.findComponentAndClick(resource.getName());
         GeneralPageElements.clickCheckoutButton();
-        resource = AtomicOperationUtils.getResourceObject(resource.getUniqueId());
+        resource = new AtomicOperationUtils().getResourceObject(resource.getUniqueId());
         getExtendTest().log(Status.INFO, String.format("Going to validate is VSP archived: %s", resource.getName()));
         assertTrue("Validate isVspArchived flag, expected: true, but was: " + resource.isVspArchived(), resource.isVspArchived().equals(true));
         String expectedText = "VSP is archived";
@@ -153,12 +152,12 @@ public class ArchiveRestoreTest extends SetupCDTest {
         GeneralPageElements.clickCertifyButtonNoUpgradePopupDismissErrorCase(resource.getName());
 //      6. restore
         getExtendTest().log(Status.INFO, String.format("Going to restore component OB side: %s", resource.getName()));
-        VendorSoftwareProductRestUtils.restoreVendorSoftwareProduct(vendorSoftwareProductObject, sdncDesignerDetails);
+        new VendorSoftwareProductRestUtils().restoreVendorSoftwareProduct(vendorSoftwareProductObject, sdncDesignerDetails);
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Succeed to restore component %s, OB side", resource.getName()));
 //      7. certify - should pass
         getExtendTest().log(Status.INFO, String.format("Going to certify resource %s ", resource.getName()));
         GeneralPageElements.clickCertifyButtonNoUpgradePopupDismiss(resource.getName());
-        resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "2.0");
+        resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resource.getName(), "2.0");
         assertTrue("Validate isVspArchived flag, expected: false, but was: " + resource.isVspArchived(), resource.isVspArchived().equals(false));
     }
 
@@ -168,27 +167,27 @@ public class ArchiveRestoreTest extends SetupCDTest {
         String vnfFile1 = "1-2017-404_vUSP_vCCF_AIC3.0-(VOIP)_v6.0.zip";
 //      1. Import VSP v1.0
         String filePath = FileHandling.getUpdateVSPVnfRepositoryPath();
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(sdncDesignerDetails);
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(sdncDesignerDetails);
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software License (VLM): %s v1.0", vendorLicenseModel
-            .getVendorLicenseName()));
+                .getVendorLicenseName()));
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         getExtendTest().log(Status.INFO, String.format("Creating Vendor Software Product (VSP): %s v1.0 from heat file: %s ", resourceReqDetails.getName(), vnfFile1));
-        VendorSoftwareProductObject vendorSoftwareProductObject = VendorSoftwareProductRestUtils.createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
-            vendorLicenseModel, null);
+        VendorSoftwareProductObject vendorSoftwareProductObject = new VendorSoftwareProductRestUtils().createAndFillVendorSoftwareProduct(resourceReqDetails, vnfFile1, filePath, this.sdncDesignerDetails,
+                vendorLicenseModel, null);
 //		2. Create VF from VSP, certify - v1.0 is created
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         getExtendTest().log(Status.INFO, String.format("Creating Virtual Function (VF): %s v1.0", resourceReqDetails.getName()));
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
         getExtendTest().log(Status.INFO, String.format("Certify the VF"));
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 //		3. Create Service add to it the certified VF and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding VF instance to Service"));
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         reloginWithNewRole(UserRoleEnum.GOVERNOR);
         GeneralUIUtils.findComponentAndClick(service.getName());
@@ -203,7 +202,6 @@ public class ArchiveRestoreTest extends SetupCDTest {
 
     }
 
-
     @Test
     public void certificationOfArchivedCR() throws Exception {
 
@@ -211,12 +209,12 @@ public class ArchiveRestoreTest extends SetupCDTest {
         ResourceUIUtils.createCR(resourceReqDetails, sdncDesignerDetails);
         GeneralPageElements.clickCertifyButtonNoUpgradePopupDismiss(resourceReqDetails.getName());
         GeneralUIUtils.ultimateWait();
-        Resource resource = (Resource) AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceReqDetails.getName(), "1.0");
+        Resource resource = (Resource) new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceReqDetails.getName(), "1.0");
 //		1. Create Service add to it the certified CR and certify the Service v1.0
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        org.openecomp.sdc.be.model.Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        org.openecomp.sdc.be.model.Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
         getExtendTest().log(Status.INFO, String.format("Creating Service: %s v1.0", serviceReqDetails.getName()));
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstance = addComponentInstanceToComponentContainer.left().value();
         getExtendTest().log(Status.INFO, String.format("Adding CR instance to Service"));
 //		2. archive CR(1.0)

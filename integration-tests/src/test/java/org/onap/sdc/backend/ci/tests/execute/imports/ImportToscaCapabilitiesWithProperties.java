@@ -90,7 +90,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 	@Test
 	public void validateCapabilityTypePropertiesSucceed() throws IOException {
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		RestResponse createResourceRes = ResourceRestUtils.getResourceByNameAndVersion(user.getUserId(), "Compute",
+		RestResponse createResourceRes = new ResourceRestUtils().getResourceByNameAndVersion(user.getUserId(), "Compute",
 				"1.0");
 		BaseRestUtils.checkSuccess(createResourceRes);
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(createResourceRes.getResponse());
@@ -194,7 +194,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 
 		List<ImmutablePair<String, String>> propertyNamesValues = new ArrayList<>();
@@ -205,7 +205,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails2 = ElementFactory.getDefaultResource();
 		resourceDetails2.setCsarUUID("vf_with_cap_prop_override_cap_type_prop.csar");
 		resourceDetails2.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 
 		checkResource(createResource, 8, container, "DBMS", propertyNamesValues);
@@ -229,13 +229,13 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkErrorMessageResponse(createResource, ActionStatus.INVALID_PROPERTY);
 
 		ResourceReqDetails resourceDetails2 = ElementFactory.getDefaultResource();
 		resourceDetails2.setCsarUUID("vf_with_cap_prop_override_cap_type_prop_failed.csar");
 		resourceDetails2.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 		BaseRestUtils.checkErrorMessageResponse(createResource, ActionStatus.INVALID_PROPERTY);
 
 	}
@@ -272,7 +272,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 
 		List<ImmutablePair<String, String>> propertyNamesValues = new ArrayList<>();
@@ -288,7 +288,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 		ResourceReqDetails resourceDetails2 = ElementFactory.getDefaultResource();
 		resourceDetails2.setCsarUUID("vf_with_cap_prop_override_cap_type_prop1.csar");
 		resourceDetails2.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 
 		checkResource(createResource, 8, container, "DBMS", propertyNamesValues);
@@ -320,14 +320,14 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkErrorResponse(createResource, ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
 				propertyForTestName);
 
 		ResourceReqDetails resourceDetails2 = ElementFactory.getDefaultResource();
 		resourceDetails2.setCsarUUID("vf_with_cap_prop_override_cap_type_prop1_failed.csar");
 		resourceDetails2.setResourceType(ResourceTypeEnum.VF.name());
-		createResource = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		createResource = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 		BaseRestUtils.checkErrorResponse(createResource, ActionStatus.PROPERTY_NAME_ALREADY_EXISTS,
 				propertyForTestName);
 	}
@@ -342,7 +342,7 @@ public class ImportToscaCapabilitiesWithProperties extends ComponentBaseTest {
 
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VFC.name());
-		return ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		return new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 	}
 
 	// TODO Tal: Since Cashing change partial resource returned that causes null

@@ -254,7 +254,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
      */
     public Component updateComponentDetailsByLifeCycleState(LifeCycleStatesEnum chosenLifeCycleState, Component component) throws Exception {
         if (LifeCycleStatesEnum.CHECKOUT.equals(chosenLifeCycleState)) {
-            component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+            component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         } else {
             component = getNewerVersionOfComponent(component, chosenLifeCycleState);
         }
@@ -278,18 +278,18 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             component = getComponentInTargetLifeCycleState(ComponentTypeEnum.SERVICE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
 
             Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, null);
-            AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+            new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
 
             // Add artifact to service if asked for certification request - must be at least one artifact for the flow
 //			if((LifeCycleStatesEnum.CERTIFICATIONREQUEST == lifeCycleStatesEnum) || (LifeCycleStatesEnum.STARTCERTIFICATION == lifeCycleStatesEnum)) {
 //			}
-            AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, component, UserRoleEnum.DESIGNER, true, true).left().value();
-            component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
+            new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, component, UserRoleEnum.DESIGNER, true, true).left().value();
+            component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
         } else {
             component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
             Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, resourceTypeEnum);
-            AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-            component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
+            new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+            component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, lifeCycleStatesEnum, true).getLeft();
         }
         return component;
     }
@@ -321,9 +321,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             String resourceUniqueID = component.getUniqueId();
 
             if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-                resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
+                resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
             } else {
-                resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
+                resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), String.format("%.1f", Double.parseDouble(component.getVersion()) + 0.1));
             }
 
             String resourceNewVersion = resourceDetails.getVersion();
@@ -338,9 +338,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             Assert.assertNotEquals(resourceUniqueID, resourceNewUniqueID, "Expected that resource will have new unique ID.");
         } else {
             if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-                resourceDetails = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+                resourceDetails = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
             } else {
-                resourceDetails = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+                resourceDetails = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
             }
         }
         return resourceDetails;
@@ -1102,10 +1102,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, resourceTypeEnum);
         ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
         uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
-        resourceInstanceDetails = AtomicOperationUtils.changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resourceInstanceDetails = new AtomicOperationUtils().changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         Component component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-        component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+        component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         Map<String, ArtifactDefinition> deploymentArtifacts;
@@ -1438,7 +1438,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             component = uploadArtifactOnAssetViaExternalAPI(componentTypeEnum, LifeCycleStatesEnum.CHECKIN, artifactType, null);
         }
 
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
 
         switch (uploadArtifactTestType) {
             case "updateArtifactWithInvalidCheckSum":
@@ -1638,7 +1638,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         String componentVersionBeforeUpdate = null;
 
         // get updated artifact data
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         componentVersionBeforeUpdate = component.getVersion();
 
         Map<String, ArtifactDefinition> deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
@@ -1662,9 +1662,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         }
 
         if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
-            component = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+            component = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
         } else {
-            component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+            component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
         }
 
         // Get list of deployment artifact + download them via external API
@@ -1698,7 +1698,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // validate response code
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, errorInfo.getCode(), "Response code is not correct.");
-        component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+        component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
@@ -1779,7 +1779,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             }
         }
 
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         componentVersionBeforeUpdate = component.getVersion();
         deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
         numberOfArtifact = deploymentArtifacts.size();
@@ -2226,7 +2226,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     public void deleteArtifactOnAssetWhichInInvalidStateForUploading(ComponentTypeEnum componentTypeEnum, String artifactType) throws Exception {
         getExtendTest().log(Status.INFO, String.format("componentTypeEnum: %s, artifactType: %s", componentTypeEnum, artifactType));
         Component component = uploadArtifactOnAssetViaExternalAPI(componentTypeEnum, LifeCycleStatesEnum.CHECKOUT, artifactType, null);
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 
         Map<String, ArtifactDefinition> deploymentArtifacts = getDeploymentArtifactsOfAsset(component, componentTypeEnum);
         String artifactUUID = null;
@@ -2270,10 +2270,10 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         Component resourceInstanceDetails = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.getValue(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, resourceTypeEnum);
         ArtifactReqDetails artifactReqDetails = ElementFactory.getArtifactByType("ci", ArtifactTypeEnum.SNMP_TRAP.getType(), true, false);
         uploadArtifactOfAssetIncludingValiditionOfAuditAndResponseCode(resourceInstanceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), artifactReqDetails, 200);
-        resourceInstanceDetails = AtomicOperationUtils.changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+        resourceInstanceDetails = new AtomicOperationUtils().changeComponentState(resourceInstanceDetails, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
         Component component = getComponentInTargetLifeCycleState(ComponentTypeEnum.RESOURCE.toString(), UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, null);
-        AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
-        component = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
+        new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceInstanceDetails, component, UserRoleEnum.DESIGNER, true).left().value();
+        component = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, component.getName(), component.getVersion());
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.OK.name());
         Map<String, ArtifactDefinition> deploymentArtifacts;
@@ -2313,9 +2313,9 @@ public class CRUDExternalAPI extends ComponentBaseTest {
     // delete artifact via external API + check audit & response code
     protected Component deleteArtifactOnAssetViaExternalAPI(Component component, ComponentTypeEnum componentTypeEnum, LifeCycleStatesEnum chosenLifeCycleState) throws Exception {
         String artifactName = null;
-        component = AtomicOperationUtils.changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
+        component = new AtomicOperationUtils().changeComponentState(component, UserRoleEnum.DESIGNER, chosenLifeCycleState, true).getLeft();
         if (!LifeCycleStatesEnum.CHECKOUT.equals(chosenLifeCycleState)) {
-            component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+            component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         } else {
             component = getNewerVersionOfComponent(component, chosenLifeCycleState);
         }
@@ -2377,7 +2377,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, expectedResponseCode, "Response code is not correct.");
-//		component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+//		component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
@@ -2389,7 +2389,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
         // Check response of external API
         Integer responseCode = restResponse.getErrorCode();
         Assert.assertEquals(responseCode, expectedResponseCode, "Response code is not correct.");
-//		component = AtomicOperationUtils.getComponentObject(component, UserRoleEnum.DESIGNER);
+//		component = new AtomicOperationUtils().getComponentObject(component, UserRoleEnum.DESIGNER);
         return restResponse;
     }
 
@@ -2420,17 +2420,17 @@ public class CRUDExternalAPI extends ComponentBaseTest {
             if (resourceTypeEnum == null) {
                 resourceTypeEnum = ResourceTypeEnum.VF;
             }
-            Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
+            Either<Resource, RestResponse> createdResource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
             resourceDetails = createdResource.left().value();
-            resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
+            resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
         } else {
-            Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(creatorUser, true);
+            Either<Service, RestResponse> createdResource = new AtomicOperationUtils().createDefaultService(creatorUser, true);
             resourceDetails = createdResource.left().value();
             // Add artifact to service if asked for certifcationrequest - must be at least one artifact for the flow
             if ((LifeCycleStatesEnum.CERTIFICATIONREQUEST == targetLifeCycleState) || (LifeCycleStatesEnum.STARTCERTIFICATION == targetLifeCycleState)) {
-                AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetails, UserRoleEnum.DESIGNER, true, true).left().value();
+                new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetails, UserRoleEnum.DESIGNER, true, true).left().value();
             }
-            resourceDetails = AtomicOperationUtils.changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
+            resourceDetails = new AtomicOperationUtils().changeComponentState(resourceDetails, creatorUser, targetLifeCycleState, true).getLeft();
         }
         return resourceDetails;
     }

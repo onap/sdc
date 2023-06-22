@@ -68,12 +68,12 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 
 		for (String version : versions) {
 
-			response = ResourceRestUtils.deleteResourceByNameAndVersion(designerDetails,
+			response = new ResourceRestUtils().deleteResourceByNameAndVersion(designerDetails,
 					resourceDetails.getName().toUpperCase(), version);
 			AssertJUnit.assertTrue("delete request returned status:" + response.getErrorCode(),
 					response.getErrorCode() == 204 || response.getErrorCode() == 404);
 
-			response = ResourceRestUtils.deleteResourceByNameAndVersion(designerDetails, resourceDetails.getName(),
+			response = new ResourceRestUtils().deleteResourceByNameAndVersion(designerDetails, resourceDetails.getName(),
 					version);
 			AssertJUnit.assertTrue("delete request returned status:" + response.getErrorCode(),
 					response.getErrorCode() == 204 || response.getErrorCode() == 404);
@@ -129,32 +129,32 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		logger.debug("Changing resource life cycle ");
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 				checkoutResource.getErrorCode().intValue());
-		/*checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		/*checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 				checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 				checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 				checkoutResource.getErrorCode().intValue());
@@ -162,19 +162,19 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		// change resource version to 1.5
 		for (int x = 0; x < 5; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 			AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			AssertJUnit.assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -188,7 +188,7 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		DbUtils.cleanAllAudits();
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		AssertJUnit.assertNotNull("check response object is not null after create resource", restResponse);
@@ -214,18 +214,18 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 
 		logger.debug("Changing resource life cycle ");
 		for (int x = 0; x < 4; x++) {
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 			origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 		}
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -246,7 +246,7 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		// restResponse);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -270,13 +270,13 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
@@ -284,16 +284,16 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 
 		// resource version 1.0
 		logger.debug("Changing resource life cycle ");
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 		origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
@@ -301,24 +301,24 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		// change resource version to 1.5
 		for (int x = 0; x < 5; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		// resource version 2.0
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 		origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
@@ -326,20 +326,20 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		// change resource version to 2.5
 		for (int x = 0; x < 5; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 			origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -362,13 +362,13 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
@@ -376,15 +376,15 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		}
 
 		logger.debug("Changing resource life cycle ");
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		/*checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		/*checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -408,13 +408,13 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
@@ -422,18 +422,18 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		}
 
 		logger.debug("Changing resource life cycle ");
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -457,32 +457,32 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 
 		}
 		logger.debug("Changing resource life cycle ");
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 		origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -506,57 +506,57 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 		RestResponse checkoutResource;
 		for (int x = 0; x < 4; x++) {
 			logger.debug("Changing resource life cycle ");
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		// get to version 1.0
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 		origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 
 		// change resource version to 1.5
 		for (int x = 0; x < 4; x++) {
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
-			checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, designerDetails,
+			checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, designerDetails,
 					resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 			assertEquals("Check response code after checkout resource", 200,
 					checkoutResource.getErrorCode().intValue());
 		}
 
 		// get to version 1.0
-/*		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+/*		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
-		checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+		checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 		origVersionsMap.put(resourceDetails.getVersion(), resourceDetails.getUniqueId());
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails,
 				resourceDetails.getUniqueId());
 		Resource res = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
@@ -567,7 +567,7 @@ public class GetAllResourceVersions extends ComponentBaseTest {
 	@Test
 	public void getResourceAllVersions_ResourceNotFound() throws Exception {
 
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(designerDetails, "123456789");
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(designerDetails, "123456789");
 		assertEquals("Check response code after checkout resource", 404, resourceGetResponse.getErrorCode().intValue());
 
 	}

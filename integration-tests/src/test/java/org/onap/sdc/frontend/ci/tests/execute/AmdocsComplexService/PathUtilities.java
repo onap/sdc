@@ -271,7 +271,7 @@ public class PathUtilities {
     public static Pair<RestResponse, ServiceReqDetails> getServiceIDByNameAndVersion(String serviceName, String version) throws Exception {
         User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 
-        RestResponse restResponse = ServiceRestUtils.getServiceByNameAndVersion(sdncUserDetails, serviceName, version);
+        RestResponse restResponse = new ServiceRestUtils().getServiceByNameAndVersion(sdncUserDetails, serviceName, version);
         ServiceReqDetails service = new ServiceReqDetails();
         service.setName(serviceName);
         service.setUniqueId(ResponseParser.getUniqueIdFromResponse(restResponse));
@@ -282,7 +282,7 @@ public class PathUtilities {
 
     public static RestResponse createServiceAPI(User sdncUserDetails, ServiceReqDetails serviceDetails) throws Exception {
         String serviceBaseVersion = "0.1";
-        RestResponse restResponse = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
+        RestResponse restResponse = new ServiceRestUtils().createService(serviceDetails, sdncUserDetails);
         assertEquals("Check API response code for CreateServiceAPI call", HttpStatus.SC_CREATED, restResponse.getErrorCode().intValue());
         return restResponse;
     }
@@ -296,7 +296,7 @@ public class PathUtilities {
         // ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
 
         // get service
-        RestResponse restResponse = ServiceRestUtils.getServiceByNameAndVersion(sdncUserDetails, serviceDetails.getName(),
+        RestResponse restResponse = new ServiceRestUtils().getServiceByNameAndVersion(sdncUserDetails, serviceDetails.getName(),
                 serviceBaseVersion);
         assertEquals("Check API response code for GetServiceAPI call", HttpStatus.SC_OK, restResponse.getErrorCode().intValue());
 

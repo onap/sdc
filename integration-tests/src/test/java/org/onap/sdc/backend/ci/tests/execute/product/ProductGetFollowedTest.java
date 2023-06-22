@@ -58,9 +58,9 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 	public void followedPageTest() throws Exception { // Actions
 		RestResponse changeLifeCycleResponse;
 		changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product200, productManager1, LifeCycleStatesEnum.CHECKIN);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 		changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product400, productManager2, LifeCycleStatesEnum.CHECKIN);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 		// Expected users Followed page
 		ProductValidationUtils.checkUserFollowedPage(productManager1, product200);
 		ProductValidationUtils.verifyProductsNotExistInUserFollowedPage(productManager1, product400);
@@ -77,7 +77,7 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 		ProductRestUtils.changeProductLifeCycle(product400, productManager2, LifeCycleStatesEnum.CHECKIN);
 		ProductRestUtils.changeProductLifeCycle(product400, productManager1, LifeCycleStatesEnum.CHECKOUT);
 		RestResponse changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product200, productManager2, LifeCycleStatesEnum.CHECKOUT);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 
 		ProductValidationUtils.checkUserFollowedPage(productManager1, product400);
 		ProductValidationUtils.verifyProductsNotExistInUserFollowedPage(productManager2, product400);
@@ -104,7 +104,7 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 	public void followedPageAdminCheckoutProductWasCheckedinByPm() throws Exception {
 		ProductRestUtils.changeProductLifeCycle(product400, productManager2, LifeCycleStatesEnum.CHECKIN);
 		RestResponse changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product400, adminUser, LifeCycleStatesEnum.CHECKOUT);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 
 		ProductValidationUtils.checkUserFollowedPage(productManager1, product200);
 		ProductValidationUtils.verifyProductsNotExistInUserFollowedPage(productManager1, product400);
@@ -119,7 +119,7 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 		ProductRestUtils.changeProductLifeCycle(product400, productManager2, LifeCycleStatesEnum.CHECKIN);
 		ProductRestUtils.changeProductLifeCycle(product400, adminUser, LifeCycleStatesEnum.CHECKOUT);
 		RestResponse changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product400, adminUser, LifeCycleStatesEnum.CHECKIN);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 
 		ProductValidationUtils.checkUserFollowedPage(productManager1, product200);
 		ProductValidationUtils.verifyProductsNotExistInUserFollowedPage(productManager1, product400);
@@ -136,7 +136,7 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 		ProductRestUtils.changeProductLifeCycle(product200, adminUser, LifeCycleStatesEnum.CHECKOUT);
 		ProductRestUtils.changeProductLifeCycle(product200, adminUser, LifeCycleStatesEnum.CHECKIN);
 		RestResponse changeLifeCycleResponse = ProductRestUtils.changeProductLifeCycle(product200, productManager2, LifeCycleStatesEnum.CHECKOUT);
-		ResourceRestUtils.checkSuccess(changeLifeCycleResponse);
+		new ResourceRestUtils().checkSuccess(changeLifeCycleResponse);
 
 		ProductValidationUtils.verifyProductsNotExistInUserFollowedPage(productManager1, product200);
 		ProductValidationUtils.checkUserFollowedPage(productManager2, product200, product400);
@@ -153,11 +153,11 @@ public class ProductGetFollowedTest extends ProductBaseTest {
 		productDetails400 = ElementFactory.getDefaultProduct("CiProd400", defaultCategories);
 
 		RestResponse createProduct = ProductRestUtils.createProduct(productDetails200, productManager1);
-		ResourceRestUtils.checkCreateResponse(createProduct);
+		new ResourceRestUtils().checkCreateResponse(createProduct);
 		product200 = ResponseParser.parseToObjectUsingMapper(createProduct.getResponse(), Product.class);
 
 		createProduct = ProductRestUtils.createProduct(productDetails400, productManager2);
-		ResourceRestUtils.checkCreateResponse(createProduct);
+		new ResourceRestUtils().checkCreateResponse(createProduct);
 		product400 = ResponseParser.parseToObjectUsingMapper(createProduct.getResponse(), Product.class);
 	}
 

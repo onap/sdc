@@ -150,7 +150,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
 
     @Test
     public void onboardVNFTestSanity() throws Exception {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.VNF);
         String vnfFile = fileNamesFromFolder.get(0);
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
@@ -427,9 +427,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        Service containerObject = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
-        Resource instanceObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
-        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        Service containerObject = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+        Resource instanceObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
+        ComponentInstance componentInstanceDetails = new AtomicOperationUtils().addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
 
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
 
@@ -642,9 +642,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
             getExtendTest().log(Status.INFO, msg);
             LOGGER.info(msg);
 
-            VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+            VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
             ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-            VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils
+            VendorSoftwareProductObject createVendorSoftwareProduct = new VendorSoftwareProductRestUtils()
                 .createVendorSoftwareProduct(resourceReqDetails, vnfFile, pathFile, getUser(), vendorLicenseModel);
 
             getExtendTest().log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));

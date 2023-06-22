@@ -32,7 +32,7 @@ import org.onap.sdc.backend.ci.tests.utils.CsarParserUtils;
 import org.onap.sdc.backend.ci.tests.utils.ToscaParserUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtillViaApis;
+import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtilsViaApis;
 import org.onap.sdc.backend.ci.tests.utils.rest.ArtifactRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.PropertyRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
@@ -122,25 +122,25 @@ public class ToscaValidationTest extends SetupCDTest {
 //TODO--------------------------AMDOCS DOWNLOAD VIA APIS--------------------------------
 //--------------------------VF--------------------------------
 //		create VF base on VNF imported from previous step - have, resourceReqDetails object include part of resource metadata
-        Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource = new OnboardingUtilsViaApis().createResourceFromVSP(resourceReqDetails);
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 //--------------------------SERVICE--------------------------------
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();//getServiceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 //--------------------------getProperties set values and declare--------------------
-        Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
+        Component componentObject = new AtomicOperationUtils().getComponentObject(service, UserRoleEnum.DESIGNER);
         Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
         setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
         PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         Map<String, VfModuleDefinition> expectedVfModulesDefinitionObject = createExpectedVfModuleDefinitionObject(resource, service, listTypeHeatMetaDefinition);
 
         File serviceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
-        OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + serviceCsarFileName));
+        new OnboardingUtilsViaApis().downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + serviceCsarFileName));
         ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + serviceCsarFileName));
 //--------------------------initialization of Tosca Parser--------------------------------
         fdntCsarHelper = initSdcCsarHelper(serviceCsarFileName, filesFolder);
@@ -192,28 +192,28 @@ public class ToscaValidationTest extends SetupCDTest {
         expectedToscaMainDefinition = addGenericPropertiesToToscaDefinitionObject(expectedToscaMainDefinition, genericPropName);
         ToscaDefinition toscaExpectedMainServiceDefinition = new ToscaDefinition(expectedToscaMainDefinition);
 //--------------------------VF--------------------------------
-        Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
-        resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        Resource resource = new AtomicOperationUtils().createResourceByResourceDetails(resourceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
         ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 
 //--------------------------SERVICE--------------------------------
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        Service service = AtomicOperationUtils.createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
+        Service service = new AtomicOperationUtils().createCustomService(serviceReqDetails, UserRoleEnum.DESIGNER, true).left().value();
 
-        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = AtomicOperationUtils.addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
+        Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainer = new AtomicOperationUtils().addComponentInstanceToComponentContainer(resource, service, UserRoleEnum.DESIGNER, true);
         ComponentInstance componentInstanceDefinition = addComponentInstanceToComponentContainer.left().value();
 
 //--------------------------getProperties set values and declare--------------------
 
-        Component componentObject = AtomicOperationUtils.getComponentObject(service, UserRoleEnum.DESIGNER);
+        Component componentObject = new AtomicOperationUtils().getComponentObject(service, UserRoleEnum.DESIGNER);
         Map<String, List<ComponentInstanceInput>> componentInstancesInputs = componentObject.getComponentInstancesInputs();
         setValuesToPropertiesList(componentInstancesInputs, toscaExpectedMainServiceDefinition);
         PropertyRestUtils.declareProporties(componentObject, componentInstancesInputs, user);
 
-        service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+        service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
         File ServiceCsarFileName = new File(File.separator + "ServiceCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
-        OnboardingUtillViaApis.downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
+        new OnboardingUtilsViaApis().downloadToscaCsarToDirectory(service, new File(filesFolder.getPath() + ServiceCsarFileName));
         ToscaDefinition toscaMainServiceDefinition = ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + ServiceCsarFileName));
 
 //--------------------------initialization of Tosca Parser--------------------------------
@@ -689,7 +689,7 @@ public class ToscaValidationTest extends SetupCDTest {
     }
 
     public static ToscaDefinition addGenericInputsToToscaObject(ToscaDefinition toscaDefinition, String genericName) throws Exception {
-        Resource genericResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, genericName, "1.0");
+        Resource genericResource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, genericName, "1.0");
         ToscaTopologyTemplateDefinition topologyTemplate = toscaDefinition.getTopology_template();
         Map<String, ToscaInputsTopologyTemplateDefinition> newInput = new HashMap<>();
         for (PropertyDefinition property : genericResource.getProperties()) {
@@ -746,7 +746,7 @@ public class ToscaValidationTest extends SetupCDTest {
 
     public static Map<String, String> convertResourceNodeTemplateMetadataToMap(ComponentInstance componentInstance) throws Exception {
 
-        Resource resource = AtomicOperationUtils.getResourceObject(componentInstance.getComponentUid());
+        Resource resource = new AtomicOperationUtils().getResourceObject(componentInstance.getComponentUid());
         Map<String, String> metadata = new HashMap<>();
 
         metadata.put(ToscaMetadataFieldsPresentationEnum.ToscaMetadataFieldsEnum.CATEGORY.value, resource.getCategories().get(0).getName());
@@ -846,7 +846,7 @@ public class ToscaValidationTest extends SetupCDTest {
 	public void allottedResourceModelTest() throws Exception{
 		List<Boolean> status = new ArrayList<>();
 
-		List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
+		List<String> fileNamesFromFolder = new OnboardingUtils().getVnfNamesFileListExcludeToscaParserFailure();
 		List<String> newRandomFileNamesFromFolder = OnbordingDataProviders.getRandomElements(1, fileNamesFromFolder);
 		String vnfFile = newRandomFileNamesFromFolder.get(0);
 		setLog(vnfFile);
@@ -860,7 +860,7 @@ public class ToscaValidationTest extends SetupCDTest {
 		toscaMainAmdocsDefinition = addGenericPropertiesToToscaDefinitionObject(toscaMainAmdocsDefinition, GENERIC_VF);
 
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails);
-		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resource = (Resource) new AtomicOperationUtils().changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		ToscaDefinition toscaMainVfDefinition = downloadAndGetToscaMainYamlObjectApi(resource, filesFolder);
 
@@ -896,8 +896,8 @@ public class ToscaValidationTest extends SetupCDTest {
      * @return updated resourceReqDetails after Vsp was created
      */
     private ResourceReqDetails createCustomizedVsp(ResourceReqDetails resourceReqDetails, String filePath, String vnfFile) throws Exception {
-        VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
-        resourceReqDetails = OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
+        VendorSoftwareProductObject vendorSoftwareProductObject = new OnboardingUtilsViaApis().createVspViaApis(resourceReqDetails, filePath, vnfFile, user);
+        resourceReqDetails = new OnboardingUtilsViaApis().prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
         return resourceReqDetails;
     }
 
@@ -928,7 +928,7 @@ public class ToscaValidationTest extends SetupCDTest {
      */
     private ToscaDefinition downloadAndGetToscaMainYamlObjectApi(Resource resource, File filesFolder) throws Exception {
         File vfCsarFileName = new File(File.separator + "VfCsar_" + ElementFactory.generateUUIDforSufix() + ".csar");
-        OnboardingUtillViaApis.downloadToscaCsarToDirectory(resource, new File(filesFolder.getPath() + vfCsarFileName));
+        new OnboardingUtilsViaApis().downloadToscaCsarToDirectory(resource, new File(filesFolder.getPath() + vfCsarFileName));
         return ToscaParserUtils.parseToscaMainYamlToJavaObjectByCsarLocation(new File(filesFolder.getPath() + vfCsarFileName));
     }
 

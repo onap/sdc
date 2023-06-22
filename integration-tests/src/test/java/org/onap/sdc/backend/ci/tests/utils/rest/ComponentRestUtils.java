@@ -55,7 +55,7 @@ public class ComponentRestUtils extends BaseRestUtils {
 	public static CapReqDef getAndParseComponentRequirmentsCapabilities(User user, ComponentReqDetails componentDetails)
 			throws IOException {
 		RestResponse getComponentReqCap = getComponentRequirmentsCapabilities(user, componentDetails);
-		ResourceRestUtils.checkSuccess(getComponentReqCap);
+		new ResourceRestUtils().checkSuccess(getComponentReqCap);
 		CapReqDef capReqDef = ResponseParser.parseToObject(getComponentReqCap.getResponse(), CapReqDef.class);
 		return capReqDef;
 	}

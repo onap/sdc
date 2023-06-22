@@ -102,7 +102,7 @@ public class InputsApiTests extends ComponentBaseTest {
 	 */
 	@Test
 	public void testCreateResourceInstanceWithInputsFromCsar() throws Exception {
-		Resource vf = AtomicOperationUtils.importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar1);
+		Resource vf = new AtomicOperationUtils().importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar1);
 		assertTrue("Success creating VF from CSAR", !vf.getInputs().isEmpty());
 	}
 
@@ -185,28 +185,28 @@ public class InputsApiTests extends ComponentBaseTest {
 	 */
 	private Service createServiceWithVFInstanceWithInputs() throws Exception, IOException {
 		// Create default service
-		Either<Service, RestResponse> createDefaultServiceEither = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createDefaultServiceEither = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		if (createDefaultServiceEither.isRight()){
 			assertTrue("Error creating default service", false);
 		}
 		Service service = createDefaultServiceEither.left().value();
 
 		// Create VF from CSAR file
-		Resource vfWithInputs = AtomicOperationUtils.importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar2);
+		Resource vfWithInputs = new AtomicOperationUtils().importResourceFromCsar(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, inputCsar2);
 
 		// Certify VF
-		Pair<Component, RestResponse> changeComponentState = AtomicOperationUtils.changeComponentState(vfWithInputs, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		Pair<Component, RestResponse> changeComponentState = new AtomicOperationUtils().changeComponentState(vfWithInputs, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
 		assertTrue("response code is BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + changeComponentState.getRight().getErrorCode(), changeComponentState.getRight().getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
 		// Add VF instance to service
-		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainerEither = AtomicOperationUtils.addComponentInstanceToComponentContainer(vfWithInputs, service, UserRoleEnum.DESIGNER, true);
+		Either<ComponentInstance, RestResponse> addComponentInstanceToComponentContainerEither = new AtomicOperationUtils().addComponentInstanceToComponentContainer(vfWithInputs, service, UserRoleEnum.DESIGNER, true);
 		if (addComponentInstanceToComponentContainerEither.isRight()){
 			assertTrue("Error adding VF to service", false);
 		}
 
 		// Get service response
 		ServiceReqDetails serviceDetails = new ServiceReqDetails(service);
-		RestResponse getServiceResponse = ServiceRestUtils.getService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		RestResponse getServiceResponse = new ServiceRestUtils().getService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		service = ResponseParser.parseToObjectUsingMapper(getServiceResponse.getResponse(), Service.class);
 
 		// Get VF instance from service
@@ -237,7 +237,7 @@ public class InputsApiTests extends ComponentBaseTest {
 
 	@Test
 	public void validateValidValueConstraintOnInputFailTest() throws Exception {
-		Either<Service, RestResponse> createDefaultServiceEither = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createDefaultServiceEither = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		if (createDefaultServiceEither.isRight()){
 			assertTrue("Error creating default service", false);
 		}
@@ -299,7 +299,7 @@ public class InputsApiTests extends ComponentBaseTest {
 
 	@Test
 	public void validateValidValueConstraintOnInputSuccessTest() throws Exception {
-		Either<Service, RestResponse> createDefaultServiceEither = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
+		Either<Service, RestResponse> createDefaultServiceEither = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true);
 		if (createDefaultServiceEither.isRight()){
 			assertTrue("Error creating default service", false);
 		}

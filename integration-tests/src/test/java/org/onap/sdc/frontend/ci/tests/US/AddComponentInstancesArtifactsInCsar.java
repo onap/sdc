@@ -86,19 +86,19 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         String vnfFile = "FDNT.zip";
         String snmpFile = "Fault-alarms-ASDC-vprobes-vLB.zip";
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();//getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVSP = VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser(),
+        VendorSoftwareProductObject createVSP = new VendorSoftwareProductRestUtils().createVSP(resourceReqDetails, vnfFile, filePath, getUser(),
             vendorLicenseModel);
         String vspName = createVSP.getName();
         resourceMetaData.setName(vspName);
-        VendorSoftwareProductRestUtils.addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
-        VendorSoftwareProductRestUtils.prepareVspForUse(getUser(), createVSP, true);
+        new VendorSoftwareProductRestUtils().addVFCArtifacts(filePath, snmpFile, null, createVSP, getUser());
+        new VendorSoftwareProductRestUtils().prepareVspForUse(getUser(), createVSP, true);
 
         HomePage.showVspRepository();
         OnboardingUiUtils.importVSP(createVSP);
         resourceMetaData.setVersion("0.1");
-        Resource vfResource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
+        Resource vfResource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), resourceMetaData.getVersion());
 
         Map<String, Object> artifacts = getArtifactsOfComponentAndComponentsInstance(vfResource);
 
@@ -139,7 +139,6 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
         }
     }
 
-
     private void compareArtifacts(Object artifactFromJavaObject, Object artifactsFromFileStructure) {
         Map<String, List<String>> artifactsMap = (Map<String, List<String>>) artifactFromJavaObject;
         List<HeatMetaFirstLevelDefinition> artifactsList = (List<HeatMetaFirstLevelDefinition>) artifactsFromFileStructure;
@@ -163,7 +162,6 @@ public class AddComponentInstancesArtifactsInCsar extends SetupCDTest {
             Assert.assertEquals(artifacts.size(), 0, "Expected that all artifacts equal. There is artifacts which not equal: " + artifacts.toString());
         }
     }
-
 
     public Map<String, Object> getArtifactsOfResourceInstance(List<ImmutablePair<ComponentInstance, ArtifactDefinition>> riList) {
         Map<String, Object> artifacts = new HashMap<>();

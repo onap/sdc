@@ -245,7 +245,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 		// TODO delete by name
 		// deleteResource(UniqueIdBuilder.buildResourceUniqueId(resourceName,
 		// "0.1"), sdncUserDetails.getUserId());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncUserDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue(createResource.getErrorCode().intValue() == 201);
 		String resourceId = ResponseParser.getUniqueIdFromResponse(createResource);
 		resourceDetails.setUniqueId(resourceId);

@@ -100,7 +100,7 @@ public abstract class ComponentBaseTest {
         config = Utils.getConfig();
         myContext = context;
         ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);
-        AtomicOperationUtils.createDefaultConsumer(true);
+        new AtomicOperationUtils().createDefaultConsumer(true);
         performClean();
     }
 
@@ -168,18 +168,18 @@ public abstract class ComponentBaseTest {
         if (!CollectionUtils.isEmpty(resourcesArrayList)) {
             List<String> collect = buildCollectionUniqueId(resourcesArrayList);
             for (String uId : collect) {
-                ResourceRestUtils.markResourceToDelete(uId, userId);
+                new ResourceRestUtils().markResourceToDelete(uId, userId);
             }
-            ResourceRestUtils.deleteMarkedResources(userId);
+            new ResourceRestUtils().deleteMarkedResources(userId);
         }
 
         resourcesArrayList = convertCatalogResponseToJavaObject.get(ComponentTypeEnum.SERVICE_PARAM_NAME);
         if (resourcesArrayList.size() > 0) {
             List<String> collect = buildCollectionUniqueId(resourcesArrayList);
             for (String uId : collect) {
-                ServiceRestUtils.markServiceToDelete(uId, userId);
+                new ServiceRestUtils().markServiceToDelete(uId, userId);
             }
-            ServiceRestUtils.deleteMarkedServices(userId);
+            new ServiceRestUtils().deleteMarkedServices(userId);
         }
     }
 
@@ -203,7 +203,7 @@ public abstract class ComponentBaseTest {
         try {
             switch (componentTypeEnum) {
                 case RESOURCE:
-                    RestResponse resource = ResourceRestUtils.getResource(i);
+                    RestResponse resource = new ResourceRestUtils().getResource(i);
                     Resource convertResourceResponseToJavaObject = ResponseParser.convertResourceResponseToJavaObject(resource.getResponse());
                     Map<String, String> allVersions = convertResourceResponseToJavaObject.getAllVersions();
                     Collection<String> values = allVersions.values();
@@ -211,7 +211,7 @@ public abstract class ComponentBaseTest {
 
                     break;
                 case SERVICE:
-                    RestResponse service = ServiceRestUtils.getService(i);
+                    RestResponse service = new ServiceRestUtils().getService(i);
                     Service convertServiceResponseToJavaObject = ResponseParser.convertServiceResponseToJavaObject(service.getResponse());
                     allVersions = convertServiceResponseToJavaObject.getAllVersions();
                     values = allVersions.values();
@@ -244,7 +244,7 @@ public abstract class ComponentBaseTest {
 
         resourceDetails.setCsarUUID(csarId);
         resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-        RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+        RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
         BaseRestUtils.checkCreateResponse(createResource);
         return ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
     }

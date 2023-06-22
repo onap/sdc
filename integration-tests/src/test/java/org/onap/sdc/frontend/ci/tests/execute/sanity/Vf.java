@@ -117,7 +117,7 @@ public class Vf extends SetupCDTest {
             vfMetaData.setVersion("0.1");
             VfVerificator.verifyLinkCreated(vfMetaData, getUser(), 1);
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -217,7 +217,7 @@ public class Vf extends SetupCDTest {
                 AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -257,7 +257,7 @@ public class Vf extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(vfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -426,11 +426,11 @@ public class Vf extends SetupCDTest {
     public void changeInstanceNameInVfTest() throws Exception {
         final ResourceReqDetails vfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.createVF(vfMetaData, getUser());
-        Resource containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
-        Resource computeObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Compute", "1.0");
-        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(computeObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
-        containerObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
-        String intanceWithUpdatedName  = AtomicOperationUtils.updateComponentInstanceName("newName", containerObject, componentInstanceDetails.getName(), getUser(), true).getRight().getName();
+        Resource containerObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        Resource computeObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, "Compute", "1.0");
+        ComponentInstance componentInstanceDetails = new AtomicOperationUtils().addComponentInstanceToComponentContainer(computeObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        containerObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vfMetaData.getName(), vfMetaData.getVersion());
+        String intanceWithUpdatedName  = new AtomicOperationUtils().updateComponentInstanceName("newName", containerObject, componentInstanceDetails.getName(), getUser(), true).getRight().getName();
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
         assertEquals(intanceWithUpdatedName, "newName");
     }
@@ -458,7 +458,7 @@ public class Vf extends SetupCDTest {
             String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
             AssertJUnit.assertTrue(errorMessage.contains(checkUIResponseOnError));
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -488,7 +488,7 @@ public class Vf extends SetupCDTest {
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, FileHandling.getVnfRepositoryPath(), vnfFile, getUser());
         String vspName = vendorSoftwareProductObject.getName();
         ResourceGeneralPage.clickSubmitForTestingButton(vspName);
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "0.1");
         VfModuleVerificator.validateSpecificModulePropertiesFromRequest(resource);
     }
 

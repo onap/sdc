@@ -129,7 +129,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         derivedFrom.clear();
         derivedFrom.add(newDerivedFromName);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResource.getUniqueId(), "");
         AssertJUnit.assertEquals("Check response code after create resource", 200,
                 updatedRestResponse.getErrorCode().intValue());
@@ -175,7 +175,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ResourceReqDetails updatedResourceDetails = new ResourceReqDetails(resourceName, description, resourceTags,
                 category, derivedFrom, vendorName, vendorRelease, contactId, icon);
         updatedResourceDetails.setUniqueId("dummyId");
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, "0.1");
 
         // validate response
@@ -194,7 +194,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // "0.1");
         updatedResourceDetails = defineUpdatedResourse(resourceName);
         updatedResourceDetails.setUniqueId("dummyId");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 "0.1");
         AssertJUnit.assertNotNull("check response object is not null after update resource", updatedRestResponse);
         AssertJUnit.assertNotNull("check error code exists in response after update resource",
@@ -266,9 +266,9 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // define and create resource
         ResourceReqDetails resourceDetails = defineResourse();
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "0.1");
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.0");
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "0.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.0");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.1");
 
         RestResponse restResponse = createResource(sdncModifierDetails, resourceDetails);
         String resourceId = resourceDetails.getUniqueId();
@@ -300,7 +300,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 ActionStatus.COMPONENT_MISSING_CONTACT.name(), resource);
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails, "0.1");
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails, "0.1");
         // validate response
         AssertJUnit.assertNotNull("check response object is not null after get resource", getRestResponse);
         AssertJUnit.assertNotNull("check error code exists in response after get resource",
@@ -314,9 +314,9 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // validate that metadata was not changed
         ResourceValidationUtils.validateResourceReqVsResp(resourceDetails, getResourceRespJavaObject);
 
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "0.1");
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.0");
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "0.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.0");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, resourceDetails.getName(), "1.1");
     }
 
     // End of validation tests
@@ -373,7 +373,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         DbUtils.cleanAllAudits();
 
         // create resource
-        RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+        RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
         // validate response
         AssertJUnit.assertNotNull("check response object is not null after create resource", restResponse);
@@ -455,7 +455,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // remove description from jsonObject
         jObject = RemoveFromJsonObject(jObject, removedField);
         // update with incomplete body.
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(jObject.toString(),
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(jObject.toString(),
                 sdncModifierDetails, resourceId);
         // validate response
         AssertJUnit.assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -468,7 +468,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
     // purpose: function for validating error response
     protected void UpdateAndValidate(User sdncModifierDetails, ResourceReqDetails resourceDetails,
                                      String recievedMessage, List<String> variables) throws Exception {
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, "0.1");
         // validate response
         AssertJUnit.assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -559,7 +559,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.NOT_ALLOWED.name(), Empty_List,
                 updatedRestResponse.getResponse());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(resourceDetails, getRestResponse);
@@ -582,7 +582,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.NOT_ALLOWED.name(), Empty_List,
                 updatedRestResponse.getResponse());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(resourceDetails, getRestResponse);
@@ -606,7 +606,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.NOT_ALLOWED.name(), Empty_List,
                 updatedRestResponse.getResponse());
 
-        RestResponse getRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(resourceDetails, getRestResponse);
@@ -624,7 +624,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         String description = "updatedDescription";
 
         // send update with incompleted json, only description string
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(description, sdncModifierDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(description, sdncModifierDetails,
                 resourceId);
 
         // validate response
@@ -632,7 +632,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
         assertEquals("check error code after update resource", 400, updatedRestResponse.getErrorCode().intValue());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(resourceDetails, getRestResponse);
@@ -664,7 +664,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
     // ResourceReqDetails updatedResourceDetails =
     // defineUpdatedResourse(resourceName);
     // RestResponse updatedRestResponse =
-    // ResourceRestUtils.updateResource(updatedResourceDetails,
+    // new ResourceRestUtils().updateResource(updatedResourceDetails,
     // updatedSdncModifierDetails, resourceDetails.getUniqueId(), "");
     //
     // // validate response
@@ -676,7 +676,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
     // Empty_List, updatedRestResponse.getResponse());
     //
     // RestResponse getRestResponse =
-    // ResourceRestUtils.getResource(sdncModifierDetails,
+    // new ResourceRestUtils().getResource(sdncModifierDetails,
     // resourceDetails.getUniqueId());
     // assertNotNull("check response object is not null after update resource",
     // getRestResponse);
@@ -693,10 +693,10 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ResourceReqDetails updatedResourceDetails = defineUpdatedResourse(resourceName);
         // Delete resources
         RestResponse response = null;
-        response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.1");
         BaseRestUtils.checkDeleteResponse(response);
-        response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.2");
         BaseRestUtils.checkDeleteResponse(response);
 
@@ -705,13 +705,13 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // check-in Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(updatedResourceDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(updatedResourceDetails,
                 sdncModifierDetails, resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         // String resourceCertifyVersion = "0.1";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(updatedResourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(updatedResourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -719,7 +719,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ArrayList<String> resourceTag = new ArrayList<String>();
         resourceTag.add(0, "ABC_-bt.aT");
         updatedResourceDetails.setTags(resourceTag);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, updatedResourceDetails.getUniqueId(), "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -727,10 +727,10 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         parseResponseAndValidate(updatedResourceDetails, updatedRestResponse);
 
         // Delete resources
-        response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.1");
         BaseRestUtils.checkDeleteResponse(response);
-        response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.2");
         BaseRestUtils.checkDeleteResponse(response);
 
@@ -755,7 +755,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
             // change icon of metadata
             updatedResourceDetails.setIcon("MyIcon" + notValidCharsArray[i]);
             // PUT request
-            updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+            updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                     resourceDetails.getUniqueId(), "");
             // validate response
             assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -773,7 +773,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // empty icon
         String updateIcon = "";
         updatedResourceDetails.setIcon(updateIcon);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -783,7 +783,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // Icon length more then 25 characters
         resourceList.add(1, "25");
         updatedResourceDetails.setIcon("1234567890_-qwertyuiopASDNNN");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         // validate response
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -795,7 +795,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getResponseMessage().toString());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -831,7 +831,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
             }
         }
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
@@ -843,7 +843,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getErrorCode().intValue());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -888,7 +888,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedResourceDetails.setName("UpdatedResourceName" + notValidCharsArray[i]);
                 resource_Name.add("UpdatedResourceName" + notValidCharsArray[i]);
                 updatedResourceDetails.setTags(resource_Name);
-                updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+                updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                         sdncAdminModifierDetails, uniqueId, "");
                 // validate response
                 // ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_TAG.name(),
@@ -912,14 +912,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedResourceDetails.setName(new String(new char[1025]).replace("\0", "a"));
         // resource_Name.add("123456789012345678901234567890123456789012345678901");
         updatedResourceDetails.setTags(resource_Name);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncAdminModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncAdminModifierDetails,
                 uniqueId, "");
         // validate response
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT.name(), resourceList,
                 updatedRestResponse.getResponse());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncAdminModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncAdminModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -932,7 +932,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ResourceValidationUtils.validateResourceReqVsResp(resourceDetails, getResourceRespJavaObject);
 
         // delete resource
-        RestResponse response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncAdminModifierDetails,
+        RestResponse response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncAdminModifierDetails,
                 updatedResourceDetails.getName(), "0.1");
         BaseRestUtils.checkDeleteResponse(response);
     }
@@ -948,7 +948,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN); // NOT_CERTIFIED_CHECKIN
         assertNotNull("check response object is not null after checkout resource", checkoutResource);
         assertNotNull("check error code exists in response after checkIn resource", checkoutResource.getErrorCode());
@@ -956,7 +956,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         ResourceReqDetails updatedResourceDetails = defineUpdatedResourse(resourceName);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -966,7 +966,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getErrorCode().intValue());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -996,34 +996,34 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         ResourceReqDetails updatedResourceDetails = defineUpdatedResourse(resourceName);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
@@ -1035,7 +1035,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // updatedRestResponse.getErrorCode().intValue());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -1065,19 +1065,19 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         // String resourceCertifyVersion = "0.1";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         ResourceReqDetails updatedResourceDetails = defineUpdatedResourse(resourceName);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -1086,7 +1086,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getErrorCode().intValue());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -1100,10 +1100,10 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         ResourceValidationUtils.validateResourceReqVsResp(updatedResourceDetails, getResourceRespJavaObject);
 
         // delete resource
-        RestResponse response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        RestResponse response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.1");
         BaseRestUtils.checkDeleteResponse(response);
-        response = ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails,
+        response = new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails,
                 updatedResourceDetails.getName(), "0.2");
         BaseRestUtils.checkDeleteResponse(response);
 
@@ -1125,28 +1125,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1156,7 +1156,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // updatedResourceDetails.setVendorName("updatedVandorName");
         updatedResourceDetails.setIcon("updatedIcon");
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
@@ -1164,7 +1164,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getResponse());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -1193,28 +1193,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1224,7 +1224,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedResourceDetails.setVendorName("updatedVandorName");
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
@@ -1236,7 +1236,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 updatedRestResponse.getErrorCode().intValue());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -1266,28 +1266,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1304,7 +1304,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         tagList.add(0, "updatedResourceName");
         resourceDetails.setTags(tagList);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
@@ -1330,28 +1330,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1366,14 +1366,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedResourceDetails.setTags(resourceTags);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
         assertEquals("Check response code after update resource", 200, updatedRestResponse.getErrorCode().intValue());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(updatedResourceDetails, getRestResponse);
@@ -1396,28 +1396,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1435,14 +1435,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedResourceDetails.setVendorRelease("5.1");
         updatedResourceDetails.setContactId("bt750h");
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
         assertEquals("Check response code after update resource", 200, updatedRestResponse.getErrorCode().intValue());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(updatedResourceDetails, getRestResponse);
@@ -1464,28 +1464,28 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // Certify Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         /*logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());*/
 
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, adminModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, adminModifierDetails,
                 resourceBaseVersion, LifeCycleStatesEnum.CERTIFY);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
         String resourceCertifyVersion = "1.0";
         logger.debug("Changing resource life cycle ");
-        checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceCertifyVersion, LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after checkout resource", 200, checkoutResource.getErrorCode().intValue());
 
@@ -1496,14 +1496,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         drivenFrom.add(0, "tosca.nodes.Container.Application");
         updatedResourceDetails.setDerivedFrom(drivenFrom);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
         // validate response
         List<String> resourceList = new ArrayList<String>();
-        ResourceRestUtils.checkSuccess(updatedRestResponse);
+        new ResourceRestUtils().checkSuccess(updatedRestResponse);
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -1525,7 +1525,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         String updatedVendorName = "";
         String uniqueId = resourceDetails.getUniqueId();
         resourceDetails.setVendorName(updatedVendorName);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, uniqueId, "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1536,7 +1536,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "	";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1547,7 +1547,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "Verification and validati";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1560,7 +1560,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         List<String> myList = new ArrayList<String>();
         myList.add(0, "25");
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT.name(), myList,
@@ -1570,7 +1570,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1<";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1579,7 +1579,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1>";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1588,7 +1588,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1:";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1597,7 +1597,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1\"";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1606,7 +1606,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1/";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1615,7 +1615,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1\\";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1624,7 +1624,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1|";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1633,7 +1633,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1?";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1642,7 +1642,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = "A1*";
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_NAME.name(), Empty_List,
@@ -1652,7 +1652,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorName = null;
         // set vendorName
         resourceDetails.setVendorName(updatedVendorName);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.MISSING_VENDOR_NAME.name(), Empty_List,
@@ -1674,7 +1674,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "1";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1685,7 +1685,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "(!#1.00000000000000000000";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1695,7 +1695,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // update resource VendorRelease metadata: 26 characters
         updatedVendorRelease = "(!#1.000000000000000000005";// set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT.name(),
                 Arrays.asList("" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH), updatedRestResponse.getResponse());
@@ -1708,7 +1708,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1<";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1716,7 +1716,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1>";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1724,7 +1724,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1:";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1732,7 +1732,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1\"";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1740,7 +1740,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1/";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1748,7 +1748,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1\\";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1756,7 +1756,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1|";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1764,7 +1764,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1?";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1772,7 +1772,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = "A1*";
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_VENDOR_RELEASE.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -1781,7 +1781,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedVendorRelease = null;
         // set VendorRelease
         resourceDetails.setVendorRelease(updatedVendorRelease);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.MISSING_VENDOR_RELEASE.name(), Empty_List,
@@ -1822,35 +1822,35 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         String updatedcontactId = "";
         resourceDetails.setContactId(updatedcontactId);
 
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "ab12345";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "      ";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "ab 50h";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "ab123c";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertEquals("Check response code after update resource", 200, updatedRestResponse.getErrorCode().intValue());
@@ -1858,7 +1858,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedcontactId = "cd789E";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertEquals("Check response code after update resource", 200, updatedRestResponse.getErrorCode().intValue());
@@ -1868,7 +1868,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedcontactId = "ef4567";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1877,7 +1877,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedcontactId = "AA012A";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1888,7 +1888,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedcontactId = "CD012c";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1899,7 +1899,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         updatedcontactId = "EF0123";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -1912,105 +1912,105 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         List<String> resource = Arrays.asList("Resource");
         updatedcontactId = "01345a";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "0y000B";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "Y1000b";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "abxyzC";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "cdXYZc";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "efXY1D";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "EFabcD";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "EFABCD";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "EFABC1";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "efui1D";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "efui1!";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "ef555!";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = ",f555";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         updatedcontactId = "EF55.5";
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
 
         // update resource contactId metadata: extended character set (128–255)
         resourceDetails.setContactId(extendedCharsStringBuilder());
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_INVALID_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
@@ -2018,7 +2018,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // update resource contactId metadata: null
         updatedcontactId = null;
         resourceDetails.setContactId(updatedcontactId);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_CONTACT.name(), myList,
                 updatedRestResponse.getResponse());
@@ -2040,7 +2040,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // set description
         resourceDetails.setTags(resourceTags);
         List<String> variables = Arrays.asList("Resource", "tag");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.INVALID_FIELD_FORMAT.name(), variables,
                 updatedRestResponse.getResponse());
@@ -2049,7 +2049,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         resourceTags = new ArrayList<String>();
         // set Tags
         resourceDetails.setTags(resourceTags);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_TAGS.name(), Empty_List,
                 updatedRestResponse.getResponse());
@@ -2061,7 +2061,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         resourceTags.add(resourceDetails.getName());
         // set description
         resourceDetails.setTags(resourceTags);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2072,7 +2072,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedTagField = "The Indian-crested.porcupine_The Indian cresteddds";
         resourceTags.add(updatedTagField);
         resourceDetails.setTags(resourceTags);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2124,7 +2124,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         resourceTags.add(resourceDetails.getName());
         // set description
         resourceDetails.setTags(resourceTags);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2136,7 +2136,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         resourceDetails.setTags(resourceTags);
         ArrayList<String> myArray = new ArrayList<String>();
         myArray.add(0, "1024");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT.name(), myArray,
                 updatedRestResponse.getResponse());
@@ -2150,7 +2150,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         resourceDetails.setTags(resourceTags);
         myArray.remove(0);
         myArray.add(0, "50");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT.name(), myArray,
                 updatedRestResponse.getResponse());
@@ -2171,7 +2171,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         String updatedDescription = "";
         // set description
         resourceDetails.setDescription(updatedDescription);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_DESCRIPTION.name(), resource,
                 updatedRestResponse.getResponse());
@@ -2180,7 +2180,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedDescription = null;
         // set description
         resourceDetails.setDescription(updatedDescription);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_MISSING_DESCRIPTION.name(), resource,
                 updatedRestResponse.getResponse());
@@ -2189,7 +2189,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedDescription = "A";
         // set description
         resourceDetails.setDescription(updatedDescription);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2208,7 +2208,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 + "It does this so effectively that most brushes between predators and the Indian porcupine end in death or severe injury";
         // set description
         resourceDetails.setDescription(updatedDescription);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2228,7 +2228,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // set description
         resourceDetails.setDescription(updatedDescription);
         resource.add(1, "1024");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncModifierDetails, uniqueId,
                 "");
         ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT.name(), resource,
                 updatedRestResponse.getResponse());
@@ -2259,7 +2259,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
             // set description
             updatedResourceDetails.setTags(resourceTags);
 
-            updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+            updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                     resourceDetails.getUniqueId(), "");
             // validate response
             assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -2290,7 +2290,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedResourceDetails.removeAllCategories();
         updatedResourceDetails.addCategoryChain(ServiceCategoriesEnum.MOBILITY.getValue(),
                 ResourceCategoryEnum.APPLICATION_L4_DATABASE.getSubCategory());
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
 
         // validate response
@@ -2305,7 +2305,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // Updating resource category
         updatedResourceDetails = defineUpdateResourceWithNonUpdatableFields(resourceBeforeUpdate);
         updatedResourceDetails.addCategory("");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         // validate response
         resourceList = new ArrayList<String>();
@@ -2319,7 +2319,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // Updating resource category
         updatedResourceDetails = defineUpdateResourceWithNonUpdatableFields(resourceBeforeUpdate);
         updatedResourceDetails.addCategory("XXXXXX");
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         // validate response
         resourceList = new ArrayList<String>();
@@ -2332,14 +2332,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkoutResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkoutResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN); // NOT_CERTIFIED_CHECKIN
         assertEquals("Check response code after checkin resource", 200, checkoutResource.getErrorCode().intValue());
 
         // Update resource Category
         updatedResourceDetails = defineUpdateResourceWithNonUpdatableFields(resourceBeforeUpdate);
         updatedResourceDetails.addCategory(ServiceCategoriesEnum.VOIP.getValue());
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncModifierDetails,
                 resourceDetails.getUniqueId(), "");
         // verify response
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
@@ -2350,13 +2350,13 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
         // CheckIn Resource
         logger.debug("Changing resource life cycle ");
-        RestResponse checkinResource = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        RestResponse checkinResource = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT); // NOT_CERTIFIED_CHECKIN
         assertNotNull("check response object is not null after checkout resource", checkoutResource);
         assertNotNull("check error code exists in response after checkIn resource", checkoutResource.getErrorCode());
         assertEquals("Check response code after checkin resource", 200, checkoutResource.getErrorCode().intValue());
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails, uniqueID);
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails, uniqueID);
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(resourceDetails, getRestResponse);
 
@@ -2375,7 +2375,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         updatedResourceDetails.removeAllCategories();
         updatedResourceDetails.addCategoryChain(ResourceCategoryEnum.APPLICATION_L4_DATABASE.getCategory(),
                 ResourceCategoryEnum.APPLICATION_L4_DATABASE.getSubCategory());
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncModifierDetails, resourceDetails.getUniqueId(), "");
 
         // validate response
@@ -2390,12 +2390,12 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         assertTrue(updatedResourceDetails.getCategories().get(0).getName()
                 .equals(ResourceCategoryEnum.APPLICATION_L4_DATABASE.getCategory()));
 
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
                 resourceDetails.getUniqueId());
         assertNotNull("check response object is not null after update resource", getRestResponse);
         parseResponseAndValidate(updatedResourceDetails, getRestResponse);
 
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncModifierDetails, updatedResourceDetails.getName(), "0.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncModifierDetails, updatedResourceDetails.getName(), "0.1");
     }
 
     // Benny
@@ -2409,7 +2409,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         User sdncAdminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 
         // define and create resource
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncAdminModifierDetails, resourceDetails.getName(), "0.1");
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncAdminModifierDetails, resourceDetails.getName(), "0.1");
 
         RestResponse restResponse = createResource(sdncAdminModifierDetails, resourceDetails);
         assertEquals("Check response code after create resource", 201, restResponse.getErrorCode().intValue());
@@ -2420,7 +2420,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // change icon of metadata
         updatedResourceDetails.setIcon(_updatedIcon);
         // PUT request
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails,
                 sdncAdminModifierDetails, resourceDetails.getUniqueId(), "");
 
         // validate response
@@ -2432,7 +2432,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // empty icon
         _updatedIcon = "";
         updatedResourceDetails.setIcon(_updatedIcon);
-        updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncAdminModifierDetails,
+        updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(updatedResourceDetails, sdncAdminModifierDetails,
                 resourceDetails.getUniqueId(), "");
         assertNotNull("check response object is not null after update resource", updatedRestResponse);
         assertNotNull("check error code exists in response after update resource", updatedRestResponse.getErrorCode());
@@ -2440,7 +2440,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 Arrays.asList("Resource"), updatedRestResponse.getResponse());
 
         // get resource with original name. original metadata should be returned
-        RestResponse getRestResponse = ResourceRestUtils.getResource(sdncAdminModifierDetails,
+        RestResponse getRestResponse = new ResourceRestUtils().getResource(sdncAdminModifierDetails,
                 resourceDetails.getUniqueId());
         // validate response
         assertNotNull("check response object is not null after get resource", getRestResponse);
@@ -2453,7 +2453,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         // validate that metadata was not changed
         ResourceValidationUtils.validateResourceReqVsResp(resourceDetails, getResourceRespJavaObject);
 
-        ResourceRestUtils.deleteResourceByNameAndVersion(sdncAdminModifierDetails, updatedResourceDetails.getName(),
+        new ResourceRestUtils().deleteResourceByNameAndVersion(sdncAdminModifierDetails, updatedResourceDetails.getName(),
                 "0.1");
 
     }
@@ -2469,7 +2469,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(newResourceType);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
         assertEquals("Check response code after create resource", 200, updatedRestResponse.getErrorCode().intValue());
         Resource updatedResourceJavaObject = ResponseParser
@@ -2499,7 +2499,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         tags.add(newResourceName);
         resourceDetails.setTags(tags);
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
         assertEquals("Check response code after create resource", 200, updatedRestResponse.getErrorCode().intValue());
         Resource updatedResourceJavaObject = ResponseParser
@@ -2522,14 +2522,14 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(newResourceType);
-        restResponse = LifecycleRestUtils.certifyResource(resourceDetails);
+        restResponse = new LifecycleRestUtils().certifyResource(resourceDetails);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
-        restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 LifeCycleStatesEnum.CHECKOUT);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
         currentResourceJavaObject = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
         assertEquals("Check response code after create resource", 200, updatedRestResponse.getErrorCode().intValue());
         Resource updatedResourceJavaObject = ResponseParser
@@ -2551,11 +2551,11 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(resourceType);
-        restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+        restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncModifierDetails,
                 LifeCycleStatesEnum.CHECKIN);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
 
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
@@ -2580,11 +2580,11 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
         Resource currentResourceJavaObject = ResponseParser
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
-        restResponse = LifecycleRestUtils.certifyResource(resourceDetails);
+        restResponse = new LifecycleRestUtils().certifyResource(resourceDetails);
         assertEquals("Check response code after resource CheckIn", 200, restResponse.getErrorCode().intValue());
 
         resourceDetails.setResourceType(resourceType);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
@@ -2610,7 +2610,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
                 .convertResourceResponseToJavaObject(restResponse.getResponse());
 
         resourceDetails.setResourceType(resourceType);
-        RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails,
+        RestResponse updatedRestResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails,
                 sdncModifierDetails, currentResourceJavaObject.getUniqueId(), "");
 
         ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());

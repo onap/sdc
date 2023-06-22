@@ -106,7 +106,7 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		createBasicServiceForAudit(versionZeroOneIDWrapper, versionZeroTwoIDWrapper, serviceDetails, true);
 		// First Certification
 
-		LifecycleRestUtils.certifyService(serviceDetails);
+		new LifecycleRestUtils().certifyService(serviceDetails);
 		// LCSbaseTest.certifyService(serviceDetails);
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals("1.0"));
 
@@ -115,11 +115,11 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		increaseServiceVersion(serviceDetails, "1.2");
 		increaseServiceVersion(serviceDetails, "1.3");
 		increaseServiceVersion(serviceDetails, "1.4");
-		LifecycleRestUtils.certifyService(serviceDetails);
+		new LifecycleRestUtils().certifyService(serviceDetails);
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals("2.0"));
 		String certifiedId = serviceDetails.getUniqueId();
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKOUT);
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKOUT);
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
 
 		JsonElement element = getAuditJson(SERVICES_API, certifiedId);
 		// audits kept: 5*check ins + 4*check outs + 2*artifact payload
@@ -150,13 +150,13 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	}
 
 	protected void certifyResource(ResourceReqDetails defaultResource) throws IOException {
-/*		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+/*		RestResponse response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncDesignerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser,
+		response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncTesterUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);*/
-		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
+		RestResponse response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}
 
@@ -182,16 +182,16 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 
 		User designerUser = sdncDesignerUser;
 
-		RestResponse response = ServiceRestUtils.createService(serviceDetails, designerUser);
+		RestResponse response = new ServiceRestUtils().createService(serviceDetails, designerUser);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_CREATED);
 		versionZeroOneIDWrapper.setInnerElement(serviceDetails.getUniqueId());
 
 		if (withResInst) {
-			Resource resourceObj = AtomicOperationUtils
+			Resource resourceObj = new AtomicOperationUtils()
 					.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-			AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceObj, UserRoleEnum.DESIGNER, true,
+			new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceObj, UserRoleEnum.DESIGNER, true,
 					true);
-			AtomicOperationUtils.changeComponentState(resourceObj, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
+			new AtomicOperationUtils().changeComponentState(resourceObj, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
 					true);
 			ResourceReqDetails resource = new ResourceReqDetails(resourceObj);
 			ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory.getDefaultComponentInstance();
@@ -203,17 +203,17 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 			// "myResource");
 		}
 
-		response = LifecycleRestUtils.changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKIN);
+		response = new LifecycleRestUtils().changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals("0.1"));
 
-		response = LifecycleRestUtils.changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKOUT);
+		response = new LifecycleRestUtils().changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKOUT);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		// ServiceUtils.addServiceDeploymentArtifact(serviceDetails.getUniqueId(),
 		// designerUser);
 		versionZeroTwoIDWrapper.setInnerElement(serviceDetails.getUniqueId());
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals("0.2"));
-		response = LifecycleRestUtils.changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKIN);
+		response = new LifecycleRestUtils().changeServiceState(serviceDetails, designerUser, LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 
 		increaseServiceVersion(serviceDetails, "0.3");
@@ -225,18 +225,18 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	}
 
 	protected void increaseServiceVersion(ServiceReqDetails serviceDetails, String excpectedVersion) throws Exception {
-		RestResponse response = LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser,
+		RestResponse response = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals(excpectedVersion));
-		response = LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
+		response = new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}
 
 	protected void createBasicResourceForAudit(Wrapper<String> versionOnePointTwoIDWrapper,
 			ResourceReqDetails defaultResource) throws Exception {
 
-		RestResponse response = ResourceRestUtils.createResource(defaultResource, sdncDesignerUser);
+		RestResponse response = new ResourceRestUtils().createResource(defaultResource, sdncDesignerUser);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_CREATED);
 
 		// ArtifactDefinition artifactDef = new
@@ -252,7 +252,7 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		AssertJUnit.assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+		response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncDesignerUser,
 				LifeCycleStatesEnum.CHECKIN);
 
 		increaseResourceVersion(defaultResource, "0.2");
@@ -280,11 +280,11 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 
 	protected void increaseResourceVersion(ResourceReqDetails defaultResource, String expectedVersion)
 			throws IOException {
-		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+		RestResponse response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncDesignerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		AssertJUnit.assertTrue(defaultResource.getVersion().equals(expectedVersion));
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+		response = new LifecycleRestUtils().changeResourceState(defaultResource, sdncDesignerUser,
 				LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}

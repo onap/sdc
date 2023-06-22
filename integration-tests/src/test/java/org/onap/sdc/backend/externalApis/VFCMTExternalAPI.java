@@ -81,7 +81,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 
 //	@BeforeMethod
 //	public synchronized void init() throws Exception{
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //	}
 	
 	
@@ -105,7 +105,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		AuditValidationUtils.validateAuditExternalCreateResource(expectedResourceAuditJavaObject, action.getName(), body);*/
 		
 		// search for vfcmt via external api - validate created resource exist
-		RestResponse searchResult = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
+		RestResponse searchResult = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
 		JsonArray listSearchResult = gson.fromJson(searchResult.getResponse(), JsonArray.class);
 		boolean found = false;
 		for(JsonElement result: listSearchResult) {

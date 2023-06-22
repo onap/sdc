@@ -90,34 +90,34 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 
 	protected void createComponents() throws Exception {
 
-		RestResponse response = ServiceRestUtils.createService(serviceDetails, sdncDesignerDetails1);
+		RestResponse response = new ServiceRestUtils().createService(serviceDetails, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("service uniqueId is null:", serviceDetails.getUniqueId());
 
-		response = ResourceRestUtils.createResource(resourceDetailsVFC, sdncDesignerDetails1);
+		response = new ResourceRestUtils().createResource(resourceDetailsVFC, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsVFC.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsVFC, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsVFC, sdncDesignerDetails1,
 				resourceDetailsVFC.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
-		response = ResourceRestUtils.createResource(resourceDetailsVF, sdncDesignerDetails1);
+		response = new ResourceRestUtils().createResource(resourceDetailsVF, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsVF.getUniqueId());
 
-		response = ResourceRestUtils.createResource(resourceDetailsCP, sdncDesignerDetails1);
+		response = new ResourceRestUtils().createResource(resourceDetailsCP, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsCP.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsCP, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsCP, sdncDesignerDetails1,
 				resourceDetailsCP.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
-		response = ResourceRestUtils.createResource(resourceDetailsVL, sdncDesignerDetails1);
+		response = new ResourceRestUtils().createResource(resourceDetailsVL, sdncDesignerDetails1);
 		assertTrue("create request returned status:" + response.getErrorCode(), response.getErrorCode() == 201);
 		assertNotNull("resource uniqueId is null:", resourceDetailsVL.getUniqueId());
-		response = LifecycleRestUtils.changeResourceState(resourceDetailsVL, sdncDesignerDetails1,
+		response = new LifecycleRestUtils().changeResourceState(resourceDetailsVL, sdncDesignerDetails1,
 				resourceDetailsVL.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LS state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
@@ -132,7 +132,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 	protected void createVFWithCertifiedResourceInstance(ResourceReqDetails resourceDetails,
 			ComponentInstanceReqDetails resourceInstanceReqDetails) throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeResourceState(resourceDetails, sdncDesignerDetails1,
+		RestResponse response = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncDesignerDetails1,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after CHECKOUT", 200, response.getErrorCode().intValue());
 
@@ -157,7 +157,7 @@ public class ComplexResourceBaseTest extends ComponentBaseTest {
 	}
 
 	protected Resource convertResourceGetResponseToJavaObject(ResourceReqDetails resourceDetails) throws IOException {
-		RestResponse response = ResourceRestUtils.getResource(resourceDetails, sdncDesignerDetails1);
+		RestResponse response = new ResourceRestUtils().getResource(resourceDetails, sdncDesignerDetails1);
 		assertEquals("Check response code after get resource", 200, response.getErrorCode().intValue());
 		return ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 	}

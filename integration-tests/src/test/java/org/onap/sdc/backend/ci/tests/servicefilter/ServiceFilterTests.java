@@ -62,12 +62,12 @@ public class ServiceFilterTests extends ComponentBaseTest {
         //Create External Service
         externalService = ElementFactory.getDefaultService();
         externalService.setName("ExternalService" + Math.random());
-        ServiceRestUtils.createService(externalService, user);
+        new ServiceRestUtils().createService(externalService, user);
 
         //Create Internal Service
         internalService = ElementFactory.getDefaultService();
         internalService.setName("InternalService" + Math.random());
-        ServiceRestUtils.createService(internalService, user);
+        new ServiceRestUtils().createService(internalService, user);
 
         //Add property services
         //#PropertyOne
@@ -83,7 +83,7 @@ public class ServiceFilterTests extends ComponentBaseTest {
         response = PropertyRestUtils.createServiceProperty(internalService.getUniqueId(), body, user);
 
         //CheckIn internal Service
-        response = LifecycleRestUtils.changeServiceState(internalService, user, "0.1",
+        response = new LifecycleRestUtils().changeServiceState(internalService, user, "0.1",
                 LifeCycleStatesEnum.CHECKIN,
                 "{\"userRemarks\":\"CheckIn\"}");
         BaseRestUtils.checkSuccess(response);

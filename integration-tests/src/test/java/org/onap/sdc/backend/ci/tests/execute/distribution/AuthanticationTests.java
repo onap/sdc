@@ -117,8 +117,8 @@ public class AuthanticationTests extends ComponentBaseTest {
 	}
 
 	protected void createComponents() throws Exception {
-		RestResponse response = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
-		ServiceRestUtils.checkCreateResponse(response);
+		RestResponse response = new ServiceRestUtils().createService(serviceDetails, sdncUserDetails);
+		new ServiceRestUtils().checkCreateResponse(response);
 	}
 
 	@Test(dataProvider = "getServiceDepArtType", description = "mumu")

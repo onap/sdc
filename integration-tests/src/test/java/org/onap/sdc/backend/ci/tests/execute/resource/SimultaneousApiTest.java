@@ -61,7 +61,7 @@ public class SimultaneousApiTest extends ComponentBaseTest {
 		public void run() {
 			System.out.println("**** Thread started " + threadIndex);
 			try {
-				RestResponse createResource = ResourceRestUtils.createResource(resourceDetails,
+				RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails,
 						ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 				String id = ResponseParser.getUniqueIdFromResponse(createResource);
 				// System.out.println("**** Thread " + threadIndex + " create

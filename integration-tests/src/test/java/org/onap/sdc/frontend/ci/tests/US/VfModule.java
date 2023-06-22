@@ -80,16 +80,16 @@ public class VfModule extends SetupCDTest {
         String filepath = org.onap.sdc.frontend.ci.tests.utilities.FileHandling.getVnfRepositoryPath();
 //		String vnfFile = "LDSA.zip";
 //		String vnfFile = "FDNT.zip";
-        List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
+        List<String> fileNamesFromFolder = new OnboardingUtils().getVnfNamesFileListExcludeToscaParserFailure();
         List<String> newRandomFileNamesFromFolder = OnboardingDataProviders.getRandomElements(1, fileNamesFromFolder);
         String filePath = FileHandling.getVnfRepositoryPath();
         String vnfFile = newRandomFileNamesFromFolder.get(0);
         getExtendTest().log(Status.INFO, String.format("Going to onboard the VNF %s......", vnfFile));
         System.out.println(String.format("Going to onboard the VNF %s......", vnfFile));
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(),
+        VendorSoftwareProductObject createVendorSoftwareProduct = new VendorSoftwareProductRestUtils().createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, getUser(),
             vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
         //
@@ -145,7 +145,7 @@ public class VfModule extends SetupCDTest {
         latestFilefromDir = org.onap.sdc.frontend.ci.tests.utilities.FileHandling.getLastModifiedFileNameFromDir();
 
 //		verification
-        Service service = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
+        Service service = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), serviceMetadata.getVersion());
         ToscaDefinition toscaDefinition = ToscaParserUtils.parseToscaYamlToJavaObject(latestFilefromDir);
 
 //		compare number of vf modules defined in HEAT.meta file vs Service TOSCA yaml

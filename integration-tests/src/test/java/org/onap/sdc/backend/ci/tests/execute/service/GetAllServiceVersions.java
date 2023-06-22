@@ -79,15 +79,15 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		sdncGovernorDeatails = ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR);
 		sdncTesterDetails = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
 		sdncOpsDetails = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
-		resourceDetailsVFCcomp = AtomicOperationUtils
+		resourceDetailsVFCcomp = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
 				true, true);
 
-		AtomicOperationUtils.changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CERTIFY, true);
-		serviceServ = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceDetailsVFCcomp, serviceServ,
+		serviceServ = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceDetailsVFCcomp, serviceServ,
 				UserRoleEnum.DESIGNER, true);
 
 		serviceDetails = new ServiceReqDetails(serviceServ);
@@ -100,15 +100,15 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 			origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
 		}
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncDesignerDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncDesignerDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -121,7 +121,7 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncDesignerDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncDesignerDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -132,16 +132,16 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		// addMandatoryArtifactsToService();
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 		}
 
 		RestResponse changeServiceState = LCSbaseTest.certifyService(serviceDetails, sdncDesignerDetails);
 		// serviceServ.setUniqueId(serviceDetails.getUniqueId());
 		// RestResponse changeServiceState =
-		// AtomicOperationUtils.changeComponentState(serviceServ,
+		// new AtomicOperationUtils().changeComponentState(serviceServ,
 		// UserRoleEnum.ADMIN, LifeCycleStatesEnum.CERTIFY, false).getRight();
 
 		assertTrue("certify service request returned status:" + changeServiceState.getErrorCode(),
@@ -149,16 +149,16 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
 		for (int x = 0; x < 5; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
 			origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
 		}
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -169,9 +169,9 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		// addMandatoryArtifactsToService();
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 		}
 
@@ -183,9 +183,9 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 
 		// getting to version 1.5
 		for (int x = 0; x < 5; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 		}
 
@@ -197,15 +197,15 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 
 		// getting to version 2.5
 		for (int x = 0; x < 5; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 			origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		}
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -217,20 +217,20 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 			origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		}
 
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 				LifeCycleStatesEnum.CHECKIN);
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -242,22 +242,22 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 			origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 		}
 
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 				LifeCycleStatesEnum.CHECKIN);
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
+		new LifecycleRestUtils().changeServiceState(serviceDetails, sdncAdminDetails, serviceDetails.getVersion(),
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -269,9 +269,9 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		// get to version 0.5
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 
 		}
@@ -283,7 +283,7 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -295,9 +295,9 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		Map<String, String> origVersionsMap = new HashMap<String, String>();
 		// get to version 0.5
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 		}
 
@@ -309,9 +309,9 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 
 		// get version 1.5
 		for (int x = 0; x < 4; x++) {
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKIN);
-			LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+			new LifecycleRestUtils().changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
 					LifeCycleStatesEnum.CHECKOUT);
 		}
 
@@ -322,7 +322,7 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 		origVersionsMap.put(serviceDetails.getVersion(), serviceDetails.getUniqueId());
 
 		// validate get response
-		RestResponse serviceGetResponse = ServiceRestUtils.getService(serviceDetails, sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService(serviceDetails, sdncAdminDetails);
 		Service res = ResponseParser.convertServiceResponseToJavaObject(serviceGetResponse.getResponse());
 		Map<String, String> getVersionsMap = res.getAllVersions();
 		assertTrue(origVersionsMap.equals(getVersionsMap));
@@ -331,7 +331,7 @@ public class GetAllServiceVersions extends ComponentBaseTest {
 	@Test
 	public void GetAllServiceVersions_ServiceNotFound() throws Exception {
 
-		RestResponse serviceGetResponse = ServiceRestUtils.getService("123456789", sdncAdminDetails);
+		RestResponse serviceGetResponse = new ServiceRestUtils().getService("123456789", sdncAdminDetails);
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.SERVICE_NOT_FOUND.name());
 		assertEquals("Check response code after get service without cache", errorInfo.getCode(),
 				serviceGetResponse.getErrorCode());

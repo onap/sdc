@@ -74,7 +74,7 @@ public class DownloadArtifactBaseTest extends ComponentBaseTest {
 
 	protected void createComponents() throws Exception {
 
-		RestResponse response = ResourceRestUtils.createResource(downloadResourceDetails, sdncUserDetails);
+		RestResponse response = new ResourceRestUtils().createResource(downloadResourceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue("create request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 201);
 		AssertJUnit.assertNotNull("resource uniqueId is null:", downloadResourceDetails.getUniqueId());
@@ -91,7 +91,7 @@ public class DownloadArtifactBaseTest extends ComponentBaseTest {
 		AssertJUnit.assertTrue("certify resource request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 
-		response = ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
+		response = new ServiceRestUtils().createService(serviceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue("create request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 201);
 		AssertJUnit.assertNotNull("service uniqueId is null:", serviceDetails.getUniqueId());
@@ -103,7 +103,7 @@ public class DownloadArtifactBaseTest extends ComponentBaseTest {
 		AssertJUnit.assertTrue("response code is not 201, returned: " + response.getErrorCode(),
 				response.getErrorCode() == 201);
 
-		response = ServiceRestUtils.getService(serviceDetails, sdncUserDetails);
+		response = new ServiceRestUtils().getService(serviceDetails, sdncUserDetails);
 		AssertJUnit.assertTrue("response code is not 200, returned: " + response.getErrorCode(),
 				response.getErrorCode() == 200);
 		service = ResponseParser.convertServiceResponseToJavaObject(response.getResponse());

@@ -70,7 +70,7 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 
 //	@BeforeMethod
 //	public void init() throws Exception{
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //	}
 	
 	;
@@ -80,7 +80,7 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 	// Search for invalid resourceType
 	@Test
 	public void searchWithInvalidFilter() throws Exception {
-		RestResponse restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "invalid", ResourceTypeEnum.VFC.toString());
+		RestResponse restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue() + "invalid", ResourceTypeEnum.VFC.toString());
 		
 		Integer expectedResponseCode = 400;
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -112,7 +112,7 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 	// Search for invalid resourceType
 	@Test(dataProvider="searchForResourceTypeNegativeTest")
 	public void searchForResourceTypeNegativeTest(String resourceType) throws Exception {
-		RestResponse restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceType);
+		RestResponse restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceType);
 		
 		Integer expectedResponseCode = 400;
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -132,15 +132,15 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 	// Searching for resource filter incorrect resource type using external API
 	@Test
 	public void searchingForResouceFilterIncorrectResouceTypeUsingExternalAPI() throws Exception {
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
 		List<String> createdResoucesName = new ArrayList<String>();
 		createdResoucesName.add(resource.getName());
 		
 		for(ResourceTypeEnum resourceTypeEnum: ResourceTypeEnum.values()) {
 			// Create resource for each type so it will not return 404
-			AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
+			new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
 
-			RestResponse restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceTypeEnum.toString());
+			RestResponse restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceTypeEnum.toString());
 			
 			Integer expectedResponseCode = 200;
 			Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -164,10 +164,10 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		performClean();
 		for(ResourceTypeEnum resourceTypeEnum: ResourceTypeEnum.values()) {
 			List<String> createdResoucesName = new ArrayList<String>();
-			Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
+			Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(resourceTypeEnum, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
 			createdResoucesName.add(resource.getName());
 			
-			RestResponse restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceTypeEnum.toString());
+			RestResponse restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), resourceTypeEnum.toString());
 			
 			Integer expectedResponseCode = 200;
 			Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -190,11 +190,11 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		
 		for(int i=0; i<numberOfResouceToCreate; i++) {
 			
-			Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
+			Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFCMT, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true).left().value();
 			createdResoucesName.add(resource.getName());
 		}
 		
-		RestResponse restResponse = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
+		RestResponse restResponse = new ResourceRestUtils().getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
 		
 		Integer expectedResponseCode = 200;
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -220,11 +220,11 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 		RestResponse restResponse = CategoryRestUtils.getAllCategories(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "resources");
 		validateJsonContainResourceCategory(restResponse.getResponse(), resourceCategoryEnum);
 		
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, resourceCategoryEnum, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, resourceCategoryEnum, UserRoleEnum.DESIGNER, true).left().value();
 		List<String> createdResoucesName = new ArrayList<String>();
 		createdResoucesName.add(resource.getName());
 		
-		restResponse = ResourceRestUtils.getResourceListFilterByCategory(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), resourceCategoryEnum.getCategory());
+		restResponse = new ResourceRestUtils().getResourceListFilterByCategory(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), resourceCategoryEnum.getCategory());
 		
 		Integer expectedResponseCode = 200;
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);
@@ -236,11 +236,11 @@ public class SearchFilterCategoryExternalAPI extends ComponentBaseTest {
 	public void validateFilterBySubcategory() throws Exception {
 		ResourceCategoryEnum resourceCategoryEnum = getRandomCategoryFromResourceCategoryEnum();
 		
-		Resource resource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, resourceCategoryEnum, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, resourceCategoryEnum, UserRoleEnum.DESIGNER, true).left().value();
 		List<String> createdResoucesName = new ArrayList<String>();
 		createdResoucesName.add(resource.getName());
 		
-		RestResponse restResponse = ResourceRestUtils.getResourceListFilterBySubCategory(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), resourceCategoryEnum.getSubCategory());
+		RestResponse restResponse = new ResourceRestUtils().getResourceListFilterBySubCategory(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), resourceCategoryEnum.getSubCategory());
 		
 		Integer expectedResponseCode = 200;
 		Assert.assertEquals(restResponse.getErrorCode(), expectedResponseCode);

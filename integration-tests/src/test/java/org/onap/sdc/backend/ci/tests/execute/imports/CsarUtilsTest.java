@@ -59,18 +59,18 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	@Test()
 	public void createServiceCsarBasicTest() throws Exception {
 		
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER,
 				true, true);
-		resourceVF = (Resource) AtomicOperationUtils
+		resourceVF = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
 		
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		
@@ -82,8 +82,8 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	@Test(enabled = true)
 	public void createResourceCsarBasicTest() throws Exception {
 
-		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		resourceVF = (Resource) AtomicOperationUtils
+		Resource resourceVF = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		resourceVF = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		
@@ -95,23 +95,23 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	@Test(enabled = true)
 	public void createServiceCsarInclDeploymentArtTest() throws Exception {
 		
-		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
+		Service service = new AtomicOperationUtils().createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
-		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF1 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
-		resourceVF1 = (Resource) AtomicOperationUtils
+		resourceVF1 = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		
-		resourceVF2 = (Resource) AtomicOperationUtils
+		resourceVF2 = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF1, service, UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF1, service, UserRoleEnum.DESIGNER, true);
+		new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
 		
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, service, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.YANG_XML, service, UserRoleEnum.DESIGNER, true, true);
 		
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		
@@ -125,12 +125,12 @@ public class CsarUtilsTest extends ComponentBaseTest {
 	@Test(enabled = true)
 	public void createResourceCsarInclDeploymentArtTest() throws Exception {
 
-		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceVF1 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_ARTIFACT, resourceVF1, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, true, true);
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_ARTIFACT, resourceVF1, UserRoleEnum.DESIGNER, true, true);
 		
-		resourceVF1 = (Resource) AtomicOperationUtils
+		resourceVF1 = (Resource) new AtomicOperationUtils()
 				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
