@@ -139,7 +139,8 @@ public class FileHandling {
 		PackageTypeEnum.VNF, getVnfRepositoryPath(),
 		PackageTypeEnum.ETSI, getEtsiRepositoryPath(),
 		PackageTypeEnum.VFC, getVfcRepositoryPath(),
-		PackageTypeEnum.ASD, getAsdRepositoryPath()
+		PackageTypeEnum.ASD, getAsdRepositoryPath(),
+		PackageTypeEnum.TYPE, getTypeRepositoryPath()
 	));
 
 	public static String getVnfRepositoryPath() {
@@ -161,6 +162,8 @@ public class FileHandling {
 	private static String getEtsiRepositoryPath() { return getFilePath("ETSI"); }
 
 	private static String getAsdRepositoryPath() { return getFilePath("ASDs"); }
+
+	private static String getTypeRepositoryPath() { return getFilePath("Types"); }
 
 	private static String getVfcRepositoryPath() { return getFilePath("VFCs"); }
 

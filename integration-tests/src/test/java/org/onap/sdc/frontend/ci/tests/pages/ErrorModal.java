@@ -1,8 +1,8 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2023 Nordix Foundation. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.backend.ci.tests.datatypes.enums;
+package org.onap.sdc.frontend.ci.tests.pages;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 
-@AllArgsConstructor
-@Getter
-public enum PackageTypeEnum {
-
-    CNF("CNF"),
-    CNF_HELM("CNF_HELM"),
-    ETSI("ETSI"),
-    PNF("PNF"),
-    VFC("VFC"),
-    VNF("VNF"),
-    ASD("ASD"),
-    TYPE("Type");
-
-    private String value;
+public class ErrorModal extends GeneralPageElements {
+    public static boolean isModalOpen(){
+        return GeneralUIUtils.isWebElementExistByTestId(DataTestIdEnum.ErrorModalEnum.OK.getValue());
+    }
 }
