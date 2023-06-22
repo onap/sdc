@@ -58,7 +58,7 @@ public class PathName extends SetupCDTest {
     // Test#8 Jira issue 6168
     @Test
     public void ValidateSameNameTest() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
@@ -74,7 +74,7 @@ public class PathName extends SetupCDTest {
     // Test#9 Jira issue 6183
     @Test
     public void ValidateEditName() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
@@ -86,7 +86,7 @@ public class PathName extends SetupCDTest {
     // Test#10 Jira issue 6411
     @Test
     public void SpacesName() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());
@@ -101,7 +101,7 @@ public class PathName extends SetupCDTest {
     // Test#11 Jira issue 6186
     @Test
     public void ValidateNameWithSpaces() throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         String vspName = onboardAndCertify(resourceReqDetails, filePath, fullCompositionFile);
         reloginWithNewRole(UserRoleEnum.DESIGNER);
         PathUtilities.createService(getUser());

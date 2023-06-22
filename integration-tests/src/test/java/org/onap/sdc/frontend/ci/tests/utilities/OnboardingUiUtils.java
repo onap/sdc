@@ -90,11 +90,11 @@ public class OnboardingUiUtils {
     }
 
     public static boolean getVspValidationCongiguration() throws Exception {
-        return Boolean.parseBoolean(OnboardingUtils.getVspValidationConfiguration());
+        return Boolean.parseBoolean(new OnboardingUtils().getVspValidationConfiguration());
     }
 
     public static boolean putVspValidationCongiguration(boolean value) throws Exception {
-        return Boolean.parseBoolean(OnboardingUtils.putVspValidationConfiguration(value));
+        return Boolean.parseBoolean(new OnboardingUtils().putVspValidationConfiguration(value));
     }
 
     public static void doCheckOut() {
@@ -140,7 +140,7 @@ public class OnboardingUiUtils {
         ExtentTestActions.log(Status.INFO, String.format("Going to update the VNF with %s......", updatedVnfFile));
         System.out.println(String.format("Going to update the VNF with %s......", updatedVnfFile));
 
-        VendorSoftwareProductRestUtils.updateVendorSoftwareProductToNextVersion(vsp, user, filePath, updatedVnfFile);
+        new VendorSoftwareProductRestUtils().updateVendorSoftwareProductToNextVersion(vsp, user, filePath, updatedVnfFile);
         HomePage.showVspRepository();
         updateVSP(vsp);
         ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
@@ -149,8 +149,8 @@ public class OnboardingUiUtils {
 
     public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String vnfFile, String filepath, User user) throws Exception {
         ExtentTestActions.log(Status.INFO, String.format("Creating VSP from package '%s'", vnfFile));
-        final VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
-        return VendorSoftwareProductRestUtils.createVSP(resourceReqDetails, vnfFile, filepath, user, vendorLicenseModel);
+        final VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(user);
+        return new VendorSoftwareProductRestUtils().createVSP(resourceReqDetails, vnfFile, filepath, user, vendorLicenseModel);
     }
 
 
@@ -158,8 +158,8 @@ public class OnboardingUiUtils {
         ExtentTestActions.log(Status.INFO, String.format("Going to onboard the VNF %s", vnfFile));
         System.out.println(String.format("Going to onboard the VNF %s", vnfFile));
 
-        VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
-        VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
+        VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(user);
+        VendorSoftwareProductObject createVendorSoftwareProduct = new VendorSoftwareProductRestUtils().createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
             vendorLicenseModel);
         String vspName = createVendorSoftwareProduct.getName();
 

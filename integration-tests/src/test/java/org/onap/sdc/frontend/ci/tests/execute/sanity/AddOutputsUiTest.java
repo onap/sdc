@@ -234,7 +234,7 @@ public class AddOutputsUiTest extends SetupCDTest {
 
     private ResourceCreateData createVfcFormData() {
         final ResourceCreateData vfcCreateData = new ResourceCreateData();
-        vfcCreateData.setRandomName(ElementFactory.getResourcePrefix() + "-VFC");
+        vfcCreateData.setRandomName(new ElementFactory().getResourcePrefix() + "-VFC");
         vfcCreateData.setCategory(ResourceCategoryEnum.NETWORK_L4.getSubCategory());
         vfcCreateData.setTagList(Arrays.asList(vfcCreateData.getName(), "importVFC"));
         vfcCreateData.setDescription("aDescription");
@@ -246,7 +246,7 @@ public class AddOutputsUiTest extends SetupCDTest {
 
     private ResourceCreateData createVfFormData() {
         final ResourceCreateData vfCreateData = new ResourceCreateData();
-        vfCreateData.setRandomName(ElementFactory.getResourcePrefix() + "-VF");
+        vfCreateData.setRandomName(new ElementFactory().getResourcePrefix() + "-VF");
         vfCreateData.setCategory(ResourceCategoryEnum.NETWORK_L4.getSubCategory());
         vfCreateData.setTagList(Arrays.asList(vfCreateData.getName(), "createVF"));
         vfCreateData.setDescription("aDescription");

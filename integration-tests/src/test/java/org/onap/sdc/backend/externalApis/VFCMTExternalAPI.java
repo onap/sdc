@@ -81,7 +81,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 
 //	@BeforeMethod
 //	public synchronized void init() throws Exception{
-//		AtomicOperationUtils.createDefaultConsumer(true);
+//		new AtomicOperationUtils().createDefaultConsumer(true);
 //	}
 	
 	
@@ -91,8 +91,8 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 	// Create VFCMT - validate response + search external api + retrieve metadata via external api  - success flow
 	@Test
 	public void createVfcmt() throws Exception {
-		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		ResourceExternalReqDetails defaultResource = ElementFactory.getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
+		User defaultUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		ResourceExternalReqDetails defaultResource = new ElementFactory().getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
 		
 		RestResponse restResponse = ResourceRestUtilsExternalAPI.createResource(defaultResource, defaultUser);
 		ResourceAssetStructure parsedCreatedResponse = gson.fromJson(restResponse.getResponse(), ResourceAssetStructure.class);
@@ -101,11 +101,11 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		AuditingActionEnum action = AuditingActionEnum.CREATE_RESOURCE_BY_API;
 		Map <AuditingFieldsKey, String> body = new HashMap<>();
 		body.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, parsedCreatedResponse.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultCreateResourceExternalAPI(parsedCreatedResponse.getName());
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ElementFactory().getDefaultCreateResourceExternalAPI(parsedCreatedResponse.getName());
 		AuditValidationUtils.validateAuditExternalCreateResource(expectedResourceAuditJavaObject, action.getName(), body);*/
 		
 		// search for vfcmt via external api - validate created resource exist
-		RestResponse searchResult = ResourceRestUtils.getResourceListFilterByCriteria(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
+		RestResponse searchResult = new ResourceRestUtils().getResourceListFilterByCriteria(new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), AssetTypeEnum.RESOURCES.getValue(), SearchCriteriaEnum.RESOURCE_TYPE.getValue(), ResourceTypeEnum.VFCMT.toString());
 		JsonArray listSearchResult = gson.fromJson(searchResult.getResponse(), JsonArray.class);
 		boolean found = false;
 		for(JsonElement result: listSearchResult) {
@@ -138,8 +138,8 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 	// Create two VFCMT with same name - validate error + audit - failure flow
 	@Test
 	public void createTwoVfcmtWithSameName() throws Exception {
-		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		ResourceExternalReqDetails defaultResource = ElementFactory.getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
+		User defaultUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		ResourceExternalReqDetails defaultResource = new ElementFactory().getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
 		
 		// create vfcmt
 		RestResponse firstTryToCreate = ResourceRestUtilsExternalAPI.createResource(defaultResource, defaultUser);
@@ -149,7 +149,7 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 		AuditingActionEnum action = AuditingActionEnum.CREATE_RESOURCE_BY_API;
 		Map <AuditingFieldsKey, String> body = new HashMap<>();
 		body.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, parsedCreatedResponse.getName());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultCreateResourceExternalAPI(parsedCreatedResponse.getName());	
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ElementFactory().getDefaultCreateResourceExternalAPI(parsedCreatedResponse.getName());
 		AuditValidationUtils.validateAuditExternalCreateResource(expectedResourceAuditJavaObject, action.getName(), body);*/
 		
 		// try to create another vfcmt wit same name
@@ -200,13 +200,13 @@ public class VFCMTExternalAPI extends ComponentBaseTest {
 	@Test(dataProvider="createVfcmtVariousFailureFlows")
 	public void createVfcmtVariousFailureFlows(String flow) throws Exception {
 		
-		User defaultUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		ResourceExternalReqDetails defaultResource = ElementFactory.getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
+		User defaultUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		ResourceExternalReqDetails defaultResource = new ElementFactory().getDefaultResourceByType("ci", ResourceCategoryEnum.TEMPLATE_MONITORING_TEMPLATE, defaultUser.getUserId(), ResourceTypeEnum.VFCMT.toString());
 		
 		ErrorInfo errorInfo = null;
 		/*List<String> variables = null;
 		AuditingActionEnum action = AuditingActionEnum.CREATE_RESOURCE_BY_API;
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ElementFactory.getDefaultCreateResourceExternalAPI(defaultResource.getName());	
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ElementFactory().getDefaultCreateResourceExternalAPI(defaultResource.getName());
 		Map <AuditingFieldsKey, String> body = new HashMap<>();
 		body.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME, defaultResource.getName());*/
 		

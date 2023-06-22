@@ -67,7 +67,7 @@ public class Inputs extends SetupCDTest {
     // Delete Input declared from VLi/CPi in service level - Deleting an Input that was declared from Complex property.
     @Test
     public void deletingAnInputThatWasDeclaredFromComplexProperty() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
@@ -125,7 +125,7 @@ public class Inputs extends SetupCDTest {
     // Delete inputs who come from CP/VL properties
     @Test
     public void deleteInputsWhoComeFromCpVlProperties() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();

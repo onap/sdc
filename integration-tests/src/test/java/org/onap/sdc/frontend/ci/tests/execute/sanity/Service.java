@@ -104,13 +104,13 @@ public class Service extends SetupCDTest {
 
     @Test
     public void createService() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
     }
 
     @Test
     public void validDefaultContactAndTagAfterCreateService() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createServiceWithDefaultTagAndUserId(serviceMetadata, getUser());
 
         assertTrue("wrong userId", getUser().getUserId().equals(ResourceGeneralPage.getContactIdText()));
@@ -122,7 +122,7 @@ public class Service extends SetupCDTest {
     @Test
     public void validateHiddenCategories() throws Exception {
         // Create Service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         // Get categories list
@@ -137,12 +137,12 @@ public class Service extends SetupCDTest {
     @Test
     public void updateService() throws Exception {
         // Create Service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         // Update Service
         ServiceGeneralPage.deleteOldTags(serviceMetadata);
-        serviceMetadata.setName(ElementFactory.getServicePrefix() + "UpdatedName" + serviceMetadata.getName());
+        serviceMetadata.setName(new ElementFactory().getServicePrefix() + "UpdatedName" + serviceMetadata.getName());
         serviceMetadata.setDescription("updatedDescriptionSanity");
         serviceMetadata.setProjectCode("654321");
         serviceMetadata.setContactId("cs6543");
@@ -159,7 +159,7 @@ public class Service extends SetupCDTest {
     public void deleteService() throws Exception {
 
         // create service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         // Delete service
@@ -174,7 +174,7 @@ public class Service extends SetupCDTest {
 
     @Test
     public void checkoutServiceTest() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -213,12 +213,12 @@ public class Service extends SetupCDTest {
     @Test
     public void submitServiceForTestingWithNonCertifiedAsset() throws Exception {
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
         ResourceUIUtils.createVF(atomicResourceMetaData, getUser());
         //TODO Andrey changed to click on ceckIn button
         ResourceGeneralPage.clickCheckinButton(atomicResourceMetaData.getName());
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -233,7 +233,7 @@ public class Service extends SetupCDTest {
             String checkUIResponseOnError = ErrorValidationUtils.checkUIResponseOnError(ActionStatus.VALIDATED_RESOURCE_NOT_FOUND.name());
             assertTrue(errorMessage.contains(checkUIResponseOnError));
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
 
     }
@@ -241,11 +241,11 @@ public class Service extends SetupCDTest {
     @Test
     public void createLinkService() throws Exception {
         String fileName2 = "vSeGW.csar";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();
@@ -257,7 +257,7 @@ public class Service extends SetupCDTest {
 
     @Test
     public void addDeploymentArtifactInCompositionScreenTest() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -280,7 +280,7 @@ public class Service extends SetupCDTest {
         String descriptionText = DESCRIPTION;
         List<String> artifactFileNames = new ArrayList<>();
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -317,7 +317,7 @@ public class Service extends SetupCDTest {
         String fileName = HEAT_FILE_YAML_NAME,
                 descriptionText = DESCRIPTION,
                 url = "http://kuku.com";
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -341,7 +341,7 @@ public class Service extends SetupCDTest {
         String descriptionText = DESCRIPTION,
                 descriptionTextEdit = "kuku2";
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getServiceLeftMenu().moveToManagmentWorkflow();
@@ -354,7 +354,7 @@ public class Service extends SetupCDTest {
 
     @Test
     public void deleteChangeVersionTest() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -387,7 +387,7 @@ public class Service extends SetupCDTest {
     @Test
     public void compositionScreenRightSideButtonsTest() throws Exception {
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -416,8 +416,8 @@ public class Service extends SetupCDTest {
     @Test
     public void addDeploymentArtifactToVFInstanceTest() throws Exception {
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL, ArtifactTypeEnum.SNMP_POLL.getType());
 
         CanvasElement computeElement = createServiceWithRiArtifact(atomicResourceMetaData, serviceMetadata, artifact);
@@ -431,8 +431,8 @@ public class Service extends SetupCDTest {
     @Test
     public void deleteDeploymentArtifactFromVFInstanceTest() throws Exception {
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL, ArtifactTypeEnum.SNMP_POLL.getType());
 
         createServiceWithRiArtifact(atomicResourceMetaData, serviceMetadata, artifact);
@@ -449,8 +449,8 @@ public class Service extends SetupCDTest {
 //			throw new SkipException("Open bug 342260");			
 //		}
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL, ArtifactTypeEnum.SNMP_POLL.getType());
 
         CanvasElement computeElement = createServiceWithRiArtifact(atomicResourceMetaData, serviceMetadata, artifact);
@@ -478,8 +478,8 @@ public class Service extends SetupCDTest {
 //			throw new SkipException("Open bug 322930");			
 //		}
 
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ArtifactInfo artifact = new ArtifactInfo(filePath, HEAT_FILE_YAML_NAME, DESCRIPTION, ARTIFACT_LABEL, ArtifactTypeEnum.SNMP_POLL.getType());
         ArtifactInfo artifactUpdate = new ArtifactInfo(filePath, HEAT_FILE_YAML_UPDATE_NAME, DESCRIPTION, ARTIFACT_LABEL_UPDATE, ArtifactTypeEnum.DCAE_INVENTORY_DOC.getType());
 
@@ -566,7 +566,7 @@ public class Service extends SetupCDTest {
 
     @Test
     public void isDisabledAndReadOnlyInCheckin() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         GeneralPageElements.clickCheckinButton(serviceMetadata.getName());
         GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
@@ -589,11 +589,11 @@ public class Service extends SetupCDTest {
     public void inputsTest() throws Exception {
         String fileName = "service_input_test_VF2.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName, getUser());
         GeneralPageElements.clickCheckinButton(resourceMetaData.getName());
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         String selectedInstanceName = addResourceToServiceInCanvas(resourceMetaData);
@@ -615,12 +615,12 @@ public class Service extends SetupCDTest {
     @Test()
     public void deploymentViewServiceTest() throws Exception {
 
-        User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+        User user = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
         String fileName2 = "vSeGWNew.csar";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
-        Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
+        Resource resource = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, resourceMetaData.getName(), "0.1");
 
         // update group property max_vf_module_instances of VF Module to 100
         List<GroupDefinition> groups = resource.getGroups();
@@ -632,7 +632,7 @@ public class Service extends SetupCDTest {
 //						List<PropertyDataDefinition> propertyList = new ArrayList<>();
 //						propertyList.add(property);
 //                        todo pass to method correct object instaed of value for custom json
-                        AtomicOperationUtils.updateGroupPropertyOnResource("100", resource, group.getUniqueId(), user, true);
+                        new AtomicOperationUtils().updateGroupPropertyOnResource("100", resource, group.getUniqueId(), user, true);
                         break;
                     }
                 }
@@ -640,7 +640,7 @@ public class Service extends SetupCDTest {
         }
 
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         addResourceToServiceInCanvas(resourceMetaData);
         GeneralUIUtils.clickOnElementByTestId("breadcrumbs-button-1");
@@ -668,11 +668,11 @@ public class Service extends SetupCDTest {
     @Test
     public void vfModuleCustomizationUUIDServiceTest() throws Exception {
         String fileName2 = "vSeGW.csar";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
         ResourceGeneralPage.clickCheckinButton(resourceMetaData.getName());
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         addResourceToServiceInCanvas(resourceMetaData);
@@ -684,7 +684,7 @@ public class Service extends SetupCDTest {
     @Test
     public void checkoutCertifyRemainSameCustomizationUUIDServiceTest() throws Exception {
         String fileName2 = "vSeGW.csar";
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, fileName2, getUser());
         //TODO Andrey should click on certify button
         ResourceGeneralPage.clickCertifyButton(resourceMetaData.getName());
@@ -695,7 +695,7 @@ public class Service extends SetupCDTest {
 		
 		reloginWithNewRole(UserRoleEnum.DESIGNER);*/
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         addResourceToServiceInCanvas(resourceMetaData);
@@ -729,7 +729,7 @@ public class Service extends SetupCDTest {
     @Test
     public void createServiceWithALaCarteInstanTypeAndCheckItsTosca() throws Exception {
         getExtendTest().log(Status.INFO, "Starting the test: createServiceWithALaCarteInstanTypeAndCheckItsTosca.");
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createServiceWithDefaultTagAndUserId(serviceMetadata, getUser());
         getExtendTest().log(Status.INFO, "Done creating service over the UI, "
                 + "about to move into Tosca Artifacts section.");
@@ -742,7 +742,7 @@ public class Service extends SetupCDTest {
     @Test
     public void createServiceWithALaCarteInstanTypeAndVerifyChosenValue() throws Exception {
         getExtendTest().log(Status.INFO, "Starting the test: createServiceWithALaCarteInstanTypeAndVerifyChosenValue.");
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createServiceWithDefaultTagAndUserId(serviceMetadata, getUser());
         getExtendTest().log(Status.INFO, "Done creating service over the UI, "
                 + "about to move into Home page.");

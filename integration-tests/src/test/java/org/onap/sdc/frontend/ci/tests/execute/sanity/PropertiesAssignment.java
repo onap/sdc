@@ -70,7 +70,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String componentName = "abstract_psm";
         String propertyName = "service_template_filter";
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -105,7 +105,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValueInt = "123";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(
                 "ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
@@ -137,7 +137,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValueFalse = "FALSE";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -168,7 +168,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValue = "updated by designer";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(
                 "ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
@@ -204,7 +204,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyOrigValueInt = "0";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -235,7 +235,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValueInt = "123";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -277,7 +277,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyOrigValueInt = "0";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -319,7 +319,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValueBoolean = "TRUE";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -364,7 +364,7 @@ public class PropertiesAssignment extends SetupCDTest {
 
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -415,7 +415,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyListValue = "12345";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -453,7 +453,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyMapValueTwo = "property-value-two";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -515,7 +515,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyValueBoolean = "FALSE";
 
         //Create VF
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 
@@ -554,7 +554,7 @@ public class PropertiesAssignment extends SetupCDTest {
         String propertyName = "name";
         String propertyLocation = DataTestIdEnum.PropertiesAssignmentScreen.PROPERTY_NAME_COLUMN.getValue();
 
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
         resourceMetaData.setVersion("0.1");
         ResourceUIUtils.importVfFromCsar(resourceMetaData, filePath, csarTestFile, getUser());
 

@@ -158,7 +158,7 @@ public class EtsiModelUiTests extends SetupCDTest {
     }
 
     private String createVsp() {
-        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String resourceName = new ElementFactory().addRandomSuffixToName(new ElementFactory().getResourcePrefix());
         final String virtualLinkableVnf = "Vnf-ETSI-SOL001-2.5.1.csar";
         final String rootFolder = org.onap.sdc.backend.ci.tests.utils.general.FileHandling.getPackageRepositoryPath(PackageTypeEnum.ETSI);
         var vspCreateData = new VspCreateData();
