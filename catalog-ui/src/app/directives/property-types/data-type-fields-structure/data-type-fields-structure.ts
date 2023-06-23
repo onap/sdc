@@ -22,14 +22,11 @@
  * Created by obarda on 1/27/2016.
  */
 'use strict';
-import { DataTypesMap, DerivedFEProperty, PropertyDeclareAPIModel, PropertyModel } from 'app/models';
+import { DataTypesMap, PropertyModel } from 'app/models';
 import { DataTypePropertyModel } from 'app/models/data-type-properties';
 import { DataTypesService } from 'app/services';
 import { ValidationUtils } from 'app/utils';
-import { PropertiesUtils } from "../../../ng2/pages/properties-assignment/services/properties.utils";
-import { InstanceFeDetails } from "app/models/instance-fe-details";
-import { SubPropertyToscaFunction } from 'app/models/sub-property-tosca-function';
-import { ToscaGetFunction } from 'app/models/tosca-get-function';
+import {InstanceFeDetails} from "app/models/instance-fe-details";
 import * as _ from 'lodash';
 
 export interface IDataTypeFieldsStructureScope extends ng.IScope {
@@ -50,20 +47,12 @@ export interface IDataTypeFieldsStructureScope extends ng.IScope {
     dataTypesService: DataTypesService;
     constraints: string[];
     isService:boolean;
-    showToscaFunction: Map<string, boolean>;
-    subpropertyMap: Map<string, PropertyDeclareAPIModel>;
-    complexToscapath: string;
 
     expandAndCollapse(): void;
     getValidationPattern(type: string): RegExp;
     validateIntRange(value: string): boolean;
     onValueChange(propertyName: string, type: string): void;
-    inputOnValueChange(property: any, value: any): void;
-    onEnableTosca(toscaFlag:boolean,propertyName:string);
-    verifyTosca(propertyName: string) : boolean;
-    getSubProperty(propertyName: string) : PropertyDeclareAPIModel;
-    getToscaPathValue(propertyName: string) : Array<string>;
-    onGetToscaFunction(toscaGetFunction: ToscaGetFunction, propertyName:string);
+    inputOnValueChange(property: any): void;
 }
 
 export class DataTypeFieldsStructureDirective implements ng.IDirective {
@@ -81,8 +70,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         defaultValue: '@',
         types: '=',
         expandByDefault: '=',
-        isService: '=',
-        complexToscapath: '='
+        isService: '='
     };
 
     restrict = 'E';
@@ -90,15 +78,13 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
 
     constructor(private DataTypesService: DataTypesService,
                 private PropertyNameValidationPattern: RegExp,
-                private ValidationUtils: ValidationUtils, 
-                private PropertiesUtils: PropertiesUtils) {
+                private ValidationUtils: ValidationUtils) {
     }
 
     public static factory = (DataTypesService: DataTypesService,
                              PropertyNameValidationPattern: RegExp,
-                             ValidationUtils: ValidationUtils, 
-                             PropertiesUtils: PropertiesUtils) => {
-        return new DataTypeFieldsStructureDirective(DataTypesService, PropertyNameValidationPattern, ValidationUtils, PropertiesUtils);
+                             ValidationUtils: ValidationUtils) => {
+        return new DataTypeFieldsStructureDirective(DataTypesService, PropertyNameValidationPattern, ValidationUtils);
     }
     template = (): string => {
         return require('./data-type-fields-structure.html');
@@ -110,20 +96,7 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         scope.$watchCollection('[typeName,fieldsPrefixName]', (newData: any): void => {
             this.rerender(scope);
         });
-        let childProp = this.PropertiesUtils.convertAddPropertyBAToPropertyFE(scope.parentProperty);
-        scope.subpropertyMap = new Map<string,PropertyDeclareAPIModel>();
-        scope.showToscaFunction = new Map<string,boolean>();
-        childProp.flattenedChildren.forEach(prop => {
-            scope.showToscaFunction.set(prop.name,false);
-            if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.toString() == prop.name) {
-                        scope.showToscaFunction.set(prop.name,true);
-                    }
-                });
-            }
-            scope.subpropertyMap.set(prop.name,new PropertyDeclareAPIModel(childProp, prop));
-        });
+
         scope.expandAndCollapse = (): void => {
             if (!scope.expanded) {
                 this.initDataOnScope(scope, $attr);
@@ -157,65 +130,6 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
                 || scope.onValueChange(property.name, (property.simpleType || property.type)));
             return value;
         };
-
-        scope.onEnableTosca = (toscaFlag:boolean,key:string):void => {
-            scope.showToscaFunction.set(key,toscaFlag);
-            scope.valueObjRef[key] = "";
-            if (!toscaFlag) {
-                if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                    let subToscaFunctionList : Array<SubPropertyToscaFunction> = [];
-                    scope.parentProperty.subPropertyToscaFunctions.forEach((SubPropertyToscaFunction, index) => {
-                        if (SubPropertyToscaFunction.subPropertyPath.toString() != key) {
-                            subToscaFunctionList.push(SubPropertyToscaFunction);
-                        }
-                    });
-                    scope.parentProperty.subPropertyToscaFunctions = subToscaFunctionList;
-                }
-            }
-        };
-
-        scope.verifyTosca = (propName:string) : boolean => {
-            return scope.showToscaFunction.get(propName);
-        }
-
-        scope.getSubProperty = (propertyName: string) : PropertyDeclareAPIModel => {
-            return scope.subpropertyMap.get(propertyName);
-        }
-
-        scope.getToscaPathValue = (propertyName: string) : Array<string> => {
-            const parentObj : PropertyDeclareAPIModel = scope.subpropertyMap.get(propertyName);
-            if (parentObj.input instanceof DerivedFEProperty) {
-                return parentObj.input.toscaPath;
-            }
-            return [propertyName];
-        }
-
-        scope.onGetToscaFunction = (toscaGetFunction: ToscaGetFunction, key:string): void => {
-            let toscaPath = key;
-            scope.valueObjRef[key] = "";
-            if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                let toscaFlag : boolean = true
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.toString() == toscaPath) {
-                        SubPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                        toscaFlag = false;
-                        return;
-                    }
-                });
-                if (toscaFlag) {
-                    let subPropertyToscaFunction = new SubPropertyToscaFunction();
-                    subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                    subPropertyToscaFunction.subPropertyPath = [toscaPath];
-                    scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
-                }
-            } else {
-                let subPropertyToscaFunction = new SubPropertyToscaFunction();
-                subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                subPropertyToscaFunction.subPropertyPath = [toscaPath];
-                scope.parentProperty.subPropertyToscaFunctions = [subPropertyToscaFunction];
-            }
-        }
-
     }
     // public types=Utils.Constants.PROPERTY_DATA.TYPES;
 
@@ -277,4 +191,4 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
     }
 }
 
-DataTypeFieldsStructureDirective.factory.$inject = ['Sdc.Services.DataTypesService', 'PropertyNameValidationPattern', 'ValidationUtils','PropertiesUtils'];
+DataTypeFieldsStructureDirective.factory.$inject = ['Sdc.Services.DataTypesService', 'PropertyNameValidationPattern', 'ValidationUtils'];

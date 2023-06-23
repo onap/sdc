@@ -49,7 +49,6 @@ export interface ITypeMapScope extends ng.IScope {
     showToscaFunction: boolean[];
     types: DataTypesMap;
     isService: boolean;
-    complexToscapath: string;
 
     getValidationPattern(type: string): RegExp;
     validateIntRange(value: string): boolean;
@@ -78,8 +77,7 @@ export class TypeMapDirective implements ng.IDirective {
         showAddBtn: '=?',
         parentProperty: '=',
         types: '=',
-        isService: '=',
-        complexToscapath: '='
+        isService: '='
     };
 
     restrict = 'E';
@@ -184,30 +182,26 @@ export class TypeMapDirective implements ng.IDirective {
             const currentKey = currentKeySet[index];
             const existingKeyIndex = currentKeySet.indexOf(newKey);
             if (existingKeyIndex > -1 && existingKeyIndex != index) {
-                if (scope.parentFormObj != null) {
-                    scope.parentFormObj[fieldName].$setValidity('keyExist', false);
-                }
+                scope.parentFormObj[fieldName].$setValidity('keyExist', false);
                 scope.isMapKeysUnique = false;
                 return;
             }
-            if (scope.parentFormObj != null) {
-                scope.parentFormObj[fieldName].$setValidity('keyExist', true);
-                if (!scope.parentFormObj[fieldName].$invalid) {
-                    // To preserve the order of the keys, delete each one and recreate
-                    const newObj = {};
-                    angular.copy(scope.valueObjRef, newObj);
-                    angular.forEach(newObj, function(value: any, key: string) {
-                        delete scope.valueObjRef[key];
-                        if (key == currentKey) {
-                            scope.valueObjRef[newKey] = value;
-                        } else {
-                            scope.valueObjRef[key] = value;
-                        }
-                    });
-                }
-            }
+
+            scope.parentFormObj[fieldName].$setValidity('keyExist', true);
             scope.isMapKeysUnique = true;
-            
+            if (!scope.parentFormObj[fieldName].$invalid) {
+                // To preserve the order of the keys, delete each one and recreate
+                const newObj = {};
+                angular.copy(scope.valueObjRef, newObj);
+                angular.forEach(newObj, function(value: any, key: string) {
+                    delete scope.valueObjRef[key];
+                    if (key == currentKey) {
+                        scope.valueObjRef[newKey] = value;
+                    } else {
+                        scope.valueObjRef[key] = value;
+                    }
+                });
+            }
         };
 
         scope.deleteMapItem = (index: number): void => {
@@ -239,7 +233,7 @@ export class TypeMapDirective implements ng.IDirective {
                 if (scope.parentProperty.subPropertyToscaFunctions != null) {
                     const subToscaFunctionList: SubPropertyToscaFunction[] = [];
                     scope.parentProperty.subPropertyToscaFunctions.forEach((SubPropertyToscaFunction, index) => {
-                        if (SubPropertyToscaFunction.subPropertyPath.toString() != scope.mapKeys[flagIndex]) {
+                        if (SubPropertyToscaFunction.subPropertyPath.indexOf(scope.mapKeys[flagIndex]) == -1) {
                             subToscaFunctionList.push(SubPropertyToscaFunction);
                         }
                     });
@@ -248,30 +242,24 @@ export class TypeMapDirective implements ng.IDirective {
             }
         };
 
-        scope.onGetToscaFunction = (toscaGetFunction: ToscaGetFunction, index:string): void => {
-            let key:string = index;
+        scope.onGetToscaFunction = (toscaGetFunction: ToscaGetFunction, key: string): void => {
             if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                let toscaFlag : boolean = true;
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.toString() == key) {
+                scope.parentProperty.subPropertyToscaFunctions.forEach((SubPropertyToscaFunction) => {
+                    if (SubPropertyToscaFunction.subPropertyPath.indexOf(key) != -1) {
                         SubPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                        toscaFlag = false;
                         return;
                     }
                 });
-                if (toscaFlag) {
-                    let subPropertyToscaFunction = new SubPropertyToscaFunction();
-                    subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                    subPropertyToscaFunction.subPropertyPath = [key];
-                    scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
-                }
-            } else {  
-                let subPropertyToscaFunction = new SubPropertyToscaFunction();
-                subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                subPropertyToscaFunction.subPropertyPath = [key];
-                scope.parentProperty.subPropertyToscaFunctions = [subPropertyToscaFunction];
+
             }
-        }
+            if (scope.parentProperty.subPropertyToscaFunctions == null) {
+                scope.parentProperty.subPropertyToscaFunctions = [];
+            }
+            const subPropertyToscaFunction = new SubPropertyToscaFunction();
+            subPropertyToscaFunction.toscaFunction = toscaGetFunction;
+            subPropertyToscaFunction.subPropertyPath = [key];
+            scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
+        };
 
         scope.addMapItemFields = (): void => {
             if (!scope.valueObjRef) {
