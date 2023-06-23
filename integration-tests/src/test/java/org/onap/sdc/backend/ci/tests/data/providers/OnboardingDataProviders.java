@@ -211,6 +211,28 @@ public final class OnboardingDataProviders {
         return parametersArray;
     }
 
+    @DataProvider(name = "floatVFC")
+    private static Object[][] floatVFC() {
+        final List<String> vfcFileNameList = OnboardingUtils.getVfcFilenameList();
+
+        if (CollectionUtils.isEmpty(vfcFileNameList)) {
+            fail("Could not create vfcList datasource");
+        }
+
+        final String vfc1 = "floatVFC.yml";
+        final List<String> vfcFiles = vfcFileNameList.stream()
+                .filter(filename -> filename.equals(vfc1)).sorted().collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(vfcFiles) || vfcFiles.size() < 1) {
+            fail(String.format("Could not create vfcList datasource, one of the vfc file '%s' was not found", vfcFiles));
+        }
+
+        final String folderPath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.VFC);
+        final Object[][] parametersArray = new Object[1][];
+        parametersArray[0] = new Object[]{folderPath, vfcFiles.get(0)};
+        return parametersArray;
+    }
+
     @DataProvider(name = "SimpleDataType")
     private static Object[][] simpleDataType() {
         final List<String> typeFileNameList = OnboardingUtils.getTypeFilenameList();

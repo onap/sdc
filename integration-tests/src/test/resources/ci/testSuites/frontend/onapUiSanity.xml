@@ -52,6 +52,7 @@
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.EtsiModelUiTests"/>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ModelToscaTypeImportTest"/>
       <class name="org.onap.sdc.frontend.ci.tests.pages.vf.composition.CompositionIntTests"/>
+      <class name="org.onap.sdc.frontend.ci.tests.pages.vf.composition.CompositionFloatTests"/>
     </classes>
   </test>
 </suite>

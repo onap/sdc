@@ -1,0 +1,81 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  org.openecomp.resource.FloatVFC:
+    derived_from: tosca.nodes.Root
+    description: aDescription
+    properties:
+      GreaterFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - greater_than: 1.0
+      float_prop_3:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+      inRangeFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - in_range:
+          - 1.0
+          - 300.0
+      GEFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - greater_or_equal: 1.1
+      float_prop_2:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+      EqualFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - equal: 1.2
+      float_prop_1:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+      ComplexProp:
+        default:
+          float_prop: 125.5
+          int_prop: 125
+          string_prop: Default String
+        type: testing.simple.data.type
+        required: false
+      LessFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - less_than: 200.0
+      validValueFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
+        - valid_values:
+          - 1.0
+          - 1.1
+          - 1.2
+      LEFloatProp:
+        default: 1.2
+        type: float
+        description: default float type property description
+        required: false
+        constraints:
