@@ -5,6 +5,102 @@
 Release Notes
 =============
 
+Version: 1.13.1
+===============
+
+:Release Date: 2023-06-23
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC London release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4545 <https://jira.onap.org/browse/SDC-4545>`_ - Support custom tosca functions in operation input values
+*  `SDC-4521 <https://jira.onap.org/browse/SDC-4521>`_ - Order response from external assets API
+*  `SDC-4520 <https://jira.onap.org/browse/SDC-4520>`_ - Additional metadata in external assets api
+*  `SDC-4540 <https://jira.onap.org/browse/SDC-4540>`_ - Enable setting of sasl.mechanism for Kafka communincation
+*  `SDC-4409 <https://jira.onap.org/browse/SDC-4409>`_ - Update external query api with new query params
+
+
+**Bug Fixes**
+
+*  `SDC-4543 <https://jira.onap.org/browse/SDC-4543>`_ - Cannot set instance property
+*  `SDC-4498 <https://jira.onap.org/browse/SDC-4498>`_ - Python Code Updates: Service Design and Creation (SDC)
+*  `SDC-4539 <https://jira.onap.org/browse/SDC-4539>`_ - Substitution Mapping node properties not updated
+*  `SDC-4541 <https://jira.onap.org/browse/SDC-4541>`_ - Fix normative VFCs being set to non normative during service import
+*  `SDC-4538 <https://jira.onap.org/browse/SDC-4538>`_ - Cannot set TOSCA function value using nested values for get_input
+*  `SDC-4535 <https://jira.onap.org/browse/SDC-4535>`_ - Node filter boolean values output as strings
+*  `SDC-4522 <https://jira.onap.org/browse/SDC-4522>`_ - Fix different issues when adding properties
+*  `SDC-4530 <https://jira.onap.org/browse/SDC-4530>`_ - NPE in ServiceImportBusinessLogic
+
+
+**Tasks**
+
+*  `SDC-4548 <https://jira.onap.org/browse/SDC-4548>`_ - Fix docs failure
+*  `SDC-4536 <https://jira.onap.org/browse/SDC-4536>`_ - Improve test coverage
+*  `SDC-4542 <https://jira.onap.org/browse/SDC-4542>`_ - Disable DMaaP if Kafka active
+*  `SDC-4534 <https://jira.onap.org/browse/SDC-4534>`_ - No error on invalid index
+*  `SDC-4532 <https://jira.onap.org/browse/SDC-4532>`_ - Remove unused Neo4jErrorsConfiguration
+*  `SDC-4531 <https://jira.onap.org/browse/SDC-4531>`_ - Improve error handling for user-created Policies
+*  `SDC-4526 <https://jira.onap.org/browse/SDC-4526>`_ - Improve build image time
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.13.0
 ===============
 
