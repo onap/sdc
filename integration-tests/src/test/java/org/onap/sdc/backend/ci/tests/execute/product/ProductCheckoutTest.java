@@ -87,16 +87,16 @@ public class ProductCheckoutTest extends ProductLifecycleTest {
 
 	@Test
 	public void checkOutProductAlreadyCheckedOut() throws Exception {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKOUT);
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkin resource", 200, lcsResponse.getErrorCode().intValue());
 		Product checkedOutProduct = ResponseParser.parseToObjectUsingMapper(lcsResponse.getResponse(), Product.class);
 
 		DbUtils.cleanAllAudits();
 
-		lcsResponse = LifecycleRestUtils.changeProductState(checkedOutProduct, productManager2, LifeCycleStatesEnum.CHECKOUT);
+		lcsResponse = new LifecycleRestUtils().changeProductState(checkedOutProduct, productManager2, LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkin resource", 403, lcsResponse.getErrorCode().intValue());
 		String[] auditParameters = new String[] { checkedOutProduct.getName(), "product", productManager1.getFirstName(), productManager1.getLastName(), productManager1.getUserId() };
 
@@ -106,10 +106,10 @@ public class ProductCheckoutTest extends ProductLifecycleTest {
 	}
 
 	private void checkOutProductSuccess(User checkoutUser) throws Exception, FileNotFoundException {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkin resource", 200, lcsResponse.getErrorCode().intValue());
 
 		// 0.1 is not highest now
@@ -132,10 +132,10 @@ public class ProductCheckoutTest extends ProductLifecycleTest {
 	}
 
 	private void checkOutProductRestricted(User checkoutUser) throws Exception, FileNotFoundException {
-		RestResponse lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
+		RestResponse lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, productManager1, LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code after checkin resource", 200, lcsResponse.getErrorCode().intValue());
 
-		lcsResponse = LifecycleRestUtils.changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
+		lcsResponse = new LifecycleRestUtils().changeProductState(expectedProduct, checkoutUser, LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code after checkin resource", 409, lcsResponse.getErrorCode().intValue());
 
 		ExpectedProductAudit expectedProductAudit = Convertor.constructFieldsForAuditValidation(expectedProduct, auditAction, checkoutUser, ActionStatus.RESTRICTED_OPERATION, "0.1", "0.1", LifecycleStateEnum.NOT_CERTIFIED_CHECKIN,

@@ -53,7 +53,7 @@ import java.util.Map.Entry;
 
 	 public static ServiceDistributionStatus getLatestServiceDistributionObject(Service service) throws IOException, ParseException {
 			ServiceDistributionStatus serviceDistributionStatus = null;
-			RestResponse distributionServiceList = ServiceRestUtils.getDistributionServiceList(service, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+			RestResponse distributionServiceList = new ServiceRestUtils().getDistributionServiceList(service, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER));
 			Map<Long, ServiceDistributionStatus> serviveDistributionStatusMap = ResponseParser.convertServiceDistributionStatusToObject(distributionServiceList.getResponse());
 			if(serviveDistributionStatusMap.size() != 0){
 				serviceDistributionStatus = getLatestServiceDistributionObjectFromMap(serviveDistributionStatusMap);

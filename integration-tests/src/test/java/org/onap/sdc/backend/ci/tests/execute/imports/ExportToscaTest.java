@@ -63,7 +63,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 
 	@Test()
 	public void exportVfModuleTest() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "VSPPackage");
 
@@ -144,7 +144,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 
 	@Test(enabled = true)
 	public void exportCsarInputsTest() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csar_1");
 		Map<String, Object> load = downloadAndParseToscaTemplate(sdncModifierDetails, createdResource);
@@ -202,9 +202,9 @@ public class ExportToscaTest extends ComponentBaseTest {
 
 	@Test
 	public void importExportCsarWithJsonPropertyType() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		String payloadName = "jsonPropertyTypeTest.csar";
-		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		ImportReqDetails resourceDetails = new ElementFactory().getDefaultImportResource();
 		String rootPath = System.getProperty("user.dir");
 		Path path = null;
 		byte[] data = null;
@@ -216,7 +216,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResource = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 		ComponentInstance pmaaServer = resource.getComponentInstances().stream()
@@ -246,26 +246,26 @@ public class ExportToscaTest extends ComponentBaseTest {
 	@Test(enabled = true)
 	public void exportServiceInputValue() throws Exception {
 		//1 create vf as certified
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csar_1");
-		RestResponse checkinState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkinState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(checkinState);
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+		ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService(
 				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(),
 				ServiceInstantiationType.A_LA_CARTE.getValue());
 		
 		//2 create service
-		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		RestResponse createServiceResponse = new ServiceRestUtils().createService(serviceDetails, sdncModifierDetails);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 		Service service = ResponseParser.parseToObjectUsingMapper(createServiceResponse.getResponse(), Service.class);
 
 		//3 create vf instance in service
-		ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(createdResource);
+		ComponentInstanceReqDetails componentInstanceDetails = new ElementFactory().getComponentInstance(createdResource);
 		RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, sdncModifierDetails, service);
-		ResourceRestUtils.checkCreateResponse(createComponentInstance);
+		new ResourceRestUtils().checkCreateResponse(createComponentInstance);
 		
-		RestResponse getService = ServiceRestUtils.getService(service.getUniqueId());
+		RestResponse getService = new ServiceRestUtils().getService(service.getUniqueId());
 		BaseRestUtils.checkSuccess(getService);
 		service = ResponseParser.parseToObjectUsingMapper(getService.getResponse(), Service.class);
 		
@@ -298,7 +298,7 @@ public class ExportToscaTest extends ComponentBaseTest {
 
 		//8 validate inputs in service 
 		//8.1 download tosca template 
-		getService = ServiceRestUtils.getService(service.getUniqueId());
+		getService = new ServiceRestUtils().getService(service.getUniqueId());
 		BaseRestUtils.checkSuccess(getService);
 		service = ResponseParser.parseToObjectUsingMapper(getService.getResponse(), Service.class);
 		

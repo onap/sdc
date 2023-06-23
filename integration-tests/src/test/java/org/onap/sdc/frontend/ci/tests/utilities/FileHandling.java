@@ -220,7 +220,7 @@ public class FileHandling {
                     filenames.add(file.getName());
                 }
 
-                filenames.removeAll(OnboardingUtils.excludeXnfList);
+                filenames.removeAll(new OnboardingUtils().excludeXnfList);
 
                 return filenames;
             }

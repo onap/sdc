@@ -53,31 +53,31 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 	@Test()
 	public void heatEnvOnResourceFormatTest() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csarHeatEnv.csar");
 		assertNotNull(createdResource);
 
-		RestResponse certifyState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse certifyState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(certifyState);
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+		ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService(
 				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(),
 				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// 2 create service
-		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		RestResponse createServiceResponse = new ServiceRestUtils().createService(serviceDetails, sdncModifierDetails);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 		Service service = ResponseParser.parseToObjectUsingMapper(createServiceResponse.getResponse(), Service.class);
 
 		// 3 create vf instance in service
-		ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(certifiedResource);
+		ComponentInstanceReqDetails componentInstanceDetails = new ElementFactory().getComponentInstance(certifiedResource);
 		RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, sdncModifierDetails, service);
-		ResourceRestUtils.checkCreateResponse(createComponentInstance);
+		new ResourceRestUtils().checkCreateResponse(createComponentInstance);
 
-		RestResponse getService = ServiceRestUtils.getService(service.getUniqueId());
+		RestResponse getService = new ServiceRestUtils().getService(service.getUniqueId());
 		BaseRestUtils.checkSuccess(getService);
 		service = ResponseParser.parseToObjectUsingMapper(getService.getResponse(), Service.class);
 
@@ -105,31 +105,31 @@ public class HeatEnvArtifact extends ComponentBaseTest {
 	}
 	@Test(enabled = true)
 	public void noHeatEnvOnResourceFormatTest() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
 		Resource createdResource = createVfFromCSAR(sdncModifierDetails, "csarHeatNoEnv.csar");
 		assertNotNull(createdResource);
 
-		RestResponse certifyState = LifecycleRestUtils.changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
+		RestResponse certifyState = new LifecycleRestUtils().changeComponentState(createdResource, sdncModifierDetails, LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(certifyState);
 
 		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(certifyState.getResponse(), Resource.class);
 
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(
+		ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService(
 				"ciNewtestservice1", ServiceCategoriesEnum.MOBILITY, sdncModifierDetails.getUserId(), 
 				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// 2 create service
-		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, sdncModifierDetails);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
+		RestResponse createServiceResponse = new ServiceRestUtils().createService(serviceDetails, sdncModifierDetails);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
 		Service service = ResponseParser.parseToObjectUsingMapper(createServiceResponse.getResponse(), Service.class);
 
 		// 3 create vf instance in service
-		ComponentInstanceReqDetails componentInstanceDetails = ElementFactory.getComponentInstance(certifiedResource);
+		ComponentInstanceReqDetails componentInstanceDetails = new ElementFactory().getComponentInstance(certifiedResource);
 		RestResponse createComponentInstance = ComponentInstanceRestUtils.createComponentInstance(componentInstanceDetails, sdncModifierDetails, service);
-		ResourceRestUtils.checkCreateResponse(createComponentInstance);
+		new ResourceRestUtils().checkCreateResponse(createComponentInstance);
 
-		RestResponse getService = ServiceRestUtils.getService(service.getUniqueId());
+		RestResponse getService = new ServiceRestUtils().getService(service.getUniqueId());
 		BaseRestUtils.checkSuccess(getService);
 		service = ResponseParser.parseToObjectUsingMapper(getService.getResponse(), Service.class);
 

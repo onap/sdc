@@ -150,7 +150,7 @@ public class ImportReqDetails extends ResourceReqDetails {
 
 	private RestResponse getResourceSource(User user, String source) throws IOException, JSONException {
 		org.codehaus.jettison.json.JSONObject getResourceJSONObject = null;
-		RestResponse rest = ResourceRestUtils.getResourceByNameAndVersion(user.getUserId(), source, "1.0");
+		RestResponse rest = new ResourceRestUtils().getResourceByNameAndVersion(user.getUserId(), source, "1.0");
 		if (rest.getErrorCode().intValue() == 200) {
 			JSONArray jArray = new JSONArray(rest.getResponse());
 			for (int i = 0; i < jArray.length(); i++) {

@@ -48,7 +48,7 @@ public class Categories extends SetupCDTest {
     public void createResourceCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         List<WebElement> resourceCategoriesList = AdminGeneralPage.getResourceCategoriesList();
         List<String> collect = resourceCategoriesList.stream().map(f -> f.getText()).collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class Categories extends SetupCDTest {
     public void createServiceCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
         List<String> collect = serviceCategoriesList.stream().map(f -> f.getText()).collect(Collectors.toList());
@@ -74,9 +74,9 @@ public class Categories extends SetupCDTest {
     public void createResourceSubCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
-        String newSubCategory = ElementFactory.getDefaultSubCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newSubCategory = new ElementFactory().getDefaultSubCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
@@ -90,7 +90,7 @@ public class Categories extends SetupCDTest {
     public void createExistingResourceCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
 
@@ -105,7 +105,7 @@ public class Categories extends SetupCDTest {
     public void createExistingServiceCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
 
@@ -120,9 +120,9 @@ public class Categories extends SetupCDTest {
 
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
-        String newSubCategory = ElementFactory.getDefaultSubCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newSubCategory = new ElementFactory().getDefaultSubCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
@@ -141,9 +141,9 @@ public class Categories extends SetupCDTest {
     public void createServiceWithNewCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
-        String newSubCategory = ElementFactory.getDefaultSubCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newSubCategory = new ElementFactory().getDefaultSubCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
@@ -152,9 +152,9 @@ public class Categories extends SetupCDTest {
         GeneralUIUtils.waitForLoader();
         AdminGeneralPage.selectUserManagmetTab();
         reloginWithNewRole(UserRoleEnum.DESIGNER);
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         List<CategoryDefinition> categories = serviceMetadata.getCategories();
         categories.get(0).setName(newserviceCategory);
 
@@ -167,9 +167,9 @@ public class Categories extends SetupCDTest {
     public void createResourceWithNewCategory() throws Exception {
 
         AdminGeneralPage.selectCategoryManagmetTab();
-        String newResourceCategory = ElementFactory.getDefaultCategory().getName();
-        String newserviceCategory = ElementFactory.getDefaultCategory().getName();
-        String newSubCategory = ElementFactory.getDefaultSubCategory().getName();
+        String newResourceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newserviceCategory = new ElementFactory().getDefaultCategory().getName();
+        String newSubCategory = new ElementFactory().getDefaultSubCategory().getName();
         AdminGeneralPage.createNewResourceCategory(newResourceCategory);
         AdminGeneralPage.createNewServiceCategory(newserviceCategory);
         List<WebElement> serviceCategoriesList = AdminGeneralPage.getServiceCategoriesList();
@@ -178,7 +178,7 @@ public class Categories extends SetupCDTest {
         GeneralUIUtils.waitForLoader();
         AdminGeneralPage.selectUserManagmetTab();
         reloginWithNewRole(UserRoleEnum.DESIGNER);
-        ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
+        ResourceReqDetails resourceMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.VF, getUser());
 
         List<CategoryDefinition> categories = resourceMetaData.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);

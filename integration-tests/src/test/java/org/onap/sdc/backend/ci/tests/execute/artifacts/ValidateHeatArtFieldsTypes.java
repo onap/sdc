@@ -67,16 +67,16 @@ public class ValidateHeatArtFieldsTypes extends ComponentBaseTest {
 
 		// get relevant resource and service
 
-		sdncDesignerDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		resourceDetails = ElementFactory.getDefaultResource();
+		sdncDesignerDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		resourceDetails = new ElementFactory().getDefaultResource();
 
-		RestResponse response = ResourceRestUtils.createResource(resourceDetails, sdncDesignerDetails);
+		RestResponse response = new ResourceRestUtils().createResource(resourceDetails, sdncDesignerDetails);
 		AssertJUnit.assertTrue("create request returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 201);
 
 		// add artifact to resource1
 
-		ArtifactReqDetails heatArtifactDetails = ElementFactory
+		ArtifactReqDetails heatArtifactDetails = new ElementFactory()
 				.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
 		List<String> listOfArtifactFromFolder = ArtifactValidationUtils.getListOfArtifactFromFolder(folderName);
 		for (int i = 0; i < listOfArtifactFromFolder.size(); i++) {

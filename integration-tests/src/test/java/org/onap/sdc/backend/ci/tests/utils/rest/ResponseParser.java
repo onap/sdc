@@ -24,43 +24,60 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.onap.sdc.backend.ci.tests.datatypes.ArtifactReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.ResourceAssetStructure;
-import org.onap.sdc.backend.ci.tests.datatypes.ResourceRespJavaObject;
 import org.onap.sdc.backend.ci.tests.datatypes.ServiceDistributionStatus;
+import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.onap.sdc.backend.ci.tests.tosca.datatypes.VfModuleDefinition;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ResponseParser {
 
     private static final String INVARIANT_UUID = "invariantUUID";
-    public static final String UNIQUE_ID = "uniqueId";
-    public static final String VERSION = "version";
-    public static final String UUID = "uuid";
-    public static final String NAME = "name";
-    public static final String ORIGIN_TYPE = "originType";
-    public static final String TOSCA_RESOURCE_NAME = "toscaResourceName";
+    private static final String UNIQUE_ID = "uniqueId";
+    private static final String VERSION = "version";
+    private static final String UUID = "uuid";
+    private static final String NAME = "name";
+    private static final String ORIGIN_TYPE = "originType";
+    private static final String TOSCA_RESOURCE_NAME = "toscaResourceName";
 
-    static Logger logger = LoggerFactory.getLogger(ResponseParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseParser.class);
 
     public static String getValueFromJsonResponse(String response, String fieldName) {
         try {
@@ -108,33 +125,6 @@ public class ResponseParser {
 
     public static String getToscaResourceNameFromResponse(RestResponse response) {
         return getValueFromJsonResponse(response.getResponse(), TOSCA_RESOURCE_NAME);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static ResourceRespJavaObject parseJsonListReturnResourceDetailsObj(RestResponse restResponse,
-                                                                               String resourceType, String searchPattern, String expectedResult) throws Exception {
-
-        // Gson gson = new Gson;
-
-        JsonElement jElement = new JsonParser().parse(restResponse.getResponse());
-        JsonObject jObject = jElement.getAsJsonObject();
-        JsonArray arrayOfObjects = (JsonArray) jObject.get(resourceType);
-        Gson gson = new Gson();
-        Map<String, Object> map = new HashMap<>();
-        ResourceRespJavaObject jsonToJavaObject = new ResourceRespJavaObject();
-
-        for (int counter = 0; counter < arrayOfObjects.size(); counter++) {
-            JsonObject jHitObject = (JsonObject) arrayOfObjects.get(counter);
-
-            map = (Map<String, Object>) gson.fromJson(jHitObject.toString(), map.getClass());
-            if (map.get(searchPattern).toString().contains(expectedResult)) {
-
-                jsonToJavaObject = gson.fromJson(jObject, ResourceRespJavaObject.class);
-                break;
-            }
-        }
-        return jsonToJavaObject;
-
     }
 
     private static ObjectMapper newObjectMapper() {
@@ -211,14 +201,6 @@ public class ResponseParser {
 
     }
 
-    public static ArtifactReqDetails convertArtifactReqDetailsToJavaObject(String response) {
-
-        ArtifactReqDetails artifactReqDetails = null;
-        Gson gson = new Gson();
-        artifactReqDetails = gson.fromJson(response, ArtifactReqDetails.class);
-        return artifactReqDetails;
-    }
-
     public static <T> T parseToObject(String json, Class<T> clazz) {
         Gson gson = new Gson();
         T object;
@@ -241,16 +223,6 @@ public class ResponseParser {
         }
 
         return object;
-    }
-
-    public static ArtifactReqDetails convertArtifactDefinitionToArtifactReqDetailsObject(
-            ArtifactDefinition artifactDefinition) {
-
-        ArtifactReqDetails artifactReqDetails = null;
-        Gson gson = new Gson();
-        String artDef = gson.toJson(artifactDefinition);
-        artifactReqDetails = gson.fromJson(artDef, ArtifactReqDetails.class);
-        return artifactReqDetails;
     }
 
     public static Service convertServiceResponseToJavaObject(String response) {
@@ -382,17 +354,6 @@ public class ResponseParser {
         return object;
     }
 
-    public static List<Map<String, Object>> getListOfMapsFromJson(RestResponse res, String field) throws Exception {
-        List<Map<String, Object>> list = new ArrayList<>();
-        JSONArray listFromJson = getListFromJson(res, field);
-        for (int i = 0; i < listFromJson.length(); i++) {
-            Map<String, Object> convertStringToMap = convertStringToMap(listFromJson.getString(i));
-            list.add(convertStringToMap);
-        }
-        return list;
-
-    }
-
     public static Map<String, Object> getJsonValueAsMap(RestResponse response, String key) {
         String valueField = getValueFromJsonResponse(response.getResponse(), key);
         Map<String, Object> convertToMap = convertStringToMap(valueField);
@@ -472,8 +433,7 @@ public class ResponseParser {
 
     }
 
-    public static Map<String, String> getPropertiesNameType(RestResponse restResponse)
-            throws JSONException {
+    public static Map<String, String> getPropertiesNameType(RestResponse restResponse) throws JSONException {
         Map<String, String> propertiesMap = new HashMap<>();
         JSONArray propertiesList = getListFromJson(restResponse, "properties");
         for (int i = 0; i < propertiesList.length(); i++) {

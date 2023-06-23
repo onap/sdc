@@ -74,16 +74,16 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceTest() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// ResourceReqDetails resourceDetails = new
 		// ResourceReqDetails(resourceName, description, resourceTags, category,
 		// derivedFrom, vendorName, vendorRelease, contactId, icon);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		String resourceName = resourceDetails.getName();
 		resourceDetails.setTags(Arrays.asList(resourceName, resourceName, resourceName, resourceName, "tag2", "tag2"));
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", createResponse);
@@ -98,7 +98,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 
@@ -119,13 +119,13 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceNonDefaultResourceTypeTest() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		String resourceType = ResourceTypeEnum.CP.toString();
 		resourceDetails.setResourceType(resourceType);
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", createResponse);
@@ -141,7 +141,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 
@@ -163,7 +163,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4572";
@@ -191,7 +191,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("User");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", createResponse);
@@ -208,7 +208,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// validate get response
 
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 
@@ -218,7 +218,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_CostIsMissing() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -245,7 +245,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("User");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 201, createResponse.getErrorCode().intValue());
@@ -259,7 +259,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 	}
@@ -267,7 +267,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseTypeMissing() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -294,7 +294,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		// resourceDetails.setLicenseType("User");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 201, createResponse.getErrorCode().intValue());
@@ -308,7 +308,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 	}
@@ -316,7 +316,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseType_Installation() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -343,7 +343,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("Installation");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 201, createResponse.getErrorCode().intValue());
@@ -357,7 +357,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 	}
@@ -365,7 +365,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseType_CPU() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -392,7 +392,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("CPU");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 201, createResponse.getErrorCode().intValue());
@@ -406,7 +406,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncModifierDetails,
 				resourceDetails.getUniqueId());
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 	}
@@ -414,7 +414,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseType_Uppercase() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -441,7 +441,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("INSTALLATION");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -451,7 +451,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseType_Invalid() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -478,7 +478,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("CPUUU");
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -488,7 +488,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_CostValidation_noNumeric() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -515,7 +515,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("User");
 		resourceDetails.setCost("12355.34b");
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -527,7 +527,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_CostValidation_valueLength() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -555,7 +555,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		// Adding invalid cost
 		resourceDetails.setCost("12355.3434");
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -566,7 +566,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_CostValidation_PriceLimitations() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -596,8 +596,8 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		// create resource
 
 		resourceDetails.setCost("000000.000");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -618,7 +618,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		 */
 
 		resourceDetails.setCost("1");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -626,8 +626,8 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				createResponse.getResponseMessage().toString());
 
 		resourceDetails.setCost("123555.340");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -635,7 +635,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				createResponse.getResponseMessage().toString());
 
 		resourceDetails.setCost("123.4570");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -643,7 +643,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				createResponse.getResponseMessage().toString());
 
 		resourceDetails.setCost("123555.30");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -651,7 +651,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				createResponse.getResponseMessage().toString());
 
 		resourceDetails.setCost("123.5550");
-		createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -663,7 +663,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_CostIsNull() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -690,7 +690,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("User");
 		resourceDetails.setCost("");
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -701,7 +701,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_LicenseIsNull() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		// set resource details
 		String resourceName = "CISCO4572";
 		String description = "description";
@@ -728,7 +728,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setLicenseType("User");
 		resourceDetails.setLicenseType("");
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		assertNotNull("check response object is not null after create resource", createResponse);
 		assertNotNull("check error code exists in response after create resource", createResponse.getErrorCode());
 		assertEquals("Check response code after create resource", 400, createResponse.getErrorCode().intValue());
@@ -740,7 +740,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceTest_uri_methods() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		ResourceReqDetails resourceDetails = createRandomResource();
@@ -797,12 +797,12 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResource_role_tester() throws Exception {
 
 		// init TESTER user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.TESTER);
 
 		ResourceReqDetails resourceDetails2 = createRandomResource();
 
 		// create resource
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.RESTRICTED_OPERATION.name());
@@ -839,9 +839,9 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResource_role_DESIGNER() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 		ResourceReqDetails resourceDetails = createRandomResource();
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 		// validate response
 		assertNotNull("check response object is not null after create resource", restResponse);
 		assertNotNull("check error code exists in response after create resource", restResponse.getErrorCode());
@@ -855,7 +855,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResource_missing_header() throws Exception {
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		ResourceReqDetails resourceDetails = createRandomResource();
 
@@ -864,7 +864,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 
@@ -907,13 +907,13 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResource_existing_resource() throws Exception {
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// ResourceReqDetails resourceDetails = createRandomResource();
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", restResponse);
@@ -921,14 +921,14 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals("Check response code after create resource", 201, restResponse.getErrorCode().intValue());
 
 		// set resource details
-		ResourceReqDetails resourceDetails2 = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails2 = new ElementFactory().getDefaultResource();
 		resourceDetails2.setName(resourceDetails.getName());
 		
 		// clean ES DB
 		DbUtils.cleanAllAudits();
 
 		// create resource
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -968,7 +968,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		;
 
 		// set resource details
@@ -992,7 +992,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 
@@ -1031,7 +1031,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1054,7 +1054,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1093,7 +1093,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 		;
 
 		// set resource details
@@ -1113,7 +1113,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				derivedFrom, vendorName, vendorRelease, contactId, icon);
 
 		// create resource
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1152,7 +1152,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceTest_with_multiple_tags() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// // set resource details
 		// String resourceName = "CISCO4";
@@ -1166,11 +1166,11 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		// String vendorName = "Oracle";
 		// String vendorRelease = "1.5";
 		// String icon = "myICON";
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		resourceDetails.setTags(Arrays.asList(resourceDetails.getName(), "tag2"));
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", restResponse);
@@ -1184,7 +1184,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1203,7 +1203,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				derivedFrom, vendorName, vendorRelease, contactId, icon);
 
 		// create resource
-		RestResponse restResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse restResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// validate response
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_FIELD_FORMAT.name());
@@ -1238,7 +1238,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_with_empty_vendorName() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1260,7 +1260,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 				derivedFrom, vendorName, vendorRelease, contactId, icon);
 
 		// create resource
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.MISSING_VENDOR_NAME.name());
@@ -1294,7 +1294,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_without_vendorName() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1317,7 +1317,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 		assertNotNull("check response object is not null after create resource", restResponse2);
@@ -1333,7 +1333,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_with_empty_vendorRelease() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1356,7 +1356,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1393,7 +1393,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_without_vendorRelease() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1416,7 +1416,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1453,7 +1453,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_with_empty_contactId() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1476,7 +1476,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1514,7 +1514,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_without_contactId() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1537,7 +1537,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1575,7 +1575,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_with_empty_icon() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1598,7 +1598,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1635,7 +1635,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_without_icon() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1658,7 +1658,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1695,7 +1695,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_with_empty_description() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1718,7 +1718,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1756,7 +1756,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createResourceTest_without_description() throws Exception {
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		// set resource details
 		String resourceName = "CISCO4";
@@ -1779,7 +1779,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// create resource
 
-		RestResponse restResponse2 = ResourceRestUtils.createResource(resourceDetails2, sdncModifierDetails);
+		RestResponse restResponse2 = new ResourceRestUtils().createResource(resourceDetails2, sdncModifierDetails);
 
 		// validate response
 
@@ -1817,12 +1817,12 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void createAndGetResourceByNameAndVersion() throws Exception {
 
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		ResourceReqDetails resourceDetailsComp = ElementFactory.getDefaultResource("testresourceComp",
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
+		ResourceReqDetails resourceDetailsComp = new ElementFactory().getDefaultResource("testresourceComp",
 				NormativeTypesEnum.COMPUTE, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, sdncModifierDetails.getUserId());
 
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetailsComp, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetailsComp, sdncModifierDetails);
 		// validate response
 		assertEquals("Check response code after create resource", 201, createResponse.getErrorCode().intValue());
 
@@ -1834,11 +1834,11 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResourceByNameAndVersion(
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResourceByNameAndVersion(
 				sdncModifierDetails.getUserId(), resourceDetailsComp.getName(), resourceDetailsComp.getVersion());
 		assertEquals("Check response code after delete resource", 200, resourceGetResponse.getErrorCode().intValue());
 		// Resource resource =
-		// ResourceRestUtils.parseResourceFromListResp(resourceGetResponse);
+		// new ResourceRestUtils().parseResourceFromListResp(resourceGetResponse);
 		ResourceValidationUtils.validateResp(resourceGetResponse, resourceRespJavaObject);
 		// resourceDetailsComp.setUniqueId(resource.getUniqueId());
 
@@ -1848,13 +1848,13 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceResourceTypeNotExistsTest() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		String resourceType = "NOT EXISTS";
 		resourceDetails.setResourceType(resourceType);
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());
 
@@ -1886,13 +1886,13 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	public void createResourceResourceTypeEmptyTest() throws Exception {
 
 		// init ADMIN user
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User sdncModifierDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		// String resourceType = "";
 		// resourceDetails.setResourceType(resourceType);
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncModifierDetails);
 
 		// ErrorInfo errorInfo =
 		// ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_CONTENT.name());
@@ -1919,8 +1919,8 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		// expectedResourceAuditJavaObject.setCurrState("");
 		// expectedResourceAuditJavaObject.setCurrVersion("");
 		// expectedResourceAuditJavaObject.setResourceName("");
-		// expectedResourceAuditJavaObject.setModifierUid(ElementFactory.getDefaultUser(UserRoleEnum.ADMIN).getUserId());
-		// expectedResourceAuditJavaObject.setModifierName(ElementFactory.getDefaultUser(UserRoleEnum.ADMIN).getFullName());
+		// expectedResourceAuditJavaObject.setModifierUid(new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN).getUserId());
+		// expectedResourceAuditJavaObject.setModifierName(new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN).getFullName());
 		// expectedResourceAuditJavaObject.setStatus(errorInfo.getCode().toString());
 		//
 		// String auditDesc =
@@ -1933,14 +1933,14 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void checkInvariantUuidIsImmutable() throws Exception {
 		// choose the user to create resource
-		User sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		User sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResource();
 		String invariantUuidDefinedByUser = "!!!!!!!!!!!!!!!!!!!!!!!!";
 		resourceDetails.setInvariantUUID(invariantUuidDefinedByUser);
 		String resourceName = resourceDetails.getName();
 		resourceDetails.setTags(Arrays.asList(resourceName, resourceName, resourceName, resourceName, "tag2", "tag2"));
 		// create resource
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, sdncUserDetails);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, sdncUserDetails);
 		BaseRestUtils.checkStatusCode(createResponse, "create request failed", false, 201);
 		// validate response
 		assertNotNull("check response object is not null after create resource", createResponse);
@@ -1957,7 +1957,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		ResourceValidationUtils.validateResp(createResponse, resourceRespJavaObject);
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncUserDetails,
+		RestResponse resourceGetResponse = new ResourceRestUtils().getResource(sdncUserDetails,
 				resourceDetails.getUniqueId());
 		BaseRestUtils.checkSuccess(resourceGetResponse);
 		Resource resourceGetting = ResponseParser
@@ -1967,7 +1967,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(invariantUUIDcreation, invariantUUIDgetting);
 
 		// Update resource with new invariant UUID
-		RestResponse restResponseUpdate = ResourceRestUtils.updateResourceMetadata(resourceDetails, sdncUserDetails,
+		RestResponse restResponseUpdate = new ResourceRestUtils().updateResourceMetadata(resourceDetails, sdncUserDetails,
 				resourceDetails.getUniqueId());
 		BaseRestUtils.checkSuccess(restResponseUpdate);
 		Resource updatedResource = ResponseParser.convertResourceResponseToJavaObject(restResponseUpdate.getResponse());
@@ -1975,7 +1975,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(invariantUUIDcreation, invariantUUIDupdating);
 
 		// Do checkin
-		RestResponse restResponseCheckin = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCheckin = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		BaseRestUtils.checkSuccess(restResponseCheckin);
 		Resource checkinResource = ResponseParser
@@ -1986,7 +1986,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.1");
 
 		// Do checkout
-		RestResponse restResponseCheckout = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCheckout = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		BaseRestUtils.checkSuccess(restResponseCheckout);
 		Resource ResourceResource = ResponseParser
@@ -1997,7 +1997,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");
 
 		/*// do certification request
-		RestResponse restResponseCertificationRequest = LifecycleRestUtils.changeResourceState(resourceDetails,
+		RestResponse restResponseCertificationRequest = new LifecycleRestUtils().changeResourceState(resourceDetails,
 				sdncUserDetails, resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		BaseRestUtils.checkSuccess(restResponseCertificationRequest);
 		Resource certificationRequestResource = ResponseParser
@@ -2008,7 +2008,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");
 
 		// start certification
-		RestResponse restResponseStartCertification = LifecycleRestUtils.changeResourceState(resourceDetails,
+		RestResponse restResponseStartCertification = new LifecycleRestUtils().changeResourceState(resourceDetails,
 				sdncUserDetails, resourceDetails.getVersion(), LifeCycleStatesEnum.STARTCERTIFICATION);
 		BaseRestUtils.checkSuccess(restResponseStartCertification);
 		Resource startCertificationRequestResource = ResponseParser
@@ -2019,7 +2019,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 		assertEquals(version, "0.2");*/
 
 		// certify
-		RestResponse restResponseCertify = LifecycleRestUtils.changeResourceState(resourceDetails, sdncUserDetails,
+		RestResponse restResponseCertify = new LifecycleRestUtils().changeResourceState(resourceDetails, sdncUserDetails,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CERTIFY);
 		BaseRestUtils.checkSuccess(restResponseCertify);
 		Resource certifyResource = ResponseParser
@@ -2035,7 +2035,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 	private void getResourceValidateInvariantUuid(String resourceUniqueId, String invariantUUIDcreation)
 			throws Exception {
-		RestResponse getResource = ResourceRestUtils.getResource(ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER),
+		RestResponse getResource = new ResourceRestUtils().getResource(new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER),
 				resourceUniqueId);
 		BaseRestUtils.checkSuccess(getResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -2045,18 +2045,18 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 	@Test
 	public void resourceInvariantUuid() throws Exception {
 
-		User designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		User testerUser = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
-		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResourceByType("VF200", NormativeTypesEnum.ROOT,
+		User designerUser = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
+		User testerUser = new ElementFactory().getDefaultUser(UserRoleEnum.TESTER);
+		ResourceReqDetails resourceDetails = new ElementFactory().getDefaultResourceByType("VF200", NormativeTypesEnum.ROOT,
 				ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, designerUser.getUserId(), ResourceTypeEnum.VF.toString());
-		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("newtestservice1",
+		ServiceReqDetails serviceDetails = new ElementFactory().getDefaultService("newtestservice1",
 				ServiceCategoriesEnum.MOBILITY, designerUser.getUserId(),
 				ServiceInstantiationType.A_LA_CARTE.getValue());
 
 		// ResourceReqDetails resourceDetails =
-		// ElementFactory.getDefaultResource();
+		// new ElementFactory().getDefaultResource();
 		resourceDetails.setInvariantUUID("kokomoko");
-		RestResponse createResponse = ResourceRestUtils.createResource(resourceDetails, designerUser);
+		RestResponse createResponse = new ResourceRestUtils().createResource(resourceDetails, designerUser);
 		assertEquals("Check response code after create resource", BaseRestUtils.STATUS_CODE_CREATED,
 				createResponse.getErrorCode().intValue());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResponse.getResponse(), Resource.class);
@@ -2072,111 +2072,111 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// Update resource with new invariant UUID
 		resourceDetails.setInvariantUUID("1234567890");
-		RestResponse updateResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, designerUser,
+		RestResponse updateResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, designerUser,
 				resourceDetails.getUniqueId());
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS,
 				updateResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		RestResponse restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		RestResponse restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);*/
 		// certify
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser, LifeCycleStatesEnum.CERTIFY);
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser, LifeCycleStatesEnum.CERTIFY);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		assertEquals(invariantUUIDcreation, ResponseParser.getInvariantUuid(restResponse));
 		getResourceValidateInvariantUuid(resource.getUniqueId(), invariantUUIDcreation);
 		// update resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		resourceDetails.setDescription("updatedDescription");
 		resourceDetails.setVendorRelease("1.2.3.4");
-		updateResponse = ResourceRestUtils.updateResourceMetadata(resourceDetails, designerUser,
+		updateResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetails, designerUser,
 				resourceDetails.getUniqueId());
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, updateResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// checkout resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		/*// certification request
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertEquals(BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// cancel certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.CANCELCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// start certification
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// failure
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, testerUser,
 				LifeCycleStatesEnum.FAILCERTIFICATION);
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);*/
 
 		// upload artifact
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				LifeCycleStatesEnum.CHECKOUT);
-		ArtifactReqDetails artifactDetails = ElementFactory.getDefaultArtifact();
+		ArtifactReqDetails artifactDetails = new ElementFactory().getDefaultArtifact();
 		ArtifactRestUtils.addInformationalArtifactToResource(artifactDetails, designerUser,
 				resourceDetails.getUniqueId());
 		assertEquals(STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		getResourceValidateInvariantUuid(resourceDetails.getUniqueId(), invariantUUIDcreation);
 
 		// checkIn resource
-		restResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUser,
+		restResponse = new LifecycleRestUtils().changeResourceState(resourceDetails, designerUser,
 				resourceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, restResponse.getErrorCode().intValue());
 		// create instance
-		RestResponse createServiceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
-		ResourceRestUtils.checkCreateResponse(createServiceResponse);
-		ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory
+		RestResponse createServiceResponse = new ServiceRestUtils().createService(serviceDetails, designerUser);
+		new ResourceRestUtils().checkCreateResponse(createServiceResponse);
+		ComponentInstanceReqDetails resourceInstanceReqDetails = new ElementFactory()
 				.getComponentResourceInstance(resourceDetails);
 		RestResponse createResourceInstanceResponse = ComponentInstanceRestUtils.createComponentInstance(
 				resourceInstanceReqDetails, designerUser, serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);

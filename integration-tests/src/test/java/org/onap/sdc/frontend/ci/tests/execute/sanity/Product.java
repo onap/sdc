@@ -45,8 +45,8 @@ public class Product extends SetupCDTest {
 
     @Test
     public void createProductAndAddCertifiedServiceInstance() throws Exception {
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
-        ProductReqDetails productReqDetails = ElementFactory.getDefaultProduct();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
+        ProductReqDetails productReqDetails = new ElementFactory().getDefaultProduct();
 
         ServiceUIUtils.createService(serviceMetadata);
         GeneralPageElements.clickSubmitForTestingButton(serviceMetadata.getName());

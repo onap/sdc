@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -340,7 +341,7 @@ public class HttpRequest {
         StringBuffer response = new StringBuffer();
         StringWriter writer = new StringWriter();
             if (isMultiPart) {
-                IOUtils.copy((con.getInputStream()), writer, Charset.forName("UTF-8"));
+                IOUtils.copy((con.getInputStream()), writer, StandardCharsets.UTF_8);
                 response = writer.getBuffer();
             } else {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {

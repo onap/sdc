@@ -123,7 +123,7 @@ public class ProductRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.GET_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort(), productId);
 		logger.debug("Send GET request to get product: {}", url);
 
-		return sendGet(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+		return sendGet(url, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 	}
 
 	public static RestResponse getProduct(String productId, String userId) throws Exception {
@@ -146,7 +146,7 @@ public class ProductRestUtils extends BaseRestUtils {
 	public static RestResponse changeProductLifeCycle(Product product, User userModifier, LifeCycleStatesEnum lifeCycle)
 			throws Exception {
 		String checkinComment = "my comment";
-		RestResponse changeLifeCycleResponse = LifecycleRestUtils.changeProductState(product, userModifier, lifeCycle,
+		RestResponse changeLifeCycleResponse = new LifecycleRestUtils().changeProductState(product, userModifier, lifeCycle,
 				checkinComment);
 		if (changeLifeCycleResponse.getErrorCode() == STATUS_CODE_SUCCESS) {
 			product.setLastUpdaterUserId(userModifier.getUserId());

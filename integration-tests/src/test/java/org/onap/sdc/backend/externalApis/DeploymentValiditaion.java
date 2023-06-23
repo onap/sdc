@@ -190,8 +190,8 @@ public class DeploymentValiditaion extends ComponentBaseTest {
 		getExtendTest().log(Status.INFO, "List of Data Types:");
 		getExtendTest().log(Status.INFO, listOfDataTypes.toString());
 
-		Resource resource = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		PropertyReqDetails defaultProperty = ElementFactory.getDefaultListProperty();
+		Resource resource = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		PropertyReqDetails defaultProperty = new ElementFactory().getDefaultListProperty();
 
 		defaultProperty.setPropertyDefaultValue(null);
 		for (String dataType : listOfDataTypes) {
@@ -199,7 +199,7 @@ public class DeploymentValiditaion extends ComponentBaseTest {
 			defaultProperty.setName(dataType);
 			System.out.println("Adding proporty with data type: ----> " + dataType);
 			getExtendTest().log(Status.INFO, "Adding proporty with data type: ----> " + dataType);
-			AtomicOperationUtils.addCustomPropertyToResource(defaultProperty, resource, UserRoleEnum.DESIGNER, true);
+			new AtomicOperationUtils().addCustomPropertyToResource(defaultProperty, resource, UserRoleEnum.DESIGNER, true);
 		}
 
 		listOfDataTypes.forEach(System.out::println);
@@ -274,7 +274,7 @@ public class DeploymentValiditaion extends ComponentBaseTest {
 
 	public Map<String, List<CategoryDefinition>> getCategories() throws Exception {
 
-		User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+		User defaultAdminUser = new ElementFactory().getDefaultUser(UserRoleEnum.ADMIN);
 
 		Map<String,List<CategoryDefinition>> map = new HashMap<String,List<CategoryDefinition>>();
 

@@ -20,16 +20,17 @@
 
 package org.onap.sdc.backend.ci.tests.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.yaml.snakeyaml.Yaml;
 
 @Getter
 @Setter
@@ -95,13 +96,17 @@ public class Config {
         super();
     }
 
-    public synchronized static Config instance() {
+    public static Config instance() {
         if (configIt == null) {
-            try {
-                configIt = init();
-            } catch (final IOException e) {
-                e.printStackTrace();
-                return null;
+            synchronized (Config.class) {
+                try {
+                    if (configIt == null) {
+                        configIt = init();
+                    }
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
         }
         return configIt;
@@ -120,7 +125,7 @@ public class Config {
 
         final Config config;
 
-        try (final InputStream in = Files.newInputStream(Paths.get(configFile));) {
+        try (final InputStream in = Files.newInputStream(Paths.get(configFile))) {
             config = new Yaml().loadAs(in, Config.class);
             setPackagesAndBugs(configFile, config);
         }
@@ -157,29 +162,29 @@ public class Config {
     @Override
     public String toString() {
         return "Config [systemUnderDebug=" + systemUnderDebug + ", rerun=" + rerun + ", reportDBhost=" + reportDBhost
-            + ", reportDBport=" + reportDBport + ", browser=" + browser + ", catalogBeHost=" + catalogBeHost
-            + ", esHost=" + esHost + ", esPort=" + esPort + ", neoHost=" + neoHost + ", neoPort=" + neoPort
-            + ", disributionClientHost=" + disributionClientHost + ", disributionClientPort="
-            + disributionClientPort + ", isDistributionClientRunning=" + isDistributionClientRunning
-            + ", errorConfigurationFile=" + errorConfigurationFile + ", resourceConfigDir=" + resourceConfigDir +
-            ", importResourceConfigDir=" + importResourceConfigDir + ", importResourceTestsConfigDir="
-            + importResourceTestsConfigDir + ", catalogFeHost="
-            + catalogFeHost + ", catalogFePort=" + catalogFePort + ", catalogBePort=" + catalogBePort
-            + ", catalogBeTlsPort=" + catalogBeTlsPort + ", neoDBusername=" + neoDBusername + ", neoDBpassword="
-            + neoDBpassword + ", packages=" + packages + ", bugs="
-            + bugs + ", resourcesNotToDelete=" + resourcesNotToDelete + ", resourceCategoriesNotToDelete="
-            + resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete=" + serviceCategoriesNotToDelete
-            + ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder=" + outputFolder + ", reportName="
-            + reportName + ", url=" + url + ", remoteTestingMachineIP=" + remoteTestingMachineIP
-            + ", remoteTestingMachinePort=" + remoteTestingMachinePort + ", remoteTesting=" + remoteTesting
-            + ", cassandraHost=" + cassandraHost + ", cassandraAuditKeySpace=" + cassandraAuditKeySpace
-            + ", cassandraArtifactKeySpace=" + cassandraArtifactKeySpace + ", cassandraAuthenticate="
-            + cassandraAuthenticate + ", cassandraUsername=" + cassandraUsername + ", cassandraPassword="
-            + cassandraPassword + ", cassandraSsl=" + cassandraSsl + ", cassandraTruststorePath="
-            + cassandraTruststorePath + ", cassandraTruststorePassword=" + cassandraTruststorePassword
-            + ", captureTraffic=" + captureTraffic
-            + ", useBrowserMobProxy=" + useBrowserMobProxy + ", configurationFile=" + configurationFile
-            + ", downloadAutomationFolder=" + downloadAutomationFolder + "]";
+                + ", reportDBport=" + reportDBport + ", browser=" + browser + ", catalogBeHost=" + catalogBeHost
+                + ", esHost=" + esHost + ", esPort=" + esPort + ", neoHost=" + neoHost + ", neoPort=" + neoPort
+                + ", disributionClientHost=" + disributionClientHost + ", disributionClientPort="
+                + disributionClientPort + ", isDistributionClientRunning=" + isDistributionClientRunning
+                + ", errorConfigurationFile=" + errorConfigurationFile + ", resourceConfigDir=" + resourceConfigDir +
+                ", importResourceConfigDir=" + importResourceConfigDir + ", importResourceTestsConfigDir="
+                + importResourceTestsConfigDir + ", catalogFeHost="
+                + catalogFeHost + ", catalogFePort=" + catalogFePort + ", catalogBePort=" + catalogBePort
+                + ", catalogBeTlsPort=" + catalogBeTlsPort + ", neoDBusername=" + neoDBusername + ", neoDBpassword="
+                + neoDBpassword + ", packages=" + packages + ", bugs="
+                + bugs + ", resourcesNotToDelete=" + resourcesNotToDelete + ", resourceCategoriesNotToDelete="
+                + resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete=" + serviceCategoriesNotToDelete
+                + ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder=" + outputFolder + ", reportName="
+                + reportName + ", url=" + url + ", remoteTestingMachineIP=" + remoteTestingMachineIP
+                + ", remoteTestingMachinePort=" + remoteTestingMachinePort + ", remoteTesting=" + remoteTesting
+                + ", cassandraHost=" + cassandraHost + ", cassandraAuditKeySpace=" + cassandraAuditKeySpace
+                + ", cassandraArtifactKeySpace=" + cassandraArtifactKeySpace + ", cassandraAuthenticate="
+                + cassandraAuthenticate + ", cassandraUsername=" + cassandraUsername + ", cassandraPassword="
+                + cassandraPassword + ", cassandraSsl=" + cassandraSsl + ", cassandraTruststorePath="
+                + cassandraTruststorePath + ", cassandraTruststorePassword=" + cassandraTruststorePassword
+                + ", captureTraffic=" + captureTraffic
+                + ", useBrowserMobProxy=" + useBrowserMobProxy + ", configurationFile=" + configurationFile
+                + ", downloadAutomationFolder=" + downloadAutomationFolder + "]";
     }
 
     @Getter

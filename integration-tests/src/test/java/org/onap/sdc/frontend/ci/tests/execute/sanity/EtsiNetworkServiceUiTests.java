@@ -218,7 +218,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
     private String createVsp() {
-        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String resourceName = new ElementFactory().addRandomSuffixToName(new ElementFactory().getResourcePrefix());
         final String virtualLinkableVnf = "etsi-vnf-virtual-linkable.csar";
         final String rootFolder = org.onap.sdc.backend.ci.tests.utils.general.FileHandling.getPackageRepositoryPath(PackageTypeEnum.VNF);
         var vspCreateData = new VspCreateData();

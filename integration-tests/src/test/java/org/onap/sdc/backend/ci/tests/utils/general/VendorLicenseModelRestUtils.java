@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,32 +22,34 @@ package org.onap.sdc.backend.ci.tests.utils.general;
 
 import com.aventstack.extentreports.Status;
 import org.json.JSONObject;
-import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
-import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.be.model.User;
 import org.onap.sdc.backend.ci.tests.api.ComponentBaseTest;
 import org.onap.sdc.backend.ci.tests.api.Urls;
 import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorLicenseModel;
+import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
+import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.be.model.User;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
 
 public class VendorLicenseModelRestUtils {
 
-    public static void updateVendorLicense(VendorLicenseModel vendorLicenseModel, User user, Boolean isVlmUpdated) throws Exception {
+    public void updateVendorLicense(VendorLicenseModel vendorLicenseModel, User user, Boolean isVlmUpdated) throws Exception {
 
 //		create major method
         RestResponse creationMethodVendorLicense = creationMethodVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to create method for vendor license", 200, creationMethodVendorLicense.getErrorCode().intValue());
         vendorLicenseModel
-            .setVersion(ResponseParser.getValueFromJsonResponse(creationMethodVendorLicense.getResponse(), "id"));
+                .setVersion(ResponseParser.getValueFromJsonResponse(creationMethodVendorLicense.getResponse(), "id"));
 
-        if(isVlmUpdated) {
+        if (isVlmUpdated) {
 //		TODO update vlm do nothing
 //		commit
             RestResponse commitVendorLicense = commitVendorLicense(vendorLicenseModel, user);
@@ -58,34 +60,33 @@ public class VendorLicenseModelRestUtils {
         RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
         assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
 
-        if(ComponentBaseTest.getExtendTest() != null){
+        if (ComponentBaseTest.getExtendTest() != null) {
             ComponentBaseTest.getExtendTest().log(Status.INFO, "Succeeded in updating the vendor license");
         }
     }
 
-     private static RestResponse getVLMComponentByVersion(String vlmId, String vlmVersion, User user) throws Exception{
+    private RestResponse getVLMComponentByVersion(String vlmId, String vlmVersion, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.GET_VLM_COMPONENT_BY_VERSION, config.getOnboardingBeHost(),config.getOnboardingBePort(), vlmId,vlmVersion);
+        String url = String.format(Urls.GET_VLM_COMPONENT_BY_VERSION, config.getOnboardingBeHost(), config.getOnboardingBePort(), vlmId, vlmVersion);
         String userId = user.getUserId();
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendGet(url, headersMap);
-        return response;
+        return http.httpSendGet(url, headersMap);
     }
 
-     public static boolean validateVlmExist(String vlmId, String vlmVersion, User user) throws Exception {
+    public boolean validateVlmExist(String vlmId, String vlmVersion, User user) throws Exception {
         RestResponse restResponse = getVLMComponentByVersion(vlmId, vlmVersion, user);
-        assertEquals(String.format("VLM version not updated, reponse code message: %s", restResponse.getResponse()),restResponse.getErrorCode().intValue(),200);
-        return (restResponse.getErrorCode()==200);
+        assertEquals(String.format("VLM version not updated, reponse code message: %s", restResponse.getResponse()), restResponse.getErrorCode().intValue(), 200);
+        return (restResponse.getErrorCode() == 200);
     }
 
-    public static VendorLicenseModel createVendorLicense(User user) throws Exception {
+    public VendorLicenseModel createVendorLicense(User user) throws Exception {
 
         VendorLicenseModel vendorLicenseModel;
 //		ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor license");
-        String vendorLicenseName = "ciLicense" + OnboardingUtils.getShortUUID();
+        String vendorLicenseName = "ciLicense" + new OnboardingUtils().getShortUUID();
         RestResponse vendorLicenseResponse = createVendorLicenseModels_1(vendorLicenseName, user);
         assertEquals("did not succeed to create vendor license model", 200, vendorLicenseResponse.getErrorCode().intValue());
         String vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "itemId");
@@ -116,52 +117,49 @@ public class VendorLicenseModelRestUtils {
         return vendorLicenseModel;
     }
 
-    private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
+    private RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.ACTION_ON_COMPONENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vspid, componentVersion);
         String userId = user.getUserId();
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPut(url, body, headersMap);
-        return response;
+        return http.httpSendPut(url, body, headersMap);
     }
 
-    private static RestResponse createMethodVendorLicense(String vendorId, String body, String onboardComponent, User user, String componentVersion) throws Exception {
+    private RestResponse createMethodVendorLicense(String vendorId, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_METHOD, config.getOnboardingBeHost(), config.getOnboardingBePort(), onboardComponent, vendorId, componentVersion);
         String userId = user.getUserId();
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, body, headersMap);
-        return response;
+        return http.httpSendPost(url, body, headersMap);
     }
 
-    public static RestResponse submitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
+    public RestResponse submitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
         return actionOnComponent(vendorLicenseModel.getVendorId(), "{\"action\":\"Submit\"}", "vendor-license-models", user, vendorLicenseModel
-            .getVersion());
+                .getVersion());
     }
 
     /**
      * @param vendorLicenseModel
      * @param user
-     * @return
-     * checkOut exist VLM method
+     * @return checkOut exist VLM method
      * @throws Exception
      */
-    public static RestResponse creationMethodVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
+    public RestResponse creationMethodVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
         String messageBody = "{\"description\":\"2.0\",\"creationMethod\":\"major\"}";
         return createMethodVendorLicense(vendorLicenseModel.getVendorId(), messageBody, "items", user, vendorLicenseModel
-            .getVersion());
+                .getVersion());
     }
 
-    public static RestResponse commitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
+    public RestResponse commitVendorLicense(VendorLicenseModel vendorLicenseModel, User user) throws Exception {
         String messageBody = "{\"action\":\"Commit\",\"commitRequest\":{\"message\":\"commit\"}}";
         return actionOnComponent(vendorLicenseModel.getVendorId(), messageBody, "items", user, vendorLicenseModel.getVersion());
     }
 
-    public static RestResponse createVendorLicenseModels_1(String name, User user) throws Exception {
+    public RestResponse createVendorLicenseModels_1(String name, User user) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_LISENCE_MODELS, config.getOnboardingBeHost(), config.getOnboardingBePort());
         String userId = user.getUserId();
@@ -171,15 +169,14 @@ public class VendorLicenseModelRestUtils {
         jObject.put("description", "new vendor license model");
         jObject.put("iconRef", "icon");
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, jObject.toString(), headersMap);
-        return response;
+        return http.httpSendPost(url, jObject.toString(), headersMap);
 
     }
 
-    public static RestResponse createVendorLicenseAgreement_5(String vspid, String versionId, String featureGroupId, User user)
+    public RestResponse createVendorLicenseAgreement_5(String vspid, String versionId, String featureGroupId, User user)
             throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_LISENCE_AGREEMENT, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
@@ -194,16 +191,15 @@ public class VendorLicenseModelRestUtils {
         jObjectBody.put("description", "new vendor license agreement");
         jObjectBody.put("requirementsAndConstrains", "abc");
         jObjectBody.put("licenseTerm", licenseTermpObject);
-        jObjectBody.put("addedFeatureGroupsIds", Arrays.asList(featureGroupId).toArray());
+        jObjectBody.put("addedFeatureGroupsIds", Collections.singletonList(featureGroupId).toArray());
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-        return response;
+        return http.httpSendPost(url, jObjectBody.toString(), headersMap);
     }
 
-    public static RestResponse createVendorLicenseFeatureGroups_4(String vspid, String versionId, String licenseKeyGroupId,
+    public RestResponse createVendorLicenseFeatureGroups_4(String vspid, String versionId, String licenseKeyGroupId,
                                                                   String entitlementPoolId, User user) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_LISENCE_FEATURE_GROUPS, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
@@ -213,18 +209,17 @@ public class VendorLicenseModelRestUtils {
         jObject.put("name", "xyz");
         jObject.put("description", "new vendor license feature groups");
         jObject.put("partNumber", "123abc456");
-        jObject.put("addedLicenseKeyGroupsIds", Arrays.asList(licenseKeyGroupId).toArray());
-        jObject.put("addedEntitlementPoolsIds", Arrays.asList(entitlementPoolId).toArray());
+        jObject.put("addedLicenseKeyGroupsIds", Collections.singletonList(licenseKeyGroupId).toArray());
+        jObject.put("addedEntitlementPoolsIds", Collections.singletonList(entitlementPoolId).toArray());
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, jObject.toString(), headersMap);
-        return response;
+        return http.httpSendPost(url, jObject.toString(), headersMap);
 
     }
 
-    public static RestResponse createVendorEntitlementPool_3(String vspid, String versionId, User user) throws Exception {
+    public RestResponse createVendorEntitlementPool_3(String vspid, String versionId, User user) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_LISENCE_ENTITLEMENT_POOL, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
@@ -238,7 +233,7 @@ public class VendorLicenseModelRestUtils {
         jAggregationFunctionObject.put("other", "");
 
         JSONObject jOperationalScope = new JSONObject();
-        jOperationalScope.put("choices", Arrays.asList("Availability_Zone").toArray());
+        jOperationalScope.put("choices", List.of("Availability_Zone").toArray());
         jOperationalScope.put("other", "");
 
         JSONObject jTimeObject = new JSONObject();
@@ -246,7 +241,7 @@ public class VendorLicenseModelRestUtils {
         jTimeObject.put("other", "");
 
         JSONObject jObjectBody = new JSONObject();
-        jObjectBody.put("name", "def"+ OnboardingUtils.getShortUUID());
+        jObjectBody.put("name", "def" + new OnboardingUtils().getShortUUID());
         jObjectBody.put("description", "new vendor license entitlement pool");
         jObjectBody.put("type", "Universal");
         jObjectBody.put("thresholdValue", "23");
@@ -258,46 +253,31 @@ public class VendorLicenseModelRestUtils {
         jObjectBody.put("time", jTimeObject);
         jObjectBody.put("manufacturerReferenceNumber", "123aaa");
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-        return response;
+        return http.httpSendPost(url, jObjectBody.toString(), headersMap);
     }
 
-    public static RestResponse createVendorKeyGroups_2(String vspid, String versionId, User user) throws Exception {
+    public RestResponse createVendorKeyGroups_2(String vspid, String versionId, User user) throws Exception {
         Config config = Utils.getConfig();
         String url = String.format(Urls.CREATE_VENDOR_LISENCE_KEY_GROUPS, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid, versionId);
         String userId = user.getUserId();
 
         JSONObject jOperationalScope = new JSONObject();
-        jOperationalScope.put("choices", Arrays.asList("Tenant").toArray());
+        jOperationalScope.put("choices", List.of("Tenant").toArray());
         jOperationalScope.put("other", "");
 
         JSONObject jObjectBody = new JSONObject();
-        jObjectBody.put("name", "keyGroup" + OnboardingUtils.getShortUUID());
+        jObjectBody.put("name", "keyGroup" + new OnboardingUtils().getShortUUID());
         jObjectBody.put("description", "new vendor license key group");
         jObjectBody.put("operationalScope", jOperationalScope);
         jObjectBody.put("type", "Universal");
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
+        Map<String, String> headersMap = new OnboardingUtils().prepareHeadersMap(userId);
 
         HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPost(url, jObjectBody.toString(), headersMap);
-        return response;
-    }
-
-    public static RestResponse validateUpload(String vspid, User user, String vspVersion) throws Exception {
-        String body = null;
-        Config config = Utils.getConfig();
-        String url = String.format(Urls.VALIDATE_UPLOAD, config.getOnboardingBeHost(), config.getOnboardingBePort(), vspid,vspVersion);
-        String userId = user.getUserId();
-
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(userId);
-        HttpRequest http = new HttpRequest();
-        RestResponse response = http.httpSendPut(url, body, headersMap);
-
-        return response;
+        return http.httpSendPost(url, jObjectBody.toString(), headersMap);
     }
 
 }

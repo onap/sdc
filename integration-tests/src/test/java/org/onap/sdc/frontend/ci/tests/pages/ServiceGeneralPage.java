@@ -170,7 +170,7 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
     }
 
     public Service prepareServiceObject(ServiceReqDetails serviceMetadata) throws Exception {
-        return AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+        return new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
     }
 
     public static boolean parseToscaFileIntoServiceAndValidateProperties(ServiceReqDetails serviceMetadata) throws Exception {

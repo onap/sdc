@@ -147,10 +147,10 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
         try {
             final Service service =
-                AtomicOperationUtils.getServiceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
+                new AtomicOperationUtils().getServiceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
             final Resource resourceToAdd =
-                AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
-            final ComponentInstance componentInstance = AtomicOperationUtils
+                new AtomicOperationUtils().getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
+            final ComponentInstance componentInstance = new AtomicOperationUtils()
                 .addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
                     String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY()))
                 .left().value();
@@ -167,10 +167,10 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         final Point freePositionInCanvas = getFreePositionInCanvas(20);
         final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
         try {
-            final Resource service = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
-            final Resource resourceToAdd = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
+            final Resource service = new AtomicOperationUtils().getResourceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
+            final Resource resourceToAdd = new AtomicOperationUtils().getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
             final ComponentInstance componentInstance =
-                AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
+                new AtomicOperationUtils().addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
                     String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY())).left().value();
 
             LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);

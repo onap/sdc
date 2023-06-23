@@ -128,8 +128,8 @@ public class OnboardingFlowsUi extends SetupCDTest {
     @Test
     public void onboardVNFTestSanityOneFile() throws Exception {
         String vnfFile = "1-VF-vUSP-vCCF-DB_v11.1.zip";
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
@@ -150,18 +150,18 @@ public class OnboardingFlowsUi extends SetupCDTest {
 
     @Test
     public void onboardVNFTestSanity() throws Exception {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
+        List<String> fileNamesFromFolder = new OnboardingUtils().getXnfNamesFileList(PackageTypeEnum.VNF);
         String vnfFile = fileNamesFromFolder.get(0);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Single_VNF")
     public void onapOnboardVNFflow(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
@@ -193,7 +193,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
     public void onboardPNFSoftwareInformationFlow(final String rootFolder, final String pnfFile,
                                                   final List<String> softwareVersionList) {
         setLog(pnfFile);
-        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String resourceName = new ElementFactory().addRandomSuffixToName(new ElementFactory().getResourcePrefix());
         runOnboardPnfSoftwareVersion(resourceName, rootFolder, pnfFile, softwareVersionList);
     }
 
@@ -380,7 +380,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
     }
 
     private String createNewVSP(String filePath, String vnfFile) throws Exception {
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         return OnboardingUiUtils.createVSP(resourceReqDetails, vnfFile, filePath, getUser()).getName();
     }
 
@@ -427,9 +427,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
-        Service containerObject = AtomicOperationUtils.getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
-        Resource instanceObject = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
-        ComponentInstance componentInstanceDetails = AtomicOperationUtils.addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
+        Service containerObject = new AtomicOperationUtils().getServiceObjectByNameAndVersion(UserRoleEnum.DESIGNER, serviceMetadata.getName(), "0.1");
+        Resource instanceObject = new AtomicOperationUtils().getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vspName, "1.0");
+        ComponentInstance componentInstanceDetails = new AtomicOperationUtils().addComponentInstanceToComponentContainer(instanceObject, containerObject, UserRoleEnum.DESIGNER, true).left().value();
 
         GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
 
@@ -468,16 +468,16 @@ public class OnboardingFlowsUi extends SetupCDTest {
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
     public void onboardVNFTest(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getRandomCategoryResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getRandomCategoryService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getRandomCategoryResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getRandomCategoryService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_List")
     public void onboardCNFTest(String filePath, String cnfFile) throws Exception {
         setLog(cnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
     }
 
@@ -540,15 +540,15 @@ public class OnboardingFlowsUi extends SetupCDTest {
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_List")
     public void onboardCNFTestShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
         setLog(cnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getDefaultService();
         Assert.assertThrows(() -> runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile));
     }
 
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "VNF_List")
     public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         onboardAndCertify(resourceReqDetails, filePath, vnfFile);
     }
 
@@ -556,8 +556,8 @@ public class OnboardingFlowsUi extends SetupCDTest {
     public void onboardRandomVNFsTest(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
         LOGGER.debug("Vnf File name is: {}", vnfFile);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getRandomCategoryResource();
-        ServiceReqDetails serviceReqDetails = ElementFactory.getRandomCategoryService();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getRandomCategoryResource();
+        ServiceReqDetails serviceReqDetails = new ElementFactory().getRandomCategoryService();
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
@@ -566,13 +566,13 @@ public class OnboardingFlowsUi extends SetupCDTest {
     public void onboardUpdateVNFTest() throws Exception {
         List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filePath);
         String vnfFile = fileNamesFromFolder.get(0);
-        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFile, getUser());
         String vspName = vsp.getName();
         ResourceGeneralPage.clickCertifyButton(vspName);
 
         // create service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
 
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
@@ -642,9 +642,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
             getExtendTest().log(Status.INFO, msg);
             LOGGER.info(msg);
 
-            VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(getUser());
-            ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
-            VendorSoftwareProductObject createVendorSoftwareProduct = VendorSoftwareProductRestUtils
+            VendorLicenseModel vendorLicenseModel = new VendorLicenseModelRestUtils().createVendorLicense(getUser());
+            ResourceReqDetails resourceReqDetails = new ElementFactory().getDefaultResource();
+            VendorSoftwareProductObject createVendorSoftwareProduct = new VendorSoftwareProductRestUtils()
                 .createVendorSoftwareProduct(resourceReqDetails, vnfFile, pathFile, getUser(), vendorLicenseModel);
 
             getExtendTest().log(Status.INFO, String.format("Searching for onboarded %s", vnfFile));
@@ -661,7 +661,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
         }
 
         // create service
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         ServiceGeneralPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager serviceCanvasManager = CanvasManager.getCanvasManager();

@@ -53,9 +53,9 @@ public class test1 extends ComponentBaseTest{
 	public void uploadArtifactOnServiceViaExternalAPI() throws Exception {
 		Config config = Utils.getConfig();	
 		
-		Service service = AtomicOperationUtils.createServiceByCategory(ServiceCategoriesEnum.MOBILITY, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.MODEL_QUERY_SPEC, service, UserRoleEnum.DESIGNER, true, true);
-		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		Service service = new AtomicOperationUtils().createServiceByCategory(ServiceCategoriesEnum.MOBILITY, UserRoleEnum.DESIGNER, true).left().value();
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.MODEL_QUERY_SPEC, service, UserRoleEnum.DESIGNER, true, true);
+		service = (Service) new AtomicOperationUtils().changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		if(config.getIsDistributionClientRunning()){
 			List<String> distributionStatusList = Arrays.asList(DistributionNotificationStatusEnum.DOWNLOAD_OK.toString(), DistributionNotificationStatusEnum.DEPLOY_OK.toString(), DistributionNotificationStatusEnum.NOTIFIED.toString());
 			DistributionValidationUtils.validateDistributedArtifactsByAudit(service, distributionStatusList);
@@ -73,13 +73,13 @@ public class test1 extends ComponentBaseTest{
 		Component component = null;
 		
 		if(componentType.toLowerCase().equals("vf")) {
-			Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
+			Either<Resource, RestResponse> createdResource = new AtomicOperationUtils().createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, creatorUser, true);
 			component = createdResource.left().value();
-			component = AtomicOperationUtils.changeComponentState(component, creatorUser, targetLifeCycleState, true).getLeft();
+			component = new AtomicOperationUtils().changeComponentState(component, creatorUser, targetLifeCycleState, true).getLeft();
 		} else {
-			Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(creatorUser, true);
+			Either<Service, RestResponse> createdResource = new AtomicOperationUtils().createDefaultService(creatorUser, true);
 			component = createdResource.left().value();
-			component = AtomicOperationUtils.changeComponentState(component, creatorUser, targetLifeCycleState, true).getLeft();
+			component = new AtomicOperationUtils().changeComponentState(component, creatorUser, targetLifeCycleState, true).getLeft();
 		}
 		
 		return component;

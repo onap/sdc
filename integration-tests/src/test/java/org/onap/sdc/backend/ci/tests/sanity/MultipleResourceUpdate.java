@@ -48,15 +48,15 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 	public void simpleScenario() throws Exception {
 
 		// Creating VF and Resource instances
-		Resource vf = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+		Resource vf = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
 				.value();
-		Resource cp1 = AtomicOperationUtils
+		Resource cp1 = new AtomicOperationUtils()
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.PORT,
 						ResourceCategoryEnum.NETWORK_CONNECTIVITY_CON_POINT, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		Resource cp2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true)
+		Resource cp2 = new AtomicOperationUtils().createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true)
 				.left().value();
-		Resource vl = AtomicOperationUtils
+		Resource vl = new AtomicOperationUtils()
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VL, NormativeTypesEnum.NETWORK,
 						ResourceCategoryEnum.NETWORK_CONNECTIVITY_VIRTUAL_LINK, UserRoleEnum.DESIGNER, true)
 				.left().value();
@@ -64,22 +64,22 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 		vf.getCreatorUserId();
 
 		// Check In Resources
-		AtomicOperationUtils.changeComponentState(cp1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		AtomicOperationUtils.changeComponentState(cp2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
-		AtomicOperationUtils.changeComponentState(vl, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		new AtomicOperationUtils().changeComponentState(cp1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		new AtomicOperationUtils().changeComponentState(cp2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
+		new AtomicOperationUtils().changeComponentState(vl, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true);
 
 		// CheckIn all other except VF
-		ComponentInstance instanceCP1 = AtomicOperationUtils
+		ComponentInstance instanceCP1 = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp1, vf, UserRoleEnum.DESIGNER, true).left().value();
-		ComponentInstance instanceVL = AtomicOperationUtils
+		ComponentInstance instanceVL = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(vl, vf, UserRoleEnum.DESIGNER, true).left().value();
-		ComponentInstance instanceCP2 = AtomicOperationUtils
+		ComponentInstance instanceCP2 = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(cp2, vf, UserRoleEnum.DESIGNER, true).left().value();
 
-		vf = (Resource) AtomicOperationUtils.getComponentObject(vf, UserRoleEnum.DESIGNER);
+		vf = (Resource) new AtomicOperationUtils().getComponentObject(vf, UserRoleEnum.DESIGNER);
 
 		// Create Vertex(Link/Associate 2 Resource Instances on Canvas)
-		AtomicOperationUtils.associate2ResourceInstances(vf, instanceCP1, instanceVL, AssocType.LINKABLE.getAssocType(),
+		new AtomicOperationUtils().associate2ResourceInstances(vf, instanceCP1, instanceVL, AssocType.LINKABLE.getAssocType(),
 				UserRoleEnum.DESIGNER, true);
 
 		List<ComponentInstanceReqDetails> componentInstanceReqDetailsList = new ArrayList<>();
@@ -98,7 +98,7 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 		compInstDet.setPosY("300");
 
 		RestResponse response = ComponentInstanceRestUtils.updateMultipleComponentInstance(
-				componentInstanceReqDetailsList, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), vf.getUniqueId(),
+				componentInstanceReqDetailsList, new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), vf.getUniqueId(),
 				vf.getComponentType());
 		assertTrue("response code is not 200, returned: " + response.getErrorCode(),
 				response.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
@@ -114,7 +114,7 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 		compInstDet.setPosY("500");
 
 		response = ComponentInstanceRestUtils.updateMultipleComponentInstance(componentInstanceReqDetailsList,
-				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), vf.getUniqueId(), vf.getComponentType());
+				new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER), vf.getUniqueId(), vf.getComponentType());
 		assertTrue("response code is not 200, returned: " + response.getErrorCode(),
 				response.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
 	}

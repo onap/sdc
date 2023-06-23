@@ -92,7 +92,7 @@ public class PNF extends SetupCDTest {
 
         // update Resource
         ResourceReqDetails updatedResource = new ResourceReqDetails();
-        updatedResource.setName(ElementFactory.getResourcePrefix() + "UpdatedName" + pnfMetaData.getName());
+        updatedResource.setName(new ElementFactory().getResourcePrefix() + "UpdatedName" + pnfMetaData.getName());
         updatedResource.setDescription("kuku");
         updatedResource.setVendorName("updatedVendor");
         updatedResource.setVendorRelease("updatedRelease");
@@ -143,7 +143,7 @@ public class PNF extends SetupCDTest {
         }
 
         String fileName = "CP02.yml";
-        ResourceReqDetails atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+        ResourceReqDetails atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
 
         try {
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
@@ -171,7 +171,7 @@ public class PNF extends SetupCDTest {
                 AssertJUnit.assertTrue(findElement.getText().equals(propertyValue));
             }
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "0.1");
         }
     }
 
@@ -184,12 +184,12 @@ public class PNF extends SetupCDTest {
         CanvasElement cpElement = null;
         String fileName = "CP03.yml";
         try {
-            atomicResourceMetaData = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
+            atomicResourceMetaData = new ElementFactory().getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, getUser());
             ResourceUIUtils.importVfc(atomicResourceMetaData, filePath, fileName, getUser());
             //TODO Andrey should click on certify button
             ResourceGeneralPage.clickCertifyButton(atomicResourceMetaData.getName());
 
-            pnfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
+            pnfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
             ResourceUIUtils.createPNF(pnfMetaData, getUser());
             ResourceGeneralPage.getLeftMenu().moveToCompositionScreen();
             vfCanvasManager = CanvasManager.getCanvasManager();
@@ -217,7 +217,7 @@ public class PNF extends SetupCDTest {
             //verfication
             VfVerificator.verifyInstanceVersion(pnfMetaData, getUser(), atomicResourceMetaData.getName(), "1.0");
         } finally {
-            ResourceRestUtils.deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
+            new ResourceRestUtils().deleteResourceByNameAndVersion(atomicResourceMetaData.getName(), "1.0");
         }
 
     }
@@ -319,7 +319,7 @@ public class PNF extends SetupCDTest {
     }
 
     public ResourceReqDetails createPNFWithGenerateName() throws Exception {
-        ResourceReqDetails pnfMetaData = ElementFactory.getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
+        ResourceReqDetails pnfMetaData = new ElementFactory().getDefaultResourceByType(ResourceTypeEnum.PNF, getUser());
         ResourceUIUtils.createPNF(pnfMetaData, getUser());
         return pnfMetaData;
     }
@@ -376,7 +376,7 @@ public class PNF extends SetupCDTest {
         VfVerificator.verifyVFLifecycle(pnfMetaData, getUser(), LifecycleStateEnum.CERTIFIED);
 
         /*reloginWithNewRole(UserRoleEnum.DESIGNER);*/
-        ServiceReqDetails serviceMetadata = ElementFactory.getDefaultService();
+        ServiceReqDetails serviceMetadata = new ElementFactory().getDefaultService();
         ServiceUIUtils.createService(serviceMetadata);
         DeploymentArtifactPage.getLeftMenu().moveToCompositionScreen();
         CanvasManager canvasManager = CanvasManager.getCanvasManager();

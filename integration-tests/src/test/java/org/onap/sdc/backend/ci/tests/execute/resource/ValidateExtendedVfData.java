@@ -61,68 +61,68 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@BeforeMethod
 	public void create() throws Exception {
 
-		sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		sdncUserDetails = new ElementFactory().getDefaultUser(UserRoleEnum.DESIGNER);
 
-		Either<Resource, RestResponse> resourceDetailsVFe = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVFe = new AtomicOperationUtils()
 				.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = resourceDetailsVFe.left().value();
-		Either<Resource, RestResponse> resourceDetailsCP_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsCP_01e = new AtomicOperationUtils()
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.PORT,
 						ResourceCategoryEnum.GENERIC_DATABASE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsCP_01 = resourceDetailsCP_01e.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsCP_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsCP_01, UserRoleEnum.DESIGNER,
 				true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsCP_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsCP_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsCP_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsCP_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_NET, resourceDetailsCP_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_NET, resourceDetailsCP_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsCP_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsCP_01, UserRoleEnum.DESIGNER,
 				true, true);
-		AtomicOperationUtils.changeComponentState(resourceDetailsCP_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsCP_01, UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CERTIFY, true);
-		Either<Resource, RestResponse> resourceDetailsVL_01e = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVL_01e = new AtomicOperationUtils()
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VL, NormativeTypesEnum.NETWORK,
 						ResourceCategoryEnum.GENERIC_NETWORK_ELEMENTS, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVL_01 = resourceDetailsVL_01e.left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVL_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVL_01, UserRoleEnum.DESIGNER,
 				true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsVL_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsVL_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsVL_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_VOL, resourceDetailsVL_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_NET, resourceDetailsVL_01,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.HEAT_NET, resourceDetailsVL_01,
 				UserRoleEnum.DESIGNER, true, true);
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsVL_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsVL_01, UserRoleEnum.DESIGNER,
 				true, true);
-		AtomicOperationUtils.changeComponentState(resourceDetailsVL_01, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsVL_01, UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CERTIFY, true);
 
-		Either<Resource, RestResponse> resourceDetailsVFCcompE = AtomicOperationUtils
+		Either<Resource, RestResponse> resourceDetailsVFCcompE = new AtomicOperationUtils()
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC, NormativeTypesEnum.COMPUTE,
 						ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVFCcomp = resourceDetailsVFCcompE.left().value();
-		AtomicOperationUtils.changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
+		new AtomicOperationUtils().changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
 				LifeCycleStatesEnum.CERTIFY, true);
 
-		ComponentInstance resourceDetailsCP_01ins = AtomicOperationUtils
+		ComponentInstance resourceDetailsCP_01ins = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceDetailsCP_01, resourceDetailsVF,
 						UserRoleEnum.DESIGNER, true)
 				.left().value();
-		ComponentInstance resourceDetailsVL_01ins = AtomicOperationUtils
+		ComponentInstance resourceDetailsVL_01ins = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceDetailsVL_01, resourceDetailsVF,
 						UserRoleEnum.DESIGNER, true)
 				.left().value();
-		ComponentInstance resourceDetailsVFCcomp_ins = AtomicOperationUtils
+		ComponentInstance resourceDetailsVFCcomp_ins = new AtomicOperationUtils()
 				.addComponentInstanceToComponentContainer(resourceDetailsVFCcomp, resourceDetailsVF,
 						UserRoleEnum.DESIGNER, true)
 				.left().value();
 
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
-		AtomicOperationUtils.associate2ResourceInstances(resourceDetailsVF, resourceDetailsCP_01ins,
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		new AtomicOperationUtils().associate2ResourceInstances(resourceDetailsVF, resourceDetailsCP_01ins,
 				resourceDetailsVL_01ins, AssocType.LINKABLE.getAssocType(), UserRoleEnum.DESIGNER, true);
-		AtomicOperationUtils.associate2ResourceInstances(resourceDetailsVF, resourceDetailsCP_01ins,
+		new AtomicOperationUtils().associate2ResourceInstances(resourceDetailsVF, resourceDetailsCP_01ins,
 				resourceDetailsVFCcomp_ins, AssocType.BINDABLE.getAssocType(), UserRoleEnum.DESIGNER, true);
 
 	}
@@ -130,20 +130,20 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void getResourceLatestVersion() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 		// resourceDetailsVF =
-		// AtomicOperationUtils.getResourceObject(resourceDetailsVF,
+		// new AtomicOperationUtils().getResourceObject(resourceDetailsVF,
 		// UserRoleEnum.DESIGNER);
-		RestResponse getResourceLatestVersionResponse = ResourceRestUtils.getResourceLatestVersionList(sdncUserDetails);
+		RestResponse getResourceLatestVersionResponse = new ResourceRestUtils().getResourceLatestVersionList(sdncUserDetails);
 		assertTrue("response code is not 200, returned :" + getResourceLatestVersionResponse.getErrorCode(),
 				getResourceLatestVersionResponse.getErrorCode() == 200);
 
-		List<Resource> resourceList = ResourceRestUtils
+		List<Resource> resourceList = new ResourceRestUtils()
 				.restResponseToResourceObjectList(getResourceLatestVersionResponse.getResponse());
-		Resource resource = ResourceRestUtils.getResourceObjectFromResourceListByUid(resourceList,
+		Resource resource = new ResourceRestUtils().getResourceObjectFromResourceListByUid(resourceList,
 				resourceDetailsVF.getUniqueId());
 
 		callAllCheckMethods(resource);
@@ -152,22 +152,22 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void getFollowedResources() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 		// resourceDetailsVF =
-		// AtomicOperationUtils.getResourceObject(resourceDetailsVF,
+		// new AtomicOperationUtils().getResourceObject(resourceDetailsVF,
 		// UserRoleEnum.DESIGNER);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
-		RestResponse getFollowedResourcesResponse = ResourceRestUtils.getFollowedList(sdncUserDetails);
+		RestResponse getFollowedResourcesResponse = new ResourceRestUtils().getFollowedList(sdncUserDetails);
 		String json = getFollowedResourcesResponse.getResponse();
 		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
 		JSONArray resources = (JSONArray) jsonResp.get("resources");
 
-		List<Resource> resourceList = ResourceRestUtils.restResponseToResourceObjectList(resources.toString());
-		Resource resource = ResourceRestUtils.getResourceObjectFromResourceListByUid(resourceList,
+		List<Resource> resourceList = new ResourceRestUtils().restResponseToResourceObjectList(resources.toString());
+		Resource resource = new ResourceRestUtils().getResourceObjectFromResourceListByUid(resourceList,
 				resourceDetailsVF.getUniqueId());
 		// TODO if get followed list Api should return full object data?
 		// callAllCheckMethods(resource);
@@ -176,14 +176,14 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void lifeCycleChekInRequest() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
 		// resourceDetailsVF =
-		// AtomicOperationUtils.getResourceObject(resourceDetailsVF,
+		// new AtomicOperationUtils().getResourceObject(resourceDetailsVF,
 		// UserRoleEnum.DESIGNER);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 		callAllCheckMethods(resource);
@@ -192,15 +192,15 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void lifeCycleChekOutRequest() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKOUT);
 		assertTrue("change LC state to CHECKOUT, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 		callAllCheckMethods(resource);
@@ -209,15 +209,15 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	/*@Test
 	public void lifeCycleRequestForCertification() throws Exception {
 
-		RestResponse response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		RestResponse response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CHECKIN);
 		assertTrue("change LC state to CHECKIN, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		response = LifecycleRestUtils.changeComponentState(resourceDetailsVF, sdncUserDetails,
+		response = new LifecycleRestUtils().changeComponentState(resourceDetailsVF, sdncUserDetails,
 				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertTrue("change LC state to CERTIFICATIONREQUEST, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 		callAllCheckMethods(resource);
@@ -226,12 +226,12 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void lifeCycleCertificationRequest() throws Exception {
 
-		RestResponse response = AtomicOperationUtils
+		RestResponse response = new AtomicOperationUtils()
 				.changeComponentState(resourceDetailsVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, false)
 				.getRight();
 		assertTrue("change LC state to CERTIFY, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 		callAllCheckMethods(resource);
@@ -240,12 +240,12 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 	@Test
 	public void checkGetResourceAfterCertificationRequest() throws Exception {
 
-		RestResponse response = AtomicOperationUtils
+		RestResponse response = new AtomicOperationUtils()
 				.changeComponentState(resourceDetailsVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, false)
 				.getRight();
 		assertTrue("change LC state to CERTIFY, returned status:" + response.getErrorCode(),
 				response.getErrorCode() == 200);
-		resourceDetailsVF = AtomicOperationUtils.getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
+		resourceDetailsVF = new AtomicOperationUtils().getResourceObject(resourceDetailsVF, UserRoleEnum.DESIGNER);
 
 		callAllCheckMethods(resourceDetailsVF);
 	}
@@ -255,7 +255,7 @@ public class ValidateExtendedVfData extends ComponentBaseTest {
 
 		resourceDetailsVF.setDescription("stamStam");
 		ResourceReqDetails resourceDetailsVFreqD = new ResourceReqDetails(resourceDetailsVF);
-		RestResponse updateResourceResponse = ResourceRestUtils.updateResourceMetadata(resourceDetailsVFreqD,
+		RestResponse updateResourceResponse = new ResourceRestUtils().updateResourceMetadata(resourceDetailsVFreqD,
 				sdncUserDetails, resourceDetailsVF.getUniqueId());
 		assertTrue("response code is not 200, returned :" + updateResourceResponse.getErrorCode(),
 				updateResourceResponse.getErrorCode() == 200);
