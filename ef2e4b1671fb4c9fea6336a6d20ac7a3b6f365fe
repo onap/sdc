@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d28770aa_b178b3df",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-26T09:44:03Z",
+      "side": 1,
+      "message": "seems like \u0027value\u0027 cannot change between L146 and this line, so, needless to check again, just use \u0027value\u0027, isn\u0027t it?",
+      "range": {
+        "startLine": 160,
+        "startChar": 16,
+        "endLine": 160,
+        "endChar": 21
+      },
+      "revId": "ef2e4b1671fb4c9fea6336a6d20ac7a3b6f365fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60d4905a_8c941b51",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/PropertyValueConstraintValidationUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-06-26T09:44:03Z",
+      "side": 1,
+      "message": "StringUtils.isEmpty(value)",
+      "range": {
+        "startLine": 163,
+        "startChar": 54,
+        "endLine": 163,
+        "endChar": 88
+      },
+      "revId": "ef2e4b1671fb4c9fea6336a6d20ac7a3b6f365fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
