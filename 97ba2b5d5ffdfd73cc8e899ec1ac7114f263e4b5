@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d0a2d91_fcd6f063",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vf/composition/CompositionFloatTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:47:33Z",
+      "side": 1,
+      "message": "Use data types/VFCs from test model, see https://gerrit.onap.org/r/c/sdc/+/134998\nAdd node types to the test model as needed",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 129,
+        "endChar": 5
+      },
+      "revId": "97ba2b5d5ffdfd73cc8e899ec1ac7114f263e4b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9d07902_6a29655a",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vf/composition/CompositionFloatTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:47:33Z",
+      "side": 1,
+      "message": "add the VFC to a service instead of a VF (using the test model cand category)",
+      "range": {
+        "startLine": 131,
+        "startChar": 2,
+        "endLine": 153,
+        "endChar": 5
+      },
+      "revId": "97ba2b5d5ffdfd73cc8e899ec1ac7114f263e4b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0ca5c54_f285aac2",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vf/composition/CompositionFloatTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:47:33Z",
+      "side": 1,
+      "message": "verify they are correct, not jut that there is the correct amount of them. The validation of the generated tosca is very important",
+      "range": {
+        "startLine": 267,
+        "startChar": 7,
+        "endLine": 267,
+        "endChar": 49
+      },
+      "revId": "97ba2b5d5ffdfd73cc8e899ec1ac7114f263e4b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
