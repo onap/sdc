@@ -22,6 +22,75 @@
       "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6c2cbbe_49f2875d",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/categories/categoryTypes.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:35:42Z",
+      "side": 1,
+      "message": "we will need to add configuration for the category.\n\nOne way to do it would be to copy BE-configuration.yaml.erb to the integation test dir, add config for the category. I would suggest the following as config:\n\n  TEST service:\n    required: true\n    baseTypes:\n      - tosca.nodes.nfv.testNodeComplex\n    doNotExtendBaseType: true\n\n\nand mount it to the backend in the docker plugin, e.g.:\n\n\u003cvolume\u003e${project.basedir}/BE-configuration.yaml.erb:/app/jetty/chef-solo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb\u003c/volume\u003e\n\n\nIm open to other suggests if there is another way to do it",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "321f41ee_5bf870e5",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:35:42Z",
+      "side": 1,
+      "message": "change to something reflecting the types are for test",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 70
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61871d47_b8c84ee8",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-27T16:35:42Z",
+      "side": 1,
+      "message": "change the \u0027nfv\u0027 to \u0027test\u0027 - same comment everywhere",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
