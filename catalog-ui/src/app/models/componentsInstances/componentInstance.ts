@@ -126,8 +126,6 @@ export class ComponentInstance implements IComponentInstance{
             this.creationTime = componentInstance.creationTime;
             this.modificationTime = componentInstance.modificationTime;
             this.propertyValueCounter = componentInstance.propertyValueCounter;
-            this.capabilities = new CapabilitiesGroup(componentInstance.capabilities);
-            this.requirements = new RequirementsGroup(componentInstance.requirements);
             this.certified = componentInstance.certified;
             this.customizationUUID = componentInstance.customizationUUID;
             this.updatePosition(componentInstance.posX, componentInstance.posY);
