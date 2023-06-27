@@ -143,6 +143,7 @@ export class PropertiesUtils {
     * Note: This logic is different than assignflattenedchildrenvalues - here we merge values, there we pick either the parents value, props value, or default value - without merging.
     */
     public initValueObjectRef = (property: PropertyFEModel): void => {
+        let index: number;
         property.resetValueObjValidation();
         if (property.isDeclared) { //if property is declared, it gets a simple input instead. List and map values and pseudo-children will be handled in property component
             property.valueObj = property.value || property.defaultValue || null;  // use null for empty value object
@@ -152,6 +153,9 @@ export class PropertiesUtils {
         } else {
             property.valueObj = property.getValueObj();
             if (property.derivedDataType == DerivedPropertyType.LIST || property.derivedDataType == DerivedPropertyType.MAP) {
+                if (property.flattenedChildren && property.flattenedChildren.length > 0) {
+                    index = property.flattenedChildren.indexOf(property.flattenedChildren.find(prop => prop.propertiesName == property.expandedChildPropertyId));
+                }
                 property.flattenedChildren = [];
                 Object.keys(property.valueObj).forEach((key) => {
                     property.flattenedChildren.push(...this.createListOrMapChildren(property, key, property.valueObj[key]));
@@ -184,6 +188,9 @@ export class PropertiesUtils {
             } else if (property.derivedDataType === DerivedPropertyType.RANGE) {
                 property.valueObj = JSON.stringify(property.getValueObj());
             }
+        }
+        if (typeof index === "number" && property.flattenedChildren && property.flattenedChildren.length > 0) {
+            property.expandedChildPropertyId = property.flattenedChildren[index].propertiesName;
         }
         property.updateValueObjOrig();
     };
