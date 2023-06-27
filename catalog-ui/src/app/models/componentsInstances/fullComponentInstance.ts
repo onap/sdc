@@ -1,23 +1,33 @@
-import { ComponentInstance, Component, ArtifactGroupModel, Service, Resource, IMainCategory, ArtifactModel, AttributeModel } from "app/models";
-import { ComponentType } from '../../utils/constants';
+import {
+    ArtifactGroupModel,
+    AttributeModel,
+    CapabilitiesGroup,
+    Component,
+    ComponentInstance,
+    IMainCategory,
+    RequirementsGroup,
+    Resource,
+    Service
+} from "app/models";
+import {ComponentType} from '../../utils/constants';
 import * as _ from 'lodash';
 
 
 export class FullComponentInstance extends ComponentInstance {
     public contactId: string;
     public componentType: string;
-    public interfaces:any;
-    public tags:Array<string>;
-    public version:string;
-    public allVersions:any;
-    public highestVersion:boolean;
-    public categories:Array<IMainCategory>;
-    public creationDate:number;
-    public creatorFullName:string;
-    public vendorName:string;
-    public vendorRelease:string;
-    public systemName:string;
-    public uuid:string;
+    public interfaces: any;
+    public tags: Array<string>;
+    public version: string;
+    public allVersions: any;
+    public highestVersion: boolean;
+    public categories: Array<IMainCategory>;
+    public creationDate: number;
+    public creatorFullName: string;
+    public vendorName: string;
+    public vendorRelease: string;
+    public systemName: string;
+    public uuid: string;
     public lifecycleState: string;
     public isArchived: boolean;
 
@@ -26,22 +36,24 @@ export class FullComponentInstance extends ComponentInstance {
     public directives: string[];
 
     //service
-    public serviceApiArtifacts:ArtifactGroupModel;
-    public serviceType:string;
-    public serviceRole:string;
+    public serviceApiArtifacts: ArtifactGroupModel;
+    public serviceType: string;
+    public serviceRole: string;
 
     //resource
-    public csarUUID:string;
+    public csarUUID: string;
     public isCsarComponent: boolean;
-    public csarVersion:string;
-    public csarPackageType:string;
-    public packageId:string;
-    public resourceType:string;
-    public resourceVendorModelNumber:string;
+    public csarVersion: string;
+    public csarPackageType: string;
+    public packageId: string;
+    public resourceType: string;
+    public resourceVendorModelNumber: string;
+    public capabilities: CapabilitiesGroup;
+    public requirements: RequirementsGroup;
 
     public attributes: Array<AttributeModel>;
 
-    constructor(componentInstance:ComponentInstance, originComponent:Component) {
+    constructor(componentInstance: ComponentInstance, originComponent: Component) {
         super(componentInstance);
 
         this.componentType = originComponent.componentType;
@@ -65,15 +77,17 @@ export class FullComponentInstance extends ComponentInstance {
         this.attributes = originComponent.attributes;
         this.directives = componentInstance.directives;
 
+        this.capabilities = new CapabilitiesGroup(originComponent.capabilities);
+        this.requirements = new RequirementsGroup(originComponent.requirements);
 
-        if(originComponent.componentType === ComponentType.SERVICE || originComponent.componentType
+        if (originComponent.componentType === ComponentType.SERVICE || originComponent.componentType
             === ComponentType.SERVICE_PROXY || originComponent.componentType === ComponentType.SERVICE_SUBSTITUTION) {
             this.isServiceInstance = true;
             this.serviceApiArtifacts = (<Service>originComponent).serviceApiArtifacts;
             this.serviceType = (<Service>originComponent).serviceType;
             this.serviceRole = (<Service>originComponent).serviceRole;
         }
-        if(originComponent.componentType === ComponentType.RESOURCE) {
+        if (originComponent.componentType === ComponentType.RESOURCE) {
             this.isResourceInstance = true;
             this.csarUUID = (<Resource>originComponent).csarUUID;
             this.isCsarComponent = !!this.csarUUID;
@@ -82,11 +96,11 @@ export class FullComponentInstance extends ComponentInstance {
         }
     }
 
-    public isResource = ():boolean => {
+    public isResource = (): boolean => {
         return this.isResourceInstance;
     }
 
-    public isService = ():boolean => {
+    public isService = (): boolean => {
         return this.isServiceInstance;
     }
 
