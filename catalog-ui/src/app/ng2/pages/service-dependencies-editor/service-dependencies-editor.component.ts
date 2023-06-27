@@ -31,6 +31,7 @@ import {ToscaFunctionHelper} from "../../../utils/tosca-function-helper";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {CustomToscaFunction} from "../../../models/default-custom-functions";
 import {ToscaFunction} from "../../../models/tosca-function";
+import {ToscaCustomFunction} from "../../../models/tosca-custom-function";
 
 @Component({
     selector: 'service-dependencies-editor',
@@ -302,7 +303,6 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         }
         newProperty.value = undefined;
         newProperty.toscaFunction = undefined;
-
         if (typeof this.currentRule.value === 'string') {
             newProperty.value = this.currentRule.value;
             this.propertiesUtils.initValueObjectRef(newProperty);
@@ -310,8 +310,7 @@ export class ServiceDependenciesEditorComponent implements OnInit {
             newProperty.toscaFunction = ToscaFunctionHelper.convertObjectToToscaFunction(this.currentRule.value);
             newProperty.value = newProperty.toscaFunction.buildValueString();
         } else if (Array.isArray(this.currentRule.value) &&
-            typeof this.currentRule.value[0] === "object" &&
-            this.currentRule.value[0]['propertySource'] != undefined) {
+            typeof this.currentRule.value[0] === "object") {
             this.validValuesToscaFunctionList = this.currentRule.value;
             this.rangeToscaFunctionList = this.currentRule.value;
             newProperty.toscaFunction = this.currentRule.value;
@@ -390,6 +389,10 @@ export class ServiceDependenciesEditorComponent implements OnInit {
                 this.currentRule.sourceType = SourceType.TOSCA_FUNCTION_LIST;
                 if (validationEvent.toscaFunction instanceof ToscaGetFunction) {
                     this.currentRule.sourceName = SourceType.TOSCA_FUNCTION_LIST;
+                }
+                else if (validationEvent.toscaFunction instanceof ToscaCustomFunction) {
+                    this.currentRule.sourceName = SourceType.TOSCA_FUNCTION_LIST;
+                    this.currentRule.sourceType = SourceType.TOSCA_FUNCTION_LIST;
                 }
             } else {
                 if (this.isLengthOperator()) {
