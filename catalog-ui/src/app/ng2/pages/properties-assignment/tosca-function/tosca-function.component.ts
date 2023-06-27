@@ -158,9 +158,9 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         }
 
         this.toscaFunctionForm.setValue(this.inToscaFunction ? this.inToscaFunction : this.property.toscaFunction);
-        let type = this.property.toscaFunction.type;
+        let type = this.property.toscaFunction.type ? this.property.toscaFunction.type : this.toscaFunctionForm.value.type;
         if (type == ToscaFunctionType.CUSTOM) {
-            let name = (this.property.toscaFunction as ToscaCustomFunction).name;
+            let name = (this.toscaFunctionForm.value as ToscaCustomFunction).name;
             let customToscaFunc = this.customToscaFunctions.find(custToscFunc => _.isEqual(custToscFunc.name, name))
             if (customToscaFunc) {
                 this.toscaFunctionTypeForm.setValue(name);
