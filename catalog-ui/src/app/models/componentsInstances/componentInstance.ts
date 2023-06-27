@@ -18,9 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-/**
- * Created by obarda on 2/4/2016.
- */
 'use strict';
 import * as _ from "lodash";
 import {
