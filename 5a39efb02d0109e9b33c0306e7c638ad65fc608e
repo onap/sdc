@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "943ce662_fa1bd955",
+        "filename": "catalog-be/src/main/resources/validateYaml/schema.json",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-06-28T10:21:47Z",
+      "side": 1,
+      "message": "this would amount to a backwards incompatible change as up to now we have supported the import of data types with just the definitions (i.e. without the \u0027tosca_definitions_version\u0027 and \u0027data_types\u0027 elements)",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 19
+      },
+      "revId": "5a39efb02d0109e9b33c0306e7c638ad65fc608e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
