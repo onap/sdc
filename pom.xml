@@ -903,6 +903,66 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>integration-tests</module>
             </modules>
         </profile>
+        <profile>
+            <id>run-integration-tests-api</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <skipYamlJsonValidator>true</skipYamlJsonValidator>
+                <checkstyle.skip>true</checkstyle.skip>
+                <surefire.skip.tests>true</surefire.skip.tests>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
+            </properties>
+            <modules>
+                <module>onboarding</module>
+                <module>common-app-logging</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>common-be-tests-utils</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>catalog-be-plugins</module>
+                <module>asdctool</module>
+                <module>catalog-ui</module>
+                <module>catalog-fe</module>
+                <module>sdc-os-chef</module>
+                <module>utils/webseal-simulator</module>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>run-integration-tests-ui</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <skipYamlJsonValidator>true</skipYamlJsonValidator>
+                <checkstyle.skip>true</checkstyle.skip>
+                <surefire.skip.tests>true</surefire.skip.tests>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
+            </properties>
+            <modules>
+                <module>onboarding</module>
+                <module>common-app-logging</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>common-be-tests-utils</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>catalog-be-plugins</module>
+                <module>asdctool</module>
+                <module>catalog-ui</module>
+                <module>catalog-fe</module>
+                <module>sdc-os-chef</module>
+                <module>utils/webseal-simulator</module>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <repositories>
