@@ -35,10 +35,11 @@ export class ServiceDataTypeReader {
                     const result = <String>reader.result;
                     const loadedContent = load(result);
                     console.log("Readed content: " + loadedContent);
-                    this.readName(this.getDataType(loadedContent));
-                    this.readDerivedFrom(this.getDataType(loadedContent));
-                    this.readDescription(this.getDataType(loadedContent));
-                    this.readProperties(this.getDataType(loadedContent));
+                    const dataType = this.getDataType(loadedContent);
+                    this.readName(dataType);
+                    this.readDerivedFrom(dataType);
+                    this.readDescription(dataType);
+                    this.readProperties(dataType);
                     resolve(this.serviceDataType);
                 } catch (error) {
                     reject(error);
