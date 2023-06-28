@@ -2874,7 +2874,15 @@ errors:
   # %1 - componentType
   # %2 - component id
   CANNOT_ARCHIVE_SYSTEM_DEPLOYED_RESOURCES: {
-      code: 409,
-      message: "System deployed %1 cannot be archived. Component: '%2'",
-      messageId: "SVC4018"
+    code: 409,
+    message: "System deployed %1 cannot be archived. Component: '%2'",
+    messageId: "SVC4018"
+  }
+
+  #---------SVC4010-----------------------------
+  # %1 - error's list
+  YAML_IS_INVALID: {
+    code: 402,
+    message: "Error: Uploaded YAML file is invalid.\n%1",
+    messageId: "SVC4010"
   }
