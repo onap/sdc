@@ -706,32 +706,83 @@
             "enum" : [ "resources", "services" ]
           }
         }, {
-          "description" : "The filter key (resourceType only for resources)",
+          "description" : "The category to filter the result set on",
           "in" : "query",
           "name" : "category",
           "schema" : {
             "type" : "string"
           }
         }, {
-          "description" : "The filter key (resourceType only for resources)",
+          "description" : "The sub category to filter the result set on. Only applicable when assetType = resources",
           "in" : "query",
           "name" : "subCategory",
           "schema" : {
             "type" : "string"
           }
         }, {
-          "description" : "The filter key (resourceType only for resources)",
+          "description" : "The distribution status to filter the result set on",
           "in" : "query",
           "name" : "distributionStatus",
           "schema" : {
             "type" : "string"
           }
         }, {
-          "description" : "The filter key (resourceType only for resources)",
+          "description" : "The resource type to filter the result set on. Only applicable when assetType = resources",
           "in" : "query",
           "name" : "resourceType",
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "description" : "Additional metadata keys to include in the response, not all keys are supported.\nSupported keys: lastUpdateDate, creationDate, description, uniqueId and category specific metadata keys",
+          "in" : "query",
+          "name" : "include",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "description" : "The version(s) to filter the result set on\nSyntax: /services?version=(highestMatchingVersionOnly|lessThan|greaterThan|equals)(:=)(value)",
+          "examples" : {
+            "An example request to get all services with version equal 2.0" : {
+              "description" : "An example request to get all services with version equal 2.0",
+              "value" : "equals:2.0"
+            },
+            "An example request to get all services with version greater than 1.1" : {
+              "description" : "An example request to get all services with version greater than 1.1",
+              "value" : "greaterThan:1.1"
+            },
+            "An example request to get all services with version less than 2.1" : {
+              "description" : "An example request to get all services with version less than 2.1",
+              "value" : "lessThan:2.1"
+            },
+            "An example request to get each service with highest version" : {
+              "description" : "An example request to get each service with highest version",
+              "value" : "highestMatchingVersionOnly:true"
+            }
+          },
+          "in" : "query",
+          "name" : "version",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The keys of the metadata to include in the entries in the result set. Only applicable when assetType = services\nOnly category specific metadata keys are supported\nSyntax: /services?metadata=<KEY1>(:=)<VALUE1>&metadata=<KEY2>(:=)<VALUE2> ...",
+          "examples" : {
+            "An example request to get all services matching following Category Specific Metadata condition 'ETSI Version=3.3.1'" : {
+              "description" : "An example request to get all services matching following Category Specific Metadata condition 'ETSI Version=3.3.1'",
+              "value" : "ETSI Version:3.3.1"
+            }
+          },
+          "in" : "query",
+          "name" : "metadata",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         } ],
         "responses" : {
@@ -4276,6 +4327,12 @@
           "normalizedName" : {
             "type" : "string"
           },
+          "notApplicableMetadataKeys" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "ownerId" : {
             "type" : "string"
           },
@@ -4778,6 +4835,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -5126,6 +5186,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -5227,6 +5290,9 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "normative" : {
+            "type" : "boolean"
           },
           "ownerId" : {
             "type" : "string"
@@ -5973,6 +6039,9 @@
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
+          "toscaSubPath" : {
+            "type" : "string"
           },
           "type" : {
             "type" : "string"
@@ -7292,6 +7361,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -7319,6 +7391,9 @@
             "type" : "string",
             "enum" : [ "EQUAL", "IN_RANGE", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_OR_EQUAL", "LENGTH", "MIN_LENGTH", "MAX_LENGTH", "VALID_VALUES", "LESS_THAN", "PATTERN", "SCHEMA" ]
           },
+          "originalType" : {
+            "type" : "string"
+          },
           "propertyName" : {
             "type" : "string"
           },
@@ -7331,7 +7406,7 @@
           },
           "valueType" : {
             "type" : "string",
-            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CONCAT" ]
+            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CUSTOM", "CONCAT", "SEVERAL" ]
           }
         }
       },
@@ -7983,6 +8058,9 @@
               "type" : "string"
             }
           },
+          "tenant" : {
+            "type" : "string"
+          },
           "topologyTemplate" : {
             "type" : "boolean"
           },
@@ -8213,7 +8291,7 @@
           },
           "type" : {
             "type" : "string",
-            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "CUSTOM", "YAML", "STRING" ]
           },
           "value" : {
             "type" : "string"
@@ -8249,9 +8327,15 @@
           "sourceUniqueId" : {
             "type" : "string"
           },
+          "toscaIndexList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object"
+            }
+          },
           "type" : {
             "type" : "string",
-            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "CUSTOM", "YAML", "STRING" ]
           }
         }
       }

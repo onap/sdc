@@ -303,6 +303,13 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "in" : "query",
+          "name" : "excludePrimitives",
+          "schema" : {
+            "type" : "string",
+            "default" : "false"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1524,6 +1531,406 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/customToscaFunctions/{type}" : {
+      "get" : {
+        "description" : "Retrieve default custom tosca functions values from the configuration file based on type",
+        "operationId" : "getDefaultCustomToscaFunctionValues",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "type",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ALL", "CUSTOM", "GET_INPUT" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns default custom tosca functions values from configuration file Ok"
+          },
+          "404" : {
+            "description" : "Default custom tosca functions not found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Retrieve all custom tosca functions",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/data-types/{dataTypeId}" : {
+      "delete" : {
+        "operationId" : "deleteDatatype",
+        "parameters" : [ {
+          "description" : "The data type id",
+          "in" : "path",
+          "name" : "dataTypeId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : { }
+            },
+            "description" : "default response"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/data-types/{dataTypeId}/{propertyId}" : {
+      "delete" : {
+        "operationId" : "deleteProperty",
+        "parameters" : [ {
+          "description" : "The data type id",
+          "in" : "path",
+          "name" : "dataTypeId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The property id to delete",
+          "in" : "path",
+          "name" : "propertyId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : { }
+            },
+            "description" : "default response"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/data-types/{dataTypeName}/models" : {
+      "get" : {
+        "description" : "Get models for type",
+        "operationId" : "getDataTypeModels",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "dataTypeName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "dataTypeModels"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data type not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns list of models for type",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/data-types/{dataTypeUid}" : {
       "get" : {
         "description" : "Get data types",
@@ -1670,6 +2077,59 @@
           "variables" : { }
         } ],
         "summary" : "Create a property in the given data type",
+        "tags" : [ "SDCE-2 APIs" ]
+      },
+      "put" : {
+        "description" : "Update a property in the given data type",
+        "operationId" : "updateProperty",
+        "parameters" : [ {
+          "description" : "The data type id",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyDefinitionDto"
+              }
+            }
+          },
+          "description" : "Property to update",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Property updated in the data type"
+          },
+          "400" : {
+            "description" : "Invalid payload"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data type not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyDefinitionDto"
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Update a property in the given data type",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -2006,6 +2466,304 @@
           }
         },
         "summary" : "Retrieve all Directives",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/downloadDataType" : {
+      "get" : {
+        "description" : "Get data types",
+        "operationId" : "downloadDataType",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "dataTypeId",
+          "in" : "query",
+          "name" : "dataTypeId",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "allDataTypes"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Data types not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns all data types from all models",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -2616,6 +3374,33 @@
               }
             },
             "description" : "Internal Error"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/interface-types/{interfaceTypeId}" : {
+      "delete" : {
+        "operationId" : "deleteInterfaceType",
+        "parameters" : [ {
+          "description" : "The interface type id",
+          "in" : "path",
+          "name" : "interfaceTypeId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "content" : {
+              "*/*" : { }
+            },
+            "description" : "default response"
           }
         },
         "servers" : [ {
@@ -4647,6 +5432,9 @@
           },
           "400" : {
             "description" : "Invalid content / Missing content"
+          },
+          "401" : {
+            "description" : "Unauthorized Tenant"
           },
           "403" : {
             "description" : "Restricted operation"
@@ -13342,6 +14130,9 @@
           },
           "400" : {
             "description" : "Invalid content / Missing content"
+          },
+          "401" : {
+            "description" : "Unauthorized Tenant"
           },
           "403" : {
             "description" : "Restricted operation"
@@ -24105,7 +24896,7 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
                   }
                 }
               }
@@ -24701,7 +25492,7 @@
     },
     "/v1/catalog/uploadType/datatypes" : {
       "post" : {
-        "description" : "Create Categories from yaml",
+        "description" : "Create Data Types from zip",
         "operationId" : "uploadDataTypes",
         "parameters" : [ {
           "in" : "header",
@@ -24727,7 +25518,322 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Data types created"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "409" : {
+            "description" : "Data types already exist"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns created data types",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/uploadType/datatypesyaml" : {
+      "post" : {
+        "description" : "Create Data Types from yaml",
+        "operationId" : "uploadDataTypesYaml",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "dataTypesYaml" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "description" : "FileInputStream"
+                  },
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model name"
                   }
                 }
               }
@@ -25042,7 +26148,7 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
                   },
                   "toscaTypeMetadata" : {
                     "type" : "string",
@@ -25361,7 +26467,7 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
                   }
                 }
               }
@@ -25671,7 +26777,7 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
                   },
                   "policyTypesZip" : {
                     "type" : "string",
@@ -25990,7 +27096,7 @@
                   },
                   "model" : {
                     "type" : "string",
-                    "description" : "model"
+                    "description" : "model name"
                   },
                   "relationshipTypeZip" : {
                     "type" : "string",
@@ -48824,6 +49930,9 @@
               "type" : "string"
             }
           },
+          "tenant" : {
+            "type" : "string"
+          },
           "uniqueId" : {
             "type" : "string"
           },
@@ -48854,6 +49963,9 @@
           },
           "defaultBaseType" : {
             "type" : "string"
+          },
+          "doNotExtendBaseType" : {
+            "type" : "boolean"
           },
           "required" : {
             "type" : "boolean"
@@ -48892,6 +50004,12 @@
           },
           "normalizedName" : {
             "type" : "string"
+          },
+          "notApplicableMetadataKeys" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           },
           "ownerId" : {
             "type" : "string"
@@ -49444,6 +50562,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -49792,6 +50913,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -49904,6 +51028,12 @@
           },
           "dataValidatorFilterExcludedUrls" : {
             "type" : "string"
+          },
+          "defaultCustomToscaFunctions" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CustomToscaFunction"
+            }
           },
           "defaultImports" : {
             "type" : "array",
@@ -50386,6 +51516,17 @@
           }
         }
       },
+      "CustomToscaFunction" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
       "DataTypeDataDefinition" : {
         "type" : "object",
         "properties" : {
@@ -50411,6 +51552,9 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "normative" : {
+            "type" : "boolean"
           },
           "ownerId" : {
             "type" : "string"
@@ -50470,6 +51614,9 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "normative" : {
+            "type" : "boolean"
           },
           "ownerId" : {
             "type" : "string"
@@ -51426,6 +52573,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -51942,6 +53092,9 @@
           "toscaGetFunctionType" : {
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
+          "toscaSubPath" : {
+            "type" : "string"
           },
           "type" : {
             "type" : "string"
@@ -53588,6 +54741,9 @@
             "type" : "string",
             "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
+          "toscaSubPath" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -53611,7 +54767,7 @@
           "constraints" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/PropertyConstraint"
+              "type" : "object"
             }
           },
           "defaultValue" : {
@@ -53650,6 +54806,9 @@
             "type" : "string",
             "enum" : [ "EQUAL", "IN_RANGE", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_OR_EQUAL", "LENGTH", "MIN_LENGTH", "MAX_LENGTH", "VALID_VALUES", "LESS_THAN", "PATTERN", "SCHEMA" ]
           },
+          "originalType" : {
+            "type" : "string"
+          },
           "propertyName" : {
             "type" : "string"
           },
@@ -53662,7 +54821,7 @@
           },
           "valueType" : {
             "type" : "string",
-            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CONCAT" ]
+            "enum" : [ "STATIC", "GET_PROPERTY", "GET_INPUT", "GET_ATTRIBUTE", "YAML", "CUSTOM", "CONCAT", "SEVERAL" ]
           }
         }
       },
@@ -54345,6 +55504,9 @@
               "type" : "string"
             }
           },
+          "tenant" : {
+            "type" : "string"
+          },
           "topologyTemplate" : {
             "type" : "boolean"
           },
@@ -54766,6 +55928,9 @@
               "type" : "string"
             }
           },
+          "tenant" : {
+            "type" : "string"
+          },
           "topologyTemplate" : {
             "type" : "boolean"
           },
@@ -55024,7 +56189,7 @@
           },
           "type" : {
             "type" : "string",
-            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "CUSTOM", "YAML", "STRING" ]
           },
           "value" : {
             "type" : "string"
@@ -55060,9 +56225,15 @@
           "sourceUniqueId" : {
             "type" : "string"
           },
+          "toscaIndexList" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object"
+            }
+          },
           "type" : {
             "type" : "string",
-            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "YAML", "STRING" ]
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE", "CONCAT", "CUSTOM", "YAML", "STRING" ]
           }
         }
       },
@@ -55082,6 +56253,9 @@
             "type" : "string"
           },
           "constraintOperator" : {
+            "type" : "string"
+          },
+          "originalType" : {
             "type" : "string"
           },
           "servicePropertyName" : {
