@@ -1053,5 +1053,61 @@ limitations under the License.
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>run-integration-tests-api</id>
+            <properties>
+                <it.helm-validator.disabled>false</it.helm-validator.disabled>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemProperties>
+                                <property>
+                                    <name>testng.dtd.http</name>
+                                    <value>true</value>
+                                </property>
+                            </systemProperties>
+                            <suiteXmlFiles>
+                                <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
+                                <file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>run-integration-tests-ui</id>
+            <properties>
+                <it.helm-validator.disabled>false</it.helm-validator.disabled>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemProperties>
+                                <property>
+                                    <name>testng.dtd.http</name>
+                                    <value>true</value>
+                                </property>
+                            </systemProperties>
+                            <suiteXmlFiles>
+                                <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
+                                <file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
