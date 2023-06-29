@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -32,24 +32,24 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CheckinTest extends LifecycleTestBase {
+class CheckinTest extends LifecycleTestBase {
 
     private CheckinTransition checkinObj = null;
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         super.setup();
         // checkout transition object
-        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  janusGraphDao, vesionUpdateHandler);
+        checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, janusGraphDao, vesionUpdateHandler);
         checkinObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         checkinObj.setConfigurationManager(configurationManager);
     }
 
     @Test
-    public void testSimpleCheckin() {
+    void testSimpleCheckin() {
         Either<Boolean, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
 
@@ -63,7 +63,7 @@ public class CheckinTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testSimpleServiceCheckin() {
+    void testSimpleServiceCheckin() {
         Either<Boolean, ResponseFormat> changeStateResult;
         Service service = createServiceObject();
 
@@ -77,7 +77,7 @@ public class CheckinTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testCheckinTwiceValidation() {
+    void testCheckinTwiceValidation() {
         Either<Resource, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
 
@@ -95,7 +95,7 @@ public class CheckinTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testServiceCheckinTwiceValidation() {
+    void testServiceCheckinTwiceValidation() {
         Either<Service, ResponseFormat> changeStateResult;
         Service service = createServiceObject();
 
@@ -112,7 +112,7 @@ public class CheckinTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testCheckoutByAnotherUserValidation() {
+    void testCheckoutByAnotherUserValidation() {
         Either<Resource, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
 
@@ -138,7 +138,7 @@ public class CheckinTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testServiceCheckoutByAnotherUserValidation() {
+    void testServiceCheckoutByAnotherUserValidation() {
         Either<Service, ResponseFormat> changeStateResult;
         Service service = createServiceObject();
 

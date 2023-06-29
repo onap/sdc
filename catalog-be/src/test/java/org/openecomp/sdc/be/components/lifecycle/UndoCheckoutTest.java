@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -31,26 +31,26 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UndoCheckoutTest extends LifecycleTestBase {
+class UndoCheckoutTest extends LifecycleTestBase {
 
     private UndoCheckoutTransition undoCheckoutObj = null;
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         super.setup();
         // checkout transition object
         undoCheckoutObj = new UndoCheckoutTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,
-            janusGraphDao);
+                janusGraphDao);
         undoCheckoutObj.setLifeCycleOperation(toscaElementLifecycleOperation);
         undoCheckoutObj.setConfigurationManager(configurationManager);
 
     }
 
     @Test
-    public void testResourceNotCheckedOutValidation() {
+    void testResourceNotCheckedOutValidation() {
         Either<Resource, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
 
@@ -77,7 +77,7 @@ public class UndoCheckoutTest extends LifecycleTestBase {
     }
 
     @Test
-    public void testDifferentResourceOwnerValidation() {
+    void testDifferentResourceOwnerValidation() {
         Either<Resource, ResponseFormat> changeStateResult;
         Resource resource = createResourceObject();
 

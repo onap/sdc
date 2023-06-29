@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -86,7 +86,8 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     protected ToscaElementLifecycleOperation toscaElementLifecycleOperation = Mockito.mock(ToscaElementLifecycleOperation.class);
     protected VesionUpdateHandler vesionUpdateHandler = Mockito.mock(VesionUpdateHandler.class);
-    protected ArtifactsBusinessLogic artifactsManager = Mockito.mock(ArtifactsBusinessLogic.class);;
+    protected ArtifactsBusinessLogic artifactsManager = Mockito.mock(ArtifactsBusinessLogic.class);
+    ;
     protected User user = null;
     protected Resource resourceResponse;
     protected Service serviceResponse;
@@ -102,7 +103,7 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
     protected final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
-    @BeforeClass
+    @BeforeAll
     public static void setupClass() {
         ExternalConfiguration.setAppName("catalog-be");
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
@@ -191,7 +192,7 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
     protected Resource createResourceVFCMTObject() {
         ResourceMetadataDataDefinition rMetadataDataDefinition = new ResourceMetadataDataDefinition();
         rMetadataDataDefinition.setResourceType(ResourceTypeEnum.VFCMT);
-        ComponentMetadataDefinition cMetadataDataDefinition = new ComponentMetadataDefinition(rMetadataDataDefinition) ;
+        ComponentMetadataDefinition cMetadataDataDefinition = new ComponentMetadataDefinition(rMetadataDataDefinition);
 
         Resource resource = new Resource(cMetadataDataDefinition);
         resource.setUniqueId("rid");
@@ -212,6 +213,7 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
 
         return resource;
     }
+
     protected Service createServiceObject() {
         return createServiceObject("sid");
     }

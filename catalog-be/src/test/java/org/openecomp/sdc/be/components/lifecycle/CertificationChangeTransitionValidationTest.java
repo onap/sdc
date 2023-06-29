@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,8 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -35,9 +35,9 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CertificationChangeTransitionValidationTest extends LifecycleTestBase {
+class CertificationChangeTransitionValidationTest extends LifecycleTestBase {
 
     private CertificationChangeTransition certifyTransitionObj = null;
     @Mock
@@ -45,11 +45,11 @@ public class CertificationChangeTransitionValidationTest extends LifecycleTestBa
 
     private User owner = null;
 
-    Resource resource;
-    Service service; 
+    private Resource resource;
+    private Service service;
 
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setup() {
 
         super.setup();
@@ -66,14 +66,14 @@ public class CertificationChangeTransitionValidationTest extends LifecycleTestBa
     }
 
     @Test
-    public void testVFCMTStateValidation(){
+    void testVFCMTStateValidation() {
         Resource resource = createResourceVFCMTObject();
         Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertTrue(validateBeforeTransition.isLeft());
     }
 
     @Test
-    public void testStateCheckInValidationSuccess() {
+    void testStateCheckInValidationSuccess() {
         Either<Boolean, ResponseFormat> changeStateResult = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertTrue(changeStateResult.isLeft());
 
@@ -82,16 +82,16 @@ public class CertificationChangeTransitionValidationTest extends LifecycleTestBa
     }
 
     @Test
-    public void testStateCheckOutValidationSuccess() {
+    void testStateCheckOutValidationSuccess() {
         Either<Boolean, ResponseFormat> changeStateResult = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         assertTrue(changeStateResult.isLeft());
 
         changeStateResult = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         assertTrue(changeStateResult.isLeft());
     }
-    
+
     @Test
-    public void testStateCertifyValidationFail() {
+    void testStateCertifyValidationFail() {
         Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, user, owner, LifecycleStateEnum.CERTIFIED);
         assertValidationStateErrorResponse(validateBeforeTransition);
 
@@ -100,7 +100,7 @@ public class CertificationChangeTransitionValidationTest extends LifecycleTestBa
     }
 
     @Test
-    public void testRolesSuccess() {
+    void testRolesSuccess() {
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         assertSuccessWithResourceAndService();
@@ -111,7 +111,7 @@ public class CertificationChangeTransitionValidationTest extends LifecycleTestBa
     }
 
     @Test
-    public void testRolesFail() {
+    void testRolesFail() {
         user.setRole(UserRoleEnum.TESTER.getName());
         assertBeforeTransitionRoleFalis();
         assertBeforeTransitionRoleFalis();
