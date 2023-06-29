@@ -606,6 +606,7 @@ public class ToscaExportHandler {
                 }
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_RELEASE.getPresentation(), resource.getVendorRelease());
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER.getPresentation(), resource.getResourceVendorModelNumber());
+                toscaMetadata.put(resource.isTopologyTemplate() ? JsonPresentationFields.TEMPLATE_VERSION.getPresentation() : JsonPresentationFields.VERSION.getPresentation(), resource.getVersion());
                 break;
             case SERVICE:
                 Service service = (Service) component;
@@ -614,6 +615,7 @@ public class ToscaExportHandler {
                 toscaMetadata.put(JsonPresentationFields.SERVICE_ROLE.getPresentation(), service.getServiceRole());
                 toscaMetadata.put(JsonPresentationFields.SERVICE_FUNCTION.getPresentation(), service.getServiceFunction());
                 toscaMetadata.put(JsonPresentationFields.ENVIRONMENT_CONTEXT.getPresentation(), service.getEnvironmentContext());
+                toscaMetadata.put(JsonPresentationFields.TEMPLATE_VERSION.getPresentation(), service.getVersion());
                 toscaMetadata.put(JsonPresentationFields.INSTANTIATION_TYPE.getPresentation(),
                         service.getEnvironmentContext() == null ? StringUtils.EMPTY : service.getInstantiationType());
                 if (!isInstance) {

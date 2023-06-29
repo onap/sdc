@@ -22,12 +22,12 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -50,13 +50,15 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
-public class CertificationChangeTransitionTests extends LifecycleTestBase {
+@ExtendWith(MockitoExtension.class)
+class CertificationChangeTransitionTests extends LifecycleTestBase {
 
     @Mock
     private ServiceBusinessLogic serviceBusinessLogic;
@@ -71,10 +73,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     private static String SERVICE_ID = "serviceId";
     private static String SERVICE_ID_CERTIFIED = "serviceIdCert";
 
-
-
-
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         changeTransition = new CertificationChangeTransition(serviceBusinessLogic, LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, janusGraphDao);
@@ -97,7 +96,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testVFCMTStateValidation(){
+    void testVFCMTStateValidation() {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource = createResourceVFCMTObject();
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -109,7 +108,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testCheckoutStateValidation() {
+    void testCheckoutStateValidation() {
         Either<? extends Component, ResponseFormat> changeStateResult;
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -125,7 +124,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testPnfValidation() {
+    void testPnfValidation() {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource.setResourceType(ResourceTypeEnum.PNF);
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -141,7 +140,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testCRValidation() {
+    void testCRValidation() {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource.setResourceType(ResourceTypeEnum.CR);
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -157,7 +156,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testVSPIsArchivedValidation(){
+    void testVSPIsArchivedValidation() {
         Resource resource = createResourceObject();
         resource.setVspArchived(true);
 
@@ -182,14 +181,14 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
 
 
     @Test
-    public void testValidateAllResourceInstanceCertified_SuccessWithoutRI() {
+    void testValidateAllResourceInstanceCertified_SuccessWithoutRI() {
         Resource resource = new Resource();
         Either<Boolean, ResponseFormat> validateAllResourceInstanceCertified = changeTransition.validateAllResourceInstanceCertified(resource);
         assertTrue(validateAllResourceInstanceCertified.isLeft());
     }
 
     @Test
-    public void testValidateAllResourceInstanceCertified_SuccessWithCertifiedResources() {
+    void testValidateAllResourceInstanceCertified_SuccessWithCertifiedResources() {
         Resource resource = new Resource();
         List<ComponentInstance> riList = new ArrayList<>();
         ComponentInstance ri = new ComponentInstance();
@@ -202,7 +201,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testValidateAllResourceInstanceCertified_FailWithUnCertifiedResourcesMinorVersion() {
+    void testValidateAllResourceInstanceCertified_FailWithUnCertifiedResourcesMinorVersion() {
         Resource resource = createVFWithRI("0.3");
 
         simulateCertifiedVersionExistForRI();
@@ -217,7 +216,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testValidateAllResourceInstanceCertified_FailWithUnCertifiedResourcesMajorVersion() {
+    void testValidateAllResourceInstanceCertified_FailWithUnCertifiedResourcesMajorVersion() {
         Resource resource = createVFWithRI("1.3");
 
         simulateCertifiedVersionExistForRI();
@@ -232,7 +231,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
     }
 
     @Test
-    public void testDeploymentArtifactRestriction() {
+    void testDeploymentArtifactRestriction() {
         Either<? extends Component, ResponseFormat> changeStateResult;
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 
@@ -242,7 +241,7 @@ public class CertificationChangeTransitionTests extends LifecycleTestBase {
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(serviceAfterCertify)));
         when(serviceBusinessLogic.generateHeatEnvArtifacts(service, owner, false, true)).thenReturn(result);
         when(serviceBusinessLogic.generateVfModuleArtifacts(service, owner, false, true)).thenReturn(result);
-        when(serviceBusinessLogic.populateToscaArtifacts(service, owner, true, false, false)).thenReturn(resultArtifacts);
+        when(serviceBusinessLogic.populateToscaArtifacts(any(Service.class), eq(owner), eq(true), eq(true), eq(false))).thenReturn(resultArtifacts);
         changeStateResult = changeTransition.changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, user, owner, false, true);
         assertTrue(changeStateResult.isLeft());
     }
