@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2d1d98dc_9d90b5d0",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/imports/testModel.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-06-29T18:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "732a4832_8aacaa26",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 11
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6c2cbbe_49f2875d",
         "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/categories/categoryTypes.yml",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "412ddf79_e692beaa",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/categories/categoryTypes.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-06-29T18:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6c2cbbe_49f2875d",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ccfbf9a7_da7aa117",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-06-29T18:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "321f41ee_5bf870e5",
+      "range": {
+        "startLine": 2,
+        "startChar": 13,
+        "endLine": 2,
+        "endChar": 70
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61871d47_b8c84ee8",
         "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/node-types/nodeTypes.yaml",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "636d63eb_67c9b43c",
+        "filename": "integration-tests/src/main/resources/import/tosca/models/init/testModel/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-06-29T18:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61871d47_b8c84ee8",
+      "range": {
+        "startLine": 26,
+        "startChar": 2,
+        "endLine": 26,
+        "endChar": 17
+      },
+      "revId": "8be2b6d895a494a5c20be9ea574864915ac245db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
