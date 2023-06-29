@@ -21,13 +21,13 @@ package org.openecomp.sdc.be.tosca.model;
 
 public interface IToscaMetadata {
 
-    public void setName(String name);
+    void setName(String name);
 
-    public void setInvariantUUID(String invariantUUID);
+    void setInvariantUUID(String invariantUUID);
 
-    public void setUUID(String uUID);
+    void setUUID(String uUID);
 
-    public void setVersion(String version);
+    void setVersion(String version);
 
-    public void setCustomizationUUID(String customizationUUID);
+    void setCustomizationUUID(String customizationUUID);
 }

@@ -20,10 +20,6 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import fj.data.Either;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -54,6 +50,11 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CertificationChangeTransition extends LifeCycleTransition {
 
@@ -122,7 +123,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         if (oldState != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT && oldState != LifecycleStateEnum.NOT_CERTIFIED_CHECKIN) {
             log.debug("Valid states for certification are NOT_CERTIFIED_CHECKIN and NOT_CERTIFIED_CHECKOUT. {} is invalid state", oldState);
             ResponseFormat error = componentUtils
-                .getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, componentName, componentType.name().toLowerCase(), oldState.name());
+                    .getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, componentName, componentType.name().toLowerCase(), oldState.name());
             return Either.right(error);
         }
         return Either.left(true);
@@ -135,24 +136,26 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         log.info("start performing certification change for resource {}", component.getUniqueId());
         Either<T, ResponseFormat> result = null;
         try {
-            handleValidationsAndArtifactsGenerationBeforeCertifying(componentType, component, componentBl, modifier, shouldLock, inTransaction);
+            component = handleValidationsBeforeCertifying(componentType, component, modifier, shouldLock, inTransaction);
             Either<ToscaElement, StorageOperationStatus> certificationChangeResult = lifeCycleOperation
-                .certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+                    .certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
             if (certificationChangeResult.isRight()) {
                 ResponseFormat responseFormat = formatCertificationError(component, certificationChangeResult.right().value(), componentType);
                 result = Either.right(responseFormat);
                 return result;
             }
+
             ToscaElement certificationResult = certificationChangeResult.left().value();
             T componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
             if (result == null || result.isLeft()) {
-                //update edges for allotted resource 
+                //update edges for allotted resource
                 StorageOperationStatus status = handleConnectionsForAllotted(componentAfterCertification);
                 if (status != StorageOperationStatus.OK) {
                     ResponseFormat responseFormat = formatCertificationError(componentAfterCertification, status, componentType);
                     result = Either.right(responseFormat);
                 }
             }
+            componentBl.populateToscaArtifacts(componentAfterCertification, modifier, true, inTransaction, shouldLock);
             updateCalculatedCapabilitiesRequirements(componentAfterCertification);
             updateCapReqPropertiesOwnerId(componentAfterCertification);
             result = Either.left(componentAfterCertification);
@@ -183,21 +186,21 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         Either<Boolean, ResponseFormat> eitherResult = Either.left(true);
         if (component.isVspArchived()) {
             return Either.right(
-                componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+                    componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
         }
         List<ComponentInstance> resourceInstance = component.getComponentInstances();
         if (resourceInstance != null) {
             //Filter components instances with archived origins
             Optional<ComponentInstance> archivedRIOptional = resourceInstance.stream().filter(ComponentInstanceDataDefinition::isOriginArchived)
-                .findAny();
+                    .findAny();
             //RIs with archived origins found, return relevant error
             if (archivedRIOptional.isPresent()) {
                 return Either.right(
-                    componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
+                        componentUtils.getResponseFormat(ActionStatus.ARCHIVED_ORIGINS_FOUND, component.getComponentType().name(), component.getName()));
             }
             //Continue with searching for non certified RIs
             Optional<ComponentInstance> nonCertifiedRIOptional = resourceInstance.stream()
-                .filter(p -> !ValidationUtils.validateCertifiedVersion(p.getComponentVersion())).findAny();
+                    .filter(p -> !ValidationUtils.validateCertifiedVersion(p.getComponentVersion())).findAny();
             // Uncertified Resource Found
             if (nonCertifiedRIOptional.isPresent()) {
                 ComponentInstance nonCertifiedRI = nonCertifiedRIOptional.get();
@@ -232,9 +235,8 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         return componentUtils.getResponseFormat(actionStatus, componentType == ComponentTypeEnum.RESOURCE ? "VF" : "service", resource.getName());
     }
 
-    private void handleValidationsAndArtifactsGenerationBeforeCertifying(ComponentTypeEnum componentType, Component component,
-                                                                         ComponentBusinessLogic componentBl, User modifier, boolean shouldLock,
-                                                                         boolean inTransaction) {
+    private Component handleValidationsBeforeCertifying(ComponentTypeEnum componentType, Component component,
+                                                        User modifier, boolean shouldLock, boolean inTransaction) {
         if (component.isTopologyTemplate()) {
             Either<Boolean, ResponseFormat> statusCert = validateAllResourceInstanceCertified(component);
             if (statusCert.isRight()) {
@@ -243,18 +245,18 @@ public class CertificationChangeTransition extends LifeCycleTransition {
         }
         if (componentType == ComponentTypeEnum.SERVICE) {
             Either<Service, ResponseFormat> generateHeatEnvResult = serviceBusinessLogic
-                .generateHeatEnvArtifacts((Service) component, modifier, shouldLock, inTransaction);
+                    .generateHeatEnvArtifacts((Service) component, modifier, shouldLock, inTransaction);
             if (generateHeatEnvResult.isRight()) {
                 throw new ByResponseFormatComponentException(generateHeatEnvResult.right().value());
             }
             Either<Service, ResponseFormat> generateVfModuleResult = serviceBusinessLogic
-                .generateVfModuleArtifacts(generateHeatEnvResult.left().value(), modifier, shouldLock, inTransaction);
+                    .generateVfModuleArtifacts(generateHeatEnvResult.left().value(), modifier, shouldLock, inTransaction);
             if (generateVfModuleResult.isRight()) {
                 throw new ByResponseFormatComponentException(generateVfModuleResult.right().value());
             }
             component = generateVfModuleResult.left().value();
         }
-        componentBl.populateToscaArtifacts(component, modifier, true, inTransaction, shouldLock);
+        return component;
     }
 
     private void updateCalculatedCapabilitiesRequirements(Component certifiedComponent) {
@@ -285,7 +287,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             componentInstancesProperties.entrySet().forEach(e -> {
                 List<ComponentInstanceProperty> props = e.getValue();
                 Optional<ComponentInstanceProperty> findProp = props.stream()
-                    .filter(p -> p.getName().equals(DEPENDING_SRV_NAME) || p.getName().equals(PROVIDING_SRV_NAME)).findFirst();
+                        .filter(p -> p.getName().equals(DEPENDING_SRV_NAME) || p.getName().equals(PROVIDING_SRV_NAME)).findFirst();
                 if (findProp.isPresent()) {
                     log.debug("Find specific properties [{} or {}]on instance {} ", DEPENDING_SRV_NAME, PROVIDING_SRV_NAME, e.getKey());
                     handleAllotedInstance(component.getUniqueId(), e.getKey(), e.getValue());
@@ -298,7 +300,7 @@ public class CertificationChangeTransition extends LifeCycleTransition {
 
     private StorageOperationStatus handleAllotedInstance(String componentId, String instanceId, List<ComponentInstanceProperty> props) {
         ComponentInstanceProperty serviceUUIDProp = props.stream()
-            .filter(p -> p.getName().equals(PROVIDING_SRV_UUID) || p.getName().equals(DEPENDING_SRV_UUID)).findFirst().get();
+                .filter(p -> p.getName().equals(PROVIDING_SRV_UUID) || p.getName().equals(DEPENDING_SRV_UUID)).findFirst().get();
         if (serviceUUIDProp.getValue() != null && !serviceUUIDProp.getValue().contains("get_input")) {
             log.debug("Handle Allotted edge on instance {} for service UUID {} ", instanceId, serviceUUIDProp.getValue());
             return nodeTemplateOperation.createAllottedOfEdge(componentId, instanceId, serviceUUIDProp.getValue());

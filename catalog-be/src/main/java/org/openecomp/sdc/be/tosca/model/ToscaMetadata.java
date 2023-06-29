@@ -19,6 +19,11 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ToscaMetadata implements IToscaMetadata {
 
     private String invariantUUID;
@@ -46,135 +51,12 @@ public class ToscaMetadata implements IToscaMetadata {
     private String serviceFunction;
     private String model;
 
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getInvariantUUID() {
-        return invariantUUID;
-    }
-
-    @Override
-    public void setInvariantUUID(String invariantUUID) {
-        this.invariantUUID = invariantUUID;
-    }
-
-    public String getUUID() {
-        return UUID;
-    }
-
-    @Override
-    public void setUUID(String uUID) {
-        UUID = uUID;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getSubcategory() {
-        return subcategory;
-    }
-
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
-    }
-
-    public String getResourceVendor() {
-        return resourceVendor;
-    }
-
-    public void setResourceVendor(String resourceVendor) {
-        this.resourceVendor = resourceVendor;
-    }
-
-    public String getResourceVendorRelease() {
-        return resourceVendorRelease;
-    }
-
-    public void setResourceVendorRelease(String resourceVendorRelease) {
-        this.resourceVendorRelease = resourceVendorRelease;
-    }
-
-    public String getResourceVendorModelNumber() {
-        return resourceVendorModelNumber;
-    }
-
-    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        this.resourceVendorModelNumber = resourceVendorModelNumber;
-    }
-
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
-
-    public String getServiceRole() {
-        return serviceRole;
-    }
-
-    public void setServiceRole(String serviceRole) {
-        this.serviceRole = serviceRole;
-    }
-
-    public String getServiceFunction() {
-        return serviceFunction;
-    }
-
-    public void setServiceFunction(String serviceFunction) {
-        this.serviceFunction = serviceFunction;
-    }
-
-    public String getInstantiationType() {
-        return instantiationType;
-    }
-
-    public void setInstantiationType(String instantiationType) {
-        this.instantiationType = instantiationType;
-    }
-
     public Boolean isEcompGeneratedNaming() {
         return new Boolean(ecompGeneratedNaming);
     }
 
     public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
         this.ecompGeneratedNaming = ecompGeneratedNaming == null ? null : ecompGeneratedNaming.toString();
-    }
-
-    public String isNamingPolicy() {
-        return namingPolicy;
-    }
-
-    public void setNamingPolicy(String namingPolicy) {
-        this.namingPolicy = namingPolicy;
     }
 
     public Boolean getServiceEcompNaming() {
@@ -185,60 +67,4 @@ public class ToscaMetadata implements IToscaMetadata {
         this.serviceEcompNaming = serviceEcompNaming == null ? null : serviceEcompNaming.toString();
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getCustomizationUUID() {
-        return customizationUUID;
-    }
-
-    public void setCustomizationUUID(String customizationUUID) {
-        this.customizationUUID = customizationUUID;
-    }
-
-    public String getSourceModelInvariant() {
-        return sourceModelInvariant;
-    }
-
-    public void setSourceModelInvariant(String sourceModelInvariant) {
-        this.sourceModelInvariant = sourceModelInvariant;
-    }
-
-    public String getSourceModelName() {
-        return sourceModelName;
-    }
-
-    public void setSourceModelName(String sourceModelName) {
-        this.sourceModelName = sourceModelName;
-    }
-
-    public String getSourceModelUuid() {
-        return sourceModelUuid;
-    }
-
-    public void setSourceModelUuid(String sourceModelUuid) {
-        this.sourceModelUuid = sourceModelUuid;
-    }
-
-    public String getEnvironmentContext() {
-        return environmentContext;
-    }
-
-    public void setEnvironmentContext(String environmentContext) {
-        this.environmentContext = environmentContext;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
 }
