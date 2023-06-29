@@ -161,10 +161,14 @@ public enum JsonPresentationFields {
     TOSCA_ID("tosca_id", null),
 
     //Relation
-    CAPABILTY_OWNER_ID("capabilityOwnerId", null), REQUIREMENT_OWNER_ID("requirementOwnerId", null), FROM_ID("fromId", null), TO_ID("toId",
-        null), REQUIREMENT("requirement", null), ORIGIN_UI("originUI", null),
-    //Groups
+    CAPABILTY_OWNER_ID("capabilityOwnerId", null),
+    REQUIREMENT_OWNER_ID("requirementOwnerId", null),
+    FROM_ID("fromId", null),
+    TO_ID("toId", null),
+    REQUIREMENT("requirement", null),
+    ORIGIN_UI("originUI", null),
 
+    //Groups
     GROUP_INVARIANT_UUID("invariantUUID", null),
     GROUP_UUID("groupUUID", null),
     GROUP_MEMBER("members", null),
@@ -182,7 +186,6 @@ public enum JsonPresentationFields {
     GROUP_INSTANCE_PROPERTIES("groupInstancesProperties", null),
 
     //Component instance
-
     CI_COMPONENT_UID("componentUid", null),
     CI_POS_X("posX", null),
     CI_POS_Y("posY", null),
@@ -262,6 +265,7 @@ public enum JsonPresentationFields {
 
     ATTRIBUTES("attributes", null),
 
+    TEMPLATE_VERSION("template_version", null),
     TOSCA_DEFINITIONS_VERSION("tosca_definitions_version", null);
     // @formatter:on
 

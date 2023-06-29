@@ -81,7 +81,7 @@ public class CheckoutTransition extends LifeCycleTransition {
         log.debug("start performing {} for resource {}", getName(), component.getUniqueId());
         Either<? extends Component, ResponseFormat> result = null;
         try {
-            Either<ToscaElement, StorageOperationStatus> checkoutResourceResult = lifeCycleOperation
+            final Either<ToscaElement, StorageOperationStatus> checkoutResourceResult = lifeCycleOperation
                 .checkoutToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
             if (checkoutResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
@@ -110,7 +110,7 @@ public class CheckoutTransition extends LifeCycleTransition {
                     }
                 }
                 result = Either.left(clonedComponent);
-                Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
+                final Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
                 if (upgradeToLatestGeneric.isRight()) {
                     result = Either.right(upgradeToLatestGeneric.right().value());
                 } else if (upgradeToLatestGeneric.left().value()) {
@@ -123,6 +123,10 @@ public class CheckoutTransition extends LifeCycleTransition {
                 }
                 handleCalculatedCapabilitiesRequirements(clonedComponent);
                 updateCapReqPropertiesOwnerId(clonedComponent);
+                final Either<Component, StorageOperationStatus> updateEither = toscaOperationFacade.updateToscaElement(clonedComponent);
+                if (updateEither.isRight()){
+                    result = Either.right(componentUtils.getResponseFormat(updateEither.right().value()));
+                }
             }
         } finally {
             if (result == null || result.isRight()) {
