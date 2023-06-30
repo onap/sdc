@@ -84,7 +84,7 @@ public final class GeneralUIUtils {
     }
 
     public static WebDriver getDriver() {
-        return DriverFactory.getDriver();
+        return new DriverFactory().getDriver();
     }
 
     public static List<WebElement> getElementsByLocator(By by) {

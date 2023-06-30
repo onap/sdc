@@ -28,6 +28,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.HeatWithParametersDefinition;
 import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.DeploymentArtifactPage;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
@@ -182,7 +183,7 @@ public class VfArtifacts extends SetupCDTest {
     public void downloadEnvFromVFLevelUpdateVSP() throws Throwable {
         String vnfFile = VSAEGW_FDNT_30_1607_E2E_ZIP;
         String updatedVnfFile = VLANDSLIDE_LDSA_30_1607_E2E_ZIP;
-        String downloadDirPath = SetupCDTest.getConfig().getDownloadAutomationFolder();
+        String downloadDirPath = new DriverFactory().getConfig().getDownloadAutomationFolder();
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject CreatedVsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         String vspName = CreatedVsp.getName();
@@ -208,7 +209,7 @@ public class VfArtifacts extends SetupCDTest {
     // Download ENV file from VF level Work-Space.
     public void downloadEnvFromVFLevelWorkSpace() throws Exception {
         String vnfFile = VSAEGW_FDNT_30_1607_E2E_ZIP;
-        String downloadDirPath = SetupCDTest.getConfig().getDownloadAutomationFolder();
+        String downloadDirPath = new DriverFactory().getConfig().getDownloadAutomationFolder();
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         Map<String, File> currentZipEnvfiles = ArtifactBusinessLogic.createEnvFilesListFromCsar(vsp.getName(), downloadDirPath);
@@ -231,7 +232,7 @@ public class VfArtifacts extends SetupCDTest {
     // Download ENV file from VF level Composition.
     public void downloadEnvVFLevelComposition() throws Exception {
 
-        String downloadDirPath = SetupCDTest.getConfig().getDownloadAutomationFolder();
+        String downloadDirPath = new DriverFactory().getConfig().getDownloadAutomationFolder();
         String vnfFile = VSAEGW_FDNT_30_1607_E2E_ZIP;
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vsp = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
@@ -257,7 +258,7 @@ public class VfArtifacts extends SetupCDTest {
     public void downloadEnvVFLevelUpdateParameters() throws Exception {
 
         String vnfFile = VFW_FCGI_30_1607_E2E_ZIP;
-        String downloadDirPath = SetupCDTest.getConfig().getDownloadAutomationFolder();
+        String downloadDirPath = new DriverFactory().getConfig().getDownloadAutomationFolder();
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource(); //getResourceReqDetails(ComponentConfigurationTypeEnum.DEFAULT);
         VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, vnfsRepositoryPath, vnfFile, getUser());
         Resource resource = AtomicOperationUtils.getResourceObjectByNameAndVersion(UserRoleEnum.DESIGNER, vendorSoftwareProductObject.getName(), "0.1");

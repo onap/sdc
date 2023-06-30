@@ -93,7 +93,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
 
     @Test
     public void etsiNetworkServiceTest() throws UnzipException {
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
 
         createVlm();
         final String resourceName = createVsp();

@@ -74,7 +74,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
 
     @BeforeMethod
     public void init() {
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
         topNavComponent = new TopNavComponent(webDriver);
     }
 

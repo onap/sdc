@@ -75,7 +75,7 @@ public class AddOutputsUiTest extends SetupCDTest {
     @Test
     public void addOutputsToVF_test() throws UnzipException, IOException {
         ComponentPage resourceCreatePage;
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
         homePage = new HomePage(webDriver);
         // TC - Import VFC with root namespace
         String fileName = "org.openecomp.resource.VFC-root.yml";

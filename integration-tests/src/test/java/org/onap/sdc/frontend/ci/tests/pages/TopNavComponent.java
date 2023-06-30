@@ -117,7 +117,7 @@ public class TopNavComponent extends AbstractPageObject {
      */
     public OnboardHomePage clickOnOnboard() {
         wrappingElement.findElement(By.xpath(XpathSelector.MAIN_MENU_ONBOARD_BTN.getXpath())).click();
-        return new OnboardHomePage(DriverFactory.getDriver(), new OnboardHeaderComponent(DriverFactory.getDriver()));
+        return new OnboardHomePage(new DriverFactory().getDriver(), new OnboardHeaderComponent(new DriverFactory().getDriver()));
     }
 
     /**

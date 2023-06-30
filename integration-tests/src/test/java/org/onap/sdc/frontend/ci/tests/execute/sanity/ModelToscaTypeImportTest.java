@@ -84,7 +84,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
 
     @BeforeMethod
     public void init() {
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
         homePage = new HomePage(webDriver);
     }
 

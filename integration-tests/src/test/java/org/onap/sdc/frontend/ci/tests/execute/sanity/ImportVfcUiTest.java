@@ -84,7 +84,7 @@ public class ImportVfcUiTest extends SetupCDTest {
     @BeforeClass
     public void beforeClass() {
         filePath = FileHandling.getFilePath("VFCs/");
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
         homePage = new HomePage(webDriver);
     }
 
