@@ -117,7 +117,7 @@ public abstract class SetupCDTest extends DriverFactory {
         return SCREENSHOT_FOLDER;
     }
 
-    private static String getHarFilesFolder() {
+    private String getHarFilesFolder() {
         return HAR_FILES_FOLDER;
     }
 
@@ -260,7 +260,7 @@ public abstract class SetupCDTest extends DriverFactory {
         }
     }
 
-    private static String setUrl() {
+    private String setUrl() {
         url = getConfig().getUrl();
         uiSimulator = getConfig().isUiSimulator();
         if (url == null) {
@@ -275,7 +275,7 @@ public abstract class SetupCDTest extends DriverFactory {
     }
 
 
-    private static void navigateToUrl(final String url) {
+    private void navigateToUrl(final String url) {
         try {
             LOGGER.info("Deleting cookies");
             deleteCookies();
@@ -292,7 +292,7 @@ public abstract class SetupCDTest extends DriverFactory {
         }
     }
 
-    private static void deleteCookies() throws Exception {
+    private void deleteCookies() throws Exception {
         getDriver().manage().deleteAllCookies();
         Thread.sleep(BASIC_SLEEP_DURATION);
 

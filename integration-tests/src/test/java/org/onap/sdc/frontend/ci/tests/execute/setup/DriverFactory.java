@@ -20,19 +20,16 @@
 
 package org.onap.sdc.frontend.ci.tests.execute.setup;
 
-
 import org.apache.commons.io.FileUtils;
 import org.onap.sdc.backend.ci.tests.config.Config;
-import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
+import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,12 +37,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class DriverFactory {
 
     private static ThreadLocal<WebDriverThread> driverThread;
-    private static List<WebDriverThread> webDriverThreadPool = Collections.synchronizedList(new ArrayList<WebDriverThread>());
-    private static Config config;
+    private static final List<WebDriverThread> webDriverThreadPool = Collections.synchronizedList(new ArrayList<>());
+    private Config config;
 
     public DriverFactory() {
         try {
@@ -56,39 +52,26 @@ public class DriverFactory {
     }
 
     @BeforeSuite(alwaysRun = true)
-    public static void instantiateDriverObject() {
+    public void instantiateDriverObject() {
 
         File basePath = new File(FileHandling.getBasePath());
-        File[] listFiles = basePath.listFiles(new FilenameFilter() {
-
-            @Override
-            public boolean accept(File basePath, String name) {
-                return name.startsWith(config.getDownloadAutomationFolder());
-            }
-        });
+        File[] listFiles = basePath.listFiles((basePath1, name) -> name.startsWith(config.getDownloadAutomationFolder()));
+        assert listFiles != null;
         Arrays.asList(listFiles).forEach(e -> FileHandling.deleteDirectory(e.getAbsolutePath()));
 
-
-        driverThread = new ThreadLocal<WebDriverThread>() {
-            @Override
-            protected WebDriverThread initialValue() {
-                WebDriverThread webDriverThread = new WebDriverThread(config);
-                webDriverThreadPool.add(webDriverThread);
-                return webDriverThread;
-            }
-        };
+        driverThread = ThreadLocal.withInitial(() -> {
+            WebDriverThread webDriverThread = new WebDriverThread(config);
+            webDriverThreadPool.add(webDriverThread);
+            return webDriverThread;
+        });
     }
 
-    public static WebDriver getDriver() {
+    public WebDriver getDriver() {
         return driverThread.get().getDriver();
     }
 
-    public static FirefoxProfile getDriverFirefoxProfile() throws Exception {
-        return driverThread.get().getFirefoxProfile();
-    }
-
     @AfterSuite(alwaysRun = true)
-    public static void quitDriverAfterSuite() throws Exception {
+    public void quitDriverAfterSuite() throws Exception {
         for (WebDriverThread webDriverThread : webDriverThreadPool) {
             if (webDriverThread.getDriver() != null) {
                 webDriverThread.quitDriver();
@@ -98,7 +81,7 @@ public class DriverFactory {
         cleanDownloadDirs();
     }
 
-    private static void cleanDownloadDirs() throws IOException {
+    private void cleanDownloadDirs() throws IOException {
         HashMap<Long, WindowTest> windowMap = WindowTestManager.getWholeMap();
         for (WindowTest win : windowMap.values()) {
             String downloadDirectory = win.getDownloadDirectory();
@@ -106,19 +89,19 @@ public class DriverFactory {
         }
     }
 
-    public static void quitDriver() throws Exception {
+    public void quitDriver() throws Exception {
         driverThread.get().quitDriver();
         driverThread.remove();
         WindowTestManager.removeWindowTest();
         MobProxy.removePoxyServer();
     }
 
-    public static Config getConfig() {
+    public Config getConfig() {
         return config;
     }
 
-    public static void setConfig(Config config) {
-        DriverFactory.config = config;
+    public void setConfig(Config config) {
+        this.config = config;
     }
 
 

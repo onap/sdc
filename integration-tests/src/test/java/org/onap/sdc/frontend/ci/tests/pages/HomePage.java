@@ -23,6 +23,7 @@ package org.onap.sdc.frontend.ci.tests.pages;
 import com.aventstack.extentreports.Status;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.exception.HomePageRuntimeException;
+import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.utilities.DownloadManager;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
@@ -42,7 +43,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
-import static org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory.getDriver;
 import static org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest.getExtendTest;
 import static org.onap.sdc.frontend.ci.tests.pages.HomePage.PageElement.REPOSITORY_ICON;
 
@@ -107,7 +107,7 @@ public class HomePage {
                 .getInputElement(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue());
             if (homeButton != null) {
                 //making sure that the mouse it is not on the add/import area
-                new Actions(getDriver()).moveToElement(homeButton).perform();
+                new Actions(new DriverFactory().getDriver()).moveToElement(homeButton).perform();
             }
             return homeButton != null && homeButton.isDisplayed();
 

@@ -95,13 +95,17 @@ public class Config {
         super();
     }
 
-    public synchronized static Config instance() {
+    public static Config instance() {
         if (configIt == null) {
-            try {
-                configIt = init();
-            } catch (final IOException e) {
-                e.printStackTrace();
-                return null;
+            synchronized (Config.class){
+                if (configIt == null) {
+                    try {
+                        configIt = init();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
             }
         }
         return configIt;

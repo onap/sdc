@@ -201,7 +201,7 @@ public class RestCDUtils {
     /*************************************/
 
     public static void deleteOnDemand() throws IOException {
-        Config config = DriverFactory.getConfig();
+        Config config = new DriverFactory().getConfig();
         if (!config.isSystemUnderDebug()) {
             deleteCreatedComponents(getCatalogAsMap());
         } else {

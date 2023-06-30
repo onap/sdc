@@ -122,7 +122,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
     public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
         LOGGER.debug("makeDistribution parameter is '{}'", makeDistributionReadValue);
         makeDistributionValue = Boolean.valueOf(makeDistributionReadValue);
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
     }
 
     @Test
@@ -393,7 +393,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
         extendTest.log(Status.INFO,
             String.format("Creating VSP '%s' by onboarding package '%s' with software version '%s'",
                 resourceName, pnfFile, swVersionsToString));
-        final WebDriver webDriver = DriverFactory.getDriver();
+        final WebDriver webDriver = getDriver();
         var vspCreateData = new VspCreateData();
         vspCreateData.setName(resourceName);
         vspCreateData.setCategory(CategorySelect.COMMON_NETWORK_RESOURCES);
@@ -672,9 +672,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
             assertNotNull(vfElement);
         }
         ServiceVerificator.verifyNumOfComponentInstances(serviceMetadata, "0.1", vspNames.values().size(), getUser());
-        File imageFilePath = GeneralUIUtils.takeScreenshot(null, SetupCDTest.getScreenshotFolder(), "Info_" + getExtendTest().getModel().getName());
+        File imageFilePath = GeneralUIUtils.takeScreenshot(null, getScreenshotFolder(), "Info_" + getExtendTest().getModel().getName());
         final String absolutePath = new File(SetupCDTest.getReportFolder()).toURI().relativize(imageFilePath.toURI()).getPath();
-        SetupCDTest.getExtendTest().log(Status.INFO, "Three kinds of vMMSC are in canvas now." + getExtendTest().addScreenCaptureFromPath(absolutePath));
+        getExtendTest().log(Status.INFO, "Three kinds of vMMSC are in canvas now." + getExtendTest().addScreenCaptureFromPath(absolutePath));
 
         ServiceGeneralPage.clickSubmitForTestingButton(serviceMetadata.getName());
 

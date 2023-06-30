@@ -84,7 +84,7 @@ public class EtsiModelUiTests extends SetupCDTest {
 
     @Test
     public void etsiNetworkServiceTest() throws UnzipException {
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
 
         createVlm();
         resourceName = createVsp();
@@ -106,7 +106,7 @@ public class EtsiModelUiTests extends SetupCDTest {
 
     @Test(dependsOnMethods = "etsiNetworkServiceTest")
     public void createServiceWithModel() throws UnzipException {
-        webDriver = DriverFactory.getDriver();
+        webDriver = getDriver();
         final ServiceCreateData serviceCreateData = createServiceFormData();
         createService(serviceCreateData);
         //adding vf to composition

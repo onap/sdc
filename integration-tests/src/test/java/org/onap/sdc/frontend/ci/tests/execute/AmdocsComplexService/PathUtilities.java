@@ -28,6 +28,7 @@ import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
+import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.GeneralPageElements;
 import org.onap.sdc.frontend.ci.tests.pages.HomePage;
@@ -250,7 +251,7 @@ public class PathUtilities {
 
     // rest apis
     private static String getServiceUUIDfromCompositionURL() throws Exception {
-        String url = SetupCDTest.getDriver().getCurrentUrl();
+        String url = new DriverFactory().getDriver().getCurrentUrl();
         String[] result = url.split("/");
         for (int i = 0; i < result.length; i++) {
             if (result[i].equals("workspace")) {
