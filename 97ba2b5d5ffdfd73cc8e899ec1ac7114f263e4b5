@@ -68,6 +68,30 @@
       "revId": "97ba2b5d5ffdfd73cc8e899ec1ac7114f263e4b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a13a3a2d_958bb57f",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/vf/composition/CompositionFloatTests.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 8208
+      },
+      "writtenOn": "2023-06-30T16:15:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0ca5c54_f285aac2",
+      "range": {
+        "startLine": 267,
+        "startChar": 7,
+        "endLine": 267,
+        "endChar": 49
+      },
+      "revId": "97ba2b5d5ffdfd73cc8e899ec1ac7114f263e4b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
