@@ -39,7 +39,14 @@ limitations under the License.
         <docker.skip.tag>true</docker.skip.tag>
         <docker.skip>true</docker.skip>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>etsi-nfv-nsd-csar-plugin</artifactId>
+            <type>jar</type>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <profiles>
         <profile>
             <id>docker</id>
