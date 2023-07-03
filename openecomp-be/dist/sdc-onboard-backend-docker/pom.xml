@@ -3,11 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>openecomp-sdc-docker-backend</name>
-    <groupId>org.openecomp.sdc</groupId>
     <artifactId>openecomp-sdc-docker-backend</artifactId>
     <packaging>pom</packaging>
-
-    <url>http://maven.apache.org</url>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -15,11 +12,17 @@
         <version>1.13.1-SNAPSHOT</version>
     </parent>
 
-
     <properties>
         <docker.image.name>sdc-onboard-backend</docker.image.name>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>api-docs</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <profiles>
         <profile>
             <id>docker</id>
@@ -177,4 +180,3 @@
         </profile>
     </profiles>
 </project>
-
