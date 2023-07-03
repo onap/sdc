@@ -34,4 +34,14 @@
         <module>etsi-nfv-nsd-csar-plugin</module>
         <module>backend-all-plugins</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>catalog-be</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
 </project>
