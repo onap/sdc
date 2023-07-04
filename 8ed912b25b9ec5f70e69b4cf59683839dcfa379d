@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7e61f444_45f99a7c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/lifecycle/CertificationChangeTransition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-04T17:57:14Z",
+      "side": 1,
+      "message": "populateToscaArtifacts should be done with componentAfterCertification , not before",
+      "parentUuid": "b48bfa2a_5bedc4f7",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 158,
+        "endChar": 119
+      },
+      "revId": "8ed912b25b9ec5f70e69b4cf59683839dcfa379d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f9e2911_c9cb7245",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/lifecycle/CheckoutTransition.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7d80ee59_3c47896c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/lifecycle/CheckoutTransition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-04T17:57:14Z",
+      "side": 1,
+      "message": "have to update tosca element with cloneComponent to save changes",
+      "parentUuid": "3f9e2911_c9cb7245",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 136
+      },
+      "revId": "8ed912b25b9ec5f70e69b4cf59683839dcfa379d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "55b645f3_048a06f0",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "8ed912b25b9ec5f70e69b4cf59683839dcfa379d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d9b1ea6_4c643644",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-04T17:57:14Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "55b645f3_048a06f0",
+      "range": {
+        "startLine": 609,
+        "startChar": 0,
+        "endLine": 609,
+        "endChar": 107
+      },
+      "revId": "8ed912b25b9ec5f70e69b4cf59683839dcfa379d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
