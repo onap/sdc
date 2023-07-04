@@ -33,6 +33,7 @@ import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../../models/tosca-get-function";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToscaGetFunctionTypeConverter} from "../../../../../models/tosca-get-function-type-converter";
+import {ResourceType} from "app/utils";
 
 @Component({
     selector: 'app-tosca-get-function',
@@ -367,6 +368,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             if (this.isPropertySourceSelf()) {
                 return componentGenericResponse.properties;
             }
+            let componentInstanceInput = componentGenericResponse.componentInstances.find(compInst => this.isInput(compInst.originType) && compInst.uniqueId === instanceId);
+            if ( componentInstanceInput) {
+                return this.removeSelectedProperty(componentGenericResponse.componentInstancesInputs[instanceId]);
+            }
             return this.removeSelectedProperty(componentGenericResponse.componentInstancesProperties[instanceId]);
         }
         if (this.isPropertySourceSelf()) {
@@ -374,6 +379,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         }
         return [...(componentGenericResponse.componentInstancesAttributes[instanceId] || []),
             ...(componentGenericResponse.componentInstancesProperties[instanceId] || [])];
+    }
+
+    private isInput (instanceType:string): boolean {
+        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
 
     private isPropertySourceSelf() {
@@ -388,7 +397,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             if (this.isPropertySourceSelf()) {
                 return this.topologyTemplateService.findAllComponentProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
             }
-            return this.topologyTemplateService.getComponentInstanceProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
+            return this.topologyTemplateService.getComponentInstancesAndInputsAndProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
+            // return this.topologyTemplateService.getComponentInstanceInputsAndProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
         }
         if (this.isGetAttribute()) {
             if (this.isPropertySourceSelf()) {

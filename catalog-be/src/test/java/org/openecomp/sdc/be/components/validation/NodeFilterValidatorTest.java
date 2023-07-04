@@ -34,12 +34,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -48,11 +50,13 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -82,6 +86,33 @@ class NodeFilterValidatorTest {
     private NodeFilterValidator nodeFilterValidator;
     private FilterConstraintDto baseFilterConstraintDto;
 
+    protected static ToscaGetFunctionDataDefinition createToscaGetFunction(final String sourceName,
+                                                                           final PropertySource propertySource,
+                                                                           final ToscaGetFunctionType toscaGetFunctionType,
+                                                                           final List<String> propertyPathFromSource,
+                                                                           final List<Object> toscaIndexList) {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(toscaGetFunctionType);
+        toscaGetFunction.setPropertyPathFromSource(propertyPathFromSource);
+        toscaGetFunction.setSourceName(sourceName);
+        toscaGetFunction.setPropertySource(propertySource);
+        toscaGetFunction.setPropertyName(propertyPathFromSource.get(0));
+        toscaGetFunction.setToscaIndexList(toscaIndexList);
+        return toscaGetFunction;
+    }
+
+    private static FilterConstraintDto buildFilterConstraintDto(final String propertyName, final FilterValueType valueType,
+                                                                final ConstraintType constraintType,
+                                                                final PropertyFilterTargetType targetType, Object value) {
+        final var filterConstraintDto = new FilterConstraintDto();
+        filterConstraintDto.setPropertyName(propertyName);
+        filterConstraintDto.setValueType(valueType);
+        filterConstraintDto.setOperator(constraintType);
+        filterConstraintDto.setTargetType(targetType);
+        filterConstraintDto.setValue(value);
+        return filterConstraintDto;
+    }
+
     @BeforeEach
     void setup() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
@@ -106,9 +137,9 @@ class NodeFilterValidatorTest {
         assertEquals(expectedResponse, either.right().value());
 
         Service service = createService("booleanIncorrect");
-        when(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, service.getName(), INNER_SERVICE))
+        when(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, service.getName(), "uniqueId"))
             .thenReturn(expectedResponse);
-        either = nodeFilterValidator.validateComponentInstanceExist(service, INNER_SERVICE);
+        either = nodeFilterValidator.validateComponentInstanceExist(service, "uniqueId");
         assertTrue(either.isRight());
         assertEquals(expectedResponse, either.right().value());
 
@@ -451,11 +482,8 @@ class NodeFilterValidatorTest {
             PropertyFilterTargetType.PROPERTY,
             toscaGetFunction
         );
-        final Either<Boolean, ResponseFormat> validationResult =
-            nodeFilterValidator.validateFilter(service, COMPONENT1_ID, List.of(filterConstraintDto));
-
-        assertTrue(validationResult.isRight());
-        assertEquals(expectedResponse, validationResult.right().value());
+        Assertions.assertThrows(ComponentException.class,
+            () -> nodeFilterValidator.validateFilter(service, COMPONENT1_ID, List.of(filterConstraintDto)));
     }
 
     @Test
@@ -474,26 +502,8 @@ class NodeFilterValidatorTest {
         final ResponseFormat expectedResponse = new ResponseFormat();
         when(componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, "Target", PROPERTY_NAME))
             .thenReturn(expectedResponse);
-        Either<Boolean, ResponseFormat> either =
-            nodeFilterValidator.validateFilter(service, COMPONENT1_ID, List.of(filterConstraintDto));
-
-        assertTrue(either.isRight());
-        assertEquals(expectedResponse, either.right().value());
-    }
-
-    protected static ToscaGetFunctionDataDefinition createToscaGetFunction(final String sourceName,
-                                                                           final PropertySource propertySource,
-                                                                           final ToscaGetFunctionType toscaGetFunctionType,
-                                                                           final List<String> propertyPathFromSource,
-                                                                           final List<Object> toscaIndexList) {
-        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
-        toscaGetFunction.setFunctionType(toscaGetFunctionType);
-        toscaGetFunction.setPropertyPathFromSource(propertyPathFromSource);
-        toscaGetFunction.setSourceName(sourceName);
-        toscaGetFunction.setPropertySource(propertySource);
-        toscaGetFunction.setPropertyName(propertyPathFromSource.get(0));
-        toscaGetFunction.setToscaIndexList(toscaIndexList);
-        return toscaGetFunction;
+        Assertions.assertThrows(ComponentException.class,
+            () -> nodeFilterValidator.validateFilter(service, COMPONENT1_ID, List.of(filterConstraintDto)));
     }
 
     @Test
@@ -528,6 +538,71 @@ class NodeFilterValidatorTest {
         assertEquals(expectedResponse, either.right().value());
     }
 
+    @Test
+    void testValidateNodeFilterForVfStaticValue() {
+        Service service = createService(ToscaPropertyType.INTEGER.getType());
+        addComponentInstanceToService(service, OriginTypeEnum.VF, "vfInstance", ToscaPropertyType.INTEGER.getType());
+        baseFilterConstraintDto.setValue(1);
+        Either<Boolean, ResponseFormat> validationResult =
+            nodeFilterValidator.validateFilter(service, "vfInstance", List.of(baseFilterConstraintDto));
+
+        assertTrue(validationResult.isLeft());
+    }
+
+    @Test
+    void testValidateNodeFilterForVfToscaGetProperty() {
+        Service service = createService(ToscaPropertyType.INTEGER.getType());
+        addComponentInstanceToService(service, OriginTypeEnum.VF, "vfInstance", ToscaPropertyType.INTEGER.getType());
+        final ToscaGetFunctionDataDefinition toscaGetFunction =
+            createToscaGetFunction(PARENT_SERVICE_ID, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, List.of(PROPERTY_NAME), null);
+        final var filterConstraintDto = buildFilterConstraintDto(
+            PROPERTY_NAME,
+            FilterValueType.GET_PROPERTY,
+            ConstraintType.EQUAL,
+            PropertyFilterTargetType.PROPERTY,
+            toscaGetFunction
+        );
+        Either<Boolean, ResponseFormat> validationResult =
+            nodeFilterValidator.validateFilter(service, "vfInstance", List.of(filterConstraintDto));
+
+        assertTrue(validationResult.isLeft());
+    }
+
+    private void addComponentInstanceToService(Service service, OriginTypeEnum originTypeEnum, String instanceName, String type) {
+        ComponentInstance componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(instanceName);
+        componentInstance.setName(instanceName);
+        componentInstance.setOriginType(originTypeEnum);
+
+        List<ComponentInstance> compInstances = new ArrayList<>();
+        service.getComponentInstances().forEach(compInstance -> compInstances.add(compInstance));
+        compInstances.add(componentInstance);
+        service.setComponentInstances(compInstances);
+
+        if (isInput(originTypeEnum)) {
+            ComponentInstanceInput componentInstanceInput = new ComponentInstanceInput();
+            componentInstanceInput.setName(PROPERTY_NAME);
+            componentInstanceInput.setType(type);
+            if (service.getComponentInstancesInputs() == null) {
+                service.setComponentInstancesInputs(new HashMap<>());
+            }
+            service.getComponentInstancesInputs().put(instanceName, Collections.singletonList(componentInstanceInput));
+        } else {
+            ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
+            componentInstanceProperty.setName(PROPERTY_NAME);
+            componentInstanceProperty.setType(type);
+            if (service.getComponentInstancesProperties() == null) {
+                service.setComponentInstancesProperties(new HashMap<>());
+            }
+            service.getComponentInstancesProperties().put(instanceName, Collections.singletonList(componentInstanceProperty));
+        }
+    }
+
+    private boolean isInput(OriginTypeEnum instanceType) {
+        return OriginTypeEnum.VF.equals(instanceType) || OriginTypeEnum.PNF.equals(instanceType) || OriginTypeEnum.CVFC.equals(instanceType) ||
+            OriginTypeEnum.CR.equals(instanceType);
+    }
+
     private Service createService(String type) {
         return createService(type, null);
     }
@@ -551,12 +626,19 @@ class NodeFilterValidatorTest {
         ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(COMPONENT1_ID);
         componentInstance.setName(COMPONENT1_ID);
+        componentInstance.setOriginType(OriginTypeEnum.VFC);
 
         ComponentInstance componentInstance2 = new ComponentInstance();
         componentInstance2.setUniqueId(COMPONENT2_ID);
         componentInstance2.setName(COMPONENT2_ID);
+        componentInstance2.setOriginType(OriginTypeEnum.VFC);
 
-        service.setComponentInstances(Arrays.asList(componentInstance, componentInstance2));
+        ComponentInstance componentInstance3 = new ComponentInstance();
+        componentInstance3.setUniqueId(INNER_SERVICE);
+        componentInstance3.setName(INNER_SERVICE);
+        componentInstance3.setOriginType(OriginTypeEnum.ServiceProxy);
+
+        service.setComponentInstances(Arrays.asList(componentInstance, componentInstance2, componentInstance3));
 
         ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
         componentInstanceProperty.setName(PROPERTY_NAME);
@@ -576,18 +658,6 @@ class NodeFilterValidatorTest {
         service.setComponentInstancesProperties(componentInstancePropertyMap);
 
         return service;
-    }
-
-    private static FilterConstraintDto buildFilterConstraintDto(final String propertyName, final FilterValueType valueType,
-                                                                final ConstraintType constraintType,
-                                                                final PropertyFilterTargetType targetType, Object value) {
-        final var filterConstraintDto = new FilterConstraintDto();
-        filterConstraintDto.setPropertyName(propertyName);
-        filterConstraintDto.setValueType(valueType);
-        filterConstraintDto.setOperator(constraintType);
-        filterConstraintDto.setTargetType(targetType);
-        filterConstraintDto.setValue(value);
-        return filterConstraintDto;
     }
 
 }
