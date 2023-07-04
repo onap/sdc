@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.validation;
 
 import com.google.gson.Gson;
@@ -30,16 +31,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -82,6 +86,28 @@ public class NodeFilterValidator {
         this.componentsUtils = componentsUtils;
         this.applicationDataTypeCache = applicationDataTypeCache;
         this.filterConstraintValidator = filterConstraintValidator;
+    }
+
+    private static List<? extends ToscaPropertyData> getSelfPropertyFromGetFunction(final Component component,
+                                                                                    final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        switch (toscaGetFunction.getFunctionType()) {
+            case GET_INPUT:
+                if (component.getInputs() != null) {
+                    return component.getInputs();
+                }
+                break;
+            case GET_PROPERTY:
+                if (component.getProperties() != null) {
+                    return component.getProperties();
+                }
+                break;
+            case GET_ATTRIBUTE:
+                if (component.getAttributes() != null) {
+                    return component.getAttributes();
+                }
+                break;
+        }
+        return List.of();
     }
 
     public Either<Boolean, ResponseFormat> validateComponentInstanceExist(final Component component, final String componentInstanceId) {
@@ -148,23 +174,20 @@ public class NodeFilterValidator {
             final List<ToscaGetFunctionDataDefinition> toscaGetFunctionList = filterConstraint.getAsListToscaGetFunction().orElse(null);
             if (toscaGetFunctionList == null || toscaGetFunctionList.isEmpty() || !(filterConstraint.getValue() instanceof List)) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
-            }
-            else {
+            } else {
                 toscaGetFunctionDataDefinitionList = toscaGetFunctionList;
             }
-        }
-        else{
+        } else {
             toscaGetFunctionDataDefinitionList.add(toscaGetFunction);
         }
         Boolean allGood = true;
-        for (ToscaGetFunctionDataDefinition _toscaGetFunction: toscaGetFunctionDataDefinitionList) {
+        for (ToscaGetFunctionDataDefinition _toscaGetFunction : toscaGetFunctionDataDefinitionList) {
 
             final Optional<? extends ToscaPropertyData> sourceSelectedProperty =
                 findPropertyFromGetFunction(parentComponent, _toscaGetFunction);
             if (sourceSelectedProperty.isPresent()) {
                 Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
-                    getInstanceProperties(parentComponent, componentInstanceId, capabilityName,
-                        filterConstraint.getPropertyName());
+                    getInstanceProperties(parentComponent, componentInstanceId, capabilityName, filterConstraint);
 
                 source = targetComponentInstanceProperty.isEmpty() ? TARGET : SOURCE;
                 if (targetComponentInstanceProperty.isPresent()) {
@@ -176,8 +199,7 @@ public class NodeFilterValidator {
                         break;
                     }
 
-                }
-                else {
+                } else {
                     allGood = false;
                     final String missingProperty =
                         SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
@@ -185,8 +207,7 @@ public class NodeFilterValidator {
                         componentsUtils.getResponseFormat(ActionStatus.FILTER_PROPERTY_NOT_FOUND, source, missingProperty);
                     break;
                 }
-            }
-            else {
+            } else {
                 allGood = false;
                 final String missingProperty =
                     SOURCE.equals(source) ? filterConstraint.getValue().toString() : filterConstraint.getPropertyName();
@@ -249,28 +270,6 @@ public class NodeFilterValidator {
         return instanceProperties;
     }
 
-    private static List<? extends ToscaPropertyData> getSelfPropertyFromGetFunction(final Component component,
-                                                                                    final ToscaGetFunctionDataDefinition toscaGetFunction) {
-        switch (toscaGetFunction.getFunctionType()) {
-            case GET_INPUT:
-                if (component.getInputs() != null) {
-                    return component.getInputs();
-                }
-                break;
-            case GET_PROPERTY:
-                if (component.getProperties() != null) {
-                    return component.getProperties();
-                }
-                break;
-            case GET_ATTRIBUTE:
-                if (component.getAttributes() != null) {
-                    return component.getAttributes();
-                }
-                break;
-        }
-        return List.of();
-    }
-
     private Optional<PropertyDefinition> findSubProperty(final List<String> propertyPath, final String parentPropertyType,
                                                          final Map<String, DataTypeDefinition> modelDataTypes) {
         final DataTypeDefinition dataTypeDefinition = modelDataTypes.get(parentPropertyType);
@@ -288,11 +287,24 @@ public class NodeFilterValidator {
         return findSubProperty(propertyPath.subList(1, propertyPath.size()), propertyDefinition.getType(), modelDataTypes);
     }
 
-    private Optional<ComponentInstanceProperty> getInstanceProperties(final Component parentComponent, final String componentInstanceId,
-                                                                      final String capabilityName, final String propertyName) {
+    private Optional<? extends PropertyDefinition> getInstanceProperties(final Component parentComponent, final String componentInstanceId,
+                                                                         final String capabilityName, final FilterConstraintDto filterConstraint) {
         if (StringUtils.isEmpty(capabilityName)) {
+            OriginTypeEnum componentInstanceType = getComponentInstanceOriginType(parentComponent, componentInstanceId);
+            if (componentInstanceType == null) {
+                return Optional.empty();
+            }
+            PropertyDefinition componentInstanceProperty =
+                getComponentInstanceProperty(componentInstanceType, parentComponent, componentInstanceId, filterConstraint);
+            if (componentInstanceProperty == null) {
+                throw new ByActionStatusComponentException(ActionStatus.SELECTED_PROPERTY_NOT_PRESENT, filterConstraint.getPropertyName());
+            }
+            if (componentInstanceProperty instanceof ComponentInstanceInput) {
+                return parentComponent.getComponentInstancesInputs().get(componentInstanceId).stream()
+                    .filter(property -> filterConstraint.getPropertyName().equals(property.getName())).findFirst();
+            }
             return parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
-                .filter(property -> propertyName.equals(property.getName())).findFirst();
+                .filter(property -> filterConstraint.getPropertyName().equals(property.getName())).findFirst();
         } else {
             final Optional<ComponentInstance> componentInstanceOptional = parentComponent.getComponentInstances().stream()
                 .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId)).findAny();
@@ -300,7 +312,8 @@ public class NodeFilterValidator {
                 for (final List<CapabilityDefinition> listOfCaps : componentInstanceOptional.get().getCapabilities().values()) {
                     final Optional<CapabilityDefinition> capDef = listOfCaps.stream().filter(cap -> cap.getName().equals(capabilityName)).findAny();
                     if (capDef.isPresent()) {
-                        return capDef.get().getProperties().stream().filter(property -> propertyName.equals(property.getName())).findFirst();
+                        return capDef.get().getProperties().stream().filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
+                            .findFirst();
                     }
                 }
             }
@@ -322,8 +335,7 @@ public class NodeFilterValidator {
                 if (optValid.isPresent()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
                 }
-            }
-            else {
+            } else {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_FUNCTION_EXPECTED_ERROR));
             }
         }
@@ -414,9 +426,8 @@ public class NodeFilterValidator {
                     }
                 }
                 return null;
-            }
-            else {
-                if (null != ((PropertyDefinition) sourcePropDefinition).getSchemaProperty()){
+            } else {
+                if (null != ((PropertyDefinition) sourcePropDefinition).getSchemaProperty()) {
                     if (((PropertyDefinition) sourcePropDefinition).getSchemaProperty().getType().equals(targetType)) {
                         if (TYPES_WITH_SCHEMA.contains(((PropertyDefinition) sourcePropDefinition).getSchemaProperty().getType())) {
                             final String sourceSchemaType = sourcePropDefinition.getSchemaType();
@@ -431,8 +442,7 @@ public class NodeFilterValidator {
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (sourceType.equalsIgnoreCase("integer")) {
                 if (TYPES_WITH_SCHEMA.contains(sourceType)) {
                     final String sourceSchemaType = sourcePropDefinition.getSchemaType();
@@ -451,10 +461,12 @@ public class NodeFilterValidator {
 
     private Either<Boolean, ResponseFormat> validateStaticValueAndOperator(final Component parentComponent, final String componentInstanceId,
                                                                            final FilterConstraintDto filterConstraint) {
-        final ComponentInstanceProperty componentInstanceProperty = parentComponent.getComponentInstancesProperties()
-            .get(componentInstanceId).stream().filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
-            .findFirst()
-            .orElse(null);
+        OriginTypeEnum componentInstanceType = getComponentInstanceOriginType(parentComponent, componentInstanceId);
+        if (componentInstanceType == null) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, componentInstanceId));
+        }
+        PropertyDefinition componentInstanceProperty =
+            getComponentInstanceProperty(componentInstanceType, parentComponent, componentInstanceId, filterConstraint);
         if (componentInstanceProperty == null) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.SELECTED_PROPERTY_NOT_PRESENT, filterConstraint.getPropertyName()));
         }
@@ -472,6 +484,34 @@ public class NodeFilterValidator {
         }
         return isValidValueCheck(componentInstanceProperty.getType(), componentInstanceProperty.getSchemaType(), parentComponent.getModel(),
             filterConstraint.getValue(), filterConstraint.getPropertyName());
+    }
+
+    private PropertyDefinition getComponentInstanceProperty(OriginTypeEnum componentInstanceType, Component parentComponent,
+                                                            String componentInstanceId, FilterConstraintDto filterConstraint) {
+        if (isInput(componentInstanceType)) {
+            return parentComponent.getComponentInstancesInputs()
+                .get(componentInstanceId).stream().filter(input -> filterConstraint.getPropertyName().equals(input.getName()))
+                .findFirst()
+                .orElse(null);
+        }
+        return parentComponent.getComponentInstancesProperties()
+            .get(componentInstanceId).stream().filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
+            .findFirst()
+            .orElse(null);
+    }
+
+    private OriginTypeEnum getComponentInstanceOriginType(Component parentComponent, String componentInstanceId) {
+        Optional<ComponentInstance> componentInstanceOptional = parentComponent.getComponentInstanceById(componentInstanceId);
+        if (componentInstanceOptional.isPresent()) {
+            ComponentInstance componentInstance = componentInstanceOptional.get();
+            return componentInstance.getOriginType();
+        }
+        return null;
+    }
+
+    private boolean isInput(OriginTypeEnum instanceType) {
+        return OriginTypeEnum.VF.equals(instanceType) || OriginTypeEnum.PNF.equals(instanceType) || OriginTypeEnum.CVFC.equals(instanceType) ||
+            OriginTypeEnum.CR.equals(instanceType);
     }
 
     private Either<Boolean, ResponseFormat> validateStaticSubstitutionFilter(final Component component,
