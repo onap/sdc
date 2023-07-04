@@ -72,7 +72,12 @@ export class ComponentInstanceServiceNg2 {
     }
 
     getComponentInstanceInputs(component: Component, componentInstance: ComponentInstance): Observable<Array<PropertyBEModel>> {
-        return this.http.get<Array<InputBEModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/inputs')
+        return this.getComponentInstanceInputsByIdAndType(component.uniqueId, component.componentType, componentInstance);
+    }
+
+
+    getComponentInstanceInputsByIdAndType(componentId: string, componentType:string, componentInstance: ComponentInstance): Observable<Array<PropertyBEModel>> {
+        return this.http.get<Array<InputBEModel>>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/componentInstances/' + componentInstance.uniqueId + '/' + componentInstance.componentUid + '/inputs')
             .map(res => {
                 return CommonUtils.initInputs(res);
             })
