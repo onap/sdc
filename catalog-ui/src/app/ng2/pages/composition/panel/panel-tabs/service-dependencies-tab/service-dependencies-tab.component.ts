@@ -26,13 +26,15 @@ import {
     Component as TopologyTemplate,
     FullComponentInstance,
     PropertiesGroup,
-    PropertyBEModel, PropertyModel,
+    PropertyBEModel, PropertyModel, ComponentInstance,
 } from 'app/models';
+import {ResourceType} from "app/utils";
 import {DEPENDENCY_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
 import {EventListenerService} from '../../../../../../services/event-listener-service';
 import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
+import {ComponentInstanceServiceNg2} from '../../../../../services/component-instance-services/component-instance.service';
 import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
 import {WorkspaceService} from '../../../../workspace/workspace.service';
 import {SelectedComponentType} from '../../../common/store/graph.actions';
@@ -63,6 +65,7 @@ export class ServiceDependenciesTabComponent implements OnInit {
 
     constructor(private store: Store,
                 private topologyTemplateService: TopologyTemplateService,
+                private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
                 private workspaceService: WorkspaceService,
                 private compositionService: CompositionService,
                 private eventListenerService: EventListenerService) {
@@ -98,10 +101,22 @@ export class ServiceDependenciesTabComponent implements OnInit {
     }
 
     private initInstancesWithProperties = (): void => {
-        this.topologyTemplateService.getComponentInstanceProperties(this.metaData.componentType, this.metaData.uniqueId).subscribe((genericResponse: ComponentGenericResponse) => {
-            this.componentInstanceProperties = genericResponse.componentInstancesProperties;
-            this.updateInstanceAttributes();
-        });
+        if (this.component instanceof FullComponentInstance && this.isInput(this.component.resourceType)) {
+            this.componentInstanceServiceNg2
+            .getComponentInstanceInputsByIdAndType(this.metaData.uniqueId, this.metaData.componentType, this.component as ComponentInstance)
+            .subscribe(response => {
+                this.selectedInstanceProperties = response;
+            });
+        } else {
+            this.topologyTemplateService.getComponentInstanceProperties(this.metaData.componentType, this.metaData.uniqueId).subscribe((genericResponse: ComponentGenericResponse) => {
+                this.componentInstanceProperties = genericResponse.componentInstancesProperties;
+                this.updateInstanceAttributes();
+            });
+        }
+    }
+
+    private isInput = (instanceType:string):boolean =>{
+        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
 
     private updateInstanceAttributes = (): void => {
