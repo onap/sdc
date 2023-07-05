@@ -68,12 +68,12 @@
             <version>${hibernate.validator.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
             <version>${ws.rs.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
         </dependency>
@@ -169,8 +169,8 @@
             <version>${aspectj.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <version>${http.client.version}</version>
             <exclusions>
                 <exclusion>
