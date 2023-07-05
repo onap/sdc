@@ -164,8 +164,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
             <version>${ws.rs.version}</version>
         </dependency>
 
@@ -366,8 +366,8 @@
 
         <!-- http client -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <version>${httpclient.version}</version>
             <scope>compile</scope>
             <exclusions>
@@ -610,7 +610,12 @@
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
             <scope>compile</scope>
-
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- functional java -->
@@ -752,6 +757,18 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-aaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -821,6 +838,10 @@
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient-cache</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -877,6 +898,12 @@
             <version>${jersey-bom.version}</version>
             <type>pom</type>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -982,12 +1009,11 @@
         <dependency>
             <groupId>com.google.code.bean-matchers</groupId>
             <artifactId>bean-matchers</artifactId>
-            <version>0.11</version>
+            <version>${bean-matchers.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
         </dependency>
