@@ -79,8 +79,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
       <version>${http.client.version}</version>
       <exclusions>
         <exclusion>
@@ -96,8 +96,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
       <version>${ws.rs.version}</version>
     </dependency>
     <dependency>
