@@ -228,8 +228,8 @@ limitations under the License.
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <version>${httpclient.version}</version>
             <scope>test</scope>
             <exclusions>
@@ -282,10 +282,21 @@ limitations under the License.
 
         <!--FOR the Frontend -->
         <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
             <version>${selenium.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -297,6 +308,10 @@ limitations under the License.
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -304,6 +319,12 @@ limitations under the License.
             <artifactId>selenium-firefox-driver</artifactId>
             <version>${selenium.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -321,6 +342,10 @@ limitations under the License.
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -375,6 +400,18 @@ limitations under the License.
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-aaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -653,8 +690,8 @@ limitations under the License.
                 <artifactId>docker-maven-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
+                        <groupId>org.apache.httpcomponents.client5</groupId>
+                        <artifactId>httpclient5</artifactId>
                         <version>${httpclient.version}</version>
                     </dependency>
                 </dependencies>
@@ -1084,12 +1121,6 @@ limitations under the License.
                                 <dockerFileDir>${project.basedir}/integration-tests-init</dockerFileDir>
                                 <tags>
                                     <tag>latest</tag>
-                                    <tag>
-                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-                                    </tag>
-                                    <tag>
-                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
-                                    </tag>
                                 </tags>
                             </build>
                             <run>

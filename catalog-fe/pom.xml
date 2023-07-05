@@ -13,6 +13,12 @@
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>onboarding-fe</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,9 +77,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <scope>compile</scope>
+            <version>${groovy.version}</version>
         </dependency>
 
         <dependency>
@@ -183,8 +189,8 @@
 
         <!-- http client -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <version>${httpclient.version}</version>
             <exclusions>
                 <exclusion>
@@ -204,7 +210,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>${httpclient.version}</version>
+            <version>${httpmime.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -360,6 +366,18 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-aaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.onap.aaf.authz</groupId>
+                    <artifactId>aaf-cadi-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- System metrics -->
@@ -383,6 +401,12 @@
             <version>${jersey-bom.version}</version>
             <type>pom</type>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
