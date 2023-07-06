@@ -22,6 +22,30 @@
       "revId": "b92a895b00ec3efeceb341dc5779b45d35f0176b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4daba09f_2bfc5cc8",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-06T15:41:10Z",
+      "side": 1,
+      "message": "bcz of this line\nADD --chown\u003donap:onap onboarding*.war         $JETTY_FOLDER/webapps/\nin\ncatalog-fe/sdc-frontend/Dockerfile",
+      "parentUuid": "d0842f3a_edc649fb",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 21
+      },
+      "revId": "b92a895b00ec3efeceb341dc5779b45d35f0176b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
