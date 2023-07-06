@@ -97,6 +97,7 @@ import {AttributesOutputsComponent} from "../ng2/pages/attributes-outputs/attrib
 import {InterfaceDefinitionComponent} from "../ng2/pages/interface-definition/interface-definition.page.component";
 import {ToscaFunctionComponent} from '../ng2/pages/properties-assignment/tosca-function/tosca-function.component';
 import {ConstraintsComponent} from '../ng2/pages/properties-assignment/constraints/constraints.component';
+import {PropertyMetadataComponent} from '../ng2/pages/properties-assignment/property-metadata/property-metadata.component';
 import {TypeWorkspaceComponent} from "../ng2/pages/type-workspace/type-workspace.component";
 import {TypeWorkspaceGeneralComponent} from "../ng2/pages/type-workspace/type-workspace-general/type-workspace-general.component";
 import {DeclareInputComponent} from "../ng2/pages/properties-assignment/declare-input/declare-input.component";
@@ -330,6 +331,12 @@ directiveModule.directive('appConstraints', downgradeComponent({
   component: ConstraintsComponent,
   inputs: ['propertyConstraints', 'isViewOnly', 'propertyType'],
   outputs: ['onConstraintChange']
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('appPropertyMetadata', downgradeComponent({
+  component: PropertyMetadataComponent,
+  inputs: ['propertyMetadata', 'isViewOnly'],
+  outputs: ['onPropertyMetadataChange']
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('appTypeWorkspace', downgradeComponent({
