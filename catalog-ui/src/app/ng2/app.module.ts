@@ -101,6 +101,7 @@ import {PropertyCreatorModule} from './pages/properties-assignment/property-crea
 import {DeclareListModule} from './pages/properties-assignment/declare-list/declare-list.module';
 import {ToscaFunctionModule} from "./pages/properties-assignment/tosca-function/tosca-function.module";
 import {ConstraintsModule} from "./pages/properties-assignment/constraints/constraints.module";
+import {PropertyMetadataModule} from "./pages/properties-assignment/property-metadata/property-metadata.module";
 import {WorkflowServiceNg2} from './services/workflow.service';
 import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
 import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operatons/operation-creator/interface-operation-handler.module";
@@ -163,6 +164,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     DeclareListModule,
     ToscaFunctionModule,
     ConstraintsModule,
+    PropertyMetadataModule,
     PluginFrameModule,
     PluginsModule,
     InterfaceOperationModule,
