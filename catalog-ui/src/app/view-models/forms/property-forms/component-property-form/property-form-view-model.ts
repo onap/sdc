@@ -537,6 +537,19 @@ export class PropertyFormViewModel {
             this.$scope.editPropertyModel.property.constraints = constraints.constraints;
         }
 
+        this.$scope.onPropertyMetadataChange = (metadata: any): void => {
+            if (!this.$scope.invalidMandatoryFields) {
+                this.$scope.footerButtons[0].disabled = !metadata.valid;
+            } else {
+                this.$scope.footerButtons[0].disabled = this.$scope.invalidMandatoryFields;
+            }
+            if (!metadata.metadata || metadata.metadata.length == 0) {
+                this.$scope.editPropertyModel.property.metadata = null;
+                return;
+            }
+            this.$scope.editPropertyModel.property.metadata = metadata.metadata;
+        }
+
         this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
