@@ -110,20 +110,6 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         scope.$watchCollection('[typeName,fieldsPrefixName]', (newData: any): void => {
             this.rerender(scope);
         });
-        let childProp = this.PropertiesUtils.convertAddPropertyBAToPropertyFE(scope.parentProperty);
-        scope.subpropertyMap = new Map<string,PropertyDeclareAPIModel>();
-        scope.showToscaFunction = new Map<string,boolean>();
-        childProp.flattenedChildren.forEach(prop => {
-            scope.showToscaFunction.set(prop.name,false);
-            if (scope.parentProperty.subPropertyToscaFunctions != null) {
-                scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.toString() == prop.name) {
-                        scope.showToscaFunction.set(prop.name,true);
-                    }
-                });
-            }
-            scope.subpropertyMap.set(prop.name,new PropertyDeclareAPIModel(childProp, prop));
-        });
         scope.expandAndCollapse = (): void => {
             if (!scope.expanded) {
                 this.initDataOnScope(scope, $attr);
@@ -183,20 +169,20 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
         }
 
         scope.getToscaPathValue = (propertyName: string) : Array<string> => {
-            const parentObj : PropertyDeclareAPIModel = scope.subpropertyMap.get(propertyName);
-            if (parentObj.input instanceof DerivedFEProperty) {
-                return parentObj.input.toscaPath;
-            }
-            return [propertyName];
+            let toscaPath = [propertyName];
+            if (scope.complexToscapath != null) {
+                toscaPath = [scope.complexToscapath,propertyName];
+             }
+            return toscaPath;
         }
 
         scope.onGetToscaFunction = (toscaGetFunction: ToscaGetFunction, key:string): void => {
-            let toscaPath = key;
+            let toscaPath = scope.getToscaPathValue(key);
             scope.valueObjRef[key] = "";
             if (scope.parentProperty.subPropertyToscaFunctions != null) {
                 let toscaFlag : boolean = true
                 scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
-                    if (SubPropertyToscaFunction.subPropertyPath.toString() == toscaPath) {
+                    if (SubPropertyToscaFunction.subPropertyPath.toString() == toscaPath.toString()) {
                         SubPropertyToscaFunction.toscaFunction = toscaGetFunction;
                         toscaFlag = false;
                         return;
@@ -205,13 +191,13 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
                 if (toscaFlag) {
                     let subPropertyToscaFunction = new SubPropertyToscaFunction();
                     subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                    subPropertyToscaFunction.subPropertyPath = [toscaPath];
+                    subPropertyToscaFunction.subPropertyPath = toscaPath;
                     scope.parentProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
                 }
             } else {
                 let subPropertyToscaFunction = new SubPropertyToscaFunction();
                 subPropertyToscaFunction.toscaFunction = toscaGetFunction;
-                subPropertyToscaFunction.subPropertyPath = [toscaPath];
+                subPropertyToscaFunction.subPropertyPath = toscaPath;
                 scope.parentProperty.subPropertyToscaFunctions = [subPropertyToscaFunction];
             }
         }
@@ -247,6 +233,37 @@ export class DataTypeFieldsStructureDirective implements ng.IDirective {
 
         if (!scope.valueObjRef) {
             scope.valueObjRef = {};
+        }
+
+        let childProp = this.PropertiesUtils.convertAddPropertyBAToPropertyFE(scope.parentProperty);
+        scope.subpropertyMap = new Map<string,PropertyDeclareAPIModel>();
+        scope.showToscaFunction = new Map<string,boolean>();
+        if (childProp.flattenedChildren.length > 0) {
+            childProp.flattenedChildren.forEach(prop => {
+                scope.showToscaFunction.set(prop.name,false);
+                if (scope.parentProperty.subPropertyToscaFunctions != null) {
+                    scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
+                        let toscaPath = scope.getToscaPathValue(prop.name);
+                        if (SubPropertyToscaFunction.subPropertyPath.toString() == toscaPath.toString()) {
+                            scope.showToscaFunction.set(prop.name,true);
+                        }
+                    });
+                }
+                scope.subpropertyMap.set(prop.name,new PropertyDeclareAPIModel(childProp, prop));
+            });
+        } else {
+            scope.dataTypeProperties.forEach(prop => {
+                scope.showToscaFunction.set(prop.name,false);
+                if (scope.parentProperty.subPropertyToscaFunctions != null) {
+                    scope.parentProperty.subPropertyToscaFunctions.forEach(SubPropertyToscaFunction => {
+                        let toscaPath = scope.getToscaPathValue(prop.name);
+                        if (SubPropertyToscaFunction.subPropertyPath.toString() == toscaPath.toString()) {
+                            scope.showToscaFunction.set(prop.name,true);
+                        }
+                    });
+                }
+                scope.subpropertyMap.set(prop.name,new PropertyDeclareAPIModel(childProp, prop));
+            });
         }
 
         _.forEach(scope.currentTypeDefaultValue, (value, key) => {

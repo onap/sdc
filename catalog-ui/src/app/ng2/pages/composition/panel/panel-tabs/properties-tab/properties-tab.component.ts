@@ -12,6 +12,7 @@ import {
     InputsGroup,
     InputModel
 } from 'app/models';
+import {DataTypesService} from "app/services";
 import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
@@ -52,6 +53,7 @@ export class PropertiesTabComponent implements OnInit {
 
     constructor(private store: Store,
                 private workspaceService: WorkspaceService,
+                private DataTypesService:DataTypesService,
                 private compositionService: CompositionService,
                 private modalsHandler: ModalsHandler,
                 private topologyTemplateService: TopologyTemplateService,
@@ -63,6 +65,7 @@ export class PropertiesTabComponent implements OnInit {
 
     ngOnInit() {
         this.metadata = this.workspaceService.metadata;
+        this.DataTypesService.loadDataTypesCache(this.workspaceService.metadata.model);
         this.isComponentInstanceSelected = this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
         this.getComponentInstancesPropertiesAndAttributes();
     }

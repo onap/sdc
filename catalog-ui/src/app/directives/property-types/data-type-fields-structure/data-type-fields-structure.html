@@ -31,7 +31,7 @@
         </div>
         <!--<div class="property-value">-->
         <div class="inner-structure tosca-box tosca-parent">
-            <div class="tosca-box" data-ng-if="complexToscapath == null">
+            <div class="tosca-box">
                 <form class="temp-form" data-ng-if="isService">
                     <input type="radio" name="hasToscaFunction-{{fieldsPrefixName}}" data-ng-checked="verifyTosca(property.name) == false" data-ng-click="onEnableTosca(false,property.name)"/> 
                     Value
@@ -45,6 +45,7 @@
                                 [allow-clear]="false"
                                 [composition-map]="true"
                                 [composition-map-key]="property.name"
+                                [complex-list-key]="complexToscapath"
                                 (on-valid-function)="onGetToscaFunction($event,property.name)"
                 >
                 </tosca-function>

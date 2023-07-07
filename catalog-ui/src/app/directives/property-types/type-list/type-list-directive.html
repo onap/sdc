@@ -22,8 +22,11 @@
                             type-name="schemaProperty.type"
                             parent-form-obj="parentFormObj"
                             parent-property="parentProperty"
+                            component-instance-map="componentInstanceMap"
                             fields-prefix-name="fieldsPrefixName+''+$index"
                             types="types"
+                            is-service="isService"
+                            complex-toscapath="$index"
                             read-only="readOnly"></fields-structure>
         </div>
         <div data-ng-if="!isSchemaTypeDataType">
