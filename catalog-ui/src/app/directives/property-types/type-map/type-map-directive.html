@@ -110,7 +110,11 @@
             <fields-structure value-obj-ref="valueObjRef[mapKeysStatic[$index]]"
                               type-name="schemaProperty.type"
                               parent-form-obj="parentFormObj"
+                              parent-property="parentProperty"
+                              component-instance-map="componentInstanceMap"
                               fields-prefix-name="'mapValue'+fieldsPrefixName+''+$index"
+                              is-service="isService"
+                              complex-toscapath="mapKeys[$index]"
                               types="types"
                               read-only="readOnly"
             ></fields-structure>

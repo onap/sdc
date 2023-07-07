@@ -52,6 +52,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     @Input() allowClear: boolean = true;
     @Input() compositionMap: boolean = false;
     @Input() compositionMapKey: string = "";
+    @Input() complexListKey: string = null;
     @Output() onValidFunction: EventEmitter<ToscaGetFunction> = new EventEmitter<ToscaGetFunction>();
     @Output() onValidityChange: EventEmitter<ToscaFunctionValidationEvent> = new EventEmitter<ToscaFunctionValidationEvent>();
 
@@ -108,7 +109,15 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
     private initToscaFunction(): void {
         if (this.compositionMap && this.property.subPropertyToscaFunctions) {
             let keyToFind = [this.compositionMapKey];
-            let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, keyToFind));
+            if (this.complexListKey != null) {
+                keyToFind = [this.complexListKey,this.compositionMapKey];
+            }       
+            let subPropertyToscaFunction;
+            this.property.subPropertyToscaFunctions.forEach(subToscaFunction => {
+                if (subToscaFunction.subPropertyPath.toString() == keyToFind.toString()) {
+                    subPropertyToscaFunction = subToscaFunction;
+                }
+            });
 
             if (subPropertyToscaFunction){
                 this.toscaFunction = subPropertyToscaFunction.toscaFunction;
