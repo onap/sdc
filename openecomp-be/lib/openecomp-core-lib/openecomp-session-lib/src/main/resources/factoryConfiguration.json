@@ -1,3 +1,0 @@
-{
-  "org.openecomp.sdc.common.session.SessionContextProviderFactory": "org.openecomp.sdc.common.session.impl.SessionContextProviderFactoryImpl"
-}
