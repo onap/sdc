@@ -1,2 +1,0 @@
-Upload_Artifacts
-The test verifies uploading an artifact when action status is locked.
