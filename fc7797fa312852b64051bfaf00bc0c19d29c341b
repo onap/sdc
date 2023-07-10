@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "54cddb85_728df095",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-07-10T12:21:15Z",
+      "side": 1,
+      "message": "The metadata is hidden when the VFC is checked in - it should always be visible (but not editable when the VFC is checked)",
+      "range": {
+        "startLine": 266,
+        "startChar": 0,
+        "endLine": 274,
+        "endChar": 22
+      },
+      "revId": "fc7797fa312852b64051bfaf00bc0c19d29c341b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
