@@ -42,6 +42,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONArray;
@@ -1983,7 +1984,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isToscaFunction()) {
                     toscaFunctionValidator.validate(property, containerComponent);
-                    property.setValue(property.getToscaFunction().getValue());
+                    property.setValue(StringEscapeUtils.unescapeJava(property.getToscaFunction().getValue()));
                 }
                 if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())) {
                     ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
