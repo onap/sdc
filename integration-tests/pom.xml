@@ -1117,6 +1117,7 @@ limitations under the License.
                             <name>${docker.namespace}/sdc-integration-tests-init</name>
                             <alias>integration-tests-init</alias>
                             <build>
+                                <skip>${it.test-model.disabled}</skip>
                                 <cleanup>try</cleanup>
                                 <dockerFileDir>${project.basedir}/integration-tests-init</dockerFileDir>
                                 <tags>
