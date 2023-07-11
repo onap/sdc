@@ -22,6 +22,12 @@
             <type>war</type>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>onboarding-be</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
