@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "758e1267_c49d56ff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-11T14:51:34Z",
+      "side": 1,
+      "message": "to be consistent I\u0027d suggest to change for lang3",
+      "range": {
+        "startLine": 45,
+        "startChar": 26,
+        "endLine": 45,
+        "endChar": 30
+      },
+      "revId": "f72b3ec74ead7607e5926ea9d8403b8541b342e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
