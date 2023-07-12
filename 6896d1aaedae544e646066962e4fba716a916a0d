@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bc0124d1_e0f57684",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-12T16:57:10Z",
+      "side": 1,
+      "message": "wouldn\u0027t be more clear like following\n\n            if (component.isService()) {\n                if (interfaceTemplateYaml.isEmpty()) {\n                    Resource resource \u003d serviceBusinessLogic.fetchDerivedFromGenericType(component, null);\n                    List\u003cPropertyDefinition\u003e properties \u003d resource.getProperties();\n                    parsedToscaYamlInfo.setProperties(properties.stream().collect(Collectors.toMap(PropertyDefinition::getName, prop -\u003e prop)));\n                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));\n                } else {\n                    parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));\n                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));\n                }\n            }\n\nisn\u0027t?",
+      "range": {
+        "startLine": 202,
+        "startChar": 12,
+        "endLine": 210,
+        "endChar": 13
+      },
+      "revId": "6896d1aaedae544e646066962e4fba716a916a0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
