@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static java.util.stream.Collectors.joining;
@@ -202,16 +203,14 @@ public class ServiceImportBusinessLogic {
     private final IGraphLockOperation graphLockOperation;
     private final ToscaFunctionService toscaFunctionService;
     private final DataTypeBusinessLogic dataTypeBusinessLogic;
-    private ApplicationDataTypeCache applicationDataTypeCache;
     private final ArtifactTypeOperation artifactTypeOperation;
-
     private final GroupTypeImportManager groupTypeImportManager;
     private final GroupTypeOperation groupTypeOperation;
-    private InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
-    private InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
-
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final CapabilityTypeOperation capabilityTypeOperation;
+    private ApplicationDataTypeCache applicationDataTypeCache;
+    private InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
+    private InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -692,7 +691,8 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finished to add inputs from yaml {}", yamlName);
-            ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
+            ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties =
+                parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
@@ -768,13 +768,17 @@ public class ServiceImportBusinessLogic {
             final List<ComponentInstance> componentInstances = component.getComponentInstances();
             final String componentUniqueId = component.getUniqueId();
             for (final InputDefinition input : inputs) {
-                if (isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
+                boolean isSubMapProp = false;
+                if (substitutionMappingProperties != null && !substitutionMappingProperties.isEmpty()) {
+                    isSubMapProp = substitutionMappingProperties.entrySet().stream()
+                        .anyMatch(stringEntry -> stringEntry.getValue().get(0).equals(input.getName()));
+                }
+                if (!isSubMapProp && isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentUniqueId);
                 } else {
                     associateInputToServiceProperty(userId, input, component, substitutionMappingProperties);
                 }
             }
-
             Either<List<InputDefinition>, StorageOperationStatus> either = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
             if (either.isRight()) {
                 throw new ComponentException(ActionStatus.GENERAL_ERROR);
@@ -788,7 +792,8 @@ public class ServiceImportBusinessLogic {
 
         AtomicBoolean isInputFromCIProp = new AtomicBoolean(false);
         if (CollectionUtils.isNotEmpty(componentInstances)) {
-            outer: for (ComponentInstance instance : componentInstances) {
+            outer:
+            for (ComponentInstance instance : componentInstances) {
                 for (PropertyDefinition instanceProperty : instance.getProperties()) {
                     if (CollectionUtils.isNotEmpty(instanceProperty.getGetInputValues())) {
                         for (GetInputValueDataDefinition getInputValueDataDefinition : instanceProperty.getGetInputValues()) {
@@ -811,7 +816,8 @@ public class ServiceImportBusinessLogic {
         String componentInstanceId = null;
         ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
 
-        outer: for (ComponentInstance instance : componentInstances) {
+        outer:
+        for (ComponentInstance instance : componentInstances) {
             for (PropertyDefinition instanceProperty : instance.getProperties()) {
                 if (CollectionUtils.isNotEmpty(instanceProperty.getGetInputValues())) {
                     for (GetInputValueDataDefinition getInputValueDataDefinition : instanceProperty.getGetInputValues()) {
@@ -851,8 +857,9 @@ public class ServiceImportBusinessLogic {
                 }
             });
 
-            final Optional<PropertyDefinition> propDefOptional = properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
-                .findFirst();
+            final Optional<PropertyDefinition> propDefOptional =
+                properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
+                    .findFirst();
             if (propDefOptional.isPresent()) {
                 // From SELF
                 final String componentUniqueId = component.getUniqueId();
@@ -868,6 +875,8 @@ public class ServiceImportBusinessLogic {
                 if (either.isRight()) {
                     throw new ComponentException(ActionStatus.GENERAL_ERROR);
                 }
+            } else {
+                input.setMappedToComponentProperty(false);
             }
         }
     }
@@ -897,8 +906,9 @@ public class ServiceImportBusinessLogic {
                                                                        boolean inTransaction, boolean shouldLock) {
         String nodeName = nodeTypeInfoToUpdateArtifacts.getNodeName();
         Resource resource = preparedResource;
-        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = nodeTypeInfoToUpdateArtifacts
-            .getNodeTypesArtifactsToHandle();
+        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle =
+            nodeTypeInfoToUpdateArtifacts
+                .getNodeTypesArtifactsToHandle();
         if (preparedResource.getResourceType() == ResourceTypeEnum.VF) {
             if (nodeName != null && nodeTypesArtifactsToHandle.get(nodeName) != null && !nodeTypesArtifactsToHandle.get(nodeName).isEmpty()) {
                 Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = handleNodeTypeArtifacts(preparedResource,
@@ -1025,7 +1035,8 @@ public class ServiceImportBusinessLogic {
                 vfCsarArtifactsToHandle = new EnumMap<>(ArtifactsBusinessLogic.ArtifactOperationEnum.class);
                 vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList.left().value());
             } else {
-                Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(
+                Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat>
+                    findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(
                     component, artifactPathAndNameList.left().value(), csarInfo.getModifier());
                 if (findVfCsarArtifactsToHandleRes.isRight()) {
                     resStatus = Either.right(findVfCsarArtifactsToHandleRes.right().value());
@@ -1316,7 +1327,8 @@ public class ServiceImportBusinessLogic {
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>> nodeTypeArtifactsToHandle = new EnumMap<>(
             ArtifactsBusinessLogic.ArtifactOperationEnum.class);
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-        Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> nodeTypeArtifactsToHandleRes = Either
+        Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat>
+            nodeTypeArtifactsToHandleRes = Either
             .left(nodeTypeArtifactsToHandle);
         try {
             List<CsarUtils.NonMetaArtifactInfo> artifactsToUpload = new ArrayList<>(artifactPathAndNameList);
