@@ -139,9 +139,8 @@
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-lts8on</artifactId>
             <version>${bouncycastle.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
