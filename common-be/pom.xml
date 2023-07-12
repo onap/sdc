@@ -36,6 +36,10 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -139,9 +143,8 @@
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-lts8on</artifactId>
             <version>${bouncycastle.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
