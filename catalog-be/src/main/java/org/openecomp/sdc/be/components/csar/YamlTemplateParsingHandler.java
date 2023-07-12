@@ -90,6 +90,7 @@ import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -107,8 +108,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefin
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -123,6 +126,7 @@ import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
@@ -154,18 +158,21 @@ public class YamlTemplateParsingHandler {
     private final GroupTypeBusinessLogic groupTypeBusinessLogic;
     private final AnnotationBusinessLogic annotationBusinessLogic;
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
     private final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
 
     public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao,
                                       GroupTypeBusinessLogic groupTypeBusinessLogic,
                                       AnnotationBusinessLogic annotationBusinessLogic,
                                       PolicyTypeBusinessLogic policyTypeBusinessLogic,
+                                      ServiceBusinessLogic serviceBusinessLogic,
                                       final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler
     ) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
+        this.serviceBusinessLogic = serviceBusinessLogic;
         this.toscaFunctionYamlParsingHandler = toscaFunctionYamlParsingHandler;
     }
 
@@ -192,9 +199,16 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
         Map<String, Object> substitutionMappings = getSubstitutionMappings(mappedToscaTemplate);
         if (substitutionMappings != null) {
-            if (component.isService() && !interfaceTemplateYaml.isEmpty()) {
-                parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
-                parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
+            if (component.isService()) {
+                if (!interfaceTemplateYaml.isEmpty()) {
+                    parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
+                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
+                } else {
+                    Resource resource = serviceBusinessLogic.fetchDerivedFromGenericType(component, null);
+                    List<PropertyDefinition> properties = resource.getProperties();
+                    parsedToscaYamlInfo.setProperties(properties.stream().collect(Collectors.toMap(PropertyDefinition::getName, prop -> prop)));
+                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
+                }
             }
             if (substitutionMappings.get("properties") != null) {
                 parsedToscaYamlInfo.setSubstitutionMappingProperties((Map<String, List<String>>) substitutionMappings.get("properties"));
@@ -930,7 +944,7 @@ public class YamlTemplateParsingHandler {
                 .createNodeFilterData(nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())));
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private void setOccurrencesAndInstanceCount(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName())) {
@@ -1205,7 +1219,8 @@ public class YamlTemplateParsingHandler {
             if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(propValueObj)) {
                 toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue(propValueMap).ifPresent(propertyDef::setToscaFunction);
             } else {
-                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
+                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions =
+                    buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
                 if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
                     Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = propertyDef.getSubPropertyToscaFunctions();
                     if (existingSubPropertyToscaFunctions == null) {
@@ -1232,7 +1247,7 @@ public class YamlTemplateParsingHandler {
         }
         return propertyDef;
     }
-    
+
     private Collection<SubPropertyToscaFunction> buildSubPropertyToscaFunctions(final Map<String, Object> propValueMap, final List<String> path) {
         Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = new ArrayList<>();
         propValueMap.entrySet().stream().filter(entry -> entry.getValue() instanceof Map).forEach(entry -> {
@@ -1240,7 +1255,7 @@ public class YamlTemplateParsingHandler {
             subPropertyPath.add(entry.getKey());
             if (ToscaFunctionType.findType(((Map<String, Object>) entry.getValue()).keySet().iterator().next()).isPresent()) {
                 Optional<ToscaFunction> toscaFunction =
-                        toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map) entry.getValue());
+                    toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map) entry.getValue());
                 if (toscaFunction.isPresent()) {
                     SubPropertyToscaFunction subPropertyToscaFunction = new SubPropertyToscaFunction();
                     subPropertyToscaFunction.setToscaFunction(toscaFunction.get());
@@ -1310,7 +1325,8 @@ public class YamlTemplateParsingHandler {
             }.getType();
             String stringValue = gson.toJson(value, type);
             if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(value)) {
-                toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) value).ifPresent(operationInput::setToscaFunction);
+                toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map<String, Object>) value)
+                    .ifPresent(operationInput::setToscaFunction);
             } else {
                 final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(valueMap, new ArrayList<>());
                 if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
@@ -1420,8 +1436,9 @@ public class YamlTemplateParsingHandler {
             if (objValue instanceof Map) {
                 Map<String, Object> objMap = (Map<String, Object>) objValue;
                 Map<String, Object> propValueMap = new HashMap<String, Object>();
-                propValueMap.put(String.valueOf(index),objValue);
-                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
+                propValueMap.put(String.valueOf(index), objValue);
+                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions =
+                    buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
                 if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
                     Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = propertyDef.getSubPropertyToscaFunctions();
                     if (existingSubPropertyToscaFunctions == null) {

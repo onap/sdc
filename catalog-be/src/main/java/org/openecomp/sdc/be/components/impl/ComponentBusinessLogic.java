@@ -725,7 +725,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return genericTypeResource;
     }
 
-    protected <T extends Component> Resource fetchDerivedFromGenericType(final T component, final String toscaType) {
+    public <T extends Component> Resource fetchDerivedFromGenericType(final T component, final String toscaType) {
         final Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component, toscaType);
         if (genericTypeEither.isRight()) {
             log.debug("Failed to fetch latest generic type for component {} of type {}", component.getName(), component.assetType());
