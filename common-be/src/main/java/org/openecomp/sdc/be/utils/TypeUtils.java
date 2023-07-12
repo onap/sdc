@@ -79,7 +79,8 @@ public class TypeUtils {
         IMPLEMENTATION("implementation"),
         SUBSTITUTION_FILTERS("substitution_filter"),
         DERIVED_FROM_NAME("derivedFromName"),
-        INTERFACE_TYPES("interface_types");
+        INTERFACE_TYPES("interface_types"),
+        INSTANCE_COUNT("instance_count");
         // @formatter:om
 
         private final String elementName;

@@ -2721,6 +2721,9 @@ public class ServiceImportBusinessLogic {
             Resource origResource = existingnodeTypeMap.get(uploadComponentInstanceInfo.getType());
             componentInstance.setName(uploadComponentInstanceInfo.getName());
             componentInstance.setIcon(origResource.getIcon());
+            componentInstance.setMinOccurrences(uploadComponentInstanceInfo.getMinOccurrences());
+            componentInstance.setMaxOccurrences(uploadComponentInstanceInfo.getMaxOccurrences());
+            componentInstance.setInstanceCount(uploadComponentInstanceInfo.getInstanceCount());
             resourcesInstancesMap.put(componentInstance, origResource);
         } catch (final ComponentException e) {
             throw e;

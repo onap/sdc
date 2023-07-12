@@ -44,4 +44,7 @@ public class UploadComponentInstanceInfo {
     private Map<String, UploadInterfaceInfo> interfaces;
     private UploadNodeFilterInfo uploadNodeFilterInfo;
     private Map<String, List<OperationUi>> operations;
+    private String maxOccurrences;
+    private String minOccurrences;
+    private String instanceCount;
 }

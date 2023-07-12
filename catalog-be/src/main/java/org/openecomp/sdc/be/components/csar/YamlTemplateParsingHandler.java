@@ -107,13 +107,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefin
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
-import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
-import org.openecomp.sdc.be.datatypes.enums.PropertySource;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -825,6 +822,7 @@ public class YamlTemplateParsingHandler {
                 setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
                 setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
                 setSubstitutions(substitutionMappings, nodeTemplateInfo);
+                setOccurrencesAndInstanceCount(nodeTemplateInfo, nodeTemplateJsonMap);
             } else {
                 rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
             }
@@ -930,6 +928,24 @@ public class YamlTemplateParsingHandler {
         if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())) {
             nodeTemplateInfo.setUploadNodeFilterInfo(new NodeFilterUploadCreator()
                 .createNodeFilterData(nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.NODE_FILTER.getElementName())));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void setOccurrencesAndInstanceCount(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+        if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName())) {
+            List<Object> occurrences = (List<Object>) nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.OCCURRENCES.getElementName());
+            nodeTemplateInfo.setMinOccurrences(occurrences.get(0).toString());
+            nodeTemplateInfo.setMaxOccurrences(occurrences.get(1).toString());
+        }
+        if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.INSTANCE_COUNT.getElementName())) {
+            Object instanceCount = nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.INSTANCE_COUNT.getElementName());
+            if (instanceCount instanceof Map) {
+                String instanceCountAsString = "{get_input:" + (String)((Map)instanceCount).get("get_input") + "}";
+                nodeTemplateInfo.setInstanceCount(instanceCountAsString);
+            } else {
+                nodeTemplateInfo.setInstanceCount(instanceCount.toString());
+            }
         }
     }
 
