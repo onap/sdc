@@ -345,7 +345,7 @@ limitations under the License.
                 </exclusion>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15on</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
