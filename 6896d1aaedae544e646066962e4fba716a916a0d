@@ -22,6 +22,30 @@
       "revId": "6896d1aaedae544e646066962e4fba716a916a0d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "013ecf33_c281c366",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-12T17:48:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bc0124d1_e0f57684",
+      "range": {
+        "startLine": 202,
+        "startChar": 12,
+        "endLine": 210,
+        "endChar": 13
+      },
+      "revId": "6896d1aaedae544e646066962e4fba716a916a0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
