@@ -34,6 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.validation.AnnotationValidator;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -91,6 +92,8 @@ public class YamlTemplateParsingHandlerTest {
     @Mock
     private PolicyTypeBusinessLogic policyTypeBusinessLogic;
     @Mock
+    private ServiceBusinessLogic serviceBusinessLogic;
+    @Mock
     private ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
 
     private YamlTemplateParsingHandler handler;
@@ -139,7 +142,7 @@ public class YamlTemplateParsingHandlerTest {
     public void setup() {
         final var annotationBusinessLogic = new AnnotationBusinessLogic(annotationTypeOperations, annotationValidator);
         handler = new YamlTemplateParsingHandler(janusGraphDao, groupTypeBusinessLogic, annotationBusinessLogic, policyTypeBusinessLogic,
-            toscaFunctionYamlParsingHandler);
+            serviceBusinessLogic, toscaFunctionYamlParsingHandler);
         ReflectionTestUtils.setField(handler, "policyTypeBusinessLogic", policyTypeBusinessLogic);
     }
 

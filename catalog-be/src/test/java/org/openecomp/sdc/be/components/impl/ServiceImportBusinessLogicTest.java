@@ -27,6 +27,7 @@ import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.matches;
@@ -211,8 +212,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString())).thenReturn(csarInfo);
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class), any(Service.class)))
             .thenReturn(Either.left(new HashMap<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>()));
-        when(csarBusinessLogic.getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class)))
-            .thenReturn(getParsedToscaYamlInfo());
+        doReturn(getParsedToscaYamlInfo()).when(csarBusinessLogic).getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class));
+//        when(csarBusinessLogic.getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class)))
+//            .thenReturn(getParsedToscaYamlInfo());
         when(serviceBusinessLogic.lockComponentByName(newService.getSystemName(), oldService, CREATE_RESOURCE)).thenReturn(Either.left(true));
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(createOldResource()));
         when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false)).thenReturn(newService);
