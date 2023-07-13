@@ -101,7 +101,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <httpmime.version>4.5.14</httpmime.version>
         <httpclient.version>5.2.1</httpclient.version>
         <httpcore.version>4.4.15</httpcore.version>
-        <json-simple.version>1.1.1</json-simple.version>
 
         <!-- PM Dictionary validation -->
         <onap.vnfsdk.validation.pmdictionary.version>1.2.15</onap.vnfsdk.validation.pmdictionary.version>
