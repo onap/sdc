@@ -127,9 +127,6 @@ Modifications copyright (c) 2018-2019 Nokia
         <!--GSON-->
         <gson.version>2.10.1</gson.version>
 
-        <!--listen to file changes-->
-        <commons-jci-core.version>1.1</commons-jci-core.version>
-
         <!--TESTING-->
         <mockito.version>4.10.0</mockito.version>
         <mockitoJupiter.version>${mockito.version}</mockitoJupiter.version>

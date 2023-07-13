@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.jci.listeners.FileChangeListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.openecomp.sdc.common.api.BasicConfiguration;
 import org.openecomp.sdc.common.api.ConfigurationListener;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -33,7 +33,8 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.exception.YamlConversionException;
 
-public class ConfigFileChangeListener extends FileChangeListener {
+
+public class ConfigFileChangeListener extends FileAlterationListenerAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigFileChangeListener.class.getName());
     private Map<String, List<ConfigurationListener>> fileChangeToCallBack = new HashMap<>();
@@ -42,7 +43,6 @@ public class ConfigFileChangeListener extends FileChangeListener {
 
     @Override
     public void onFileChange(File pFile) {
-        super.onFileChange(pFile);
         if (pFile == null) {
             LOGGER.debug("Invalid file '{}'.", pFile);
             return;
@@ -68,7 +68,7 @@ public class ConfigFileChangeListener extends FileChangeListener {
                 basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
             } catch (final YamlConversionException e) {
                 LOGGER.warn(EcompLoggerErrorCode.SCHEMA_ERROR, "Configuration", "Configuration",
-                    "Cannot update the listeners for file Change since the file content is invalid: {}", e.getLocalizedMessage());
+                        "Cannot update the listeners for file Change since the file content is invalid: {}", e.getLocalizedMessage());
                 continue;
             }
             LOGGER.debug("Loaded configuration after converting is {}", basicConfiguration);
