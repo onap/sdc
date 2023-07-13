@@ -48,12 +48,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>${bean-matchers.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onap.logging-analytics</groupId>
       <artifactId>logging-slf4j</artifactId>
       <version>${onap.logging.version}</version>
