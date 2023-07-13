@@ -212,13 +212,6 @@ Modifications copyright (c) 2018 Nokia
     </dependency>
 
     <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>${bean-matchers.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>${snakeyaml.version}</version>

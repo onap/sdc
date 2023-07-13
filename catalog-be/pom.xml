@@ -992,12 +992,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.bean-matchers</groupId>
-            <artifactId>bean-matchers</artifactId>
-            <version>${bean-matchers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
