@@ -5,6 +5,101 @@
 Release Notes
 =============
 
+Version: 1.13.2
+===============
+
+:Release Date: 2023-07-13
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC London release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4561 <https://jira.onap.org/browse/SDC-4561>`_ - UI support for metadata when editing properties of VFCs
+*  `SDC-4558 <https://jira.onap.org/browse/SDC-4558>`_ - Include version in metadata
+*  `SDC-4528 <https://jira.onap.org/browse/SDC-4528>`_ - Support TOSCA functions of complex types in composition view
+*  `SDC-4555 <https://jira.onap.org/browse/SDC-4555>`_ - Do not collapse complex property when setting element value
+*  `SDC-4471 <https://jira.onap.org/browse/SDC-4471>`_ - Create test model
+*  `SDC-4537 <https://jira.onap.org/browse/SDC-4537>`_ - Validation of datatype YAML prior to import
+
+
+**Bug Fixes**
+
+*  `SDC-4568 <https://jira.onap.org/browse/SDC-4568>`_ - Service import issues
+*  `SDC-4564 <https://jira.onap.org/browse/SDC-4564>`_ - JUEL function not displayed correctly in UI (ok in template)
+*  `SDC-4566 <https://jira.onap.org/browse/SDC-4566>`_ - Occurrences and instance count do not survive import
+*  `SDC-4527 <https://jira.onap.org/browse/SDC-4527>`_ - Unable to set tosca function on complex type on input operation
+*  `SDC-4551 <https://jira.onap.org/browse/SDC-4551>`_ - Validation problems when trying to set an operation input of complex type
+*  `SDC-4529 <https://jira.onap.org/browse/SDC-4529>`_ - Certifying a template with two connected services results in error (using service proxy in the relationship)
+
+
+**Tasks**
+
+*  `SDC-4569 <https://jira.onap.org/browse/SDC-4569>`_ - Replace outdated dependencies
+*  `SDC-4567 <https://jira.onap.org/browse/SDC-4567>`_ - Fix missing logs SDC-BE
+*  `SDC-4560 <https://jira.onap.org/browse/SDC-4560>`_ - Update outdated/vulnerable dependencies
+*  `SDC-4559 <https://jira.onap.org/browse/SDC-4559>`_ - Remove unused 'org.springframework.boot' dependency
+*  `SDC-4553 <https://jira.onap.org/browse/SDC-4553>`_ - Separate execution of UI and API integration tests to speed up verify feedback
+*  `SDC-4557 <https://jira.onap.org/browse/SDC-4557>`_ - Update SDC openapi files
+
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+    
+    
 Version: 1.13.1
 ===============
 
