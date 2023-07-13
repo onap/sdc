@@ -56,13 +56,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>${bean-matchers.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
       <version>1.6</version>

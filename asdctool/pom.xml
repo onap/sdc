@@ -622,13 +622,6 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>${bean-matchers.version}</version>
-      <scope>test</scope>
-    </dependency>
     <!-- testing end -->
 
     <dependency>
