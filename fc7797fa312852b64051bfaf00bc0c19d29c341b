@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "54cddb85_728df095",
         "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
@@ -20,8 +21,31 @@
         "endChar": 22
       },
       "revId": "fc7797fa312852b64051bfaf00bc0c19d29c341b",
-      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
-      "unresolved": true
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4e76669_0f215443",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-13T09:49:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "54cddb85_728df095",
+      "range": {
+        "startLine": 266,
+        "startChar": 0,
+        "endLine": 274,
+        "endChar": 22
+      },
+      "revId": "fc7797fa312852b64051bfaf00bc0c19d29c341b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
