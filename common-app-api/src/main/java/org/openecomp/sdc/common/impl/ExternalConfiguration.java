@@ -20,8 +20,10 @@
 package org.openecomp.sdc.common.impl;
 
 import java.io.File;
-import org.apache.commons.jci.monitor.FilesystemAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.openecomp.sdc.common.api.ConfigurationSource;
+
 
 /**
  * Save the
@@ -34,7 +36,7 @@ public class ExternalConfiguration {
     private static String appVersion;
     private static String configDir;
     private static ConfigurationSource configurationSource;
-    private static FilesystemAlterationMonitor fam = null;
+    private static FileAlterationMonitor monitor;
     private static ConfigFileChangeListener changeListener = new ConfigFileChangeListener();
     private static boolean enableReconfigure = true;
 
@@ -75,23 +77,28 @@ public class ExternalConfiguration {
     }
 
     public static void listenForChanges() {
-        String watchingDir = configDir + File.separator + appName;
         if (enableReconfigure) {
-            if (fam == null) {
-                fam = new FilesystemAlterationMonitor();
-                fam.setInterval(1000);
-                fam.addListener(new File(watchingDir), changeListener);
-                fam.start();
+            monitor = new FileAlterationMonitor();
+            final String watchingDir = configDir + File.separator + appName;
+            final FileAlterationObserver observer = new FileAlterationObserver(watchingDir);
+            observer.addListener(changeListener);
+            monitor.addObserver(observer);
+            try {
+                monitor.start();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
     public static void stopListenForFileChanges() {
-        if (enableReconfigure) {
-            if (fam != null) {
-                fam.stop();
-                fam = null;
+        if (enableReconfigure && monitor != null) {
+            try {
+                monitor.stop();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+            monitor = null;
         }
     }
 }

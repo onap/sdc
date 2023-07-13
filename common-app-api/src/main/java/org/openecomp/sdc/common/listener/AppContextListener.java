@@ -39,6 +39,7 @@ public class AppContextListener implements ServletContextListener {
 
     private static Logger log = Logger.getLogger(AppContextListener.class.getName());
 
+    @Override
     public void contextInitialized(ServletContextEvent context) {
         log.debug("ServletContextListener initialized ");
         log.debug("After read values from Manifest {}", getManifestInfo(context.getServletContext()));
@@ -50,13 +51,13 @@ public class AppContextListener implements ServletContextListener {
         String configHome = System.getProperty(Constants.CONFIG_HOME);
         ExternalConfiguration.setConfigDir(configHome);
         String appConfigDir = configHome + File.separator + appName;
-        // ChangeListener changeListener = new ChangeListener();
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         context.getServletContext().setAttribute(Constants.CONFIGURATION_SOURCE_ATTR, configurationSource);
         ExternalConfiguration.setConfigurationSource(configurationSource);
         ExternalConfiguration.listenForChanges();
     }
 
+    @Override
     public void contextDestroyed(ServletContextEvent context) {
         log.debug("ServletContextListener destroyed");
         ExternalConfiguration.stopListenForFileChanges();
