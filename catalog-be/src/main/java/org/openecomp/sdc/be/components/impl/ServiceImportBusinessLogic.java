@@ -2012,7 +2012,9 @@ public class ServiceImportBusinessLogic {
             instAttributes.put(resourceInstanceId, originResource.getAttributes());
             addAttributeValueToResourceInstance(instAttributes, uploadComponentInstanceInfo.getAttributes());
         }
-        if (uploadComponentInstanceInfo.getUploadNodeFilterInfo() != null) {
+        if (uploadComponentInstanceInfo.getUploadNodeFilterInfo() == null) {
+            instNodeFilter.put(resourceInstanceId, new UploadNodeFilterInfo());
+        } else
             instNodeFilter.put(resourceInstanceId, uploadComponentInstanceInfo.getUploadNodeFilterInfo());
         }
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getInterfaces())) {
