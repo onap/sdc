@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -405,7 +406,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
             final GroupInstanceData groupInstanceData = findResInstanceRes.left().value();
             //TODO fix
             toscaFunctionValidator.validate(propDataDef, null);
-            propertyValueData.setValue(propDataDef.getToscaFunction().getValue());
+            propertyValueData.setValue(StringEscapeUtils.unescapeJava(propDataDef.getToscaFunction().getValue()));
         } else {
             final String innerType = innerTypeEither.left().value();
             Either<Object, Boolean> isValid = propertyOperation

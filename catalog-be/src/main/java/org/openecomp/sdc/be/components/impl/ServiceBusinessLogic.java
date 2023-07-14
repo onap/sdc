@@ -55,6 +55,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -674,7 +677,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         validateUserRole(user, service, new ArrayList<>(), AuditingActionEnum.CREATE_RESOURCE, null);
         service.setCreatorUserId(user.getUserId());
         // warn on overridden fields
-        checkFieldsForOverideAttampt(service);
+        checkFieldsForOverideAttempt(service);
         // enrich object
         log.debug("enrich service with version and state");
         service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -689,7 +692,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return createServiceByDao(service, user).left().bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE).left().map(Service.class::cast));
     }
 
-    private void checkFieldsForOverideAttampt(Service service) {
+    private void checkFieldsForOverideAttempt(Service service) {
         checkComponentFieldsForOverrideAttempt(service);
         if (service.getDistributionStatus() != null) {
             log.info("Distribution Status cannot be defined by user. This field will be overridden by the application");
@@ -2327,8 +2330,10 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public boolean isServiceExist(String serviceName) {
-        Either<Service, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByServiceName(serviceName);
-        return latestByName.isLeft();
+        return toscaOperationFacade.getLatestByServiceName(serviceName).isLeft();
+    }
+
+    public void updateService(Service service, Map<String, Object> map) {
     }
 
     interface ArtifactGenerator<CallVal> extends Callable<Either<CallVal, ResponseFormat>> {
@@ -2336,26 +2341,16 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     @Getter
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     class HeatEnvArtifactGenerator implements ArtifactGenerator<ArtifactDefinition> {
 
         private ArtifactDefinition artifactDefinition;
         private Service service;
         private String resourceInstanceName;
         private User modifier;
-        private String instanceId;
         private boolean shouldLock;
         private boolean inTransaction;
-
-        HeatEnvArtifactGenerator(ArtifactDefinition artifactDefinition, Service service, String resourceInstanceName, User modifier,
-                                 boolean shouldLock, boolean inTransaction, String instanceId) {
-            this.artifactDefinition = artifactDefinition;
-            this.service = service;
-            this.resourceInstanceName = resourceInstanceName;
-            this.modifier = modifier;
-            this.shouldLock = shouldLock;
-            this.instanceId = instanceId;
-            this.inTransaction = inTransaction;
-        }
+        private String instanceId;
 
         @Override
         public Either<ArtifactDefinition, ResponseFormat> call() throws Exception {
@@ -2365,23 +2360,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     class VfModuleArtifactGenerator implements ArtifactGenerator<ArtifactDefinition> {
 
-        boolean shouldLock;
-        boolean inTransaction;
         private User user;
         private ComponentInstance componentInstance;
         private Service service;
-
-        private VfModuleArtifactGenerator(User user, ComponentInstance componentInstance, Service service, boolean shouldLock,
-                                          boolean inTransaction) {
-            super();
-            this.user = user;
-            this.componentInstance = componentInstance;
-            this.service = service;
-            this.shouldLock = shouldLock;
-            this.inTransaction = inTransaction;
-        }
+        private boolean shouldLock;
+        private boolean inTransaction;
 
         private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance,
                                                                                             Service service, boolean shouldLock,
@@ -2400,13 +2386,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock, inTransaction, payloadWrapper,
                     responseWrapper, service);
             }
-            Either<ArtifactDefinition, ResponseFormat> result;
             if (responseWrapper.isEmpty()) {
-                result = Either.left(vfModuleArtifact);
+                return Either.left(vfModuleArtifact);
             } else {
-                result = Either.right(responseWrapper.getInnerElement());
+                return Either.right(responseWrapper.getInnerElement());
             }
-            return result;
         }
 
         private void fillVfModuleInstHeatEnvPayload(List<GroupInstance> groupsForCurrVF, Wrapper<String> payloadWrapper) {
@@ -2446,9 +2430,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
 
         private List<GroupInstance> collectGroupsInstanceForCompInstance(ComponentInstance currVF) {
-            Map<String, ArtifactDefinition> deploymentArtifacts = currVF.getDeploymentArtifacts();
             if (currVF.getGroupInstances() != null) {
-                currVF.getGroupInstances().forEach(gi -> gi.alignArtifactsUuid(deploymentArtifacts));
+                currVF.getGroupInstances().forEach(gi -> gi.alignArtifactsUuid(currVF.getDeploymentArtifacts()));
             }
             return currVF.getGroupInstances();
         }
@@ -2471,14 +2454,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             vfModuleArtifactDefinition.setArtifactChecksum(newCheckSum);
             Either<ArtifactDefinition, StorageOperationStatus> addArtifactToComponent = artifactToscaOperation
                 .addArtifactToComponent(vfModuleArtifactDefinition, service, NodeTypeEnum.ResourceInstance, true, currVF.getUniqueId());
-            Either<ArtifactDefinition, ResponseFormat> result;
             if (addArtifactToComponent.isLeft()) {
-                result = Either.left(addArtifactToComponent.left().value());
+                return Either.left(addArtifactToComponent.left().value());
             } else {
-                result = Either
+                return Either
                     .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addArtifactToComponent.right().value())));
             }
-            return result;
         }
 
         private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact,

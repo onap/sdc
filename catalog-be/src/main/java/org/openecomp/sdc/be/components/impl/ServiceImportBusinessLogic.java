@@ -52,6 +52,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.simple.JSONObject;
@@ -1965,7 +1966,7 @@ public class ServiceImportBusinessLogic {
                 .forEach(instanceProperty -> {
                     toscaFunctionService.updateFunctionWithDataFromSelfComponent(instanceProperty.getToscaFunction(),
                         updatedService, instancePropertyMap, instanceAttributeMap);
-                    instanceProperty.setValue(instanceProperty.getToscaFunction().getValue());
+                    instanceProperty.setValue(StringEscapeUtils.unescapeJava(instanceProperty.getToscaFunction().getValue()));
                 })
         );
     }
