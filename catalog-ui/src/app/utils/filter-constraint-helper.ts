@@ -27,11 +27,9 @@ export class FilterConstraintHelper {
     public static buildFilterConstraintLabel(constraint: FilterConstraint): string {
         let value;
         if (ToscaFunctionHelper.isValueToscaFunction(constraint.value)) {
-            console.error(constraint.value);
             const toscaFunction = ToscaFunctionHelper.convertObjectToToscaFunction(constraint.value);
             if (toscaFunction) {
-                value = toscaFunction.value;
-                console.error(value);
+		value = toscaFunction.value === undefined || toscaFunction.value == null ? toscaFunction.buildValueString() : toscaFunction.value
             } else {
                 value = JSON.stringify(constraint.value, null, 4);
             }
