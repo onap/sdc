@@ -59,6 +59,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -1740,7 +1741,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                                                   final Map<String, DataTypeDefinition> dataTypes) {
         if (property.isToscaFunction()) {
             toscaFunctionValidator.validate(property, containerComponent);
-            property.setValue(property.getToscaFunction().getValue());
+            property.setValue(StringEscapeUtils.unescapeJava(property.getToscaFunction().getValue()));
             return Either.left(property.getValue());
         }
         Either<String, JanusGraphOperationStatus> checkInnerType = checkInnerType(property);
