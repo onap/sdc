@@ -712,7 +712,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     private void getAndValidateComponentCsarYaml(Map<String, byte[]> csarUIPayload, Component component, User user, String csarUUID) {
         Either<ImmutablePair<String, String>, ResponseFormat> getToscaYamlRes = CsarValidationUtils
-            .getToscaYaml(csarUIPayload, csarUUID, getComponentsUtils());
+            .getToscaYaml(csarUIPayload, csarUUID, getComponentsUtils(), null);
         if (getToscaYamlRes.isRight()) {
             ResponseFormat responseFormat = getToscaYamlRes.right().value();
             log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);

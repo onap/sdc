@@ -21,14 +21,15 @@ package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.inject.Singleton;
-import javax.ws.rs.Path;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+
+import javax.inject.Singleton;
+import javax.ws.rs.Path;
 
 /**
  * Root service (exposed at "/" path)
@@ -37,7 +38,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 //upload Service model by Shiyong1989@hotmail.com
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/uploadservice")
-@Tags({@Tag(name = "SDCE-2 APIs")})
+@Tag(name = "SDCE-2 APIs")
 @Singleton
 public class ServiceUploadServlet extends AbstractValidationsServlet {
 
@@ -45,46 +46,22 @@ public class ServiceUploadServlet extends AbstractValidationsServlet {
     public static final String CSAR_TYPE_SERVICE = "csar";
     public static final String USER_TYPE_SERVICE = "user-service";
     public static final String USER_TYPE_SERVICE_UI_IMPORT = "user-servcie-ui-import";
-    private static final Logger log = Logger.getLogger(ServiceUploadServlet.class);
 
     public ServiceUploadServlet(ComponentInstanceBusinessLogic componentInstanceBL,
                                 ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
         super(componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum ServiceAuthorityTypeEnum {
-        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_SERVICE, true, false), USER_TYPE_BE(USER_TYPE_SERVICE, true, true), USER_TYPE_UI(USER_TYPE_SERVICE_UI_IMPORT,
-            false, true), CSAR_TYPE_BE(CSAR_TYPE_SERVICE, true, true);
-        private String urlPath;
-        private boolean isBackEndImport, isUserTypeService;
+        NORMATIVE_TYPE_BE(NORMATIVE_TYPE_SERVICE, true, false),
+        USER_TYPE_BE(USER_TYPE_SERVICE, true, true),
+        USER_TYPE_UI(USER_TYPE_SERVICE_UI_IMPORT, false, true),
+        CSAR_TYPE_BE(CSAR_TYPE_SERVICE, true, true);
+        private final String urlPath;
+        private final boolean isBackEndImport;
+        private final boolean isUserTypeService;
 
-        private ServiceAuthorityTypeEnum(String urlPath, boolean isBackEndImport, boolean isUserTypeService) {
-            this.urlPath = urlPath;
-            this.isBackEndImport = isBackEndImport;
-            this.isUserTypeService = isUserTypeService;
-        }
-
-        public static ServiceAuthorityTypeEnum findByUrlPath(String urlPath) {
-            ServiceAuthorityTypeEnum found = null;
-            for (ServiceAuthorityTypeEnum curr : ServiceAuthorityTypeEnum.values()) {
-                if (curr.getUrlPath().equals(urlPath)) {
-                    found = curr;
-                    break;
-                }
-            }
-            return found;
-        }
-
-        public String getUrlPath() {
-            return urlPath;
-        }
-
-        public boolean isBackEndImport() {
-            return isBackEndImport;
-        }
-
-        public boolean isUserTypeService() {
-            return isUserTypeService;
-        }
     }
 }

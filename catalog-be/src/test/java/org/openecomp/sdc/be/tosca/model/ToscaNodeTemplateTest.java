@@ -124,7 +124,7 @@ public class ToscaNodeTemplateTest {
 	@Test
 	public void testGetMetadata() throws Exception {
 		ToscaNodeTemplate testSubject;
-		Map<String, String> result;
+		Map<String, Object> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -135,7 +135,7 @@ public class ToscaNodeTemplateTest {
 	@Test
 	public void testSetMetadata() throws Exception {
 		ToscaNodeTemplate testSubject;
-		Map<String, String> metadata = null;
+		Map<String, Object> metadata = null;
 
 		// default test
 		testSubject = createTestSubject();

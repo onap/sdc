@@ -30,7 +30,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fj.data.Either;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -150,6 +154,7 @@ import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -210,8 +215,9 @@ public class ServiceImportBusinessLogic {
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final CapabilityTypeOperation capabilityTypeOperation;
     private ApplicationDataTypeCache applicationDataTypeCache;
-    private InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
-    private InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
+    private final InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
+    private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
+    private final ModelOperation modelOperation;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -228,7 +234,8 @@ public class ServiceImportBusinessLogic {
                                       final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                       final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
                                       final CapabilityTypeImportManager capabilityTypeImportManager,
-                                      final CapabilityTypeOperation capabilityTypeOperation) {
+                                      final CapabilityTypeOperation capabilityTypeOperation,
+                                      final ModelOperation modelOperation) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -254,6 +261,7 @@ public class ServiceImportBusinessLogic {
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.capabilityTypeOperation = capabilityTypeOperation;
+        this.modelOperation = modelOperation;
     }
 
     @Autowired
@@ -261,14 +269,30 @@ public class ServiceImportBusinessLogic {
         this.applicationDataTypeCache = applicationDataTypeCache;
     }
 
+    public Service updateService(final Service serviceOriginal, final User modifier, final String data) {
+        final Service newService = new Service(serviceOriginal.getComponentMetadataDefinition());
+        newService.setCategories(serviceOriginal.getCategories());
+        newService.setInvariantUUID(serviceOriginal.getInvariantUUID());
+        newService.setUniqueId(serviceOriginal.getUniqueId());
+        newService.setName(serviceOriginal.getName());
+        newService.setUUID(serviceOriginal.getUUID());
+        final Map<String, byte[]> payload = new HashMap<>();
+        final Map<String, String> metadata = (Map<String, String>) new Yaml().loadAs(data, Map.class).get("metadata");
+        payload.put("Definitions/service-" + metadata.get("name") + "-template.yml", data.getBytes());
+        updateServiceMetadata(newService, metadata);
+        return createService(newService, AuditingActionEnum.UPDATE_SERVICE, modifier, payload, null);
+    }
+
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
                                  String payloadName) {
         log.debug("enter createService");
-        service.setCreatorUserId(user.getUserId());
-        service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        service.setVersion(INITIAL_VERSION);
-        service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
-        service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
+        if (AuditingActionEnum.CREATE_SERVICE.equals(auditingAction)) {
+            service.setCreatorUserId(user.getUserId());
+            service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+            service.setVersion(INITIAL_VERSION);
+            service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
+            service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
+        }
         try {
             final var serviceBeforeCreate = serviceBusinessLogic.validateServiceBeforeCreate(service, user, auditingAction);
             if (serviceBeforeCreate.isRight()) {
@@ -276,10 +300,12 @@ public class ServiceImportBusinessLogic {
             }
             log.debug("enter createService,validateServiceBeforeCreate success");
             String csarUUID = payloadName == null ? service.getCsarUUID() : payloadName;
-            log.debug("enter createService,get csarUUID:{}", csarUUID);
-            csarBusinessLogic.validateCsarBeforeCreate(service, csarUUID);
+            if (AuditingActionEnum.CREATE_SERVICE.equals(auditingAction)) {
+                log.debug("enter createService,get csarUUID:{}", csarUUID);
+                csarBusinessLogic.validateCsarBeforeCreate(service, csarUUID);
+            }
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
-            return createServiceFromCsar(service, user, csarUIPayload, csarUUID);
+            return createServiceFromCsar(service, user, csarUIPayload, csarUUID, auditingAction);
         } catch (final ComponentException e) {
             log.debug("Exception occurred when createService: {}", e.getMessage(), e);
             throw e;
@@ -289,16 +315,36 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {
+    private void updateServiceMetadata(final Service service, final Map<String, String> metadata) {
+        metadata.entrySet().forEach(s -> {
+            final Optional<Method> find =
+                    Arrays.stream(service.getClass().getMethods()).filter(method -> method.getName().equalsIgnoreCase("set" + s.getKey())).findAny();
+            if (find.isPresent()) {
+                try {
+                    find.get().invoke(service, s.getValue());
+                } catch (final Exception e) {
+                    log.warn("Unable to set '{}' with value '{}'", s.getKey(), s.getValue());
+                }
+            }
+        });
+    }
+
+    protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID, AuditingActionEnum auditingAction) {
         log.trace("************* created successfully from YAML, resource TOSCA ");
         try {
-            final ServiceCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
+            final ServiceCsarInfo csarInfo;
+            if (AuditingActionEnum.UPDATE_SERVICE.equals(auditingAction)) {
+                csarInfo = new ServiceCsarInfo(user, csarUUID, csarUIPayload, service.getName(), service.getModel(),
+                        csarUIPayload.keySet().iterator().next(), new String(csarUIPayload.values().iterator().next()), true, modelOperation);
+            } else {
+                csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID, auditingAction);
+            }
             final String serviceModel = service.getModel();
             final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), serviceModel, true);
                 dataTypesToCreate.keySet().forEach(key ->
-                    applicationDataTypeCache.reload(serviceModel, UniqueIdBuilder.buildDataTypeUid(serviceModel, key))
+                        applicationDataTypeCache.reload(serviceModel, UniqueIdBuilder.buildDataTypeUid(serviceModel, key))
                 );
             }
 
@@ -325,20 +371,19 @@ public class ServiceImportBusinessLogic {
             }
 
             final Map<String, Object> capabilityTypesToCreate = getCapabilityTypesToCreate(serviceModel, csarInfo);
-
             if (MapUtils.isNotEmpty(capabilityTypesToCreate)) {
                 capabilityTypeImportManager.createCapabilityTypes(new Yaml().dump(capabilityTypesToCreate), serviceModel, true);
             }
 
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes
-                = serviceImportParseLogic.findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
+                    = serviceImportParseLogic.findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
             if (findNodeTypesArtifactsToHandleRes.isRight()) {
                 log.debug("failed to find node types for update with artifacts during import csar {}. ", csarInfo.getCsarUUID());
                 throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
             }
             return createServiceFromYaml(service, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(), nodeTypesInfo, csarInfo,
-                findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId());
+                    findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId(), auditingAction);
         } catch (final ComponentException e) {
             log.debug("Exception occurred when createServiceFromCsar,error is:{}", e.getMessage(), e);
             throw e;
@@ -366,7 +411,7 @@ public class ServiceImportBusinessLogic {
 
     private String getIconFromGroupType(final Object value) {
         final Either<GroupTypeDefinition, StorageOperationStatus> groupType = groupTypeOperation.getLatestGroupTypeByType(
-            (String) ((LinkedHashMap) value).get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()), null);
+                (String) ((LinkedHashMap) value).get(ToscaTagNamesEnum.DERIVED_FROM.getElementName()), null);
         if (groupType.isLeft()) {
             return groupType.left().value().getIcon();
         }
@@ -379,7 +424,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(groupTypes)) {
             for (final Entry<String, Object> entry : groupTypes.entrySet()) {
                 final Either<GroupTypeDefinition, StorageOperationStatus> result
-                    = groupTypeOperation.getGroupTypeByUid(UniqueIdBuilder.buildGroupTypeUid(model, entry.getKey(), "1.0"));
+                        = groupTypeOperation.getGroupTypeByUid(UniqueIdBuilder.buildGroupTypeUid(model, entry.getKey(), "1.0"));
                 if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                     groupTypesToCreate.put(entry.getKey(), entry.getValue());
                     log.info("Deploying new group type {} to model {} from package {}", entry.getKey(), model, csarInfo.getCsarUUID());
@@ -395,7 +440,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(capabilityTypes)) {
             for (final Entry<String, Object> entry : capabilityTypes.entrySet()) {
                 final Either<CapabilityTypeDefinition, StorageOperationStatus> result
-                    = capabilityTypeOperation.getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(model, entry.getKey()));
+                        = capabilityTypeOperation.getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(model, entry.getKey()));
                 if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                     capabilityTypesToCreate.put(entry.getKey(), entry.getValue());
                     log.info("Deploying new capability type {} to model {} from package {}", entry.getKey(), model, csarInfo.getCsarUUID());
@@ -410,7 +455,7 @@ public class ServiceImportBusinessLogic {
 
         for (final Entry<String, Object> dataTypeEntry : csarInfo.getDataTypes().entrySet()) {
             final Either<DataTypeDefinition, JanusGraphOperationStatus> result = applicationDataTypeCache.get(model,
-                UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
+                    UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
             if (result.isRight() && result.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
                 log.info("Deploying unknown type {} to model {} from package {}", dataTypeEntry.getKey(), model, csarInfo.getCsarUUID());
@@ -429,11 +474,11 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(artifactTypesMap)) {
             for (final Entry<String, Object> artifactTypeEntry : artifactTypesMap.entrySet()) {
                 final Either<ArtifactTypeDefinition, StorageOperationStatus> result =
-                    artifactTypeOperation.getArtifactTypeByUid(UniqueIdBuilder.buildArtifactTypeUid(model, artifactTypeEntry.getKey()));
+                        artifactTypeOperation.getArtifactTypeByUid(UniqueIdBuilder.buildArtifactTypeUid(model, artifactTypeEntry.getKey()));
                 if (result.isRight() && StorageOperationStatus.NOT_FOUND.equals(result.right().value())) {
                     artifactTypesToCreate.put(artifactTypeEntry.getKey(), artifactTypeEntry.getValue());
                     log.info("Deploying new artifact type={}, to model={}, from package={}",
-                        artifactTypeEntry.getKey(), model, csarInfo.getCsarUUID());
+                            artifactTypeEntry.getKey(), model, csarInfo.getCsarUUID());
                 }
             }
         }
@@ -446,7 +491,7 @@ public class ServiceImportBusinessLogic {
 
         interfacetypeMap.entrySet().forEach(interfacetypeDef -> {
             Either<InterfaceDefinition, StorageOperationStatus> interfaceDefinition =
-                interfaceLifecycleTypeOperation.getInterface(UniqueIdBuilder.buildInterfaceTypeUid(model, interfacetypeDef.getKey()));
+                    interfaceLifecycleTypeOperation.getInterface(UniqueIdBuilder.buildInterfaceTypeUid(model, interfacetypeDef.getKey()));
             if (interfaceDefinition.isRight() && interfaceDefinition.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 interfaceTypesToCreate.put(interfacetypeDef.getKey(), interfacetypeDef.getValue());
             }
@@ -457,7 +502,7 @@ public class ServiceImportBusinessLogic {
     private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result,
                                      final Map<String, Map<String, Object>> dataType) {
         return result.isLeft() && dataType.containsKey("properties") && result.left().value().getProperties() != null
-            && result.left().value().getProperties().size() != dataType.get("properties").size();
+                && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
 
     private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, String model, User user) {
@@ -477,16 +522,16 @@ public class ServiceImportBusinessLogic {
 
         for (final NodeTypeDefinition nodeTypeDefinition : csarInfo.getNodeTypesUsed()) {
             Either<Component, StorageOperationStatus> result = toscaOperationFacade
-                .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
+                    .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
             if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 namesOfNodeTypesToCreate.add(nodeTypeDefinition);
             } else if (result.isLeft()) {
                 Resource latestResource = (Resource) result.left().value();
                 Entry<String, Object> existingMappedToscaTemplate = getResourceToscaTemplate(latestResource.getUniqueId(),
-                    latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
+                        latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
                 Map<String, Object> newMappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
                 Map<String, Object> combinedMappedToscaTemplate =
-                    getNewChangesToToscaTemplate(newMappedToscaTemplate, (Map<String, Object>) existingMappedToscaTemplate.getValue());
+                        getNewChangesToToscaTemplate(newMappedToscaTemplate, (Map<String, Object>) existingMappedToscaTemplate.getValue());
                 if (!combinedMappedToscaTemplate.equals(existingMappedToscaTemplate.getValue())) {
                     if (latestResource.getComponentMetadataDefinition().getMetadataDataDefinition().isNormative()) {
                         nodeTypeDefinition.getNodeTypeMetadata().setNormative(true);
@@ -503,10 +548,10 @@ public class ServiceImportBusinessLogic {
     private Entry<String, Object> getResourceToscaTemplate(String uniqueId, ArtifactDefinition assetToscaTemplate, String userId) {
         String assetToToscaTemplate = assetToscaTemplate.getUniqueId();
         ImmutablePair<String, byte[]> toscaTemplate = artifactsBusinessLogic.
-            handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
+                handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
         Map<String, Object> mappedToscaTemplate = new Yaml().load(new String(toscaTemplate.right));
         Either<Map<String, Object>, ImportUtils.ResultStatusEnum> eitherNodeTypes =
-            findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+                findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (eitherNodeTypes.isRight()) {
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
@@ -517,15 +562,15 @@ public class ServiceImportBusinessLogic {
                                                              Map<String, Object> existingMappedToscaTemplate) {
         Map<String, Object> combinedMappedToscaTemplate = new HashMap<>(existingMappedToscaTemplate);
         combinePropertiesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("properties"),
-            (Map<String, Object>) existingMappedToscaTemplate.get("properties"), combinedMappedToscaTemplate);
+                (Map<String, Object>) existingMappedToscaTemplate.get("properties"), combinedMappedToscaTemplate);
         combineAttributesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("attributes"),
-            (Map<String, Object>) existingMappedToscaTemplate.get("attributes"), combinedMappedToscaTemplate);
+                (Map<String, Object>) existingMappedToscaTemplate.get("attributes"), combinedMappedToscaTemplate);
         combineRequirementsIntoToscaTemplate((List<Map<String, Object>>) newMappedToscaTemplate.get("requirements"),
-            (List<Map<String, Object>>) existingMappedToscaTemplate.get("requirements"), combinedMappedToscaTemplate);
+                (List<Map<String, Object>>) existingMappedToscaTemplate.get("requirements"), combinedMappedToscaTemplate);
         combineCapabilitiesIntoToscaTemplate((Map<String, Object>) newMappedToscaTemplate.get("capabilities"),
-            (Map<String, Object>) existingMappedToscaTemplate.get("capabilities"), combinedMappedToscaTemplate);
+                (Map<String, Object>) existingMappedToscaTemplate.get("capabilities"), combinedMappedToscaTemplate);
         combineInterfacesIntoToscaTemplate((Map<String, Map<String, Object>>) newMappedToscaTemplate.get("interfaces"),
-            (Map<String, Map<String, Object>>) existingMappedToscaTemplate.get("interfaces"), combinedMappedToscaTemplate);
+                (Map<String, Map<String, Object>>) existingMappedToscaTemplate.get("interfaces"), combinedMappedToscaTemplate);
         return combinedMappedToscaTemplate;
     }
 
@@ -534,7 +579,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Map<String, Object>> combinedInterfaces = combineAdditionalInterfaces(existingInterfaces, newInterfaces);
         if ((MapUtils.isEmpty(existingInterfaces) && MapUtils.isNotEmpty(combinedInterfaces))
-            || (MapUtils.isNotEmpty(existingInterfaces) && !existingInterfaces.equals(combinedInterfaces))) {
+                || (MapUtils.isNotEmpty(existingInterfaces) && !existingInterfaces.equals(combinedInterfaces))) {
             combinedMappedToscaTemplate.put("interfaces", combinedInterfaces);
         }
     }
@@ -543,7 +588,7 @@ public class ServiceImportBusinessLogic {
                                                       Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedCapabilities = combineEntries(newCapabilities, existingCapabilities);
         if ((MapUtils.isEmpty(existingCapabilities) && MapUtils.isNotEmpty(combinedCapabilities)) ||
-            (MapUtils.isNotEmpty(existingCapabilities) && !combinedCapabilities.equals(existingCapabilities))) {
+                (MapUtils.isNotEmpty(existingCapabilities) && !combinedCapabilities.equals(existingCapabilities))) {
             combinedMappedToscaTemplate.put("capabilities", combinedCapabilities);
         }
     }
@@ -552,7 +597,7 @@ public class ServiceImportBusinessLogic {
                                                       Map<String, Object> combinedMappedToscaTemplate) {
         List<Map<String, Object>> combinedRequirements = combineAdditionalRequirements(newRequirements, existingRequirements);
         if ((CollectionUtils.isEmpty(existingRequirements) && CollectionUtils.isNotEmpty(combinedRequirements))
-            || (CollectionUtils.isNotEmpty(existingRequirements) && !combinedRequirements.equals(existingRequirements))) {
+                || (CollectionUtils.isNotEmpty(existingRequirements) && !combinedRequirements.equals(existingRequirements))) {
             combinedMappedToscaTemplate.put("requirements", combinedRequirements);
         }
     }
@@ -561,7 +606,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedAttributes = combineEntries(newAttributes, existingAttributes);
         if ((MapUtils.isEmpty(existingAttributes) && MapUtils.isNotEmpty(combinedAttributes)) ||
-            (MapUtils.isNotEmpty(existingAttributes) && !combinedAttributes.equals(existingAttributes))) {
+                (MapUtils.isNotEmpty(existingAttributes) && !combinedAttributes.equals(existingAttributes))) {
             combinedMappedToscaTemplate.put("attributes", combinedAttributes);
         }
     }
@@ -570,7 +615,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, Object> combinedMappedToscaTemplate) {
         Map<String, Object> combinedProperties = combineEntries(newProperties, existingProperties);
         if ((MapUtils.isEmpty(existingProperties) && MapUtils.isNotEmpty(combinedProperties)) ||
-            (MapUtils.isNotEmpty(existingProperties) && !combinedProperties.equals(existingProperties))) {
+                (MapUtils.isNotEmpty(existingProperties) && !combinedProperties.equals(existingProperties))) {
             combinedMappedToscaTemplate.put("properties", combinedProperties);
         }
     }
@@ -586,11 +631,11 @@ public class ServiceImportBusinessLogic {
         }
         existingInterfaces.entrySet().forEach(interfaceDef -> {
             combinedEntries.entrySet().stream().filter((interFace) -> interFace.getValue().get("type").equals((interfaceDef.getValue()).get("type")))
-                .findFirst().ifPresentOrElse((interFace) -> {
-                    interFace.getValue().putAll(interfaceDef.getValue());
-                }, () -> {
-                    combinedEntries.put(interfaceDef.getKey(), interfaceDef.getValue());
-                });
+                    .findFirst().ifPresentOrElse((interFace) -> {
+                        interFace.getValue().putAll(interfaceDef.getValue());
+                    }, () -> {
+                        combinedEntries.put(interfaceDef.getKey(), interfaceDef.getValue());
+                    });
         });
         return combinedEntries;
     }
@@ -601,7 +646,7 @@ public class ServiceImportBusinessLogic {
             existingResourceReqs = new ArrayList<>();
         }
         Set<Map<String, Object>> combinedReqs = new TreeSet<>((map1, map2) ->
-            map1.keySet().equals(map2.keySet()) ? 0 : map1.keySet().iterator().next().compareTo(map2.keySet().iterator().next()));
+                map1.keySet().equals(map2.keySet()) ? 0 : map1.keySet().iterator().next().compareTo(map2.keySet().iterator().next()));
         combinedReqs.addAll(existingResourceReqs);
         if (CollectionUtils.isEmpty(newReqs)) {
             return new ArrayList<>(combinedReqs);
@@ -624,15 +669,15 @@ public class ServiceImportBusinessLogic {
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
                                             CsarInfo csarInfo,
-                                            Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                            boolean shouldLock, boolean inTransaction, String nodeName, final String userId)
-        throws BusinessLogicException {
+                                            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                            boolean shouldLock, boolean inTransaction, String nodeName, final String userId, AuditingActionEnum auditingAction)
+            throws BusinessLogicException {
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         Service createdService;
         CreateServiceFromYamlParameter csfyp = new CreateServiceFromYamlParameter();
         try {
             ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic
-                .getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, service);
+                    .getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, service);
             log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", service.getName());
             csfyp.setYamlName(yamlName);
             csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
@@ -641,7 +686,7 @@ public class ServiceImportBusinessLogic {
             csfyp.setNodeTypesInfo(nodeTypesInfo);
             csfyp.setCsarInfo(csarInfo);
             csfyp.setNodeName(nodeName);
-            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp, userId);
+            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp, userId, auditingAction);
             log.debug("#createResourceFromYaml - The resource {} has been created ", service.getName());
         } catch (ComponentException | BusinessLogicException e) {
             log.debug("Create Service from yaml failed", e);
@@ -654,10 +699,10 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Service createServiceAndRIsFromYaml(Service service, boolean isNormative,
-                                                  Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                                  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
                                                   boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp,
-                                                  final String userId)
-        throws BusinessLogicException {
+                                                  final String userId, AuditingActionEnum auditingAction)
+            throws BusinessLogicException {
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
         String yamlName = csfyp.getYamlName();
         ParsedToscaYamlInfo parsedToscaYamlInfo = csfyp.getParsedToscaYamlInfo();
@@ -687,19 +732,19 @@ public class ServiceImportBusinessLogic {
                 service.setProperties(propertiesList);
             }
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative);
+            service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative, auditingAction);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finished to add inputs from yaml {}", yamlName);
             ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties =
-                parsedToscaYamlInfo.getSubstitutionFilterProperties();
+                    parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
             log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
             service = createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap, topologyTemplateYaml,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
+                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
             log.trace("************* Going to add outputs from yaml {}", yamlName);
             Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
@@ -707,7 +752,7 @@ public class ServiceImportBusinessLogic {
             log.trace("************* Finished to add outputs from yaml {}", yamlName);
 
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes
-                = groupBusinessLogic.validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), service.getSystemName());
+                    = groupBusinessLogic.validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), service.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
@@ -735,7 +780,7 @@ public class ServiceImportBusinessLogic {
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
             NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
             Either<Service, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
-                createdArtifacts, yamlName, csarInfo, service, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
+                    createdArtifacts, yamlName, csarInfo, service, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createArtifactsEither.right().value());
@@ -772,7 +817,7 @@ public class ServiceImportBusinessLogic {
                 boolean isSubMapProp = false;
                 if (substitutionMappingProperties != null && !substitutionMappingProperties.isEmpty()) {
                     isSubMapProp = substitutionMappingProperties.entrySet().stream()
-                        .anyMatch(stringEntry -> stringEntry.getValue().get(0).equals(input.getName()));
+                            .anyMatch(stringEntry -> stringEntry.getValue().get(0).equals(input.getName()));
                 }
                 if (!isSubMapProp && isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentUniqueId);
@@ -839,8 +884,8 @@ public class ServiceImportBusinessLogic {
         updateInput(input, componentInstanceProperty, userId, componentInstanceId);
 
         final Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> either =
-            toscaOperationFacade.updateComponentInstancePropsToComponent(Collections.singletonMap(componentInstanceId,
-                Collections.singletonList(componentInstanceProperty)), componentUniqueId);
+                toscaOperationFacade.updateComponentInstancePropsToComponent(Collections.singletonMap(componentInstanceId,
+                        Collections.singletonList(componentInstanceProperty)), componentUniqueId);
         if (either.isRight()) {
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -859,8 +904,8 @@ public class ServiceImportBusinessLogic {
             });
 
             final Optional<PropertyDefinition> propDefOptional =
-                properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
-                    .findFirst();
+                    properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
+                            .findFirst();
             if (propDefOptional.isPresent()) {
                 // From SELF
                 final String componentUniqueId = component.getUniqueId();
@@ -872,7 +917,7 @@ public class ServiceImportBusinessLogic {
                 updateInput(input, propertyDefinition, userId, componentUniqueId);
 
                 final Either<PropertyDefinition, StorageOperationStatus> either
-                    = toscaOperationFacade.updatePropertyOfComponent(component, propertyDefinition);
+                        = toscaOperationFacade.updatePropertyOfComponent(component, propertyDefinition);
                 if (either.isRight()) {
                     throw new ComponentException(ActionStatus.GENERAL_ERROR);
                 }
@@ -908,19 +953,19 @@ public class ServiceImportBusinessLogic {
         String nodeName = nodeTypeInfoToUpdateArtifacts.getNodeName();
         Resource resource = preparedResource;
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle =
-            nodeTypeInfoToUpdateArtifacts
-                .getNodeTypesArtifactsToHandle();
+                nodeTypeInfoToUpdateArtifacts
+                        .getNodeTypesArtifactsToHandle();
         if (preparedResource.getResourceType() == ResourceTypeEnum.VF) {
             if (nodeName != null && nodeTypesArtifactsToHandle.get(nodeName) != null && !nodeTypesArtifactsToHandle.get(nodeName).isEmpty()) {
                 Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = handleNodeTypeArtifacts(preparedResource,
-                    nodeTypesArtifactsToHandle.get(nodeName), createdArtifacts, csarInfo.getModifier(), inTransaction, true);
+                        nodeTypesArtifactsToHandle.get(nodeName), createdArtifacts, csarInfo.getModifier(), inTransaction, true);
                 if (handleNodeTypeArtifactsRes.isRight()) {
                     return Either.right(handleNodeTypeArtifactsRes.right().value());
                 }
             }
         } else {
             Either<Resource, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedResource, csarInfo, createdArtifacts,
-                new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);
+                    new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);
             log.trace("************* Finished to add artifacts from yaml {}", yamlFileName);
             if (createdCsarArtifactsEither.isRight()) {
                 return createdCsarArtifactsEither;
@@ -936,22 +981,22 @@ public class ServiceImportBusinessLogic {
         if (csarInfo.getCsar() != null) {
             createOrUpdateSingleNonMetaArtifactToComstants(resource, csarInfo, artifactOperation, shouldLock, inTransaction);
             Either<Resource, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(csarInfo, resource, createdArtifacts, shouldLock,
-                inTransaction, artifactOperation);
+                    inTransaction, artifactOperation);
             if (eitherCreateResult.isRight()) {
                 return Either.right(eitherCreateResult.right().value());
             }
             Either<Resource, StorageOperationStatus> eitherGerResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
             if (eitherGerResource.isRight()) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), resource);
+                        .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), resource);
                 return Either.right(responseFormat);
             }
             resource = eitherGerResource.left().value();
             Either<ImmutablePair<String, String>, ResponseFormat> artifacsMetaCsarStatus = CsarValidationUtils
-                .getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
+                    .getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
             if (artifacsMetaCsarStatus.isLeft()) {
                 return getResourceResponseFormatEither(resource, csarInfo, createdArtifacts, artifactOperation, shouldLock, inTransaction,
-                    artifacsMetaCsarStatus);
+                        artifacsMetaCsarStatus);
             } else {
                 return csarArtifactsAndGroupsBusinessLogic.deleteVFModules(resource, csarInfo, shouldLock, inTransaction);
             }
@@ -977,12 +1022,12 @@ public class ServiceImportBusinessLogic {
             }
         }
         createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VENDOR_LICENSE_MODEL,
-            Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
-            Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId,
-            artifactOperation, null, true, shouldLock, inTransaction);
+                Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
+                Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId,
+                artifactOperation, null, true, shouldLock, inTransaction);
         createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL,
-            ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL, Constants.VF_LICENSE_DISPLAY_NAME,
-            Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, true, shouldLock, inTransaction);
+                ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL, Constants.VF_LICENSE_DISPLAY_NAME,
+                Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, true, shouldLock, inTransaction);
     }
 
     private Either<Resource, ResponseFormat> getResourceResponseFormatEither(Resource resource, CsarInfo csarInfo,
@@ -996,11 +1041,11 @@ public class ServiceImportBusinessLogic {
             Either<Resource, ResponseFormat> createArtifactsFromCsar;
             if (ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
                 createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic
-                    .createResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts);
+                        .createResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts);
             } else {
                 Either<Component, ResponseFormat> result = csarArtifactsAndGroupsBusinessLogic
-                    .updateResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
-                        inTransaction);
+                        .updateResourceArtifactsFromCsar(csarInfo, resource, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
+                                inTransaction);
                 if ((result.left().value() instanceof Resource) && result.isLeft()) {
                     Resource service1 = (Resource) result.left().value();
                     createArtifactsFromCsar = Either.left(service1);
@@ -1029,7 +1074,7 @@ public class ServiceImportBusinessLogic {
             Either<List<CsarUtils.NonMetaArtifactInfo>, String> artifactPathAndNameList = getValidArtifactNames(csarInfo, collectedWarningMessages);
             if (artifactPathAndNameList.isRight()) {
                 return Either.right(
-                    getComponentsUtils().getResponseFormatByArtifactId(ActionStatus.ARTIFACT_NAME_INVALID, artifactPathAndNameList.right().value()));
+                        getComponentsUtils().getResponseFormatByArtifactId(ActionStatus.ARTIFACT_NAME_INVALID, artifactPathAndNameList.right().value()));
             }
             EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>> vfCsarArtifactsToHandle = null;
             if (ArtifactsBusinessLogic.ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
@@ -1037,8 +1082,8 @@ public class ServiceImportBusinessLogic {
                 vfCsarArtifactsToHandle.put(artifactOperation.getArtifactOperationEnum(), artifactPathAndNameList.left().value());
             } else {
                 Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat>
-                    findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(
-                    component, artifactPathAndNameList.left().value(), csarInfo.getModifier());
+                        findVfCsarArtifactsToHandleRes = findVfCsarArtifactsToHandle(
+                        component, artifactPathAndNameList.left().value(), csarInfo.getModifier());
                 if (findVfCsarArtifactsToHandleRes.isRight()) {
                     resStatus = Either.right(findVfCsarArtifactsToHandleRes.right().value());
                 }
@@ -1048,7 +1093,7 @@ public class ServiceImportBusinessLogic {
             }
             if (resStatus == null && vfCsarArtifactsToHandle != null) {
                 resStatus = processCsarArtifacts(csarInfo, component, createdArtifacts, shouldLock, inTransaction, resStatus,
-                    vfCsarArtifactsToHandle);
+                        vfCsarArtifactsToHandle);
             }
             if (resStatus == null) {
                 resStatus = Either.left(component);
@@ -1073,12 +1118,12 @@ public class ServiceImportBusinessLogic {
                                                                                    boolean inTransaction, Either<T, ResponseFormat> resStatus,
                                                                                    EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>> vfCsarArtifactsToHandle) {
         for (Map.Entry<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>> currArtifactOperationPair : vfCsarArtifactsToHandle
-            .entrySet()) {
+                .entrySet()) {
             Optional<ResponseFormat> optionalCreateInDBError = currArtifactOperationPair.getValue().stream().map(
-                e -> createOrUpdateSingleNonMetaArtifact(comp, csarInfo, e.getPath(), e.getArtifactName(), e.getArtifactType(),
-                    e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(), CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
-                    new ArtifactOperationInfo(false, false, currArtifactOperationPair.getKey()), createdArtifacts, e.isFromCsar(), shouldLock,
-                    inTransaction)).filter(Either::isRight).map(e -> e.right().value()).findAny();
+                    e -> createOrUpdateSingleNonMetaArtifact(comp, csarInfo, e.getPath(), e.getArtifactName(), e.getArtifactType(),
+                            e.getArtifactGroupType(), e.getArtifactLabel(), e.getDisplayName(), CsarUtils.ARTIFACT_CREATED_FROM_CSAR, e.getArtifactUniqueId(),
+                            new ArtifactOperationInfo(false, false, currArtifactOperationPair.getKey()), createdArtifacts, e.isFromCsar(), shouldLock,
+                            inTransaction)).filter(Either::isRight).map(e -> e.right().value()).findAny();
             if (optionalCreateInDBError.isPresent()) {
                 resStatus = Either.right(optionalCreateInDBError.get());
                 break;
@@ -1100,10 +1145,10 @@ public class ServiceImportBusinessLogic {
         }
         Either<Boolean, ResponseFormat> result = Either.left(true);
         if (operation.getArtifactOperationEnum() == ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE
-            || operation.getArtifactOperationEnum() == ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE) {
+                || operation.getArtifactOperationEnum() == ArtifactsBusinessLogic.ArtifactOperationEnum.DELETE) {
             if (serviceImportParseLogic.isArtifactDeletionRequired(artifactId, artifactFileBytes, isFromCsar)) {
                 Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic
-                    .handleDelete(component.getUniqueId(), artifactId, csarInfo.getModifier(), component, shouldLock, inTransaction);
+                        .handleDelete(component.getUniqueId(), artifactId, csarInfo.getModifier(), component, shouldLock, inTransaction);
                 if (handleDelete.isRight()) {
                     result = Either.right(handleDelete.right().value());
                 }
@@ -1115,15 +1160,15 @@ public class ServiceImportBusinessLogic {
         }
         if (artifactFileBytes != null) {
             Map<String, Object> vendorLicenseModelJson = ArtifactUtils
-                .buildJsonForUpdateArtifact(artifactId, artifactFileName, artifactType, artifactGroupType, artifactLabel, artifactDisplayName,
-                    artifactDescription, artifactFileBytes, null, isFromCsar);
+                    .buildJsonForUpdateArtifact(artifactId, artifactFileName, artifactType, artifactGroupType, artifactLabel, artifactDisplayName,
+                            artifactDescription, artifactFileBytes, null, isFromCsar);
             Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherNonMetaArtifacts = csarArtifactsAndGroupsBusinessLogic
-                .createOrUpdateCsarArtifactFromJson(component, csarInfo.getModifier(), vendorLicenseModelJson, operation);
+                    .createOrUpdateCsarArtifactFromJson(component, csarInfo.getModifier(), vendorLicenseModelJson, operation);
             serviceImportParseLogic.addNonMetaCreatedArtifactsToSupportRollback(operation, createdArtifacts, eitherNonMetaArtifacts);
             if (eitherNonMetaArtifacts.isRight()) {
                 BeEcompErrorManager.getInstance().logInternalFlowError("UploadLicenseArtifact",
-                    "Failed to upload license artifact: " + artifactFileName + "With csar uuid: " + csarInfo.getCsarUUID(),
-                    BeEcompErrorManager.ErrorSeverity.WARNING);
+                        "Failed to upload license artifact: " + artifactFileName + "With csar uuid: " + csarInfo.getCsarUUID(),
+                        BeEcompErrorManager.ErrorSeverity.WARNING);
                 return Either.right(eitherNonMetaArtifacts.right().value());
             }
         }
@@ -1146,14 +1191,14 @@ public class ServiceImportBusinessLogic {
             List<ArtifactDefinition> handledNodeTypeArtifacts = new ArrayList<>();
             log.debug("************* Going to handle artifacts of node type resource {}. ", nodeTypeResource.getName());
             for (Map.Entry<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> curOperationEntry : nodeTypeArtifactsToHandle
-                .entrySet()) {
+                    .entrySet()) {
                 ArtifactsBusinessLogic.ArtifactOperationEnum curOperation = curOperationEntry.getKey();
                 List<ArtifactDefinition> curArtifactsToHandle = curOperationEntry.getValue();
                 if (curArtifactsToHandle != null && !curArtifactsToHandle.isEmpty()) {
                     log.debug("************* Going to {} artifact to vfc {}", curOperation.name(), nodeTypeResource.getName());
                     handleNodeTypeArtifactsRequestRes = artifactsBusinessLogic
-                        .handleArtifactsRequestForInnerVfcComponent(curArtifactsToHandle, nodeTypeResource, user, createdArtifacts,
-                            new ArtifactOperationInfo(false, ignoreLifecycleState, curOperation), false, inTransaction);
+                            .handleArtifactsRequestForInnerVfcComponent(curArtifactsToHandle, nodeTypeResource, user, createdArtifacts,
+                                    new ArtifactOperationInfo(false, ignoreLifecycleState, curOperation), false, inTransaction);
                     if (ArtifactsBusinessLogic.ArtifactOperationEnum.isCreateOrLink(curOperation)) {
                         createdArtifacts.addAll(handleNodeTypeArtifactsRequestRes);
                     }
@@ -1173,11 +1218,11 @@ public class ServiceImportBusinessLogic {
         Either<Resource, ResponseFormat> checkoutResourceRes;
         try {
             if (!resource.getComponentMetadataDefinition().getMetadataDataDefinition().getState()
-                .equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
+                    .equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
                 Either<? extends Component, ResponseFormat> checkoutRes = lifecycleBusinessLogic
-                    .changeComponentState(resource.getComponentType(), resource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
-                        new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
-                            LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR), inTransaction, true);
+                        .changeComponentState(resource.getComponentType(), resource.getUniqueId(), user, LifeCycleTransitionEnum.CHECKOUT,
+                                new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
+                                        LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR), inTransaction, true);
                 if (checkoutRes.isRight()) {
                     checkoutResourceRes = Either.right(checkoutRes.right().value());
                 } else {
@@ -1199,7 +1244,7 @@ public class ServiceImportBusinessLogic {
                                                                       NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts,
                                                                       boolean inTransaction, boolean shouldLock) {
         Either<Service, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedService, csarInfo, createdArtifacts,
-            new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);
+                new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);
         log.trace("************* Finished to add artifacts from yaml {}", yamlFileName);
         if (createdCsarArtifactsEither.isRight()) {
             return createdCsarArtifactsEither;
@@ -1227,39 +1272,39 @@ public class ServiceImportBusinessLogic {
                 }
             }
             createOrUpdateSingleNonMetaArtifact(service, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VENDOR_LICENSE_MODEL,
-                Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
-                Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId,
-                artifactOperation, null, true, shouldLock, inTransaction);
+                    Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
+                    Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId,
+                    artifactOperation, null, true, shouldLock, inTransaction);
             createOrUpdateSingleNonMetaArtifact(service, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL,
-                ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL,
-                Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, true, shouldLock,
-                inTransaction);
+                    ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL,
+                    Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, true, shouldLock,
+                    inTransaction);
             Either<Service, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(csarInfo, service, createdArtifacts, shouldLock,
-                inTransaction, artifactOperation);
+                    inTransaction, artifactOperation);
             if (eitherCreateResult.isRight()) {
                 return Either.right(eitherCreateResult.right().value());
             }
             Either<Service, StorageOperationStatus> eitherGerResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
             if (eitherGerResource.isRight()) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), service,
-                        ComponentTypeEnum.SERVICE);
+                        .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGerResource.right().value()), service,
+                                ComponentTypeEnum.SERVICE);
                 return Either.right(responseFormat);
             }
             service = eitherGerResource.left().value();
             Either<ImmutablePair<String, String>, ResponseFormat> artifacsMetaCsarStatus = CsarValidationUtils
-                .getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
+                    .getArtifactsMeta(csarInfo.getCsar(), csarInfo.getCsarUUID(), componentsUtils);
             if (artifacsMetaCsarStatus.isLeft()) {
                 String artifactsFileName = artifacsMetaCsarStatus.left().value().getKey();
                 String artifactsContents = artifacsMetaCsarStatus.left().value().getValue();
                 Either<Service, ResponseFormat> createArtifactsFromCsar;
                 if (ArtifactsBusinessLogic.ArtifactOperationEnum.isCreateOrLink(artifactOperation.getArtifactOperationEnum())) {
                     createArtifactsFromCsar = csarArtifactsAndGroupsBusinessLogic
-                        .createResourceArtifactsFromCsar(csarInfo, service, artifactsContents, artifactsFileName, createdArtifacts);
+                            .createResourceArtifactsFromCsar(csarInfo, service, artifactsContents, artifactsFileName, createdArtifacts);
                 } else {
                     Either<Component, ResponseFormat> result = csarArtifactsAndGroupsBusinessLogic
-                        .updateResourceArtifactsFromCsar(csarInfo, service, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
-                            inTransaction);
+                            .updateResourceArtifactsFromCsar(csarInfo, service, artifactsContents, artifactsFileName, createdArtifacts, shouldLock,
+                                    inTransaction);
                     if ((result.left().value() instanceof Service) && result.isLeft()) {
                         Service service1 = (Service) result.left().value();
                         createArtifactsFromCsar = Either.left(service1);
@@ -1286,7 +1331,7 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandle(
-        Component component, List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList, User user) {
+            Component component, List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList, User user) {
         List<ArtifactDefinition> existingArtifacts = new ArrayList<>();
         if (component.getDeploymentArtifacts() != null && !component.getDeploymentArtifacts().isEmpty()) {
             existingArtifacts.addAll(component.getDeploymentArtifacts().values());
@@ -1318,19 +1363,19 @@ public class ServiceImportBusinessLogic {
     private boolean isValidArtifactType(ArtifactDefinition artifact) {
         final String artifactType = artifact.getArtifactType();
         return artifactType != null
-            && !ArtifactTypeEnum.VENDOR_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType))
-            && !ArtifactTypeEnum.VF_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType));
+                && !ArtifactTypeEnum.VENDOR_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType))
+                && !ArtifactTypeEnum.VF_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType));
     }
 
     protected Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> organizeVfCsarArtifactsByArtifactOperation(
-        List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList, List<ArtifactDefinition> existingArtifactsToHandle, Component component,
-        User user) {
+            List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList, List<ArtifactDefinition> existingArtifactsToHandle, Component component,
+            User user) {
         EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>> nodeTypeArtifactsToHandle = new EnumMap<>(
-            ArtifactsBusinessLogic.ArtifactOperationEnum.class);
+                ArtifactsBusinessLogic.ArtifactOperationEnum.class);
         Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
         Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat>
-            nodeTypeArtifactsToHandleRes = Either
-            .left(nodeTypeArtifactsToHandle);
+                nodeTypeArtifactsToHandleRes = Either
+                .left(nodeTypeArtifactsToHandle);
         try {
             List<CsarUtils.NonMetaArtifactInfo> artifactsToUpload = new ArrayList<>(artifactPathAndNameList);
             List<CsarUtils.NonMetaArtifactInfo> artifactsToUpdate = new ArrayList<>();
@@ -1339,7 +1384,7 @@ public class ServiceImportBusinessLogic {
                 ArtifactDefinition foundArtifact;
                 if (!existingArtifactsToHandle.isEmpty()) {
                     foundArtifact = existingArtifactsToHandle.stream().filter(a -> a.getArtifactName().equals(currNewArtifact.getArtifactName()))
-                        .findFirst().orElse(null);
+                            .findFirst().orElse(null);
                     if (foundArtifact != null) {
                         if (ArtifactTypeEnum.findType(foundArtifact.getArtifactType()).equals(currNewArtifact.getArtifactType())) {
                             if (!foundArtifact.getArtifactChecksum().equals(currNewArtifact.getArtifactChecksum())) {
@@ -1351,13 +1396,13 @@ public class ServiceImportBusinessLogic {
                         } else {
                             log.debug("Can't upload two artifact with the same name {}.", currNewArtifact.getArtifactName());
                             ResponseFormat responseFormat = ResponseFormatManager.getInstance()
-                                .getResponseFormat(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, currNewArtifact.getArtifactName(),
-                                    currNewArtifact.getArtifactType(), foundArtifact.getArtifactType());
+                                    .getResponseFormat(ActionStatus.ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR, currNewArtifact.getArtifactName(),
+                                            currNewArtifact.getArtifactType(), foundArtifact.getArtifactType());
                             AuditingActionEnum auditingAction = artifactsBusinessLogic.detectAuditingType(
-                                new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE),
-                                foundArtifact.getArtifactChecksum());
+                                    new ArtifactOperationInfo(false, false, ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE),
+                                    foundArtifact.getArtifactChecksum());
                             artifactsBusinessLogic.handleAuditing(auditingAction, component, component.getUniqueId(), user, null, null,
-                                foundArtifact.getUniqueId(), responseFormat, component.getComponentType(), null);
+                                    foundArtifact.getUniqueId(), responseFormat, component.getComponentType(), null);
                             responseWrapper.setInnerElement(responseFormat);
                             break;
                         }
@@ -1368,12 +1413,12 @@ public class ServiceImportBusinessLogic {
                 for (ArtifactDefinition currArtifact : existingArtifactsToHandle) {
                     if (currArtifact.getIsFromCsar()) {
                         artifactsToDelete.add(new CsarUtils.NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-                            ArtifactTypeEnum.findType(currArtifact.getArtifactType()), currArtifact.getArtifactGroupType(), null,
-                            currArtifact.getUniqueId(), currArtifact.getIsFromCsar()));
+                                ArtifactTypeEnum.findType(currArtifact.getArtifactType()), currArtifact.getArtifactGroupType(), null,
+                                currArtifact.getUniqueId(), currArtifact.getIsFromCsar()));
                     } else {
                         artifactsToUpdate.add(new CsarUtils.NonMetaArtifactInfo(currArtifact.getArtifactName(), null,
-                            ArtifactTypeEnum.findType(currArtifact.getArtifactType()), currArtifact.getArtifactGroupType(), null,
-                            currArtifact.getUniqueId(), currArtifact.getIsFromCsar()));
+                                ArtifactTypeEnum.findType(currArtifact.getArtifactType()), currArtifact.getArtifactGroupType(), null,
+                                currArtifact.getUniqueId(), currArtifact.getIsFromCsar()));
                     }
                 }
             }
@@ -1403,9 +1448,9 @@ public class ServiceImportBusinessLogic {
     protected Either<List<CsarUtils.NonMetaArtifactInfo>, String> getValidArtifactNames(CsarInfo csarInfo,
                                                                                         Map<String, Set<List<String>>> collectedWarningMessages) {
         List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList = csarInfo.getCsar().entrySet().stream()
-            .filter(e -> Pattern.compile(VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
-            .map(e -> CsarUtils.validateNonMetaArtifact(e.getKey(), e.getValue(), collectedWarningMessages)).filter(Either::isLeft)
-            .map(e -> e.left().value()).collect(toList());
+                .filter(e -> Pattern.compile(VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN).matcher(e.getKey()).matches())
+                .map(e -> CsarUtils.validateNonMetaArtifact(e.getKey(), e.getValue(), collectedWarningMessages)).filter(Either::isLeft)
+                .map(e -> e.left().value()).collect(toList());
         Pattern englishNumbersAndUnderScoresOnly = Pattern.compile(CsarUtils.VALID_ENGLISH_ARTIFACT_NAME);
         for (CsarUtils.NonMetaArtifactInfo nonMetaArtifactInfo : artifactPathAndNameList) {
             if (!englishNumbersAndUnderScoresOnly.matcher(nonMetaArtifactInfo.getDisplayName()).matches()) {
@@ -1439,17 +1484,17 @@ public class ServiceImportBusinessLogic {
         final Map<String, List<AttributeDefinition>> instanceAttributeMap = new HashMap<>();
         if (MapUtils.isNotEmpty(componentInstancesAttributes)) {
             instanceAttributeMap.putAll(componentInstancesAttributes
-                .entrySet().stream()
-                .collect(toMap(Entry::getKey, entry -> entry.getValue().stream().map(AttributeDefinition.class::cast).collect(toList()))));
+                    .entrySet().stream()
+                    .collect(toMap(Entry::getKey, entry -> entry.getValue().stream().map(AttributeDefinition.class::cast).collect(toList()))));
         }
         policies.values().stream()
-            .map(PolicyDataDefinition::getProperties)
-            .flatMap(Collection::stream)
-            .filter(PropertyDataDefinition::isToscaFunction)
-            .forEach(policyDefinition -> toscaFunctionService
-                .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(),
-                    instanceAttributeMap)
-            );
+                .map(PolicyDataDefinition::getProperties)
+                .flatMap(Collection::stream)
+                .filter(PropertyDataDefinition::isToscaFunction)
+                .forEach(policyDefinition -> toscaFunctionService
+                        .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(),
+                                instanceAttributeMap)
+                );
         policyBusinessLogic.createPolicies(service, policies);
         return getServiceResponseFormatEither(service);
     }
@@ -1458,8 +1503,8 @@ public class ServiceImportBusinessLogic {
         Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
         if (updatedResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
-                    ComponentTypeEnum.SERVICE);
+                    .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                            ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
         return Either.left(updatedResource.left().value());
@@ -1493,7 +1538,7 @@ public class ServiceImportBusinessLogic {
         try {
             log.debug("************* Going to create all nodes {}", yamlName);
             handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts, nodeTypesInfo,
-                csarInfo, nodeName);
+                    csarInfo, nodeName);
             log.debug("************* Going to create all resource instances {}", yamlName);
             resource = createResourceInstances(yamlName, resource, uploadComponentInstanceInfoMap, csarInfo.getCreatedNodes());
             log.debug("************* Finished to create all resource instances {}", yamlName);
@@ -1512,12 +1557,12 @@ public class ServiceImportBusinessLogic {
         log.debug("#createResourceInstancesRelations - Going to create relations ");
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
         if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) &&
-            resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
+                resource.getResourceType() != ResourceTypeEnum.PNF)) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ",
-                resource.getUniqueId(), yamlName);
+                    resource.getUniqueId(), yamlName);
             BeEcompErrorManager.getInstance()
-                .logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ",
-                    BeEcompErrorManager.ErrorSeverity.ERROR);
+                    .logInternalDataError("createResourceInstancesRelations", "No instances found in a resource or nn yaml template. ",
+                            BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
         }
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
@@ -1536,10 +1581,10 @@ public class ServiceImportBusinessLogic {
         if (applicationDataTypeCache != null) {
             Resource finalResource = resource;
             uploadResInstancesMap.values().forEach(
-                i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
-                    componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
-                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
-                    instInterfaces, i));
+                    i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
+                            componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
+                            instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
+                            instInterfaces, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
@@ -1556,7 +1601,7 @@ public class ServiceImportBusinessLogic {
         log.debug("************* in create relations, getResource end");
         if (eitherGetResource.isRight()) {
             throw new ComponentException(
-                componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
+                    componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource));
         }
         return eitherGetResource.left().value();
     }
@@ -1620,13 +1665,13 @@ public class ServiceImportBusinessLogic {
             Either<Resource, StorageOperationStatus> getResourceRes = toscaOperationFacade.getToscaFullElement(resource.getUniqueId());
             if (getResourceRes.isRight()) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
+                        .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
                 throw new ComponentException(responseFormat);
             }
             getResourceRes = updateCalculatedCapReqWithSubstitutionMappings(getResourceRes.left().value(), uploadResInstancesMap);
             if (getResourceRes.isRight()) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
+                        .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
                 throw new ComponentException(responseFormat);
             }
         }
@@ -1646,7 +1691,7 @@ public class ServiceImportBusinessLogic {
         }
         Map<ComponentInstance, Resource> resourcesInstancesMap = new HashMap<>();
         uploadResInstancesMap.values()
-            .forEach(i -> createAndAddResourceInstance(i, yamlName, resource, nodeNamespaceMap, existingNodeTypeMap, resourcesInstancesMap));
+                .forEach(i -> createAndAddResourceInstance(i, yamlName, resource, nodeNamespaceMap, existingNodeTypeMap, resourcesInstancesMap));
         if (MapUtils.isNotEmpty(resourcesInstancesMap)) {
             try {
                 toscaOperationFacade.associateComponentInstancesToComponent(resource, resourcesInstancesMap, false, false);
@@ -1654,7 +1699,7 @@ public class ServiceImportBusinessLogic {
                 if (exp.getStorageOperationStatus() != null && exp.getStorageOperationStatus() != StorageOperationStatus.OK) {
                     log.debug("Failed to add component instances to container component {}", resource.getName());
                     ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(exp.getStorageOperationStatus()));
+                            .getResponseFormat(componentsUtils.convertFromStorageResponse(exp.getStorageOperationStatus()));
                     eitherResource = Either.right(responseFormat);
                     throw new ByResponseFormatComponentException(eitherResource.right().value());
                 }
@@ -1662,15 +1707,15 @@ public class ServiceImportBusinessLogic {
         }
         log.debug("*************Going to get resource {}", resource.getUniqueId());
         Either<Resource, StorageOperationStatus> eitherGetResource = toscaOperationFacade
-            .getToscaElement(resource.getUniqueId(), serviceImportParseLogic.getComponentWithInstancesFilter());
+                .getToscaElement(resource.getUniqueId(), serviceImportParseLogic.getComponentWithInstancesFilter());
         log.debug("*************finished to get resource {}", resource.getUniqueId());
         if (eitherGetResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), resource);
             throw new ComponentException(responseFormat);
         }
         if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances()) &&
-            resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
+                resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             log.debug("Error when create resource instance from csar. ComponentInstances list empty");
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Error when create resource instance from csar. ComponentInstances list empty");
             throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE));
@@ -1686,28 +1731,28 @@ public class ServiceImportBusinessLogic {
             for (Map.Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
                 if (nodeTypeEntry.getValue().isNested()) {
                     handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                        nodeTypeEntry.getKey());
+                            nodeTypeEntry.getKey());
                     log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
                 }
             }
             Map<String, Object> mappedToscaTemplate = null;
             if (org.apache.commons.lang.StringUtils.isNotEmpty(nodeName) && MapUtils.isNotEmpty(nodeTypesInfo) && nodeTypesInfo
-                .containsKey(nodeName)) {
+                    .containsKey(nodeName)) {
                 mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
             }
             if (MapUtils.isEmpty(mappedToscaTemplate)) {
                 mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
             }
             createResourcesFromYamlNodeTypesList(yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
+                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
-                e.getResponseFormat() != null ? e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+                    e.getResponseFormat() != null ? e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         } catch (StorageException e) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         } catch (Exception e) {
@@ -1724,7 +1769,7 @@ public class ServiceImportBusinessLogic {
             String yamlName = nodesInfo.get(nodeName).getTemplateFileName();
             Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
             createResourcesFromYamlNodeTypesList(yamlName, service, nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
-                csarInfo);
+                    csarInfo);
             log.debug("************* Finished to create node types from yaml {}", yamlName);
             if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
                 log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
@@ -1745,7 +1790,7 @@ public class ServiceImportBusinessLogic {
         Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
         log.debug("************* Going to create node types from yaml {}", yamlName);
         createResourcesFromYamlNodeTypesList(yamlName, resource, nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
-            csarInfo);
+                csarInfo);
         if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
             log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
             resource = handleComplexVfc(resource, nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName);
@@ -1760,30 +1805,30 @@ public class ServiceImportBusinessLogic {
         Resource oldComplexVfc = null;
         Resource newComplexVfc = serviceImportParseLogic.buildValidComplexVfc(resource, csarInfo, nodeName, nodesInfo);
         Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade
-            .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
+                .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
         if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() == StorageOperationStatus.NOT_FOUND) {
             oldComplexVfcRes = toscaOperationFacade.getFullLatestComponentByToscaResourceName(
-                serviceImportParseLogic.buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getRight());
+                    serviceImportParseLogic.buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName).getRight());
         }
         if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         } else if (oldComplexVfcRes.isLeft()) {
             log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
             Either<Boolean, ResponseFormat> eitherValidation = serviceImportParseLogic
-                .validateNestedDerivedFromDuringUpdate(oldComplexVfcRes.left().value(), newComplexVfc,
-                    ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
+                    .validateNestedDerivedFromDuringUpdate(oldComplexVfcRes.left().value(), newComplexVfc,
+                            ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
             if (eitherValidation.isLeft()) {
                 oldComplexVfc = oldComplexVfcRes.left().value();
             }
         }
         newComplexVfc = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, oldComplexVfc,
-            newComplexVfc);
+                newComplexVfc);
         csarInfo.getCreatedNodesToscaResourceNames().put(nodeName, newComplexVfc.getToscaResourceName());
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
-            LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
+                LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
         log.debug("Going to certify cvfc {}. ", newComplexVfc.getName());
         final Resource result = serviceImportParseLogic
-            .propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false, true);
+                .propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false, true);
         csarInfo.getCreatedNodes().put(nodeName, result);
         csarInfo.removeNodeFromQueue();
         return result;
@@ -1795,7 +1840,7 @@ public class ServiceImportBusinessLogic {
                                                                        List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
                                                                        Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
         Either<String, ImportUtils.ResultStatusEnum> toscaVersion = findFirstToscaStringElement(mappedToscaTemplate,
-            TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
+                TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
         if (toscaVersion.isRight()) {
             throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
@@ -1803,7 +1848,7 @@ public class ServiceImportBusinessLogic {
         mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
         Map<String, Object> nodeTypes = serviceImportParseLogic.getNodeTypesFromTemplate(mappedToscaTemplate);
         createNodeTypes(yamlName, resource, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert,
-            nodeTypes);
+                nodeTypes);
         return csarInfo.getCreatedNodes();
     }
 
@@ -1816,17 +1861,17 @@ public class ServiceImportBusinessLogic {
         while (nodesNameValueIter.hasNext()) {
             Map.Entry<String, Object> nodeType = nodesNameValueIter.next();
             Map<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle =
-                nodeTypesArtifactsToHandle == null || nodeTypesArtifactsToHandle.isEmpty() ? null : nodeTypesArtifactsToHandle.get(nodeType.getKey());
+                    nodeTypesArtifactsToHandle == null || nodeTypesArtifactsToHandle.isEmpty() ? null : nodeTypesArtifactsToHandle.get(nodeType.getKey());
             if (nodeTypesInfo.containsKey(nodeType.getKey())) {
                 log.trace("************* Going to handle nested vfc {}", nodeType.getKey());
                 vfcCreated = handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                    nodeType.getKey());
+                        nodeType.getKey());
                 log.trace("************* Finished to handle nested vfc {}", nodeType.getKey());
             } else if (csarInfo.getCreatedNodesToscaResourceNames() != null && !csarInfo.getCreatedNodesToscaResourceNames()
-                .containsKey(nodeType.getKey())) {
+                    .containsKey(nodeType.getKey())) {
                 log.trace("************* Going to create node {}", nodeType.getKey());
                 ImmutablePair<Resource, ActionStatus> resourceCreated = createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(),
-                    mapToConvert, resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true, csarInfo, true);
+                        mapToConvert, resource, needLock, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true, csarInfo, true);
                 log.debug("************* Finished to create node {}", nodeType.getKey());
                 vfcCreated = resourceCreated.getLeft();
                 csarInfo.getCreatedNodesToscaResourceNames().put(nodeType.getKey(), vfcCreated.getToscaResourceName());
@@ -1846,13 +1891,13 @@ public class ServiceImportBusinessLogic {
                                                                                    boolean forceCertificationAllowed, CsarInfo csarInfo,
                                                                                    boolean isNested) {
         final var validatedUser = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE,
-            true);
+                true);
         UploadResourceInfo resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(),
-            validatedUser);
+                validatedUser);
         String singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
         return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, validatedUser, true, needLock,
-            nodeTypeArtifactsToHandle,
-            nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
+                nodeTypeArtifactsToHandle,
+                nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
     }
 
     protected Service createRIAndRelationsFromYaml(String yamlName, Service service,
@@ -1863,7 +1908,7 @@ public class ServiceImportBusinessLogic {
                                                    String nodeName) {
         log.debug("************* Going to create all nodes {}", yamlName);
         handleServiceNodeTypes(yamlName, service, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts,
-            nodeTypesInfo, csarInfo, nodeName);
+                nodeTypesInfo, csarInfo, nodeName);
         List<PropertyDefinition> serviceProperties = null != service ? service.getProperties() : Collections.emptyList();
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfoMap)) {
             log.debug("************* Going to create all resource instances {}", yamlName);
@@ -1884,10 +1929,10 @@ public class ServiceImportBusinessLogic {
         List<ComponentInstance> componentInstancesList = service.getComponentInstances();
         if (MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ",
-                service.getUniqueId(), yamlName);
+                    service.getUniqueId(), yamlName);
             BeEcompErrorManager.getInstance()
-                .logInternalDataError("createResourceInstancesRelations", "No instances found in a component or nn yaml template. ",
-                    BeEcompErrorManager.ErrorSeverity.ERROR);
+                    .logInternalDataError("createResourceInstancesRelations", "No instances found in a component or nn yaml template. ",
+                            BeEcompErrorManager.ErrorSeverity.ERROR);
             throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName));
         }
         Map<String, List<ComponentInstanceProperty>> instProperties = new HashMap<>();
@@ -1905,22 +1950,22 @@ public class ServiceImportBusinessLogic {
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
         if (applicationDataTypeCache != null) {
             final Map<String, DataTypeDefinition> allDataTypesMap =
-                componentsUtils.getAllDataTypes(applicationDataTypeCache, service.getModel());
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, service.getModel());
             final Service service1 = service;
             service1.setProperties(serviceProperties);
             uploadResInstancesMap.values().forEach(
-                i -> processComponentInstance(yamlName, service1, componentInstancesList,
-                    allDataTypesMap, instProperties,
-                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
-                    instNodeFilter, instInterfaces, i)
+                    i -> processComponentInstance(yamlName, service1, componentInstancesList,
+                            allDataTypesMap, instProperties,
+                            instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
+                            instNodeFilter, instInterfaces, i)
             );
         }
         updatePropertyToscaFunctionData(service, instProperties, instAttributes);
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInterfacesToComponent(
-            yamlName,
-            service,
-            instInterfaces
+                yamlName,
+                service,
+                instInterfaces
         );
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
         serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
@@ -1942,8 +1987,8 @@ public class ServiceImportBusinessLogic {
         log.debug("************* in create relations, getResource end");
         if (eitherGetResource.isRight()) {
             throw new ComponentException(componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service,
-                    service.getComponentType()));
+                    .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service,
+                            service.getComponentType()));
         }
         return eitherGetResource.left().value();
     }
@@ -1952,22 +1997,22 @@ public class ServiceImportBusinessLogic {
                                                  final Map<String, List<ComponentInstanceProperty>> instancePropertyMap,
                                                  final Map<String, List<AttributeDefinition>> instanceAttributeMap) {
         final Component updatedService =
-            toscaOperationFacade.getToscaElement(service.getUniqueId()).left()
-                .on(storageOperationStatus -> {
-                        final ActionStatus status = componentsUtils.convertFromStorageResponse(storageOperationStatus);
-                        final ResponseFormat responseFormat =
-                            componentsUtils.getResponseFormatByComponent(status, service, service.getComponentType());
-                        throw new ComponentException(responseFormat);
-                    }
-                );
+                toscaOperationFacade.getToscaElement(service.getUniqueId()).left()
+                        .on(storageOperationStatus -> {
+                                    final ActionStatus status = componentsUtils.convertFromStorageResponse(storageOperationStatus);
+                                    final ResponseFormat responseFormat =
+                                            componentsUtils.getResponseFormatByComponent(status, service, service.getComponentType());
+                                    throw new ComponentException(responseFormat);
+                                }
+                        );
         instancePropertyMap.values().forEach(instancePropertyList ->
-            instancePropertyList.stream()
-                .filter(PropertyDataDefinition::isToscaFunction)
-                .forEach(instanceProperty -> {
-                    toscaFunctionService.updateFunctionWithDataFromSelfComponent(instanceProperty.getToscaFunction(),
-                        updatedService, instancePropertyMap, instanceAttributeMap);
+                instancePropertyList.stream()
+                        .filter(PropertyDataDefinition::isToscaFunction)
+                        .forEach(instanceProperty -> {
+                            toscaFunctionService.updateFunctionWithDataFromSelfComponent(instanceProperty.getToscaFunction(),
+                                    updatedService, instancePropertyMap, instanceAttributeMap);
                     instanceProperty.setValue(StringEscapeUtils.unescapeJava(instanceProperty.getToscaFunction().getValue()));
-                })
+                        })
         );
     }
 
@@ -1985,12 +2030,12 @@ public class ServiceImportBusinessLogic {
                                             UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
-            .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
+                .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
         if (currentCompInstanceOpt.isEmpty()) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), component.getUniqueId());
             BeEcompErrorManager.getInstance()
-                .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, component.getUniqueId(),
-                    BeEcompErrorManager.ErrorSeverity.ERROR);
+                    .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, component.getUniqueId(),
+                            BeEcompErrorManager.ErrorSeverity.ERROR);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
             throw new ComponentException(responseFormat);
         }
@@ -2021,11 +2066,11 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getInterfaces())) {
 
             ResponseFormat addInterfacesToRiRes = addInterfaceValuesToRi(
-                uploadComponentInstanceInfo,
-                component,
-                originResource,
-                currentCompInstance,
-                instInterfaces
+                    uploadComponentInstanceInfo,
+                    component,
+                    originResource,
+                    currentCompInstance,
+                    instInterfaces
             );
             if (addInterfacesToRiRes.getStatus() != 200) {
                 throw new ComponentException(addInterfacesToRiRes);
@@ -2033,7 +2078,7 @@ public class ServiceImportBusinessLogic {
         }
         if (originResource.getResourceType() != ResourceTypeEnum.VF) {
             ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, component, originResource,
-                currentCompInstance, instProperties, allDataTypes);
+                    currentCompInstance, instProperties, allDataTypes);
             if (addPropertiesValueToRiRes.getStatus() != 200) {
                 throw new ComponentException(addPropertiesValueToRiRes);
             }
@@ -2100,15 +2145,15 @@ public class ServiceImportBusinessLogic {
             return;
         }
         attributeMap.forEach((attributeName, attributeValue) -> instAttributes.values()
-            .forEach(value -> value.stream().filter(attr -> attr.getName().equals(attributeName)).forEach(attr -> {
-                if (attributeValue.getValue() instanceof Collection<?> || attributeValue.getValue() instanceof Map<?, ?>) {
-                    Gson gson = new Gson();
-                    String json = gson.toJson(attributeValue.getValue());
-                    attr.setValue(json);
-                } else {
-                    attr.setValue(String.valueOf(attributeValue.getValue()));
-                }
-            })));
+                .forEach(value -> value.stream().filter(attr -> attr.getName().equals(attributeName)).forEach(attr -> {
+                    if (attributeValue.getValue() instanceof Collection<?> || attributeValue.getValue() instanceof Map<?, ?>) {
+                        Gson gson = new Gson();
+                        String json = gson.toJson(attributeValue.getValue());
+                        attr.setValue(json);
+                    } else {
+                        attr.setValue(String.valueOf(attributeValue.getValue()));
+                    }
+                })));
     }
 
     protected ResponseFormat addPropertyValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo, Component component,
@@ -2126,8 +2171,8 @@ public class ServiceImportBusinessLogic {
             return componentsUtils.getResponseFormat(ActionStatus.OK);
         }
         originalPropertyList.stream()
-            .filter(property -> !currPropertiesMap.containsKey(property.getName()))
-            .forEach(property -> currPropertiesMap.put(property.getName(), property));
+                .filter(property -> !currPropertiesMap.containsKey(property.getName()))
+                .forEach(property -> currPropertiesMap.put(property.getName(), property));
         List<ComponentInstanceProperty> instPropList = new ArrayList<>();
         if (MapUtils.isNotEmpty(propMap)) {
             for (final List<UploadPropInfo> propertyList : propMap.values()) {
@@ -2181,7 +2226,7 @@ public class ServiceImportBusinessLogic {
                         if (inputs == null || inputs.isEmpty()) {
                             log.debug("Failed to add property {} to instance. Inputs list is empty ", property);
                             serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND,
-                                property.getGetInputValues().stream().map(GetInputValueDataDefinition::getInputName).collect(toList()).toString());
+                                    property.getGetInputValues().stream().map(GetInputValueDataDefinition::getInputName).collect(toList()).toString());
                         }
                         InputDefinition input = serviceImportParseLogic.findInputByName(inputs, getInput);
                         getInput.setInputId(input.getUniqueId());
@@ -2210,7 +2255,7 @@ public class ServiceImportBusinessLogic {
 
     private boolean tryHandlingAsYamlToscaFunction(String validatedPropValue, String value, UploadPropInfo propertyInfo) {
         return StringUtils.isEmpty(validatedPropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null
-            && CollectionUtils.isEmpty(propertyInfo.getSubPropertyToscaFunctions());
+                && CollectionUtils.isEmpty(propertyInfo.getSubPropertyToscaFunctions());
     }
 
     private void addSubPropertyYamlToscaFunctions(final String validatedPropValue, final String value, final String propertyType,
@@ -2223,14 +2268,14 @@ public class ServiceImportBusinessLogic {
 
             final DataTypeDefinition dataTypeDefinition = allDataTypes.get(propertyType);
             final List<String> propertyNames =
-                dataTypeDefinition.getProperties().stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
+                    dataTypeDefinition.getProperties().stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
 
             boolean hasSubPropertyValues = jsonObject.entrySet().stream().allMatch(entry -> propertyNames.contains(entry.getKey()));
 
             if (hasSubPropertyValues) {
                 for (final PropertyDefinition prop : dataTypeDefinition.getProperties()) {
                     if (propertyInfo.getSubPropertyToscaFunctions().stream()
-                        .anyMatch(subPropertyToscaFunction -> subPropertyToscaFunction.getSubPropertyPath().get(0).equals(prop.getName()))) {
+                            .anyMatch(subPropertyToscaFunction -> subPropertyToscaFunction.getSubPropertyPath().get(0).equals(prop.getName()))) {
                         continue;
                     }
                     Optional<SubPropertyToscaFunction> subPropertyToscaFunction = createSubPropertyYamlToscaFunction(jsonObject, prop, allDataTypes);
@@ -2251,7 +2296,7 @@ public class ServiceImportBusinessLogic {
             final String subPropValue = propJsonElement.toString();
             final ComponentInstanceProperty subProperty = new ComponentInstanceProperty(prop, subPropValue, null);
             final String validateSubPropValue =
-                serviceBusinessLogic.validatePropValueBeforeCreate(subProperty, subPropValue, true, allDataTypes);
+                    serviceBusinessLogic.validatePropValueBeforeCreate(subProperty, subPropValue, true, allDataTypes);
 
             if (StringUtils.isEmpty(validateSubPropValue) && StringUtils.isNotEmpty(subPropValue)) {
                 try {
@@ -2271,10 +2316,10 @@ public class ServiceImportBusinessLogic {
     }
 
     protected ResponseFormat addInterfaceValuesToRi(
-        UploadComponentInstanceInfo uploadComponentInstanceInfo,
-        Component component,
-        Resource originResource, ComponentInstance currentCompInstance,
-        Map<String, Map<String, InterfaceDefinition>> instInterfaces
+            UploadComponentInstanceInfo uploadComponentInstanceInfo,
+            Component component,
+            Resource originResource, ComponentInstance currentCompInstance,
+            Map<String, Map<String, InterfaceDefinition>> instInterfaces
     ) {
         Map<String, UploadInterfaceInfo> instanceInterfacesMap = uploadComponentInstanceInfo.getInterfaces();
         Map<String, InterfaceDefinition> currInterfacesMap = new HashMap<>();
@@ -2313,14 +2358,14 @@ public class ServiceImportBusinessLogic {
                     mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
                     if (null != instanceInputs) {
                         component.getProperties()
-                            .forEach(property -> instanceInputs.getListToscaDataDefinition().stream()
-                                .filter(instanceInput ->
-                                    instanceInput.getToscaFunction() instanceof ToscaGetFunctionDataDefinition &&
-                                        property.getName().equals(instanceInput.getToscaFunction() != null ?
-                                            ((ToscaGetFunctionDataDefinition) instanceInput.getToscaFunction()).getPropertyName() :
-                                            null))
-                                .forEach(oldInput -> oldInput.setType(property.getType()))
-                            );
+                                .forEach(property -> instanceInputs.getListToscaDataDefinition().stream()
+                                        .filter(instanceInput ->
+                                                instanceInput.getToscaFunction() instanceof ToscaGetFunctionDataDefinition &&
+                                                        property.getName().equals(instanceInput.getToscaFunction() != null ?
+                                                                ((ToscaGetFunctionDataDefinition) instanceInput.getToscaFunction()).getPropertyName() :
+                                                                null))
+                                        .forEach(oldInput -> oldInput.setType(property.getType()))
+                                );
                     }
                     templateOperation.setInputs(instanceInputs);
                     //Implementation
@@ -2351,25 +2396,25 @@ public class ServiceImportBusinessLogic {
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
                                                 ListDataDefinition<OperationInputDefinition> instanceInputs) {
         if (inputsFromNodeType == null || CollectionUtils.isEmpty(inputsFromNodeType.getListToscaDataDefinition()) || instanceInputs == null
-            || CollectionUtils.isEmpty(instanceInputs.getListToscaDataDefinition())) {
+                || CollectionUtils.isEmpty(instanceInputs.getListToscaDataDefinition())) {
             return;
         }
         instanceInputs.getListToscaDataDefinition().forEach(
-            instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
-                templateInput -> templateInput.getName().equals(instanceInput.getName())
-            ).forEach(
-                newInstanceInput -> {
-                    instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
-                    instanceInput.setSource(newInstanceInput.getSource());
-                    instanceInput.setType(newInstanceInput.getType());
-                }
-            )
+                instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
+                        templateInput -> templateInput.getName().equals(instanceInput.getName())
+                ).forEach(
+                        newInstanceInput -> {
+                            instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
+                            instanceInput.setSource(newInstanceInput.getSource());
+                            instanceInput.setType(newInstanceInput.getType());
+                        }
+                )
         );
         instanceInputs.getListToscaDataDefinition().stream()
-            .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
-                inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
-            ))
-            .forEach(oldInput -> oldInput.setType("string"));
+                .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
+                        inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
+                ))
+                .forEach(oldInput -> oldInput.setType("string"));
     }
 
     protected void processComponentInstanceCapabilities(Map<String, DataTypeDefinition> allDataTypes,
@@ -2383,7 +2428,7 @@ public class ServiceImportBusinessLogic {
             Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
             originResource.getCapabilities().forEach((k, v) -> serviceImportParseLogic.addCapabilities(originCapabilities, k, v));
             uploadComponentInstanceInfo.getCapabilities().values()
-                .forEach(l -> serviceImportParseLogic.addCapabilitiesProperties(newPropertiesMap, l));
+                    .forEach(l -> serviceImportParseLogic.addCapabilitiesProperties(newPropertiesMap, l));
             updateCapabilityPropertiesValues(allDataTypes, originCapabilities, newPropertiesMap);
         } else {
             originCapabilities = originResource.getCapabilities();
@@ -2395,7 +2440,7 @@ public class ServiceImportBusinessLogic {
                                                     Map<String, List<CapabilityDefinition>> originCapabilities,
                                                     Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
         originCapabilities.values().stream().flatMap(Collection::stream).filter(c -> newPropertiesMap.containsKey(c.getName()))
-            .forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes));
+                .forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes));
     }
 
     protected void updatePropertyValues(List<ComponentInstanceProperty> properties, Map<String, UploadPropInfo> newProperties,
@@ -2426,10 +2471,10 @@ public class ServiceImportBusinessLogic {
         log.debug("after enter ServiceImportBusinessLogic processComponentInstance, enter getOriginResource");
         if (!originCompMap.containsKey(currentCompInstance.getComponentUid())) {
             Either<Resource, StorageOperationStatus> getOriginResourceRes = toscaOperationFacade
-                .getToscaFullElement(currentCompInstance.getComponentUid());
+                    .getToscaFullElement(currentCompInstance.getComponentUid());
             if (getOriginResourceRes.isRight()) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(getOriginResourceRes.right().value()), yamlName);
                 throw new ComponentException(responseFormat);
             }
             originResource = getOriginResourceRes.left().value();
@@ -2448,12 +2493,12 @@ public class ServiceImportBusinessLogic {
         StorageOperationStatus status = toscaOperationFacade.deleteAllCalculatedCapabilitiesRequirements(resource.getUniqueId());
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             log.debug("Failed to delete all calculated capabilities and requirements of resource {} upon update. Status is {}",
-                resource.getUniqueId(), status);
+                    resource.getUniqueId(), status);
             updateRes = Either.right(status);
         }
         if (updateRes == null) {
             fillUpdatedInstCapabilitiesRequirements(resource.getComponentInstances(), uploadResInstancesMap, updatedInstCapabilities,
-                updatedInstRequirements);
+                    updatedInstRequirements);
             status = toscaOperationFacade.associateOrAddCalculatedCapReq(updatedInstCapabilities, updatedInstRequirements, resource);
             if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
                 updateRes = Either.right(status);
@@ -2482,13 +2527,13 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(capabilitiesNamesToUpdate)) {
             for (Map.Entry<String, List<CapabilityDefinition>> requirements : instance.getCapabilities().entrySet()) {
                 updatedCapabilities.put(requirements.getKey(), requirements.getValue().stream().filter(
-                        c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
-                    .map(c -> {
-                        c.setParentName(c.getName());
-                        c.setName(capabilitiesNamesToUpdate.get(c.getName()));
-                        updatedCapNames.add(c.getName());
-                        return c;
-                    }).collect(toList()));
+                                c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
+                        .map(c -> {
+                            c.setParentName(c.getName());
+                            c.setName(capabilitiesNamesToUpdate.get(c.getName()));
+                            updatedCapNames.add(c.getName());
+                            return c;
+                        }).collect(toList()));
             }
         }
         if (MapUtils.isNotEmpty(updatedCapabilities)) {
@@ -2503,13 +2548,13 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(requirementsNamesToUpdate)) {
             for (Map.Entry<String, List<RequirementDefinition>> requirements : instance.getRequirements().entrySet()) {
                 updatedRequirements.put(requirements.getKey(), requirements.getValue().stream().filter(
-                        r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
-                    .map(r -> {
-                        r.setParentName(r.getName());
-                        r.setName(requirementsNamesToUpdate.get(r.getName()));
-                        updatedReqNames.add(r.getName());
-                        return r;
-                    }).collect(toList()));
+                                r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
+                        .map(r -> {
+                            r.setParentName(r.getName());
+                            r.setName(requirementsNamesToUpdate.get(r.getName()));
+                            updatedReqNames.add(r.getName());
+                            return r;
+                        }).collect(toList()));
             }
         }
         if (MapUtils.isNotEmpty(updatedRequirements)) {
@@ -2531,8 +2576,8 @@ public class ServiceImportBusinessLogic {
             if (currentCompInstance == null) {
                 log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), service.getUniqueId());
                 BeEcompErrorManager.getInstance()
-                    .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, service.getUniqueId(),
-                        BeEcompErrorManager.ErrorSeverity.ERROR);
+                        .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, service.getUniqueId(),
+                                BeEcompErrorManager.ErrorSeverity.ERROR);
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                 throw new ComponentException(responseFormat);
             }
@@ -2556,8 +2601,8 @@ public class ServiceImportBusinessLogic {
         if (currentCompInstance == null) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, nodesInfoValue.getName(), service.getUniqueId());
             BeEcompErrorManager.getInstance()
-                .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + nodesInfoValue.getName() + IN_RESOURCE, service.getUniqueId(),
-                    BeEcompErrorManager.ErrorSeverity.ERROR);
+                    .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + nodesInfoValue.getName() + IN_RESOURCE, service.getUniqueId(),
+                            BeEcompErrorManager.ErrorSeverity.ERROR);
             return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
         }
         String resourceInstanceId = currentCompInstance.getUniqueId();
@@ -2574,7 +2619,7 @@ public class ServiceImportBusinessLogic {
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
                     Either<RequirementDefinition, ResponseFormat> eitherReqStatus = serviceImportParseLogic
-                        .findAvailableRequirement(regName, yamlName, nodesInfoValue, currentCompInstance, uploadRegInfo.getCapabilityName());
+                            .findAvailableRequirement(regName, yamlName, nodesInfoValue, currentCompInstance, uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         log.debug("failed to find available requirement {} status is {}", regName, eitherReqStatus.right().value());
                         return eitherReqStatus.right().value();
@@ -2601,18 +2646,18 @@ public class ServiceImportBusinessLogic {
                     if (currentCapCompInstance == null) {
                         log.debug("The component instance  with name {} not found on resource {} ", uploadRegInfo.getNode(), service.getUniqueId());
                         BeEcompErrorManager.getInstance()
-                            .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE, service.getUniqueId(),
-                                BeEcompErrorManager.ErrorSeverity.ERROR);
+                                .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE, service.getUniqueId(),
+                                        BeEcompErrorManager.ErrorSeverity.ERROR);
                         return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     regCapRelDef.setToNode(currentCapCompInstance.getUniqueId());
                     log.debug("try to find aviable Capability  req name is {} ", validReq.getName());
                     CapabilityDefinition aviableCapForRel = serviceImportParseLogic
-                        .findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadRegInfo);
+                            .findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadRegInfo);
                     if (aviableCapForRel == null) {
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                            "aviable capability was not found. req name is " + validReq.getName() + " component instance is " + currentCapCompInstance
-                                .getUniqueId(), service.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
+                                "aviable capability was not found. req name is " + validReq.getName() + " component instance is " + currentCapCompInstance
+                                        .getUniqueId(), service.getUniqueId(), BeEcompErrorManager.ErrorSeverity.ERROR);
                         return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
@@ -2665,7 +2710,7 @@ public class ServiceImportBusinessLogic {
         }
         Map<ComponentInstance, Resource> resourcesInstancesMap = new HashMap<>();
         uploadResInstancesMap.values()
-            .forEach(i -> createAndAddResourceInstance(i, yamlName, service, nodeNamespaceMap, existingNodeTypeMap, resourcesInstancesMap));
+                .forEach(i -> createAndAddResourceInstance(i, yamlName, service, nodeNamespaceMap, existingNodeTypeMap, resourcesInstancesMap));
         if (MapUtils.isNotEmpty(resourcesInstancesMap)) {
             try {
                 toscaOperationFacade.associateComponentInstancesToComponent(service, resourcesInstancesMap, false, false);
@@ -2673,19 +2718,19 @@ public class ServiceImportBusinessLogic {
                 if (exp.getStorageOperationStatus() != null && exp.getStorageOperationStatus() != StorageOperationStatus.OK) {
                     log.debug("Failed to add component instances to container component {}", service.getName());
                     ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(exp.getStorageOperationStatus()));
+                            .getResponseFormat(componentsUtils.convertFromStorageResponse(exp.getStorageOperationStatus()));
                     eitherResource = Either.right(responseFormat);
                     throw new ComponentException(eitherResource.right().value());
                 }
             }
         }
         Either<Service, StorageOperationStatus> eitherGetResource = toscaOperationFacade
-            .getToscaElement(service.getUniqueId(), serviceImportParseLogic.getComponentWithInstancesFilter());
+                .getToscaElement(service.getUniqueId(), serviceImportParseLogic.getComponentWithInstancesFilter());
         log.debug("*************finished to get resource {}", service.getUniqueId());
         if (eitherGetResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service,
-                    ComponentTypeEnum.SERVICE);
+                    .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(eitherGetResource.right().value()), service,
+                            ComponentTypeEnum.SERVICE);
             throw new ComponentException(responseFormat);
         }
         if (CollectionUtils.isEmpty(eitherGetResource.left().value().getComponentInstances())) { // PNF can have no resource instances
@@ -2705,7 +2750,7 @@ public class ServiceImportBusinessLogic {
                 uploadComponentInstanceInfo.setType(nodeNamespaceMap.get(uploadComponentInstanceInfo.getType()).getToscaResourceName());
             }
             Resource refResource =
-                validateResourceInstanceBeforeCreate(yamlName, component.getModel(), uploadComponentInstanceInfo, existingnodeTypeMap);
+                    validateResourceInstanceBeforeCreate(yamlName, component.getModel(), uploadComponentInstanceInfo, existingnodeTypeMap);
             ComponentInstance componentInstance = new ComponentInstance();
             componentInstance.setComponentUid(refResource.getUniqueId());
             Collection<String> directives = uploadComponentInstanceInfo.getDirectives();
@@ -2715,22 +2760,22 @@ public class ServiceImportBusinessLogic {
             UploadNodeFilterInfo uploadNodeFilterInfo = uploadComponentInstanceInfo.getUploadNodeFilterInfo();
             if (uploadNodeFilterInfo != null) {
                 componentInstance
-                    .setNodeFilter(new CINodeFilterUtils().getNodeFilterDataDefinition(uploadNodeFilterInfo, componentInstance.getUniqueId()));
+                        .setNodeFilter(new CINodeFilterUtils().getNodeFilterDataDefinition(uploadNodeFilterInfo, componentInstance.getUniqueId()));
             }
             ComponentTypeEnum containerComponentType = component.getComponentType();
             NodeTypeEnum containerNodeType = containerComponentType.getNodeType();
             if (containerNodeType.equals(NodeTypeEnum.Resource) && MapUtils.isNotEmpty(uploadComponentInstanceInfo.getCapabilities()) && MapUtils
-                .isNotEmpty(refResource.getCapabilities())) {
+                    .isNotEmpty(refResource.getCapabilities())) {
                 serviceImportParseLogic.setCapabilityNamesTypes(refResource.getCapabilities(), uploadComponentInstanceInfo.getCapabilities());
                 Map<String, List<CapabilityDefinition>> validComponentInstanceCapabilities = serviceImportParseLogic
-                    .getValidComponentInstanceCapabilities(refResource.getUniqueId(), refResource.getCapabilities(),
-                        uploadComponentInstanceInfo.getCapabilities());
+                        .getValidComponentInstanceCapabilities(refResource.getUniqueId(), refResource.getCapabilities(),
+                                uploadComponentInstanceInfo.getCapabilities());
                 componentInstance.setCapabilities(validComponentInstanceCapabilities);
             }
             if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
-                        uploadComponentInstanceInfo.getType());
+                        .getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
+                                uploadComponentInstanceInfo.getType());
                 throw new ComponentException(responseFormat);
             }
             Resource origResource = existingnodeTypeMap.get(uploadComponentInstanceInfo.getType());
@@ -2755,10 +2800,10 @@ public class ServiceImportBusinessLogic {
                 refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
             } else {
                 final Either<Component, StorageOperationStatus> resourceEither =
-                    toscaOperationFacade.getLatestByToscaResourceName(uploadComponentInstanceInfo.getType(), model);
+                        toscaOperationFacade.getLatestByToscaResourceName(uploadComponentInstanceInfo.getType(), model);
                 if (resourceEither.isRight()) {
                     ResponseFormat responseFormat = componentsUtils
-                        .getResponseFormat(componentsUtils.convertFromStorageResponse(resourceEither.right().value()));
+                            .getResponseFormat(componentsUtils.convertFromStorageResponse(resourceEither.right().value()));
                     throw new ComponentException(responseFormat);
                 }
                 refResource = (Resource) resourceEither.left().value();
@@ -2767,15 +2812,15 @@ public class ServiceImportBusinessLogic {
             String componentState = refResource.getComponentMetadataDefinition().getMetadataDataDefinition().getState();
             if (componentState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name())) {
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, refResource.getComponentType().getValue(), refResource.getName(),
-                        componentState);
+                        .getResponseFormat(ActionStatus.ILLEGAL_COMPONENT_STATE, refResource.getComponentType().getValue(), refResource.getName(),
+                                componentState);
                 throw new ComponentException(responseFormat);
             }
             if (!ModelConverter.isAtomicComponent(refResource) && refResource.getResourceType() != ResourceTypeEnum.VF) {
                 log.debug("validateResourceInstanceBeforeCreate -  ref resource type is  ", refResource.getResourceType());
                 ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
-                        uploadComponentInstanceInfo.getType());
+                        .getResponseFormat(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
+                                uploadComponentInstanceInfo.getType());
                 throw new ComponentException(responseFormat);
             }
             return refResource;
@@ -2795,20 +2840,20 @@ public class ServiceImportBusinessLogic {
                 boolean isResourceNotExisted = validateResourceNotExisted(nodeTypeEntry.getKey());
                 if (nodeTypeEntry.getValue().isNested() && isResourceNotExisted) {
                     handleNestedVF(service, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                        nodeTypeEntry.getKey());
+                            nodeTypeEntry.getKey());
                     log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
                 }
             }
             Map<String, Object> mappedToscaTemplate = null;
             if (org.apache.commons.lang.StringUtils.isNotEmpty(nodeName) && MapUtils.isNotEmpty(nodeTypesInfo) && nodeTypesInfo
-                .containsKey(nodeName)) {
+                    .containsKey(nodeName)) {
                 mappedToscaTemplate = nodeTypesInfo.get(nodeName).getMappedToscaTemplate();
             }
             if (MapUtils.isEmpty(mappedToscaTemplate)) {
                 mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
             }
             createResourcesFromYamlNodeTypesList(yamlName, service, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
+                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
         } catch (ComponentException | StorageException e) {
             throw e;
         } catch (Exception e) {
@@ -2835,7 +2880,7 @@ public class ServiceImportBusinessLogic {
             String yamlName = nodesInfo.get(nodeName).getTemplateFileName();
             Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
             createResourcesFromYamlNodeTypesList(yamlName, service, nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts, nodesInfo,
-                csarInfo);
+                    csarInfo);
             log.debug("************* Finished to create node types from yaml {}", yamlName);
             if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
                 log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
@@ -2849,39 +2894,39 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Resource handleComplexVfc(
-        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
-        List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName) {
+            Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+            List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName) {
         try {
             Resource oldComplexVfc = null;
             Resource newComplexVfc = serviceImportParseLogic.buildValidComplexVfc(csarInfo, nodeName, nodesInfo);
             Either<Resource, StorageOperationStatus> oldComplexVfcRes = toscaOperationFacade
-                .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
+                    .getFullLatestComponentByToscaResourceName(newComplexVfc.getToscaResourceName());
             if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() == StorageOperationStatus.NOT_FOUND) {
                 oldComplexVfcRes = toscaOperationFacade.getFullLatestComponentByToscaResourceName(
-                    serviceImportParseLogic.buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName)
-                        .getRight());
+                        serviceImportParseLogic.buildNestedToscaResourceName(ResourceTypeEnum.VF.name(), csarInfo.getVfResourceName(), nodeName)
+                                .getRight());
             }
             if (oldComplexVfcRes.isRight() && oldComplexVfcRes.right().value() != StorageOperationStatus.NOT_FOUND) {
                 log.debug("Failed to fetch previous complex VFC by tosca resource name {}. Status is {}. ", newComplexVfc.getToscaResourceName(),
-                    oldComplexVfcRes.right().value());
+                        oldComplexVfcRes.right().value());
                 throw new ComponentException(ActionStatus.GENERAL_ERROR);
             } else if (oldComplexVfcRes.isLeft()) {
                 log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
                 Either<Boolean, ResponseFormat> eitherValidation = serviceImportParseLogic
-                    .validateNestedDerivedFromDuringUpdate(oldComplexVfcRes.left().value(), newComplexVfc,
-                        ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
+                        .validateNestedDerivedFromDuringUpdate(oldComplexVfcRes.left().value(), newComplexVfc,
+                                ValidationUtils.hasBeenCertified(oldComplexVfcRes.left().value().getVersion()));
                 if (eitherValidation.isLeft()) {
                     oldComplexVfc = oldComplexVfcRes.left().value();
                 }
             }
             newComplexVfc = handleComplexVfc(nodesArtifactsToHandle, createdArtifacts, nodesInfo, csarInfo, nodeName, yamlName, oldComplexVfc,
-                newComplexVfc);
+                    newComplexVfc);
             csarInfo.getCreatedNodesToscaResourceNames().put(nodeName, newComplexVfc.getToscaResourceName());
             LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction(CERTIFICATION_ON_IMPORT,
-                LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
+                    LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
             log.debug("Going to certify cvfc {}. ", newComplexVfc.getName());
             final Resource result = serviceImportParseLogic
-                .propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false, true);
+                    .propagateStateToCertified(csarInfo.getModifier(), newComplexVfc, lifecycleChangeInfo, true, false, true);
             csarInfo.getCreatedNodes().put(nodeName, result);
             csarInfo.removeNodeFromQueue();
             return result;
@@ -2892,22 +2937,22 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Resource handleComplexVfc(
-        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
-        List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName,
-        Resource oldComplexVfc, Resource newComplexVfc) {
+            Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodesArtifactsToHandle,
+            List<ArtifactDefinition> createdArtifacts, Map<String, NodeTypeInfo> nodesInfo, CsarInfo csarInfo, String nodeName, String yamlName,
+            Resource oldComplexVfc, Resource newComplexVfc) {
         Resource handleComplexVfcRes;
         try {
             Map<String, Object> mappedToscaTemplate = nodesInfo.get(nodeName).getMappedToscaTemplate();
             String yamlContent = new String(csarInfo.getCsar().get(yamlName));
             Map<String, NodeTypeInfo> newNodeTypesInfo = nodesInfo.entrySet().stream()
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().getUnmarkedCopy()));
+                    .collect(toMap(Map.Entry::getKey, e -> e.getValue().getUnmarkedCopy()));
             CsarInfo.markNestedVfc(mappedToscaTemplate, newNodeTypesInfo);
             if (oldComplexVfc == null) {
                 handleComplexVfcRes = createResourceFromYaml(newComplexVfc, yamlContent, yamlName, newNodeTypesInfo, csarInfo, nodesArtifactsToHandle,
-                    false, true, nodeName);
+                        false, true, nodeName);
             } else {
                 handleComplexVfcRes = updateResourceFromYaml(oldComplexVfc, newComplexVfc, AuditingActionEnum.UPDATE_RESOURCE_METADATA,
-                    createdArtifacts, yamlContent, yamlName, csarInfo, newNodeTypesInfo, nodesArtifactsToHandle, nodeName, true);
+                        createdArtifacts, yamlContent, yamlName, csarInfo, newNodeTypesInfo, nodesArtifactsToHandle, nodeName, true);
             }
             return handleComplexVfcRes;
         } catch (Exception e) {
@@ -2927,37 +2972,37 @@ public class ServiceImportBusinessLogic {
         ParsedToscaYamlInfo uploadComponentInstanceInfoMap = null;
         try {
             uploadComponentInstanceInfoMap = csarBusinessLogic
-                .getParsedToscaYamlInfo(yamlFileContent, yamlFileName, nodeTypesInfo, csarInfo, nodeName, oldRresource);
+                    .getParsedToscaYamlInfo(yamlFileContent, yamlFileName, nodeTypesInfo, csarInfo, nodeName, oldRresource);
             Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.getInstances();
             if (MapUtils.isEmpty(instances) && newRresource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlFileName);
             }
             preparedResource = updateExistingResourceByImport(newRresource, oldRresource, csarInfo.getModifier(), inTransaction, shouldLock,
-                isNested).left;
+                    isNested).left;
             log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContent);
             serviceImportParseLogic.handleResourceGenericType(preparedResource);
             handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo,
-                csarInfo, nodeName);
+                    csarInfo, nodeName);
             preparedResource = serviceImportParseLogic.createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs());
             preparedResource = createResourceInstances(yamlFileName, preparedResource, instances, csarInfo.getCreatedNodes());
             preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, instances);
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
-                e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+                    e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
             log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
             componentsUtils
-                .auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
+                    .auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
             throw e;
         } catch (StorageException e) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
             log.debug("#updateResourceFromYaml - failed to update resource from yaml {} .The error is {}", yamlFileName, responseFormat);
             componentsUtils
-                .auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
+                    .auditResource(responseFormat, csarInfo.getModifier(), preparedResource == null ? oldRresource : preparedResource, actionEnum);
             throw e;
         }
         Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic.validateUpdateVfGroupNames(
-            uploadComponentInstanceInfoMap.getGroups(), preparedResource.getSystemName());
+                uploadComponentInstanceInfoMap.getGroups(), preparedResource.getSystemName());
         if (validateUpdateVfGroupNamesRes.isRight()) {
             throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
         }
@@ -2971,7 +3016,7 @@ public class ServiceImportBusinessLogic {
         preparedResource = serviceImportParseLogic.updateGroupsOnResource(preparedResource, groups);
         NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToHandle);
         Either<Resource, ResponseFormat> updateArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.UPDATE,
-            createdArtifacts, yamlFileName, csarInfo, preparedResource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
+                createdArtifacts, yamlFileName, csarInfo, preparedResource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
         if (updateArtifactsEither.isRight()) {
             log.debug("failed to update artifacts {}", updateArtifactsEither.right().value());
             throw new ComponentException(updateArtifactsEither.right().value());
@@ -2994,22 +3039,22 @@ public class ServiceImportBusinessLogic {
         Resource createdResource;
         try {
             ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic
-                .getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, resource);
+                    .getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, resource);
             if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances()) && resource.getResourceType() != ResourceTypeEnum.PNF) {
                 throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
             }
             log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", resource.getName());
             createdResource = createResourceAndRIsFromYaml(yamlName, resource, parsedToscaYamlInfo, AuditingActionEnum.IMPORT_RESOURCE, false,
-                createdArtifacts, topologyTemplateYaml, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
+                    createdArtifacts, topologyTemplateYaml, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, shouldLock, inTransaction, nodeName);
             log.debug("#createResourceFromYaml - The resource {} has been created ", resource.getName());
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
-                e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
+                    e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         } catch (StorageException e) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(e.getStorageOperationStatus()));
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.IMPORT_RESOURCE);
             throw e;
         }
@@ -3024,7 +3069,7 @@ public class ServiceImportBusinessLogic {
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
         if (shouldLock) {
             Either<Boolean, ResponseFormat> lockResult = serviceBusinessLogic
-                .lockComponentByName(resource.getSystemName(), resource, CREATE_RESOURCE);
+                    .lockComponentByName(resource.getSystemName(), resource, CREATE_RESOURCE);
             if (lockResult.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(lockResult.right().value());
@@ -3046,11 +3091,11 @@ public class ServiceImportBusinessLogic {
             resource = serviceImportParseLogic.createInputsOnResource(resource, inputs);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
             resource = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap, topologyTemplateYaml,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
+                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
             // validate update vf module group names
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic.validateUpdateVfGroupNames(
-                parsedToscaYamlInfo.getGroups(), resource.getSystemName());
+                    parsedToscaYamlInfo.getGroups(), resource.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
@@ -3071,7 +3116,7 @@ public class ServiceImportBusinessLogic {
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
             NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
             Either<Resource, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
-                createdArtifacts, yamlName, csarInfo, resource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
+                    createdArtifacts, yamlName, csarInfo, resource, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createArtifactsEither.right().value());
@@ -3109,7 +3154,7 @@ public class ServiceImportBusinessLogic {
         Either<Resource, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(resource.getUniqueId());
         if (updatedResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource);
+                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), resource);
             return Either.right(responseFormat);
         }
         return Either.left(updatedResource.left().value());
@@ -3140,15 +3185,15 @@ public class ServiceImportBusinessLogic {
         if (CollectionUtils.isEmpty(componentInstances)) {
             String membersAstString = compInstancesNames.stream().collect(joining(","));
             log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.", membersAstString,
-                groupName, component.getNormalizedName());
+                    groupName, component.getNormalizedName());
             throw new ComponentException(componentsUtils
-                .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
-                    serviceImportParseLogic.getComponentTypeForResponse(component)));
+                    .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
+                            serviceImportParseLogic.getComponentTypeForResponse(component)));
         }
         Map<String, String> memberNames = componentInstances.stream().collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
         memberNames.putAll(groups.keySet().stream().collect(toMap(g -> g, g -> "")));
         Map<String, String> relevantInstances = memberNames.entrySet().stream().filter(n -> compInstancesNames.contains(n.getKey()))
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
             List<String> foundMembers = new ArrayList<>();
             if (relevantInstances != null) {
@@ -3157,24 +3202,24 @@ public class ServiceImportBusinessLogic {
             compInstancesNames.removeAll(foundMembers);
             String membersAstString = compInstancesNames.stream().collect(joining(","));
             throw new ComponentException(componentsUtils
-                .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
-                    serviceImportParseLogic.getComponentTypeForResponse(component)));
+                    .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
+                            serviceImportParseLogic.getComponentTypeForResponse(component)));
         }
         updatedGroupDefinition.setMembers(relevantInstances);
     }
 
     protected Resource createResourceTransaction(Resource resource, User user, boolean isNormative) {
         Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
-            .validateComponentNameExists(resource.getName(), resource.getResourceType(), resource.getComponentType());
+                .validateComponentNameExists(resource.getName(), resource.getResourceType(), resource.getComponentType());
         if (eitherValidation.isRight()) {
             ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
             throw new ComponentException(errorResponse);
         }
         if (Boolean.TRUE.equals(eitherValidation.left().value())) {
             log.debug("resource with name: {}, already exists", resource.getName());
             ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
+                    .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
             throw new ComponentException(errorResponse);
         }
         log.debug("send resource {} to dao for create", resource.getName());
@@ -3189,14 +3234,14 @@ public class ServiceImportBusinessLogic {
             }
         }
         return toscaOperationFacade.createToscaComponent(resource).left()
-            .on(r -> serviceImportParseLogic.throwComponentExceptionByResource(r, resource));
+                .on(r -> serviceImportParseLogic.throwComponentExceptionByResource(r, resource));
     }
 
     protected ImmutablePair<Resource, ActionStatus> updateExistingResourceByImport(Resource newResource, Resource oldResource, User user,
                                                                                    boolean inTransaction, boolean needLock, boolean isNested) {
         String lockedResourceId = oldResource.getUniqueId();
         log.debug("found resource: name={}, id={}, version={}, state={}", oldResource.getName(), lockedResourceId, oldResource.getVersion(),
-            oldResource.getLifecycleState());
+                oldResource.getLifecycleState());
         ImmutablePair<Resource, ActionStatus> resourcePair = null;
         try {
             serviceBusinessLogic.lockComponent(lockedResourceId, oldResource, needLock, "Update Resource by Import");
@@ -3204,7 +3249,7 @@ public class ServiceImportBusinessLogic {
             serviceImportParseLogic.mergeOldResourceMetadataWithNew(oldResource, newResource);
             serviceImportParseLogic.validateResourceFieldsBeforeUpdate(oldResource, newResource, inTransaction, isNested);
             serviceImportParseLogic.validateCapabilityTypesCreate(user, serviceImportParseLogic.getCapabilityTypeOperation(), newResource,
-                AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
+                    AuditingActionEnum.IMPORT_RESOURCE, inTransaction);
             createNewResourceToOldResource(newResource, oldResource, user);
             Either<Resource, StorageOperationStatus> overrideResource = toscaOperationFacade.overrideComponent(newResource, oldResource);
             if (overrideResource.isRight()) {
@@ -3277,7 +3322,7 @@ public class ServiceImportBusinessLogic {
                                                                          Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
         try {
             Either<String, ImportUtils.ResultStatusEnum> toscaVersion = findFirstToscaStringElement(mappedToscaTemplate,
-                TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
+                    TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
             if (toscaVersion.isRight()) {
                 throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
             }
@@ -3285,7 +3330,7 @@ public class ServiceImportBusinessLogic {
             mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
             Map<String, Object> nodeTypes = serviceImportParseLogic.getNodeTypesFromTemplate(mappedToscaTemplate);
             createNodeTypes(yamlName, service, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                mapToConvert, nodeTypes);
+                    mapToConvert, nodeTypes);
             return csarInfo.getCreatedNodes();
         } catch (Exception e) {
             log.debug("Exception occured when createResourcesFromYamlNodeTypesList,error is:{}", e.getMessage(), e);
@@ -3303,16 +3348,16 @@ public class ServiceImportBusinessLogic {
             Map.Entry<String, Object> nodeType = nodesNameValueIter.next();
             String nodeTypeKey = nodeType.getKey();
             Map<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle =
-                nodeTypesArtifactsToHandle == null || nodeTypesArtifactsToHandle.isEmpty() ? null : nodeTypesArtifactsToHandle.get(nodeTypeKey);
+                    nodeTypesArtifactsToHandle == null || nodeTypesArtifactsToHandle.isEmpty() ? null : nodeTypesArtifactsToHandle.get(nodeTypeKey);
             if (nodeTypesInfo.containsKey(nodeTypeKey)) {
                 vfcCreated = handleNestedVfc(service, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                    nodeTypeKey);
+                        nodeTypeKey);
                 log.trace("************* Finished to handle nested vfc {}", nodeTypeKey);
             } else if (csarInfo.getCreatedNodesToscaResourceNames() != null && !csarInfo.getCreatedNodesToscaResourceNames()
-                .containsKey(nodeTypeKey)) {
+                    .containsKey(nodeTypeKey)) {
                 ImmutablePair<Resource, ActionStatus> resourceCreated = serviceImportParseLogic
-                    .createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(), mapToConvert, service, needLock,
-                        nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true, csarInfo, true);
+                        .createNodeTypeResourceFromYaml(yamlName, nodeType, csarInfo.getModifier(), mapToConvert, service, needLock,
+                                nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, true, csarInfo, true);
                 log.debug("************* Finished to create node {}", nodeTypeKey);
                 vfcCreated = resourceCreated.getLeft();
                 csarInfo.getCreatedNodesToscaResourceNames().put(nodeTypeKey, vfcCreated.getName());
