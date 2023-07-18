@@ -279,11 +279,18 @@ export class InterfaceDefinitionComponent {
         this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
         const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
         const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+        let timeout = null;
+        if (operationToUpdate.implementation && operationToUpdate.implementation.timeout != null) {
+            timeout = operationToUpdate.implementation.timeout;
+        }
         const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
         if (!isArtifactChecked) {
             const artifactName = interfaceOperationHandlerComponentInstance.artifactName ?
                 interfaceOperationHandlerComponentInstance.artifactName : '';
             operationToUpdate.implementation = new ArtifactModel({'artifactName': artifactName, 'artifactVersion': ''} as ArtifactModel);
+        }
+        if (timeout != null) {
+            operationToUpdate.implementation.timeout = timeout;
         }
         this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
         .subscribe((newOperation: InterfaceOperationModel) => {

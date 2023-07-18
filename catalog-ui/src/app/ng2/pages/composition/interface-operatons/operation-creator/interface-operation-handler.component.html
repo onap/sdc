@@ -146,5 +146,14 @@
             >
             </app-add-input>
         </div>
+        <div class="group-with-border content-row">
+            <label class="sdc-timeout-label">Timeout : </label>
+            <input class="sdc-timeout" type="number" [formControl]="timeoutValue" (change)="timeoutConversion()"/>
+            <select class="sdc-timeout-select" [formControl]="timeoutType" (change)="timeoutConversion()">
+                <option value="sec">Seconds</option>
+                <option value="hour">Hours</option>
+                <option value="day">Days</option>
+              </select>
+        </div>
     </form>
 </div>
