@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.HashMap;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -34,9 +35,9 @@ public class OperationTest {
 	@Test
 	public void testCtor() throws Exception {
 		new Operation(new OperationDataDefinition());
-		new Operation(new ArtifactDataDefinition(), "mock", new ListDataDefinition<>(), new ListDataDefinition<>());
+		new Operation(new ArtifactDataDefinition(), "mock", new ListDataDefinition<>(), new ListDataDefinition<>(), new HashMap<>());
 	}
-	
+
 	@Test
 	public void testIsDefinition() throws Exception {
 		Operation testSubject;
