@@ -1,0 +1,17 @@
+inputs:
+  stringInput:
+    type: string
+    description: stringInput description
+    required: true
+    default: defaultValue
+    status: aStatus
+  actionInput:
+    type: org.openecomp.resource.datatypes.Action
+type: tosca.interfaces.node.lifecycle.Standard
+operations:
+  start:
+    implementation: "camunda/executeAction"
+    milestones:
+      on_failure:
+      on_success:
+      on_timeout:
