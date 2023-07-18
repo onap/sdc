@@ -257,6 +257,9 @@ public enum JsonPresentationFields {
     OPERATION_IMPLEMENTATION("implementation", null),
     OPERATION_INPUTS("inputs", null),
     OPERATION_OUTPUTS("outputs", null),
+    OPERATION_MILESTONES("milestones", null),
+    OPERATION_ACTIVITIES("activities", null),
+    OPERATION_ACTIVITIES_WORKFLOW("workflow", null),
     INPUTS("inputs", null),
 
     GET_PROPERTY("get_property", null),
