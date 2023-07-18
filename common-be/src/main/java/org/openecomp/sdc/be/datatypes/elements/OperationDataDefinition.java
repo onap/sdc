@@ -21,7 +21,9 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Map;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
@@ -46,6 +48,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
     }
 
     public OperationDataDefinition(OperationDataDefinition p) {
+        setMilestones(p.getMilestones());
         setDescription(p.getDescription());
         setImplementation(p.getImplementation());
         setInputs(p.getInputs());
@@ -57,6 +60,15 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
         setWorkflowAssociationType(p.getWorkflowAssociationType());
         setWorkflowName(p.getWorkflowName());
         setWorkflowVersion(p.getWorkflowVersion());
+    }
+
+    public void setMilestones(Map<String, MilestoneDataDefinition> milestones) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_MILESTONES, milestones);
+    }
+
+    public Map<String, MilestoneDataDefinition>  getMilestones() {
+        return (Map<String, MilestoneDataDefinition> ) getToscaPresentationValue(
+            JsonPresentationFields.OPERATION_MILESTONES);
     }
 
     public String getDescription() {
