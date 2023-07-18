@@ -41,6 +41,25 @@ operations:
           service_restoration_sla: service_restoration_sla_value
           battery_backup: true
           partner_priorty_assist: false
+    milestones:
+      on_failure:
+        activities:
+          - type: delegate
+            workflow: workflow1
+          - type: delegate
+            workflow: workflow2
+      on_success:
+        activities:
+          - type: delegate
+            workflow: workflow1
+          - type: delegate
+            workflow: workflow2
+      on_timeout:
+        activities:
+          - type: delegate
+            workflow: workflow1
+          - type: delegate
+            workflow: workflow2
   stop:
     implementation: "camunda/executeAction"
     inputs:

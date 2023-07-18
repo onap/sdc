@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
@@ -1052,7 +1053,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
             new ComponentInstanceInterface("interfaceId", new InterfaceInstanceDataDefinition());
         Map<String, Operation> operationsMap = Maps.newHashMap();
         operationsMap.put(operationId, new Operation(new ArtifactDataDefinition(), "1",
-            new ListDataDefinition<>(), new ListDataDefinition<>()));
+            new ListDataDefinition<>(), new ListDataDefinition<>(), new HashMap<>()));
         componentInstanceInterface.setOperationsMap(operationsMap);
 
         Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = Maps.newHashMap();

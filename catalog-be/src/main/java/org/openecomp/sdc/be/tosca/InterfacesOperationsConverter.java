@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +38,16 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -49,12 +55,14 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
+import org.openecomp.sdc.be.tosca.model.ToscaActivity;
 import org.openecomp.sdc.be.tosca.model.ToscaArtifactDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInput;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceOperationImplementation;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
+import org.openecomp.sdc.be.tosca.model.ToscaMilestone;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignment;
@@ -285,6 +293,7 @@ public class InterfacesOperationsConverter {
                     toscaLifecycleOperationDefinition.setDescription(operationEntry.getValue().getDescription());
                 }
                 fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition);
+                fillToscaOperationMilestones(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition);
                 toscaOperationMap.put(operationEntry.getValue().getName(), toscaLifecycleOperationDefinition);
             }
         }
@@ -301,6 +310,35 @@ public class InterfacesOperationsConverter {
         handleOperationInputValue(operationsMap, interfaceType);
         interfaceDefinitionAsMap.putAll(operationsMap);
         toscaInterfaceDefinitions.put(getLastPartOfName(interfaceType), interfaceDefinitionAsMap);
+    }
+
+    private void fillToscaOperationMilestones(OperationDataDefinition operation, Map<String, DataTypeDefinition> dataTypes,
+                                              ToscaLifecycleOperationDefinition toscaOperation) {
+        if (Objects.isNull(operation.getMilestones()) || operation.getMilestones().isEmpty()) {
+            toscaOperation.setMilestones(null);
+            return;
+        }
+        Map<String, ToscaMilestone> toscaMilestones = new HashMap<>();
+        for (Entry<String, MilestoneDataDefinition> milestone : operation.getMilestones().entrySet()) {
+            ListDataDefinition<ActivityDataDefinition> activities = milestone.getValue().getActivities();
+            if (MilestoneTypeEnum.getEnum(milestone.getKey()).isEmpty() || activities == null || activities.isEmpty()) {
+                continue;
+            }
+            List<ToscaActivity> toscaActivities = new ArrayList<>();
+            for (ActivityDataDefinition activity : activities.getListToscaDataDefinition()) {
+                if (ActivityTypeEnum.getEnum(activity.getType()).isEmpty()) {
+                    continue;
+                }
+                ToscaActivity toscaActivity = new ToscaActivity();
+                toscaActivity.setType(activity.getType());
+                toscaActivity.setWorkflow(activity.getWorkflow());
+                toscaActivities.add(toscaActivity);
+            }
+            ToscaMilestone toscaMilestone = new ToscaMilestone();
+            toscaMilestone.setActivities(toscaActivities);
+            toscaMilestones.put(milestone.getKey(), toscaMilestone);
+        }
+        toscaOperation.setMilestones(toscaMilestones);
     }
 
     private boolean operationHasAnImplementation(OperationDataDefinition operation) {
