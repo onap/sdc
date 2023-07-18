@@ -26,8 +26,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
@@ -56,12 +58,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.yaml.snakeyaml.Yaml;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,6 +85,9 @@ class InterfaceDefinitionHandlerTest {
     private static final String START_OPERATION = "start";
     private static final String STOP_OPERATION = "stop";
     private static final String INTERFACE_TYPE = "tosca.interfaces.node.lifecycle.Standard";
+    static ConfigurationSource
+        configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be");
+    static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
     @BeforeEach
     void setUp() {
@@ -95,7 +106,7 @@ class InterfaceDefinitionHandlerTest {
         operations.put(DELETE_OPERATION, new OperationDataDefinition());
         interfaceLifecyleStandard.setOperations(operations);
         interfaceTypes.put(INTERFACE_TYPE, interfaceLifecyleStandard);
-        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(StringUtils.EMPTY)).thenReturn(Either.left(interfaceTypes));
+        lenient().when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(StringUtils.EMPTY)).thenReturn(Either.left(interfaceTypes));
     }
 
     @Test
@@ -108,8 +119,18 @@ class InterfaceDefinitionHandlerTest {
     @Test
     void testCreateWithOperationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-tosca1.3.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create( load, StringUtils.EMPTY);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
+    }
+
+    @Test
+    void testCreateWithOperationFailMilestones() throws FileNotFoundException {
+        final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinitionInvalidMilestone-tosca1.3.yaml"));
+        final ByActionStatusComponentException actualException =
+            assertThrows(ByActionStatusComponentException.class, () -> interfaceDefinitionHandler.create(load, StringUtils.EMPTY));
+        assertEquals(ActionStatus.INVALID_OPERATION_MILESTONE, actualException.getActionStatus());
+        assertEquals(1, actualException.getParams().length);
+        assertEquals("on_failure", actualException.getParams()[0]);
     }
 
     private void assertInterfaceDefinition(final InterfaceDefinition actualInterfaceDefinition) {
