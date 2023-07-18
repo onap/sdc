@@ -109,7 +109,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     public Either<TopologyTemplate, StorageOperationStatus> createTopologyTemplate(TopologyTemplate topologyTemplate) {
-        topologyTemplate.generateUUID();
+        if (topologyTemplate.getUUID() == null) {
+            topologyTemplate.generateUUID();
+        }
         topologyTemplate = getResourceMetaDataFromResource(topologyTemplate);
         String resourceUniqueId = topologyTemplate.getUniqueId();
         if (resourceUniqueId == null) {
