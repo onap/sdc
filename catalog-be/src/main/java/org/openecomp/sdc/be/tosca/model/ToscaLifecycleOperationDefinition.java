@@ -17,6 +17,7 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
 import lombok.Data;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 
 /**
  * @author KATYR
@@ -28,5 +29,6 @@ public class ToscaLifecycleOperationDefinition {
     private String description;
     private Object implementation;
     private Map<String, ToscaProperty> inputs;
+    private Map<String, ToscaMilestone> milestones;
 
 }

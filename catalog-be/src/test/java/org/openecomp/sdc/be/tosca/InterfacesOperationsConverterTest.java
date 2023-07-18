@@ -42,16 +42,20 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.DummyConfigurationManager;
+import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -98,7 +102,7 @@ class InterfacesOperationsConverterTest {
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("Local");
-        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false);
+        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -121,7 +125,7 @@ class InterfacesOperationsConverterTest {
         component.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("NodeTypeName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("Local");
-        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false);
+        addOperationsToInterface(component, addedInterface, 5, 3, true, false, false, false);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -142,7 +146,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.resource.or.other.resourceName");
 
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -165,7 +169,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedServiceComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.service.or.other.serviceName");
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false, false);
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -189,7 +193,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
         addedInterface.setType("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -210,7 +214,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.resource.or.other.resourceNameNoInputs");
-        addOperationsToInterface(component, addedInterface, 3, 3, false, false, false);
+        addOperationsToInterface(component, addedInterface, 3, 3, false, false, false, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -234,7 +238,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType(addedInterfaceType);
-        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false);
+        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false, false);
         addedInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -268,7 +272,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType(addedInterfaceType);
         addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false);
+        addOperationsToInterface(component, addedInterface, 2, 2, true, true, false, false);
         addedInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -281,7 +285,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition secondInterface = new InterfaceDefinition();
         secondInterface.setType(secondInterfaceType);
         secondInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, secondInterface, 2, 2, true, true, false);
+        addOperationsToInterface(component, secondInterface, 2, 2, true, true, false, false);
         secondInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
                 "name_for_op_0"))
@@ -396,8 +400,8 @@ class InterfacesOperationsConverterTest {
         assertTrue(expectedListOfStringPropValue.contains("value3"));
     }
 
-    private void addOperationsToInterface(Component component, InterfaceDefinition addedInterface, int numOfOps,
-                                          int numOfInputsPerOp, boolean hasInputs, boolean hasOutputs, boolean addAComplexType) {
+    private void addOperationsToInterface(Component component, InterfaceDefinition addedInterface, int numOfOps, int numOfInputsPerOp,
+                                          boolean hasInputs, boolean hasOutputs, boolean addAComplexType, boolean hasMilestones) {
 
         addedInterface.setOperations(new HashMap<>());
         for (int i = 0; i < numOfOps; i++) {
@@ -407,6 +411,9 @@ class InterfacesOperationsConverterTest {
             final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
             implementation.setArtifactName(i + "_createBPMN.bpmn");
             operation.setImplementation(implementation);
+            if (hasMilestones) {
+                operation.setMilestones(createMilestones());
+            }
             if (hasInputs) {
                 operation.setInputs(createInputs(component, numOfInputsPerOp, addAComplexType));
             }
@@ -416,6 +423,19 @@ class InterfacesOperationsConverterTest {
             }
             addedInterface.getOperations().put(operation.getName(), operation);
         }
+    }
+
+    private Map<String, MilestoneDataDefinition> createMilestones() {
+        Map<String, MilestoneDataDefinition> toscaMilestones = new HashMap<>();
+        ActivityDataDefinition activity = new ActivityDataDefinition();
+        activity.setType(ActivityTypeEnum.DELEGATE.getValue());
+        activity.setWorkflow("workflow1");
+        ListDataDefinition<ActivityDataDefinition> activities = new ListDataDefinition<>();
+        activities.add(activity);
+        MilestoneDataDefinition milestone = new MilestoneDataDefinition();
+        milestone.setActivities(activities);
+        toscaMilestones.put(MilestoneTypeEnum.ON_ENTRY.getValue(), milestone);
+        return toscaMilestones;
     }
 
     private InputDataDefinition createInput(final String type, final String description, final Boolean isRequired,
@@ -555,7 +575,7 @@ class InterfacesOperationsConverterTest {
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
         addedInterface.setType("com.some.resource.or.other.resourceName");
-        addOperationsToInterface(component, addedInterface, 3, 2, true, false, true);
+        addOperationsToInterface(component, addedInterface, 3, 2, true, false, true, false);
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
@@ -583,6 +603,42 @@ class InterfacesOperationsConverterTest {
         assertEquals("designer", complexInputStringProp.get("propertyName"));
         assertTrue(complexInputStringProp.containsKey("propertySource"));
         assertEquals("SELF", complexInputStringProp.get("propertySource"));
+    }
+
+    @Test
+    void testGetInterfaceAsMapWithMilestones() {
+        Component component = new Resource();
+        component.setNormalizedName("normalizedComponentName");
+        InterfaceDefinition addedInterface = new InterfaceDefinition();
+        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
+        addedInterface.setType("com.some.resource.or.other.resourceName");
+        addOperationsToInterface(component, addedInterface, 2, 0, false, false, false, true);
+        final String interfaceType = "normalizedComponentName-interface";
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(interfaceType, addedInterface);
+        final var interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), dataTypes, false);
+        assertNotNull(interfacesMap);
+        assertEquals(1, interfacesMap.size());
+        assertTrue(interfacesMap.containsKey("resourceName"));
+        Object resourceName = interfacesMap.get("resourceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(3, ((Map) resourceName).size());
+        Map<String, Object> resource = (Map<String, Object>) resourceName;
+        assertTrue(resource.containsKey("name_for_op_0"));
+        Map<String, Object> operation0 = (Map<String, Object>) resource.get("name_for_op_0");
+        assertTrue(operation0.containsKey("milestones"));
+        Map<String, Object> operation0Milestones = (Map<String, Object>) operation0.get("milestones");
+        assertTrue(operation0Milestones.containsKey(MilestoneTypeEnum.ON_ENTRY.getValue()));
+        Map<String, Object> milestone = (Map<String, Object>) operation0Milestones.get(MilestoneTypeEnum.ON_ENTRY.getValue());
+        assertTrue(milestone.containsKey("activities"));
+        List<Map<String, String>> activities = (List<Map<String, String>>) milestone.get("activities");
+        assertEquals(1, activities.size());
+        Map<String, String> activity = activities.get(0);
+        assertTrue(activity.containsKey("type"));
+        assertEquals(ActivityTypeEnum.DELEGATE.getValue(), activity.get("type"));
+        assertTrue(activity.containsKey("workflow"));
+        assertEquals("workflow1", activity.get("workflow"));
     }
 
     private void addComplexTypeToDataTypes() {
