@@ -557,12 +557,12 @@ public class ToscaExportHandler {
         }
     }
 
-    private Map<String, String> convertMetadata(Component component) {
+    private Map<String, Object> convertMetadata(Component component) {
         return convertMetadata(component, false, null);
     }
 
-    private Map<String, String> convertMetadata(Component component, boolean isInstance, ComponentInstance componentInstance) {
-        Map<String, String> toscaMetadata = new LinkedHashMap<>();
+    private Map<String, Object> convertMetadata(Component component, boolean isInstance, ComponentInstance componentInstance) {
+        Map<String, Object> toscaMetadata = new LinkedHashMap<>();
         toscaMetadata.put(convertMetadataKey(JsonPresentationFields.INVARIANT_UUID), component.getInvariantUUID());
         toscaMetadata.put(JsonPresentationFields.UUID.getPresentation(), component.getUUID());
         toscaMetadata
@@ -619,9 +619,7 @@ public class ToscaExportHandler {
                 toscaMetadata.put(JsonPresentationFields.INSTANTIATION_TYPE.getPresentation(),
                         service.getEnvironmentContext() == null ? StringUtils.EMPTY : service.getInstantiationType());
                 if (!isInstance) {
-                    // DE268546
-                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(), service.isEcompGeneratedNaming().toString());
-                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(), service.isEcompGeneratedNaming().toString());
+                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(), service.isEcompGeneratedNaming()/*.toString()*/);
                     toscaMetadata.put(JsonPresentationFields.NAMING_POLICY.getPresentation(), service.getNamingPolicy());
                 }
                 break;

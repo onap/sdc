@@ -74,7 +74,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadInfo;
-import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
@@ -1400,31 +1399,36 @@ public class ServiceImportParseLogic {
     }
 
 
-    public Service createServiceTransaction(Service service, User user, boolean isNormative) {
+    public Service createServiceTransaction(Service service, User user, boolean isNormative, AuditingActionEnum auditingAction) {
         // validate resource name uniqueness
         log.debug("validate resource name");
-        Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
-            .validateComponentNameExists(service.getName(), null, service.getComponentType());
-        if (eitherValidation.isRight()) {
-            log.debug("Failed to validate component name {}. Status is {}. ", service.getName(), eitherValidation.right().value());
-            ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
-            throw new ComponentException(errorResponse);
-        }
-        if (eitherValidation.left().value()) {
-            log.debug("resource with name: {}, already exists", service.getName());
-            ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), service.getName());
-            throw new ComponentException(errorResponse);
+        if (!AuditingActionEnum.UPDATE_SERVICE.equals(auditingAction)) {
+            Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
+                    .validateComponentNameExists(service.getName(), null, service.getComponentType());
+            if (eitherValidation.isRight()) {
+                log.debug("Failed to validate component name {}. Status is {}. ", service.getName(), eitherValidation.right().value());
+                ResponseFormat errorResponse = componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
+                throw new ComponentException(errorResponse);
+            }
+            if (eitherValidation.left().value()) {
+                log.debug("resource with name: {}, already exists", service.getName());
+                ResponseFormat errorResponse = componentsUtils
+                        .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), service.getName());
+                throw new ComponentException(errorResponse);
+            }
         }
         log.debug("send resource {} to dao for create", service.getName());
         createArtifactsPlaceHolderData(service, user);
         // enrich object
-        if (!isNormative) {
+        if (!isNormative && !AuditingActionEnum.UPDATE_SERVICE.equals(auditingAction)) {
             log.debug("enrich resource with creator, version and state");
             service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
             service.setVersion(INITIAL_VERSION);
             service.setHighestVersion(true);
+        }
+        if (AuditingActionEnum.UPDATE_SERVICE.equals(auditingAction)) {
+            toscaOperationFacade.deleteService(service.getInvariantUUID(), true);
         }
         return toscaOperationFacade.createToscaComponent(service).left().on(r -> throwComponentExceptionByResource(r, service));
     }

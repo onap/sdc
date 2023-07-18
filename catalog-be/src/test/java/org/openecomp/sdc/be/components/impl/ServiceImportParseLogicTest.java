@@ -1250,7 +1250,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
         when(toscaOperationFacade.createToscaComponent(any(Service.class))).thenReturn(Either.left(service));
 
-        Assertions.assertThrows(NullPointerException.class, () -> testSubject.createServiceTransaction(service, user, true));
+        Assertions.assertThrows(NullPointerException.class, () -> testSubject.createServiceTransaction(service, user, true, null));
     }
 
     @Test
