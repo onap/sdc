@@ -77,6 +77,9 @@ public class TypeUtils {
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), POLICY_TYPES("policy_types"),  IMPORTS("imports"),
         //Operations
         IMPLEMENTATION("implementation"),
+        MILESTONES("milestones"),
+        ACTIVITIES("activities"),
+        WORKFLOW("workflow"),
         SUBSTITUTION_FILTERS("substitution_filter"),
         DERIVED_FROM_NAME("derivedFromName"),
         INTERFACE_TYPES("interface_types"),
