@@ -19,6 +19,7 @@
 *  ============LICENSE_END=========================================================
 */
 import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {UIInterfaceModel} from "../interface-operations.component";
 import {InputOperationParameter, InterfaceOperationModel, IOperationParamsList} from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
@@ -89,6 +90,8 @@ export class InterfaceOperationHandlerComponent {
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
     inputTypeOptions: any[];
+    timeoutValue = new FormControl('');
+    timeoutType = new FormControl('');
 
     constructor(private dataTypeService: DataTypeService,
                 private componentServiceNg2: ComponentServiceNg2,
@@ -105,6 +108,23 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
         this.modelName = this.input.modelName;
+        this.timeoutType.setValue('sec');
+        if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.timeout != null) {
+            this.timeoutValue.setValue(this.operationToUpdate.implementation.timeout);
+            let timeout = this.timeoutValue.value / 3600;
+            if (Number.isInteger(timeout)) {
+                if (timeout > 23 && Number.isInteger(timeout / 24)) {
+                    this.timeoutValue.setValue(timeout / 24);
+                    this.timeoutType.setValue("day");
+                } else {
+                    this.timeoutValue.setValue(timeout);
+                    this.timeoutType.setValue("hour");
+                }
+            } else if (Number.isInteger(timeout / 24)) {
+                this.timeoutValue.setValue(timeout / 24);
+                this.timeoutType.setValue("day");
+            }
+        }
         this.initCustomToscaFunctions();
         this.initInputs();
         this.removeImplementationQuote();
@@ -257,6 +277,21 @@ export class InterfaceOperationHandlerComponent {
     onRemoveInput = (inputParam: InputOperationParameter): void => {
         let index = this.inputs.indexOf(inputParam);
         this.inputs.splice(index, 1);
+    }
+
+    timeoutConversion = (): void => {
+        let timeout = this.timeoutValue.value;
+        if (timeout != null) {
+            if (this.timeoutType.value == null || this.timeoutType.value == 'sec') {
+                this.operationToUpdate.implementation.timeout = timeout;
+                return;
+            }
+            if (this.timeoutType.value == 'hour') {
+                this.operationToUpdate.implementation.timeout = timeout * 3600;
+            } else if (this.timeoutType.value == 'day') {
+                this.operationToUpdate.implementation.timeout = (timeout * 24) * 3600;
+            }
+        }
     }
 
     private removeImplementationQuote(): void {
