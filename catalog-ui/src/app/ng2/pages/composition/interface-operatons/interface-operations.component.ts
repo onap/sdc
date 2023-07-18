@@ -289,11 +289,18 @@ export class InterfaceOperationsComponent {
         this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
         const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
         const operationUpdated: InterfaceOperationModel = interfaceOperationHandlerComponentInstance.operationToUpdate;
+        let timeout = null;
+        if (operationUpdated.implementation && operationUpdated.implementation.timeout != null) {
+            timeout = operationUpdated.implementation.timeout;
+        }
         const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
         if (!isArtifactChecked) {
             let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
             artifactName = artifactName === undefined ? '' : artifactName;
             operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName, 'artifactVersion': ''} as ArtifactModel);
+        }
+        if (timeout != null) {
+            operationUpdated.implementation.timeout = timeout;
         }
         this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
             this.componentMetaData.uniqueId,

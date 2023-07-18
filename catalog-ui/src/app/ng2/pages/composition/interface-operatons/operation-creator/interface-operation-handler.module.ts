@@ -23,6 +23,7 @@ import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {BrowserModule} from '@angular/platform-browser';
 import {FormElementsModule} from "app/ng2/components/ui/form-components/form-elements.module";
 import {TranslateModule} from "app/ng2/shared/translator/translate.module";
 import {AddInputComponent} from './add-input/add-input.component';
@@ -46,6 +47,7 @@ import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function
     imports: [
         CommonModule,
         SdcUiComponentsModule,
+        BrowserModule,
         FormsModule,
         FormElementsModule,
         TranslateModule,
