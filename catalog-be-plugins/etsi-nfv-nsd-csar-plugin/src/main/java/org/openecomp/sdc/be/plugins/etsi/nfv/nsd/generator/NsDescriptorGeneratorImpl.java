@@ -394,7 +394,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
     }
 
     private ToscaTemplate parseToToscaTemplate(final Component component) throws NsdException {
-        final Either<ToscaTemplate, ToscaError> toscaTemplateRes = toscaExportHandler.convertToToscaTemplate(component);
+        final Either<ToscaTemplate, ToscaError> toscaTemplateRes = toscaExportHandler.convertToToscaTemplate(component, false);
         if (toscaTemplateRes.isRight()) {
             String errorMsg = String
                 .format("Could not parse component '%s' to tosca template. Error '%s'", component.getName(), toscaTemplateRes.right().value().name());
