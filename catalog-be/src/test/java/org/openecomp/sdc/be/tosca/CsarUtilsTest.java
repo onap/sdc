@@ -84,6 +84,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.plugins.CsarZipGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.ComponentCache.CacheEntry;
@@ -102,11 +103,17 @@ class CsarUtilsTest extends BaseConfDependent {
 	@InjectMocks
 	CsarUtils testSubject;
 
+    @InjectMocks
+    DefaultCsarGenerator defaultCsarGeneratorSubject;
+
 	@Mock
 	private ArtifactCassandraDao artifactCassandraDao;
 
 	@Mock
 	private ComponentsUtils componentsUtils;
+
+    @Mock
+    private CsarZipGenerator csarZipGenerator;
 
 	@Mock
 	private ToscaExportHandler toscaExportUtils;
@@ -158,7 +165,7 @@ class CsarUtilsTest extends BaseConfDependent {
 	}
 
 	@Test
-	void testCreateCsar() {
+	void testCreateCsar() throws IOException {
 		Component component = new Resource();
 		Map<String, ArtifactDefinition> artifactDefinitionHashMap = new HashMap<>();
 		ArtifactDefinition artifact = new ArtifactDefinition();
@@ -170,17 +177,24 @@ class CsarUtilsTest extends BaseConfDependent {
 		component.setArtifacts(artifactDefinitionHashMap);
 		component.setDeploymentArtifacts(artifactDefinitionHashMap);
 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(out);
+
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
 		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
 				.thenReturn(ActionStatus.GENERAL_ERROR);
 
+        Mockito.when(
+                csarZipGenerator.generateCsarZip(Mockito.any(Component.class), Mockito.any(Boolean.class), Mockito.any(ZipOutputStream.class), Mockito.any(Boolean.class)))
+            .thenReturn(Either.left(zip));
+
 		testSubject.createCsar(component, true, true);
 	}
 
 	@Test
-	void testCreateCsarWithGenerateCsarZipResponseIsLeft() {
+	void testCreateCsarWithGenerateCsarZipResponseIsLeft() throws IOException {
 		Component component = new Resource();
 		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
 		ArtifactDefinition artifact = new ArtifactDefinition();
@@ -207,6 +221,9 @@ class CsarUtilsTest extends BaseConfDependent {
 		filedata.setPayloadAsArray(data);
 		filesData.add(filedata);
 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(out);
+
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
 		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
@@ -218,6 +235,10 @@ class CsarUtilsTest extends BaseConfDependent {
 		Mockito.when(
 				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
 				.thenReturn(Either.left(filesData));
+
+        Mockito.when(
+            csarZipGenerator.generateCsarZip(Mockito.any(Component.class), Mockito.any(Boolean.class), Mockito.any(ZipOutputStream.class), Mockito.any(Boolean.class)))
+            .thenReturn(Either.left(zip));
 
 		testSubject.createCsar(component, false, true);
 	}
@@ -357,7 +378,7 @@ class CsarUtilsTest extends BaseConfDependent {
 				.thenReturn(Either.left(Mockito.any(ArtifactDefinition.class)));
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(testSubject, "populateZip", component, getFromCS, zip, true);
+			Deencapsulation.invoke(defaultCsarGeneratorSubject, "generateCsarZip", component, getFromCS, zip, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -542,7 +563,7 @@ class CsarUtilsTest extends BaseConfDependent {
 		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
 				.thenReturn(Either.left(componentRI));
 
-		Deencapsulation.invoke(testSubject, "addInnerComponentsToCache", componentCache, childComponent);
+		Deencapsulation.invoke(defaultCsarGeneratorSubject, "addInnerComponentsToCache", componentCache, childComponent);
 
 		io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId","artifactName",componentRI));
 		assertEquals(expected, componentCache.all().toList());
@@ -591,7 +612,7 @@ class CsarUtilsTest extends BaseConfDependent {
 
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName);
+		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(defaultCsarGeneratorSubject, "writeComponentInterface", new Resource(), zip, fileName);
 			assertNotNull(output);
 		}
 	}
@@ -604,7 +625,7 @@ class CsarUtilsTest extends BaseConfDependent {
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-		Either<byte[], ActionStatus> output = Deencapsulation.invoke(testSubject, "getEntryData", cassandraId, childComponent);
+		Either<byte[], ActionStatus> output = Deencapsulation.invoke(defaultCsarGeneratorSubject, "getEntryData", cassandraId, childComponent);
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -618,7 +639,7 @@ class CsarUtilsTest extends BaseConfDependent {
 				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
 				.thenReturn(Either.left(filesData));
 
-		Either<byte[], ResponseFormat> output = Deencapsulation.invoke(testSubject, "getLatestSchemaFilesFromCassandra");
+		Either<byte[], ResponseFormat> output = Deencapsulation.invoke(defaultCsarGeneratorSubject, "getLatestSchemaFilesFromCassandra");
 
 		assertNotNull(output);
 		assertTrue(output.isRight());
@@ -950,7 +971,7 @@ class CsarUtilsTest extends BaseConfDependent {
 		final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
 		final byte[] data = Files.readAllBytes(path);
 		try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zip = new ZipOutputStream(out)) {
-			Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage);
+			Deencapsulation.invoke(defaultCsarGeneratorSubject, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage);
 			final IOException actualException = assertThrows(IOException.class, () -> zip.putNextEntry(new ZipEntry("Definitions/nodes.yml")));
 			assertEquals("duplicate entry: Definitions/nodes.yml", actualException.getMessage());
 		}
@@ -965,7 +986,7 @@ class CsarUtilsTest extends BaseConfDependent {
 		final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
 		dependencies.add(triple);
 		final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
-		final List<String> result = Deencapsulation.invoke(testSubject,
+		final List<String> result = Deencapsulation.invoke(defaultCsarGeneratorSubject,
 			"findNonRootNodesFromPackage", dependencies);
 		assertTrue(CollectionUtils.isNotEmpty(result));
 		assertEquals(expectedResult, result);
