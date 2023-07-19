@@ -386,7 +386,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(toscaOperationFacade.getToscaFullElement("name")).thenReturn(Either.left(resource));
 
         Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> result;
-        result = Deencapsulation.invoke(testSubject, "fillImports", resource, toscaTemplate);
+        result = Deencapsulation.invoke(testSubject, "fillImports", resource, toscaTemplate, false);
 
         verify(toscaOperationFacade, times(1)).getToscaFullElement("name");
         assertTrue(result.isLeft());
@@ -421,7 +421,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         doReturn(map).when(outputConverter).convert(any(), any());
 
         // default test
-        result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
+        result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode, false);
         assertNotNull(result);
     }
 
@@ -471,7 +471,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         doReturn(map).when(outputConverter).convert(any(), any());
 
         // test component contains group
-        final var result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
+        final var result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode, false);
         assertNotNull(result);
     }
 
@@ -510,7 +510,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         doReturn(map).when(outputConverter).convert(any(), any());
 
         // test component contains group
-        result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
+        result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode, false);
         assertNotNull(result);
     }
 
@@ -561,7 +561,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(toscaOperationFacade.getByToscaResourceNameAndVersion("org.typeA", "1.0", null)).thenReturn(Either.left(baseType));
 
         // default test
-        result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate);
+        result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate, false);
         assertNotNull(result);
     }
 
@@ -588,7 +588,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(toscaOperationFacade.getToscaFullElement("modelName")).thenReturn(Either.left(new Service()));
 
         // default test
-        Deencapsulation.invoke(testSubject, "createDependency", componentCache, imports, dependecies, ci);
+        Deencapsulation.invoke(testSubject, "createDependency", componentCache, imports, dependecies, ci, false);
         assertFalse(componentCache.isEmpty());
     }
 
