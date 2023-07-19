@@ -21,6 +21,7 @@
  */
 package org.openecomp.sdc.config;
 
+import java.util.List;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.sdc.security.PortalClient;
@@ -30,10 +31,19 @@ import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.filters.FilterConfiguration;
 import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
+import org.openecomp.sdc.be.tosca.CommonCsarGenerator;
+import org.openecomp.sdc.be.tosca.DefaultCsarGenerator;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -130,6 +140,11 @@ public class CatalogBESpringConfig {
     @Bean
     public PortalClient portalClient() throws CipherUtilException {
         return new PortalClient(httpClientConnectionManager(), portalConfiguration());
+    }
+
+    @Bean(name = "defaultCsarGenerator")
+    public DefaultCsarGenerator defaultCsarGenerator(CommonCsarGenerator commonCsarGenerator) {
+        return new DefaultCsarGenerator(commonCsarGenerator);
     }
 
     @Bean
