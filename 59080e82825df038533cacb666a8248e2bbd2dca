@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7e3af79_9a7e22fc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-19T18:01:50Z",
+      "side": 1,
+      "message": "potential NPE, handleMilestoneActivities can return null",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 39
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea8e5e13_72c2d8ae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-19T18:01:50Z",
+      "side": 1,
+      "message": "redundant, instanceof also checks for null",
+      "range": {
+        "startLine": 207,
+        "startChar": 12,
+        "endLine": 207,
+        "endChar": 29
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa09e6b0_1f58584b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaMilestone.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-19T18:01:50Z",
+      "side": 1,
+      "message": "private",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 35
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caf36605_d1dc3d4f",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ActivityDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-19T18:01:50Z",
+      "side": 1,
+      "message": "class without private field, what @Getter/@Setter are for ?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 7
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69bb39d6_4d091127",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/MilestoneDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-19T18:01:50Z",
+      "side": 1,
+      "message": "class without private field, what @Getter/@Setter are for ?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 7
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
