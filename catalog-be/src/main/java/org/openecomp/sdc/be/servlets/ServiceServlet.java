@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import static org.apache.hc.core5.http.HttpStatus.SC_BAD_REQUEST;
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,6 +46,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -58,14 +60,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -97,7 +102,8 @@ import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-import org.keycloak.representations.AccessToken;
+import org.yaml.snakeyaml.Yaml;
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Server(url = "/sdc2/rest")
@@ -130,7 +136,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Service created"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Service already exist"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
+        @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createService(@Parameter(description = "Service object to be created", required = true) String data,
                                   @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -157,7 +163,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
                     throw new ByResponseFormatComponentException(actionResponse.right().value());
                 }
                 loggerSupportability.log(LoggerSupportabilityActions.CREATE_SERVICE, service.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-                        "Service {} has been created by user {} ", service.getName(), userId);
+                    "Service {} has been created by user {} ", service.getName(), userId);
                 return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
             } else {
                 log.debug("Unauthorized Tenant");
@@ -170,14 +176,14 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 throw new ByResponseFormatComponentException(actionResponse.right().value());
             }
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_SERVICE, service.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-                    "Service {} has been created by user {} ", service.getName(), userId);
+                "Service {} has been created by user {} ", service.getName(), userId);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.left().value());
         }
     }
 
     public Either<Service, ResponseFormat> parseToService(String serviceJson, User user) {
         return getComponentsUtils()
-            .convertJsonToObjectUsingObjectMapper(serviceJson, user, Service.class, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
+            .convertJsonToObjectUsingObjectMapper(serviceJson, user, Service.class, AuditingActionEnum.CREATE_SERVICE, ComponentTypeEnum.SERVICE);
     }
 
     @GET
@@ -804,6 +810,76 @@ public class ServiceServlet extends AbstractValidationsServlet {
             log.debug("import service failed with exception", e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+    }
+
+
+    @PUT
+    @Path("/services/{serviceId}/toscaTemplate")
+    @Tag(name = "SDCE-2 APIs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Update service by tosca template import", method = "PUT", summary = "Returns updated service",
+        responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "200", description = "Service Updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response importToscaTemplate(@PathParam("serviceId") final String serviceId,
+                                        @Parameter(description = "Service object to be Updated", required = true) final String data,
+                                        @Context final HttpServletRequest request,
+                                        @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) throws IOException {
+        initSpringFromContext();
+        final String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        final User modifier = new User(userId);
+        log.debug(MODIFIER_ID_IS, userId);
+        try {
+            final Service serviceOriginal = getService(serviceId, modifier, data);
+            final ServiceImportBusinessLogic serviceImportBusinessLogic = serviceImportManager.getServiceImportBusinessLogic();
+            final Service updatedService = serviceImportBusinessLogic.updateServiceFromToscaTemplate(serviceOriginal, modifier, data);
+
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(updatedService));
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Service Metadata");
+            log.debug("update service metadata failed with exception", e);
+            throw e;
+        }
+    }
+
+    @NotNull
+    private Service getService(final String serviceId, final User modifier, final String data) {
+        final Either<Service, ResponseFormat> originalService = serviceBusinessLogic.getService(serviceId, modifier);
+        if (originalService.isRight()) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+
+        final Map<String, Object> map = new Yaml().loadAs(data, Map.class);
+        if (MapUtils.isEmpty(map)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        final Map<String, String> metadata = (Map<String, String>) map.get("metadata");
+        if (MapUtils.isEmpty(metadata)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        final Service service = originalService.left().value();
+        final String uuid = metadata.get("UUID");
+        if (!service.getUUID().equals(uuid)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        final String invariantUUID = metadata.get("invariantUUID");
+        if (!service.getInvariantUUID().equals(invariantUUID)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        final String name = metadata.get("name");
+        if (!service.getName().equals(name)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        final String version = metadata.get("template_version");
+        if (!service.getVersion().equals(version)) {
+            throw new ByResponseFormatComponentException(new ResponseFormat(SC_BAD_REQUEST));
+        }
+        return service;
     }
 
     public enum Action {DELETE, MARK_AS_DELETE}

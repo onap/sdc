@@ -55,7 +55,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -219,7 +218,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation,
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
-                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator, KafkaHandler kafkaHandler) {
+                                final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator,
+                                KafkaHandler kafkaHandler) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -800,13 +800,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_SERVICE, ComponentTypeEnum.SERVICE);
             throw exp;
         }
-        service.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
-        service.setContactId(service.getContactId().toLowerCase());
-        // Generate invariant UUID - must be here and not in operation since it
-
-        // should stay constant during clone
-        String invariantUUID = UniqueIdBuilder.buildInvariantUUID();
-        service.setInvariantUUID(invariantUUID);
+        if (!AuditingActionEnum.UPDATE_SERVICE.equals(actionEnum)) {
+            service.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
+            service.setContactId(service.getContactId().toLowerCase());
+            // Generate invariant UUID - must be here and not in operation since it should stay constant during clone
+            service.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
+        }
         return Either.left(service);
     }
 
@@ -1153,14 +1152,14 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private void addInputsToService(Service currentService, List<PropertyDefinition> subNodePropsToBeAdded) {
-            ListUtils.emptyIfNull(subNodePropsToBeAdded).forEach(prop -> {
-                InputDefinition inputDef = new InputDefinition(prop);
-                Either<InputDefinition, StorageOperationStatus> status =
-                        toscaOperationFacade.addInputToComponent(prop.getName(), inputDef, currentService);
-                if (status.isRight()) {
-                    throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
-                }
-            });
+        ListUtils.emptyIfNull(subNodePropsToBeAdded).forEach(prop -> {
+            InputDefinition inputDef = new InputDefinition(prop);
+            Either<InputDefinition, StorageOperationStatus> status =
+                toscaOperationFacade.addInputToComponent(prop.getName(), inputDef, currentService);
+            if (status.isRight()) {
+                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            }
+        });
     }
 
     private void removePropertiesFromService(Service currentService, List<String> subNodePropsToBeRemoved) {
@@ -1249,25 +1248,25 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
             return currentProps.stream().map(PropertyDefinition::getName).collect(Collectors.toList());
         }
-        
+
         Map<String, PropertyDefinition> currentPropsMap = currentProps.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
         Map<String, PropertyDefinition> updatedPropsMap = updatedProps.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
 
         List<String> propNamesToBeRemoved = new ArrayList<>();
-        for (String currentPropertyName: currentPropsMap.keySet()) {
+        for (String currentPropertyName : currentPropsMap.keySet()) {
             if (updatedPropsMap.containsKey(currentPropertyName)) {
                 if (!haveSameType(currentPropsMap.get(currentPropertyName), updatedPropsMap.get(currentPropertyName))) {
                     propNamesToBeRemoved.add(currentPropertyName);
-                } 
+                }
             } else {
                 propNamesToBeRemoved.add(currentPropertyName);
             }
         }
-        
+
         return propNamesToBeRemoved;
     }
-    
-    private boolean haveSameType(final PropertyDefinition property1, final PropertyDefinition property2){
+
+    private boolean haveSameType(final PropertyDefinition property1, final PropertyDefinition property2) {
         if (property1.getType().equals("list")) {
             return property2.getType().equals("list") && property1.getSchema().equals(property2.getSchema());
         }
@@ -1276,28 +1275,30 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         return property1.getType().equals(property2.getType());
     }
-    
+
     private List<PropertyDefinition> getSubstitutionNodePropertiesToBeAdded(Service currentService, Service serviceUpdate) {
         List<PropertyDefinition> propsInCurrentVersion = ListUtils.emptyIfNull(fetchDerivedFromGenericType(currentService, null).getProperties());
         List<PropertyDefinition> propsInUpdatedVersion = ListUtils.emptyIfNull(fetchDerivedFromGenericType(serviceUpdate, null).getProperties());
         if (!StringUtils.equals(currentService.getDerivedFromGenericType(), serviceUpdate.getDerivedFromGenericType())) {
             return propsInUpdatedVersion;
         }
-        
-        Map<String, PropertyDefinition> mapOfPropsInCurrentVersion = propsInCurrentVersion.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
-        Map<String, PropertyDefinition> mapOfPropsInUpdatedVersion = propsInUpdatedVersion.stream().collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
-        
+
+        Map<String, PropertyDefinition> mapOfPropsInCurrentVersion = propsInCurrentVersion.stream()
+            .collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+        Map<String, PropertyDefinition> mapOfPropsInUpdatedVersion = propsInUpdatedVersion.stream()
+            .collect(Collectors.toMap(prop -> prop.getName(), prop -> prop));
+
         List<PropertyDefinition> propsToBeAdded = new ArrayList<>();
-        for (Entry<String, PropertyDefinition> propertyInUpdatedVersion: mapOfPropsInUpdatedVersion.entrySet()) {
+        for (Entry<String, PropertyDefinition> propertyInUpdatedVersion : mapOfPropsInUpdatedVersion.entrySet()) {
             if (mapOfPropsInCurrentVersion.containsKey(propertyInUpdatedVersion.getKey())) {
                 if (!haveSameType(mapOfPropsInCurrentVersion.get(propertyInUpdatedVersion.getKey()), propertyInUpdatedVersion.getValue())) {
                     propsToBeAdded.add(propertyInUpdatedVersion.getValue());
-                } 
+                }
             } else {
                 propsToBeAdded.add(propertyInUpdatedVersion.getValue());
             }
         }
-                
+
         return propsToBeAdded;
     }
 
@@ -1751,9 +1752,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (serviceRes.isRight()) {
             log.debug("failed retrieving service");
             response = componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(serviceRes.right().value(), ComponentTypeEnum.SERVICE), serviceId);
             componentsUtils.auditComponent(response, user, null, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-                    new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()), ResourceVersionInfo.newBuilder().build(), did);
+                new ResourceCommonInfo(ComponentTypeEnum.SERVICE.getValue()), ResourceVersionInfo.newBuilder().build(), did);
             return Either.right(response);
         }
         Service service = serviceRes.left().value();
@@ -1764,7 +1765,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (service.getLifecycleState() != LifecycleStateEnum.CERTIFIED) {
             log.info("service {} is  not available for distribution. Should be in certified state", service.getUniqueId());
             ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(), service.getName());
+                .getResponseFormat(ActionStatus.SERVICE_NOT_AVAILABLE_FOR_DISTRIBUTION, service.getVersion(), service.getName());
             return Either.right(responseFormat);
         }
         String dcurrStatus = service.getDistributionStatus().name();
@@ -1775,7 +1776,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             ActionStatus notifyServiceResponse = distributionEngine.notifyService(did, service, notificationData, envName, user);
             if (notifyServiceResponse == ActionStatus.OK) {
                 Either<Service, ResponseFormat> updateStateRes = updateDistributionStatusForActivation(service, user,
-                        DistributionStatusEnum.DISTRIBUTED);
+                    DistributionStatusEnum.DISTRIBUTED);
                 if (updateStateRes.isLeft() && updateStateRes.left().value() != null) {
                     updatedService = updateStateRes.left().value();
                     updatedStatus = updatedService.getDistributionStatus().name();
@@ -1794,13 +1795,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
         } else {
             response = componentsUtils
-                    .getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
+                .getResponseFormatByDE(componentsUtils.convertFromStorageResponse(readyForDistribution, ComponentTypeEnum.SERVICE), envName);
             result = Either.right(response);
         }
         componentsUtils.auditComponent(response, user, service, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST,
-                new ResourceCommonInfo(service.getName(), ComponentTypeEnum.SERVICE.getValue()),
-                ResourceVersionInfo.newBuilder().distributionStatus(dcurrStatus).build(),
-                ResourceVersionInfo.newBuilder().distributionStatus(updatedStatus).build(), null, null, did);
+            new ResourceCommonInfo(service.getName(), ComponentTypeEnum.SERVICE.getValue()),
+            ResourceVersionInfo.newBuilder().distributionStatus(dcurrStatus).build(),
+            ResourceVersionInfo.newBuilder().distributionStatus(updatedStatus).build(), null, null, did);
         return result;
     }
 
@@ -2331,9 +2332,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     public boolean isServiceExist(String serviceName) {
         return toscaOperationFacade.getLatestByServiceName(serviceName).isLeft();
-    }
-
-    public void updateService(Service service, Map<String, Object> map) {
     }
 
     interface ArtifactGenerator<CallVal> extends Callable<Either<CallVal, ResponseFormat>> {
