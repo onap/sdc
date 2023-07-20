@@ -16,6 +16,52 @@
       "message": "recheck",
       "revId": "be70ddc63a4b13a8b04c020bc53448e3e4e33851",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "febf9e00_0eac3747",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/plugins/CsarZipGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-20T18:31:45Z",
+      "side": 1,
+      "message": "2023",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "be70ddc63a4b13a8b04c020bc53448e3e4e33851",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f65cd25_f47383ef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/DefaultCsarGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-20T18:31:45Z",
+      "side": 1,
+      "message": "2023",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "be70ddc63a4b13a8b04c020bc53448e3e4e33851",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
