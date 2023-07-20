@@ -200,13 +200,13 @@ public class YamlTemplateParsingHandler {
         Map<String, Object> substitutionMappings = getSubstitutionMappings(mappedToscaTemplate);
         if (substitutionMappings != null) {
             if (component.isService()) {
-                if (!interfaceTemplateYaml.isEmpty()) {
-                    parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
-                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
-                } else {
+                if (interfaceTemplateYaml.isEmpty()) {
                     Resource resource = serviceBusinessLogic.fetchDerivedFromGenericType(component, null);
                     List<PropertyDefinition> properties = resource.getProperties();
                     parsedToscaYamlInfo.setProperties(properties.stream().collect(Collectors.toMap(PropertyDefinition::getName, prop -> prop)));
+                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
+                } else {
+                    parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
                     parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
                 }
             }

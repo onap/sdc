@@ -17,73 +17,34 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class ServiceImportManagerTest {
 
-    private final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+    @Mock
+    private ServiceBusinessLogic serviceBusinessLogic;
+
     @InjectMocks
     private ServiceImportManager serviceImportManager;
 
     @BeforeEach
     public void setup() {
-        serviceImportManager = new ServiceImportManager();
-    }
-
-    private ServiceImportManager createTestSubject() {
-        return new ServiceImportManager();
-    }
-
-    @Test
-    void testGetServiceImportBusinessLogic() {
-        ServiceImportManager testSubject;
-        ServiceImportBusinessLogic result;
-
-        testSubject = createTestSubject();
-        result = testSubject.getServiceImportBusinessLogic();
-        assertNull(result);
-    }
-
-    @Test
-    void testSetServiceImportBusinessLogic() {
-        ServiceImportManager testSubject;
-        ServiceImportBusinessLogic serviceImportBusinessLogic = null;
-
-        testSubject = createTestSubject();
-        testSubject.setServiceImportBusinessLogic(serviceImportBusinessLogic);
-        assertNotNull(testSubject);
-    }
-
-    @Test
-    void testGetServiceBusinessLogic() {
-        ServiceImportManager testSubject;
-        ServiceBusinessLogic result;
-
-        testSubject = createTestSubject();
-        result = testSubject.getServiceBusinessLogic();
-        assertNull(result);
-    }
-
-    @Test
-    void testSetServiceBusinessLogic() {
-        ServiceImportManager testSubject;
-        ServiceBusinessLogic serviceBusinessLogic = null;
-
-        testSubject = createTestSubject();
-        testSubject.setServiceBusinessLogic(serviceBusinessLogic);
-        assertNotNull(testSubject);
+        MockitoAnnotations.openMocks(this);
+        serviceImportManager = new ServiceImportManager(serviceBusinessLogic, null);
     }
 
     @Test
@@ -92,8 +53,17 @@ class ServiceImportManagerTest {
         serviceMetaData.setDescription("Description");
         serviceMetaData.setVendorName("VendorName");
         serviceMetaData.setVendorRelease("VendorRelease");
+        serviceMetaData.setDerivedFromGenericVersion("derivedFromGenericVersion");
         Service service = new Service();
         service.setName("service");
         serviceImportManager.populateServiceMetadata(serviceMetaData, service);
+        assertEquals("derivedFromGenericVersion", service.getDerivedFromGenericVersion());
+    }
+
+    @Test
+    void testIsServiceExist() {
+        when(serviceBusinessLogic.isServiceExist(anyString())).thenReturn(false);
+        boolean result = serviceImportManager.isServiceExist("no exist");
+        assertFalse(result);
     }
 }

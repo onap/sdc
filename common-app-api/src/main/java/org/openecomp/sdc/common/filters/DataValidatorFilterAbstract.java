@@ -32,6 +32,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.MediaType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.util.DataValidator;
@@ -88,7 +89,7 @@ public abstract class DataValidatorFilterAbstract implements Filter {
 
     private boolean skipCheckBody(final HttpServletRequest requestWrapper) {
         final String contentType = requestWrapper.getContentType();
-        return StringUtils.isNotEmpty(contentType) && contentType.contains("multipart/form-data");
+        return StringUtils.isNotEmpty(contentType) && contentType.contains(MediaType.MULTIPART_FORM_DATA);
     }
 
     private boolean isValid(final HttpServletRequest request) {

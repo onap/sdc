@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -30,6 +31,7 @@ import org.openecomp.sdc.common.api.UploadArtifactInfo;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UploadServiceInfo {
 
     private String payloadData;
@@ -66,9 +68,6 @@ public class UploadServiceInfo {
     private Map<String, String> categorySpecificMetadata;
     private String derivedFromGenericType;
     private String derivedFromGenericVersion;
-
-    public UploadServiceInfo() {
-    }
 
     public void addSubCategory(String category, String subCategory) {
         if (category != null || subCategory != null) {
