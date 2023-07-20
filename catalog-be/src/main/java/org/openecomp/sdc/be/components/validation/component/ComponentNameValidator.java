@@ -65,7 +65,9 @@ public class ComponentNameValidator implements ComponentFieldValidator {
             log.debug("Component name {} has invalid format", componentName);
             auditErrorAndThrow(user, component, actionEnum, ActionStatus.INVALID_COMPONENT_NAME);
         }
-        if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
+        if (component.getComponentType().equals(ComponentTypeEnum.SERVICE) &&
+            !AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(actionEnum) &&
+            !AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL.equals(actionEnum)) {
             validateComponentNameUnique(user, component, actionEnum);
         }
         //TODO remove assignment here

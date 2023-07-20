@@ -209,15 +209,6 @@ public class ResourceImportManager {
         }
     }
 
-    public ImmutablePair<Resource, ActionStatus> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData,
-                                                                                 User creator, boolean createNewVersion, boolean needLock) {
-        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
-        lifecycleChangeInfo.setUserRemarks("certification on import");
-        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
-        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock,
-            null, null, false, null, null, false);
-    }
-
     public ImmutablePair<Resource, ActionStatus> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator,
                                                                          Function<Resource, Boolean> validationFunction,
                                                                          LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction,

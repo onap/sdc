@@ -15,7 +15,22 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,7 +89,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadInfo;
-import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
@@ -102,22 +116,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Getter
 @org.springframework.stereotype.Component
@@ -516,7 +514,8 @@ public class ServiceImportParseLogic {
             while (intItr.hasNext() && eitherResult.isLeft()) {
                 InterfaceDefinition interfaceDefinition = intItr.next();
                 String intType = interfaceDefinition.getUniqueId();
-                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation.getInterface(UniqueIdBuilder.buildInterfaceTypeUid(resource.getModel(), intType));
+                Either<InterfaceDefinition, StorageOperationStatus> eitherCapTypeFound = interfaceTypeOperation.getInterface(
+                    UniqueIdBuilder.buildInterfaceTypeUid(resource.getModel(), intType));
                 if (eitherCapTypeFound.isRight()) {
                     if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                         BeEcompErrorManager.getInstance()
@@ -1400,31 +1399,39 @@ public class ServiceImportParseLogic {
     }
 
 
-    public Service createServiceTransaction(Service service, User user, boolean isNormative) {
-        // validate resource name uniqueness
-        log.debug("validate resource name");
-        Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
-            .validateComponentNameExists(service.getName(), null, service.getComponentType());
-        if (eitherValidation.isRight()) {
-            log.debug("Failed to validate component name {}. Status is {}. ", service.getName(), eitherValidation.right().value());
-            ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
-            throw new ComponentException(errorResponse);
-        }
-        if (eitherValidation.left().value()) {
-            log.debug("resource with name: {}, already exists", service.getName());
-            ResponseFormat errorResponse = componentsUtils
-                .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), service.getName());
-            throw new ComponentException(errorResponse);
+    public Service createServiceTransaction(Service service, User user, boolean isNormative, AuditingActionEnum auditingAction) {
+        if (!AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(auditingAction) &&
+            !AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL.equals(auditingAction)) {
+            // validate resource name uniqueness
+            log.debug("validate resource name");
+            Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
+                .validateComponentNameExists(service.getName(), null, service.getComponentType());
+            if (eitherValidation.isRight()) {
+                log.debug("Failed to validate component name {}. Status is {}. ", service.getName(), eitherValidation.right().value());
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
+                throw new ComponentException(errorResponse);
+            }
+            if (eitherValidation.left().value()) {
+                log.debug("resource with name: {}, already exists", service.getName());
+                ResponseFormat errorResponse = componentsUtils
+                    .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), service.getName());
+                throw new ComponentException(errorResponse);
+            }
         }
         log.debug("send resource {} to dao for create", service.getName());
         createArtifactsPlaceHolderData(service, user);
         // enrich object
-        if (!isNormative) {
+        if (!isNormative && !AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(auditingAction) &&
+            !AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL.equals(auditingAction)) {
             log.debug("enrich resource with creator, version and state");
             service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
             service.setVersion(INITIAL_VERSION);
             service.setHighestVersion(true);
+        }
+        if (AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(auditingAction) ||
+            AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL.equals(auditingAction)) {
+            toscaOperationFacade.deleteService(service.getInvariantUUID(), true);
         }
         return toscaOperationFacade.createToscaComponent(service).left().on(r -> throwComponentExceptionByResource(r, service));
     }
@@ -2010,19 +2017,20 @@ public class ServiceImportParseLogic {
     }
 
     public void associateComponentInstanceInterfacesToComponent(
-            String yamlName,
-            Service service,
-            Map<String, Map<String, InterfaceDefinition>> instInterfaces
+        String yamlName,
+        Service service,
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces
     ) {
         if (MapUtils.isNotEmpty(instInterfaces)) {
             Either<Map<String, MapInterfaceDataDefinition>, StorageOperationStatus> addInterfaceToInst =
-                    toscaOperationFacade
+                toscaOperationFacade
                     .associateComponentInstanceInterfacesToComponent(
-                            instInterfaces,
-                            service.getUniqueId()
+                        instInterfaces,
+                        service.getUniqueId()
                     );
             if (addInterfaceToInst.isRight()) {
-                log.error("failed to associate interfaces value of service {}, status is {}", service.getUniqueId(), addInterfaceToInst.right().value());
+                log.error("failed to associate interfaces value of service {}, status is {}", service.getUniqueId(),
+                    addInterfaceToInst.right().value());
                 throw new ComponentException(
                     componentsUtils.getResponseFormat(
                         componentsUtils.convertFromStorageResponse(
