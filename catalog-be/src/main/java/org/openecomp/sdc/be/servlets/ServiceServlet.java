@@ -846,5 +846,37 @@ public class ServiceServlet extends AbstractValidationsServlet {
         }
     }
 
+    @PUT
+    @Path("/services/{serviceId}/toscaModel")
+    @Tag(name = "SDCE-2 APIs")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Update service by tosca template model", method = "PUT", summary = "Returns updated service",
+        responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "200", description = "Service Updated"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response importToscaModel(@PathParam("serviceId") final String serviceId,
+                                     @NotNull @FormDataParam("upload") final InputStream fileToUpload,
+                                     @Context final HttpServletRequest request,
+                                     @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) throws IOException {
+        initSpringFromContext();
+        final String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        final User modifier = new User(userId);
+        log.debug(MODIFIER_ID_IS, userId);
+        try {
+            final ServiceImportBusinessLogic serviceImportBusinessLogic = serviceImportManager.getServiceImportBusinessLogic();
+            final Service updatedService = serviceImportBusinessLogic.updateServiceFromToscaModel(serviceId, modifier, fileToUpload);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(updatedService));
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Service Metadata");
+            log.error("update service metadata failed with exception", e);
+            throw e;
+        }
+    }
+
     public enum Action {DELETE, MARK_AS_DELETE}
 }
