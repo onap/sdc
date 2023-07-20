@@ -1431,7 +1431,7 @@ public class ServiceImportParseLogic {
         }
         if (AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(auditingAction) ||
             AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL.equals(auditingAction)) {
-            toscaOperationFacade.deleteService(service.getInvariantUUID(), false);
+            toscaOperationFacade.deleteService(service.getInvariantUUID(), true);
         }
         return toscaOperationFacade.createToscaComponent(service).left().on(r -> throwComponentExceptionByResource(r, service));
     }
