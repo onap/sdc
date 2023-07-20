@@ -283,6 +283,33 @@ public class ServiceImportBusinessLogic {
         return createService(newService, AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE, modifier, payload, null);
     }
 
+    public Service updateServiceFromToscaModel(final String serviceId, final User modifier, final @NotNull InputStream fileToUpload) {
+        final Either<Service, ResponseFormat> serviceResponseFormatEither = serviceBusinessLogic.getService(serviceId, modifier);
+        if (serviceResponseFormatEither.isRight()) {
+            throw new ByActionStatusComponentException(ActionStatus.SERVICE_NOT_FOUND, serviceId);
+        }
+        final Service serviceOriginal = serviceResponseFormatEither.left().value();
+        Map<String, byte[]> csar = null;
+        try {
+            csar = ZipUtils.readZip(fileToUpload.readAllBytes(), false);
+        } catch (final ZipException | IOException e) {
+            log.info("Failed to unzip received csar {}", serviceId, e);
+        }
+        if (csar == null) {
+            throw new ByActionStatusComponentException(ActionStatus.CSAR_NOT_FOUND);
+        }
+        final String mainYamlFileName = "Definitions/service-" + serviceOriginal.getSystemName() + "-template.yml";
+        final byte[] mainYamlBytes = csar.get(mainYamlFileName);
+        if (mainYamlBytes == null) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND_IN_CSAR, mainYamlFileName, "");
+        }
+        final Map<String, String> metadata = (Map<String, String>) new Yaml().loadAs(new String(mainYamlBytes), Map.class).get("metadata");
+        validateServiceMetadataBeforeCreate(serviceOriginal, metadata);
+        final Service newService = cloneServiceIdentifications(serviceOriginal);
+        updateServiceMetadata(newService, metadata);
+        return createService(newService, AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL, modifier, csar, null);
+    }
+
     private Service cloneServiceIdentifications(final Service serviceOriginal) {
         final Service newService = new Service(serviceOriginal.getComponentMetadataDefinition());
         newService.setCategories(serviceOriginal.getCategories());
