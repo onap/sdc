@@ -321,6 +321,10 @@ public class InterfacesOperationsConverter {
         if (isArtifactPresent(operationDataDefinition)) {
             final String operationArtifactPath =
                 OperationArtifactUtil.createOperationArtifactPath(component, componentInstance, operationDataDefinition, isAssociatedComponent);
+            final ToscaInterfaceOperationImplementation toscaInterfaceOperationImplementation = new ToscaInterfaceOperationImplementation();
+            if (implementation.getTimeout() != null && implementation.getTimeout() > 0) {
+                toscaInterfaceOperationImplementation.setTimeout(implementation.getTimeout());
+            }
             if (implementation.getArtifactType() != null) {
                 final ToscaArtifactDefinition toscaArtifactDefinition = new ToscaArtifactDefinition();
                 toscaArtifactDefinition.setFile(operationArtifactPath);
@@ -331,12 +335,18 @@ public class InterfacesOperationsConverter {
                 if (MapUtils.isNotEmpty(propertiesMap)) {
                     toscaArtifactDefinition.setProperties(propertiesMap);
                 }
-                final ToscaInterfaceOperationImplementation toscaInterfaceOperationImplementation = new ToscaInterfaceOperationImplementation();
                 toscaInterfaceOperationImplementation.setPrimary(toscaArtifactDefinition);
                 toscaOperation.setImplementation(toscaInterfaceOperationImplementation);
             } else {
-                toscaOperation.setImplementation(
-                    StringUtils.isBlank(operationArtifactPath) || "null".equals(operationArtifactPath) ? null : operationArtifactPath);
+                if (toscaInterfaceOperationImplementation.getTimeout() != null) {
+                    final ToscaArtifactDefinition toscaArtifactDefinition = new ToscaArtifactDefinition();
+                    toscaArtifactDefinition.setFile(StringUtils.isBlank(operationArtifactPath) || "null".equals(operationArtifactPath) ? null : operationArtifactPath);
+                    toscaInterfaceOperationImplementation.setPrimary(toscaArtifactDefinition);
+                    toscaOperation.setImplementation(toscaInterfaceOperationImplementation);
+                } else {
+                    toscaOperation.setImplementation(
+                        StringUtils.isBlank(operationArtifactPath) || "null".equals(operationArtifactPath) ? null : operationArtifactPath);
+                }
             }
         }
     }
