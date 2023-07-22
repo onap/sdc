@@ -517,7 +517,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         validateLifecycleState(oldResource, user);
         String lockedResourceId = oldResource.getUniqueId();
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
-        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(newResource, oldResource, user, csarUIPayload, csarUUID);
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(newResource, oldResource, user, csarUIPayload, csarUUID, null);
         lockComponent(lockedResourceId, oldResource, "update Resource From Csar");
         Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
@@ -1034,7 +1034,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         loggerSupportability
             .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, StatusCode.STARTED, "Starting to create Resource From Csar by user {}",
                 user.getUserId());
-        OnboardedCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
+        OnboardedCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID, null);
 
         Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
         final String model = resource.getModel();

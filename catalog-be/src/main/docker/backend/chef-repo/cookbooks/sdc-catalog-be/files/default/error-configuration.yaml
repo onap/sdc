@@ -2903,3 +2903,18 @@ errors:
         message: "Error: Uploaded YAML file is invalid.\n%1",
         messageId: "SVC4010"
     }
+
+    #---------SVC4019-----------------------------
+    # %1 - metadata property name
+    UNCHANGEABLE_PROPERTY_ERROR: {
+        code: 402,
+        message: "Error: '%1' cannot change",
+        messageId: "SVC4019"
+    }
+
+    #---------SVC4020-----------------------------
+    MISSING_SERVICE_METADATA: {
+        code: 402,
+        message: "Error: Missing metadata in Service",
+        messageId: "SVC4020"
+    }

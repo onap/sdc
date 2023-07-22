@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.model.Component;
 public class ToscaTemplate {
 
     private String tosca_definitions_version;
-    private Map<String, String> metadata;
+    private Map<String, Object> metadata;
     private List<Map<String, Map<String, String>>> imports;
     private Map<String, Object> interface_types;
     private Map<String, ToscaDataType> data_types;

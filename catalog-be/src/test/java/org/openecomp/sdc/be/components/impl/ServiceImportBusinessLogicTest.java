@@ -209,7 +209,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             .thenReturn(Either.left(newService));
         when(toscaOperationFacade.validateCsarUuidUniqueness(anyString())).thenReturn(StorageOperationStatus.OK);
         ServiceCsarInfo csarInfo = getCsarInfo();
-        when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString())).thenReturn(csarInfo);
+        when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString(), any())).thenReturn(csarInfo);
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class), any(Service.class)))
             .thenReturn(Either.left(new HashMap<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>()));
         doReturn(getParsedToscaYamlInfo()).when(csarBusinessLogic).getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class));
@@ -217,7 +217,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 //            .thenReturn(getParsedToscaYamlInfo());
         when(serviceBusinessLogic.lockComponentByName(newService.getSystemName(), oldService, CREATE_RESOURCE)).thenReturn(Either.left(true));
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(createOldResource()));
-        when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false)).thenReturn(newService);
+        when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false, AuditingActionEnum.CREATE_RESOURCE)).thenReturn(newService);
         when(serviceImportParseLogic.createInputsOnService(eq(oldService), anyMap())).thenReturn(newService);
         Assertions.assertDoesNotThrow(() -> {
             when(serviceImportParseLogic.createSubstitutionFilterOnService(eq(oldService), any())).thenReturn(newService);
@@ -350,7 +350,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(serviceBusinessLogic.validateServiceBeforeCreate(any(Service.class), any(User.class), any(AuditingActionEnum.class)))
             .thenReturn(Either.left(newService));
         when(toscaOperationFacade.validateCsarUuidUniqueness(anyString())).thenReturn(StorageOperationStatus.OK);
-        when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString())).thenReturn(getCsarInfo());
+        when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString(), any())).thenReturn(getCsarInfo());
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class), any(Service.class)))
             .thenReturn(Either.right(ActionStatus.GENERAL_ERROR));
         when(csarBusinessLogic.getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), anyString(),
@@ -370,11 +370,11 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             new HashedMap();
 
         when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class),
-            any(Map.class), anyString())).thenReturn(csarInfo);
+            any(Map.class), anyString(), any())).thenReturn(csarInfo);
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class),
             any(Service.class))).thenReturn(Either.left(map));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceFromCsar(oldService,
-            user, payload, csarUUID));
+            user, payload, csarUUID, null));
     }
 
     @Test
@@ -400,7 +400,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceFromYaml(oldService,
             topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo,
-            nodeTypesArtifactsToCreate, false, true, nodeName, user.getUserId()));
+            nodeTypesArtifactsToCreate, false, true, nodeName, user.getUserId(), null));
     }
 
     @Test
@@ -419,7 +419,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId(), null));
     }
 
     @Test
@@ -438,7 +438,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId(), null));
     }
 
     @Test
@@ -678,14 +678,13 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         preparedService.setDeploymentArtifacts(deploymentArtifacts);
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
-        NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToHandle);
 
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(createServiceObject(true)));
         when(csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(any(CsarInfo.class), any(Service.class),
             anyString(), anyString(), anyList(), anyBoolean(), anyBoolean())).thenReturn(Either.left(preparedService));
         Assertions.assertNotNull(
             sIBL.createOrUpdateArtifacts(operation, createdArtifacts, yamlFileName, csarInfo,
-                preparedService, nodeTypeInfoToUpdateArtifacts, true, true));
+                preparedService, true, true));
     }
 
     @Test

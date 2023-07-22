@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.hc.core5.http.HttpStatus.SC_BAD_REQUEST;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
@@ -30,7 +31,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fj.data.Either;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -48,6 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,6 +61,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphTransaction;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
@@ -63,6 +71,7 @@ import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
@@ -150,6 +159,7 @@ import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -165,6 +175,8 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
@@ -210,8 +222,9 @@ public class ServiceImportBusinessLogic {
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final CapabilityTypeOperation capabilityTypeOperation;
     private ApplicationDataTypeCache applicationDataTypeCache;
-    private InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
-    private InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
+    private final InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
+    private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
+    private final ModelOperation modelOperation;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -228,7 +241,8 @@ public class ServiceImportBusinessLogic {
                                       final InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                       final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
                                       final CapabilityTypeImportManager capabilityTypeImportManager,
-                                      final CapabilityTypeOperation capabilityTypeOperation) {
+                                      final CapabilityTypeOperation capabilityTypeOperation,
+                                      final ModelOperation modelOperation) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -254,6 +268,7 @@ public class ServiceImportBusinessLogic {
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.capabilityTypeOperation = capabilityTypeOperation;
+        this.modelOperation = modelOperation;
     }
 
     @Autowired
@@ -261,14 +276,64 @@ public class ServiceImportBusinessLogic {
         this.applicationDataTypeCache = applicationDataTypeCache;
     }
 
+    public Service updateServiceFromToscaTemplate(final String serviceId, final User modifier, final String data) {
+        final Either<Service, ResponseFormat> serviceResponseFormatEither = serviceBusinessLogic.getService(serviceId, modifier);
+        if (serviceResponseFormatEither.isRight()) {
+            throw new ByActionStatusComponentException(ActionStatus.SERVICE_NOT_FOUND, serviceId);
+        }
+        final Service serviceOriginal = serviceResponseFormatEither.left().value();
+        final Map<String, String> metadata = (Map<String, String>) new Yaml().loadAs(data, Map.class).get("metadata");
+        validateServiceMetadataBeforeCreate(serviceOriginal, metadata);
+
+        final Service newService = cloneServiceIdentifications(serviceOriginal);
+        final Map<String, byte[]> payload = new HashMap<>();
+        payload.put("Definitions/service-" + metadata.get("name") + "-template.yml", data.getBytes());
+        updateServiceMetadata(newService, metadata);
+        return createService(newService, AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE, modifier, payload, null);
+    }
+
+    private Service cloneServiceIdentifications(final Service serviceOriginal) {
+        final Service newService = new Service(serviceOriginal.getComponentMetadataDefinition());
+        newService.setCategories(serviceOriginal.getCategories());
+        newService.setInvariantUUID(serviceOriginal.getInvariantUUID());
+        newService.setUniqueId(serviceOriginal.getUniqueId());
+        newService.setName(serviceOriginal.getName());
+        newService.setUUID(serviceOriginal.getUUID());
+        return newService;
+    }
+
+    private void validateServiceMetadataBeforeCreate(final Service service, final Map<String, String> metadata) {
+        if (MapUtils.isEmpty(metadata)) {
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_SERVICE_METADATA);
+        }
+        final String uuid = metadata.get("UUID");
+        if (!service.getUUID().equals(uuid)) {
+            throw new ByActionStatusComponentException(ActionStatus.UNCHANGEABLE_PROPERTY_ERROR, "UUID");
+        }
+        final String invariantUUID = metadata.get("invariantUUID");
+        if (!service.getInvariantUUID().equals(invariantUUID)) {
+            throw new ByActionStatusComponentException(ActionStatus.UNCHANGEABLE_PROPERTY_ERROR, "invariantUUID");
+        }
+        final String name = metadata.get("name");
+        if (!service.getName().equals(name)) {
+            throw new ByActionStatusComponentException(ActionStatus.UNCHANGEABLE_PROPERTY_ERROR, "name");
+        }
+        final String version = metadata.get("template_version");
+        if (!service.getVersion().equals(version)) {
+            throw new ByActionStatusComponentException(ActionStatus.UNCHANGEABLE_PROPERTY_ERROR, "template_version");
+        }
+    }
+
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
                                  String payloadName) {
         log.debug("enter createService");
-        service.setCreatorUserId(user.getUserId());
-        service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        service.setVersion(INITIAL_VERSION);
-        service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
-        service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
+        if (AuditingActionEnum.CREATE_SERVICE.equals(auditingAction)) {
+            service.setCreatorUserId(user.getUserId());
+            service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+            service.setVersion(INITIAL_VERSION);
+            service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
+            service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
+        }
         try {
             final var serviceBeforeCreate = serviceBusinessLogic.validateServiceBeforeCreate(service, user, auditingAction);
             if (serviceBeforeCreate.isRight()) {
@@ -276,10 +341,12 @@ public class ServiceImportBusinessLogic {
             }
             log.debug("enter createService,validateServiceBeforeCreate success");
             String csarUUID = payloadName == null ? service.getCsarUUID() : payloadName;
-            log.debug("enter createService,get csarUUID:{}", csarUUID);
-            csarBusinessLogic.validateCsarBeforeCreate(service, csarUUID);
+            if (AuditingActionEnum.CREATE_SERVICE.equals(auditingAction)) {
+                log.debug("enter createService,get csarUUID:{}", csarUUID);
+                csarBusinessLogic.validateCsarBeforeCreate(service, csarUUID);
+            }
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
-            return createServiceFromCsar(service, user, csarUIPayload, csarUUID);
+            return createServiceFromCsar(service, user, csarUIPayload, csarUUID, auditingAction);
         } catch (final ComponentException e) {
             log.debug("Exception occurred when createService: {}", e.getMessage(), e);
             throw e;
@@ -289,10 +356,31 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {
+    private void updateServiceMetadata(final Service service, final Map<String, String> metadata) {
+        metadata.entrySet().forEach(s -> {
+            final Optional<Method> find =
+                Arrays.stream(service.getClass().getMethods()).filter(method -> method.getName().equalsIgnoreCase("set" + s.getKey())).findAny();
+            if (find.isPresent()) {
+                try {
+                    find.get().invoke(service, s.getValue());
+                } catch (final Exception e) {
+                    log.warn("Unable to set '{}' with value '{}'", s.getKey(), s.getValue());
+                }
+            }
+        });
+    }
+
+    protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID,
+                                            AuditingActionEnum auditingAction) {
         log.trace("************* created successfully from YAML, resource TOSCA ");
         try {
-            final ServiceCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
+            final ServiceCsarInfo csarInfo;
+            if (AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE.equals(auditingAction)) {
+                csarInfo = new ServiceCsarInfo(user, csarUUID, csarUIPayload, service.getName(), service.getModel(),
+                    csarUIPayload.keySet().iterator().next(), new String(csarUIPayload.values().iterator().next()), true, modelOperation);
+            } else {
+                csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID, auditingAction);
+            }
             final String serviceModel = service.getModel();
             final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(serviceModel, csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
@@ -325,7 +413,6 @@ public class ServiceImportBusinessLogic {
             }
 
             final Map<String, Object> capabilityTypesToCreate = getCapabilityTypesToCreate(serviceModel, csarInfo);
-
             if (MapUtils.isNotEmpty(capabilityTypesToCreate)) {
                 capabilityTypeImportManager.createCapabilityTypes(new Yaml().dump(capabilityTypesToCreate), serviceModel, true);
             }
@@ -338,7 +425,7 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
             }
             return createServiceFromYaml(service, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(), nodeTypesInfo, csarInfo,
-                findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId());
+                findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId(), auditingAction);
         } catch (final ComponentException e) {
             log.debug("Exception occurred when createServiceFromCsar,error is:{}", e.getMessage(), e);
             throw e;
@@ -624,8 +711,9 @@ public class ServiceImportBusinessLogic {
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
                                             CsarInfo csarInfo,
-                                            Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                            boolean shouldLock, boolean inTransaction, String nodeName, final String userId)
+                                            Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                            boolean shouldLock, boolean inTransaction, String nodeName, final String userId,
+                                            AuditingActionEnum auditingAction)
         throws BusinessLogicException {
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         Service createdService;
@@ -641,7 +729,8 @@ public class ServiceImportBusinessLogic {
             csfyp.setNodeTypesInfo(nodeTypesInfo);
             csfyp.setCsarInfo(csarInfo);
             csfyp.setNodeName(nodeName);
-            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp, userId);
+            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp, userId,
+                auditingAction);
             log.debug("#createResourceFromYaml - The resource {} has been created ", service.getName());
         } catch (ComponentException | BusinessLogicException e) {
             log.debug("Create Service from yaml failed", e);
@@ -654,10 +743,11 @@ public class ServiceImportBusinessLogic {
     }
 
     protected Service createServiceAndRIsFromYaml(Service service, boolean isNormative,
-                                                  Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
+                                                  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
                                                   boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp,
-                                                  final String userId)
+                                                  final String userId, AuditingActionEnum auditingAction)
         throws BusinessLogicException {
+
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
         String yamlName = csfyp.getYamlName();
         ParsedToscaYamlInfo parsedToscaYamlInfo = csfyp.getParsedToscaYamlInfo();
@@ -669,7 +759,6 @@ public class ServiceImportBusinessLogic {
         if (shouldLock) {
             Either<Boolean, ResponseFormat> lockResult = serviceBusinessLogic.lockComponentByName(service.getSystemName(), service, CREATE_RESOURCE);
             if (lockResult.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(lockResult.right().value());
             }
             log.debug("name is locked {} status = {}", service.getSystemName(), lockResult);
@@ -687,7 +776,7 @@ public class ServiceImportBusinessLogic {
                 service.setProperties(propertiesList);
             }
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
-            service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative);
+            service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative, auditingAction);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
@@ -709,7 +798,6 @@ public class ServiceImportBusinessLogic {
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes
                 = groupBusinessLogic.validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), service.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
             }
             Map<String, GroupDefinition> groups;
@@ -721,23 +809,19 @@ public class ServiceImportBusinessLogic {
             }
             Either<Service, ResponseFormat> createGroupsOnResource = createGroupsOnResource(service, groups);
             if (createGroupsOnResource.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createGroupsOnResource.right().value());
             }
             service = createGroupsOnResource.left().value();
 
             Either<Service, ResponseFormat> createPoliciesOnResource = createPoliciesOnResource(service, parsedToscaYamlInfo.getPolicies());
             if (createPoliciesOnResource.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createPoliciesOnResource.right().value());
             }
             service = createPoliciesOnResource.left().value();
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
-            NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
             Either<Service, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
-                createdArtifacts, yamlName, csarInfo, service, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
+                createdArtifacts, yamlName, csarInfo, service, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
@@ -1196,7 +1280,6 @@ public class ServiceImportBusinessLogic {
 
     protected Either<Service, ResponseFormat> createOrUpdateArtifacts(ArtifactOperationEnum operation, List<ArtifactDefinition> createdArtifacts,
                                                                       String yamlFileName, CsarInfo csarInfo, Service preparedService,
-                                                                      NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts,
                                                                       boolean inTransaction, boolean shouldLock) {
         Either<Service, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedService, csarInfo, createdArtifacts,
             new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);

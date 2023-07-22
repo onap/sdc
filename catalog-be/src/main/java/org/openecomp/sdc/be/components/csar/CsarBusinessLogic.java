@@ -98,9 +98,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     }
 
     public void validateCsarBeforeCreate(Service resource, String csarUUID) {
-        // check if VF with the same Csar UUID or with he same name already
-
-        // exists
+        // check if VF with the same Csar UUID or with he same name already exists
         StorageOperationStatus status = toscaOperationFacade.validateCsarUuidUniqueness(csarUUID);
         log.debug("enter validateCsarBeforeCreate,get status:{}", status);
         if (status == StorageOperationStatus.ENTITY_ALREADY_EXISTS) {
@@ -111,7 +109,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public OnboardedCsarInfo getCsarInfo(Resource resource, Resource oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
+    public OnboardedCsarInfo getCsarInfo(Resource resource, Resource oldResource, User user, Map<String, byte[]> payload, String csarUUID, AuditingActionEnum auditingAction) {
         Map<String, byte[]> csar = payload;
         if (csar == null) {
             final var vendorSoftwareProduct = getCsar(resource, user);
@@ -119,7 +117,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
 
             csar = vendorSoftwareProduct.getFileMap();
         }
-        ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(resource, user, csar, csarUUID).left()
+        ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(resource, user, csar, csarUUID, auditingAction).left()
             .on(this::throwComponentException);
         String checksum = CsarValidationUtils.getToscaYamlChecksum(csar, csarUUID, componentsUtils).left()
             .on(r -> logAndThrowComponentException(r, "Failed to calculate checksum for casrUUID {} error {} ", csarUUID));
@@ -149,9 +147,9 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public ServiceCsarInfo getCsarInfo(Service service, Service oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
+    public ServiceCsarInfo getCsarInfo(Service service, Service oldResource, User user, Map<String, byte[]> payload, String csarUUID, AuditingActionEnum auditingAction) {
         Map<String, byte[]> csar = getCsar(service, user, payload, csarUUID);
-        ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(service, user, csar, csarUUID).left()
+        ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(service, user, csar, csarUUID, auditingAction).left()
             .on(this::throwComponentException);
         String checksum = CsarValidationUtils.getToscaYamlChecksum(csar, csarUUID, componentsUtils).left()
             .on(r -> logAndThrowComponentException(r, "Failed to calculate checksum for casrUUID {} error {} ", csarUUID));
@@ -199,7 +197,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Component component, User user, Map<String, byte[]> csar,
-                                                                                       String csarUUID) {
+                                                                                       String csarUUID, AuditingActionEnum auditingAction) {
         Either<Boolean, ResponseFormat> validateCsarStatus = CsarValidationUtils.validateCsar(csar, csarUUID, componentsUtils);
         if (validateCsarStatus.isRight()) {
             ResponseFormat responseFormat = validateCsarStatus.right().value();
@@ -210,7 +208,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
             }
             return Either.right(responseFormat);
         }
-        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = CsarValidationUtils.getToscaYaml(csar, csarUUID, componentsUtils);
+        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = CsarValidationUtils.getToscaYaml(csar, csarUUID, componentsUtils, auditingAction);
         if (toscaYamlCsarStatus.isRight()) {
             ResponseFormat responseFormat = toscaYamlCsarStatus.right().value();
             log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);
@@ -278,7 +276,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Service service, User user, Map<String, byte[]> payload,
-                                                                                       String csarUUID) {
+                                                                                       String csarUUID, AuditingActionEnum auditingAction) {
         Map<String, byte[]> csar = getCsar(service, user, payload, csarUUID);
         Either<Boolean, ResponseFormat> validateCsarStatus = CsarValidationUtils.validateCsar(csar, csarUUID, componentsUtils);
         if (validateCsarStatus.isRight()) {
@@ -287,7 +285,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
             BeEcompErrorManager.getInstance().logBeDaoSystemError(CREATING_RESOURCE_FROM_CSAR_FETCHING_CSAR_WITH_ID + csarUUID + FAILED);
             return Either.right(responseFormat);
         }
-        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = CsarValidationUtils.getToscaYaml(csar, csarUUID, componentsUtils);
+        Either<ImmutablePair<String, String>, ResponseFormat> toscaYamlCsarStatus = CsarValidationUtils.getToscaYaml(csar, csarUUID, componentsUtils, auditingAction);
         if (toscaYamlCsarStatus.isRight()) {
             ResponseFormat responseFormat = toscaYamlCsarStatus.right().value();
             log.debug("Error when try to get csar toscayamlFile with csar ID {}, error: {}", csarUUID, responseFormat);
