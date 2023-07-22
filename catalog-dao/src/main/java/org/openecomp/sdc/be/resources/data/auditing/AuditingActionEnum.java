@@ -44,6 +44,8 @@ public enum AuditingActionEnum {
     CANCEL_CERTIFICATION_RESOURCE("CertificationCancel", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     CERTIFICATION_SUCCESS_RESOURCE("CertificationSuccess", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     CREATE_SERVICE("CreateService", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
+    UPDATE_SERVICE_TOSCA_TEMPLATE("UpdateService", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
+    UPDATE_SERVICE_TOSCA_MODEL("UpdateService", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     UPDATE_RESOURCE_METADATA("UpdateResourceMetadata", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     UPDATE_SERVICE_METADATA("UpdateServiceMetadata", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),
     ARTIFACT_UPLOAD("ArtifactUpload", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE),

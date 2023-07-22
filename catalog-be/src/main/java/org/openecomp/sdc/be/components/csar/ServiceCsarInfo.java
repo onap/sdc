@@ -170,24 +170,21 @@ public class ServiceCsarInfo extends CsarInfo {
         return getTypes(ToscaTagNamesEnum.CAPABILITY_TYPES);
     }
 
-    private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
-        final Map<String, Object> types = new HashMap<>();
-        mainTemplateImports.entrySet().forEach(entry -> types.putAll(getTypesFromTemplate(entry.getValue(), toscaTag)));
-        types.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), toscaTag));
-        return types;
-    }
-
+    @Override
     public Map<String, Object> getArtifactTypes() {
-        final Map<String, Object> artifactsTypes = new HashMap<>();
-        mainTemplateImports.entrySet()
-            .forEach(entry -> artifactsTypes.putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES)));
-        artifactsTypes.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
-        return artifactsTypes;
+        return getTypes(ToscaTagNamesEnum.ARTIFACT_TYPES);
     }
 
     @Override
     public Map<String, Object> getInterfaceTypes() {
         return getTypes(ToscaTagNamesEnum.INTERFACE_TYPES);
+    }
+
+    private Map<String, Object> getTypes(ToscaTagNamesEnum toscaTag) {
+        final Map<String, Object> types = new HashMap<>();
+        mainTemplateImports.entrySet().forEach(entry -> types.putAll(getTypesFromTemplate(entry.getValue(), toscaTag)));
+        types.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), toscaTag));
+        return types;
     }
 
     public List<NodeTypeDefinition> getNodeTypesUsed() {
@@ -249,7 +246,6 @@ public class ServiceCsarInfo extends CsarInfo {
         return nodeTypesToReturn;
     }
 
-
     private Map<String, NodeTypeDefinition> getTypes(final Set<String> nodeTypes) {
         final Map<String, NodeTypeDefinition> nodeTypeDefinitionsMap = new HashMap<>();
         final Set<String> lowerPrecedenceImports = new HashSet<>();
@@ -274,7 +270,6 @@ public class ServiceCsarInfo extends CsarInfo {
         return nodeTypeDefinitionsMap;
     }
 
-    
     private void addTypesFromTemplate(final Map<String, NodeTypeDefinition> nodeTypeDefinitionsMap, final Map<String, Object> mappedTemplate,
             final Set<String> nodeTypes) {
         final Map<String, Object> types = getTypesFromTemplate(mappedTemplate, ToscaTagNamesEnum.NODE_TYPES, nodeTypes);
