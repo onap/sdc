@@ -116,7 +116,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(Optional.of(vendorSoftwareProduct));
 
         // when
-        final CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID);
+        final CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null);
 
         // then
         assertNotNull(csarInfo);
@@ -144,7 +144,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user)).thenReturn(Optional.of(vendorSoftwareProduct));
 
         final ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID));
+            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null));
         assertEquals(ActionStatus.VSP_MODEL_NOT_ALLOWED, actualException.getActionStatus());
         assertEquals(2, actualException.getParams().length);
         assertEquals(resource.getModel(), actualException.getParams()[0]);
@@ -166,7 +166,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user)).thenReturn(Optional.of(vendorSoftwareProduct));
 
         final ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID));
+            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null));
         assertEquals(ActionStatus.VSP_MODEL_NOT_ALLOWED, actualException.getActionStatus());
         assertEquals(2, actualException.getParams().length);
         assertEquals(resource.getModel(), actualException.getParams()[0]);
@@ -187,7 +187,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user)).thenReturn(Optional.of(vendorSoftwareProduct));
 
         final ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID));
+            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null));
         assertEquals(ActionStatus.VSP_MODEL_NOT_ALLOWED, actualException.getActionStatus());
         assertEquals(2, actualException.getParams().length);
         assertEquals("SDC AID", actualException.getParams()[0]);
@@ -207,7 +207,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user)).thenThrow(new RuntimeException());
 
         final ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID));
+            () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null));
         assertEquals(ActionStatus.VSP_FIND_ERROR, actualException.getActionStatus());
         assertEquals(2, actualException.getParams().length);
         assertEquals(resource.getCsarUUID(), actualException.getParams()[0]);
@@ -223,7 +223,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         Map<String, byte[]> payload = loadPayload(PAYLOAD_NAME);
 
         // when
-        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, payload, CSAR_UUID);
+        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, payload, CSAR_UUID, null);
 
         // then
         assertNotNull(csarInfo);
@@ -246,7 +246,7 @@ class CsarBusinessLogicTest extends BaseBusinessLogicMock {
         when(csarOperation.findVspLatestPackage(anyString(), any(User.class))).thenReturn(Either.left(csar_data));
 
         // when/then
-        assertThrows(ComponentException.class, () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID));
+        assertThrows(ComponentException.class, () -> csarBusinessLogic.getCsarInfo(resource, null, user, null, CSAR_UUID, null));
     }
 
     @Test

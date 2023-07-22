@@ -19,44 +19,27 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import javax.servlet.ServletContext;
+import lombok.Getter;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 //upload Service model by Shiyong1989@hotmail.com
 @Component("ServiceImportManager")
+@Getter
 public class ServiceImportManager {
 
-    private ServletContext servletContext;
-    private ResponseFormatManager responseFormatManager;
-    @Autowired
-    private ServiceBusinessLogic serviceBusinessLogic;
-    @Autowired
-    private ServiceImportBusinessLogic serviceImportBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
+    private final ServiceImportBusinessLogic serviceImportBusinessLogic;
 
-    public ServiceImportBusinessLogic getServiceImportBusinessLogic() {
-        return serviceImportBusinessLogic;
-    }
-
-    public void setServiceImportBusinessLogic(ServiceImportBusinessLogic serviceImportBusinessLogic) {
+    public ServiceImportManager(ServiceBusinessLogic serviceBusinessLogic, ServiceImportBusinessLogic serviceImportBusinessLogic) {
+        this.serviceBusinessLogic = serviceBusinessLogic;
         this.serviceImportBusinessLogic = serviceImportBusinessLogic;
     }
 
     public boolean isServiceExist(String serviceName) {
         return serviceBusinessLogic.isServiceExist(serviceName);
-    }
-
-    public ServiceBusinessLogic getServiceBusinessLogic() {
-        return serviceBusinessLogic;
-    }
-
-    public void setServiceBusinessLogic(ServiceBusinessLogic serviceBusinessLogic) {
-        this.serviceBusinessLogic = serviceBusinessLogic;
     }
 
     public void populateServiceMetadata(UploadServiceInfo serviceMetaData, Service service) {
@@ -70,13 +53,13 @@ public class ServiceImportManager {
             service.setIcon(serviceMetaData.getServiceIconPath());
             service.setServiceVendorModelNumber(serviceMetaData.getServiceVendorModelNumber());
             ServiceMetadataDataDefinition serviceMetadataDataDefinition = (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition()
-                .getMetadataDataDefinition();
+                    .getMetadataDataDefinition();
             serviceMetadataDataDefinition.getServiceVendorModelNumber();
             service.setServiceType(serviceMetaData.getServiceType());
             service.setServiceRole(serviceMetaData.getServiceRole());
             service.setNamingPolicy(serviceMetaData.getNamingPolicy());
             boolean ecompGeneratedNaming = serviceMetaData.getEcompGeneratedNaming() == null
-                || serviceMetaData.getEcompGeneratedNaming().equals("true");
+                    || serviceMetaData.getEcompGeneratedNaming().equals("true");
             service.setEcompGeneratedNaming(ecompGeneratedNaming);
             service.setServiceFunction(serviceMetaData.getServiceFunction());
             service.setInstantiationType(serviceMetaData.getInstantiationType());
@@ -95,18 +78,4 @@ public class ServiceImportManager {
         }
     }
 
-    public synchronized void init(ServletContext servletContext) {
-        if (this.servletContext == null) {
-            this.servletContext = servletContext;
-            responseFormatManager = ResponseFormatManager.getInstance();
-            serviceBusinessLogic = getServiceBL(servletContext);
-        }
-    }
-
-    private ServiceBusinessLogic getServiceBL(ServletContext context) {
-        WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
-            .getAttribute(org.openecomp.sdc.common.api.Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-        WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-        return webApplicationContext.getBean(ServiceBusinessLogic.class);
-    }
 }
