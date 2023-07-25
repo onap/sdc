@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
 import fj.data.Either;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -785,7 +787,7 @@ public class ToscaOperationFacade {
         return updateToscaElement(componentToUpdate, new ComponentParametersView());
     }
 
-    public <T extends Component> Either<T, StorageOperationStatus> updateToscaElement(T componentToUpdate, ComponentParametersView filterResult) {
+    private <T extends Component> Either<T, StorageOperationStatus> updateToscaElement(T componentToUpdate, ComponentParametersView filterResult) {
         String componentId = componentToUpdate.getUniqueId();
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll);
         if (getVertexEither.isRight()) {
@@ -1303,14 +1305,22 @@ public class ToscaOperationFacade {
     /**
      * @return max counter of component instance Id's, null if not found
      */
-    private Integer getMaxCounterFromNamesAndIds(Component containerComponent, String normalizedName) {
-        List<String> countersInNames = containerComponent.getComponentInstances().stream()
+    private Integer getMaxCounterFromNamesAndIds(final Component containerComponent, final String normalizedName) {
+        final Pattern COUNTER_PATTERN = Pattern.compile(normalizedName + "[\\s_:-]?\\d+$");
+        final List<String> countersInNames = containerComponent.getComponentInstances().stream()
             .filter(ci -> ci.getNormalizedName() != null && ci.getNormalizedName().startsWith(normalizedName))
-            .map(ci -> ci.getNormalizedName().split(normalizedName)[1].replaceAll("\\D", "")).collect(Collectors.toList());
-        List<String> countersInIds = containerComponent.getComponentInstances().stream()
+            .filter(ci -> !ci.getNormalizedName().equals(normalizedName))
+            .map(ComponentInstance::getNormalizedName)
+            .map(COUNTER_PATTERN::matcher).filter(Matcher::find).map(matcher -> matcher.group(0))
+            .map(nn -> nn.replaceAll("\\D", ""))
+            .collect(Collectors.toList());
+        final List<String> countersInIds = containerComponent.getComponentInstances().stream()
             .filter(ci -> ci.getUniqueId() != null && ci.getUniqueId().contains(normalizedName))
-            .map(ci -> ci.getUniqueId().split(normalizedName)[1].replaceAll("\\D", "")).collect(Collectors.toList());
-        List<String> namesAndIdsList = new ArrayList<>(countersInNames);
+            .map(ComponentInstance::getUniqueId)
+            .map(COUNTER_PATTERN::matcher).filter(Matcher::find).map(matcher -> matcher.group(0))
+            .map(nn -> nn.replaceAll("\\D", ""))
+            .collect(Collectors.toList());
+        final List<String> namesAndIdsList = new ArrayList<>(countersInNames);
         namesAndIdsList.addAll(countersInIds);
         return getMaxInteger(namesAndIdsList);
     }
