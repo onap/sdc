@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "08689e704ece13dec54c42b0379d1e9c1c6d8314",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f2ee7a4_986bcc1d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-25T17:02:28Z",
+      "side": 1,
+      "message": "see my comments in https://jira.onap.org/browse/SDC-4575",
+      "revId": "08689e704ece13dec54c42b0379d1e9c1c6d8314",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
