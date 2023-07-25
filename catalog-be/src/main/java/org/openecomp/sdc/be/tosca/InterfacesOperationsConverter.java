@@ -332,6 +332,7 @@ public class InterfacesOperationsConverter {
                 ToscaActivity toscaActivity = new ToscaActivity();
                 toscaActivity.setType(activity.getType());
                 toscaActivity.setWorkflow(activity.getWorkflow());
+                toscaActivity.setInputs(getToscaActivityInputs(activity.getInputs(), dataTypes));
                 toscaActivities.add(toscaActivity);
             }
             ToscaMilestone toscaMilestone = new ToscaMilestone();
@@ -339,6 +340,23 @@ public class InterfacesOperationsConverter {
             toscaMilestones.put(milestone.getKey(), toscaMilestone);
         }
         toscaOperation.setMilestones(toscaMilestones);
+    }
+
+    private Map<String, ToscaProperty> getToscaActivityInputs(ListDataDefinition<OperationInputDefinition> inputs,
+                                                              Map<String, DataTypeDefinition> dataTypes) {
+        if (Objects.isNull(inputs) || inputs.isEmpty()) {
+            return null;
+        }
+        Map<String, ToscaProperty> toscaInputs = new HashMap<>();
+        for (OperationInputDefinition input : inputs.getListToscaDataDefinition()) {
+            ToscaProperty toscaInput = new ToscaProperty();
+            toscaInput.setDescription(input.getDescription());
+            toscaInput.setType(input.getType());
+            toscaInput.setRequired(input.isRequired());
+            toscaInput.setValue(propertyConvertor.convertToToscaObject(input, getInputValue(input), dataTypes, false));
+            toscaInputs.put(input.getName(), toscaInput);
+        }
+        return toscaInputs;
     }
 
     private boolean operationHasAnImplementation(OperationDataDefinition operation) {
