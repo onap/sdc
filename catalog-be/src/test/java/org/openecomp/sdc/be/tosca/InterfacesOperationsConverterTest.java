@@ -427,9 +427,18 @@ class InterfacesOperationsConverterTest {
 
     private Map<String, MilestoneDataDefinition> createMilestones() {
         Map<String, MilestoneDataDefinition> toscaMilestones = new HashMap<>();
+        OperationInputDefinition input1 = new OperationInputDefinition();
+        input1.setValue("testString");
+        input1.setType("string");
+        input1.setName("stringName");
+        OperationInputDefinition input2 = createMockComplexOperationInputDefinition("complex", "complex");
+        ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+        inputs.add(input1);
+        inputs.add(input2);
         ActivityDataDefinition activity = new ActivityDataDefinition();
         activity.setType(ActivityTypeEnum.DELEGATE.getValue());
         activity.setWorkflow("workflow1");
+        activity.setInputs(inputs);
         ListDataDefinition<ActivityDataDefinition> activities = new ListDataDefinition<>();
         activities.add(activity);
         MilestoneDataDefinition milestone = new MilestoneDataDefinition();
@@ -607,6 +616,7 @@ class InterfacesOperationsConverterTest {
 
     @Test
     void testGetInterfaceAsMapWithMilestones() {
+        addComplexTypeToDataTypes();
         Component component = new Resource();
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
@@ -632,13 +642,40 @@ class InterfacesOperationsConverterTest {
         assertTrue(operation0Milestones.containsKey(MilestoneTypeEnum.ON_ENTRY.getValue()));
         Map<String, Object> milestone = (Map<String, Object>) operation0Milestones.get(MilestoneTypeEnum.ON_ENTRY.getValue());
         assertTrue(milestone.containsKey("activities"));
-        List<Map<String, String>> activities = (List<Map<String, String>>) milestone.get("activities");
+        List<Map<String, Object>> activities = (List<Map<String, Object>>) milestone.get("activities");
         assertEquals(1, activities.size());
-        Map<String, String> activity = activities.get(0);
+        Map<String, Object> activity = activities.get(0);
         assertTrue(activity.containsKey("type"));
         assertEquals(ActivityTypeEnum.DELEGATE.getValue(), activity.get("type"));
         assertTrue(activity.containsKey("workflow"));
         assertEquals("workflow1", activity.get("workflow"));
+        assertTrue(activity.containsKey("inputs"));
+        assertTrue(activity.get("inputs") instanceof Map);
+        Map<String, Object> inputs =  (Map<String, Object>) activity.get("inputs");
+        assertNotNull(inputs);
+        assertTrue(inputs.containsKey("stringName"));
+        assertTrue(inputs.get("stringName") instanceof Map);
+        Map<String, Object> input =  (Map<String, Object>) inputs.get("stringName");
+        assertNotNull(input);
+        assertTrue(input.containsKey("type"));
+        assertEquals("string", input.get("type"));
+        assertTrue(input.containsKey("value"));
+        assertEquals("testString", input.get("value"));
+        assertTrue(inputs.containsKey("complex"));
+        Map<String, Object> complexInput = (Map<String, Object>) inputs.get("complex");
+        assertTrue(complexInput.containsKey("type"));
+        assertEquals("complexDataType", complexInput.get("type"));
+        assertTrue(complexInput.containsKey("value"));
+        assertTrue(complexInput.get("value") instanceof Map);
+        Map<String, Object> complexInputValue =  (Map<String, Object>) complexInput.get("value");
+        assertTrue(complexInputValue.containsKey("stringProp"));
+        Map<String, Object> complexInputStringProp = (Map<String, Object>) complexInputValue.get("stringProp");
+        assertTrue(complexInputStringProp.containsKey("type"));
+        assertTrue(ToscaFunctionType.findType((String) complexInputStringProp.get("type")).isPresent());
+        assertTrue(complexInputStringProp.containsKey("propertyName"));
+        assertEquals("designer", complexInputStringProp.get("propertyName"));
+        assertTrue(complexInputStringProp.containsKey("propertySource"));
+        assertEquals("SELF", complexInputStringProp.get("propertySource"));
     }
 
     private void addComplexTypeToDataTypes() {
