@@ -281,6 +281,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         } else {
             this.toscaFunctionForm.setValue(undefined);
         }
+        this.emitValidityChange();
     }
 
     onCustomFunctionValidityChange(validationEvent: ToscaCustomFunctionValidationEvent): void {
@@ -307,6 +308,7 @@ export class ToscaFunctionComponent implements OnInit, OnChanges {
         } else {
             this.toscaFunctionForm.setValue(undefined);
         }
+        this.emitValidityChange();
     }
 
     onFunctionTypeChange(): void {
