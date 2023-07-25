@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "027f50ed_588e7d78",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-07-25T19:38:57Z",
+      "side": 1,
+      "message": "missing timeout in \u0027Tosca Template\u0027",
+      "revId": "cc7dfb94bac47c05c9faebc6551b65b76c59098e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
