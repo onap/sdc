@@ -584,3 +584,20 @@ node_types:
           typeVersion: 1.0.0
         description: The connfiguration entities the Automation Composition Element is managing and
           their associated REST requests
+  tosca.dataTypes.tmf.milestoneJeopardyData:
+    derived_from: tosca.datatypes.Root
+    properties:
+      name:
+        type: string
+        required: true
+      message:
+        type: string
+        required: true
+      eventType:
+        type: string
+        required: true
+        valid_values: [milestone, jeopardy]
+      jeopardyType:
+        type: string
+        required: false
+        valid_values: [normal, critical, hazard]

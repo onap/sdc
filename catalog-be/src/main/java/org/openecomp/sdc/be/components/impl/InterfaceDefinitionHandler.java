@@ -31,6 +31,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.STATUS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALUE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.WORKFLOW;
 
 import com.google.gson.Gson;
@@ -211,10 +212,13 @@ public class InterfaceDefinitionHandler {
                 for (Object activityValue : milestoneActivities) {
                     ActivityDataDefinition activity = new ActivityDataDefinition();
                     if (activityValue instanceof Map) {
-                        Map<String, String> activityMap = (Map<String, String>) activityValue;
+                        Map<String, Object> activityMap = (Map<String, Object>) activityValue;
+                        if (activityMap.containsKey(INPUTS.getElementName())) {
+                            activity.setInputs(handleInterfaceOperationInputs((Map<String, Object>) activityMap.get(INPUTS.getElementName())));
+                        }
                         if (activityMap.containsKey(TYPE.getElementName()) && activityMap.containsKey(WORKFLOW.getElementName())) {
-                            activity.setType(activityMap.get(TYPE.getElementName()));
-                            activity.setWorkflow(activityMap.get(WORKFLOW.getElementName()));
+                            activity.setType((String) activityMap.get(TYPE.getElementName()));
+                            activity.setWorkflow((String) activityMap.get(WORKFLOW.getElementName()));
                             activities.add(activity);
                         } else {
                             return new ListDataDefinition<>();
@@ -267,6 +271,11 @@ public class InterfaceDefinitionHandler {
                 final String json = gson.toJson(inputPropertyValue.get(DEFAULT.getElementName()));
                 LOGGER.debug(WITH_ATTRIBUTE, DEFAULT.getElementName(), json);
                 operationInput.setToscaDefaultValue(json);
+            }
+            if (inputPropertyValue.get(VALUE.getElementName()) != null) {
+                final Gson gson = new Gson();
+                final String json = gson.toJson(inputPropertyValue.get(VALUE.getElementName()));
+                operationInput.setValue(json);
             }
             if (inputPropertyValue.get(STATUS.getElementName()) != null) {
                 final String status = inputPropertyValue.get(STATUS.getElementName()).toString();
