@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
@@ -332,6 +333,10 @@ public class InterfacesOperationsConverter {
                 Map<String, ToscaActivity> toscaActivityMap = new HashMap<>();
                 ToscaActivity toscaActivity = new ToscaActivity();
                 toscaActivity.setWorkflow(activity.getWorkflow());
+                Map<String, Object> inputs = getToscaActivityInputs(activity.getInputs(), dataTypes);
+                if (!inputs.isEmpty()) {
+                    toscaActivity.setInputs(inputs);
+                }
                 toscaActivityMap.put(activity.getType(), toscaActivity);
                 toscaActivities.add(toscaActivityMap);
             }
@@ -340,6 +345,21 @@ public class InterfacesOperationsConverter {
             toscaMilestones.put(milestone.getKey(), toscaMilestone);
         }
         toscaOperation.setMilestones(toscaMilestones);
+    }
+
+    private Map<String, Object> getToscaActivityInputs(ListDataDefinition<OperationInputDefinition> inputs,
+                                                       Map<String, DataTypeDefinition> dataTypes) {
+        if (Objects.isNull(inputs) || inputs.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> toscaInputs = new HashMap<>();
+        for (OperationInputDefinition input : inputs.getListToscaDataDefinition()) {
+            Object value = propertyConvertor.convertToToscaObject(input, getInputValue(input), dataTypes, false);
+            if (ObjectUtils.isNotEmpty(value)) {
+                toscaInputs.put(input.getName(), value);
+            }
+        }
+        return toscaInputs;
     }
 
     private boolean operationHasAnImplementation(OperationDataDefinition operation) {

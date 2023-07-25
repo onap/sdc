@@ -3478,3 +3478,21 @@ tosca.datatypes.asd.requiredPlugin:
       description: "the version of the required K8s plugin"
       type: string
       required: true
+
+tosca.dataTypes.tmf.milestoneJeopardyData:
+  derived_from: tosca.datatypes.Root
+  properties:
+    name:
+      type: string
+      required: true
+    message:
+      type: string
+      required: true
+    eventType:
+      type: string
+      required: true
+      valid_values: [milestone, jeopardy]
+    jeopardyType:
+      type: string
+      required: false
+      valid_values: [normal, critical, hazard]

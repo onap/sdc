@@ -1607,3 +1607,20 @@ policy_types:
         description: Provide additional data to access the interface endpoint
         required: false
     targets: [ tosca.nodes.nfv.VnfExtCp, tosca.nodes.nfv.VduCp ]
+  tosca.dataTypes.tmf.milestoneJeopardyData:
+    derived_from: tosca.datatypes.Root
+    properties:
+      name:
+        type: string
+        required: true
+      message:
+        type: string
+        required: true
+      eventType:
+        type: string
+        required: true
+        valid_values: [milestone, jeopardy]
+      jeopardyType:
+        type: string
+        required: false
+        valid_values: [normal, critical, hazard]

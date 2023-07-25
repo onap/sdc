@@ -21,10 +21,12 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.Map;
 import lombok.Data;
 
 @Data
 public class ToscaActivity {
 
     String workflow;
+     private Map<String, Object> inputs;
 }
