@@ -24,6 +24,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "589963e0_fafa91cb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-25T09:57:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7e3af79_9a7e22fc",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 39
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea8e5e13_72c2d8ae",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-07-19T18:01:50Z",
       "side": 1,
       "message": "redundant, instanceof also checks for null",
+      "range": {
+        "startLine": 207,
+        "startChar": 12,
+        "endLine": 207,
+        "endChar": 29
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84e783b5_e7fdb660",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-25T09:57:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea8e5e13_72c2d8ae",
       "range": {
         "startLine": 207,
         "startChar": 12,
@@ -70,6 +118,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59405d3b_860c1833",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaMilestone.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-25T09:57:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa09e6b0_1f58584b",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 35
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "caf36605_d1dc3d4f",
@@ -93,6 +165,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "28cb1e08_652edb0b",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ActivityDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-25T09:57:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "caf36605_d1dc3d4f",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 7
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "69bb39d6_4d091127",
@@ -106,6 +202,30 @@
       "writtenOn": "2023-07-19T18:01:50Z",
       "side": 1,
       "message": "class without private field, what @Getter/@Setter are for ?",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 7
+      },
+      "revId": "59080e82825df038533cacb666a8248e2bbd2dca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74b0d460_3ffa7945",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/MilestoneDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-07-25T09:57:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69bb39d6_4d091127",
       "range": {
         "startLine": 31,
         "startChar": 0,
