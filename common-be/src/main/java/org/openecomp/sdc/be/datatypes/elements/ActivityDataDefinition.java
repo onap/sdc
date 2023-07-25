@@ -31,7 +31,8 @@ public class ActivityDataDefinition extends ToscaDataDefinition implements Seria
 
     public ActivityDataDefinition(ActivityDataDefinition activity) {
         setType(activity.getType());
-        setWorkflow(getWorkflow());
+        setWorkflow(activity.getWorkflow());
+        setInputs(activity.getInputs());
     }
 
     public String getType() {
@@ -48,6 +49,15 @@ public class ActivityDataDefinition extends ToscaDataDefinition implements Seria
 
     public void setWorkflow(String workflow) {
         setToscaPresentationValue(JsonPresentationFields.OPERATION_ACTIVITIES_WORKFLOW, workflow);
+    }
+
+    public ListDataDefinition<OperationInputDefinition> getInputs() {
+        return (ListDataDefinition<OperationInputDefinition>) getToscaPresentationValue(
+            JsonPresentationFields.INPUTS);
+    }
+
+    public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
+        setToscaPresentationValue(JsonPresentationFields.INPUTS, inputs);
     }
 
 }

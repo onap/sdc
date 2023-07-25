@@ -374,3 +374,21 @@ org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.Configurati
         type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest
         typeVersion: 1.0.0
       description: A sequence of REST commands to send to the REST endpoint
+
+tosca.dataTypes.tmf.milestoneJeopardyData:
+  derived_from: tosca.datatypes.Root
+  properties:
+    name:
+      type: string
+      required: true
+    message:
+      type: string
+      required: true
+    eventType:
+      type: string
+      required: true
+      valid_values: [milestone, jeopardy]
+    jeopardyType:
+      type: string
+      required: false
+      valid_values: [normal, critical, hazard]
