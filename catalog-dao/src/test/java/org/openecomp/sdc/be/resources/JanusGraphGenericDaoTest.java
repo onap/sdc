@@ -93,7 +93,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testcheckEdgeProps() {
+    void testcheckEdgeProps() {
         JanusGraph graph = janusGraphDao.getGraph().left().value();
         JanusGraphVertex v1 = graph.addVertex();
         v1.property("prop1", 123);
@@ -113,7 +113,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testCrudNode() {
+    void testCrudNode() {
 
         String id = "userId12345abc";
         UserData userData = new UserData("Myname123", "Mylastname", id, "email123", "Tester",
@@ -153,7 +153,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testGetByCategoryAndAll() {
+    void testGetByCategoryAndAll() {
 
         // create 2 nodes
         String id = "userId12345abc";
@@ -208,7 +208,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testGetEdgesForNode() {
+    void testGetEdgesForNode() {
         String id = "userId12345abc";
         UserData userData = new UserData("Myname123", "Mylastname", id, "email123", UserRoleEnum.ADMIN.name(),
             UserStatusEnum.ACTIVE.name(), null);
@@ -254,7 +254,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testLockElement() {
+    void testLockElement() {
 
         ResourceMetadataData resourceData = new ResourceMetadataData();
 
@@ -299,7 +299,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testReLockElement() throws InterruptedException {
+    void testReLockElement() throws InterruptedException {
 
         ResourceMetadataData resourceData = new ResourceMetadataData();
 
@@ -360,7 +360,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testBoolean() {
+    void testBoolean() {
         ResourceMetadataData resourceData = new ResourceMetadataData();
 
         resourceData.getMetadataDataDefinition().setName("resourceForLock");
@@ -405,7 +405,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testStringSearch() {
+    void testStringSearch() {
         JanusGraph graph;
 
         BaseConfiguration conf = new BaseConfiguration();
@@ -434,7 +434,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testDuplicateResultDueToJanusGraphBug() {
+    void testDuplicateResultDueToJanusGraphBug() {
 
         ResourceMetadataData resourceData1 = new ResourceMetadataData();
         resourceData1.getMetadataDataDefinition().setUniqueId("A");
@@ -576,7 +576,7 @@ public class JanusGraphGenericDaoTest {
     }
 
     @Test
-    public void testDuplicateResultUSeHasNotQueryDueToJanusGraphBug() {
+    void testDuplicateResultUSeHasNotQueryDueToJanusGraphBug() {
 
         String name = "bbbb";
 
