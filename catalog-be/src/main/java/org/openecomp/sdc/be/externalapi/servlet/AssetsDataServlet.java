@@ -35,6 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,7 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
-import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetDetailedMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceAssetMetadata;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Component;
@@ -119,53 +120,55 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @Path("/{assetType}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Fetch list of assets", method = "GET", summary = "Returns list of assets", responses = {
-            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+        @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
+        @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetListExternal(
-            @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources", "services"}), required = true) @PathParam("assetType") final String assetType,
+        @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
+            "services"}), required = true) @PathParam("assetType") final String assetType,
 
-            @Parameter(description = "The category to filter the result set on") @QueryParam("category") String category,
-            @Parameter(description = "The sub category to filter the result set on. Only applicable when assetType = resources") @QueryParam("subCategory") String subCategory,
-            @Parameter(description = "The distribution status to filter the result set on") @QueryParam("distributionStatus") String distributionStatus,
-            @Parameter(description = "The resource type to filter the result set on. Only applicable when assetType = resources") @QueryParam("resourceType") String resourceType,
-            @Parameter(description = "Additional metadata keys to include in the response, not all keys are supported.\nSupported keys: lastUpdateDate, creationDate, description, uniqueId and category specific metadata keys")
-            @QueryParam("include") List<String> additionalMetadataKeysToInclude,
-            @Parameter(description = "The version(s) to filter the result set on\n" +
-                    "Syntax: /services?version=(highestMatchingVersionOnly|lessThan|greaterThan|equals)(:=)(value)",
-                    examples = {
-                            @ExampleObject(
-                                    name = "An example request to get each service with highest version",
-                                    value = "highestMatchingVersionOnly:true"),
-                            @ExampleObject(
-                                    name = "An example request to get all services with version less than 2.1",
-                                    value = "lessThan:2.1"),
-                            @ExampleObject(
-                                    name = "An example request to get all services with version equal 2.0",
-                                    value = "equals:2.0"),
-                            @ExampleObject(
-                                    name = "An example request to get all services with version greater than 1.1",
-                                    value = "greaterThan:1.1")})
-            @QueryParam("version") String version,
-            @Parameter(description = "The keys of the metadata to include in the entries in the result set. Only applicable when assetType = services\n" +
-                    "Only category specific metadata keys are supported\n" +
-                    "Syntax: /services?metadata=<KEY1>(:=)<VALUE1>&metadata=<KEY2>(:=)<VALUE2> ...",
-                    examples = {
-                            @ExampleObject(
-                                    name = "An example request to get all services matching following Category Specific Metadata condition 'ETSI Version=3.3.1'",
-                                    value = "ETSI Version:3.3.1")})
-            @QueryParam("metadata") List<String> metadata) throws IOException {
+        @Parameter(description = "The category to filter the result set on") @QueryParam("category") String category,
+        @Parameter(description = "The sub category to filter the result set on. Only applicable when assetType = resources") @QueryParam("subCategory") String subCategory,
+        @Parameter(description = "The distribution status to filter the result set on") @QueryParam("distributionStatus") String distributionStatus,
+        @Parameter(description = "The resource type to filter the result set on. Only applicable when assetType = resources") @QueryParam("resourceType") String resourceType,
+        @Parameter(description = "Additional metadata keys to include in the response, not all keys are supported.\nSupported keys: lastUpdateDate, creationDate, description, uniqueId and category specific metadata keys")
+        @QueryParam("include") List<String> additionalMetadataKeysToInclude,
+        @Parameter(description = "The version(s) to filter the result set on\n" +
+            "Syntax: /services?version=(highestMatchingVersionOnly|lessThan|greaterThan|equals)(:=)(value)",
+            examples = {
+                @ExampleObject(
+                    name = "An example request to get each service with highest version",
+                    value = "highestMatchingVersionOnly:true"),
+                @ExampleObject(
+                    name = "An example request to get all services with version less than 2.1",
+                    value = "lessThan:2.1"),
+                @ExampleObject(
+                    name = "An example request to get all services with version equal 2.0",
+                    value = "equals:2.0"),
+                @ExampleObject(
+                    name = "An example request to get all services with version greater than 1.1",
+                    value = "greaterThan:1.1")})
+        @QueryParam("version") String version,
+        @Parameter(description = "The keys of the metadata to include in the entries in the result set. Only applicable when assetType = services\n" +
+            "Only category specific metadata keys are supported\n" +
+            "Syntax: /services?metadata=<KEY1>(:=)<VALUE1>&metadata=<KEY2>(:=)<VALUE2> ...",
+            examples = {
+                @ExampleObject(
+                    name = "An example request to get all services matching following Category Specific Metadata condition 'ETSI Version=3.3.1'",
+                    value = "ETSI Version:3.3.1")})
+        @QueryParam("metadata") List<String> metadata) throws IOException {
         ResponseFormat responseFormat;
         final String query = request.getQueryString();
-        final String requestURI = request.getRequestURI().endsWith("/") ? removeDuplicateSlashSeparator(request.getRequestURI()) : request.getRequestURI();
+        final String requestURI =
+            request.getRequestURI().endsWith("/") ? removeDuplicateSlashSeparator(request.getRequestURI()) : request.getRequestURI();
         final String url = request.getMethod() + " " + requestURI;
         log.debug("Start handle request of {}", url);
         final AuditingActionEnum auditingActionEnum = query == null ? AuditingActionEnum.GET_ASSET_LIST : AuditingActionEnum.GET_FILTERED_ASSET_LIST;
@@ -214,7 +217,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             } else {
                 log.debug("getAssetList: Asset Fetching Success");
                 final Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
-                        .convertToAssetMetadata(componentList.left().value(), requestURI, false, additionalMetadataKeysToInclude);
+                    .convertToAssetMetadata(componentList.left().value(), requestURI, false, additionalMetadataKeysToInclude);
                 if (resMetadata.isRight()) {
                     log.debug("getAssetList: Asset conversion Failed");
                     responseFormat = resMetadata.right().value();
@@ -246,22 +249,22 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/metadata")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Detailed metadata of asset by uuid", method = "GET", summary = "Returns detailed metadata of an asset by uuid", responses = {
-            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+        @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AssetMetadata.class)))),
+        @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetSpecificMetadataByUuidExternal(
-            @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
-                    "services"}), required = true) @PathParam("assetType") final String assetType,
-            @Parameter(description = "The requested asset uuid", required = true) @PathParam("uuid") final String uuid) throws IOException {
+        @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
+            "services"}), required = true) @PathParam("assetType") final String assetType,
+        @Parameter(description = "The requested asset uuid", required = true) @PathParam("uuid") final String uuid) throws IOException {
         ResponseFormat responseFormat = null;
         AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_ASSET_METADATA;
         String requestURI = request.getRequestURI();
@@ -288,7 +291,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
             resourceCommonInfo.setResourceName(assetTypeData.left().value().iterator().next().getName());
             log.debug("getAssetList: Asset Fetching Success");
             Either<List<? extends AssetMetadata>, ResponseFormat> resMetadata = assetMetadataConverter
-                    .convertToAssetMetadata(assetTypeData.left().value(), requestURI, true, null);
+                .convertToAssetMetadata(assetTypeData.left().value(), requestURI, true, null);
             if (resMetadata.isRight()) {
                 log.debug("getAssetList: Asset conversion Failed");
                 responseFormat = resMetadata.right().value();
@@ -328,23 +331,23 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
     @Path("/{assetType}/{uuid}/toscaModel")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @Operation(description = "Fetch assets CSAR", method = "GET", summary = "Returns asset csar", responses = {
-            @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
-            @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
-            @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
-            @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
-            @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
-            @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
-            @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+        @ApiResponse(description = "default response", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(responseCode = "200", description = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+        @ApiResponse(responseCode = "400", description = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
+        @ApiResponse(responseCode = "401", description = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+        @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
+        @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
+        @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
+        @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
     @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getToscaModelExternal(
-            @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-            @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
-            @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
-            @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
-            @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
-                    "services"}), required = true) @PathParam("assetType") final String assetType,
-            @Parameter(description = "The requested asset uuid", required = true) @PathParam("uuid") final String uuid) {
+        @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+        @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+        @Parameter(description = "Determines the format of the body of the response") @HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+        @Parameter(description = "The username and password", required = true) @HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+        @Parameter(description = "The requested asset type", schema = @Schema(allowableValues = {"resources",
+            "services"}), required = true) @PathParam("assetType") final String assetType,
+        @Parameter(description = "The requested asset uuid", required = true) @PathParam("uuid") final String uuid) {
         String url = request.getRequestURI();
         log.debug("Start handle request of {} {}", request.getMethod(), url);
         ResponseFormat responseFormat = null;
@@ -385,10 +388,11 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         return requestUri.substring(0, requestUri.length() - 1);
     }
 
-    private List<? extends AssetMetadata> sortIfNeed(final List<? extends AssetMetadata> assetMetadataList, final List<String> additionalMetadataKeysToInclude) {
+    private List<? extends AssetMetadata> sortIfNeed(final List<? extends AssetMetadata> assetMetadataList,
+                                                     final List<String> additionalMetadataKeysToInclude) {
         if (additionalMetadataKeysToInclude.contains("creationDate")) {
-            assetMetadataList.sort((am1, am2) -> ((ServiceAssetDetailedMetadata) am1).getAdditionalRequestedMetadata().get("creationDate")
-                    .compareTo(((ServiceAssetDetailedMetadata) am2).getAdditionalRequestedMetadata().get("creationDate")));
+            assetMetadataList.sort(
+                Comparator.comparing((AssetMetadata am) -> ((ServiceAssetMetadata) am).getAdditionalRequestedMetadata().get("creationDate")));
         }
         return assetMetadataList;
     }
