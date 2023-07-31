@@ -2910,3 +2910,11 @@ errors:
         message: "Error: Missing metadata in Service",
         messageId: "SVC4020"
     }
+
+    #---------SVC4021-----------------------------
+    # %1 - missing properties list
+    MISSING_PROPERTIES_ERROR: {
+        code: 402,
+        message: "Error: Following properties are missing in CSAR:\n%1",
+        messageId: "SVC4021"
+    }

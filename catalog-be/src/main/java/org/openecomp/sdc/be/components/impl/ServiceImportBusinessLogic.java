@@ -20,7 +20,6 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.hc.core5.http.HttpStatus.SC_BAD_REQUEST;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
@@ -31,8 +30,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fj.data.Either;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +50,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -61,8 +57,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphTransaction;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
@@ -175,8 +169,6 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
-import org.openecomp.sdc.common.zip.ZipUtils;
-import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
@@ -852,6 +844,7 @@ public class ServiceImportBusinessLogic {
         if (CollectionUtils.isNotEmpty(inputs)) {
             final List<ComponentInstance> componentInstances = component.getComponentInstances();
             final String componentUniqueId = component.getUniqueId();
+            List<String> propertyMissingNames = new ArrayList<>();
             for (final InputDefinition input : inputs) {
                 boolean isSubMapProp = false;
                 if (substitutionMappingProperties != null && !substitutionMappingProperties.isEmpty()) {
@@ -861,8 +854,14 @@ public class ServiceImportBusinessLogic {
                 if (!isSubMapProp && isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentUniqueId);
                 } else {
-                    associateInputToServiceProperty(userId, input, component, substitutionMappingProperties);
+                    String propertyName = associateInputToServiceProperty(userId, input, component, substitutionMappingProperties);
+                    if (StringUtils.isNotBlank(propertyName)) {
+                        propertyMissingNames.add(propertyName);
+                    }
                 }
+            }
+            if (CollectionUtils.isNotEmpty(propertyMissingNames)) {
+                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.MISSING_PROPERTIES_ERROR, propertyMissingNames.toString()));
             }
             Either<List<InputDefinition>, StorageOperationStatus> either = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
             if (either.isRight()) {
@@ -930,7 +929,7 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    private void associateInputToServiceProperty(final String userId,
+    private String associateInputToServiceProperty(final String userId,
                                                  final InputDefinition input, final Service component,
                                                  final Map<String, List<String>> substitutionMappingProperties) {
         final List<PropertyDefinition> properties = component.getProperties();
@@ -962,8 +961,10 @@ public class ServiceImportBusinessLogic {
                 }
             } else {
                 input.setMappedToComponentProperty(false);
+                return propertyNameFromInput.get();
             }
         }
+        return "";
     }
 
     private void updateProperty(final PropertyDefinition propertyDefinition, final InputDefinition input, final String componentUniqueId) {
