@@ -1393,6 +1393,13 @@ public class YamlTemplateParsingHandler {
                 artifactDataDefinition.setArtifactName(generateArtifactName(primary.toString()));
             }
         }
+
+        if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
+            ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("timeout")) {
+            final Object timeOut = ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("timeout");
+            artifactDataDefinition.setTimeout((Integer)timeOut);
+        }
+
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
             final String implementation = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
             artifactDataDefinition.setArtifactName(generateArtifactName(implementation));
