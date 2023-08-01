@@ -22,31 +22,47 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 @NoArgsConstructor
-public class MilestoneDataDefinition extends ToscaDataDefinition implements Serializable {
+public class FilterDataDefinition extends PropertyDataDefinition implements Serializable {
 
-    public MilestoneDataDefinition(MilestoneDataDefinition milestone) {
-        setActivities(milestone.getActivities());
+    @Getter
+    @Setter
+    private Object filterValue;
+
+    @Getter
+    @Setter
+    private String constraint;
+
+    public FilterDataDefinition(FilterDataDefinition activity) {
+        setName(activity.getName());
+        setConstraint(activity.getConstraint());
+        setValue(activity.getValue());
+        setToscaFunction(activity.getToscaFunction());
     }
 
-    public ListDataDefinition<ActivityDataDefinition> getActivities() {
-        return (ListDataDefinition<ActivityDataDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATION_ACTIVITIES);
-    }
+//    public String getConstraint() {
+//        return (String) getToscaPresentationValue(JsonPresentationFields.OPERATION_CONSTRAINT);
+//    }
+//
+//    public void setConstraint(String constraint) {
+//        setToscaPresentationValue(JsonPresentationFields.OPERATION_CONSTRAINT, constraint);
+//    }
+//
+//    public String getFilterValue() {
+//        return (String) getToscaPresentationValue(JsonPresentationFields.OPERATION_FILTER_VALUE);
+//    }
+//
+//    public void setFilterValue(String filterValue) {
+//        setToscaPresentationValue(JsonPresentationFields.OPERATION_FILTER_VALUE, filterValue);
+//    }
 
-    public void setActivities(ListDataDefinition<ActivityDataDefinition> activities) {
-        setToscaPresentationValue(JsonPresentationFields.OPERATION_ACTIVITIES, activities);
-    }
 
-    public ListDataDefinition<FilterDataDefinition> getFilters() {
-        return (ListDataDefinition<FilterDataDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATION_FILTERS);
-    }
 
-    public void setFilters(ListDataDefinition<FilterDataDefinition> activities) {
-        setToscaPresentationValue(JsonPresentationFields.OPERATION_FILTERS, activities);
-    }
 
 }
