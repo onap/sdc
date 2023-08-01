@@ -19,16 +19,29 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.tosca.model;
+package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.List;
-import java.util.Map;
-import lombok.Data;
+import java.io.Serializable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class ToscaMilestone {
+@NoArgsConstructor
+public class FilterDataDefinition extends PropertyDataDefinition implements Serializable {
 
-    private List<ToscaActivity> activities;
-    private List<Map<String, ToscaPropertyConstraint>> filters;
+    @Getter
+    @Setter
+    private Object filterValue;
+
+    @Getter
+    @Setter
+    private String constraint;
+
+    public FilterDataDefinition(FilterDataDefinition activity) {
+        setName(activity.getName());
+        setConstraint(activity.getConstraint());
+        setValue(activity.getValue());
+        setToscaFunction(activity.getToscaFunction());
+    }
 
 }

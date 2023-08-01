@@ -41,4 +41,12 @@ public class MilestoneDataDefinition extends ToscaDataDefinition implements Seri
         setToscaPresentationValue(JsonPresentationFields.OPERATION_ACTIVITIES, activities);
     }
 
+    public ListDataDefinition<FilterDataDefinition> getFilters() {
+        return (ListDataDefinition<FilterDataDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATION_FILTERS);
+    }
+
+    public void setFilters(ListDataDefinition<FilterDataDefinition> activities) {
+        setToscaPresentationValue(JsonPresentationFields.OPERATION_FILTERS, activities);
+    }
+
 }

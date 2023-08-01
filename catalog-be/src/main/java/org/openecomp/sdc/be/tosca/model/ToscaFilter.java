@@ -21,14 +21,12 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
-import java.util.List;
-import java.util.Map;
 import lombok.Data;
 
 @Data
-public class ToscaMilestone {
+public class ToscaFilter {
 
-    private List<ToscaActivity> activities;
-    private List<Map<String, ToscaPropertyConstraint>> filters;
-
+    private String name;
+    private String constraint;
+    private Object value; //ToscaFunction or String or float, etc I guess
 }

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
@@ -41,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.FilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
@@ -48,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -55,6 +58,17 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.tosca.constraints.EqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
+import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaActivity;
 import org.openecomp.sdc.be.tosca.model.ToscaArtifactDefinition;
@@ -68,6 +82,18 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignment;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignmentJsonSerializer;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraint;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintGreaterOrEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintGreaterThan;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintInRange;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessOrEqual;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessThan;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMaxLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMinLength;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintPattern;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -341,9 +367,73 @@ public class InterfacesOperationsConverter {
             }
             ToscaMilestone toscaMilestone = new ToscaMilestone();
             toscaMilestone.setActivities(toscaActivities);
+            toscaMilestone.setFilters(getToscaFilters(milestone.getValue().getFilters()));
             toscaMilestones.put(milestone.getKey(), toscaMilestone);
         }
         toscaOperation.setMilestones(toscaMilestones);
+    }
+
+    private List<Map<String, ToscaPropertyConstraint>> getToscaFilters(ListDataDefinition<FilterDataDefinition> filters) {
+        if (filters != null && !filters.isEmpty()) {
+            List<Map<String, ToscaPropertyConstraint>> toscaFilters = new ArrayList<>();
+            for (FilterDataDefinition filter : filters.getListToscaDataDefinition()) {
+                Optional<ConstraintType> typeOptional = ConstraintType.findByType(filter.getConstraint());
+                if (typeOptional.isEmpty()) {
+                    continue;
+                }
+                ConstraintType type = typeOptional.get();
+                Object value = filter.isToscaFunction() ? filter.getToscaFunction().getJsonObjectValue() : filter.getFilterValue();
+                if (ConstraintType.EQUAL.equals(type)) {
+                    EqualConstraint equalConstraint = new EqualConstraint(value);
+                    ToscaPropertyConstraint prop = new ToscaPropertyConstraintEqual(equalConstraint.getEqual());
+                    toscaFilters.add(Map.of(filter.getName(), prop));
+                }
+                if (ConstraintType.GREATER_THAN.equals(type)) {
+                    GreaterThanConstraint greaterThanConstraint = new GreaterThanConstraint(value);
+                    ToscaPropertyConstraintGreaterThan prop = new ToscaPropertyConstraintGreaterThan(greaterThanConstraint.getGreaterThan());
+                    toscaFilters.add(Map.of(filter.getName(), prop));
+                }
+                if (ConstraintType.GREATER_OR_EQUAL.equals(type)) {
+                    GreaterOrEqualConstraint greaterOrEqualConstraint = new GreaterOrEqualConstraint<>(value);
+                    ToscaPropertyConstraintGreaterOrEqual prop =
+                        new ToscaPropertyConstraintGreaterOrEqual(greaterOrEqualConstraint.getGreaterOrEqual());
+                    toscaFilters.add(Map.of(filter.getName(), prop));
+                }
+                if (ConstraintType.LESS_THAN.equals(type)) {
+                    LessThanConstraint lessThanConstraint = new LessThanConstraint(value);
+                    ToscaPropertyConstraintLessThan prop = new ToscaPropertyConstraintLessThan(lessThanConstraint.getLessThan());
+                    toscaFilters.add(Map.of(filter.getName(), prop));
+                }
+                if (ConstraintType.LESS_OR_EQUAL.equals(type)) {
+                    LessOrEqualConstraint lessOrEqualConstraint = new LessOrEqualConstraint<>(value);
+                    ToscaPropertyConstraintLessOrEqual prop = new ToscaPropertyConstraintLessOrEqual(lessOrEqualConstraint.getLessOrEqual());
+                    toscaFilters.add(Map.of(filter.getName(), prop));
+                }
+                if (ConstraintType.IN_RANGE.equals(type)) {
+                    InRangeConstraint inRangeConstraint = new InRangeConstraint((List<Object>) value);
+                    toscaFilters.add(Map.of(filter.getName(), new ToscaPropertyConstraintInRange(inRangeConstraint.getInRange())));
+                }
+                if (ConstraintType.VALID_VALUES.equals(type)) {
+                    ValidValuesConstraint validValues = new ValidValuesConstraint((List<Object>) value);
+                    List prop = validValues.getValidValues();
+                    toscaFilters.add(Map.of(filter.getName(), (new ToscaPropertyConstraintValidValues(prop))));
+                }
+                if (ConstraintType.LENGTH.equals(type)) {
+                    LengthConstraint lengthConstraint = new LengthConstraint((Integer) value);
+                    toscaFilters.add(Map.of(filter.getName(), (new ToscaPropertyConstraintLength(lengthConstraint.getLength()))));
+                }
+                if (ConstraintType.MIN_LENGTH.equals(type)) {
+                    MinLengthConstraint minLengthConstraint = new MinLengthConstraint((Integer) value);
+                    toscaFilters.add(Map.of(filter.getName(), new ToscaPropertyConstraintMinLength(minLengthConstraint.getMinLength())));
+                }
+                if (ConstraintType.MAX_LENGTH.equals(type)) {
+                    MaxLengthConstraint maxLengthConstraint = new MaxLengthConstraint((Integer) value);
+                    toscaFilters.add(Map.of(filter.getName(), new ToscaPropertyConstraintMaxLength(maxLengthConstraint.getMaxLength())));
+                }
+            }
+            return toscaFilters;
+        }
+        return null;
     }
 
     private Map<String, Object> getToscaActivityInputs(ListDataDefinition<OperationInputDefinition> inputs,

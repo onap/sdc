@@ -77,6 +77,27 @@ start:
                   virtual_cpu_pinning_rule:
                     - 1
                     - 2
+      filters:
+        - my_attribute:
+            equal:
+              get_attribute:
+                - SELF
+                - role
+        - my_attribute1:
+            greaterThan: my_other_value
+        - my_attribute2:
+            inRange:
+              - test1
+              - test99
+        - my_attribute3:
+            validValues:
+              - test1
+              - test2
+              - test3
+        - my_attribute4:
+            length: 12
+        - my_attribute5:
+            minLength: 4
     on_timeout:
       activities:
         - type: delegate
