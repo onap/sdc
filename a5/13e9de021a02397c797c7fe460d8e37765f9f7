@@ -1,0 +1,8 @@
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: JEFF VAN DAM <jeff.van.dam@est.tech>
+Submitted-by: JEFF VAN DAM <jeff.van.dam@est.tech>
+Submitted-at: Tue, 01 Aug 2023 13:32:51 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/135610
+Project: sdc
+Branch: refs/heads/master
