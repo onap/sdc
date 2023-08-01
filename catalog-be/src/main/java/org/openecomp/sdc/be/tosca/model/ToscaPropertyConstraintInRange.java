@@ -18,6 +18,7 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,7 @@ public class ToscaPropertyConstraintInRange implements ToscaPropertyConstraint {
     }
 
     @Override
+    @JsonIgnore
     public ConstraintType getConstraintType() {
         return CONSTRAINT_TYPE;
     }
