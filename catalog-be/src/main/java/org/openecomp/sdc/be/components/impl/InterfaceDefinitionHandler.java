@@ -20,9 +20,11 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
+import static org.openecomp.sdc.be.utils.PropertyFilterConstraintDataDefinitionHelper.createToscaFunctionFromLegacyConstraintValue;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ACTIVITIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILTERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MILESTONES;
@@ -53,6 +55,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.FilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
@@ -60,6 +63,9 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -197,10 +203,68 @@ public class InterfaceDefinitionHandler {
             if (activities.isEmpty()) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OPERATION_MILESTONE, interfaceInput.getKey());
             }
+            ListDataDefinition<FilterDataDefinition> filters = handleMilestoneFilters(interfaceInput.getValue());
+            if (!filters.isEmpty()) {
+                operationMilestone.setFilters(filters);
+            }
             operationMilestone.setActivities(activities);
             milestones.put(interfaceInput.getKey(), operationMilestone);
         }
         return milestones;
+    }
+
+    private ListDataDefinition<FilterDataDefinition> handleMilestoneFilters(Object milestone) {
+        ListDataDefinition<FilterDataDefinition> filters = new ListDataDefinition<>();
+        if (milestone instanceof Map) {
+            final LinkedHashMap<String, Object> milestoneValue = (LinkedHashMap<String, Object>) milestone;
+            if (milestoneValue.containsKey(FILTERS.getElementName())) {
+                final List<Object> milestoneFilters = (List<Object>) milestoneValue.get(FILTERS.getElementName());
+                for (Object filtersValues : milestoneFilters) {
+                    if (filtersValues instanceof Map) {
+                        FilterDataDefinition filter = new FilterDataDefinition();
+                        Map<String, Object> filterMap = (Map<String, Object>) filtersValues;
+
+                        Optional<Entry<String, Object>> filterOptional =
+                            filterMap.entrySet().stream().filter(entrySet -> entrySet.getValue() instanceof Map).findAny();
+                        if (filterOptional.isEmpty()) {
+                            continue;
+                        }
+                        Entry<String, Object> filterValue = filterOptional.get();
+                        if (!(filterValue.getValue() instanceof Map)) {
+                            continue;
+                        }
+                        Map<String, Object> valueMap = (Map<String, Object>) filterValue.getValue();
+                        Optional<String> constraintTypeOptional =
+                            valueMap.keySet().stream().filter(key -> ConstraintType.findByType(key).isPresent()).findAny();
+                        if (constraintTypeOptional.isEmpty()) {
+                            continue;
+                        }
+                        String constraintType = constraintTypeOptional.get();
+                        filter.setName(filterValue.getKey());
+                        filter.setConstraint(constraintType);
+                        Object value = valueMap.get(constraintType);
+                        if (value instanceof Map) {
+                            Map<String, Object> valueAsMap = (Map<String, Object>) value;
+                            Optional<String> toscaFunctionTypeOptional =
+                                valueAsMap.keySet().stream().filter(key -> ToscaFunctionType.findType(key).isPresent()).findAny();
+                            if (toscaFunctionTypeOptional.isPresent()) {
+                                Optional<ToscaFunction> toscaValue = createToscaFunctionFromLegacyConstraintValue(valueAsMap);
+                                if (toscaValue.isPresent()) {
+                                    filter.setToscaFunction(toscaValue.get());
+                                }
+                            }
+                        }
+                        filter.setFilterValue(value);
+                        filters.add(filter);
+                    } else {
+                        return new ListDataDefinition<>();
+                    }
+                }
+            } else {
+                return new ListDataDefinition<>();
+            }
+        }
+        return filters;
     }
 
     private ListDataDefinition<ActivityDataDefinition> handleMilestoneActivities(final Object value) {

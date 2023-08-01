@@ -18,6 +18,7 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,7 @@ public class ToscaPropertyConstraintMaxLength implements ToscaPropertyConstraint
     }
 
     @Override
+    @JsonIgnore
     public ConstraintType getConstraintType() {
         return CONSTRAINT_TYPE;
     }

@@ -79,6 +79,7 @@ public class TypeUtils {
         IMPLEMENTATION("implementation"),
         MILESTONES("milestones"),
         ACTIVITIES("activities"),
+        FILTERS("filters"),
         WORKFLOW("workflow"),
         SUBSTITUTION_FILTERS("substitution_filter"),
         DERIVED_FROM_NAME("derivedFromName"),
