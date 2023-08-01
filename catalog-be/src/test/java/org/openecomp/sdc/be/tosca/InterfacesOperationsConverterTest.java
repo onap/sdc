@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.FilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
@@ -53,9 +54,13 @@ import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -443,6 +448,25 @@ class InterfacesOperationsConverterTest {
         activities.add(activity);
         MilestoneDataDefinition milestone = new MilestoneDataDefinition();
         milestone.setActivities(activities);
+        FilterDataDefinition filter1 = new FilterDataDefinition();
+        filter1.setName("my_attribute");
+        filter1.setConstraint("equal");
+        filter1.setFilterValue("my_value");
+        FilterDataDefinition filter2 = new FilterDataDefinition();
+        ToscaGetFunctionDataDefinition toscaFunction = new ToscaGetFunctionDataDefinition();
+        toscaFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
+        toscaFunction.setPropertyName("role");
+        toscaFunction.setPropertySource(PropertySource.SELF);
+        toscaFunction.setSourceName("myVfc");
+        toscaFunction.setPropertyPathFromSource(Arrays.asList("role"));
+        filter2.setToscaFunction(toscaFunction);
+        filter2.setName("my_other_attribute");
+        filter2.setConstraint("equal");
+        filter2.setFilterValue("{'get_attribute':['SELF','role']}");
+        ListDataDefinition<FilterDataDefinition> filters = new ListDataDefinition<>();
+        filters.add(filter1);
+        filters.add(filter2);
+        milestone.setFilters(filters);
         toscaMilestones.put(MilestoneTypeEnum.ON_ENTRY.getValue(), milestone);
         return toscaMilestones;
     }
@@ -651,11 +675,11 @@ class InterfacesOperationsConverterTest {
         assertEquals("workflow1", activity.get("workflow"));
         assertTrue(activity.containsKey("inputs"));
         assertTrue(activity.get("inputs") instanceof Map);
-        Map<String, Object> inputs =  (Map<String, Object>) activity.get("inputs");
+        Map<String, Object> inputs = (Map<String, Object>) activity.get("inputs");
         assertNotNull(inputs);
         assertTrue(inputs.containsKey("stringName"));
         assertTrue(inputs.get("stringName") instanceof Map);
-        Map<String, Object> input =  (Map<String, Object>) inputs.get("stringName");
+        Map<String, Object> input = (Map<String, Object>) inputs.get("stringName");
         assertNotNull(input);
         assertTrue(input.containsKey("type"));
         assertEquals("string", input.get("type"));
@@ -667,7 +691,7 @@ class InterfacesOperationsConverterTest {
         assertEquals("complexDataType", complexInput.get("type"));
         assertTrue(complexInput.containsKey("value"));
         assertTrue(complexInput.get("value") instanceof Map);
-        Map<String, Object> complexInputValue =  (Map<String, Object>) complexInput.get("value");
+        Map<String, Object> complexInputValue = (Map<String, Object>) complexInput.get("value");
         assertTrue(complexInputValue.containsKey("stringProp"));
         Map<String, Object> complexInputStringProp = (Map<String, Object>) complexInputValue.get("stringProp");
         assertTrue(complexInputStringProp.containsKey("type"));
@@ -676,6 +700,26 @@ class InterfacesOperationsConverterTest {
         assertEquals("designer", complexInputStringProp.get("propertyName"));
         assertTrue(complexInputStringProp.containsKey("propertySource"));
         assertEquals("SELF", complexInputStringProp.get("propertySource"));
+
+        assertTrue(milestone.containsKey("filters"));
+        List<Map<String, Object>> filters = (List<Map<String, Object>>) milestone.get("filters");
+        assertEquals(2, filters.size());
+        Map<String, Object> filter1 = filters.get(0);
+        assertTrue(filter1.containsKey("my_attribute"));
+        Map<String, Object> filter1Constraint = (Map<String, Object>) filter1.get("my_attribute");
+        assertTrue(filter1Constraint.containsKey(ConstraintType.EQUAL.getType()));
+        String filter1Value = (String) filter1Constraint.get(ConstraintType.EQUAL.getType());
+        assertEquals("my_value", filter1Value);
+        Map<String, Object> filter2 = filters.get(1);
+        assertTrue(filter2.containsKey("my_other_attribute"));
+        Map<String, Object> filter2Constraint = (Map<String, Object>) filter2.get("my_other_attribute");
+        assertTrue(filter2Constraint.containsKey(ConstraintType.EQUAL.getType()));
+        Map<String, Object> filter2Value = (Map<String, Object>) filter2Constraint.get(ConstraintType.EQUAL.getType());
+        assertTrue(filter2Value.containsKey(ToscaGetFunctionType.GET_ATTRIBUTE.getFunctionName()));
+        List<String> filter2ValueToscaFunction = (List<String>) filter2Value.get(ToscaGetFunctionType.GET_ATTRIBUTE.getFunctionName());
+        assertEquals(2, filter2ValueToscaFunction.size());
+        assertEquals("SELF", filter2ValueToscaFunction.get(0));
+        assertEquals("role", filter2ValueToscaFunction.get(1));
     }
 
     private void addComplexTypeToDataTypes() {
