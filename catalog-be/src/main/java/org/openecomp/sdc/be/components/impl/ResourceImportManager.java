@@ -436,8 +436,7 @@ public class ResourceImportManager {
         Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils
                 .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isLeft() && toscaElement.left().value().size() == 1) {
-            String toscaResourceName = toscaElement.left().value().keySet().iterator().next();
-            return toscaResourceName;
+            return toscaElement.left().value().keySet().iterator().next();
         }
         return null;
     }
@@ -463,13 +462,16 @@ public class ResourceImportManager {
             map = Collections.emptyMap();
         }
         if (existingResource.isLeft()) {
-            final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
-                existingResource.left().value().getInterfaces().entrySet().stream()
-                    .filter(i -> i.getValue().isUserCreated())
-                    .filter(i -> !map.containsKey(i.getValue().getType()))
-                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-            if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
-                moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
+            final Map<String, InterfaceDefinition> interfaces = existingResource.left().value().getInterfaces();
+            if (MapUtils.isNotEmpty(interfaces)) {
+                final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
+                    interfaces.entrySet().stream()
+                        .filter(i -> i.getValue().isUserCreated())
+                        .filter(i -> !map.containsKey(i.getValue().getType()))
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                    moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
+                }
             }
         }
 
@@ -583,16 +585,14 @@ public class ResourceImportManager {
                 for (final Entry<String, PropertyDefinition> entry : propertyDefinitionMap.entrySet()) {
                     addPropertyToList(resource.getName(), propertiesList, entry);
                 }
-                if (existingResource.isLeft()) {
-                    if ( CollectionUtils.isNotEmpty(existingResource.left().value().getProperties())) {
-                        final List<PropertyDefinition> userCreatedResourceProperties =
-                            existingResource.left().value().getProperties().stream()
-                                .filter(PropertyDataDefinition::isUserCreated)
-                                .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
-                                .collect(Collectors.toList());
-                        if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
-                            propertiesList.addAll(userCreatedResourceProperties);
-                        }
+                if (existingResource.isLeft() && CollectionUtils.isNotEmpty(existingResource.left().value().getProperties())) {
+                    final List<PropertyDefinition> userCreatedResourceProperties =
+                        existingResource.left().value().getProperties().stream()
+                            .filter(PropertyDataDefinition::isUserCreated)
+                            .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
+                            .collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
+                        propertiesList.addAll(userCreatedResourceProperties);
                     }
                 }
 
