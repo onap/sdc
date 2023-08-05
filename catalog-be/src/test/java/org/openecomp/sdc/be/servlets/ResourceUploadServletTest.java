@@ -206,7 +206,7 @@ class ResourceUploadServletTest extends JerseyTest {
         when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
         when(userBusinessLogic.getUser(anyString())).thenReturn(user);
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
-        when(resourceImportManager.importNormativeResource(anyString(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean()))
+        when(resourceImportManager.importNormativeResource(anyString(), any(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean()))
             .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.CREATED));
         when(modelBusinessLogic.findModel(modelName)).thenReturn(Optional.of(new Model(modelName)));
         final var response = target().path(multipartPath).request(MediaType.APPLICATION_JSON)
@@ -223,7 +223,7 @@ class ResourceUploadServletTest extends JerseyTest {
         when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
         when(userBusinessLogic.getUser(anyString())).thenReturn(user);
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
-        when(resourceImportManager.importNormativeResource(anyString(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean()))
+        when(resourceImportManager.importNormativeResource(anyString(), any(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean()))
             .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.CREATED));
         final var response = target().path(multipartPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
