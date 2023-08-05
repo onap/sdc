@@ -320,7 +320,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertNotNull(capabilityTypesMap.get("tosca.testcapabilitytypes.Name"));
 
         ArgumentCaptor<Map<String, Object>> nodeTypes = ArgumentCaptor.forClass(Map.class);
-        verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(),
+        verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(), any(),
                 anyBoolean(), anyBoolean());
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
@@ -676,8 +676,6 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         artifactDefinition.setArtifactName("artifactDefinition");
         deploymentArtifacts.put("deploymentArtifacts", artifactDefinition);
         preparedService.setDeploymentArtifacts(deploymentArtifacts);
-        String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
-        Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
 
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(createServiceObject(true)));
         when(csarArtifactsAndGroupsBusinessLogic.updateResourceArtifactsFromCsar(any(CsarInfo.class), any(Service.class),

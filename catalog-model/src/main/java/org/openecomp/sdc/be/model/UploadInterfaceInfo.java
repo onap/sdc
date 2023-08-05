@@ -20,11 +20,16 @@
  */
 package org.openecomp.sdc.be.model;
 
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 
+@Getter
+@Setter
 public class UploadInterfaceInfo extends UploadInfo {
+
     private Object value;
     private String description;
     private String type;
@@ -37,31 +42,4 @@ public class UploadInterfaceInfo extends UploadInfo {
         return operations;
     }
 
-    public void setOperations(Map<String, OperationDataDefinition> operations) {
-        this.operations = operations;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

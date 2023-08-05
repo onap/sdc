@@ -1774,7 +1774,7 @@ public class ServiceImportParseLogic {
         Function<Resource, Boolean> validator = resource -> validateResourceCreationFromNodeType(resource, creator);
         return resourceImportManager
             .importCertifiedResource(nodeTypeYaml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, true, needLock,
-                nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested);
+                nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeName, isNested, null);
     }
 
     public ImmutablePair<Resource, ActionStatus> createNodeTypeResourceFromYaml(String yamlName, Map.Entry<String, Object> nodeNameValue, User user,
