@@ -65,7 +65,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED = " failed";
     private final YamlTemplateParsingHandler yamlHandler;
     private CsarOperation csarOperation;
-    private ModelOperation modelOperation;
+    private final ModelOperation modelOperation;
 
     @Autowired
     public CsarBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -162,6 +162,10 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
         return new ServiceCsarInfo(user, csarUUID, csar, service.getName(), service.getModel(), toscaYamlCsarStatus.getKey(),
             toscaYamlCsarStatus.getValue(), true, modelOperation);
+    }
+
+    public ParsedToscaYamlInfo getParsedToscaYamlInfo(final ServiceCsarInfo csarInfo, final Service service){
+        return getParsedToscaYamlInfo(csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(), csarInfo.extractTypesInfo(), csarInfo, null, service);
     }
 
     public ParsedToscaYamlInfo getParsedToscaYamlInfo(String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,

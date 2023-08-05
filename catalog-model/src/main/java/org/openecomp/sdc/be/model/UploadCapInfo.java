@@ -20,7 +20,11 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UploadCapInfo extends UploadInfo {
 
     /**
@@ -30,27 +34,4 @@ public class UploadCapInfo extends UploadInfo {
     private List<UploadPropInfo> properties;
     private String node;
 
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public List<String> getValidSourceTypes() {
-        return validSourceTypes;
-    }
-
-    public void setValidSourceTypes(List<String> validSourceTypes) {
-        this.validSourceTypes = validSourceTypes;
-    }
-
-    public List<UploadPropInfo> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<UploadPropInfo> properties) {
-        this.properties = properties;
-    }
 }

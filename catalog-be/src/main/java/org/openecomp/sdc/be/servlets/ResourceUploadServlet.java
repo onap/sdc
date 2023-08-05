@@ -197,8 +197,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         }
 
         try {
-            resourceImportManager
-                .importAllNormativeResource(nodeTypesYamlString, nodeTypeMetadata, user, createNewVersion, false);
+            resourceImportManager.importAllNormativeResource(nodeTypesYamlString, nodeTypeMetadata, user, createNewVersion, false);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), null);
         } catch (final BusinessException e) {
             throw e;
