@@ -46,7 +46,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -389,7 +388,8 @@ public class ServiceImportBusinessLogic {
 
             final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(serviceModel, csarInfo);
             if (CollectionUtils.isNotEmpty(nodeTypesToCreate)) {
-                createNodeTypes(nodeTypesToCreate, serviceModel, csarInfo.getModifier());
+                ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic.getParsedToscaYamlInfo(csarInfo, service);
+                createNodeTypes(nodeTypesToCreate, parsedToscaYamlInfo.getInstances(), serviceModel, csarInfo.getModifier());
             }
 
             final Map<String, Object> groupTypesToCreate = getGroupTypesToCreate(serviceModel, csarInfo);
@@ -539,7 +539,7 @@ public class ServiceImportBusinessLogic {
             && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
 
-    private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, String model, User user) {
+    private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, Map<String, UploadComponentInstanceInfo> instancesFromCsar, String model, User user) {
         NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
         List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
         final Map<String, Object> allTypesToCreate = new HashMap<>();
@@ -548,7 +548,7 @@ public class ServiceImportBusinessLogic {
             nodeTypeMetadataList.add(nodeType.getNodeTypeMetadata());
         });
         nodeTypesMetadataList.setNodeMetadataList(nodeTypeMetadataList);
-        resourceImportManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, model, true, false);
+        resourceImportManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, instancesFromCsar, user, model, true, false);
     }
 
     private List<NodeTypeDefinition> getNodeTypesToCreate(final String model, final ServiceCsarInfo csarInfo) {
@@ -874,23 +874,20 @@ public class ServiceImportBusinessLogic {
 
     private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances) {
 
-        AtomicBoolean isInputFromCIProp = new AtomicBoolean(false);
         if (CollectionUtils.isNotEmpty(componentInstances)) {
-            outer:
             for (ComponentInstance instance : componentInstances) {
                 for (PropertyDefinition instanceProperty : instance.getProperties()) {
                     if (CollectionUtils.isNotEmpty(instanceProperty.getGetInputValues())) {
                         for (GetInputValueDataDefinition getInputValueDataDefinition : instanceProperty.getGetInputValues()) {
                             if (inputName.equals(getInputValueDataDefinition.getInputName())) {
-                                isInputFromCIProp.set(true);
-                                break outer;
+                                return true;
                             }
                         }
                     }
                 }
             }
         }
-        return isInputFromCIProp.get();
+        return false;
     }
 
     private void associateInputToComponentInstanceProperty(final String userId, final InputDefinition input,

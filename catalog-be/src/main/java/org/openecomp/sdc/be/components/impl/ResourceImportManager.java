@@ -66,6 +66,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -84,10 +85,11 @@ import org.openecomp.sdc.be.model.DefaultUploadResourceInfo;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypesMetadataList;
-import org.openecomp.sdc.be.model.NullNodeTypeMetadata;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -154,13 +156,14 @@ public class ResourceImportManager {
     }
 
     public ImmutablePair<Resource, ActionStatus> importNormativeResource(final String resourceYml, final UploadResourceInfo resourceMetaData,
+                                                                         final Map<String, UploadComponentInstanceInfo> instancesFromCsar,
                                                                          final User creator, final boolean createNewVersion, final boolean needLock,
                                                                          final boolean isInTransaction) {
         LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
         lifecycleChangeInfo.setUserRemarks("certification on import");
         Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
         return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, createNewVersion,
-            needLock, null, null, false, null, null, false);
+            needLock, null, null, false, null, null, false, instancesFromCsar);
     }
 
     public void importAllNormativeResource(final String resourcesYaml, final NodeTypesMetadataList nodeTypesMetadataList, final User user,
@@ -176,11 +179,11 @@ public class ResourceImportManager {
             return;
         }
         final Map<String, Object> nodeTypesMap = (Map<String, Object>) nodeTypesYamlMap.get(ToscaTagNamesEnum.NODE_TYPES.getElementName());
-        importAllNormativeResource(nodeTypesMap, nodeTypesMetadataList, user, "", createNewVersion,needLock);
+        importAllNormativeResource(nodeTypesMap, nodeTypesMetadataList, null, user, "", createNewVersion,needLock);
     }
 
     public void importAllNormativeResource(final  Map<String, Object> nodeTypesMap, final NodeTypesMetadataList nodeTypesMetadataList,
-                                           final User user, String model, final boolean createNewVersion, final boolean needLock) {
+                                           Map<String, UploadComponentInstanceInfo> instancesFromCsar, final User user, String model, final boolean createNewVersion, final boolean needLock) {
         try {
             nodeTypesMetadataList.getNodeMetadataList().forEach(nodeTypeMetadata -> {
                 final String nodeTypeToscaName = nodeTypeMetadata.getToscaName();
@@ -199,7 +202,7 @@ public class ResourceImportManager {
                         uploadResourceInfo.setModel(model);
                         uploadResourceInfo.setContactId(user.getUserId());
                     }
-                    importNormativeResource(nodeTypeYaml, uploadResourceInfo, user, createNewVersion, needLock, true);
+                    importNormativeResource(nodeTypeYaml, uploadResourceInfo, instancesFromCsar, user, createNewVersion, needLock, true);
                 }
             });
             janusGraphDao.commit();
@@ -209,6 +212,15 @@ public class ResourceImportManager {
         }
     }
 
+    public ImmutablePair<Resource, ActionStatus> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData,
+                                                                                 User creator, boolean createNewVersion, boolean needLock) {
+        LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
+        lifecycleChangeInfo.setUserRemarks("certification on import");
+        Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+        return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock,
+            null, null, false, null, null, false, null);
+    }
+
     public ImmutablePair<Resource, ActionStatus> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator,
                                                                          Function<Resource, Boolean> validationFunction,
                                                                          LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction,
@@ -216,7 +228,7 @@ public class ResourceImportManager {
                                                                          Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle,
                                                                          List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
                                                                          boolean forceCertificationAllowed, CsarInfo csarInfo, String nodeName,
-                                                                         boolean isNested) {
+                                                                         boolean isNested, Map<String, UploadComponentInstanceInfo> instancesFromCsar) {
         Resource resource = new Resource();
         ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
         Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
@@ -225,7 +237,7 @@ public class ResourceImportManager {
             boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty();
             setConstantMetaData(resource, shouldBeCertified);
             setResourceMetaData(resource, resourceYml, resourceMetaData);
-            populateResourceFromYaml(resourceYml, resource);
+            populateResourceFromYaml(resourceYml, resource, instancesFromCsar);
             validationFunction.apply(resource);
             resource.getComponentMetadataDefinition().getMetadataDataDefinition().setNormative(resourceMetaData.isNormative());
             checkResourceExists(createNewVersion, csarInfo, resource);
@@ -341,7 +353,7 @@ public class ResourceImportManager {
         ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
         try {
             setMetaDataFromJson(resourceMetaData, resource);
-            populateResourceFromYaml(resourceYml, resource);
+            populateResourceFromYaml(resourceYml, resource, null);
             // currently import VF isn't supported. In future will be supported import VF only with CSAR file!!
             if (ResourceTypeEnum.VF == resource.getResourceType()) {
                 log.debug("Now import VF isn't supported. It will be supported in future with CSAR file only");
@@ -356,7 +368,7 @@ public class ResourceImportManager {
         return responsePair;
     }
 
-    private void populateResourceFromYaml(final String resourceYml, Resource resource) {
+    private void populateResourceFromYaml(final String resourceYml, Resource resource, Map<String, UploadComponentInstanceInfo> instancesFromCsar) {
         @SuppressWarnings("unchecked") Object ymlObj = new Yaml().load(resourceYml);
         if (ymlObj instanceof Map) {
             final Either<Resource, StorageOperationStatus> existingResource = getExistingResource(resource);
@@ -383,7 +395,7 @@ public class ResourceImportManager {
             setProperties(toscaJson, resource, existingResource);
             setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
-            setInterfaceLifecycle(toscaJson, resource, existingResource);
+            setInterfaceLifecycle(toscaJson, resource, existingResource, instancesFromCsar);
         } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -441,20 +453,29 @@ public class ResourceImportManager {
         return null;
     }
 
-    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource) {
+    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource,
+                                       Map<String, UploadComponentInstanceInfo> instancesFromCsar) {
         final Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
             .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
         final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
         final Map<String, Object> map;
+        List<UploadInterfaceInfo> interfaceInfoList = null;
+        if (MapUtils.isNotEmpty(instancesFromCsar)) {
+            interfaceInfoList = instancesFromCsar.values().stream().filter(i -> MapUtils.isNotEmpty(i.getInterfaces()))
+                .flatMap(i -> i.getInterfaces().values().stream()).collect(Collectors.toList());
+        }
         if (toscaInterfaces.isLeft()) {
             map = toscaInterfaces.left().value();
             for (final Entry<String, Object> interfaceNameValue : map.entrySet()) {
-                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
-                    resource.getModel());
+                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface =
+                    createModuleInterface(interfaceNameValue.getValue(), resource.getModel());
                 if (eitherInterface.isRight()) {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
                 } else {
                     final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
+                    if (CollectionUtils.isNotEmpty(interfaceInfoList)) {
+                        updateInterfaceDefinition(interfaceDefinition, interfaceInfoList);
+                    }
                     moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
                 }
             }
@@ -478,6 +499,17 @@ public class ResourceImportManager {
         if (MapUtils.isNotEmpty(moduleInterfaces)) {
             resource.setInterfaces(moduleInterfaces);
         }
+    }
+
+    private void updateInterfaceDefinition(InterfaceDefinition interfaceDefinition, List<UploadInterfaceInfo> interfaceInfoList) {
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        interfaceInfoList.stream().filter(i -> interfaceDefinition.getType().endsWith(i.getKey())).forEach(i -> {
+            i.getOperations().values().forEach(o -> {
+                o.setImplementation(null);
+            });
+            operations.putAll(i.getOperations());
+        });
+        interfaceDefinition.setOperations(operations);
     }
 
     private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(final Object interfaceJson, final String model) {

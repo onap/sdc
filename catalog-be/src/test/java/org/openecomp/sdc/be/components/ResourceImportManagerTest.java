@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -53,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -172,7 +169,7 @@ class ResourceImportManagerTest {
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         Resource resource = createResource.left;
 
         testSetConstantMetaData(resource);
@@ -198,7 +195,7 @@ class ResourceImportManagerTest {
         final String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         assertNotNull(createResource);
         Resource resource = createResource.left;
         assertNotNull(resource);
@@ -300,7 +297,7 @@ class ResourceImportManagerTest {
         String jsonContent = "this is an invalid yml!";
         ComponentException errorInfoFromTest = null;
         try {
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         } catch (ComponentException e) {
             errorInfoFromTest = e;
         }
@@ -323,7 +320,7 @@ class ResourceImportManagerTest {
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         Resource resource = createResource.left;
         testSetCapabilities(resource);
 
@@ -343,7 +340,7 @@ class ResourceImportManagerTest {
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-port.yml");
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         testSetRequirements(createResource.left);
 
     }
@@ -367,7 +364,7 @@ class ResourceImportManagerTest {
         when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         final ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         assertSetInterfaceImplementation(createResource.left);
     }
 
@@ -390,7 +387,7 @@ class ResourceImportManagerTest {
         when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         assertNotNull(createResource);
         Resource resource = createResource.getLeft();
         assertNotNull(resource);
@@ -427,7 +424,7 @@ class ResourceImportManagerTest {
         when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         assertNull(createResource.left.getInterfaces());
     }
 
@@ -450,7 +447,7 @@ class ResourceImportManagerTest {
         when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         ImmutablePair<Resource, ActionStatus> createResource =
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+            importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
         assertNull(createResource.left.getInterfaces());
     }
 
@@ -471,7 +468,7 @@ class ResourceImportManagerTest {
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
         var actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false));
+            () -> importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false));
         assertEquals(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS, actualException.getActionStatus());
     }
 
@@ -495,7 +492,7 @@ class ResourceImportManagerTest {
                 .createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null), eq(null), eq(false)))
                 .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK)).thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
 
-        importManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, "", false, false);
+        importManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, null, user, "", false, false);
         verify(janusGraphDao).commit();
     }
 
@@ -610,7 +607,7 @@ class ResourceImportManagerTest {
         interfaces.put(interfaceDefinition.getType(), interfaceDefinition);
         resource.setInterfaces(interfaces);
 
-        return importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+        return importManager.importNormativeResource(jsonContent, resourceMD, null, user, true, true, false);
 
     }
 
