@@ -2901,6 +2901,6 @@ errors:
     # %1 - missing properties list
     MISSING_PROPERTIES_ERROR: {
         code: 402,
-        message: "Error: Following properties are missing in CSAR:\n%1",
+        message: "Error: The following properties:\n%1\nused in the substitution mapping node type in CSAR are missing from the system. Please add these to the node in the SDC catalog prior to importing the template",
         messageId: "SVC4021"
     }
