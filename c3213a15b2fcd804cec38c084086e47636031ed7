@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1af018b3_1fcf6b58",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-08T14:23:01Z",
+      "side": 1,
+      "message": "Only issue I have seen with this is I will get an error if I try to add multiple resources of different versions at the same time",
+      "revId": "c3213a15b2fcd804cec38c084086e47636031ed7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
