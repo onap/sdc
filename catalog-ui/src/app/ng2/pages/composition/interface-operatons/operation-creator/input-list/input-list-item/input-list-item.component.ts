@@ -85,6 +85,9 @@ export class InputListItemComponent implements OnInit {
       this.valueObjRef = this.toscaFunction.value;
       this.isToscaFunction = true;
     }
+    if (this.property.type == PROPERTY_TYPES.JSON) {
+      this.valueObjRef = JSON.stringify(this.valueObjRef);
+    }
   }
 
   ngOnChanges(): void {
