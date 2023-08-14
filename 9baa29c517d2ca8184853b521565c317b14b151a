@@ -94,6 +94,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "be6cdfc4_dc3a7b71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaMilestone.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-08-14T12:41:24Z",
+      "side": 1,
+      "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 53
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c61b08ba_0b36a321",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/FilterDataDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-08-14T12:41:24Z",
+      "side": 1,
+      "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 21,
+        "endLine": 29,
+        "endChar": 64
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d51b4a92_f6d80234",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/FilterDataDefinition.java",
         "patchSetId": 2
