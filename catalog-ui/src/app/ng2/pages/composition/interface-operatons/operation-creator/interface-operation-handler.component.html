@@ -133,6 +133,7 @@
                 [componentInstanceMap]="componentInstanceMap"
                 [showToscaFunctionOption]="true"
                 (onValueChange)="onInputValueChange($event)"
+                (onInputsValidityChange)="implementationPropsValidityChange($event)"
                 (onDelete)="onInputDelete($event)"
             >
             </input-list>

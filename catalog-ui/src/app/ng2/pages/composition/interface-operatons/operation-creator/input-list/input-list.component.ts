@@ -137,7 +137,19 @@ export class InputListComponent {
       } else if (this.isTypeComplex(inputOperationParameter.type)) {
         this.setComplexType($event, inputOperationParameter);
       } else {
-        inputOperationParameter.value = $event.value;
+        if (inputOperationParameter.type == PROPERTY_TYPES.JSON) {
+          const parseValue = $event.value;
+          try {
+            JSON.parse(parseValue);
+            inputOperationParameter.value = $event.value;
+          } catch (err) {
+            console.log('invalid json');
+            inputOperationParameter.valid = false;
+            inputOperationParameter.value = null;
+          }
+        } else {
+          inputOperationParameter.value = $event.value;
+        }
         inputOperationParameter.toscaFunction = null;
       }
     }
