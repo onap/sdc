@@ -116,7 +116,7 @@ import org.yaml.snakeyaml.Yaml;
 @org.springframework.stereotype.Component("resourceImportManager")
 public class ResourceImportManager {
 
-    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\:]+");
+    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\.\\:]+");
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
     private final InterfaceDefinitionHandler interfaceDefinitionHandler;
     private final ComponentsUtils componentsUtils;
