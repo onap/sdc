@@ -85,7 +85,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class BeGenericServlet extends BasicServlet {
 
     private static final Logger log = Logger.getLogger(BeGenericServlet.class);
-    private static final String PROPERTY_NAME_REGEX = "[a-zA-Z0-9_:-@]+";
+    private static final String PROPERTY_NAME_REGEX = "[a-zA-Z0-9._:-@]+";
     @Context
     protected HttpServletRequest servletRequest;
     protected ComponentsUtils componentsUtils;
