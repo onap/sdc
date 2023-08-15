@@ -21,22 +21,21 @@ package org.openecomp.sdc.common.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonUtils {
-
-    private JsonUtils() {
-
-    }
 
     public static String toString(JsonElement jsonElement) {
         if (jsonElement == null) {
             return null;
         }
         if (!jsonElement.isJsonNull()) {
-            if (!jsonElement.isJsonObject()) {
-                return jsonElement.getAsString();
-            } else {
+            if (jsonElement.isJsonObject() || jsonElement.isJsonArray()) {
                 return jsonElement.toString();
+            } else {
+                return jsonElement.getAsString();
             }
         } else {
             return null;
@@ -59,7 +58,7 @@ public class JsonUtils {
             return json.getAsJsonArray().isEmpty();
         }
         if (json.isJsonObject()) {
-            return JsonUtils.isEmptyJson(json.getAsJsonObject());
+            return isEmptyJson(json.getAsJsonObject());
         }
 
         return false;
