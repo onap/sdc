@@ -101,6 +101,8 @@ export class OperationModel extends BEOperationModel{
     workflowName: string;
     workflowVersion: string;
 
+    milestones: Object;
+
     protected OperationTypeEnum: Array<String> = [
         'Create',
         'Delete',
@@ -125,6 +127,7 @@ export class OperationModel extends BEOperationModel{
             this.artifactData = operation.artifactData;
             this.workflowName = operation.workflowName;
             this.workflowVersion = operation.workflowVersion;
+            this.milestones = operation.milestones;
         }
     }
 

@@ -155,5 +155,31 @@
                 <option value="day">Days</option>
               </select>
         </div>
+
+        <div class="group-with-border content-row">
+            <label class="sub-operations-label"> Sub operations </label>
+            <tabs tabStyle="basic-tabs" [hideIndicationOnTabChange]="true" (tabChanged)="tabChanged($event)">
+                <div *ngFor="let milestone of milestones">
+                  <tab tabTitle="{{milestone}}" [active]="isActiveTab(milestone)" [highlight]="isInvalidActivity(milestone)">
+                    <filters-list
+                        [customToscaFunctions]="customToscaFunctions"
+                        [activitiesExist]="getExistingActivities(milestone) ? true : false"
+                        [isViewOnly]="isViewOnly"
+                        [componentInstanceMap]="componentInstanceMap"
+                        [existingFilters]="getExistingFilters(milestone)"
+                        (filtersChangeEvent)="filtersChangeEvent($event, milestone)">
+                    </filters-list>
+                    <activities-list
+                        [isViewOnly]="isViewOnly"
+                        [dataTypeMap]="dataTypeMap"
+                        [dataTypeMap$]="dataTypeMap$"
+                        [componentInstanceMap]="componentInstanceMap"
+                        [existingActivities]="getExistingActivities(milestone)"
+                        (activitiesChangeEvent)="activitiesChangeEvent($event, milestone)">
+                    </activities-list>
+                  </tab>
+                </div>
+              </tabs>
+        </div>
     </form>
 </div>

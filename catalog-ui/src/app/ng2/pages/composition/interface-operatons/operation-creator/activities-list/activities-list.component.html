@@ -1,0 +1,106 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2023 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+-->
+
+<div class="sub-operation-activities">
+  <div class="group-with-border content-row">
+    <form novalidate class="w-sdc-form two-columns" [formGroup]="activityForm">
+      <div formArrayName="activityFormList">
+        <label class="activities-label"> Activities </label>
+        <div *ngFor="let activity of activities; let idx = index">
+          <div class="side-by-side group-with-border-blue">
+            <div class="form-item">
+              <label class="sdc-timeout-label">Type: </label>
+              <div class="sdc-dropdown">
+                <select class="i-sdc-form-select"
+                        data-tests-id="activity-type"
+                        [value]="activity.type"
+                        [disabled]="isViewOnly"
+                        (change)="onActivityTypeChange($event.target.value, idx)"
+                        required>
+                  <option *ngIf="activity" [value]="activity.type" hidden selected>
+                    {{ activity.type }}
+                  </option>
+                  <option *ngFor="let activityType of activityTypes"
+                          [value]="activityType">
+                    {{ activityType }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="form-item">
+              <div class="side-by-side">
+                <div class="form-item-big">
+                  <label>Value: </label>
+                  <input type="text"
+                     class="i-sdc-form-input"
+                     [disabled]="isViewOnly"
+                     (input)="onActivityValueChange($event.target.value, idx)"
+                     [value]="activity.workflow"
+                     [ngClass]="{'disabled': isViewOnly}"
+                     required/>
+                </div>
+                <div class="form-item-icon">
+                  <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromActivities(idx)"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-sdc-form-columns-wrapper">
+            <div class="validation-errors">
+              <ng-container *ngFor="let validation of validationMessages.activity">
+                <div class="input-error" *ngIf="activityFormArray.at(idx).hasError(validation.type);">
+                  {{ validation.message }}
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="group-with-border content-row" *ngIf="dataTypeMap">
+            <input-list
+                [title]="'INPUT_LIST_TITLE' | translate"
+                [emptyMessage]="'INPUT_LIST_EMPTY' | translate"
+                [inputs]="getInputs(idx)"
+                [dataTypeMap]="dataTypeMap"
+                [isViewOnly]="isViewOnly"
+                [allowDeletion]="true"
+                [componentInstanceMap]="componentInstanceMap"
+                [showToscaFunctionOption]="true"
+                (onValueChange)="onInputValueChange($event, idx)"
+                (onDelete)="onInputDelete($event, idx)"
+            >
+            </input-list>
+        </div>
+        <div class="group-with-border content-row">
+            <app-add-input
+                [dataTypeMap]="dataTypeMap$"
+                [isView]="isViewOnly"
+                [existingInputNames]="collectInputNames(idx)"
+                (onAddInput)="onAddInput($event, idx)"
+            >
+            </app-add-input>
+        </div>
+        </div>
+        <div class="add-button-container group-with-border" *ngIf="!isViewOnly">
+          <a class="add-btn" data-tests-id="add-input.add-input-link"
+             (click)="addActivity()">Add Activity</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

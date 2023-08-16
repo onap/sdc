@@ -34,6 +34,7 @@ export class Tab {
     @Input('tabTitle') title: string;
     @Input() active:boolean = false;
     @Input() show:boolean = true;
+    @Input() highlight?: string;
     @Input() indication?: number;
 
 }
