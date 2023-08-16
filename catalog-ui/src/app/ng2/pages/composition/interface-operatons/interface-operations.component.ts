@@ -142,6 +142,8 @@ export class InterfaceOperationsComponent {
     toscaArtifactTypes: Array<DropdownValue> = [];
     componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
     validImplementationProps: boolean = true;
+    validMilestoneActivities: boolean = true;
+    validMilestoneFilters: boolean = true;
 
     @Input() component: ComponentInstance;
     @Input() isViewOnly: boolean;
@@ -224,6 +226,11 @@ export class InterfaceOperationsComponent {
             return disable;
         }
 
+        const validMilestoneFilters = this.modalInstance.instance.dynamicContent.instance.validMilestoneFilters;
+        const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
+        if (!validMilestoneActivities || !validMilestoneFilters) {
+            return disable;
+        }
         let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
         if(enableAddArtifactImplementation) {
             const validImplementationProps = this.modalInstance.instance.dynamicContent.instance.validImplementationProps;
@@ -273,6 +280,8 @@ export class InterfaceOperationsComponent {
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.isViewOnly,
                 validImplementationProps: this.validImplementationProps,
+                validMilestoneActivities: this.validMilestoneActivities,
+                validMilestoneFilters: this.validMilestoneFilters,
                 isEdit: true,
                 modelName: this.componentMetaData.model
             }

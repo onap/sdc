@@ -21,7 +21,17 @@
 import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {UIInterfaceModel} from "../interface-operations.component";
-import {InputOperationParameter, InterfaceOperationModel, IOperationParamsList} from "../../../../../models/interfaceOperation";
+import {
+    ActivityParameter,
+    IActivityParameterList,
+    IFilterParameterList,
+    InputOperationParameter,
+    InterfaceOperationModel,
+    IOperationParamsList,
+    FilterParameter,
+    Milestone,
+    MilestoneEnum
+} from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
 import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ArtifactModel} from "../../../../../models/artifacts";
@@ -57,7 +67,9 @@ export class InterfaceOperationHandlerComponent {
         validityChangedCallback: Function;
         isViewOnly: boolean;
         isEdit: boolean;
-        validImplementationProps:boolean;
+        validImplementationProps: boolean;
+        validMilestoneActivities: boolean;
+        validMilestoneFilters: boolean;
         modelName: string;
     };
 
@@ -73,7 +85,9 @@ export class InterfaceOperationHandlerComponent {
     isLoading: boolean = false;
     isViewOnly: boolean;
     isEdit: boolean;
-    validImplementationProps:boolean;
+    validImplementationProps: boolean;
+    validMilestoneActivities: boolean;
+    validMilestoneFilters: boolean;
     interfaceTypes: Array<DropdownValue> = [];
     interfaceTypeOptions: Array<DropDownOption> = [];
     selectedInterfaceType: DropDownOption = undefined;
@@ -92,6 +106,10 @@ export class InterfaceOperationHandlerComponent {
     inputTypeOptions: any[];
     timeoutValue = new FormControl('');
     timeoutType = new FormControl('');
+    invalidMilestones: string[] = [];
+    activeTab: string;
+    milestones = Object.keys(MilestoneEnum)
+            .map(key => MilestoneEnum[key]);
 
     constructor(private dataTypeService: DataTypeService,
                 private componentServiceNg2: ComponentServiceNg2,
@@ -102,6 +120,8 @@ export class InterfaceOperationHandlerComponent {
         this.isViewOnly = this.input.isViewOnly;
         this.isEdit = this.input.isEdit;
         this.validImplementationProps = this.input.validImplementationProps;
+        this.validMilestoneActivities = this.input.validMilestoneActivities;
+        this.validMilestoneFilters = this.input.validMilestoneFilters;
         this.componentInstanceMap =  this.input.componentInstanceMap ? this.input.componentInstanceMap : null;
         this.interfaceType = this.input.selectedInterface.type;
         this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
@@ -124,6 +144,9 @@ export class InterfaceOperationHandlerComponent {
                 this.timeoutValue.setValue(timeout / 24);
                 this.timeoutType.setValue("day");
             }
+        }
+        if (!this.operationToUpdate.milestones) {
+            this.operationToUpdate.milestones = {};
         }
         this.initCustomToscaFunctions();
         this.initInputs();
@@ -441,6 +464,107 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.operationType = dropDownOption ? dropDownOption.value : undefined;
         this.selectedInterfaceOperation = dropDownOption ? dropDownOption : undefined;
     }
+
+    getExistingFilters(key: string) {
+        if (this.operationToUpdate.milestones[key] && this.operationToUpdate.milestones[key].filters) {
+            return this.operationToUpdate.milestones[key].filters
+        }
+        return undefined;
+    }
+
+    filtersChangeEvent($event: any, milestone: string) {
+        if ($event.valid) {
+            if (this.invalidMilestones.indexOf(milestone) > -1) {
+                this.invalidMilestones.splice(this.invalidMilestones.indexOf(milestone), 1);
+                this.validMilestoneFilters = this.invalidMilestones.length < 1;
+                this.validMilestoneActivities = this.invalidMilestones.length < 1;
+            }
+            let operationMilestone = this.operationToUpdate.milestones[milestone];
+            if (!operationMilestone) {
+                operationMilestone = new Milestone();
+            }
+            operationMilestone.filters = new class implements IFilterParameterList {
+                listToscaDataDefinition: Array<FilterParameter> = [];
+            }
+            let milestoneFilters = $event.filters;
+            for (let filter of milestoneFilters) {
+                let filterParameter = new FilterParameter();
+                filterParameter.constraint = filter.constraint;
+                filterParameter.name = filter.name;
+                filterParameter.filterValue = filter.filterValue;
+                filterParameter.toscaFunction = filter.toscaFunction;
+                operationMilestone.filters.listToscaDataDefinition.push(filterParameter);
+            }
+            this.operationToUpdate.milestones[milestone] = operationMilestone;
+        } else {
+            if (this.invalidMilestones.indexOf(milestone) == -1) {
+                this.invalidMilestones.push(milestone);
+            }
+            this.validMilestoneFilters = false;
+            this.validMilestoneActivities = false;
+        }
+    }
+
+    getExistingActivities(key: string) {
+        if (
+            this.operationToUpdate.milestones[key]
+            && this.operationToUpdate.milestones[key].activities
+            && this.operationToUpdate.milestones[key].activities.listToscaDataDefinition
+            && this.operationToUpdate.milestones[key].activities.listToscaDataDefinition.length > 0
+        ) {
+            return this.operationToUpdate.milestones[key].activities
+        }
+        return undefined;
+    }
+
+    activitiesChangeEvent($event: any, milestone: string) {
+        if ($event.valid) {
+            if (this.invalidMilestones.indexOf(milestone) > -1) {
+                this.invalidMilestones.splice(this.invalidMilestones.indexOf(milestone), 1);
+                this.validMilestoneActivities = this.invalidMilestones.length < 1;
+                this.validMilestoneFilters  = this.invalidMilestones.length < 1;
+            }
+            let operationMilestone = this.operationToUpdate.milestones[milestone];
+            if (!operationMilestone) {
+                operationMilestone = new Milestone();
+            }
+            operationMilestone.activities = new class implements IActivityParameterList {
+                listToscaDataDefinition: Array<ActivityParameter> = [];
+            }
+            let milestoneActivities = $event.activities;
+            for (let activity of milestoneActivities) {
+                let activityParameter = new ActivityParameter();
+                activityParameter.type = activity.type;
+                activityParameter.workflow = activity.workflow;
+                activityParameter.inputs = activity.inputs;
+                operationMilestone.activities.listToscaDataDefinition.push(activityParameter);
+            }
+            this.operationToUpdate.milestones[milestone] = operationMilestone;
+        } else {
+            if (this.invalidMilestones.indexOf(milestone) == -1) {
+                this.invalidMilestones.push(milestone);
+            }
+            this.validMilestoneActivities = false;
+            this.validMilestoneFilters = false;
+        }
+    }
+
+    isActiveTab(title: string): boolean {
+        if (this.activeTab) {
+            return this.activeTab == title;
+        }
+        return this.milestones[0] == title;
+    }
+
+    tabChanged = (event) => {
+        this.activeTab = event.title;
+      }
+
+    isInvalidActivity(title: string) {
+        if (this.invalidMilestones.indexOf(title) > -1) {
+            return "#cf2a2a";
+        }
+      }
 }
 
 class DropDownOption implements IDropDownOption {

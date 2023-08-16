@@ -19,22 +19,25 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {NgModule} from "@angular/core";
-import {CommonModule} from "@angular/common";
+import { NgModule} from '@angular/core';
+import { CommonModule} from '@angular/common';
 
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {BrowserModule} from '@angular/platform-browser';
-import {FormElementsModule} from "app/ng2/components/ui/form-components/form-elements.module";
-import {TranslateModule} from "app/ng2/shared/translator/translate.module";
-import {AddInputComponent} from './add-input/add-input.component';
-import {InputListComponent} from './input-list/input-list.component';
-import {InputListItemComponent} from './input-list/input-list-item/input-list-item.component';
-import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
-import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.component";
-import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
-import {PropertyTableModule} from "app/ng2/components/logic/properties-table/property-table.module";
-import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function/tosca-function.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormElementsModule } from 'app/ng2/components/ui/form-components/form-elements.module';
+import { TranslateModule } from 'app/ng2/shared/translator/translate.module';
+import { AddInputComponent } from './add-input/add-input.component';
+import { InputListComponent } from './input-list/input-list.component';
+import { InputListItemComponent } from './input-list/input-list-item/input-list-item.component';
+import { PropertyParamRowComponent } from './property-param-row/property-param-row.component';
+import { InterfaceOperationHandlerComponent } from './interface-operation-handler.component';
+import { SdcUiComponentsModule } from 'onap-ui-angular/dist';
+import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
+import { PropertyTableModule } from 'app/ng2/components/logic/properties-table/property-table.module';
+import { ToscaFunctionModule } from '../../../properties-assignment/tosca-function/tosca-function.module';
+import { TabModule } from 'app/ng2/components/ui/tabs/tabs.module';
+import { FiltersListComponent } from './filters-list/filters-list.component';
+import { ActivitiesListComponent } from './activities-list/activities-list.component';
 
 @NgModule({
     declarations: [
@@ -42,7 +45,9 @@ import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function
         PropertyParamRowComponent,
         AddInputComponent,
         InputListComponent,
-        InputListItemComponent
+        InputListItemComponent,
+        FiltersListComponent,
+        ActivitiesListComponent
     ],
     imports: [
         CommonModule,
@@ -54,7 +59,8 @@ import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function
         UiElementsModule,
         PropertyTableModule,
         ReactiveFormsModule,
-        ToscaFunctionModule
+        ToscaFunctionModule,
+        TabModule
     ],
     exports: [
         PropertyParamRowComponent,

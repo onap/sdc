@@ -181,12 +181,15 @@ export class CommonUtils {
                         newOperation.interfaceType = interf.type;
                         newOperation.interfaceId = interf.uniqueId;
 
-                        const {inputs, outputs} = operation;
+                        const {inputs, outputs, milestones} = operation;
                         if (inputs) {
                             newOperation.createInputsList(inputs.listToscaDataDefinition);
                         }
                         if (outputs) {
                             newOperation.createOutputsList(outputs.listToscaDataDefinition);
+                        }
+                        if (milestones) {
+                            newOperation.milestones = milestones;
                         }
 
                         return newOperation;

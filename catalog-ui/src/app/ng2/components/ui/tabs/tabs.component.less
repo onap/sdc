@@ -82,4 +82,24 @@
             }
         }
     }
+
+    &.basic-tabs .tab {
+        color: @main_color_n;
+        flex: 0 0 auto;
+
+        &:after {
+            display:block;
+            content: '';
+            border-bottom: 2px solid @main_color_a;
+            transform: scaleX(0);
+            transition: transform 200ms ease-in-out;
+        }
+
+        &.active {
+            color: @main_color_a;
+            &:after {
+                transform: scaleX(1.2);
+            }
+        }
+    }
 }

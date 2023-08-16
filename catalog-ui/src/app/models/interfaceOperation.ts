@@ -25,6 +25,17 @@ import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
 import {ToscaFunction} from "./tosca-function";
 import {SubPropertyToscaFunction} from "./sub-property-tosca-function";
 
+export enum MilestoneEnum {
+    on_entry = 'on_entry',
+    on_success = 'on_success',
+    on_failure = 'on_failure',
+    on_timeout = 'on_timeout'
+}
+
+export enum ActivityTypesEnum {
+    Delegate = 'delegate'
+}
+
 export class InputOperationParameter {
     name: string;
     type: string;
@@ -96,12 +107,63 @@ export interface IOperationParamsList {
     listToscaDataDefinition: Array<InputOperationParameter>;
 }
 
+export class Milestone {
+    activities: IActivityParameterList;
+    filterParams: IActivityParameterList;
+
+    constructor(param?: any) {
+        if (param) {
+            this.activities = param.activityParams;
+            this.filterParams = param.filterParams;
+        }
+    }
+}
+
+export class ActivityParameter {
+    type: string;
+    workflow: string;
+    inputs: IOperationParamsList;
+
+    constructor(param?: any) {
+        if (param) {
+            this.type = param.type;
+            this.workflow = param.workflow;
+            this.inputs = param.inputs;
+        }
+    }
+}
+
+export interface IActivityParameterList {
+    listToscaDataDefinition: Array<ActivityParameter>;
+}
+
+export class FilterParameter {
+    name: string;
+    constraint: string;
+    filterValue: any;
+    toscaFunction?: ToscaFunction;
+
+    constructor(param?: any) {
+        if (param) {
+            this.name = param.name;
+            this.constraint = param.constraint;
+            this.filterValue = param.filterValue;
+            this.toscaFunction = param.toscaFunction;
+        }
+    }
+}
+
+export interface IFilterParameterList {
+    listToscaDataDefinition: Array<FilterParameter>;
+}
+
 export class BEInterfaceOperationModel {
     name: string;
     description: string;
     uniqueId: string;
     inputs: IOperationParamsList;
     implementation: ArtifactModel;
+    milestones: Object;
 
     constructor(operation?: any) {
         if (operation) {
@@ -110,6 +172,7 @@ export class BEInterfaceOperationModel {
             this.uniqueId = operation.uniqueId;
             this.inputs = operation.inputs;
             this.implementation = operation.implementation;
+            this.milestones = operation.milestones;
         }
     }
 }
@@ -126,6 +189,7 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
     uniqueId: string;
     inputParams: IOperationParamsList;
     implementation: ArtifactModel;
+    milestones: Object
 
     constructor(operation?: any) {
         super(operation);
@@ -147,6 +211,7 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
             if (operation.implementation) {
                 this.implementation = new ArtifactModel(operation.implementation);
             }
+            this.milestones = operation.milestones;
         }
     }
 
