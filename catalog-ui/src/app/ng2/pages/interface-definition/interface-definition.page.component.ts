@@ -156,7 +156,9 @@ export class InterfaceDefinitionComponent {
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
     workflowIsOnline: boolean;
-    validImplementationProps:boolean = true;
+    validImplementationProps: boolean = true;
+    validMilestoneActivities: boolean = true;
+    validMilestoneFilters: boolean = true;
     serviceInterfaces: InterfaceModel[];
 
     @Input() component: IComponent;
@@ -186,7 +188,6 @@ export class InterfaceDefinitionComponent {
     ngOnInit(): void {
         this.isLoading = true;
         this.interfaces = [];
-        //this.disableFlag = this.readonly;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaceOperations(this.component),
@@ -218,7 +219,7 @@ export class InterfaceDefinitionComponent {
                 });
                 this.onInstanceSelectedUpdate(this.instancesNavigationData[0]);
                 this.loadingInstances = false;
-                
+
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
                 this.WorkflowServiceNg2.getWorkflows().subscribe(
@@ -275,7 +276,6 @@ export class InterfaceDefinitionComponent {
             }
             this.interfaces = newInterfaces.map((interf) => new UIInterfaceModel(interf));
         } else {
-            //this.disableFlag = this.readonly;
             this.interfaces = this.serviceInterfaces.map((interf) => new UIInterfaceModel(interf));
         }
         this.sortInterfaces();
@@ -299,7 +299,12 @@ export class InterfaceDefinitionComponent {
         if (this.component.isService()) {
             return disable;
         }
-    
+        const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
+        const validMilestoneFilters = this.modalInstance.instance.dynamicContent.instance.validMilestoneFilters;
+        if (!validMilestoneActivities || !validMilestoneFilters) {
+            return disable;
+        }
+
         let selectedInterfaceOperation = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceOperation;
         let isInterfaceOperation:boolean = !(typeof selectedInterfaceOperation == 'undefined' || _.isEmpty(selectedInterfaceOperation));
         let selectedInterfaceType = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceType;
@@ -344,6 +349,8 @@ export class InterfaceDefinitionComponent {
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.readonly,
                 validImplementationProps: this.validImplementationProps,
+                validMilestoneActivities: this.validMilestoneActivities,
+                validMilestoneFilters: this.validMilestoneFilters,
                 'isEdit': isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
                 modelName: this.component.model

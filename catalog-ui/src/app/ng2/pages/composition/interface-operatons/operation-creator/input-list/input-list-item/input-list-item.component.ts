@@ -95,6 +95,7 @@ export class InputListItemComponent implements OnInit {
       this.property.toscaFunction = this.toscaFunction;
       this.valueObjRef = this.toscaFunction.value;
     } else {
+      this.property = this.property ? this.property : new PropertyBEModel();
       this.property.toscaFunction = undefined;
     }
   }
