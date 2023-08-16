@@ -147,7 +147,9 @@ export class InterfaceDefinitionComponent {
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
     workflowIsOnline: boolean;
-    validImplementationProps:boolean = true;
+    validImplementationProps: boolean = true;
+    validMilestoneActivities: boolean = true;
+    validMilestoneFilters: boolean = true;
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -222,7 +224,12 @@ export class InterfaceDefinitionComponent {
         if(this.readonly) {
             return disable;
         }
-    
+        const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
+        const validMilestoneFilters = this.modalInstance.instance.dynamicContent.instance.validMilestoneFilters;
+        if (!validMilestoneActivities || !validMilestoneFilters) {
+            return disable;
+        }
+
         let selectedInterfaceOperation = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceOperation;
         let isInterfaceOperation:boolean = !(typeof selectedInterfaceOperation == 'undefined' || _.isEmpty(selectedInterfaceOperation));
         let selectedInterfaceType = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceType;
@@ -267,6 +274,8 @@ export class InterfaceDefinitionComponent {
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.readonly,
                 validImplementationProps: this.validImplementationProps,
+                validMilestoneActivities: this.validMilestoneActivities,
+                validMilestoneFilters: this.validMilestoneFilters,
                 'isEdit': isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
                 modelName: this.component.model

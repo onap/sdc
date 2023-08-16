@@ -16,7 +16,7 @@
 
 <div class="tabs {{tabStyle}}">
 <ng-container *ngFor="let tab of tabs">
-    <div class="tab" *ngIf="tab.show" (click)="selectTab(tab)" [class.active]="tab.active" [attr.data-tests-id]="tab.title">
+    <div class="tab" *ngIf="tab.show" (click)="selectTab(tab)" [class.active]="tab.active" [attr.data-tests-id]="tab.title" [ngStyle]="{'color': tab.highlight}">
         {{tab.title}}
         <div class="tab-indication" *ngIf="tab.indication" [@indicatorAnimation]="tab.indication">{{tab.indication}}</div>
     </div>
