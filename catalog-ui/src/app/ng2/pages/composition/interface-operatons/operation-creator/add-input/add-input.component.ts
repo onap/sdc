@@ -38,6 +38,7 @@ export class AddInputComponent implements OnInit {
   @Input('dataTypeMap') dataTypeMap$: Observable<Map<string, DataTypeModel>>;
   @Input('isView') isView: boolean;
   @Input() existingInputNames: Array<string> = [];
+  @Input('defaultType') defaultType: string;
   @Output('onAddInput') onAddInputEvent: EventEmitter<InputOperationParameter>;
 
   dataTypeMap: Map<string, DataTypeModel>;
@@ -143,6 +144,9 @@ export class AddInputComponent implements OnInit {
   }
 
   showAddInput() {
+    if (this.defaultType) {
+      this.inputToAdd.type = this.dataTypeMap.get(this.defaultType) ? this.defaultType : undefined;
+    }
     this.showForm = true;
     this.showAddLink = false;
   }

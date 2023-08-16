@@ -1,0 +1,168 @@
+<!--
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2023 Nordix Foundation. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+-->
+
+<div class="sub-operation-filters">
+  <div class="group-with-border content-row">
+    <form novalidate class="w-sdc-form two-columns" [formGroup]="filterForm">
+      <div formArrayName="filterFormList">
+        <label class="filters-label"> Filters </label>
+        <div *ngFor="let filter of filters; let idx = index">
+          <div class="side-by-side group-with-border">
+            <div class="form-item">
+              <div class="side-by-side">
+                <div class="form-item">
+                  <label class="sdc-timeout-label">Name: </label>
+                  <input type="text"
+                     class="i-sdc-form-input"
+                     [disabled]="isViewOnly"
+                     [value]="filter.name"
+                     [ngClass]="{'disabled': isViewOnly}"
+                     (input)="onFilterNameChange($event.target.value, idx)"
+                     required/>
+                </div>
+                <div class="form-item">
+                  <label>Constraint: </label>
+                  <div class="sdc-dropdown">
+                    <select class="i-sdc-form-select"
+                            data-tests-id="filter-type"
+                            [value]="filter.constraint"
+                            [disabled]="isViewOnly"
+                            (change)="onFilterConstraintChange($event.target.value, idx)"
+                            required>
+                      <option *ngIf="filter" [value]="filter.constraint" hidden selected>
+                        {{ ConstraintTypesMapping[filter.constraint] }}
+                      </option>
+                      <option *ngFor="let operatorType of operatorTypes"
+                            [value]="operatorType">
+                      {{ ConstraintTypesMapping[operatorType] }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-item">
+              <div class="side-by-side">
+                <div class="form-item-big">
+                  <fieldset class="padding-zero" [disabled]="isViewOnly" >
+                    <label>Value: </label>
+                    <input type="radio" [name]="'hasGetFunctionValue.' + filter.name + idx"
+                          [value]="false"
+                          [checked]="!isToscaFunction(idx)"
+                          (change)="onValueTypeChange($event.target.value, idx)"/> Value
+                    <input type="radio" [name]="'hasGetFunctionValue.' + filter.name + idx"
+                          [checked]="isToscaFunction(idx)"
+                          (change)="onValueTypeChange($event.target.value, idx)"
+                          [value]="true"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
+                  </fieldset>
+                  <div *ngIf="isToscaFunction(idx)">
+                    <div *ngIf="componentInstanceMap">
+                      <tosca-function
+                          [property]="getAsProperty(idx)"
+                          [allowClear]="false"
+                          [customToscaFunctions]="customToscaFunctions"
+                          [componentInstanceMap]="componentInstanceMap"
+                          (onValidityChange)="onToscaFunctionValidityChange($event, idx)">
+                      </tosca-function>
+                    </div>
+                    <div *ngIf="!componentInstanceMap">
+                      <tosca-function
+                          [property]="getAsProperty(idx)"
+                          [allowClear]="false"
+                          [customToscaFunctions]="customToscaFunctions"
+                          (onValidityChange)="onToscaFunctionValidityChange($event, idx)">
+                      </tosca-function>
+                    </div>
+                  </div>
+                  <div *ngIf="!isToscaFunction(idx)">
+                    <div *ngIf="filter.constraint == 'validValues'">
+                      <div class="add-btn padding-bottom"
+                          [ngClass]="{'disabled': isViewOnly}"
+                          (click)="addToList(idx)">
+                          Add to List
+                      </div>
+                      <div class="w-sdc-form-columns-wrapper padding-bottom" *ngFor="let value of constraintValuesArray(idx); let valueIndex = index; trackBy:trackByFn">
+                        <div class="w-sdc-form-column">
+                          <input type="text" required
+                            (change)="onChangeConstrainValueIndex(idx, $event.target.value, valueIndex)"
+                            [disabled]="isViewOnly"
+                            [value]="getInRangeValue(idx, valueIndex)"/>
+                        </div>
+                        <div class="w-sdc-form-column">
+                          <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromList(idx, valueIndex)"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="filter.constraint == 'inRange'">
+                      <div class="side-by-side">
+                        <div class="form-item-50">
+                          <input type="text" required
+                          (input)="onChangeConstrainValueIndex(idx, $event.target.value, 0)"
+                          [disabled]="isViewOnly"
+                          [value]="getInRangeValue(idx, 0)"/>
+                        </div>
+                        <div class="form-item-50">
+                          <input type="text" required
+                          (input)="onChangeConstrainValueIndex(idx, $event.target.value, 1)"
+                          [disabled]="isViewOnly"
+                          [value]="getInRangeValue(idx, 1)"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="filter.constraint != 'inRange' && filter.constraint != 'validValues'">
+                      <input type="text"
+                      class="i-sdc-form-input"
+                      [disabled]="isViewOnly"
+                      [ngClass]="{'disabled': isViewOnly}"
+                      [value]="filter.filterValue"
+                      (input)="onFilterValueChange($event.target.value, idx)"
+                      required/>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-item-icon">
+                  <span class="sprite-new delete-btn" [ngClass]="{'disabled': isViewOnly}" (click)="removeFromFilters(idx)"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-sdc-form-columns-wrapper">
+            <div class="validation-errors">
+              <ng-container *ngFor="let validation of validationMessages.filter">
+                <div class="input-error" *ngIf="filterFormArray.at(idx).hasError(validation.type);">
+                  {{ validation.message }}
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-button-container group-with-border" *ngIf="!isViewOnly && activitiesExist">
+          <a class="add-btn" data-tests-id="add-input.add-input-link"
+             (click)="addFilter()">Add Filter</a>
+        </div>
+        <div *ngIf="!activitiesExist">
+          Must have at leat one actifity before adding filters
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
