@@ -209,10 +209,12 @@ class ToscaFunctionJsonDeserializerTest {
         assertEquals(1, yamlMap.size());
         final Object customFunctionGetInputValue = yamlMap.get("$" + ((ToscaCustomFunction) toscaFunction).getName());
         assertTrue(customFunctionGetInputValue instanceof ArrayList);
-        ArrayList<Object> customFunctionGetInputValueList = (ArrayList<Object>) customFunctionGetInputValue;
-        assertEquals(1, customFunctionGetInputValueList.size());
-        assertEquals(1, customFunctionGetInputValueList.size());
-        assertEquals("controller_actor", customFunctionGetInputValueList.get(0));
+        List<Object> customFunctionGetInputValueList = (ArrayList<Object>) customFunctionGetInputValue;
+        assertEquals(4, customFunctionGetInputValueList.size());
+        assertEquals("pLMNInfoList", customFunctionGetInputValueList.get(0));
+        assertEquals(1, customFunctionGetInputValueList.get(1));
+        assertEquals("snssai", customFunctionGetInputValueList.get(2));
+        assertEquals("sd", customFunctionGetInputValueList.get(3));
 
         List<ToscaFunctionParameter> parameters = toscaCustomFunction.getParameters();
         assertEquals(1, parameters.size());
@@ -222,12 +224,12 @@ class ToscaFunctionJsonDeserializerTest {
         final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) paramFunction;
         assertEquals(ToscaFunctionType.GET_INPUT, toscaGetFunction.getType());
         assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunction.getFunctionType());
-        assertEquals("dd0ec4d2-7e74-4d92-af2f-89c7436baa63.controller_actor", toscaGetFunction.getPropertyUniqueId());
+        assertEquals("dd0ec4d2-7e74-4d92-af2f-89c7436baa63.pLMNInfoList", toscaGetFunction.getPropertyUniqueId());
         assertEquals(PropertySource.SELF, toscaGetFunction.getPropertySource());
-        assertEquals("controller_actor", toscaGetFunction.getPropertyName());
+        assertEquals("pLMNInfoList", toscaGetFunction.getPropertyName());
         assertEquals("testService", toscaGetFunction.getSourceName());
         assertEquals("dd0ec4d2-7e74-4d92-af2f-89c7436baa63", toscaGetFunction.getSourceUniqueId());
-        assertEquals(List.of("controller_actor"), toscaGetFunction.getPropertyPathFromSource());
+        assertEquals(List.of("pLMNInfoList"), toscaGetFunction.getPropertyPathFromSource());
     }
 
     private void setDefaultCustomToscaFunctionOnConfiguration() {

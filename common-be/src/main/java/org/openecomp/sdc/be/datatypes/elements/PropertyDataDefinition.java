@@ -332,7 +332,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return this.toscaGetFunctionType != null || this.toscaFunction != null;
     }
 
-
     @JsonIgnoreProperties
     public boolean isToscaGetFunction() {
         return this.toscaFunction != null

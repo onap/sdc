@@ -126,17 +126,18 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
     }
 
     private Map<String, Object> buildGetInputFunctionValue() {
-        List<Object> propertySourceCopy = new ArrayList<Object>(this.propertyPathFromSource);
-        List<Object> propertySourceOneCopy = new ArrayList<>();
+        final List<Object> propertySourceCopy = new ArrayList<>(this.propertyPathFromSource);
+        final List<Object> propertySourceOneCopy = new ArrayList<>();
         propertySourceOneCopy.add(this.propertyPathFromSource.get(0));
         if (CollectionUtils.isNotEmpty(toscaIndexList)) {
             propertySourceCopy.addAll(toscaIndexList);
             propertySourceOneCopy.addAll(toscaIndexList);
         }
         if (this.propertyPathFromSource.size() == 1) {
-            return Map.of(this.functionType.getFunctionName(), propertySourceOneCopy);
+            return Map.of(functionType.getFunctionName(), propertySourceOneCopy.size() == 1 ? propertySourceOneCopy.get(0) : propertySourceOneCopy);
+        } else {
+            return Map.of(functionType.getFunctionName(), propertySourceCopy.size() == 1 ? propertySourceCopy.get(0) : propertySourceCopy);
         }
-        return Map.of(this.functionType.getFunctionName(), propertySourceCopy);
     }
 
     @Override
