@@ -34,12 +34,12 @@ public abstract class ToscaDataDefinition {
 
     protected Map<String, Object> toscaPresentation;
 
-    public ToscaDataDefinition() {
+    protected ToscaDataDefinition() {
         toscaPresentation = new HashMap<>();
     }
 
     @JsonCreator
-    public ToscaDataDefinition(Map<String, Object> art) {
+    protected ToscaDataDefinition(Map<String, Object> art) {
         toscaPresentation = art;
     }
 

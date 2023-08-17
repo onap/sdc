@@ -88,9 +88,7 @@ public class PropertyDataValueMergeBusinessLogic {
     }
 
     private Object convertPropertyStrValueToObject(PropertyDataDefinition propertyDataDefinition, Map<String, DataTypeDefinition> dataTypes) {
-        String propValue = propertyDataDefinition.getValue() == null ? "" : propertyDataDefinition.getValue();
-        String propertyType = propertyDataDefinition.getType();
-        String innerType = propertyDataDefinition.getSchemaType();
+        final String propValue = propertyDataDefinition.getValue() == null ? "" : propertyDataDefinition.getValue();
         return propertyConvertor.convertToToscaObject(propertyDataDefinition, propValue, dataTypes, true);
     }
 
