@@ -67,6 +67,9 @@ public class DataDefinitionsValuesMergingBusinessLogic {
     private void mergeInstanceDefinition(MergePropertyData mergeData) {
         if (isSameType(mergeData.getOldProp(), mergeData.getNewProp())) {
             propertyValueMergeBL.mergePropertyValue(mergeData.getOldProp(), mergeData.getNewProp(), mergeData.getGetInputNamesToMerge());
+            if (mergeData.getOldProp().isToscaFunction()) {
+                mergeData.getNewProp().setToscaFunction(mergeData.getOldProp().getToscaFunction());
+            }
         }
     }
 

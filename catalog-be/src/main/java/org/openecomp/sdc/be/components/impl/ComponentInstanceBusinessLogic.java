@@ -42,9 +42,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
@@ -76,6 +76,7 @@ import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -1985,6 +1986,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 if (property.isToscaFunction()) {
                     toscaFunctionValidator.validate(property, containerComponent);
                     property.setValue(StringEscapeUtils.unescapeJava(property.getToscaFunction().getValue()));
+                    if (ToscaFunctionType.GET_INPUT == property.getToscaFunction().getType()) {
+                        property.setGetInputValues(Collections.singletonList(buildGetInputValue(property)));
+                    }
                 }
                 if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())) {
                     ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
@@ -2045,6 +2049,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
         }
+    }
+
+    private GetInputValueDataDefinition buildGetInputValue(final ComponentInstanceProperty property) {
+        final GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+        getInputValueDataDefinition.setPropName(property.getName());
+        getInputValueDataDefinition.setInputName(((ToscaGetFunctionDataDefinition) property.getToscaFunction()).getPropertyName());
+        getInputValueDataDefinition.setInputId(((ToscaGetFunctionDataDefinition) property.getToscaFunction()).getPropertyUniqueId());
+        return getInputValueDataDefinition;
     }
 
     private void addE(JSONArray jsonArray, List<String> path, String value) {
@@ -2548,7 +2560,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw ToscaGetFunctionExceptionSupplier
                 .propertyTypeDiverge(toscaGetFunction.getType(), referredProperty.getType(), property.getType()).get();
         }
-        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getType()) && !"list".equalsIgnoreCase(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
+        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getType())
+            && !"list".equalsIgnoreCase(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
             throw ToscaGetFunctionExceptionSupplier
                 .propertySchemaDiverge(toscaGetFunction.getType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
         }

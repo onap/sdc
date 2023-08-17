@@ -122,6 +122,7 @@ public class DataForMergeHolder {
             propertyCopy.setDefaultValue(property.getDefaultValue());
             propertyCopy.setInputId(property.getInputId());
             propertyCopy.setGetInputValues(property.getGetInputValues());
+            propertyCopy.setToscaFunction(property.getToscaFunction());
             this.origComponentInstanceProperties.add(propertyCopy);
         });
     }
