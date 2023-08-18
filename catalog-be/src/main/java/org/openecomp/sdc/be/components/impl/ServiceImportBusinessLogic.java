@@ -539,7 +539,8 @@ public class ServiceImportBusinessLogic {
             && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
 
-    private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, Map<String, UploadComponentInstanceInfo> instancesFromCsar, String model, User user) {
+    private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, Map<String, UploadComponentInstanceInfo> instancesFromCsar, String model,
+                                 User user) {
         NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
         List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
         final Map<String, Object> allTypesToCreate = new HashMap<>();
@@ -611,7 +612,7 @@ public class ServiceImportBusinessLogic {
     private void combineInterfacesIntoToscaTemplate(Map<String, Map<String, Object>> newInterfaces,
                                                     Map<String, Map<String, Object>> existingInterfaces,
                                                     Map<String, Object> combinedMappedToscaTemplate) {
-        Map<String, Map<String, Object>> combinedInterfaces = combineAdditionalInterfaces(existingInterfaces, newInterfaces);
+        Map<String, Map<String, Object>> combinedInterfaces = combineAdditionalInterfaces(newInterfaces, existingInterfaces);
         if ((MapUtils.isEmpty(existingInterfaces) && MapUtils.isNotEmpty(combinedInterfaces))
             || (MapUtils.isNotEmpty(existingInterfaces) && !existingInterfaces.equals(combinedInterfaces))) {
             combinedMappedToscaTemplate.put("interfaces", combinedInterfaces);
@@ -654,8 +655,11 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    private Map<String, Map<String, Object>> combineAdditionalInterfaces(Map<String, Map<String, Object>> existingInterfaces,
-                                                                         Map<String, Map<String, Object>> newInterfaces) {
+    private Map<String, Map<String, Object>> combineAdditionalInterfaces(Map<String, Map<String, Object>> newInterfaces,
+                                                                         Map<String, Map<String, Object>> existingInterfaces) {
+        if (MapUtils.isNotEmpty(newInterfaces) && MapUtils.isNotEmpty(existingInterfaces) && newInterfaces.equals(existingInterfaces)) {
+            return new HashMap<>(existingInterfaces);
+        }
         if (MapUtils.isEmpty(newInterfaces)) {
             newInterfaces = new HashMap<>();
         }
@@ -676,6 +680,9 @@ public class ServiceImportBusinessLogic {
 
     private List<Map<String, Object>> combineAdditionalRequirements(List<Map<String, Object>> newReqs,
                                                                     List<Map<String, Object>> existingResourceReqs) {
+        if (CollectionUtils.isNotEmpty(newReqs) && CollectionUtils.isNotEmpty(existingResourceReqs) && newReqs.equals(existingResourceReqs)) {
+            return new ArrayList<>(existingResourceReqs);
+        }
         if (CollectionUtils.isEmpty(existingResourceReqs)) {
             existingResourceReqs = new ArrayList<>();
         }
@@ -690,6 +697,9 @@ public class ServiceImportBusinessLogic {
     }
 
     private Map<String, Object> combineEntries(Map<String, Object> newMap, Map<String, Object> existingMap) {
+        if (MapUtils.isNotEmpty(newMap) && MapUtils.isNotEmpty(existingMap) && newMap.equals(existingMap)) {
+            return new HashMap<>(existingMap);
+        }
         if (MapUtils.isEmpty(newMap)) {
             newMap = new HashMap<>();
         }
@@ -861,7 +871,8 @@ public class ServiceImportBusinessLogic {
                 }
             }
             if (CollectionUtils.isNotEmpty(propertyMissingNames)) {
-                throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.MISSING_PROPERTIES_ERROR, propertyMissingNames.toString()));
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(ActionStatus.MISSING_PROPERTIES_ERROR, propertyMissingNames.toString()));
             }
             Either<List<InputDefinition>, StorageOperationStatus> either = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
             if (either.isRight()) {
@@ -927,8 +938,8 @@ public class ServiceImportBusinessLogic {
     }
 
     private String associateInputToServiceProperty(final String userId,
-                                                 final InputDefinition input, final Service component,
-                                                 final Map<String, List<String>> substitutionMappingProperties) {
+                                                   final InputDefinition input, final Service component,
+                                                   final Map<String, List<String>> substitutionMappingProperties) {
         final List<PropertyDefinition> properties = component.getProperties();
         if (CollectionUtils.isNotEmpty(properties) && MapUtils.isNotEmpty(substitutionMappingProperties)) {
             AtomicReference<String> propertyNameFromInput = new AtomicReference<>(" ");
@@ -2388,7 +2399,8 @@ public class ServiceImportBusinessLogic {
                 Map<String, OperationDataDefinition> operations = uploadInterfaceInfo.getOperations();
                 for (Map.Entry<String, OperationDataDefinition> operation : operations.entrySet()) {
                     OperationDataDefinition instanceOperation = operation.getValue();
-                    OperationDataDefinition templateOperation = currentInterfaceDef.getOperationsMap().getOrDefault(operation.getKey(), new Operation(instanceOperation));
+                    OperationDataDefinition templateOperation = currentInterfaceDef.getOperationsMap()
+                        .getOrDefault(operation.getKey(), new Operation(instanceOperation));
                     //Inputs
                     ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
                     if (null != instanceInputs) {

@@ -82,7 +82,10 @@ export class ServiceCsarReader {
     }
 
     private readSubstitutionNodeFromMainTemplateFile(entryDefinitionFileContent) {
-        this.serviceCsar.substitutionNodeType = load(entryDefinitionFileContent).topology_template.substitution_mappings.node_type;
+        const loadEntryDefinitionFileContent = load(entryDefinitionFileContent);
+        if (loadEntryDefinitionFileContent.topology_template && loadEntryDefinitionFileContent.topology_template.substitution_mappings) {
+            this.serviceCsar.substitutionNodeType = loadEntryDefinitionFileContent.topology_template.substitution_mappings.node_type;
+        }
     }
 
     private setMetadata = (metadata:object) : void => {
