@@ -1196,12 +1196,9 @@ limitations under the License.
                 <configuration>
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
-                    <systemProperties>
-                        <property>
-                            <name>testng.dtd.http</name>
-                            <value>true</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <testng.dtd.http>true</testng.dtd.http>
+                    </systemPropertyVariables>
                     <suiteXmlFiles>
                         <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                         <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
@@ -1260,12 +1257,9 @@ limitations under the License.
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <systemProperties>
-                                <property>
-                                    <name>testng.dtd.http</name>
-                                    <value>true</value>
-                                </property>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <testng.dtd.http>true</testng.dtd.http>
+                            </systemPropertyVariables>
                             <suiteXmlFiles>
                                 <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                                 <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
@@ -1294,12 +1288,9 @@ limitations under the License.
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <systemProperties>
-                                <property>
-                                    <name>testng.dtd.http</name>
-                                    <value>true</value>
-                                </property>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <testng.dtd.http>true</testng.dtd.http>
+                            </systemPropertyVariables>
                             <suiteXmlFiles>
                                 <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
                                 <file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file>
@@ -1326,12 +1317,9 @@ limitations under the License.
                         <configuration>
                             <forkCount>1</forkCount>
                             <reuseForks>true</reuseForks>
-                            <systemProperties>
-                                <property>
-                                    <name>testng.dtd.http</name>
-                                    <value>true</value>
-                                </property>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <testng.dtd.http>true</testng.dtd.http>
+                            </systemPropertyVariables>
                             <suiteXmlFiles>
                                 <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
                                 <file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file>
