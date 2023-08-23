@@ -35,6 +35,23 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "463023d2_8368ef15",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-08-23T11:50:00Z",
+      "side": 1,
+      "message": "comment done and added solution for https://eteamproject.ericsson.net/browse/ESTU-720",
+      "revId": "0e2476e0c9bb0a4c42e1be3d8eb41313b648d0f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fb5b5d23_806b2f42",
@@ -48,6 +65,30 @@
       "writtenOn": "2023-08-22T06:50:14Z",
       "side": 1,
       "message": "check for unused imports",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 0
+      },
+      "revId": "0e2476e0c9bb0a4c42e1be3d8eb41313b648d0f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68978494_ee03f589",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/config/CatalogBESpringConfig.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-08-23T11:50:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb5b5d23_806b2f42",
       "range": {
         "startLine": 23,
         "startChar": 0,
