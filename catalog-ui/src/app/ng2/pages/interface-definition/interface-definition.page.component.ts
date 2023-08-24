@@ -21,7 +21,7 @@
 import {Component, ComponentRef, Inject, Input} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
 import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
-
+import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
 import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {IModalButtonComponent, SdcUiServices} from 'onap-ui-angular';
@@ -34,6 +34,7 @@ import {
     CapabilitiesGroup,
     InputBEModel,
     InterfaceModel,
+    ComponentInstance,
     ModalModel,
     OperationModel,
     WORKFLOW_ASSOCIATION_OPTIONS
@@ -49,6 +50,7 @@ import {ToscaArtifactService} from "../../services/tosca-artifact.service";
 import {InterfaceOperationComponent} from "../interface-operation/interface-operation.page.component";
 import {Observable} from "rxjs/Observable";
 import {PluginsService} from 'app/ng2/services/plugins.service';
+import { InstanceFeDetails } from 'app/models/instance-fe-details';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -132,6 +134,13 @@ export class InterfaceDefinitionComponent {
     interfaces: UIInterfaceModel[];
     inputs: InputBEModel[];
 
+    instancesNavigationData = [];
+    instances: any = [];
+    loadingInstances: boolean = false;
+    selectedInstanceData: any = null;
+    hierarchyInstancesDisplayOptions: HierarchyDisplayOptions = new HierarchyDisplayOptions('uniqueId', 'name', 'archived', null, 'iconClass');
+    disableFlag : boolean = true;
+
     deploymentArtifactsFilePath: Array<DropdownValue> = [];
 
     toscaArtifactTypes: Array<DropdownValue> = [];
@@ -148,6 +157,7 @@ export class InterfaceDefinitionComponent {
     enableWorkflowAssociation: boolean;
     workflowIsOnline: boolean;
     validImplementationProps:boolean = true;
+    serviceInterfaces: InterfaceModel[];
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -176,21 +186,39 @@ export class InterfaceDefinitionComponent {
     ngOnInit(): void {
         this.isLoading = true;
         this.interfaces = [];
+        //this.disableFlag = this.readonly;
         this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
         Observable.forkJoin(
             this.ComponentServiceNg2.getInterfaceOperations(this.component),
             this.ComponentServiceNg2.getComponentInputs(this.component),
             this.ComponentServiceNg2.getInterfaceTypes(this.component),
-            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
+            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId),
+            this.componentServiceNg2.getComponentResourcePropertiesData(this.component)
         ).subscribe((response: any[]) => {
             const callback = (workflows) => {
                 this.isLoading = false;
+                this.serviceInterfaces = response[0].interfaces;
                 this.initInterfaces(response[0].interfaces);
                 this.sortInterfaces();
                 this.inputs = response[1].inputs;
                 this.interfaceTypes = response[2];
                 this.workflows = (workflows.items) ? workflows.items : workflows;
                 this.capabilities = response[3].capabilities;
+                this.instances = response[4].componentInstances;
+                const serviceInstance = new ComponentInstance();
+                serviceInstance.name = "SELF";
+                serviceInstance.uniqueId = this.component.uniqueId;
+                if (this.instances != null) {
+                    this.instances.unshift(serviceInstance);
+                } else {
+                    this.instances = [serviceInstance];
+                }
+                _.forEach(this.instances, (instance) => {
+                    this.instancesNavigationData.push(instance);
+                });
+                this.onInstanceSelectedUpdate(this.instancesNavigationData[0]);
+                this.loadingInstances = false;
+                
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
                 this.WorkflowServiceNg2.getWorkflows().subscribe(
@@ -204,7 +232,53 @@ export class InterfaceDefinitionComponent {
                 callback([]);
             }
         });
+
         this.loadToscaArtifacts();
+    }
+
+    onInstanceSelectedUpdate = (instance: any) => {
+        this.selectedInstanceData = instance;
+        if (instance.name != "SELF") {
+            this.disableFlag = true;
+            let newInterfaces : InterfaceModel[] = [];
+            if (instance.interfaces instanceof Array) {
+                instance.interfaces.forEach(result => {
+                    let interfaceObj = new InterfaceModel();
+                    interfaceObj.type = result.type;
+                    interfaceObj.uniqueId = result.uniqueId;
+                    if (result.operations instanceof Array) {
+                        interfaceObj.operations = result.operations;
+                    } else if (!_.isEmpty(result.operations)) {
+                        interfaceObj.operations = [];
+                        Object.keys(result.operations).forEach(name => {
+                            interfaceObj.operations.push(result.operations[name]);
+                        });
+                    }
+                    newInterfaces.push(interfaceObj);
+                });
+            } else {
+                Object.keys(instance.interfaces).forEach(key => {
+                    let obj = instance.interfaces[key];
+                    let interfaceObj = new InterfaceModel();
+                    interfaceObj.type = obj.type;
+                    interfaceObj.uniqueId = obj.uniqueId;
+                    if (obj.operations instanceof Array) {
+                        interfaceObj.operations = obj.operations;
+                    } else if (!_.isEmpty(obj.operations)) {
+                        interfaceObj.operations = [];
+                        Object.keys(obj.operations).forEach(name => {
+                            interfaceObj.operations.push(obj.operations[name]);
+                        });
+                    }
+                    newInterfaces.push(interfaceObj);
+                });
+            }
+            this.interfaces = newInterfaces.map((interf) => new UIInterfaceModel(interf));
+        } else {
+            //this.disableFlag = this.readonly;
+            this.interfaces = this.serviceInterfaces.map((interf) => new UIInterfaceModel(interf));
+        }
+        this.sortInterfaces();
     }
 
     initInterfaces(interfaces: InterfaceModel[]): void {
@@ -220,6 +294,9 @@ export class InterfaceDefinitionComponent {
     private disableSaveButton = (): boolean => {
         let disable:boolean = true;
         if(this.readonly) {
+            return disable;
+        }
+        if (this.component.isService()) {
             return disable;
         }
     
