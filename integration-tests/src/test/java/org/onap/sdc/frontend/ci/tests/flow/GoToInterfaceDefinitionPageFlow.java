@@ -45,7 +45,7 @@ public class GoToInterfaceDefinitionPageFlow extends AbstractUiTestFlow {
         componentPage.isLoaded();
         interfaceDefinitionPage = componentPage.goToInterfaceDefinition();
         interfaceDefinitionPage.isLoaded();
-        ExtentTestActions.takeScreenshot(Status.INFO, "interface-definition-page", "Interface Definition page loaded");
+        ExtentTestActions.takeScreenshot(Status.INFO, "interface_definition-page", "Interface Definition page loaded");
         return Optional.of(interfaceDefinitionPage);
     }
 

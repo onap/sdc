@@ -228,7 +228,7 @@ const SDC_MENU_CONFIG = {
             {"text": "TOSCA Artifacts", "action": "onMenuItemPressed", "state": "workspace.tosca_artifacts"},
             {"text": "Properties", "action": "onMenuItemPressed", "state": "workspace.properties"},
             {"text": "Attributes", "action": "onMenuItemPressed", "state": "workspace.attributes"},
-            {"text": "Interfaces", "action": "onMenuItemPressed", "state": "workspace.interface-definition"},
+            {"text": "Interfaces", "action": "onMenuItemPressed", "state": "workspace.interface_definition"},
             {"text": "Req. & Capabilities", "action": "onMenuItemPressed", "state": "workspace.reqAndCap"},
             {"text": "Activity Log", "action": "onMenuItemPressed", "state": "workspace.activity_log"}
         ],
@@ -297,6 +297,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
             {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN"]},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
+            {"text": "Interfaces Assignment", "action": "onMenuItemPressed", "state": "workspace.interface_definition"},
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
             {"text": "Attributes & Outputs", "action": "onMenuItemPressed", "state": "workspace.attributes_outputs"}
         ],

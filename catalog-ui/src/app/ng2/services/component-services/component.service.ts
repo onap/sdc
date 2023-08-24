@@ -114,7 +114,7 @@ export class ComponentServiceNg2 {
     }
 
     getComponentResourcePropertiesData(component: Component): Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
+        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES, COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS, COMPONENT_FIELDS.COMPONENT_POLICIES, COMPONENT_FIELDS.COMPONENT_NON_EXCLUDED_GROUPS]);
     }
 
     getComponentResourceAttributesData(component: Component): Observable<ComponentGenericResponse> {
@@ -156,6 +156,8 @@ export class ComponentServiceNg2 {
     getInterfaceOperations(component: Component): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_INTERFACE_OPERATIONS]);
     }
+
+    
 
     getInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         return this.http.get<OperationModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaceOperations/' + operation.uniqueId);
