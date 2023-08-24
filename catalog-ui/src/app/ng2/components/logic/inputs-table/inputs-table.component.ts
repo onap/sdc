@@ -185,7 +185,23 @@ export class InputsTableComponent {
                 modelProperty.constraints = tempProperty.constraints;
             });
         }
-        this.modalsHandler.newOpenEditPropertyModal(modelProperty, [],true, 'component', modelProperty.resourceInstanceUniqueId, this.parentComponent, inputProperty);     
+        this.modalsHandler.newOpenEditPropertyModal(modelProperty, [],true, 'component', modelProperty.resourceInstanceUniqueId, this.parentComponent, inputProperty).then(result => {
+            let newInputs : Array<InputFEModel> = [];
+            this.inputs.forEach(input => {
+                if (input.uniqueId != inputProperty.uniqueId) {
+                    newInputs.push(input);
+                } else {
+                    let newMetadataEntries : Array<MetadataEntry> = [];
+                    for (let key of Object.keys(inputProperty.metadata)){
+                        newMetadataEntries.push(new MetadataEntry(key, inputProperty.metadata[key]));
+                    }
+                    inputProperty.metadataEntries = [];
+                    inputProperty.metadataEntries = newMetadataEntries;
+                    newInputs.push(inputProperty);
+                }
+            });
+            this.inputs = newInputs;
+        });     
     }
 
     private createPropertyModel(inputproperty: InputFEModel){
