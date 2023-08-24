@@ -23,7 +23,9 @@
 @import '../../../../assets/styles/sprite-old.less';
 .interface-definition {
     font-size: 14px;
-
+    display:flex;
+    flex-direction:row;
+    height: 100%;
     .delete-col-header{
         .sprite;
         .sprite.e-sdc-small-icon-delete;
@@ -53,14 +55,6 @@
         padding: 14px;
     }
 
-    .top-add-btn {
-        position: relative;
-        top: -31px;
-        text-transform: uppercase;
-        font-size: 14px;
-        font-family: @font-opensans-medium;
-    }
-
     .link {
         color: @sdcui_color_blue;
         text-decoration: underline;
@@ -79,7 +73,7 @@
     .operation-list {
         border-top: 1px solid @main_color_o;
         padding-top: 5px;
-
+        
         .empty-list-container {
             width: 100%;
             display: flex;
@@ -249,5 +243,87 @@
             }
 
         }
+    }
+    .left-column {
+        flex: 1 0 500px;
+        position: relative;
+	    min-width:930px;
+    }
+    .right-column {
+        display:flex;
+        flex:0 0 350px;
+        flex-direction:column;
+        margin: 0px 0 0 1em;
+        overflow-x:auto;
+        .add-btn{
+            align-self: flex-end;
+            margin-top: 10px;
+            margin-bottom: 19px;
+        }
+        /deep/ .tabs {
+            border-bottom: solid 1px #d0d0d0;
+        }
+
+        /deep/ .tab {
+            flex: none;
+            padding: 8px 20px 0;
+            font-size: 14px;
+            line-height:30px;
+            font-family: @font-opensans-regular;
+
+            &.active {
+                font-family: @font-opensans-medium;
+            }
+        }
+    }
+
+    .hierarchy-tabs {
+        flex: 0 0 40px;
+    }
+
+    .gray-border {
+        border: 1px solid #ddd;
+    }
+
+    /deep/ .white-sub-header {
+        background-color:  #fffefe;
+        box-shadow: 0px 1px 0.99px 0.01px rgba(34, 31, 31, 0.15);
+        border-bottom: #d2d2d2 solid 1px;
+        font-size:14px;
+        text-align:left;
+        flex:0 0 auto;
+        padding: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        text-transform: uppercase;
+
+        &.hierarchy-header {
+            padding-left:20px;
+            &.selected {
+                background-color: #e6f6fb;
+            }
+        }
+
+    }
+
+    .hierarchy-header {
+
+        span{
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            max-width: 290px;
+        }
+    }
+
+    .hierarchy-nav {
+        flex:1;
+        overflow:auto;
+        display: grid;
+        margin-top: 1em;
+        margin-left: 1em;
+        font-size: 12px;
+        padding-top: 1em;
     }
 }
