@@ -297,6 +297,7 @@ const SDC_MENU_CONFIG = {
             {"text": "Network Call Flow ", "action": "onMenuItemPressed", "state": "workspace.network_call_flow"},
             {"text": "Distribution","action": "onMenuItemPressed","state": "workspace.distribution","disabledRoles": ["ADMIN"]},
             {"text": "Deployment", "action": "onMenuItemPressed", "state": "workspace.deployment"},
+            {"text": "Interfaces Assignment", "action": "onMenuItemPressed", "state": "workspace.interface-definition"},
             {"text": "Properties Assignment", "action": "onMenuItemPressed", "state": "workspace.properties_assignment"},
             {"text": "Attributes & Outputs", "action": "onMenuItemPressed", "state": "workspace.attributes_outputs"}
         ],
