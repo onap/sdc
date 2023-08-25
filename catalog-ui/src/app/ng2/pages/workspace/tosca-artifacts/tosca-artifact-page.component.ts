@@ -1,14 +1,15 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {WorkspaceService} from "../workspace.service";
-import {SdcUiServices} from "onap-ui-angular";
-import {ArtifactModel} from "../../../../models";
-import {Select, Store} from "@ngxs/store";
-import {WorkspaceState} from "../../../store/states/workspace.state";
-import {ArtifactGroupType} from "../../../../utils";
-import {GetArtifactsByTypeAction} from "../../../store/actions/artifacts.action";
-import {Observable} from "rxjs/index";
-import {ArtifactsState} from "../../../store/states/artifacts.state";
-import {map} from "rxjs/operators";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { WorkspaceService } from "../workspace.service";
+import { ArtifactModel } from "../../../../models";
+import { Select, Store } from "@ngxs/store";
+import { WorkspaceState } from "../../../store/states/workspace.state";
+import { ArtifactGroupType } from "../../../../utils";
+import { GetArtifactsByTypeAction } from "../../../store/actions/artifacts.action";
+import { Observable } from "rxjs/index";
+import { ArtifactsState } from "../../../store/states/artifacts.state";
+import { map } from "rxjs/operators";
+import { ArtifactType, ComponentState, ComponentType } from "app/utils/constants"
+import { ComponentServiceNg2 } from "app/ng2/services/component-services/component.service";
 
 @Component({
     selector: 'tosca-artifact-page',
@@ -23,8 +24,13 @@ export class ToscaArtifactPageComponent implements OnInit {
     public toscaArtifacts$: Observable<ArtifactModel[]>;
     public componentId: string;
     public componentType:string;
+    public isLoading: boolean = false;
 
-    constructor(private serviceLoader: SdcUiServices.LoaderService, private workspaceService: WorkspaceService, private store: Store) {
+    constructor(
+        private workspaceService: WorkspaceService,
+        private store: Store,
+        @Inject("Notification") private Notification: any,
+        private componentService: ComponentServiceNg2) {
     }
 
 
@@ -39,6 +45,49 @@ export class ToscaArtifactPageComponent implements OnInit {
     onActivate(event) {
         if(event.type === 'click'){
             this.table.rowDetail.toggleExpandRow(event.row);
+        }
+    }
+
+    getExtension(artifactType: string) {
+        switch (artifactType) {
+            case (ArtifactType.TOSCA.TOSCA_CSAR):
+                return "csar";
+            case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                return "yaml,yml";
+        }
+    }
+
+    isService() {
+        return ComponentType.SERVICE === this.componentType;
+    }
+
+    isCheckedOut() {
+        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+    }
+
+    onFileUpload(file, artifactType) {
+        if (file && file.name) {
+            this.isLoading = true;
+            switch (artifactType) {
+                case (ArtifactType.TOSCA.TOSCA_CSAR):
+                    this.Notification.error({
+                        message: "Feature not implemented yet",
+                        title: "Error"
+                    });
+                    this.isLoading = false;
+                    break;
+                case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                    this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.Notification.success({
+                            message: "Service " + response.name + " has been updated",
+                            title: "Success"
+                        });
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
+                    });
+                    break;
+            }
         }
     }
 }

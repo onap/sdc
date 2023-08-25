@@ -86,6 +86,10 @@ export class ComponentServiceNg2 {
         }
     }
 
+    putServiceToscaTemplate(componentId: string, componentType: string, file) {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file)
+    }
+
     getFullComponent(uniqueId: string): Observable<ComponentGenericResponse> {
         return this.http.get<ComponentGenericResponse>(this.baseUrl + uniqueId)
         .map((res) => {
