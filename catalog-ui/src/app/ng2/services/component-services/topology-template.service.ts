@@ -76,6 +76,10 @@ export class TopologyTemplateService {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
+    putServiceToscaTemplate(componentId: string, componentType: string, file) {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file)
+    }
+
     getFullComponent(componentType: string, uniqueId: string): Observable<Component> {
         return this.http.get<Component>(this.baseUrl + this.getServerTypeUrl(componentType) + uniqueId);
     }
