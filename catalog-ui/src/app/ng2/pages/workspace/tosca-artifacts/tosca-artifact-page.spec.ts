@@ -12,14 +12,15 @@ import 'rxjs/add/observable/of';
 import {NgxsModule, Store} from "@ngxs/store";
 import {ArtifactsState} from "../../../store/states/artifacts.state";
 import {toscaArtifactMock} from "../../../../../jest/mocks/artifacts-mock";
+import { ComponentServiceNg2 } from "app/ng2/services/component-services/component.service";
 
 describe('tosca artifacts page', () => {
 
     let fixture: ComponentFixture<ToscaArtifactPageComponent>;
     let topologyTemplateServiceMock: Partial<TopologyTemplateService>;
     let workspaceServiceMock: Partial<WorkspaceService>;
-    let loaderServiceMock: Partial<SdcUiServices.LoaderService>;
     let store: Store;
+    let notificationMock: Partial<any>;
 
 
     beforeEach(
@@ -30,10 +31,6 @@ describe('tosca artifacts page', () => {
             };
             workspaceServiceMock = {metadata: <ComponentMetadata>{uniqueId: 'service_unique_id', componentType: 'SERVICE'}}
 
-            loaderServiceMock = {
-                activate : jest.fn(),
-                deactivate: jest.fn()
-            }
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
                     declarations: [ToscaArtifactPageComponent],
@@ -42,7 +39,8 @@ describe('tosca artifacts page', () => {
                     providers: [
                         {provide: WorkspaceService, useValue: workspaceServiceMock},
                         {provide: TopologyTemplateService, useValue: topologyTemplateServiceMock},
-                        {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock }
+                        {provide: ComponentServiceNg2, useValue: {}},
+                        {provide: "Notification", useValue: notificationMock }
                     ],
                 });
             };

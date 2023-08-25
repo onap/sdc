@@ -2,7 +2,9 @@
 
 exports[`tosca artifacts page should match current snapshot of tosca artifact pages component 1`] = `
 <tosca-artifact-page
-  serviceLoader={[Function Object]}
+  Notification="undefined"
+  componentService={[Function Object]}
+  isLoading="false"
   store={[Function Store]}
   table={[Function DatatableComponent]}
   workspaceService={[Function Object]}
@@ -10,6 +12,7 @@ exports[`tosca artifacts page should match current snapshot of tosca artifact pa
   <div
     class="tosca-artifact-page"
   >
+    <loader />
     <ngx-datatable
       class="ngx-datatable"
       columnmode="flex"

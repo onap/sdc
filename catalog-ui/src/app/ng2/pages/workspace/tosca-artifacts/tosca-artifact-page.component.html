@@ -1,4 +1,5 @@
 <div class="tosca-artifact-page">
+    <loader [display]="isLoading" [relative]="true"></loader>
     <ngx-datatable
             columnMode="flex"
             [headerHeight]="40"
@@ -27,7 +28,7 @@
                 </div>
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column [resizeable]="false"name="Type" [flexGrow]="3">
+        <ngx-datatable-column [resizeable]="false" name="Type" [flexGrow]="3">
             <ng-template ngx-datatable-cell-template let-row="row">
                 {{row.artifactType}}
             </ng-template>
@@ -37,7 +38,22 @@
                 {{ row.artifactVersion }}
             </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column [resizeable]="false"[flexGrow]="1">
+        <ngx-datatable-column *ngIf="isService() && isCheckedOut()" [resizeable]="false" name="Upload" [flexGrow]="1">
+            <ng-template ngx-datatable-cell-template let-row="row">
+                <div class="download-artifact-button">
+                    <upload-artifact
+                        [artifact]="row"
+                        [componentId]="componentId"
+                        [componentType]="componentType"
+                        [disabled]="!isCheckedOut()"
+                        [extensions]="getExtension(row.artifactType)"
+                        (onFileUpload)="onFileUpload($event, row.artifactType)"
+                        testId="upload_{{row.artifactDisplayName}}"
+                    ></upload-artifact>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [resizeable]="false" name="Download" [flexGrow]="1">
             <ng-template ngx-datatable-cell-template let-row="row">
                 <div class="download-artifact-button">
                     <download-artifact [artifact]="row" [componentId]="componentId"
