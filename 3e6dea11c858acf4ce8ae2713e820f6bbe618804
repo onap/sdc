@@ -24,6 +24,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3d10fcd_7df6fa71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaLifecycleOperationDefinition.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "55697ae2_f06d21f9",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 62
+      },
+      "revId": "3e6dea11c858acf4ce8ae2713e820f6bbe618804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b7da5ec9_b66838a2",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-08-14T12:41:34Z",
       "side": 1,
       "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 71
+      },
+      "revId": "3e6dea11c858acf4ce8ae2713e820f6bbe618804",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a54adac8_962a1aa8",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/OperationTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7da5ec9_b66838a2",
       "range": {
         "startLine": 27,
         "startChar": 0,
