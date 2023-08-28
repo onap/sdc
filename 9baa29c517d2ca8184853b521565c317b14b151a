@@ -92,6 +92,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6e59835_67f39c6c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e54e00b1_4d22bee9",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 41
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be6cdfc4_dc3a7b71",
@@ -105,6 +129,30 @@
       "writtenOn": "2023-08-14T12:41:24Z",
       "side": 1,
       "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 53
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98e02a65_9c26b799",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaMilestone.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be6cdfc4_dc3a7b71",
       "range": {
         "startLine": 27,
         "startChar": 0,
@@ -138,6 +186,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f183bdc_3fad10ea",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/FilterDataDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c61b08ba_0b36a321",
+      "range": {
+        "startLine": 27,
+        "startChar": 21,
+        "endLine": 29,
+        "endChar": 64
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d51b4a92_f6d80234",
@@ -151,6 +223,30 @@
       "writtenOn": "2023-08-14T11:24:36Z",
       "side": 1,
       "message": "remove commented code",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 0
+      },
+      "revId": "9baa29c517d2ca8184853b521565c317b14b151a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d2dee65_6a07da03",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/FilterDataDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-08-28T10:08:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d51b4a92_f6d80234",
       "range": {
         "startLine": 48,
         "startChar": 0,
