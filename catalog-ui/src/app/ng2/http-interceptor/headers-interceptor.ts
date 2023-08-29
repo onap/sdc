@@ -14,11 +14,19 @@ export class HeadersInterceptor implements HttpInterceptor {
     constructor(private injector: Injector, private cookieService: Cookie2Service, private httpHelperService: HttpHelperService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let authReq = req.clone({ headers: req.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
-            .set('Content-Type', 'application/json; charset=UTF-8')
-            .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
-            .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
-        });
+        let authReq: HttpRequest<any>;
+        if (req.body instanceof FormData) {
+            authReq = req.clone({ headers: req.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+                .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+                .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+            });
+        } else {
+            authReq = req.clone({ headers: req.headers.set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+                .set('Content-Type', 'application/json; charset=UTF-8')
+                .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+                .set(this.cookieService.getUserIdSuffix(), this.cookieService.getUserId())
+            });
+        }
 
         const uuidValue = this.httpHelperService.getUuidValue(authReq.url);
         if (uuidValue !== '') {

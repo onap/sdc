@@ -70,11 +70,15 @@ export class ToscaArtifactPageComponent implements OnInit {
             this.isLoading = true;
             switch (artifactType) {
                 case (ArtifactType.TOSCA.TOSCA_CSAR):
-                    this.Notification.error({
-                        message: "Feature not implemented yet",
-                        title: "Error"
+                    this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.Notification.success({
+                            message: "Service " + response.name + " has been updated",
+                            title: "Success"
+                        });
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
                     });
-                    this.isLoading = false;
                     break;
                 case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
                     this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
