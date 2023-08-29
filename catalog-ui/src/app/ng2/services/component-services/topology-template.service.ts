@@ -76,6 +76,19 @@ export class TopologyTemplateService {
         this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
     }
 
+<<<<<<< PATCH SET (9da9d7 Provide UI support to upload csar to update service)
+    putServiceToscaTemplate(componentId: string, componentType: string, file) {
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file)
+    }
+
+    putServiceToscaModel(componentId: string, componentType: string, file) {
+        let uploadData:FormData = new FormData();
+        uploadData.append('upload', file);
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaModel', uploadData);
+    }
+
+=======
+>>>>>>> BASE      (142503 Implement 'Update Service by importing Tosca Model'-story)
     getFullComponent(componentType: string, uniqueId: string): Observable<Component> {
         return this.http.get<Component>(this.baseUrl + this.getServerTypeUrl(componentType) + uniqueId);
     }

@@ -41,4 +41,54 @@ export class ToscaArtifactPageComponent implements OnInit {
             this.table.rowDetail.toggleExpandRow(event.row);
         }
     }
+<<<<<<< PATCH SET (9da9d7 Provide UI support to upload csar to update service)
+
+    getExtension(artifactType: string) {
+        switch (artifactType) {
+            case (ArtifactType.TOSCA.TOSCA_CSAR):
+                return "csar";
+            case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                return "yaml,yml";
+        }
+    }
+
+    isService() {
+        return ComponentType.SERVICE === this.componentType;
+    }
+
+    isCheckedOut() {
+        return this.workspaceService.metadata.lifecycleState === ComponentState.NOT_CERTIFIED_CHECKOUT;
+    }
+
+    onFileUpload(file, artifactType) {
+        if (file && file.name) {
+            this.isLoading = true;
+            switch (artifactType) {
+                case (ArtifactType.TOSCA.TOSCA_CSAR):
+                    this.componentService.putServiceToscaModel(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.Notification.success({
+                            message: "Service " + response.name + " has been updated",
+                            title: "Success"
+                        });
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
+                    });
+                    break;
+                case (ArtifactType.TOSCA.TOSCA_TEMPLATE):
+                    this.componentService.putServiceToscaTemplate(this.componentId, this.componentType, file).subscribe((response)=> {
+                        this.Notification.success({
+                            message: "Service " + response.name + " has been updated",
+                            title: "Success"
+                        });
+                        this.isLoading = false;
+                    }, () => {
+                        this.isLoading = false;
+                    });
+                    break;
+            }
+        }
+    }
+=======
+>>>>>>> BASE      (142503 Implement 'Update Service by importing Tosca Model'-story)
 }
