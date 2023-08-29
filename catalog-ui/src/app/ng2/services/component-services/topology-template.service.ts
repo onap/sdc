@@ -80,6 +80,12 @@ export class TopologyTemplateService {
         return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaTemplate', file)
     }
 
+    putServiceToscaModel(componentId: string, componentType: string, file) {
+        let uploadData:FormData = new FormData();
+        uploadData.append('upload', file);
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/toscaModel', uploadData);
+    }
+
     getFullComponent(componentType: string, uniqueId: string): Observable<Component> {
         return this.http.get<Component>(this.baseUrl + this.getServerTypeUrl(componentType) + uniqueId);
     }
