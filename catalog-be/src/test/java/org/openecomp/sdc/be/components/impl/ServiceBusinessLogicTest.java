@@ -154,7 +154,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         assertTrue(createResponse.isLeft());
     }
 
-
     @Test
     void testCreateServiceWhenGenericTypeHasProperties() {
         final Service service = createServiceObject(false);
@@ -254,8 +253,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         org.hamcrest.MatcherAssert.assertThat("Service properties should be as expected",
             actualService.getProperties(), is(expectedService.getProperties()));
     }
-
-
 
     /* CREATE validations - start ***********************/
     // Service name - start
@@ -644,7 +641,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         fail();
     }
 
-
     private void testProjectCodeTooShort() {
 
         Service serviceExist = createServiceObject(false);
@@ -701,7 +697,7 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         eitherService.left().value().setArchived(false);
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
         final ComponentException actualException = assertThrows(ComponentException.class, () -> bl.deleteServiceAllVersions(serviceId, user));
-        assertEquals(actualException.getActionStatus(), ActionStatus.COMPONENT_NOT_ARCHIVED);
+        assertEquals(ActionStatus.COMPONENT_NOT_ARCHIVED, actualException.getActionStatus());
         assertEquals(actualException.getParams()[0], serviceId);
     }
 
@@ -893,16 +889,16 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         newService.setServiceType("");
         resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService, false, new ArrayList<>());
         assertThat(resultOfUpdate.isLeft()).isTrue();
-        //null is invalid
+        //null is valid
         newService.setServiceType(null);
         resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService, false, new ArrayList<>());
-        assertThat(resultOfUpdate.isRight()).isTrue();
+        assertThat(resultOfUpdate.isLeft()).isTrue();
     }
 
     @Test
     void testCreateDefaultMetadataServiceFunction() {
         Service currentService = createServiceObject(true);
-        assertThat(currentService.getServiceFunction()).isEqualTo("");
+        assertThat(currentService.getServiceFunction()).isEmpty();
     }
 
     @Test
@@ -933,9 +929,8 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         newService.setServiceFunction(null);
         resultOfUpdate = bl.validateAndUpdateServiceMetadata(user, currentService, newService, false, new ArrayList<>());
         assertThat(resultOfUpdate.isLeft()).isTrue();
-        assertThat(updatedService.getServiceFunction()).isEqualTo("");
+        assertThat(updatedService.getServiceFunction()).isEmpty();
     }
-
 
     @Test
     void testServiceFunctionExceedLength() {
@@ -1096,7 +1091,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         return propertyList;
     }
 
-
     @Test
     void testCreateService_withMultitenancyValidTenant_Success() {
         Assert.assertTrue(MULTITENANCY_ENABLED);
@@ -1112,7 +1106,6 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         assertEquals(TEST_TENANT, service.getTenant());
         assertEqualsServiceObject(createServiceObject(true), createResponse.left().value());
     }
-
 
     @Test
     void testCreateService_withMultitenancyInvalidTenant_Failure() {

@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -475,10 +476,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
     protected StorageOperationStatus associateComponentToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType,
                                                                final EdgeLabelEnum edgeLabelEnum) {
-        if (nodeType.getMetadataValue(JsonPresentationFields.MODEL) == null) {
+        Object metadataValue = nodeType.getMetadataValue(JsonPresentationFields.MODEL);
+        if (metadataValue == null || StringUtils.isEmpty((String) metadataValue)) {
             return StorageOperationStatus.OK;
         }
-        final String model = ((String) nodeType.getMetadataValue(JsonPresentationFields.MODEL));
+        final String model = ((String) metadataValue);
         final JanusGraphOperationStatus createEdge = janusGraphDao.createEdge(getModelVertex(model), nodeTypeVertex, edgeLabelEnum, new HashMap<>());
         if (createEdge != JanusGraphOperationStatus.OK) {
             log.trace("Failed to associate resource {} to model {}", nodeType.getUniqueId(), model);

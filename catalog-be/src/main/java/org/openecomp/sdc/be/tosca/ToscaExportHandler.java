@@ -358,7 +358,7 @@ public class ToscaExportHandler {
     }
 
     private List<Map<String, Map<String, String>>> getDefaultToscaImports(final String modelId) {
-        if (modelId == null) {
+        if (StringUtils.isEmpty(modelId)) {
             return getDefaultToscaImportConfig();
         }
 

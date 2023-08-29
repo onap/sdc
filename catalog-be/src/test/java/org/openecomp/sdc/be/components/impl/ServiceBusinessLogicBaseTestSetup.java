@@ -120,7 +120,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
     protected ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
-    protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
+    protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator();
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
     protected ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
     protected ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);
