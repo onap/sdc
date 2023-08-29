@@ -26,6 +26,7 @@ import fj.data.Either;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
@@ -319,7 +320,7 @@ public class LifecycleBusinessLogic {
         if (LifeCycleTransitionEnum.CERTIFY == transitionEnum || LifeCycleTransitionEnum.CHECKIN == transitionEnum
             // import?
         ) {
-            if (!ValidationUtils.validateStringNotEmpty(comment)) {
+            if (StringUtils.isEmpty(comment)) {
                 log.debug("user comment cannot be empty or null.");
                 ResponseFormat errorResponse = componentUtils.getResponseFormat(ActionStatus.MISSING_DATA, COMMENT);
                 return Either.right(errorResponse);

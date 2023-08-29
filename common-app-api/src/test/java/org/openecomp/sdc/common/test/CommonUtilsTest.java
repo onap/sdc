@@ -225,14 +225,6 @@ public class CommonUtilsTest {
 	}
 
 	@Test
-	public void validateStringNotEmptyTest() {
-		assertTrue(ValidationUtils.validateStringNotEmpty("fsdlfsdlk"));
-		assertFalse(ValidationUtils.validateStringNotEmpty(""));
-		assertFalse(!ValidationUtils.validateStringNotEmpty("  "));
-		assertFalse(!ValidationUtils.validateStringNotEmpty("	"));
-	}
-
-	@Test
 	public void validateVendorNameTest() {
 		assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk"));
 		assertTrue(ValidationUtils.validateVendorName("fsdlfsdlk.sdsd;"));
