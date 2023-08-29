@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -230,8 +231,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     private Either<String, ResponseFormat> validateValue(String value) {
-        boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(value);
-        if (!isNonEmptyString) {
+        if (StringUtils.isEmpty(value)) {
             return Either.right(componentsUtils.getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED));
         }
         boolean valid = StringValidator.getInstance().isValid(value, null);
@@ -262,8 +262,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
         AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo();
         additionalInfoParameterInfo.setKey(key);
         String normKey = ValidationUtils.normalizeAdditionalInformation(key);
-        boolean isNonEmptyString = ValidationUtils.validateStringNotEmpty(normKey);
-        if (!isNonEmptyString) {
+        if (StringUtils.isEmpty(normKey)) {
             return Either.right(componentsUtils
                 .getResponseFormatAdditionalProperty(ActionStatus.ADDITIONAL_INFORMATION_EMPTY_STRING_NOT_ALLOWED, null, null,
                     AdditionalInformationEnum.Label));

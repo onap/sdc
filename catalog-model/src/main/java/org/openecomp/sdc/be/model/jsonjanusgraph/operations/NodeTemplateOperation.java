@@ -1497,7 +1497,7 @@ public class NodeTemplateOperation extends BaseOperation {
                                                                                  String instanceNewName, boolean generateUid,
                                                                                  ToscaElement originToscaElement) {
         String ciOriginComponentUid = resourceInstance.getComponentUid();
-        if (!ValidationUtils.validateStringNotEmpty(resourceInstance.getCustomizationUUID())) {
+        if (StringUtils.isEmpty(resourceInstance.getCustomizationUUID())) {
             resourceInstance.setCustomizationUUID(generateCustomizationUUID());
         }
         ComponentInstanceDataDefinition dataDefinition = new ComponentInstanceDataDefinition(resourceInstance);
