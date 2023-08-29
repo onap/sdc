@@ -4785,14 +4785,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.RESOURCE_TOO_MUCH_SUBCATEGORIES);
         }
         SubCategoryDefinition subcategory = subcategories.get(0);
-        if (!ValidationUtils.validateStringNotEmpty(category.getName())) {
+        if (StringUtils.isEmpty(category.getName())) {
             log.debug(CATEGORY_IS_EMPTY);
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
             componentsUtils.auditResource(responseFormat, user, resource, actionEnum);
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
         }
-        if (!ValidationUtils.validateStringNotEmpty(subcategory.getName())) {
+        if (StringUtils.isEmpty(subcategory.getName())) {
             log.debug(CATEGORY_IS_EMPTY);
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -4841,7 +4841,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     public void validateVendorReleaseName(User user, Resource resource, AuditingActionEnum actionEnum) {
         String vendorRelease = resource.getVendorRelease();
         log.debug("validate vendor relese name");
-        if (!ValidationUtils.validateStringNotEmpty(vendorRelease)) {
+        if (StringUtils.isEmpty(vendorRelease)) {
             log.info("vendor relese name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_RELEASE);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);
@@ -4870,7 +4870,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void validateVendorName(User user, Resource resource, AuditingActionEnum actionEnum) {
         String vendorName = resource.getVendorName();
-        if (!ValidationUtils.validateStringNotEmpty(vendorName)) {
+        if (StringUtils.isEmpty(vendorName)) {
             log.info("vendor name is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_VENDOR_NAME);
             componentsUtils.auditResource(errorResponse, user, resource, actionEnum);

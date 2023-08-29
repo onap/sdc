@@ -143,7 +143,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected UserValidations userValidations = mock(UserValidations.class);
     protected CatalogOperation catalogOperation = mock(CatalogOperation.class);
     protected ServiceImportParseLogic serviceImportParseLogic = mock(ServiceImportParseLogic.class);
-    protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
+    protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator();
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
     protected ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
     protected ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);

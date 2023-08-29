@@ -563,18 +563,6 @@ class ComponentsUtilsTest {
     }
 
     @Test
-    void testValidateStringNotEmpty() {
-        ComponentsUtils testSubject;
-        String value = "";
-        boolean result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = testSubject.validateStringNotEmpty(value);
-        assertThat(result).isFalse();
-    }
-
-    @Test
     void testConvertFromStorageResponseForAdditionalInformation() {
         ComponentsUtils testSubject;
         StorageOperationStatus storageResponse = StorageOperationStatus.ARTIFACT_NOT_FOUND;

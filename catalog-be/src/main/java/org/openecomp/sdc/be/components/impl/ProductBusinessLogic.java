@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
@@ -300,7 +301,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
         // remove duplicated entries
         for (CategoryDefinition cat : categories) {
             String catName = cat.getName();
-            if (!ValidationUtils.validateStringNotEmpty(catName)) {
+            if (StringUtils.isEmpty(catName)) {
                 // error missing cat name
                 log.debug("Missing category name for product: {}", product.getName());
                 ResponseFormat responseFormat = componentsUtils
@@ -323,7 +324,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
             }
             for (SubCategoryDefinition subcat : subcategories) {
                 String subCatName = subcat.getName();
-                if (!ValidationUtils.validateStringNotEmpty(subCatName)) {
+                if (StringUtils.isEmpty(subCatName)) {
                     // error missing sub cat name for cat
                     log.debug("Missing or empty sub-category for category {} in product {}", catName, product.getName());
                     ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_SUBCATEGORY);
@@ -338,7 +339,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
                 List<GroupingDefinition> groupings = subcat.getGroupings();
                 for (GroupingDefinition group : groupings) {
                     String groupName = group.getName();
-                    if (!ValidationUtils.validateStringNotEmpty(groupName)) {
+                    if (StringUtils.isEmpty(groupName)) {
                         // error missing grouping for sub cat name and cat
                         log.debug("Missing or empty groupng name for sub-category: {} for categor: {} in product: {}", subCatName, catName,
                             product.getName());
@@ -481,7 +482,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Boolean, ResponseFormat> validateProductFullNameAndCleanup(User user, Product product, AuditingActionEnum actionEnum) {
         String fullName = product.getFullName();
-        if (!ValidationUtils.validateStringNotEmpty(fullName)) {
+        if (StringUtils.isEmpty(fullName)) {
             ResponseFormat errorResponse = componentsUtils
                 .getResponseFormat(ActionStatus.MISSING_ONE_OF_COMPONENT_NAMES, ComponentTypeEnum.PRODUCT.getValue(), PRODUCT_FULL_NAME);
             componentsUtils.auditComponentAdmin(errorResponse, user, product, actionEnum, ComponentTypeEnum.PRODUCT);
@@ -509,7 +510,7 @@ public class ProductBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Boolean, ResponseFormat> validateProductNameAndCleanup(User user, Product product, AuditingActionEnum actionEnum) {
         String name = product.getName();
-        if (!ValidationUtils.validateStringNotEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(ActionStatus.MISSING_ONE_OF_COMPONENT_NAMES, ComponentTypeEnum.PRODUCT.getValue(), PRODUCT_ABBREVIATED_NAME);
             componentsUtils.auditComponentAdmin(responseFormat, user, product, actionEnum, ComponentTypeEnum.PRODUCT);

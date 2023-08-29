@@ -215,7 +215,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateResourceInstanceNameLength(String resourceInstanceName) {
-        return resourceInstanceName.length() <= RSI_NAME_MAX_LENGTH;
+        return StringUtils.isEmpty(resourceInstanceName) || resourceInstanceName.length() <= RSI_NAME_MAX_LENGTH;
     }
 
     public static boolean validateResourceInstanceName(String resourceInstanceName) {
@@ -223,7 +223,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateUrlLength(String url) {
-        return url.length() <= API_URL_LENGTH;
+        return StringUtils.isEmpty(url) || url.length() <= API_URL_LENGTH;
     }
 
     public static boolean validateArtifactNameLength(String artifactName) {
@@ -235,7 +235,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateComponentNameLength(String componentName) {
-        return componentName.length() <= COMPONENT_NAME_MAX_LENGTH;
+        return StringUtils.isEmpty(componentName) || componentName.length() <= COMPONENT_NAME_MAX_LENGTH;
     }
 
     public static boolean validateIcon(String icon) {
@@ -243,7 +243,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateIconLength(String icon) {
-        return icon.length() <= ICON_MAX_LENGTH;
+        return StringUtils.isEmpty(icon) || icon.length() <= ICON_MAX_LENGTH;
     }
 
     public static boolean validateProjectCode(String projectCode) {
@@ -251,7 +251,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateProjectCodeLegth(String projectCode) {
-        return projectCode.length() <= PROJECT_CODE_MAX_LEGTH;
+        return StringUtils.isEmpty(projectCode) || projectCode.length() <= PROJECT_CODE_MAX_LEGTH;
     }
 
     public static boolean validateContactId(String contactId) {
@@ -340,14 +340,7 @@ public class ValidationUtils {
     }
 
     public static boolean validateDescriptionLength(String description) {
-        return description.length() <= COMPONENT_DESCRIPTION_MAX_LENGTH;
-    }
-
-    public static boolean validateStringNotEmpty(String value) {
-        if ((value == null) || (value.isEmpty())) {
-            return false;
-        }
-        return true;
+        return StringUtils.isEmpty(description) || description.length() <= COMPONENT_DESCRIPTION_MAX_LENGTH;
     }
 
     public static boolean validateListNotEmpty(List<?> list) {
@@ -362,35 +355,35 @@ public class ValidationUtils {
     }
 
     public static boolean validateVendorNameLength(String vendorName) {
-        return vendorName.length() <= VENDOR_NAME_MAX_LENGTH;
+        return StringUtils.isEmpty(vendorName) || vendorName.length() <= VENDOR_NAME_MAX_LENGTH;
     }
 
     public static boolean validateResourceVendorModelNumberLength(String resourceVendorModelNumber) {
-        return resourceVendorModelNumber.length() <= RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH;
+        return StringUtils.isEmpty(resourceVendorModelNumber) || resourceVendorModelNumber.length() <= RESOURCE_VENDOR_MODEL_NUMBER_MAX_LENGTH;
     }
 
     public static boolean validateVendorRelease(String vendorRelease) {
-        return VENDOR_RELEASE_PATTERN.matcher(vendorRelease).matches();
+        return StringUtils.isEmpty(vendorRelease) || VENDOR_RELEASE_PATTERN.matcher(vendorRelease).matches();
     }
 
     public static boolean validateVendorReleaseLength(String vendorRelease) {
-        return vendorRelease.length() <= VENDOR_RELEASE_MAX_LENGTH;
+        return StringUtils.isEmpty(vendorRelease) || vendorRelease.length() <= VENDOR_RELEASE_MAX_LENGTH;
     }
 
     public static boolean validateServiceTypeLength(String serviceType) {
-        return serviceType.length() <= SERVICE_TYPE_MAX_LENGTH;
+        return StringUtils.isEmpty(serviceType) || serviceType.length() <= SERVICE_TYPE_MAX_LENGTH;
     }
 
     public static boolean validateServiceRoleLength(String serviceRole) {
-        return serviceRole.length() <= SERVICE_ROLE_MAX_LENGTH;
+        return StringUtils.isEmpty(serviceRole) || serviceRole.length() <= SERVICE_ROLE_MAX_LENGTH;
     }
 
     public static boolean validateServiceFunctionLength(String serviceFunction) {
-        return serviceFunction.length() <= SERVICE_FUNCTION_MAX_LENGTH;
+        return StringUtils.isEmpty(serviceFunction) || serviceFunction.length() <= SERVICE_FUNCTION_MAX_LENGTH;
     }
 
     public static boolean validateServiceNamingPolicyLength(String namingPolicy) {
-        return namingPolicy.length() <= SERVICE_NAMING_POLICY_MAX_SIZE;
+        return StringUtils.isEmpty(namingPolicy) || namingPolicy.length() <= SERVICE_NAMING_POLICY_MAX_SIZE;
     }
 
     public static boolean hasBeenCertified(String version) {
