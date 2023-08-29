@@ -526,24 +526,6 @@ public class ValidationUtilsTest {
 	}
 
 	@Test
-	public void checkValidateStringNotEmptyReturnsFalseIfStringIsNotEmpty() {
-		final String testString = "test";
-
-		boolean result = ValidationUtils.validateStringNotEmpty(testString);
-
-		assertTrue(result);
-	}
-
-	@Test
-	public void checkValidateStringNotEmptyReturnsFTrueIfStringIsEmpty() {
-		final String testString =  "";
-
-		boolean result = ValidationUtils.validateStringNotEmpty(testString);
-
-		assertFalse(result);
-	}
-
-	@Test
 	public void checkValidateVendorNameReturnsTrueIfNameFitsPattern() {
 		final String testVendorName =  "testVendor";
 

@@ -2210,7 +2210,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<Boolean, ResponseFormat> validateAndServiceApiUrl(ArtifactDefinition artifactInfo) {
-        if (!ValidationUtils.validateStringNotEmpty(artifactInfo.getApiUrl())) {
+        if (StringUtils.isEmpty(artifactInfo.getApiUrl())) {
             log.debug("Artifact url cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, ARTIFACT_URL));
         }
@@ -2879,9 +2879,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             List<HeatParameterDefinition> empltyHeatValues = new ArrayList<>();
             for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
                 String heatValue = heatParameterDefinition.getCurrentValue();
-                if (!ValidationUtils.validateStringNotEmpty(heatValue)) {
+                if (StringUtils.isEmpty(heatValue)) {
                     heatValue = heatParameterDefinition.getDefaultValue();
-                    if (!ValidationUtils.validateStringNotEmpty(heatValue)) {
+                    if (StringUtils.isEmpty(heatValue)) {
                         empltyHeatValues.add(heatParameterDefinition);
                         continue;
                     }

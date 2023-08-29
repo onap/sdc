@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.components.validation.component;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -45,7 +46,7 @@ public class ComponentDescriptionValidator implements ComponentFieldValidator {
     public void validateAndCorrectField(User user, Component component, AuditingActionEnum actionEnum) {
         ComponentTypeEnum type = component.getComponentType();
         String description = component.getDescription();
-        if (!ValidationUtils.validateStringNotEmpty(description)) {
+        if (StringUtils.isEmpty(description)) {
             auditErrorAndThrow(user, component, actionEnum, ActionStatus.COMPONENT_MISSING_DESCRIPTION);
         }
         description = ValidationUtils.cleanUpText(description);
