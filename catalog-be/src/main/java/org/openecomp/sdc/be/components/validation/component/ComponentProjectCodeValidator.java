@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.components.validation.component;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -49,7 +50,7 @@ public class ComponentProjectCodeValidator implements ComponentFieldValidator {
         }
         log.debug("validate ProjectCode name ");
         String projectCode = component.getProjectCode();
-        if (!ValidationUtils.validateStringNotEmpty(projectCode)) {
+        if (StringUtils.isEmpty(projectCode)) {
             log.info("projectCode is empty is allowed CR.");
             return;
         }
