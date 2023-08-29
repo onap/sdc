@@ -49,21 +49,19 @@ public class ServiceNamingPolicyValidator implements ServiceFieldValidator {
             throw new ByActionStatusComponentException(ActionStatus.MISSING_ECOMP_GENERATED_NAMING);
         }
         if (isEcompGeneratedCurr) {
+            if (StringUtils.isEmpty(namingPolicyUpdate)) {
+                return;
+            }
             if (!ValidationUtils.validateServiceNamingPolicyLength(namingPolicyUpdate)) {
                 ResponseFormat responseFormat = componentsUtils
                     .getResponseFormat(ActionStatus.NAMING_POLICY_EXCEEDS_LIMIT, "" + ValidationUtils.SERVICE_NAMING_POLICY_MAX_SIZE);
                 throw new ByResponseFormatComponentException(responseFormat);
             }
-            if (StringUtils.isEmpty(namingPolicyUpdate)) {
-                service.setNamingPolicy("");
-                return;
-            }
             if (!ValidationUtils.validateCommentPattern(namingPolicyUpdate)) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_NAMING_POLICY);
             }
-            service.setNamingPolicy(namingPolicyUpdate);
         } else {
-            if (!StringUtils.isEmpty(namingPolicyUpdate)) {
+            if (StringUtils.isNotEmpty(namingPolicyUpdate)) {
                 log.warn("NamingPolicy must be empty for EcompGeneratedNaming=false");
             }
             service.setNamingPolicy("");

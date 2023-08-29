@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.components.validation.component;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -45,7 +46,7 @@ public class ComponentContactIdValidator implements ComponentFieldValidator {
         log.debug("validate component contactId");
         ComponentTypeEnum type = component.getComponentType();
         String contactId = component.getContactId();
-        if (!ValidationUtils.validateStringNotEmpty(contactId)) {
+        if (StringUtils.isEmpty(contactId)) {
             log.info("contact is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);

@@ -304,7 +304,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         log.debug("validate Icon");
         ComponentTypeEnum type = component.getComponentType();
         String icon = component.getIcon();
-        if (!ValidationUtils.validateStringNotEmpty(icon)) {
+        if (StringUtils.isEmpty(icon)) {
             log.info("icon is missing.");
             ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_MISSING_ICON, type.getValue());
             componentsUtils.auditComponentAdmin(errorResponse, user, component, actionEnum, type);
