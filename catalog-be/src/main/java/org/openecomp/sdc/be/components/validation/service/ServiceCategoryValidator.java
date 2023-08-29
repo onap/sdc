@@ -23,6 +23,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import fj.data.Either;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -80,7 +81,7 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.SERVICE_CANNOT_CONTAIN_SUBCATEGORY);
                 return Either.right(responseFormat);
             }
-            if (!ValidationUtils.validateStringNotEmpty(category.getName())) {
+            if (StringUtils.isEmpty(category.getName())) {
                 log.debug("Resource category is empty");
                 ResponseFormat responseFormat = componentsUtils
                     .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());

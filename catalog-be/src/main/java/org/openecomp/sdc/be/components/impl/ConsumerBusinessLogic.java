@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -163,7 +164,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 
     private Either<ConsumerDefinition, ResponseFormat> validateConsumerName(ConsumerDefinition consumer) {
         String name = consumer.getConsumerName();
-        if (!ValidationUtils.validateStringNotEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             log.debug("Consumer name cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, CONSUMER_NAME));
         }
@@ -185,7 +186,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 
     private Either<ConsumerDefinition, ResponseFormat> validateConsumerPassword(ConsumerDefinition consumer) {
         String password = consumer.getConsumerPassword();
-        if (!ValidationUtils.validateStringNotEmpty(password)) {
+        if (StringUtils.isEmpty(password)) {
             log.debug("Consumer password cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, CONSUMER_PW));
         }
@@ -203,7 +204,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 
     private Either<ConsumerDefinition, ResponseFormat> validateConsumerSalt(ConsumerDefinition consumer) {
         String salt = consumer.getConsumerSalt();
-        if (!ValidationUtils.validateStringNotEmpty(salt)) {
+        if (StringUtils.isEmpty(salt)) {
             log.debug("Consumer salt cannot be empty.");
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_DATA, CONSUMER_SALT));
         }
