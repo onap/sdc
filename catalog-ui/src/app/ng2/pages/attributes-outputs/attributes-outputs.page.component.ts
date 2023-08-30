@@ -44,6 +44,9 @@ import {
   InstanceBeAttributesMap,
   InstanceFeAttributesMap
 } from "app/models/attributes-outputs/attribute-fe-map";
+import {
+  InstanceBePropertiesMap
+} from "app/models/properties-inputs/property-fe-map";
 import {ModalService} from "../../services/modal.service";
 import {InstanceFeDetails} from "../../../models/instance-fe-details";
 import {HierarchyDisplayOptions} from "../../components/logic/hierarchy-navigtion/hierarchy-display-options";
@@ -109,22 +112,24 @@ export class AttributesOutputsComponent {
   @ViewChild('attributeOutputTabs') attributeOutputTabs: Tabs;
 
 
-  constructor(private attributesService: AttributesService,
-              private hierarchyNavService: HierarchyNavService,
-              private attributesUtils: AttributesUtils,
-              private outputsUtils: OutputsUtils,
-              private componentServiceNg2: ComponentServiceNg2,
-              private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
-              @Inject("$stateParams") _stateParams,
-              @Inject("$scope") private $scope: ng.IScope,
-              @Inject("$state") private $state: ng.ui.IStateService,
-              @Inject("Notification") private Notification: any,
-              private componentModeService: ComponentModeService,
-              private EventListenerService: EventListenerService,
-              private ModalServiceSdcUI: SdcUiServices.ModalService,
-              private ModalService: ModalService,
-              private keysPipe: KeysPipe,
-              private topologyTemplateService: TopologyTemplateService) {
+  constructor(
+    private attributesService: AttributesService,
+    private hierarchyNavService: HierarchyNavService,
+    private attributesUtils: AttributesUtils,
+    private outputsUtils: OutputsUtils,
+    private componentServiceNg2: ComponentServiceNg2,
+    private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+    @Inject("$stateParams") _stateParams,
+    @Inject("$scope") private $scope: ng.IScope,
+    @Inject("$state") private $state: ng.ui.IStateService,
+    @Inject("Notification") private Notification: any,
+    private componentModeService: ComponentModeService,
+    private EventListenerService: EventListenerService,
+    private ModalServiceSdcUI: SdcUiServices.ModalService,
+    private ModalService: ModalService,
+    private keysPipe: KeysPipe,
+    private topologyTemplateService: TopologyTemplateService
+  ) {
 
     this.instanceFeAttributesMap = new InstanceFeAttributesMap();
     /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
@@ -234,7 +239,7 @@ export class AttributesOutputsComponent {
     .subscribe((response) => {
       this.serviceBeAttributesMap = new InstanceBeAttributesMap();
       this.serviceBeAttributesMap[this.component.uniqueId] = response;
-      this.processInstanceAttributesResponse(this.serviceBeAttributesMap, false);
+      this.processInstanceAttributesResponse(this.serviceBeAttributesMap, false, null);
     }, (error) => {
       this.Notification.error({
         message: 'Failed to get Service Attribute:' + error,
@@ -259,14 +264,15 @@ export class AttributesOutputsComponent {
   changeSelectedInstance = (instance: ComponentInstance) => {
     this.selectedInstanceData = instance;
     this.loadingAttributes = true;
+    this.instanceFeAttributesMap = undefined;
     if (instance instanceof ComponentInstance) {
-      let instanceBeAttributesMap: InstanceBeAttributesMap = new InstanceBeAttributesMap();
+      let instanceBeAttributesMap: InstanceBeAttributesMap | InstanceBePropertiesMap = new InstanceBeAttributesMap();
       if (this.isOutput(instance.originType)) {
         this.componentInstanceServiceNg2
         .getComponentInstanceOutputs(this.component, instance)
         .subscribe(response => {
           instanceBeAttributesMap[instance.uniqueId] = response;
-          this.processInstanceAttributesResponse(instanceBeAttributesMap, true);
+          this.processInstanceAttributesResponse(instanceBeAttributesMap, true, instance.uniqueId);
         }, error => {
           this.Notification.error({
             message: 'Failed to change Selected Instance:' + error,
@@ -281,8 +287,23 @@ export class AttributesOutputsComponent {
         this.componentInstanceServiceNg2
         .getComponentInstanceAttributes(this.component, instance.uniqueId)
         .subscribe(response => {
+          instanceBeAttributesMap = new InstanceBeAttributesMap();
           instanceBeAttributesMap[instance.uniqueId] = response;
-          this.processInstanceAttributesResponse(instanceBeAttributesMap, false);
+          this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
+        }, error => {
+          this.Notification.error({
+            message: 'Failed to change Selected Instance:' + error,
+            title: 'Failure'
+          });
+        }, () => {
+          this.loadingAttributes = false;
+        });
+        this.componentInstanceServiceNg2
+        .getComponentInstanceProperties(this.component, instance.uniqueId)
+        .subscribe(response => {
+          instanceBeAttributesMap = new InstanceBePropertiesMap();
+          instanceBeAttributesMap[instance.uniqueId] = response;
+          this.processInstanceAttributesResponse(instanceBeAttributesMap, false, instance.uniqueId);
         }, error => {
           this.Notification.error({
             message: 'Failed to change Selected Instance:' + error,
@@ -292,7 +313,6 @@ export class AttributesOutputsComponent {
           this.loadingAttributes = false;
         });
       }
-
       this.resourceIsReadonly = (instance.componentName === "vnfConfiguration");
     } else {
       this.loadingAttributes = false;
@@ -306,8 +326,20 @@ export class AttributesOutputsComponent {
   /**
    * Entry point handling response from server
    */
-  processInstanceAttributesResponse = (instanceBeAttributesMap: InstanceBeAttributesMap, originTypeIsVF: boolean) => {
-    this.instanceFeAttributesMap = this.attributesUtils.convertAttributesMapToFEAndCreateChildren(instanceBeAttributesMap, originTypeIsVF, this.outputs); //create flattened children, disable declared attribs, and init values
+  processInstanceAttributesResponse = (instanceBeAttributesMap: InstanceBePropertiesMap | InstanceBeAttributesMap, originTypeIsVF: boolean, instanceId: string) => {
+    let attributesMap = this.attributesUtils.convertAttributesMapToFEAndCreateChildren(instanceBeAttributesMap, originTypeIsVF, this.outputs); //create flattened children, disable declared attribs, and init values
+    if (!this.instanceFeAttributesMap) {
+      this.instanceFeAttributesMap = attributesMap;
+    } else if (instanceId) {
+      let toAdd: AttributeFEModel[];
+      if (instanceBeAttributesMap instanceof InstanceBeAttributesMap) {
+        toAdd = this.instanceFeAttributesMap[instanceId].filter(currentAtr => !attributesMap[instanceId].some(newAtr => newAtr.name === currentAtr.name))
+        this.instanceFeAttributesMap[instanceId] = attributesMap[instanceId];
+      } else {
+        toAdd = attributesMap[instanceId].filter(currentAtr => !this.instanceFeAttributesMap[instanceId].some(newAtr => newAtr.name === currentAtr.name))
+      }
+      this.instanceFeAttributesMap[instanceId] = this.instanceFeAttributesMap[instanceId].concat(toAdd);
+    }
     this.checkedAttributesCount = 0;
   };
 

@@ -24,6 +24,7 @@ import { DataTypeService } from "app/ng2/services/data-type.service";
 import { PROPERTY_TYPES } from "app/utils";
 import { AttributesService } from "app/ng2/services/attributes.service";
 import { InstanceBeAttributesMap, InstanceFeAttributesMap } from "app/models/attributes-outputs/attribute-fe-map";
+import { InstanceBePropertiesMap } from "app/models/properties-inputs/property-fe-map";
 import {OutputFEModel} from "../../../../models/attributes-outputs/output-fe-model";
 import { AttributeBEModel, DerivedAttributeType } from "app/models/attributes-outputs/attribute-be-model";
 import { AttributeFEModel } from "app/models/attributes-outputs/attribute-fe-model";
@@ -43,7 +44,7 @@ export class AttributesUtils {
      * 3. Initialize valueObj (which also creates any new list/map flattened children as needed)
      * Returns InstanceFeAttributesMap
      */
-    public convertAttributesMapToFEAndCreateChildren = (instanceAttributesMap:InstanceBeAttributesMap, isVF:boolean, outputs?:Array<OutputFEModel>): InstanceFeAttributesMap => {
+    public convertAttributesMapToFEAndCreateChildren = (instanceAttributesMap:InstanceBeAttributesMap | InstanceBePropertiesMap, isVF:boolean, outputs?:Array<OutputFEModel>): InstanceFeAttributesMap => {
         let instanceFeAttributesMap:InstanceFeAttributesMap = new InstanceFeAttributesMap();
         angular.forEach(instanceAttributesMap, (attributes:Array<AttributeBEModel>, instanceId:string) => {
             let propertyFeArray: Array<AttributeFEModel> = [];
