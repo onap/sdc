@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.google.common.base.CharMatcher;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +246,7 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
                 );
             if (toscaFunctionType == ToscaFunctionType.STRING) {
                 final ToscaStringParameter toscaStringParameter = new ToscaStringParameter();
-                toscaStringParameter.setValue(parameterNode.get("value").asText());
+                toscaStringParameter.setValue(CharMatcher.anyOf("\"\'").trimFrom(parameterNode.get("value").asText()));
                 functionParameterList.add(toscaStringParameter);
             } else {
                 final ToscaFunction toscaFunction = this.deserializeToscaFunction(parameterNode, context);
