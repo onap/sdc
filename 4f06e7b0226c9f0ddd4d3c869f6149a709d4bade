@@ -45,6 +45,54 @@
       },
       "revId": "4f06e7b0226c9f0ddd4d3c869f6149a709d4bade",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "889a9df6_1b0760c7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-08-31T10:37:33Z",
+      "side": 1,
+      "message": "yes, it should, done",
+      "parentUuid": "56cdd951_2087199b",
+      "range": {
+        "startLine": 876,
+        "startChar": 12,
+        "endLine": 876,
+        "endChar": 74
+      },
+      "revId": "4f06e7b0226c9f0ddd4d3c869f6149a709d4bade",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1d35c4f_268b4fc0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-08-31T10:37:33Z",
+      "side": 1,
+      "message": "yes, it should, done",
+      "parentUuid": "ea5343d6_285abbef",
+      "range": {
+        "startLine": 876,
+        "startChar": 12,
+        "endLine": 876,
+        "endChar": 74
+      },
+      "revId": "4f06e7b0226c9f0ddd4d3c869f6149a709d4bade",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
