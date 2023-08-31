@@ -409,8 +409,10 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private addPropertyToDropdown(propertyDropdownValue: PropertyDropdownValue, propertyList: Array<PropertyDropdownValue>): void {
-        propertyList.push(propertyDropdownValue);
-        propertyList.sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));
+        if (!propertyList.find(prop => prop.propertyName === propertyDropdownValue.propertyName)) {
+            propertyList.push(propertyDropdownValue);
+            propertyList.sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));
+        }
     }
 
     private addPropertiesToDropdown(properties: Array<PropertyBEModel | AttributeBEModel>, propertyList: Array<PropertyDropdownValue>): void {
