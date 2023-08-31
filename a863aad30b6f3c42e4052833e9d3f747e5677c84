@@ -39,6 +39,30 @@
       },
       "revId": "a863aad30b6f3c42e4052833e9d3f747e5677c84",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f9310ac_08e3c66b",
+        "filename": "catalog-ui/configurations/menu.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2023-08-31T10:17:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a269329f_3591d91d",
+      "range": {
+        "startLine": 300,
+        "startChar": 106,
+        "endLine": 300,
+        "endChar": 107
+      },
+      "revId": "a863aad30b6f3c42e4052833e9d3f747e5677c84",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
