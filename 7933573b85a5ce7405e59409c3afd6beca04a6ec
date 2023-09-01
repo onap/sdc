@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "7933573b85a5ce7405e59409c3afd6beca04a6ec",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fcb7620_3d58f0bd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-01T09:27:19Z",
+      "side": 1,
+      "message": "Is the result of this that we will now allow null values in metadata?\nThis could cause issues for TOSCA parsers in orchestrators that will not expect the metadata values to be null",
+      "revId": "7933573b85a5ce7405e59409c3afd6beca04a6ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
