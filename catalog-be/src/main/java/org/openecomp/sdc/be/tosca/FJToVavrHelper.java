@@ -19,8 +19,11 @@
  */
 package org.openecomp.sdc.be.tosca;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
+import java.util.List;
 import java.util.function.Function;
+import org.openecomp.sdc.be.model.ComponentInstance;
 
 /**
  * Helper class providing facilities for migrating from FJ to VAVR
@@ -41,6 +44,10 @@ public final class FJToVavrHelper {
          */
         static <L, R> Try<L> fromEither(fj.data.Either<L, R> e, Function<R, Throwable> onError) {
             return e.either(Try::success, r -> Try.failure(onError.apply(r)));
+        }
+
+        static io.vavr.collection.List<ComponentInstance> javaListToVavrList(List<ComponentInstance> componentInstances) {
+            return Option.of(componentInstances).map(io.vavr.collection.List::ofAll).getOrElse(io.vavr.collection.List::empty);
         }
     }
 }
