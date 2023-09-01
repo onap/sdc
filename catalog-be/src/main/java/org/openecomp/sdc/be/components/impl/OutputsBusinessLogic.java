@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -43,6 +45,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.OutputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
@@ -68,7 +71,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_OUTPUTS = "Going to execute rollback on create outputs.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_OUTPUTS = "Going to execute commit on create outputs.";
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(OutputsBusinessLogic.class);
-    private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID = "Failed to found component instance outputs componentInstanceId: {}";
+    private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID =
+        "Failed to found component instance outputs componentInstanceId: {}";
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR = "Failed to found component instance outputs {}, error: {}";
     private final AttributeDeclarationOrchestrator attributeDeclarationOrchestrator;
 
@@ -301,7 +305,32 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 result.addAll(createdOutputs.left().value());
             }
         }
+        final List<PropertyDefinition> componentInstanceProperties = componentInstance.getProperties();
+        if (CollectionUtils.isNotEmpty(componentInstanceProperties)) {
+            final Optional<PropertyDefinition> componentInstancePropertyOptional = componentInstanceProperties.stream()
+                .filter(prop -> prop.getName().equals(attributeName)).findFirst();
+            if (componentInstancePropertyOptional.isPresent()) {
+                PropertyDefinition propertyDefinition = componentInstancePropertyOptional.get();
+                final ComponentInstOutputsMap componentInstOutputsMap = new ComponentInstOutputsMap();
+                ComponentInstanceAttribOutput attribute = getComponentInstanceAttribOutput(propertyDefinition);
+                componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
+                    Collections.singletonList(new ComponentInstanceAttribOutput(attribute))));
+                return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE, componentInstOutputsMap, true, false);
+            }
+        }
         return Either.left(result);
+    }
+
+    @NotNull
+    private ComponentInstanceAttribOutput getComponentInstanceAttribOutput(PropertyDefinition propertyDefinition) {
+        ComponentInstanceAttribOutput attribute = new ComponentInstanceAttribOutput();
+        attribute.setParentUniqueId(propertyDefinition.getParentUniqueId());
+        attribute.setName(propertyDefinition.getName());
+        attribute.setOwnerId(propertyDefinition.getOwnerId());
+        attribute.setType(propertyDefinition.getType());
+        attribute.setSchema(propertyDefinition.getSchema());
+        attribute.setUniqueId(propertyDefinition.getUniqueId());
+        return attribute;
     }
 
 }
