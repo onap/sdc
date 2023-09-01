@@ -34,6 +34,8 @@ import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.filters.FilterConfiguration;
 import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
+import org.openecomp.sdc.be.tosca.CommonCsarGenerator;
+import org.openecomp.sdc.be.tosca.DefaultCsarGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -130,6 +132,11 @@ public class CatalogBESpringConfig {
     @Bean
     public PortalClient portalClient() throws CipherUtilException {
         return new PortalClient(httpClientConnectionManager(), portalConfiguration());
+    }
+
+    @Bean(name = "defaultCsarGenerator")
+    public DefaultCsarGenerator defaultCsarGenerator(CommonCsarGenerator commonCsarGenerator) {
+        return new DefaultCsarGenerator(commonCsarGenerator);
     }
 
     @Bean

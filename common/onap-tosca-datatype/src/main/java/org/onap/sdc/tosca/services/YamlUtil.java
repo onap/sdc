@@ -87,7 +87,7 @@ public class YamlUtil {
         constructor.setPropertyUtils(getPropertyUtils());
         TypeDescription yamlFileDescription = new TypeDescription(typClass);
         constructor.addTypeDescription(yamlFileDescription);
-        T yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), getLoaderOptions()).load(yamlContent);
+        T yamlObj = new Yaml(constructor, new Representer(new DumperOptions()), new DumperOptions(), getLoaderOptions()).load(yamlContent);
 
         //noinspection ResultOfMethodCallIgnored
         yamlObj.toString();
@@ -114,7 +114,7 @@ public class YamlUtil {
             TypeDescription yamlFileDescription = new TypeDescription(typClass);
             constructor.addTypeDescription(yamlFileDescription);
             //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
-            T yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), getLoaderOptions()).load(yamlContent);
+            T yamlObj = new Yaml(constructor, new Representer(new DumperOptions()), new DumperOptions(), getLoaderOptions()).load(yamlContent);
             if (yamlObj != null) {
                 //noinspection ResultOfMethodCallIgnored
                 yamlObj.toString();

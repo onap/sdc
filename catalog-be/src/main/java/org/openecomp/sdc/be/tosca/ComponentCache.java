@@ -27,6 +27,7 @@ import io.vavr.collection.Stream;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.openecomp.sdc.be.model.Component;
 
@@ -132,6 +133,7 @@ public final class ComponentCache {
      * Entry stored by the cache
      */
     @EqualsAndHashCode
+    @Getter
     public static final class CacheEntry {
 
         final String id;

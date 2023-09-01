@@ -181,7 +181,7 @@ class NsDescriptorGeneratorImplTest {
         interfaceToscaNodeType.setRequirements(interfaceNodeTypeRequirements);
         final String nsNodeTypeName = "nsNodeTypeName";
         componentInterfaceToscaTemplate.setNode_types(ImmutableMap.of(nsNodeTypeName, interfaceToscaNodeType));
-        when(toscaExportHandler.convertToToscaTemplate(component)).thenReturn(Either.left(componentToscaTemplate));
+        when(toscaExportHandler.convertToToscaTemplate(component, false)).thenReturn(Either.left(componentToscaTemplate));
         when(toscaExportHandler.convertInterfaceNodeType(any(), any(), any(), any(), anyBoolean()))
             .thenReturn(Either.left(componentInterfaceToscaTemplate));
         final List<VnfDescriptor> vnfDescriptorList = new ArrayList<>();
