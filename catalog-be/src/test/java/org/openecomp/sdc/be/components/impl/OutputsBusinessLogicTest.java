@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +47,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -67,6 +67,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.OutputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -149,6 +150,9 @@ class OutputsBusinessLogicTest {
         final AttributeDefinition attributeDefinition = new AttributeDefinition();
         attributeDefinition.setName("attribName");
         componentInstance.setAttributes(Collections.singletonList(attributeDefinition));
+        final PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName("propName");
+        componentInstance.setProperties(Collections.singletonList(propertyDefinition));
         service.setComponentInstances(Collections.singletonList(componentInstance));
 
         instanceOutputMap = new HashMap<>();
@@ -160,7 +164,7 @@ class OutputsBusinessLogicTest {
         instanceOutputMap.put("someOutputId", Collections.singletonList(new ComponentInstanceOutput()));
         service.setComponentInstancesOutputs(instanceOutputMap);
         when(userValidations.validateUserExists(USER_ID)).thenReturn(new User());
-        when(userValidations.isSameUser(eq(USER_ID),eq(USER_ID))).thenReturn(true);
+        when(userValidations.isSameUser(eq(USER_ID), eq(USER_ID))).thenReturn(true);
         when(userAdminMock.getUser(USER_ID, false)).thenReturn(new User());
     }
 
@@ -409,8 +413,12 @@ class OutputsBusinessLogicTest {
         final var out_2 = new OutputDefinition();
         out_2.setName("out-2");
         out_2.setValue("{ get_attribute: [ SELF, oneMoreAttribute ] }");
+        final var out_4 = new OutputDefinition();
+        out_4.setName("out_4");
+        out_4.setValue("{ get_attribute: [ instanceId, propName ] }");
         outputs.put(out_1.getName(), out_1);
         outputs.put(out_2.getName(), out_2);
+        outputs.put(out_4.getName(), out_4);
 
         final List<OutputDefinition> serviceOutputs = new ArrayList<>();
         final var out_3 = new OutputDefinition();
@@ -418,17 +426,18 @@ class OutputsBusinessLogicTest {
         serviceOutputs.add(out_3);
         service.setOutputs(serviceOutputs);
 
-        final List<OutputDefinition> list = Arrays.asList(out_1, out_2, out_3);
+        final List<OutputDefinition> list = Arrays.asList(out_2, out_3, out_4);
+        final List<OutputDefinition> expetedList = Arrays.asList(out_1, out_2, out_3, out_4);
         when(toscaOperationFacadeMock.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(attributeDeclarationOrchestrator.declareAttributesToOutputs(eq(service), any(ComponentInstOutputsMap.class)))
-            .thenReturn(Either.left(list));
+            .thenReturn(Either.left(Collections.singletonList(out_1))).thenReturn(Either.left(list));
         when(toscaOperationFacadeMock.addOutputsToComponent(anyMap(), anyString())).thenReturn(Either.left(list));
 
         final var result = testInstance.createOutputsInGraph(outputs, service, USER_ID);
         assertTrue(result.isLeft());
-        assertEquals(3, result.left().value().size());
-        assertEquals(list, result.left().value());
+        assertEquals(4, result.left().value().size());
+        assertEquals(expetedList, result.left().value());
     }
 
     @Test
