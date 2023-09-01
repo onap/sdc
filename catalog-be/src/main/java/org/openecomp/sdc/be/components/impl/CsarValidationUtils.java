@@ -50,13 +50,13 @@ public class CsarValidationUtils {
     private static final String CSAR_VERSION = "CSAR-Version";
     private static final String CREATED_BY = "Created-By";
     private static final String NEW_LINE_DELM = "\n";
-    private static final String TOSCA_METADATA = "TOSCA-Metadata";
-    private static final String TOSCA_FILE = "TOSCA.meta";
-    private static final String DEL_PATTERN = "([/\\\\]+)";
-    private static final String TOSCA_METADATA_PATH_PATTERN = TOSCA_METADATA +
+    public static final String TOSCA_METADATA = "TOSCA-Metadata";
+    public static final String TOSCA_FILE = "TOSCA.meta";
+    public static final String DEL_PATTERN = "([/\\\\]+)";
+    public static final String TOSCA_METADATA_PATH_PATTERN = TOSCA_METADATA +
         // Artifact Group (i.e Deployment/Informational)
         DEL_PATTERN + TOSCA_FILE;
-    private static final String TOSCA_META_ENTRY_DEFINITIONS = "Entry-Definitions";
+    public static final String TOSCA_META_ENTRY_DEFINITIONS = "Entry-Definitions";
     private static final String[] TOSCA_METADATA_FIELDS = {TOSCA_META_FILE_VERSION, CSAR_VERSION, CREATED_BY, TOSCA_META_ENTRY_DEFINITIONS};
     private static final String ARTIFACTS_METADATA_FILE = "HEAT.meta";
     private static final String TOSCA_CSAR_EXTENSION = ".csar";
@@ -147,18 +147,16 @@ public class CsarValidationUtils {
         }
         Pattern pattern = Pattern.compile(TOSCA_METADATA_PATH_PATTERN);
         Optional<String> keyOp = csar.keySet().stream().filter(k -> pattern.matcher(k).matches()).findAny();
-        if (!keyOp.isPresent()) {
+        if (keyOp.isEmpty()) {
             log.debug(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID);
             BeEcompErrorManager.getInstance()
                     .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
                             CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID));
         }
-        byte[] toscaMetaBytes = csar.get(keyOp.get());
         Properties props = new Properties();
         try {
-            String propStr = new String(toscaMetaBytes);
-            props.load(new StringReader(propStr.replace("\\", "\\\\")));
+            props.load(new StringReader(new String(csar.get(keyOp.get())).replace("\\", "\\\\")));
         } catch (IOException e) {
             log.debug(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID, e);
             BeEcompErrorManager.getInstance()
