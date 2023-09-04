@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "867e1b5f_931ad8d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-04T15:57:23Z",
+      "side": 1,
+      "message": "The inputs should be input assignments rather than input definitions, i.e. name and value rather than name and type\n\nSee the example in the jira",
+      "revId": "4794e4318e30bb2fdb39746fc9e5d5017ee3adea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
