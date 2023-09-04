@@ -58,6 +58,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9754ac32_b9aaecda",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-09-04T10:03:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aab10c8a_fac1abb4",
+      "range": {
+        "startLine": 318,
+        "startChar": 16,
+        "endLine": 323,
+        "endChar": 66
+      },
+      "revId": "11507d33b959245039c993b890b40110f31466e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "95460375_7fe98506",
@@ -71,6 +95,30 @@
       "writtenOn": "2023-09-01T15:22:22Z",
       "side": 1,
       "message": "don\u0027t need to be static",
+      "range": {
+        "startLine": 330,
+        "startChar": 12,
+        "endLine": 330,
+        "endChar": 18
+      },
+      "revId": "11507d33b959245039c993b890b40110f31466e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09fa5c66_d46f7241",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-09-04T10:03:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95460375_7fe98506",
       "range": {
         "startLine": 330,
         "startChar": 12,
