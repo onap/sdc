@@ -97,8 +97,7 @@ public class PolicyTypeImportManager {
     private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(
         List<PolicyTypeDefinition> policyTypesToCreate, String modelName) {
         return commonImportManager.createElementTypesWithVersionByDao(policyTypesToCreate, this::validatePolicyType,
-            policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, UniqueIdBuilder.buildPolicyTypeUid(policyType.getModel(),
-                policyType.getType(), policyType.getVersion(), NodeTypeEnum.PolicyType.getName()).toLowerCase()),
+            policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, policyType.getType()),
             policyTypeOperation::getLatestPolicyTypeByType,
             policyTypeOperation::addPolicyType, this::updatePolicyType, modelName);
     }
