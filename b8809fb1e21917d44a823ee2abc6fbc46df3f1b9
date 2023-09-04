@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "027695e6_07553a19",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-09-04T16:34:38Z",
+      "side": 1,
+      "message": "same should be done for\ncatalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-concat-function/tosca-concat-function.component.less\nisn\u0027t ?",
+      "revId": "b8809fb1e21917d44a823ee2abc6fbc46df3f1b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
