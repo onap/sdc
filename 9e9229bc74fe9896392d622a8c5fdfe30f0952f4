@@ -33,6 +33,24 @@
       "message": "The Save button seems to be always disabled",
       "revId": "9e9229bc74fe9896392d622a8c5fdfe30f0952f4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3725aa59_02ae0311",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-04T14:21:17Z",
+      "side": 1,
+      "message": "Saving to be covered by another story",
+      "parentUuid": "d5060d61_f20dde3f",
+      "revId": "9e9229bc74fe9896392d622a8c5fdfe30f0952f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
