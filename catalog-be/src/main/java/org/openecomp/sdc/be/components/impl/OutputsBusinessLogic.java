@@ -23,10 +23,14 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -130,6 +134,10 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         try {
             validateUserExists(userId);
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
+            ImmutablePair<StorageOperationStatus, String> status = validateOutputName(component, componentInstOutputsMapUi);
+            if (status.getLeft() != StorageOperationStatus.OK) {
+                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.OUTPUT_NAME_ALREADY_EXIST, status.getRight()));
+            }
             result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi).left()
                 .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate)).right()
                 .map(componentsUtils::getResponseFormat);
@@ -153,6 +161,29 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 graphLockOperation.unlockComponent(componentId, componentType.getNodeType());
             }
         }
+    }
+
+    private ImmutablePair<StorageOperationStatus, String> validateOutputName(final Component component,
+                                                                            final ComponentInstOutputsMap componentInstOutputsMapUi) {
+        final Map<String, List<ComponentInstanceAttribOutput>> outputDeclaredProperties = new HashMap<>();
+        if (MapUtils.isNotEmpty(componentInstOutputsMapUi.getComponentInstanceOutputsMap())) {
+            outputDeclaredProperties.putAll(componentInstOutputsMapUi.getComponentInstanceOutputsMap());
+        } else if (MapUtils.isNotEmpty(componentInstOutputsMapUi.getComponentInstanceAttributes())) {
+            outputDeclaredProperties.putAll(componentInstOutputsMapUi.getComponentInstanceAttributes());
+        }
+        if (MapUtils.isNotEmpty(outputDeclaredProperties) && CollectionUtils.isNotEmpty(component.getOutputs())) {
+            for (final List<ComponentInstanceAttribOutput> componentInstancePropOutputs : outputDeclaredProperties.values()) {
+                for (final ComponentInstanceAttribOutput componentInstancePropOutput : componentInstancePropOutputs) {
+                    final Optional<OutputDefinition> outputDefinition = component.getOutputs().stream()
+                        .filter(output -> output.getName().equals(componentInstancePropOutput.getOutputName())
+                            || output.getName().equals(componentInstancePropOutput.getName())).findAny();
+                    if (outputDefinition.isPresent()) {
+                        return new ImmutablePair<>(StorageOperationStatus.INVALID_VALUE, outputDefinition.get().getName());
+                    }
+                }
+            }
+        }
+        return new ImmutablePair<>(StorageOperationStatus.OK, StringUtils.EMPTY);
     }
 
     private Component getAndValidateComponentForCreate(final String userId, final String componentId,
