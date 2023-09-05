@@ -60,6 +60,7 @@ import {DerivedFEAttribute} from "../../../models/attributes-outputs/derived-fe-
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {AttributeCreatorComponent} from "app/ng2/pages/attributes-outputs/attribute-creator/attribute-creator.component";
 import {AttributeRowSelectedEvent} from "app/ng2/components/logic/attributes-table/attributes-table.component";
+import { DeclareInputComponent } from '../properties-assignment/declare-input/declare-input.component';
 
 const SERVICE_SELF_TITLE = "SELF";
 
@@ -432,9 +433,61 @@ export class AttributesOutputsComponent {
     this.searchQuery = '';
   };
 
+  declareOutput = (): void => {
+    if (this.checkedAttributesCount == 1) {
+        this.openAddOutputNameModal();
+    } else if (this.checkedAttributesCount > 1) {
+        this.declareAttributes();
+    }
+  }
+
+  private openAddOutputNameModal = (): void => {
+    const modalTitle = 'Enter name of the ouput to be created';
+    const modalButtons = [];
+    const modal = this.ModalService.createCustomModal(new ModalModel(
+        'sm',
+        modalTitle,
+        null,
+        modalButtons,
+        null /* type */
+    ));
+    modalButtons.push(new ButtonModel('Save', 'blue',
+        () => {
+            const outputName: string = modal.instance.dynamicContent.instance.inputNameForm.value;
+            if (outputName) {
+                this.declareAttributes(outputName);
+            } else {
+                this.Notification.warning({
+                    message: 'Failed to set input name',
+                    title: 'Warning'
+                });
+            }
+            this.ModalService.closeCurrentModal();
+        }
+    ));
+    modalButtons.push(new ButtonModel('Cancel', 'outline grey', () => {
+        this.ModalService.closeCurrentModal();
+    }));
+    this.ModalService.addDynamicContentToModal(modal, DeclareInputComponent, {defaultInputName: this.generateDefaultOutputName()});
+    modal.instance.open();
+  }
+
+  generateDefaultOutputName = (): string => {
+    let defaultInputName: string;
+    let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
+    angular.forEach(instancesIds, (instanceId: string) => {
+      const selectedOutput : AttributeBEModel = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId])[0];
+        let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
+        defaultInputName = selectedOutput.name;
+        if (selectedInstanceData.invariantName) {
+          defaultInputName = selectedInstanceData.invariantName+'_'+selectedOutput.name;
+        }
+    });
+    return defaultInputName;
+  }
 
   /*** DECLARE ATTRIBUTES/OUTPUTS ***/
-  declareAttributes = (): void => {
+  declareAttributes = (outputName?: string): void => {
     let selectedComponentInstancesAttributes: InstanceBeAttributesMap = new InstanceBeAttributesMap();
     let selectedComponentInstancesOutputs: InstanceBeAttributesMap = new InstanceBeAttributesMap();
     let instancesIds = this.keysPipe.transform(this.instanceFeAttributesMap, []);
@@ -445,6 +498,9 @@ export class AttributesOutputsComponent {
         if (!this.isOutput(selectedInstanceData.originType)) {
           // convert Attribute FE model -> Attribute BE model, extract only checked
           selectedComponentInstancesAttributes[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
+          if (outputName) {
+            selectedComponentInstancesAttributes[instanceId][0].outputName = outputName;
+          }
         } else {
           selectedComponentInstancesOutputs[instanceId] = this.attributesService.getCheckedAttributes(this.instanceFeAttributesMap[instanceId]);
         }
@@ -455,6 +511,11 @@ export class AttributesOutputsComponent {
     this.topologyTemplateService
     .createOutput(this.component, outputsToCreate, this.isSelf())
     .subscribe((response) => {
+      this.selectedInstanceData = _.find(this.instancesNavigationData, (instance: ComponentInstance) => {
+        return instance.name == SERVICE_SELF_TITLE;
+      });
+      this.hierarchyNavTabs.triggerTabChange('Composition');
+      this.onInstanceSelectedUpdate(this.instances[0]);
       this.setOutputTabIndication(response.length);
       this.checkedAttributesCount = 0;
       response.forEach((output: OutputBEModel) => {

@@ -51,6 +51,7 @@ export class AttributeBEModel {
   subAttributeOutputPath: string;
   outputPath: string;
   toscaPresentation: ToscaPresentationData;
+  outputName: string;
 
   constructor(attribute?: AttributeBEModel) {
     if (attribute) {
@@ -77,6 +78,7 @@ export class AttributeBEModel {
       this.subAttributeOutputPath = attribute.subAttributeOutputPath;
       this.toscaPresentation = attribute.toscaPresentation;
       this.outputPath = attribute.outputPath;
+      this.outputName = attribute.outputName;
     }
 
     if (!this.schema || !this.schema.property) {
