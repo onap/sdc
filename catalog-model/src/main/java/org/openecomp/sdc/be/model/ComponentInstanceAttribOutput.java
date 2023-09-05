@@ -28,6 +28,7 @@ public class ComponentInstanceAttribOutput extends ComponentInstanceAttribute {
 
     private String attributesName;
     private AttributeDefinition output;
+    private String outputName;
 
     public ComponentInstanceAttribOutput() {
         super();

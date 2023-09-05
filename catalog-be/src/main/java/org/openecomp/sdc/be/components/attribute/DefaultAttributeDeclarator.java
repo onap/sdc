@@ -119,7 +119,13 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             //Creating input from property create on self using add property..Do not add the prefix
             generatedInputPrefix = null;
         }
-        final String generatedOutputName = generateOutputName(generatedInputPrefix, attribOutput);
+        String generatedOutputName = null;
+        if (StringUtils.isNotEmpty(attribOutput.getOutputName())) {
+            generatedOutputName = attribOutput.getOutputName();
+        } else {
+            generatedOutputName = generateOutputName(generatedInputPrefix, attribOutput);
+        }
+
         log.debug("createInput: propOwner.uniqueId={}, attribOutput.parentUniqueId={}", propertiesOwner.getUniqueId(),
             attribOutput.getParentUniqueId());
         return createOutputFromAttribute(component.getUniqueId(), propertiesOwner, generatedOutputName, attribOutput, attributeDataDefinition);
