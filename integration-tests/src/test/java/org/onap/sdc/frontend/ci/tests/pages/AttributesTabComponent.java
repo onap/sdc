@@ -45,6 +45,10 @@ public class AttributesTabComponent extends AbstractPageObject {
         }
         waitForElementVisibility(By.xpath(XpathSelector.ATTRIBUTES_CHECKBOX.getXpath(attributeName))).click();
         waitToBeClickable(By.xpath(XpathSelector.DECLARE_OUTPUT_BTN.getXpath())).click();
+        final By setInputNameLocator = By.xpath(XpathSelector.SET_INPUT_NAME_FIELD.getXpath());
+        final WebElement inputNameField = waitForElementVisibility(setInputNameLocator, 5);
+        inputNameField.sendKeys(attributeName);
+        waitToBeClickable(By.xpath(XpathSelector.INPUT_NAME_SAVE_BTN.getXpath())).click();
         waitForAddedOutputNotification();
     }
 
@@ -82,6 +86,8 @@ public class AttributesTabComponent extends AbstractPageObject {
         ATTRIBUTES_CHECKBOX("//checkbox[@data-tests-id='%s']"),
         DECLARE_OUTPUT_BTN("declare-button declare-output", "//button[@data-tests-id='%s']"),
         INSTANCE_SPAN("//div[contains(@class,'table-rows-header')]"),
+        SET_INPUT_NAME_FIELD("//*[@id=\"myText\"]"),
+        INPUT_NAME_SAVE_BTN("//button[@data-tests-id='Save']"),
         ADDED_OUTPUT_NOTIFICATION("tab-indication", "//div[@data-tests-id='Outputs']/div[contains(@class, '%s')]");
 
         @Getter
