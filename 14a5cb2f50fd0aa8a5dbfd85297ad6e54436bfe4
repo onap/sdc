@@ -24,6 +24,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "550ccf46_e66f02db",
+        "filename": "catalog-ui/src/app/ng2/http-interceptor/headers-interceptor.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2023-09-05T09:36:37Z",
+      "side": 1,
+      "message": "it was the existing code, just reused it.",
+      "parentUuid": "070cf62b_a482878d",
+      "range": {
+        "startLine": 20,
+        "startChar": 16,
+        "endLine": 21,
+        "endChar": 90
+      },
+      "revId": "14a5cb2f50fd0aa8a5dbfd85297ad6e54436bfe4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1a4c23e0_04b2af89",
@@ -37,6 +61,30 @@
       "writtenOn": "2023-08-31T10:04:22Z",
       "side": 1,
       "message": "same here",
+      "range": {
+        "startLine": 26,
+        "startChar": 15,
+        "endLine": 28,
+        "endChar": 15
+      },
+      "revId": "14a5cb2f50fd0aa8a5dbfd85297ad6e54436bfe4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e72bc161_7660e3ea",
+        "filename": "catalog-ui/src/app/ng2/http-interceptor/headers-interceptor.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2023-09-05T09:36:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a4c23e0_04b2af89",
       "range": {
         "startLine": 26,
         "startChar": 15,
