@@ -33,6 +33,24 @@
       "message": "Importing with an output defined results in failure. It looks like the original outputs are not deleted when the original service is deleted (TopologyTemplateOperation::deleteToscaElement)\n\nImporting with in_range node filter results in the values in the range being lost, which then causes subsequent problems downloading the template as the in_rnage value is unexpectedly empty",
       "revId": "319cc5d21cba72b7ed1b35763b628437b188f949",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4f4b635d_06a9bc8c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 28
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-09-06T09:31:27Z",
+      "side": 1,
+      "message": "\"Importing with an output defined results in failure. It looks like the original outputs are not deleted when the original service is deleted (TopologyTemplateOperation::deleteToscaElement)\"\n\nDONE\n\n\n\"Importing with in_range node filter results in the values in the range being lost, which then causes subsequent problems downloading the template as the in_rnage value is unexpectedly empty\"\n\nnot related to this commit, same problem without it. Will open separate ticket",
+      "parentUuid": "75441a83_46b99035",
+      "revId": "319cc5d21cba72b7ed1b35763b628437b188f949",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
