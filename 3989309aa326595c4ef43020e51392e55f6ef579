@@ -41,6 +41,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7185d94_2960762a",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/activities-list/activities-list.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-09-06T11:56:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1726d15b_fb907a29",
+      "range": {
+        "startLine": 50,
+        "startChar": 25,
+        "endLine": 50,
+        "endChar": 32
+      },
+      "revId": "3989309aa326595c4ef43020e51392e55f6ef579",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f30c7d42_4f3649cf",
@@ -54,6 +78,30 @@
       "writtenOn": "2023-09-04T16:05:40Z",
       "side": 1,
       "message": "the inputs should be input assignements rather then input definitions",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 14
+      },
+      "revId": "3989309aa326595c4ef43020e51392e55f6ef579",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20e32bac_93f52265",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/activities-list/activities-list.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-09-06T11:56:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f30c7d42_4f3649cf",
       "range": {
         "startLine": 74,
         "startChar": 0,
