@@ -1219,9 +1219,9 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             log.debug("Failed to disassociate instances properties for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
-        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_INPUTS);
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.INST_OUTPUTS);
         if (status != JanusGraphOperationStatus.OK) {
-            log.debug("Failed to disassociate instances inputs for {} error {}", toscaElementVertex.getUniqueId(), status);
+            log.debug("Failed to disassociate instances outputs for {} error {}", toscaElementVertex.getUniqueId(), status);
             Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
         status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.GROUPS);

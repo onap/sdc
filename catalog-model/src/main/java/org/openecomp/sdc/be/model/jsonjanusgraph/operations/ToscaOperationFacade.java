@@ -1791,25 +1791,25 @@ public class ToscaOperationFacade {
     }
 
     public Either<Map<String, List<ComponentInstanceAttribute>>, StorageOperationStatus> addComponentInstanceAttributesToComponent(
-        final Component containerComponent, final Map<String, List<ComponentInstanceAttribute>> instProperties) {
-        requireNonNull(instProperties);
-        for (final Entry<String, List<ComponentInstanceAttribute>> entry : instProperties.entrySet()) {
-            final List<ComponentInstanceAttribute> props = entry.getValue();
-            if (isEmpty(props)) {
+        final Component containerComponent, final Map<String, List<ComponentInstanceAttribute>> componentInstanceAttribute) {
+        requireNonNull(componentInstanceAttribute);
+        for (final Entry<String, List<ComponentInstanceAttribute>> entry : componentInstanceAttribute.entrySet()) {
+            final List<ComponentInstanceAttribute> attributes = entry.getValue();
+            if (isEmpty(attributes)) {
                 continue;
             }
             final String componentInstanceId = entry.getKey();
-            final List<ComponentInstanceAttribute> originalComponentInstProps = containerComponent.getComponentInstancesAttributes()
+            final List<ComponentInstanceAttribute> componentInstanceAttributes = containerComponent.getComponentInstancesAttributes()
                 .get(componentInstanceId);
-            for (final ComponentInstanceAttribute property : props) {
+            for (final ComponentInstanceAttribute attribute : attributes) {
                 final StorageOperationStatus status = updateOrAddComponentInstanceAttribute(containerComponent, componentInstanceId,
-                    originalComponentInstProps, property);
+                    componentInstanceAttributes, attribute);
                 if (status != StorageOperationStatus.OK) {
                     return Either.right(status);
                 }
             }
         }
-        return Either.left(instProperties);
+        return Either.left(componentInstanceAttribute);
     }
 
     private StorageOperationStatus populateAndUpdateInstanceCapProperty(Component containerComponent, String componentInstanceId,
@@ -1847,19 +1847,19 @@ public class ToscaOperationFacade {
     }
 
     private StorageOperationStatus updateOrAddComponentInstanceAttribute(Component containerComponent, String componentInstanceId,
-                                                                         List<ComponentInstanceAttribute> originalComponentInstProps,
-                                                                         ComponentInstanceAttribute property) {
+                                                                         List<ComponentInstanceAttribute> componentInstanceAttributes,
+                                                                         ComponentInstanceAttribute attribute) {
         StorageOperationStatus status;
-        // check if the property already exists or not
-        Optional<ComponentInstanceAttribute> instanceProperty = originalComponentInstProps.stream()
-            .filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
+        // check if the attribute already exists or not
+        Optional<ComponentInstanceAttribute> instanceProperty = componentInstanceAttributes.stream()
+            .filter(p -> p.getUniqueId().equals(attribute.getUniqueId())).findAny();
         if (instanceProperty.isPresent()) {
-            status = updateComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+            status = updateComponentInstanceAttribute(containerComponent, componentInstanceId, attribute);
         } else {
-            status = addComponentInstanceAttribute(containerComponent, componentInstanceId, property);
+            status = addComponentInstanceAttribute(containerComponent, componentInstanceId, attribute);
         }
         if (status != StorageOperationStatus.OK) {
-            log.debug("Failed to update instance property {} for instance {} error {} ", property, componentInstanceId, status);
+            log.debug("Failed to update instance attribute {} for instance {} error {} ", attribute, componentInstanceId, status);
         }
         return status;
     }

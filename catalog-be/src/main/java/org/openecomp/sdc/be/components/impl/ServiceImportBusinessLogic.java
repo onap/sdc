@@ -20,6 +20,8 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.CsarValidationUtils.TOSCA_METADATA_PATH_PATTERN;
+import static org.openecomp.sdc.be.components.impl.CsarValidationUtils.TOSCA_META_ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
@@ -30,6 +32,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fj.data.Either;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,11 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -168,6 +175,8 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
@@ -281,6 +290,50 @@ public class ServiceImportBusinessLogic {
         payload.put("Definitions/service-" + metadata.get("name") + "-template.yml", data.getBytes());
         updateServiceMetadata(newService, metadata);
         return createService(newService, AuditingActionEnum.UPDATE_SERVICE_TOSCA_TEMPLATE, modifier, payload, null);
+    }
+
+    public Service updateServiceFromToscaModel(final String serviceId, final User modifier, final @NotNull InputStream fileToUpload) {
+        final Either<Service, ResponseFormat> serviceResponseFormatEither = serviceBusinessLogic.getService(serviceId, modifier);
+        if (serviceResponseFormatEither.isRight()) {
+            throw new ByActionStatusComponentException(ActionStatus.SERVICE_NOT_FOUND, serviceId);
+        }
+        final Service serviceOriginal = serviceResponseFormatEither.left().value();
+        Map<String, byte[]> csar = null;
+        try {
+            csar = ZipUtils.readZip(fileToUpload.readAllBytes(), false);
+        } catch (final ZipException | IOException e) {
+            log.info("Failed to unzip received csar {}", serviceId, e);
+        }
+        if (csar == null) {
+            throw new ByActionStatusComponentException(ActionStatus.CSAR_NOT_FOUND);
+        }
+        final byte[] mainYamlBytes = readMainYamlFile(csar);
+        final Map<String, String> metadata = (Map<String, String>) new Yaml().loadAs(new String(mainYamlBytes), Map.class).get("metadata");
+        validateServiceMetadataBeforeCreate(serviceOriginal, metadata);
+        final Service newService = cloneServiceIdentifications(serviceOriginal);
+        updateServiceMetadata(newService, metadata);
+        return createService(newService, AuditingActionEnum.UPDATE_SERVICE_TOSCA_MODEL, modifier, csar, null);
+    }
+
+    private byte[] readMainYamlFile(final Map<String, byte[]> csar) {
+        final Pattern pattern = Pattern.compile(TOSCA_METADATA_PATH_PATTERN);
+        final Optional<String> keyOp = csar.keySet().stream().filter(k -> pattern.matcher(k).matches()).findAny();
+        if (keyOp.isEmpty()) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND_IN_CSAR, TOSCA_METADATA_PATH_PATTERN, "");
+        }
+        final Properties props = new Properties();
+        try {
+            final String propStr = new String(csar.get(keyOp.get()));
+            props.load(new StringReader(propStr.replace("\\", "\\\\")));
+        } catch (IOException e) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND_IN_CSAR, TOSCA_META_ENTRY_DEFINITIONS, "");
+        }
+        final String mainYamlFileName = props.getProperty(TOSCA_META_ENTRY_DEFINITIONS);
+        final byte[] mainYamlBytes = csar.get(mainYamlFileName);
+        if (mainYamlBytes == null) {
+            throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_NOT_FOUND_IN_CSAR, mainYamlFileName, "");
+        }
+        return mainYamlBytes;
     }
 
     private Service cloneServiceIdentifications(final Service serviceOriginal) {
