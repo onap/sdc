@@ -130,9 +130,9 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         try {
             validateUserExists(userId);
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
-            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi).left()
-                .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate)).right()
-                .map(componentsUtils::getResponseFormat);
+            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi)
+                .left().bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate))
+                .right().map(componentsUtils::getResponseFormat);
             return result;
         } catch (final ByResponseFormatComponentException e) {
             log.error("#createMultipleOutputs: Exception thrown: ", e);
@@ -191,6 +191,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnoreComponentInstances(false);
         componentParametersView.setIgnoreComponentInstancesOutputs(false);
         componentParametersView.setIgnoreComponentInstancesAttributes(false);
+        componentParametersView.setIgnoreComponentInstancesProperties(false);
         componentParametersView.setIgnoreUsers(false);
         return componentParametersView;
     }
