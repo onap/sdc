@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "319cc5d21cba72b7ed1b35763b628437b188f949",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "75441a83_46b99035",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 28
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-06T07:19:56Z",
+      "side": 1,
+      "message": "Importing with an output defined results in failure. It looks like the original outputs are not deleted when the original service is deleted (TopologyTemplateOperation::deleteToscaElement)\n\nImporting with in_range node filter results in the values in the range being lost, which then causes subsequent problems downloading the template as the in_rnage value is unexpectedly empty",
+      "revId": "319cc5d21cba72b7ed1b35763b628437b188f949",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
