@@ -288,7 +288,6 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                                                                          final String attributeName,
                                                                          final ComponentInstance componentInstance) {
         // From Instance
-        final List<OutputDefinition> result = new ArrayList<>();
         final var componentInstanceAttributes = componentInstance.getAttributes();
         if (CollectionUtils.isNotEmpty(componentInstanceAttributes)) {
             final var componentInstanceAttributeOptional = componentInstanceAttributes.stream()
@@ -297,12 +296,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 final var componentInstOutputsMap = new ComponentInstOutputsMap();
                 componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
                     Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get()))));
-                final var createdOutputs = createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE,
+                return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE,
                     componentInstOutputsMap, true, false);
-                if (createdOutputs.isRight()) {
-                    return Either.right((createdOutputs.right().value()));
-                }
-                result.addAll(createdOutputs.left().value());
             }
         }
         final List<PropertyDefinition> componentInstanceProperties = componentInstance.getProperties();
@@ -318,7 +313,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE, componentInstOutputsMap, true, false);
             }
         }
-        return Either.left(result);
+        return Either.left(new ArrayList<>());
     }
 
     @NotNull
