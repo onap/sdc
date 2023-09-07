@@ -138,11 +138,8 @@ public abstract class LifeCycleTransition {
         }
         // this is only used in 2 cases
 
-        //1. when creating vfc/cp when import vf from csar - when we
-
-        // create resources from node type, we create need to change the state
-
-        // to certified
+        //1. when creating vfc/cp when import vf from CSAR - when we
+        // create resources from node type, we create need to change the state to certified
 
         //2. certification flow upno upgrade migration
         if (lifecycleChangeInfo != null && lifecycleChangeInfo.getAction() != null && (
@@ -150,8 +147,7 @@ public abstract class LifeCycleTransition {
                 || lifecycleChangeInfo.getAction() == LifecycleChanceActionEnum.UPGRADE_MIGRATION)) {
             return Either.left(true);
         }
-        ResponseFormat responseFormat = componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
-        return Either.right(responseFormat);
+        return Either.right(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
     }
 
     protected boolean userResourceRoleValidation(Component component, ComponentTypeEnum componentType, User modifier) {

@@ -1423,16 +1423,15 @@ public abstract class BaseOperation {
             mergedToscaDataMap.putAll(existingToscaDataMap);
         }
         for (T toscaDataElement : toscaDataList) {
-            status = handleToscaDataElement(toscaElement, mapKeyField, mergedToscaDataMap, toscaDataElement, isUpdate);
+            status = handleToscaDataElement(toscaElement.getUniqueId(), mapKeyField, mergedToscaDataMap, toscaDataElement, isUpdate);
             if (status != StorageOperationStatus.OK) {
-                result = Either.right(status);
-                break;
+                return Either.right(status);
             }
         }
         return result;
     }
 
-    private <T extends ToscaDataDefinition> StorageOperationStatus handleToscaDataElement(GraphVertex toscaElement,
+    private <T extends ToscaDataDefinition> StorageOperationStatus handleToscaDataElement(String toscaElementId,
                                                                                           JsonPresentationFields mapKeyField,
                                                                                           Map<String, T> mergedToscaDataMap, T toscaDataElement,
                                                                                           boolean isUpdate) {
@@ -1450,7 +1449,7 @@ public abstract class BaseOperation {
             status = StorageOperationStatus.BAD_REQUEST;
         } else if (!isUpdate && mergedToscaDataMap.containsKey(currKey)) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
-                "Failed to add tosca data to tosca element {}. The element with the same key {} already exists. ", toscaElement.getUniqueId(),
+                "Failed to add tosca data to tosca element {}. The element with the same key {} already exists. ", toscaElementId,
                 currKey);
             status = StorageOperationStatus.BAD_REQUEST;
         }

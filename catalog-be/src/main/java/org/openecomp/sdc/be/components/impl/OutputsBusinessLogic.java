@@ -138,9 +138,9 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             if (status.getLeft() != StorageOperationStatus.OK) {
                 throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.OUTPUT_NAME_ALREADY_EXIST, status.getRight()));
             }
-            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi).left()
-                .bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate)).right()
-                .map(componentsUtils::getResponseFormat);
+            result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi)
+                .left().bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate))
+                .right().map(componentsUtils::getResponseFormat);
             return result;
         } catch (final ByResponseFormatComponentException e) {
             log.error("#createMultipleOutputs: Exception thrown: ", e);
@@ -222,6 +222,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnoreComponentInstances(false);
         componentParametersView.setIgnoreComponentInstancesOutputs(false);
         componentParametersView.setIgnoreComponentInstancesAttributes(false);
+        componentParametersView.setIgnoreComponentInstancesProperties(false);
         componentParametersView.setIgnoreUsers(false);
         return componentParametersView;
     }
