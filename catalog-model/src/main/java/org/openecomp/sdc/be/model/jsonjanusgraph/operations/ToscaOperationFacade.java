@@ -17,13 +17,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
+
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.janusgraph.core.attribute.Text.REGEX;
+import static org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum.TOPOLOGY_TEMPLATE;
 
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -113,32 +139,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.janusgraph.core.attribute.Text.REGEX;
-import static org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum.TOPOLOGY_TEMPLATE;
-
 @org.springframework.stereotype.Component("tosca-operation-facade")
 public class ToscaOperationFacade {
 
@@ -146,9 +146,11 @@ public class ToscaOperationFacade {
     public static final String PROXY_SUFFIX = "_proxy";
     // region - Fields
     private static final String COULDNT_FETCH_A_COMPONENT_WITH_AND_UNIQUE_ID_ERROR = "Couldn't fetch a component with and UniqueId {}, error: {}";
-    private static final String FAILED_TO_FIND_RECENTLY_ADDED_PROPERTY_ON_THE_RESOURCE_STATUS_IS = "Failed to find recently added property {} on the resource {}. Status is {}. ";
+    private static final String FAILED_TO_FIND_RECENTLY_ADDED_PROPERTY_ON_THE_RESOURCE_STATUS_IS =
+        "Failed to find recently added property {} on the resource {}. Status is {}. ";
     private static final String FAILED_TO_GET_UPDATED_RESOURCE_STATUS_IS = "Failed to get updated resource {}. Status is {}. ";
-    private static final String FAILED_TO_ADD_THE_PROPERTY_TO_THE_RESOURCE_STATUS_IS = "Failed to add the property {} to the resource {}. Status is {}. ";
+    private static final String FAILED_TO_ADD_THE_PROPERTY_TO_THE_RESOURCE_STATUS_IS =
+        "Failed to add the property {} to the resource {}. Status is {}. ";
     private static final String SERVICE = "service";
     private static final String VF = "VF";
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
@@ -2532,7 +2534,7 @@ public class ToscaOperationFacade {
         }
         Component component = latestVersionList.size() == 1 ? latestVersionList.get(0)
             : latestVersionList.stream().max((c1, c2) -> Double.compare(Double.parseDouble(c1.getVersion()), Double.parseDouble(c2.getVersion())))
-                .get();
+            .get();
         return Either.left(component);
     }
 
