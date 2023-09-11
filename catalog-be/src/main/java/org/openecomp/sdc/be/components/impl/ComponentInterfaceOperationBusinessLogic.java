@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -304,6 +305,84 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             }
         }
         return Optional.of(component);
+    }
+
+    public Optional<ComponentInstance> createComponentInstanceInterfaceOperation(String componentId, String componentInstanceId,
+                                                                                 InterfaceDefinition interfaceDefinition,
+                                                                                 ComponentTypeEnum componentTypeEnum,
+                                                                                 Wrapper<ResponseFormat> errorWrapper, final boolean shouldLock)
+        throws BusinessLogicException {
+        ResponseFormat responseFormat;
+        final Component component = getComponent(componentId);
+        final Optional<ComponentInstance> componentInstanceOptional = componentValidations.getComponentInstance(component, componentInstanceId);
+        if (componentInstanceOptional.isEmpty()) {
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
+            LOGGER.debug("Failed to find component instance with id {}, error: {}", componentInstanceId, responseFormat);
+            errorWrapper.setInnerElement(responseFormat);
+            return Optional.empty();
+        }
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaceMap = component.getComponentInstancesInterfaces();
+        if (MapUtils.isEmpty(componentInstancesInterfaceMap)) {
+            componentInstancesInterfaceMap = new HashMap<>();
+            component.setComponentInstancesInterfaces(componentInstancesInterfaceMap);
+        }
+        final String interfaceKey = interfaceDefinition.getType();
+        interfaceDefinition.setUniqueId(interfaceKey);
+        interfaceDefinition.setToscaResourceName(interfaceKey);
+        interfaceDefinition.setUserCreated(true);
+
+        final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinition.getOperations().values().stream().findFirst();
+        if (optionalOperationDataDefinition.isEmpty()) {
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, interfaceKey);
+            LOGGER.debug("Failed to find interface operation on interface being added {}, error: {}", interfaceKey, responseFormat);
+            errorWrapper.setInnerElement(responseFormat);
+            return Optional.empty();
+        }
+
+        final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
+        updatedOperationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        updatedOperationDataDefinition.getImplementation()
+            .setArtifactName(generateArtifactName(updatedOperationDataDefinition.getImplementation().getArtifactName()));
+
+        List<ComponentInstanceInterface> componentInstanceInterfaceList = componentInstancesInterfaceMap.get(componentInstanceId);
+        componentInstanceInterfaceList = CollectionUtils.isEmpty(componentInstanceInterfaceList) ? new ArrayList<>() : componentInstanceInterfaceList;
+        Optional<ComponentInstanceInterface> componentInstanceInterface =
+            componentInstanceInterfaceList.stream().filter(instInterface -> instInterface.getInterfaceId().equals(interfaceKey)).findFirst();
+
+        if (componentInstanceInterface.isEmpty()) {
+            componentInstanceInterfaceList.add(new ComponentInstanceInterface(interfaceKey, interfaceDefinition));
+            componentInstanceOptional.get().addInterface(interfaceKey, interfaceDefinition);
+        } else {
+            componentInstanceInterface.get().getOperations().put(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
+        }
+
+        boolean wasLocked = false;
+        try {
+            if (shouldLock) {
+                lockComponent(componentId, component, UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE);
+                wasLocked = true;
+            }
+            StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId);
+            if (status != StorageOperationStatus.OK) {
+                janusGraphDao.rollback();
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+                LOGGER.error(EXCEPTION_OCCURRED_WHEN_UPDATING_COMPONENT_INSTANCE_INTERFACES, responseFormat);
+                errorWrapper.setInnerElement(responseFormat);
+                return Optional.empty();
+            }
+            janusGraphDao.commit();
+        } catch (final Exception e) {
+            janusGraphDao.rollback();
+            LOGGER.error("Exception occurred when updating Interface Operation on Component Instance: {}", e.getMessage(), e);
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            errorWrapper.setInnerElement(responseFormat);
+            throw new BusinessLogicException(responseFormat);
+        } finally {
+            if (wasLocked) {
+                unlockComponent(component.getUniqueId(), componentTypeEnum);
+            }
+        }
+        return componentInstanceOptional;
     }
 
     public Optional<Component> createInterfaceOperationInResource(final String componentId, final InterfaceDefinition interfaceDefinition,
