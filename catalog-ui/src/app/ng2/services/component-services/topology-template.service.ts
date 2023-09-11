@@ -36,6 +36,7 @@ import {
     IFileDownload,
     InputBEModel,
     InstancePropertiesAPIMap,
+    InterfaceModel,
     OperationModel,
     PropertyModel,
     Requirement
@@ -664,6 +665,31 @@ export class TopologyTemplateService {
     getDefaultCustomFunction(type='ALL'): Observable<CustomToscaFunction[]> {
         return this.http.get<DefaultCustomFunctions>(this.baseUrl + "customToscaFunctions/" + type)
         .pipe(map(response => response && response.defaultCustomToscaFunction  ? response.defaultCustomToscaFunction : []));
+    }
+
+    createComponentInstanceInterfaceOperation(componentMetaDataId: string, componentInstanceId: string,
+        operation: InterfaceOperationModel): Observable<InterfaceOperationModel> {
+        const operationList = {
+            interfaces: {
+                [operation.interfaceType]: {
+                    type: operation.interfaceType,
+                    operations: {
+                        [operation.name]: new BEInterfaceOperationModel(operation)
+                    }
+                }
+            }
+        };
+        return this.http.post<any>(this.baseUrl + 'services/' + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList)
+        .map((res: any) => {
+            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+
+            return new InterfaceOperationModel({
+                ...newOperation,
+                interfaceType: interf.type,
+                interfaceId: interf.uniqueId,
+            });
+        });
     }
 
 }
