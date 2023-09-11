@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de848560_ecdf29e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-11T13:24:03Z",
+      "side": 1,
+      "message": "Generated tosca:\n          milestones:\n            on_entry:\n              activities:\n              - type: delegate\n                workflow: def\n                \nShould be:\n          milestones:\n            on_entry:\n              activities:\n                - delegate                           \u003c-- i..e no \u0027type:\u0027\n                  workflow: def",
+      "revId": "3429a6996e01b0d9aabb169b46b486648a4e6adb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
