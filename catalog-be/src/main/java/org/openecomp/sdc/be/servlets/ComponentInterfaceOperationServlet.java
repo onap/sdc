@@ -18,6 +18,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.servlets;
 
 import static org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum.RESOURCE;
@@ -87,7 +88,8 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
     private static final String FAILED_TO_UPDATE_INTERFACE_OPERATION_WITH_ERROR = "Failed to update Interface Operation with an error";
     private static final String INTERFACE_OPERATION_CONTENT_INVALID = "Interface Operation content is invalid - {}";
     private static final String UNSUPPORTED_COMPONENT_TYPE = "Unsupported component type {}";
-    private static final String INTERFACE_OPERATION_SUCCESSFULLY_UPDATED = "Interface Operation successfully updated on component instance with id {}";
+    private static final String INTERFACE_OPERATION_SUCCESSFULLY_UPDATED =
+        "Interface Operation successfully updated on component instance with id {}";
     private final ComponentInterfaceOperationBusinessLogic componentInterfaceOperationBusinessLogic;
 
     @Autowired
@@ -198,6 +200,62 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         } catch (final ComponentException e) {
             //let it be handled by org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper
             throw e;
+        } catch (final Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_INTERFACE_OPERATION);
+            LOGGER.error(FAILED_TO_UPDATE_INTERFACE_OPERATION_WITH_ERROR, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    @POST
+    @Path("/{componentType}/{componentId}/componentInstance/{componentInstanceId}/interfaceOperation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(description = "Create Interface Operation", method = "POST", summary = "Create Interface Operation on ComponentInstance", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Create Interface Operation"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response createComponentInstanceInterfaceOperation(
+        @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
+            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") String componentType,
+        @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
+        @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
+        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
+        LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
+        userId = ValidationUtils.sanitizeInputString(userId);
+        componentType = ValidationUtils.sanitizeInputString(componentType);
+        componentInstanceId = ValidationUtils.sanitizeInputString(componentInstanceId);
+        LOGGER.debug(MODIFIER_ID_IS, userId);
+        final User userModifier = componentInterfaceOperationBusinessLogic.validateUser(userId);
+        final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
+        if (componentTypeEnum == null) {
+            LOGGER.debug(UNSUPPORTED_COMPONENT_TYPE, componentType);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, componentType));
+        }
+        final byte[] bytes = IOUtils.toByteArray(request.getInputStream());
+        if (bytes == null || bytes.length == 0) {
+            LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID, "content is empty");
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+        }
+        final String data = new String(bytes);
+        final Optional<InterfaceDefinition> mappedInterfaceOperationData = getMappedInterfaceData(data, userModifier, componentTypeEnum);
+        if (mappedInterfaceOperationData.isEmpty()) {
+            LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID, data);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+        }
+        final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+        try {
+            final Optional<ComponentInstance> actionResponse = componentInterfaceOperationBusinessLogic.createComponentInstanceInterfaceOperation(
+                componentId, componentInstanceId, mappedInterfaceOperationData.get(), componentTypeEnum, errorWrapper, true);
+            if (actionResponse.isEmpty()) {
+                LOGGER.error(FAILED_TO_UPDATE_INTERFACE_OPERATION, componentInstanceId);
+                return buildErrorResponse(errorWrapper.getInnerElement());
+            } else {
+                LOGGER.debug(INTERFACE_OPERATION_SUCCESSFULLY_UPDATED, componentInstanceId);
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.get());
+            }
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_INTERFACE_OPERATION);
             LOGGER.error(FAILED_TO_UPDATE_INTERFACE_OPERATION_WITH_ERROR, e);

@@ -26,7 +26,7 @@ import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
 import {IModalButtonComponent, SdcUiServices} from 'onap-ui-angular';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-
+import {ResourceType, ComponentType} from "app/utils";
 import {ModalService} from 'app/ng2/services/modal.service';
 import {
     ArtifactModel,
@@ -238,9 +238,13 @@ export class InterfaceDefinitionComponent {
     }
 
     onInstanceSelectedUpdate = (instance: any) => {
+        this.interfaces = [];
         this.selectedInstanceData = instance;
         if (instance.name != "SELF") {
-            this.disableFlag = true;
+            this.disableFlag = !this.isAllowAddOperation(instance.originType);
+            if (!instance.interfaces) {
+                return;
+            }
             let newInterfaces : InterfaceModel[] = [];
             if (instance.interfaces instanceof Array) {
                 instance.interfaces.forEach(result => {
@@ -252,6 +256,8 @@ export class InterfaceDefinitionComponent {
                     } else if (!_.isEmpty(result.operations)) {
                         interfaceObj.operations = [];
                         Object.keys(result.operations).forEach(name => {
+                            result.operations[name].interfaceId = result.type;
+                            result.operations[name].interfaceType = result.type;
                             interfaceObj.operations.push(result.operations[name]);
                         });
                     }
@@ -268,6 +274,8 @@ export class InterfaceDefinitionComponent {
                     } else if (!_.isEmpty(obj.operations)) {
                         interfaceObj.operations = [];
                         Object.keys(obj.operations).forEach(name => {
+                            obj.operations[name].interfaceId = key;
+                            obj.operations[name].interfaceType = key;
                             interfaceObj.operations.push(obj.operations[name]);
                         });
                     }
@@ -276,9 +284,17 @@ export class InterfaceDefinitionComponent {
             }
             this.interfaces = newInterfaces.map((interf) => new UIInterfaceModel(interf));
         } else {
+            this.disableFlag = true;
             this.interfaces = this.serviceInterfaces.map((interf) => new UIInterfaceModel(interf));
         }
         this.sortInterfaces();
+    }
+
+    isAllowAddOperation(originType: string): boolean {
+        if (originType && (originType === ResourceType.VFC || originType === ResourceType.CP || originType === ResourceType.VL)){
+            return true;
+        }
+        return false;
     }
 
     initInterfaces(interfaces: InterfaceModel[]): void {
@@ -294,9 +310,6 @@ export class InterfaceDefinitionComponent {
     private disableSaveButton = (): boolean => {
         let disable:boolean = true;
         if(this.readonly) {
-            return disable;
-        }
-        if (this.component.isService()) {
             return disable;
         }
         const validMilestoneActivities = this.modalInstance.instance.dynamicContent.instance.validMilestoneActivities;
@@ -376,53 +389,106 @@ export class InterfaceDefinitionComponent {
         if (timeout != null) {
             operationToUpdate.implementation.timeout = timeout;
         }
-        this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
-        .subscribe((newOperation: InterfaceOperationModel) => {
-            let oldOpIndex;
-            let oldInterf;
-            this.interfaces.forEach(interf => {
-                interf.operations.forEach(op => {
-                    if (op.uniqueId === newOperation.uniqueId) {
-                        oldInterf = interf;
-                        oldOpIndex = interf.operations.findIndex((el) => el.uniqueId === op.uniqueId);
-                    }
+        if (this.component.componentType === ComponentType.SERVICE) {
+            this.topologyTemplateService.updateComponentInstanceInterfaceOperation(this.component.uniqueId, this.component.componentType, this.selectedInstanceData.uniqueId, operationToUpdate)
+            .subscribe((res) => {
+                const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operationToUpdate.interfaceType);
+                const newOp: OperationModel = _.find(interf.operations, op => op.name === operationToUpdate.name);
+                let newOperation = new InterfaceOperationModel({
+                    ...newOp,
+                    interfaceType: interf.type,
+                    interfaceId: interf.uniqueId,
+                })
+                let oldOpIndex;
+                let oldInterf;
+                this.interfaces.forEach(interf => {
+                    interf.operations.forEach(op => {
+                        if (op.uniqueId === newOperation.uniqueId) {
+                            oldInterf = interf;
+                            oldOpIndex = interf.operations.findIndex((el) => el.uniqueId === op.uniqueId);
+                        }
+                    });
                 });
+                oldInterf.operations.splice(oldOpIndex, 1);
+                oldInterf.operations.push(new InterfaceOperationModel(newOperation));
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+            }, () => {
+                this.sortInterfaces();
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
             });
-            oldInterf.operations.splice(oldOpIndex, 1);
-            oldInterf.operations.push(new InterfaceOperationModel(newOperation));
-        }, error => {
-            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-        }, () => {
-            this.sortInterfaces();
-            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-            this.modalServiceNg2.closeCurrentModal();
-        });
+        } else {
+            this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
+            .subscribe((newOperation: InterfaceOperationModel) => {
+                let oldOpIndex;
+                let oldInterf;
+                this.interfaces.forEach(interf => {
+                    interf.operations.forEach(op => {
+                        if (op.uniqueId === newOperation.uniqueId) {
+                            oldInterf = interf;
+                            oldOpIndex = interf.operations.findIndex((el) => el.uniqueId === op.uniqueId);
+                        }
+                    });
+                });
+                oldInterf.operations.splice(oldOpIndex, 1);
+                oldInterf.operations.push(new InterfaceOperationModel(newOperation));
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+            }, () => {
+                this.sortInterfaces();
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        }
     }
 
     private createOperationCallback(): void {
         this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
         const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
-        console.log('createOperationCallback', operationToUpdate);
-        console.log('this.component', this.component);
-        this.componentServiceNg2.createComponentInterfaceOperation(this.component.uniqueId, this.component.getTypeUrl(), operationToUpdate)
-        .subscribe((newOperation: InterfaceOperationModel) => {
-            const foundInterface = this.interfaces.find(value => value.type === newOperation.interfaceType);
-            if (foundInterface) {
-                foundInterface.operations.push(new UIOperationModel(new OperationModel(newOperation)));
-            } else {
-                const uiInterfaceModel = new UIInterfaceModel();
-                uiInterfaceModel.type = newOperation.interfaceType;
-                uiInterfaceModel.uniqueId = newOperation.interfaceType;
-                uiInterfaceModel.operations = [];
-                uiInterfaceModel.operations.push(new UIOperationModel(new OperationModel(newOperation)));
-                this.interfaces.push(uiInterfaceModel);
-            }
-        }, error => {
-            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-        }, () => {
-            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
-            this.modalServiceNg2.closeCurrentModal();
-        });
+        if (this.component.componentType === ComponentType.SERVICE) {
+            this.topologyTemplateService.createComponentInstanceInterfaceOperation(this.component.uniqueId, this.selectedInstanceData.uniqueId, operationToUpdate)
+            .subscribe((newOperation: InterfaceOperationModel) => {
+                const foundInterface = this.interfaces.find(value => value.type === newOperation.interfaceType);
+                if (foundInterface) {
+                    foundInterface.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+                } else {
+                    const uiInterfaceModel = new UIInterfaceModel();
+                    uiInterfaceModel.type = newOperation.interfaceType;
+                    uiInterfaceModel.uniqueId = newOperation.interfaceType;
+                    uiInterfaceModel.operations = [];
+                    uiInterfaceModel.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+                    this.interfaces.push(uiInterfaceModel);
+                }
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        } else {
+            this.componentServiceNg2.createComponentInterfaceOperation(this.component.uniqueId, this.component.getTypeUrl(), operationToUpdate)
+            .subscribe((newOperation: InterfaceOperationModel) => {
+                const foundInterface = this.interfaces.find(value => value.type === newOperation.interfaceType);
+                if (foundInterface) {
+                    foundInterface.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+                } else {
+                    const uiInterfaceModel = new UIInterfaceModel();
+                    uiInterfaceModel.type = newOperation.interfaceType;
+                    uiInterfaceModel.uniqueId = newOperation.interfaceType;
+                    uiInterfaceModel.operations = [];
+                    uiInterfaceModel.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+                    this.interfaces.push(uiInterfaceModel);
+                }
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
+            }, () => {
+                this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+                this.modalServiceNg2.closeCurrentModal();
+            });
+        }
     }
 
     private handleEnableAddArtifactImplementation = (newOperation: InterfaceOperationModel): InterfaceOperationModel => {
