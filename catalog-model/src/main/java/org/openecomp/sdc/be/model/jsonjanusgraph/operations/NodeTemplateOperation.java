@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
@@ -134,7 +135,8 @@ public class NodeTemplateOperation extends BaseOperation {
     static final String HEAT_VF_ENV_NAME = "VfHeatEnv";
     static final String HEAT_ENV_SUFFIX = "env";
     private static final String FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR = "Failed to fetch container vertex {} error {}";
-    private static final String FAILED_TO_UPDATE_TOPOLOGY_TEMPLATE_WITH_NEW_COMPONENT_INSTANCE = "Failed to update topology template {} with new component instance {}. ";
+    private static final String FAILED_TO_UPDATE_TOPOLOGY_TEMPLATE_WITH_NEW_COMPONENT_INSTANCE =
+        "Failed to update topology template {} with new component instance {}. ";
     private static final String ARTIFACT_PLACEHOLDER_TYPE = "type";
     private static final String ARTIFACT_PLACEHOLDER_DISPLAY_NAME = "displayName";
     private static final Object ARTIFACT_PLACEHOLDER_DESCRIPTION = "description";
@@ -669,31 +671,35 @@ public class NodeTemplateOperation extends BaseOperation {
         if (composition != null) {
             Map<String, RelationshipInstDataDefinition> relations = composition.getRelations();
             if (MapUtils.isNotEmpty(relations)) {
-                Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult = fetchContainerCalculatedCapability(
-                    containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+                Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult =
+                    fetchContainerCalculatedCapability(
+                        containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
                 if (capResult.isRight()) {
                     return capResult.right().value();
 
                 }
                 Map<String, MapListCapabilityDataDefinition> calculatedCapabilty = capResult.left().value().getRight();
 
-                Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult = fetchContainerCalculatedCapability(
-                    containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
+                Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult =
+                    fetchContainerCalculatedCapability(
+                        containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
                 if (capFullResult.isRight()) {
                     return capFullResult.right().value();
 
                 }
                 Map<String, MapListCapabilityDataDefinition> fullFilledCapabilty = capFullResult.left().value().getRight();
 
-                Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult = fetchContainerCalculatedRequirement(
-                    containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+                Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult =
+                    fetchContainerCalculatedRequirement(
+                        containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
                 if (reqResult.isRight()) {
                     return reqResult.right().value();
                 }
                 Map<String, MapListRequirementDataDefinition> calculatedRequirement = reqResult.left().value().getRight();
 
-                Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult = fetchContainerCalculatedRequirement(
-                    containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
+                Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult =
+                    fetchContainerCalculatedRequirement(
+                        containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
                 if (reqResult.isRight()) {
                     return reqResult.right().value();
                 }
@@ -1588,26 +1594,30 @@ public class NodeTemplateOperation extends BaseOperation {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error));
         }
         GraphVertex containerV = containerVEither.left().value();
-        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult = fetchContainerCalculatedCapability(
-            containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult =
+            fetchContainerCalculatedCapability(
+                containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (capResult.isRight()) {
             return Either.right(capResult.right().value());
         }
         Map<String, MapListCapabilityDataDefinition> calculatedCapabilty = capResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult = fetchContainerCalculatedCapability(
-            containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
+        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult =
+            fetchContainerCalculatedCapability(
+                containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
         if (capResult.isRight()) {
             return Either.right(capResult.right().value());
         }
         Map<String, MapListCapabilityDataDefinition> fullFilledCapabilty = capFullResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult = fetchContainerCalculatedRequirement(
-            containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult =
+            fetchContainerCalculatedRequirement(
+                containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
         if (reqResult.isRight()) {
             return Either.right(reqResult.right().value());
         }
         Map<String, MapListRequirementDataDefinition> calculatedRequirement = reqResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult = fetchContainerCalculatedRequirement(
-            containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult =
+            fetchContainerCalculatedRequirement(
+                containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
         if (reqResult.isRight()) {
             return Either.right(reqResult.right().value());
         }
@@ -1823,26 +1833,30 @@ public class NodeTemplateOperation extends BaseOperation {
         }
         Map<String, RelationshipInstDataDefinition> relations = compositionDataDefinition.getRelations();
         List<CapabilityRequirementRelationship> relationPairList = requirementDef.getRelationships();
-        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult = fetchContainerCalculatedCapability(
-            containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capResult =
+            fetchContainerCalculatedCapability(
+                containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
         if (capResult.isRight()) {
             return Either.right(capResult.right().value());
         }
         Map<String, MapListCapabilityDataDefinition> calculatedCapability = capResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult = fetchContainerCalculatedCapability(
-            containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
+        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capFullResult =
+            fetchContainerCalculatedCapability(
+                containerV, EdgeLabelEnum.FULLFILLED_CAPABILITIES);
         if (capResult.isRight()) {
             return Either.right(capResult.right().value());
         }
         Map<String, MapListCapabilityDataDefinition> fulfilledCapability = capFullResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult = fetchContainerCalculatedRequirement(
-            containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqResult =
+            fetchContainerCalculatedRequirement(
+                containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS);
         if (reqResult.isRight()) {
             return Either.right(reqResult.right().value());
         }
         Map<String, MapListRequirementDataDefinition> calculatedRequirement = reqResult.left().value().getRight();
-        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult = fetchContainerCalculatedRequirement(
-            containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> reqFullResult =
+            fetchContainerCalculatedRequirement(
+                containerV, EdgeLabelEnum.FULLFILLED_REQUIREMENTS);
         if (reqResult.isRight()) {
             return Either.right(reqResult.right().value());
         }
@@ -2237,8 +2251,9 @@ public class NodeTemplateOperation extends BaseOperation {
 
     private Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> fetchContainerCalculatedCapability(
         GraphVertex containerV, EdgeLabelEnum capLabel) {
-        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, JanusGraphOperationStatus> calculatedCapabiltyEither = getDataAndVertexFromGraph(
-            containerV, capLabel);
+        Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, JanusGraphOperationStatus> calculatedCapabiltyEither =
+            getDataAndVertexFromGraph(
+                containerV, capLabel);
         if (calculatedCapabiltyEither.isRight()) {
             JanusGraphOperationStatus error = calculatedCapabiltyEither.right().value();
             CommonUtility
@@ -2251,8 +2266,9 @@ public class NodeTemplateOperation extends BaseOperation {
 
     private Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, StorageOperationStatus> fetchContainerCalculatedRequirement(
         GraphVertex containerV, EdgeLabelEnum reqLabel) {
-        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, JanusGraphOperationStatus> calculatedRequirementEither = getDataAndVertexFromGraph(
-            containerV, reqLabel);
+        Either<Pair<GraphVertex, Map<String, MapListRequirementDataDefinition>>, JanusGraphOperationStatus> calculatedRequirementEither =
+            getDataAndVertexFromGraph(
+                containerV, reqLabel);
         if (calculatedRequirementEither.isRight()) {
             JanusGraphOperationStatus error = calculatedRequirementEither.right().value();
             CommonUtility

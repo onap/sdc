@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -416,6 +417,126 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
             .updateComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
                 ComponentTypeEnum.SERVICE, errorWrapper, false);
         assertThat(result).isPresent();
+    }
+
+    @Test
+    void createComponentInstanceInterfaceOperationTest() throws BusinessLogicException {
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        final Map<String, OperationDataDefinition> operations = new HashMap<>();
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName("EO Implementation info");
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        operations.put("configure", operationDataDefinition);
+        interfaceDefinition.setOperations(operations );
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, new ArrayList<>());
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+        when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId))
+            .thenReturn(StorageOperationStatus.OK);
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .createComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, new Wrapper<>(), true);
+        assertThat(result).isPresent();
+    }
+
+    @Test
+    void createComponentInstanceInterfaceOperationTestUpdateFail() throws BusinessLogicException {
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        final Map<String, OperationDataDefinition> operations = new HashMap<>();
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName("EO Implementation info");
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        operations.put("configure", operationDataDefinition);
+        interfaceDefinition.setOperations(operations );
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, new ArrayList<>());
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+        when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId))
+            .thenReturn(StorageOperationStatus.GENERAL_ERROR);
+        when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .createComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, new Wrapper<>(), true);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void createComponentInstanceInterfaceOperationTestNoInstances() throws BusinessLogicException {
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .createComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, new Wrapper<>(), true);
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void createComponentInstanceInterfaceOperationTestNoOperations() throws BusinessLogicException {
+        final String componentId = component.getUniqueId();
+        final String componentInstanceId = componentInstance.getUniqueId();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+
+        Map<String, List<ComponentInstanceInterface>> componentInstancesInterfacesMap = new HashMap<>();
+        componentInstancesInterfacesMap.put(componentInstanceId, new ArrayList<>());
+        componentInstance.setInterfaces(
+            (Map<String, Object>) new HashMap<>().put(componentInstanceId, interfaceDefinition));
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
+        when(componentValidations.getComponentInstance(component, componentInstanceId))
+            .thenReturn(Optional.of(componentInstance));
+
+        final Optional<ComponentInstance> result = componentInterfaceOperationBusinessLogic
+            .createComponentInstanceInterfaceOperation(componentId, componentInstanceId, interfaceDefinition,
+                ComponentTypeEnum.SERVICE, new Wrapper<>(), true);
+        assertThat(result).isEmpty();
     }
 
     private void initComponentData() {
