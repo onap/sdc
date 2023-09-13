@@ -51,8 +51,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -107,7 +105,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Policy already exist"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createPolicy(@PathParam("componentId") final String containerComponentId,
                                  @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                      ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -134,7 +131,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Policy updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / policy Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePolicy(@PathParam("componentId") final String containerComponentId,
                                  @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                      ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -165,7 +161,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / policy Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPolicy(@PathParam("componentId") final String containerComponentId,
                               @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                   ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -187,7 +182,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / policy Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deletePolicy(@PathParam("componentId") final String containerComponentId,
                                  @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                      ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -209,7 +203,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / policy Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response undeclarePolicy(@PathParam("componentId") final String containerComponentId,
                                     @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                         ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -244,7 +237,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Componentorpolicy  not found"),
         @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPolicyProperties(
         @Parameter(description = "the id of the component which is the container of the policy") @PathParam("componentId") final String containerComponentId,
         @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -266,7 +258,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / policy Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePolicyProperties(@PathParam("componentId") final String containerComponentId,
                                            @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -304,7 +295,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Policy target updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePolicyTargets(@PathParam("componentId") final String containerComponentId,
                                         @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                             ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -324,7 +314,6 @@ public class PolicyServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response declareProperties(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
                                       @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                       @Parameter(description = "ComponentIns policies Object to be created", required = true) String componentInstPoliciesMapObj) {

@@ -98,8 +98,6 @@ public class DmaapClientFactory {
         props.setProperty("AFT_DME2_EP_READ_TIMEOUT_MS", Integer.toString(parameters.getAftDme2ReadTimeoutMs()));
         props.setProperty("AFT_DME2_SSL_ENABLE", Boolean.toString(parameters.isAftDme2SslEnable()));
         props.setProperty("AFT_DME2_CLIENT_IGNORE_SSL_CONFIG", Boolean.toString(parameters.isAftDme2ClientIgnoreSslConfig()));
-        props.setProperty("AFT_DME2_CLIENT_KEYSTORE", parameters.getAftDme2ClientKeystore());
-        props.setProperty("AFT_DME2_CLIENT_KEYSTORE_PASSWORD", parameters.getAftDme2ClientKeystorePassword());
         props.setProperty("AFT_DME2_CLIENT_SSL_CERT_ALIAS", parameters.getAftDme2ClientSslCertAlias());
         String dme2PreferredRouterFilePath = parameters.getDme2preferredRouterFilePath();
         ensureFileExists(dme2PreferredRouterFilePath);
@@ -145,8 +143,6 @@ public class DmaapClientFactory {
         props.setProperty("AFT_DME2_EP_READ_TIMEOUT_MS", Integer.toString(parameters.getAftDme2ReadTimeoutMs()));
         props.setProperty("AFT_DME2_SSL_ENABLE", Boolean.toString(parameters.isAftDme2SslEnable()));
         props.setProperty("AFT_DME2_CLIENT_IGNORE_SSL_CONFIG", Boolean.toString(parameters.isAftDme2ClientIgnoreSslConfig()));
-        props.setProperty("AFT_DME2_CLIENT_KEYSTORE", parameters.getAftDme2ClientKeystore());
-        props.setProperty("AFT_DME2_CLIENT_KEYSTORE_PASSWORD", parameters.getAftDme2ClientKeystorePassword());
         props.setProperty("AFT_DME2_CLIENT_SSL_CERT_ALIAS", parameters.getAftDme2ClientSslCertAlias());
         String dme2PreferredRouterFilePath = parameters.getDme2preferredRouterFilePath();
         ensureFileExists(dme2PreferredRouterFilePath);

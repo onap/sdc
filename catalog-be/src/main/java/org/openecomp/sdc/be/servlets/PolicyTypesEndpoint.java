@@ -39,8 +39,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.PolicyTypeMixin;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -76,7 +74,6 @@ public class PolicyTypesEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "The GET request failed due to internal SDC problem.")})
     @ResponseView(mixin = {PolicyTypeMixin.class})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<PolicyTypeDefinition> getPolicyTypes(
         @Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
         @QueryParam("internalComponentType") String internalComponentType,

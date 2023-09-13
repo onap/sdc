@@ -57,8 +57,6 @@ import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
@@ -163,7 +161,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Create VFCMT request: VFCMT name exceeds character limit - SVC4073"),
         @ApiResponse(responseCode = "400", description = "Invalid Content. Missing PROJECT_CODE number - SVC4129"),
         @ApiResponse(responseCode = "409", description = "Error: %1 (Service) with name '%2' already exists. - SVC4050")})
-    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response createComponentExternal(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
@@ -327,7 +324,6 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
         @ApiResponse(responseCode = "403", description = "Asset is already checked-out by another user - SVC4085"),
         @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4080")})
-    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response changeResourceStateExternal(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,

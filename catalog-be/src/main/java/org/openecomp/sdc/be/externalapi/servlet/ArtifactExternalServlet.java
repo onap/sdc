@@ -51,8 +51,6 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -206,7 +204,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "400", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "400", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response uploadArtifact(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -290,7 +287,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "400", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "400", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response uploadArtifactToInstance(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -374,7 +370,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "409", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response updateArtifact(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -461,7 +456,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "409", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed(AafPermission.PermNames.WRITE_VALUE)
     public Response updateArtifactOnResourceInstance(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The value for this header must be the MD5 checksum over the whole json body", required = true) @HeaderParam(value = Constants.MD5_HEADER) String checksum,
@@ -549,7 +543,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "409", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed(AafPermission.PermNames.DELETE_VALUE)
     public Response deleteArtifact(
         @Parameter(description = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
         @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -633,7 +626,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Artifact name is missing in input - SVC4128"),
         @ApiResponse(responseCode = "403", description = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
         @ApiResponse(responseCode = "409", description = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
-    @PermissionAllowed(AafPermission.PermNames.DELETE_VALUE)
     public Response deleteArtifactOnResourceInstance(
         @Parameter(description = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
         @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -711,7 +703,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
         @ApiResponse(responseCode = "404", description = "Artifact was not found - SVC4505")})
-    @PermissionAllowed(AafPermission.PermNames.DELETE_VALUE)
     public Response downloadComponentArtifact(
         @Parameter(description = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
         @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
@@ -781,7 +772,6 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
         @ApiResponse(responseCode = "404", description = "Artifact was not found - SVC4505")})
-    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response downloadResourceInstanceArtifact(
         @Parameter(description = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
         @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,

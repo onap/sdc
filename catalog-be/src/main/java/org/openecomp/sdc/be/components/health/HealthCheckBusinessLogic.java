@@ -52,7 +52,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
-import org.openecomp.sdc.be.components.impl.CADIHealthCheck;
 import org.openecomp.sdc.be.components.impl.CassandraHealthCheck;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
@@ -144,8 +143,6 @@ public class HealthCheckBusinessLogic {
         healthCheckInfos.add(getHostedComponentsBeHealthCheck(HC_COMPONENT_ON_BOARDING, buildOnBoardingHealthCheckUrl()));
         //ECOMP Portal
         healthCheckInfos.add(portalHealthCheck.getHealthCheckInfo());
-        //CADI
-        healthCheckInfos.add(CADIHealthCheck.getCADIHealthCheckInstance().getCADIStatus());
         return healthCheckInfos;
     }
 

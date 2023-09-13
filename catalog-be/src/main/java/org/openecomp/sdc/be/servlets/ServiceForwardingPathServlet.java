@@ -53,8 +53,6 @@ import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -104,7 +102,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createForwardingPath(@Parameter(description = "Forwarding Path to create", required = true) String data,
                                          @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                          @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
@@ -122,7 +119,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateForwardingPath(@Parameter(description = "Update Path to create", required = true) String data,
                                          @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                          @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
@@ -172,7 +168,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getForwardingPath(@Parameter(description = "Forwarding Path to create", required = true) String datax,
                                       @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                       @Parameter(description = "Forwarding Path Id") @PathParam("forwardingPathId") String forwardingPathId,
@@ -213,7 +208,6 @@ public class ServiceForwardingPathServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Forwarding Path already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteForwardingPath(@Parameter(description = "Forwarding Path Id") @PathParam("forwardingPathId") String forwardingPathId,
                                          @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                          @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)

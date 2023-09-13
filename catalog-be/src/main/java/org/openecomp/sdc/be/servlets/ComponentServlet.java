@@ -54,8 +54,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -107,7 +105,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response conformanceLevelValidation(@PathParam("componentType") final String componentType,
                                                @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
                                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -138,7 +135,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getRequirementAndCapabilities(@PathParam("componentType") final String componentType,
                                                   @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
@@ -170,7 +166,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponents(@PathParam("componentType") final String componentType,
                                                                   @Context final HttpServletRequest request,
                                                                   @QueryParam("internalComponentType") String internalComponentType,
@@ -205,7 +200,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponentsByBody(@PathParam("componentType") final String componentType,
                                                                         @Context final HttpServletRequest request,
                                                                         @QueryParam("internalComponentType") String internalComponentType,
@@ -244,7 +238,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(@PathParam("componentType") final String componentType,
                                                                           @Context final HttpServletRequest request,
                                                                           @QueryParam("internalComponentType") String internalComponentType,
@@ -288,7 +281,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentInstancesFilteredByPropertiesAndInputs(@PathParam("componentType") final String componentType,
                                                                        @PathParam("componentId") final String componentId,
                                                                        @Context final HttpServletRequest request,
@@ -336,7 +328,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
     @ResponseView(mixin = {GroupCompositionMixin.class, PolicyCompositionMixin.class})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentDataFilteredByParams(@PathParam("componentType") final String componentType,
                                                      @PathParam("componentId") final String componentId,
                                                      @QueryParam("include") final List<String> dataParamsToReturn,
@@ -376,7 +367,6 @@ public class ComponentServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Map.class)))),
         @ApiResponse(responseCode = "200", description = "Component found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getFilteredComponentInstanceProperties(@PathParam("componentType") final String componentType,
                                                            @PathParam("componentId") final String componentId,
                                                            @PathParam("propertyNameFragment") final String propertyNameFragment,

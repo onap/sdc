@@ -44,8 +44,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -83,7 +81,6 @@ public class ComponentAttributeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "attribute"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Service attribute not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAttributeListInService(
         @Parameter(description = "service id of attribute", required = true) @PathParam("serviceId") final String serviceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
@@ -99,7 +96,6 @@ public class ComponentAttributeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "attribute"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource attribute not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAttributeListInResource(
         @Parameter(description = "resource id of attribute", required = true) @PathParam("resourceId") final String resourceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {

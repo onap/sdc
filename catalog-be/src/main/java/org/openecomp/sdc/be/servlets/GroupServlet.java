@@ -49,8 +49,6 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -96,7 +94,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createGroup(@PathParam("containerComponentType") final String containerComponentType,
                                 @PathParam("componentId") final String componentId, @PathParam("groupType") final String type,
                                 @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -113,7 +110,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "group found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Group not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getGroupById(@PathParam("containerComponentType") final String containerComponentType,
                                  @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
                                  @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -143,7 +139,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteGroup(@PathParam("containerComponentType") final String containerComponentType,
                                 @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupId,
                                 @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -161,7 +156,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Group updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "component / group Not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroup(@PathParam("containerComponentType") final String containerComponentType,
                                 @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -180,7 +174,6 @@ public class GroupServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupDefinition.class)))),
         @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroupMetadata(@PathParam("containerComponentType") final String containerComponentType,
                                         @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
                                         @Parameter(description = "Service object to be Updated", required = true) String data,

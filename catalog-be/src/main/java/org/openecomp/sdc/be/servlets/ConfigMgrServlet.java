@@ -35,8 +35,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.Constants;
@@ -57,7 +55,6 @@ public class ConfigMgrServlet extends BasicServlet {
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public String getConfig(@Context final HttpServletRequest request, @QueryParam("type") String type) {
         String result = null;
         ServletContext context = request.getSession().getServletContext();
@@ -78,7 +75,6 @@ public class ConfigMgrServlet extends BasicServlet {
     @Path("/set1")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public String setConfig1(@Context final HttpServletRequest request, Configuration configuration) {
         log.debug("{}", configuration);
         return "ok";
@@ -88,7 +84,6 @@ public class ConfigMgrServlet extends BasicServlet {
     @Path("/set2")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public void setConfig2(@Context final HttpServletRequest request, Configuration configuration) {
         log.debug("{}", configuration);
     }
@@ -97,7 +92,6 @@ public class ConfigMgrServlet extends BasicServlet {
     @Path("/setput1")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public String setConfig3(@Context final HttpServletRequest request, Configuration configuration) {
         log.debug("{}", configuration);
         return "ok";
@@ -107,7 +101,6 @@ public class ConfigMgrServlet extends BasicServlet {
     @Path("/setput2")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public void setConfig4(@Context final HttpServletRequest request, Configuration configuration) {
         log.debug("{}", configuration);
     }

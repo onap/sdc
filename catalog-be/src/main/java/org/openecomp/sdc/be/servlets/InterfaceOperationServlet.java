@@ -50,8 +50,6 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -99,7 +97,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found"),
         @ApiResponse(responseCode = "409", description = "Interface Operation already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createInterfaceOperationsOnResource(@Parameter(description = "Interface Operations to create", required = true) String data,
                                                         @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -157,7 +154,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateInterfaceOperationsOnResource(@Parameter(description = "Interface Operations to update", required = true) String data,
                                                         @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -175,7 +171,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteInterfaceOperationsFromResource(@Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                           @Parameter(description = "Interface Id") @PathParam("interfaceId") String interfaceId,
                                                           @Parameter(description = "Operation Id") @PathParam("operationId") String operationId,
@@ -215,7 +210,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInterfaceOperationsFromResource(@Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                        @Parameter(description = "Interface Id") @PathParam("interfaceId") String interfaceId,
                                                        @Parameter(description = "Operation Id") @PathParam("operationId") String operationId,
@@ -256,7 +250,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found"),
         @ApiResponse(responseCode = "409", description = "Interface Operation already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createInterfaceOperationsOnService(@Parameter(description = "Interface Operations to create", required = true) String data,
                                                        @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                                        @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -274,7 +267,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateInterfaceOperationsOnService(@Parameter(description = "Interface Operations to update", required = true) String data,
                                                        @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                                        @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
@@ -292,7 +284,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteInterfaceOperationsFromService(@Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                                          @Parameter(description = "Interface Id") @PathParam("interfaceId") String interfaceId,
                                                          @Parameter(description = "Operation Id") @PathParam("operationId") String operationId,
@@ -311,7 +302,6 @@ public class InterfaceOperationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInterfaceOperationsFromService(@Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                                       @Parameter(description = "Interface Id") @PathParam("interfaceId") String interfaceId,
                                                       @Parameter(description = "Operation Id") @PathParam("operationId") String operationId,

@@ -35,8 +35,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
@@ -57,7 +55,6 @@ public class ConfigServlet extends BasicServlet {
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(description = "Retrieve configuration", method = "GET", responses = {
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = String.class)))})
     public String getConfig(@Context final HttpServletRequest request) {

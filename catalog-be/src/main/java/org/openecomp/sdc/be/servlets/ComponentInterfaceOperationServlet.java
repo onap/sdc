@@ -49,8 +49,6 @@ import org.apache.commons.io.IOUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -110,7 +108,6 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Update Interface Operation"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateComponentInstanceInterfaceOperation(
         @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") String componentType,
@@ -166,7 +163,6 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Update Interface Operation"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceInterfaceOperation(
         @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
@@ -272,7 +268,6 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Create Interface Operation"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createInterfaceOperationInResource(
         @Parameter(description = "valid values: resources", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME}))
         @PathParam("componentType") final String componentType,

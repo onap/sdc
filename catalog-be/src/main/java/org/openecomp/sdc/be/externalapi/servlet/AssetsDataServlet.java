@@ -59,8 +59,6 @@ import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -126,7 +124,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "ECOMP component is not authorized - POL5003"),
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
-    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetListExternal(
         @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
         @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
@@ -256,7 +253,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
-    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getAssetSpecificMetadataByUuidExternal(
         @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
         @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
@@ -339,7 +335,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
-    @PermissionAllowed(AafPermission.PermNames.READ_VALUE)
     public Response getToscaModelExternal(
         @Parameter(description = "X-ECOMP-RequestID header") @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
         @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,

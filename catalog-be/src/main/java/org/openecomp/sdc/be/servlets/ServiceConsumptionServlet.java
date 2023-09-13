@@ -56,8 +56,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -104,7 +102,6 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Service property already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response addInputToServiceOperation(@PathParam("serviceId") final String serviceId,
                                                @PathParam("serviceInstanceId") final String serviceInstanceId,
                                                @Parameter(description = "Service Consumption Data", required = true) String data,
@@ -141,7 +138,6 @@ public class ServiceConsumptionServlet extends BeGenericServlet {
     @Path("/services/{serviceId}/consumption/{serviceInstanceId}/interfaces/{interfaceId}/operations/{operationId}/inputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInputsListOfOperation(@PathParam("serviceId") final String serviceId,
                                              @PathParam("serviceInstanceId") final String serviceInstanceId,
                                              @PathParam("interfaceId") final String interfaceId, @PathParam("operationId") final String operationId,

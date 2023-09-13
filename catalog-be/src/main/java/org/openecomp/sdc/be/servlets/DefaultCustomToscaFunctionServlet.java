@@ -43,8 +43,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -77,7 +75,6 @@ public class DefaultCustomToscaFunctionServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "200", description = "Returns default custom tosca functions values from configuration file Ok"),
             @ApiResponse(responseCode = "404", description = "Default custom tosca functions not found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDefaultCustomToscaFunctionValues(@Context final HttpServletRequest request,
                                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                                         @PathParam("type") Type type) {

@@ -39,8 +39,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.mixin.GroupTypeMixin;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
@@ -73,7 +71,6 @@ public class GroupTypesEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"), @ApiResponse(responseCode = "500", description = "Internal Error")})
     @ResponseView(mixin = {GroupTypeMixin.class})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<GroupTypeDefinition> getGroupTypes(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                                    @Parameter(description =
                                                        "An optional parameter to indicate the type of the container from where this call is executed")

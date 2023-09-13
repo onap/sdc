@@ -61,7 +61,6 @@ import org.mockito.Spy;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
-import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
@@ -106,7 +105,6 @@ class PolicyServletTest extends JerseySpringBaseTest {
     private static ServletUtils servletUtils;
     private static PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     private static ToscaOperationFacade toscaOperationFacade;
-    private static RoleAuthorizationHandler roleAuthorizationHandler;
     private static ResponseFormat responseFormat;
     @Captor
     private static ArgumentCaptor<PolicyDefinition> policyCaptor;
@@ -538,7 +536,6 @@ class PolicyServletTest extends JerseySpringBaseTest {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         servletUtils = Mockito.mock(ServletUtils.class);
         responseFormat = Mockito.mock(ResponseFormat.class);
-        roleAuthorizationHandler = Mockito.mock(RoleAuthorizationHandler.class);
     }
 
     private static class BaseBusinessLogicTest extends BaseBusinessLogic {

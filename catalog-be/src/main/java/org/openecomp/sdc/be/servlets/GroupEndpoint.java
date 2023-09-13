@@ -42,8 +42,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogicNew;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -83,7 +81,6 @@ public class GroupEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "400", description = "field name invalid type/length, characters;  mandatory field is absent, already exists (name)"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<String> updateGroupMembers(@PathParam("containerComponentType") final String containerComponentType,
                                            @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
                                            @Parameter(description = "List of members unique ids", required = true) List<String> members,
@@ -103,7 +100,6 @@ public class GroupEndpoint extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
         @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<PropertyDataDefinition> getGroupProperties(@PathParam("containerComponentType") final String containerComponentType,
                                                            @PathParam("componentId") final String componentId,
                                                            @PathParam("groupUniqueId") final String groupUniqueId,
@@ -117,7 +113,6 @@ public class GroupEndpoint extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroupProperty.class)))),
         @ApiResponse(responseCode = "200", description = "Group Updated"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<GroupProperty> updateGroupProperties(@PathParam("containerComponentType") final String containerComponentType,
                                                      @PathParam("componentId") final String componentId,
                                                      @PathParam("groupUniqueId") final String groupUniqueId,

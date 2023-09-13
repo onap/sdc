@@ -50,8 +50,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -96,7 +94,6 @@ public class ModelServlet extends AbstractValidationsServlet {
     @Path("/model")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(description = "Create a TOSCA model, along with its imports files", method = "POST", summary = "Create a TOSCA model", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Model created"),
@@ -129,7 +126,6 @@ public class ModelServlet extends AbstractValidationsServlet {
     @GET
     @Path("/model")
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(method = "GET", summary = "List TOSCA models", description = "List all the existing TOSCA models",
         responses = {
             @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Model.class)))),
@@ -165,7 +161,6 @@ public class ModelServlet extends AbstractValidationsServlet {
     @Path("/model/imports")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(description = "Update a model TOSCA imports", method = "PUT", summary = "Update a model TOSCA imports", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "204", description = "Model imports updated"),
