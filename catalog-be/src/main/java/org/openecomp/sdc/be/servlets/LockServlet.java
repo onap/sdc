@@ -37,8 +37,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
@@ -71,7 +69,6 @@ public class LockServlet extends BeGenericServlet {
     @Path("/lock")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(description = "Toggle disable locking", method = "POST", responses = {
         @ApiResponse(content = @Content(schema = @Schema(implementation = Response.class))),
         @ApiResponse(responseCode = "200", description = "Disable locking successfully updated"),

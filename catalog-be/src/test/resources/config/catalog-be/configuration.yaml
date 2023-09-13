@@ -97,8 +97,6 @@ cassandraConfig:
     username: koko
     password: bobo
     ssl: false
-    truststorePath : /path/path
-    truststorePassword : 123123
     keySpaces:
         - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
@@ -476,8 +474,6 @@ dmaapConsumerConfiguration:
         password: XyCUPhFx9u70aklYGo6OiA==
     aftDme2SslEnable: true
     aftDme2ClientIgnoreSslConfig: false
-    aftDme2ClientKeystore: /opt/app/jetty/base/be/config/.truststore
-    aftDme2ClientKeystorePassword: XyCUPhFx9u70aklYGo6OiA==
     aftDme2ClientSslCertAlias: certman
 
 dmaapProducerConfiguration:
@@ -537,26 +533,6 @@ healthStatusExclude:
    - DE
    - ES
    - DMAAP
-
-aafNamespace: com.att.sdc
-
-aafAuthNeeded:            false
-
-cadiFilterParams:
-    AFT_LATITUDE:  "32.780140"
-    AFT_LONGITUDE: "-96.800451"
-    hostname:                 192.168.33.10
-    aaf_id:                   aaf@sdc.onap.org
-    aaf_env:                  TEST
-    aaf_url:                  https://aaftest.onap.org/locate/
-    csp_domain:               PROD
-    cadi_keyfile:             /opt/app/jetty/base/be/etc/keyfile
-    aaf_password:             enc:uI_J4jBL4YUcIZZa5uZKj3QMUC63hbS8TmDn5PSp5nO
-    cadi_loglevel:            DEBUG
-    AFT_ENVIRONMENT:          AFTUAT
-    cadiX509Issuers:          CN=intermediateCA_1, OU=OSAAF, O=ONAP, C=US
-    cadi_truststore:          /opt/app/jetty/base/be/etc/cadi_truststore.jks
-    cadi_truststore_password: changeit
 
 # This configuration entry lists all node type names prefix that shall be allowed on SDC.
 definedResourceNamespace:

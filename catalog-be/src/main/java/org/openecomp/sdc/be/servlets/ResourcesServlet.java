@@ -63,8 +63,6 @@ import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
@@ -124,7 +122,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Resource already exist"),
             @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResource(@Parameter(description = "Resource object to be created", required = true) String data,
                                    @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
         throws IOException, ZipException {
@@ -240,7 +237,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/resources/{resourceId}")
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResource(@PathParam("resourceId") final String resourceId,
                                    @Parameter(description = "Optional parameter to determine the delete action: " +
                                        "DELETE, which will permanently delete the Resource from the system or " +
@@ -286,7 +282,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResourceByNameAndVersion(@PathParam("resourceName") final String resourceName, @PathParam("version") final String version,
                                                    @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
@@ -317,7 +312,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceById(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request,
                                     @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         ServletContext context = request.getSession().getServletContext();
@@ -354,7 +348,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceByNameAndVersion(@PathParam("resourceName") final String resourceName,
                                                 @PathParam("resourceVersion") final String resourceVersion, @Context final HttpServletRequest request,
                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
@@ -386,7 +379,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Operation(description = "validate resource name", method = "GET", summary = "checks if the chosen resource name is available ", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Resource found"), @ApiResponse(responseCode = "403", description = "Restricted operation")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response validateResourceName(@PathParam("resourceName") final String resourceName, @QueryParam("subtype") String resourceType,
                                          @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -419,7 +411,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/certified/abstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCertifiedAbstractResources(@Context final HttpServletRequest request,
                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -438,7 +429,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @Path("/resources/certified/notabstract")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCertifiedNotAbstractResources(@Context final HttpServletRequest request,
                                                      @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -462,7 +452,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Resource metadata updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceMetadata(@PathParam("resourceId") final String resourceId,
                                            @Parameter(description = "Resource metadata to be updated", required = true) String data,
                                            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
@@ -505,7 +494,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Resource already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResource(@Parameter(description = "Resource object to be updated", required = true) String data,
                                    @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                    @PathParam(value = "resourceId") String resourceId) throws IOException, ZipException {
@@ -557,7 +545,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource retrieced"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceFromCsar(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                         @PathParam(value = "csaruuid") String csarUUID) throws IOException {
         init();
@@ -595,7 +582,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Resource already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response importReplaceResource(
         @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
         @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,

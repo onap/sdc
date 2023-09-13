@@ -42,8 +42,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ArchiveBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.catalog.CatalogComponent;
@@ -80,7 +78,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Archive successful"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response archiveResources(@PathParam("componentId") final String componentId,
                                      @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         loggerSupportability
@@ -98,7 +95,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Restore successful"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Resource not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response restoreResource(@PathParam("componentId") final String componentId,
                                     @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE, StatusCode.STARTED,
@@ -116,7 +112,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Archive successful"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response archiveService(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         loggerSupportability.log(LoggerSupportabilityActions.ARCHIVE, StatusCode.STARTED,
             "Archive Service for " + COMPONENT_ID + " " + componentId + " by " + userId);
@@ -133,7 +128,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Restore successful"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Service not found"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response restoreService(@PathParam("componentId") final String componentId, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         loggerSupportability.log(LoggerSupportabilityActions.RESTORE_FROM_ARCHIVE, StatusCode.STARTED,
             "Restore service from archive " + COMPONENT_ID + " " + componentId + " by " + userId);
@@ -149,7 +143,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = String.class)))),
         @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"), @ApiResponse(responseCode = "500", description = "Internal Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Map<String, List<CatalogComponent>> getArchivedComponents(@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         return this.archiveBusinessLogic.getArchiveComponents(userId, new LinkedList<>());
     }
@@ -160,7 +153,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response onVspArchived(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds) {
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspArchive(userId, csarIds);
         if (!failedCsarIds.isEmpty()) {
@@ -178,7 +170,6 @@ public class ArchiveEndpoint extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Success"), @ApiResponse(responseCode = "400", description = "Bad request"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Error. A list of the failed CSAR IDs may be returned.")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response onVspRestored(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @RequestBody List<String> csarIds) {
         List<String> failedCsarIds = this.archiveBusinessLogic.onVspRestore(userId, csarIds);
         if (!failedCsarIds.isEmpty()) {

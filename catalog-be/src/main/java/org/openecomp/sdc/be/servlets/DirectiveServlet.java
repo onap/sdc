@@ -39,8 +39,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -70,7 +68,6 @@ public class DirectiveServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns Directive values from configuration file Ok"),
         @ApiResponse(responseCode = "404", description = "Directive not found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getConfCategoriesAndVersion(@Context final HttpServletRequest request,
                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         final String url = request.getMethod() + " " + request.getRequestURI();

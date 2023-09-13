@@ -53,8 +53,6 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
@@ -140,7 +138,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "400", description = "Invalid component type"),
         @ApiResponse(responseCode = "409", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getComponentCategories(
         @Parameter(description = "allowed values are resources / services/ products", schema = @Schema(allowableValues = {
             ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
@@ -172,7 +169,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "USER_ID header is missing"),
         @ApiResponse(responseCode = "409", description = "Category already exists / User not permitted to perform the action"),
         @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentCategory(
         @Parameter(description = "allowed values are resources /services / products", schema = @Schema(allowableValues = {
             ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
@@ -203,7 +199,6 @@ public class ElementServlet extends BeGenericServlet {
         responses = {@ApiResponse(responseCode = "200", description = "Returns base types Ok"),
             @ApiResponse(responseCode = "404", description = "No base types were found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCategoryBaseTypes(@PathParam(value = "categoryName") final String categoryName,
                                          @PathParam(value = "componentType") final String componentType,
                                          @Context final HttpServletRequest request,
@@ -242,7 +237,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "USER_ID header is missing"),
         @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
         @ApiResponse(responseCode = "404", description = "Category not found"), @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentCategory(@PathParam(value = "categoryUniqueId") final String categoryUniqueId,
                                             @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
                                             @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -278,7 +272,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "404", description = "Parent category wasn't found"),
         @ApiResponse(responseCode = "409", description = "Subcategory already exists / User not permitted to perform the action"),
         @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentSubCategory(
         @Parameter(description = "allowed values are resources / products", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
             ComponentTypeEnum.PRODUCT_PARAM_NAME}), required = true) @PathParam(value = "componentType") final String componentType,
@@ -312,7 +305,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "USER_ID header is missing"),
         @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
         @ApiResponse(responseCode = "404", description = "Category not found"), @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentSubCategory(@PathParam(value = "categoryUniqueId") final String categoryUniqueId,
                                                @PathParam(value = "subCategoryUniqueId") final String subCategoryUniqueId,
                                                @PathParam(value = "componentType") final String componentType,
@@ -348,7 +340,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "404", description = "Parent category or subcategory were not found"),
         @ApiResponse(responseCode = "409", description = "Grouping already exists / User not permitted to perform the action"),
         @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentGrouping(@Parameter(description = "allowed values are products", schema = @Schema(allowableValues = {
         ComponentTypeEnum.PRODUCT_PARAM_NAME}), required = true) @PathParam(value = "componentType") final String componentType,
                                             @Parameter(description = "Parent category unique ID", required = true) @PathParam(value = "categoryId") final String grandParentCategoryId,
@@ -382,7 +373,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "USER_ID header is missing"),
         @ApiResponse(responseCode = "409", description = "User not permitted to perform the action"),
         @ApiResponse(responseCode = "404", description = "Category not found"), @ApiResponse(responseCode = "500", description = "General Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentGrouping(@PathParam(value = "categoryUniqueId") final String grandParentCategoryUniqueId,
                                             @PathParam(value = "subCategoryUniqueId") final String parentSubCategoryUniqueId,
                                             @PathParam(value = "groupingUniqueId") final String groupingUniqueId,
@@ -413,7 +403,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         @ApiResponse(responseCode = "200", description = "Returns tags Ok"), @ApiResponse(responseCode = "404", description = "No tags were found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getTags(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getTags) Start handle request of {}", url);
@@ -444,7 +433,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns propertyScopes Ok"),
         @ApiResponse(responseCode = "404", description = "No propertyScopes were found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyScopes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(getPropertyScopes) Start handle request of {}", url);
@@ -475,7 +463,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns artifactTypes Ok"),
         @ApiResponse(responseCode = "404", description = "No artifactTypes were found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getArtifactTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(GET - getArtifactTypes) Start handle request of {}", url);
@@ -512,7 +499,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "404", description = "No followed were found"),
         @ApiResponse(responseCode = "404", description = "User not found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getFollowedResourcesServices(@Context final HttpServletRequest request,
                                                  @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         try {
@@ -562,7 +548,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "404", description = "No resources and services were found"),
         @ApiResponse(responseCode = "404", description = "User not found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCatalogComponents(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                          @QueryParam("excludeTypes") List<OriginTypeEnum> excludeTypes) throws IOException {
         try {
@@ -585,7 +570,6 @@ public class ElementServlet extends BeGenericServlet {
 
     @DELETE
     @Path("/inactiveComponents/{componentType}")
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteMarkedResources(@PathParam("componentType") final String componentType, @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -624,7 +608,6 @@ public class ElementServlet extends BeGenericServlet {
     @Operation(description = "Retrieve ecomp portal menu - MOC", method = "GET", summary = "Retrieve ecomp portal menu", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         @ApiResponse(responseCode = "200", description = "Retrieve ecomp portal menu")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getListOfCsars(@Context final HttpServletRequest request) {
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
             "[{\"menuId\":1,\"column\":2,\"text\":\"Design\",\"parentMenuId\":null,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":11,\"column\":1,\"text\":\"ProductDesign\",\"parentMenuId\":1,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":12,\"column\":2,\"text\":\"Service\",\"parentMenuId\":1,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":21,\"column\":1,\"text\":\"ViewPolicies\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":90,\"column\":1,\"text\":\"4thLevelApp1aR16\",\"parentMenuId\":21,\"url\":\"http://google.com\",\"appid\":null,\"roles\":null}]},{\"menuId\":22,\"column\":2,\"text\":\"UpdatePolicies\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null,\"children\":[{\"menuId\":91,\"column\":1,\"text\":\"4thLevelApp1bR16\",\"parentMenuId\":22,\"url\":\"http://jsonlint.com/\",\"appid\":null,\"roles\":null}]},{\"menuId\":23,\"column\":3,\"text\":\"UpdateRules\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":24,\"column\":4,\"text\":\"CreateSignatures?\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null},{\"menuId\":25,\"column\":5,\"text\":\"Definedata\",\"parentMenuId\":12,\"url\":\"\",\"appid\":null,\"roles\":null}]}]}]");
@@ -637,7 +620,6 @@ public class ElementServlet extends BeGenericServlet {
     @Operation(description = "Retrieve previus and current catalog update time", method = "GET", summary = "Retrieve previus and current catalog update time", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "Retrieve previus and current catalog update time")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCatalogUpdateTime(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(post) Start handle request of {}", url);
@@ -655,7 +637,6 @@ public class ElementServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns artifactTypes, ui configuration and sdc version Ok"),
         @ApiResponse(responseCode = "404", description = "No artifactTypes were found/no ui configuration were found/no sdc version were found"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getConfCategoriesAndVersion(@Context final HttpServletRequest request,
                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();

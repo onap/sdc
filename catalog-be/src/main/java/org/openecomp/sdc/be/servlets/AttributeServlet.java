@@ -49,8 +49,6 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -104,7 +102,6 @@ public class AttributeServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Resource attribute already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createAttribute(
         @Parameter(description = "resource id to update with new attribute", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Resource attribute to be created", required = true) String data, @Context final HttpServletRequest request,
@@ -163,7 +160,6 @@ public class AttributeServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Resource attribute updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateAttribute(
         @Parameter(description = "resource id to update with new attribute", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "attribute id to update", required = true) @PathParam("attributeId") final String attributeId,
@@ -227,7 +223,6 @@ public class AttributeServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteAttribute(
         @Parameter(description = "resource id of attribute", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Attribute id to delete", required = true) @PathParam("attributeId") final String attributeId,

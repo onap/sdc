@@ -69,8 +69,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -169,7 +167,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Component instance already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentInstance(@Parameter(description = "RI object to be created", required = true) String data,
                                             @PathParam("componentId") final String containerComponentId,
                                             @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
@@ -210,7 +207,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Resource instance updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateComponentInstanceMetadata(@PathParam("componentId") final String componentId,
                                                     @PathParam("componentInstanceId") final String componentInstanceId,
                                                     @Parameter(description = "valid values: resources / services / products", schema = @Schema(allowableValues = {
@@ -289,7 +285,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Resource instance updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateMultipleComponentInstance(@PathParam("componentId") final String componentId,
                                                     @Parameter(description = "valid values: resources / services / products", schema = @Schema(allowableValues = {
                                                         ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
@@ -336,7 +331,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "ResourceInstance deleted"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResourceInstance(@PathParam("componentId") final String componentId,
                                            @PathParam("resourceInstanceId") final String resourceInstanceId,
                                            @Parameter(description = "valid values: resources / services / products", schema = @Schema(allowableValues = {
@@ -379,7 +373,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Missing information"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Relationship already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response associateRIToRI(
         @Parameter(description = "unique id of the container component") @PathParam("componentId") final String componentId,
         @Parameter(description = "allowed values are resources /services / products", schema = @Schema(allowableValues = {
@@ -426,7 +419,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Relationship deleted"),
         @ApiResponse(responseCode = "403", description = "Missing information"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response dissociateRIFromRI(
         @Parameter(description = "allowed values are resources /services / products", schema = @Schema(allowableValues = {
             ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
@@ -469,7 +461,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "RI created"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Relationship already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createAndAssociateRIToRI(@PathParam("componentId") final String componentId,
                                              @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                  ComponentTypeEnum.RESOURCE_PARAM_NAME, ComponentTypeEnum.SERVICE_PARAM_NAME,
@@ -524,7 +515,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceInstanceProperties(@Parameter(description = "service id") @PathParam("componentId") final String componentId,
                                                      @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                          ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -623,7 +613,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceInstanceInput(@Parameter(description = "service id") @PathParam("componentId") final String componentId,
                                                 @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                     ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -696,7 +685,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceInstanceAttribute(@Parameter(description = "service id") @PathParam("componentId") final String componentId,
                                                     @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                         ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -759,7 +747,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteResourceInstanceProperty(@Parameter(description = "service id") @PathParam("componentId") final String componentId,
                                                    @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                        ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -803,7 +790,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response changeResourceInstanceVersion(@PathParam("componentId") final String componentId,
                                                   @PathParam("componentInstanceId") final String componentInstanceId,
                                                   @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
@@ -850,7 +836,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateGroupInstanceProperty(@Parameter(description = "service id") @PathParam("componentId") final String componentId,
                                                 @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
                                                     ComponentTypeEnum.RESOURCE_PARAM_NAME,
@@ -908,7 +893,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "group found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Group not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType,
                                          @PathParam("componentId") final String componentId,
                                          @PathParam("componentInstanceId") final String componentInstanceId,
@@ -942,7 +926,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Properties found"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component/Component Instance - not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInstancePropertiesById(@PathParam("containerComponentType") final String containerComponentType,
                                               @PathParam("containerComponentId") final String containerComponentId,
                                               @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
@@ -964,7 +947,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Attributes found"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component/Component Instance - not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInstanceAttributesById(@PathParam("containerComponentType") final String containerComponentType,
                                               @PathParam("containerComponentId") final String containerComponentId,
                                               @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
@@ -987,7 +969,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Properties found"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component/Component Instance/Capability - not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInstanceCapabilityPropertiesById(@PathParam("containerComponentType") final String containerComponentType,
                                                         @PathParam("containerComponentId") final String containerComponentId,
                                                         @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
@@ -1020,7 +1001,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Component/Component Instance/Capability - not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateInstanceCapabilityProperty(@PathParam("containerComponentType") final String containerComponentType,
                                                      @PathParam("containerComponentId") final String containerComponentId,
                                                      @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
@@ -1077,7 +1057,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Component/Component Instance/Requirement - not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateInstanceRequirement(@PathParam("containerComponentType") final String containerComponentType,
                                               @PathParam("containerComponentId") final String containerComponentId,
                                               @PathParam("componentInstanceUniqueId") final String componentInstanceUniqueId,
@@ -1135,7 +1114,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Service proxy already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createServiceProxy(@Parameter(description = "RI object to be created", required = true) String data,
                                        @PathParam("containerComponentId") final String containerComponentId,
                                        @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
@@ -1176,7 +1154,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Service proxy deleted"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceProxy(@PathParam("containerComponentId") final String containerComponentId,
                                        @PathParam("serviceProxyId") final String serviceProxyId,
                                        @Parameter(description = "valid values: resources / services / products", schema = @Schema(allowableValues = {
@@ -1212,7 +1189,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Service proxy created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response changeServiceProxyVersion(@PathParam("containerComponentId") final String containerComponentId,
                                               @PathParam("serviceProxyId") final String serviceProxyId,
                                               @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {
@@ -1256,7 +1232,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "200", description = "relation found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Relation not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getRelationById(@PathParam("containerComponentType") final String containerComponentType,
                                     @PathParam("componentId") final String componentId, @PathParam("relationId") final String relationId,
                                     @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -1558,7 +1533,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "405", description = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
         @ApiResponse(responseCode = "500", description = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000"),
         @ApiResponse(responseCode = "409", description = "Service already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response replaceVNF(@Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                @Parameter(description = "X-ECOMP-RequestID header", required = false) @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
                                @Parameter(description = "X-ECOMP-InstanceID header", required = true) @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,

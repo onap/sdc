@@ -47,8 +47,6 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -93,7 +91,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Capability already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createCapabilitiesOnResource(@Parameter(description = "Capability to create", required = true) String data,
                                                  @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                  @Context final HttpServletRequest request,
@@ -110,7 +107,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Update Capabilities"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateCapabilitiesOnResource(@Parameter(description = "Capabilities to update", required = true) String data,
                                                  @Parameter(description = "Component Id") @PathParam("resourceId") String resourceId,
                                                  @Context final HttpServletRequest request,
@@ -126,7 +122,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
         @ApiResponse(responseCode = "201", description = "GET Capability"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnResource(@Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                             @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
                                             @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -142,7 +137,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Delete capability"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteCapabilityOnResource(@Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
                                                @Parameter(description = "Resource Id") @PathParam("resourceId") String resourceId,
                                                @Context final HttpServletRequest request,
@@ -160,7 +154,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Capability already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createCapabilitiesOnService(@Parameter(description = "Capability to create", required = true) String data,
                                                 @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                                 @Context final HttpServletRequest request,
@@ -177,7 +170,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Update Capabilities"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateCapabilitiesOnService(@Parameter(description = "Capabilities to update", required = true) String data,
                                                 @Parameter(description = "Component Id") @PathParam("serviceId") String serviceId,
                                                 @Context final HttpServletRequest request,
@@ -193,7 +185,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = CapabilityDefinition.class)))),
         @ApiResponse(responseCode = "201", description = "GET Capability"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCapabilityOnService(@Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                            @Parameter(description = "Capability Id") @PathParam("capabilityId") String capabilityId,
                                            @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -209,7 +200,6 @@ public class CapabilityServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Delete capability"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteCapabilityOnService(@Parameter(description = "capability Id") @PathParam("capabilityId") String capabilityId,
                                               @Parameter(description = "Service Id") @PathParam("serviceId") String serviceId,
                                               @Context final HttpServletRequest request,

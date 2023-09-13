@@ -52,8 +52,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.exception.BusinessException;
@@ -107,7 +105,6 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Resource already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadMultipart(
         @Parameter(description = "validValues: normative-resource / user-resource", schema = @Schema(allowableValues = {NORMATIVE_TYPE_RESOURCE,
             USER_TYPE_RESOURCE, USER_TYPE_RESOURCE_UI_IMPORT})) @PathParam(value = "resourceAuthority") final String resourceAuthority,
@@ -161,7 +158,6 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     @Path("/resource/import")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     @Operation(description = "Import node types from a TOSCA yaml, along with the types metadata", method = "POST",
         summary = "Creates node types from a TOSCA yaml file", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),

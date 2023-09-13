@@ -44,8 +44,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
@@ -94,7 +92,6 @@ public class LifecycleServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Resource state changed"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "409", description = "Resource already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response changeResourceState(
         @Parameter(description = "LifecycleChangeInfo - relevant for checkin, failCertification, cancelCertification") String jsonChangeInfo,
         @Parameter(description = "validValues: resources / services / products", schema = @Schema(allowableValues = {

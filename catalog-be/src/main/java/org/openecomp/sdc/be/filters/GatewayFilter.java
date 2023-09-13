@@ -20,8 +20,6 @@
 package org.openecomp.sdc.be.filters;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Stream;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -33,10 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.common.api.FilterDecisionEnum;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,16 +40,12 @@ import org.springframework.stereotype.Component;
 @Component("gatewayFilter")
 public class GatewayFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger(GatewayFilter.class);
-    private Configuration.CookieConfig authCookieConf;
-    private Configuration config;
     @Autowired
     private ThreadLocalUtils threadLocalUtils;
     @Autowired
     private ComponentExceptionMapper componentExceptionMapper;
 
-    public GatewayFilter(org.openecomp.sdc.be.config.Configuration configuration) {
-        this.authCookieConf = configuration.getAuthCookie();
+    public GatewayFilter() {
     }
 
     @Override
@@ -65,11 +57,9 @@ public class GatewayFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) req;
         HttpServletResponse httpResponse = (HttpServletResponse) res;
         try {
-            if (isUrlFromWhiteList(httpRequest) || isConsumerBusinessLogic()) {
-                ThreadLocalsHolder.setApiType(FilterDecisionEnum.NA);
-                threadLocalUtils.setUserContextFromDB(httpRequest);
-                filterChain.doFilter(httpRequest, res);
-            }
+            ThreadLocalsHolder.setApiType(FilterDecisionEnum.NA);
+            threadLocalUtils.setUserContextFromDB(httpRequest);
+            filterChain.doFilter(httpRequest, res);
         } catch (ComponentException ce) {
             componentExceptionMapper.writeToResponse(ce, httpResponse);
         } catch (WebApplicationException we) {
@@ -86,20 +76,6 @@ public class GatewayFilter implements Filter {
     private void setDefaultHttpParams(HttpServletResponse httpResponse) {
         httpResponse.setContentType("application/json");
         httpResponse.setCharacterEncoding("UTF-8");
-    }
-
-    private boolean isUrlFromWhiteList(HttpServletRequest httpRequest) {
-        String pathInfo;
-        List<String> excludedUrls = authCookieConf.getExcludedUrls();
-        pathInfo = httpRequest.getPathInfo().toLowerCase();
-        log.debug("SessionValidationFilter: white list validation ->  PathInfo: {} ", pathInfo);
-        Stream<String> stream = excludedUrls.stream();
-        pathInfo.getClass();
-        return stream.anyMatch(pathInfo::matches);
-    }
-
-    private Boolean isConsumerBusinessLogic() {
-        return config.getConsumerBusinessLogic();
     }
 
     @Override

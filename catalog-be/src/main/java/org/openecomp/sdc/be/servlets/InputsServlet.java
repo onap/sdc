@@ -54,8 +54,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -395,7 +393,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = DataTypeDefinition.class)))),
         @ApiResponse(responseCode = "200", description = "Data type found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Data type not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataType(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
                                 @PathParam("dataTypeName") final String dataTypeName, @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
@@ -432,7 +429,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "200", description = "Data type found"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Component not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataTypes(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
                                  @Context final HttpServletRequest request) {
         ComponentsUtils componentsUtils = getComponentsUtils();
@@ -471,7 +467,6 @@ public class InputsServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "200", description = "Data type deleted"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Data type not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteDataType(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId,
                                    @PathParam("dataTypeName") final String dataTypeName, @Context final HttpServletRequest request) {
         ComponentsUtils componentsUtils = getComponentsUtils();

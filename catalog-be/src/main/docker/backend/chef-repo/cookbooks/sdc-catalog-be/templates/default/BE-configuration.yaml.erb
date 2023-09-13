@@ -81,20 +81,6 @@ users:
     tom: passwd
     bob: passwd
 
-# access restriction
-authCookie:
-  securityKey: "sdcaccessrestrictionsecureykey"
-  maxSessionTimeOut: 86400000
-  sessionIdleTimeOut: 3600000
-  cookieName: "AuthenticationCookie"
-  path: /
-  domain: ""
-  isHttpOnly: true
-  # redirect variable name from portal.properties file
-  redirectURL: ""
-  excludedUrls: [<%= node['access_restriction']['excluded_urls'] %>]
-  onboardingExcludedUrls: [<%= node['access_restriction']['excluded_urls_onboarding'] %>]
-
 basicAuth:
   enabled: <%= @basic_auth_flag %>
   userName: <%= @user_name %>
@@ -112,8 +98,6 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : <%= node['jetty']['truststore_path'] %>
-    truststorePassword : <%= @cassandra_truststore_password %>
     keySpaces:
         - { name: dox,           replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdcaudit,      replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
@@ -1004,8 +988,6 @@ toscaValidators:
 
 disableAudit: false
 
-consumerBusinessLogic: true
-
 vfModuleProperties:
     min_vf_module_instances:
         forBaseModule: 1
@@ -1145,8 +1127,6 @@ dmaapConsumerConfiguration:
         username: user
         password:
     aftDme2SslEnable: true
-    aftDme2ClientKeystore: <%= node['jetty']['truststore_path'] %>
-    aftDme2ClientKeystorePassword: ""
     aftDme2ClientSslCertAlias: certman
 
 dmaapProducerConfiguration:
@@ -1178,8 +1158,6 @@ dmaapProducerConfiguration:
         username: <%= node['DMAAP']['producer']['username'] %>
         password: <%= node['DMAAP']['producer']['password'] %>
     aftDme2SslEnable: true
-    aftDme2ClientKeystore: <%= node['jetty']['truststore_path'] %>
-    aftDme2ClientKeystorePassword: <%= node['jetty']['dmaap_truststore_pwd'] %>
     aftDme2ClientSslCertAlias: certman
 
 
@@ -1244,26 +1222,6 @@ autoHealingOwner: jh0003
 supportAllottedResourcesAndProxy: true
 deleteLockTimeoutInSeconds: 60
 maxDeleteComponents: 10
-
-# Cadi filter (access restriction) Parameters
-aafNamespace:  <%= node['aafNamespace'] %>
-aafAuthNeeded:  <%= node['access_restriction']['aafAuthNeeded'] %>
-
-cadiFilterParams:
-    AFT_LATITUDE:  "32.780140"
-    AFT_LONGITUDE: "-96.800451"
-    hostname: <%= node['BE_VIP'] %>
-    aaf_id: <%= node['access_restriction']['aaf_id'] %>
-    aaf_env: <%= node['access_restriction']['aaf_env'] %>
-    aaf_url: <%= node['access_restriction']['aaf_url'] %>
-    csp_domain: <%= node['access_restriction']['csp_domain'] %>
-    cadi_keyfile: <%= node['access_restriction']['cadi_keyfile'] %>
-    aaf_password: <%= node['access_restriction']['aaf_password'] %>
-    cadi_loglevel: <%= node['access_restriction']['cadi_loglevel'] %>
-    AFT_ENVIRONMENT: <%= node['access_restriction']['AFT_ENVIRONMENT'] %>
-    cadiX509Issuers: <%= node['access_restriction']['cadiX509Issuers'] %>
-    cadi_truststore: <%= node['access_restriction']['cadi_truststore'] %>
-    cadi_truststore_password: <%= node['access_restriction']['cadi_truststore_password'] %>
 
 # This configuration entry lists all node type names prefix that shall be allowed on SDC.
 definedResourceNamespace:

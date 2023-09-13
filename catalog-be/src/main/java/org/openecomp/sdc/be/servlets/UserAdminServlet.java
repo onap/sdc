@@ -46,8 +46,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.jetty.http.HttpStatus;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
@@ -85,7 +83,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns user Ok"), @ApiResponse(responseCode = "404", description = "User not found"),
         @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User get(@Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
                     @Context final HttpServletRequest request) {
         return userBusinessLogic.getUser(userId, false);
@@ -101,7 +98,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Returns user role Ok"), @ApiResponse(responseCode = "404", description = "User not found"),
         @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public String getRole(@Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
                           @Context final HttpServletRequest request) {
         User user = userBusinessLogic.getUser(userId, false);
@@ -120,7 +116,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "404", description = "User not found"), @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
         @ApiResponse(responseCode = "409", description = "User already exists"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User updateUserRole(@Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userIdUpdateUser,
                                @Context final HttpServletRequest request,
                                @Parameter(description = "json describe the update role", required = true) UserRole newRole,
@@ -155,7 +150,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         @ApiResponse(responseCode = "200", description = "Returns user Ok"), @ApiResponse(responseCode = "403", description = "Restricted Access"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName,
                           @HeaderParam("HTTP_CSP_LASTNAME") String lastName, @HeaderParam("HTTP_CSP_EMAIL") String email) {
         User authUser = new User();
@@ -174,7 +168,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
         @ApiResponse(responseCode = "200", description = "Returns user Ok"), @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<User> getAdminsUser(@Context final HttpServletRequest request) {
         return userBusinessLogic.getAllAdminUsers();
     }
@@ -215,7 +208,6 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "405", description = "Method Not Allowed"),
         @ApiResponse(responseCode = "409", description = "Restricted operation"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User deActivateUser(@Parameter(description = "userId of user to get", required = true) @PathParam("userId") final String userId,
                                @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String modifierId) {
         return userBusinessLogicExt.deActivateUser(modifierId, userId);

@@ -43,8 +43,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
@@ -105,7 +103,6 @@ public class ServiceActivationServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "The resource name is missing in the request body - SVC4062"),
         @ApiResponse(responseCode = "409", description = "Service state is invalid for this action"),
         @ApiResponse(responseCode = "502", description = "The server was acting as a gateway or proxy and received an invalid response from the upstream server")})
-    @PermissionAllowed({AafPermission.PermNames.WRITE_VALUE})
     public Response activateServiceExternal(
         @Parameter(description = "Determines the format of the body of the request", required = true) @HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contentType,
         @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,

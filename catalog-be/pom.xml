@@ -832,31 +832,6 @@
             </exclusions>
         </dependency>
 
-        <!-- CADI -->
-        <dependency>
-            <groupId>org.onap.aaf.authz</groupId>
-            <artifactId>aaf-cadi-aaf</artifactId>
-            <version>${cadi.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.datastax.cassandra</groupId>
-                    <artifactId>cassandra-driver-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>log4j</artifactId>
-                    <groupId>log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- TEST -->
         <dependency>
             <groupId>org.assertj</groupId>

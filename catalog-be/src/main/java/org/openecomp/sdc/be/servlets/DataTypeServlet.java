@@ -49,8 +49,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
@@ -94,7 +92,6 @@ public class DataTypeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Data types not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response fetchDataType(@Context final HttpServletRequest request,
                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                   @PathParam("dataTypeUid") String dataTypeUid) {
@@ -124,7 +121,6 @@ public class DataTypeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Data type found, properties may be empty"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Data type not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response fetchProperties(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                     @PathParam("id") final String id) {
         final List<PropertyDefinition> allProperties = dataTypeOperation.findAllProperties(id);
@@ -144,7 +140,6 @@ public class DataTypeServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Data type not found")
         })
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                    @PathParam("id") final String id,
                                    @RequestBody(description = "Property to add", required = true) final PropertyDefinitionDto propertyDefinitionDto) {
@@ -183,7 +178,6 @@ public class DataTypeServlet extends BeGenericServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "404", description = "Data type not found")
         })
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateProperty(@Parameter(in = ParameterIn.PATH, required = true, description = "The data type id")
                                    @PathParam("id") final String id,
                                    @RequestBody(description = "Property to update", required = true)
@@ -221,7 +215,6 @@ public class DataTypeServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "404", description = "Data type not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getDataTypeModels(@PathParam("dataTypeName") String dataTypeName) {
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
             gson.toJson(dataTypeOperation.getAllDataTypeModels(dataTypeName)));

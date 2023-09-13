@@ -48,8 +48,6 @@ import org.openecomp.sdc.be.components.impl.InterfaceLifecycleTypeImportManager;
 import org.openecomp.sdc.be.components.impl.PolicyTypeImportManager;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeImportManager;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -143,7 +141,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Capability Type already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
                                          @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                          @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -163,7 +160,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Relationship Type already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                            @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -180,7 +176,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Interface Lifecycle Type already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadInterfaceLifecycleType(@Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
                                                  @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                                  @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -199,7 +194,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Tosca Artifact Type already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadArtifactTypes(@Parameter(description = "Zip file containing a yaml with the TOSCA artifact types definition")
                                         @FormDataParam("artifactsZip") File file,
                                         @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -220,7 +214,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Category already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCategories(@Parameter(description = "FileInputStream") @FormDataParam("categoriesZip") File file,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
@@ -236,7 +229,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Data types already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                     @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -253,7 +245,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "Data types already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypesYaml(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesYaml") File file,
                                         @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                         @Parameter(description = "model name") @FormDataParam("model") String modelName,
@@ -270,7 +261,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "group types already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadGroupTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
                                      @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                      @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
@@ -289,7 +279,6 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation"),
             @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
             @ApiResponse(responseCode = "409", description = "policy types already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadPolicyTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
                                       @Parameter(description = "model name") @FormDataParam("model") String modelName,
                                       @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,

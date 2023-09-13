@@ -26,12 +26,10 @@ import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.sdc.security.PortalClient;
 import org.openecomp.sdc.be.auditing.impl.ConfigurationProvider;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
-import org.openecomp.sdc.be.components.impl.aaf.RoleAuthorizationHandler;
 import org.openecomp.sdc.be.components.impl.lock.ComponentLockAspect;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
-import org.openecomp.sdc.be.filters.FilterConfiguration;
 import org.openecomp.sdc.be.filters.PortalConfiguration;
 import org.openecomp.sdc.be.filters.ThreadLocalUtils;
 import org.openecomp.sdc.be.tosca.CommonCsarGenerator;
@@ -104,11 +102,6 @@ public class CatalogBESpringConfig {
     }
 
     @Bean
-    public RoleAuthorizationHandler roleAuthorizationHandler() {
-        return new RoleAuthorizationHandler();
-    }
-
-    @Bean
     public CloseableHttpClient httpClientConnectionManager() {
         HttpClientFactory httpClientFactory = new HttpClientFactory();
         return httpClientFactory.createHttpClient();
@@ -117,11 +110,6 @@ public class CatalogBESpringConfig {
     @Bean
     public PortalConfiguration portalConfiguration() throws CipherUtilException {
         return new PortalConfiguration();
-    }
-
-    @Bean
-    public FilterConfiguration filterConfiguration() {
-        return new FilterConfiguration(configuration());
     }
 
     @Bean

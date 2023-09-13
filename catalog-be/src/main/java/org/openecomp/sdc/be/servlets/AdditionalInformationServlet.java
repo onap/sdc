@@ -47,8 +47,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
@@ -97,7 +95,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createResourceAdditionalInformationLabel(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Additional information key value to be created", required = true) String data,
@@ -122,7 +119,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createServiceAdditionalInformationLabel(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "Additional information key value to be created", required = true) String data,
@@ -148,7 +144,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceAdditionalInformationLabel(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
@@ -175,7 +170,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateServiceAdditionalInformationLabel(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId,
@@ -201,7 +195,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateResourceAdditionalInformationLabel(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request,
@@ -226,7 +219,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteServiceAdditionalInformationLabel(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request,
@@ -251,7 +243,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getResourceAdditionalInformationLabel(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request,
@@ -276,7 +267,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getServiceAdditionalInformationLabel(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "label id", required = true) @PathParam("labelId") final String labelId, @Context final HttpServletRequest request,
@@ -300,7 +290,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllResourceAdditionalInformationLabel(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -323,7 +312,6 @@ public class AdditionalInformationServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Additional information key already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllServiceAdditionalInformationLabel(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {

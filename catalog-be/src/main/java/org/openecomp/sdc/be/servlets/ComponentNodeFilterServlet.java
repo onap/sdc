@@ -45,8 +45,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -108,7 +106,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response addComponentFilterConstraint(@Parameter(description = "UIConstraint data", required = true) String constraintData,
                                                  @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                                  @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
@@ -168,7 +165,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateComponentFilterConstraint(@Parameter(description = "UIConstraint data", required = true) String constraintData,
                                                     @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                                     @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
@@ -225,7 +221,6 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "201", description = "Delete Component Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteComponentFilterConstraint(@Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                                     @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
                                                     @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,

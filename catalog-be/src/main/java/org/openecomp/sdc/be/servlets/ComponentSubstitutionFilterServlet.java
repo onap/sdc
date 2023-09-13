@@ -46,8 +46,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentSubstitutionFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -110,7 +108,6 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Add Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response addSubstitutionFilter(@Parameter(description = "UIConstraint data", required = true) String constraintData,
                                           @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                           @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {
@@ -161,7 +158,6 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Update Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateSubstitutionFilters(@Parameter(description = "UIConstraint data", required = true) String constraintData,
                                               @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                               @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {
@@ -216,7 +212,6 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Update Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateSubstitutionFilter(@Parameter(description = "Filter constraint information", required = true) UIConstraint uiConstraint,
                                              @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
                                              @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
@@ -272,7 +267,6 @@ public class ComponentSubstitutionFilterServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Delete Substitution Filter Constraint"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deleteSubstitutionFilterConstraint(@Parameter(description = "Component Id") @PathParam("componentId") String componentId,
                                                        @Parameter(description = "Constraint Index") @PathParam("constraintIndex") int index,
                                                        @Parameter(description = "valid value: resources / services", schema = @Schema(allowableValues = {

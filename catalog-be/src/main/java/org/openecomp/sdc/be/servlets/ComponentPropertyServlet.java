@@ -43,8 +43,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
-import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
@@ -92,7 +90,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Service property already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createPropertyInService(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "Service property to be created", required = true) String data, @Context final HttpServletRequest request,
@@ -110,7 +107,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Resource property already exist")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createPropertyInResource(
         @Parameter(description = "Resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Resource property to be created", required = true) String data, @Context final HttpServletRequest request,
@@ -127,7 +123,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "property"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Service property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyInService(
         @Parameter(description = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
@@ -144,7 +139,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "property"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyInResource(
         @Parameter(description = "resource id of property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "property id to get", required = true) @PathParam("propertyId") final String propertyId,
@@ -161,7 +155,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "property"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Service property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyListInService(
         @Parameter(description = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -177,7 +170,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "property"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getPropertyListInResource(
         @Parameter(description = "resource id of property", required = true) @PathParam("resourceId") final String resourceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
@@ -194,7 +186,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Service property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deletePropertyInService(
         @Parameter(description = "service id of property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "Property id to delete", required = true) @PathParam("propertyId") final String propertyId,
@@ -212,7 +203,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Resource property not found")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response deletePropertyInResource(
         @Parameter(description = "resource id of property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Property id to delete", required = true) @PathParam("propertyId") final String propertyId,
@@ -229,7 +219,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Service property updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePropertyInService(
         @Parameter(description = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
         @Parameter(description = "Service property to update", required = true) String data, @Context final HttpServletRequest request,
@@ -246,7 +235,6 @@ public class ComponentPropertyServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "200", description = "Resource property updated"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updatePropertyInResource(
         @Parameter(description = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
         @Parameter(description = "Resource property to update", required = true) String data, @Context final HttpServletRequest request,

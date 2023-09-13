@@ -191,7 +191,6 @@ class ExternalRefsServletTest extends JerseyTest {
         configuration.setJanusGraphInMemoryGraph(true);
         HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new HeatDeploymentArtifactTimeout();
         heatDeploymentArtifactTimeout.setDefaultMinutes(30);
-        configuration.setAafAuthNeeded(false);
         configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");

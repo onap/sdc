@@ -118,15 +118,12 @@ public class Configuration extends BasicConfiguration {
     private ApplicationL2CacheConfig applicationL2Cache;
     private ToscaValidatorsConfig toscaValidators;
     private boolean disableAudit;
-    private Boolean consumerBusinessLogic;
     private Map<String, VfModuleProperty> vfModuleProperties;
     private Map<String, String> genericAssetNodeTypes;
     private Map<String, CategoryBaseTypeConfig> serviceBaseNodeTypes;
     private Map<String, Map<String, String>> resourceNodeTypes;
     private String appVersion;
     private String artifactGeneratorConfig;
-    private CadiFilterParams cadiFilterParams;
-    private Boolean aafAuthNeeded = false;
     private String autoHealingOwner;
     private boolean enableAutoHealing;
     private Map<String, List<String>> resourcesForUpgrade;
@@ -138,8 +135,6 @@ public class Configuration extends BasicConfiguration {
     private boolean supportAllottedResourcesAndProxy;
     private Integer deleteLockTimeoutInSeconds;
     private Integer maxDeleteComponents;
-    private CookieConfig authCookie;
-    private String aafNamespace;
     private String workloadContext;
     private EnvironmentContext environmentContext;
     private List<GabConfig> gabConfig;
@@ -204,31 +199,6 @@ public class Configuration extends BasicConfiguration {
             return Collections.emptyList();
         }
         return globalCsarImports;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class CookieConfig {
-
-        private String securityKey = "";
-        private long maxSessionTimeOut = 600 * 1000L;
-        private long sessionIdleTimeOut = 30 * 1000L;
-        private String cookieName = "AuthenticationCookie";
-        private String redirectURL = "https://www.e-access.att.com/ecomp_portal_ist/ecompportal/process_csp";
-        private List<String> excludedUrls;
-        private List<String> onboardingExcludedUrls;
-        private String domain = "";
-        private String path = "";
-        private boolean isHttpOnly = true;
-
-        public boolean isHttpOnly() {
-            return isHttpOnly;
-        }
-
-        public void setIsHttpOnly(final boolean isHttpOnly) {
-            this.isHttpOnly = isHttpOnly;
-        }
     }
 
     @Getter
