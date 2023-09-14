@@ -85,6 +85,10 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     instantiationTypes:Array<instantiationType>;
     isHiddenCategorySelected: boolean;
     isModelRequired: boolean;
+    othersFlag: boolean;
+    functionOption: string;
+    othersRoleFlag: boolean;
+    roleOption: string;
 
     save():Promise<any>;
     revert():void;
@@ -108,6 +112,8 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     possibleToUpdateIcon():boolean;
     initModel():void;
     isVspImport(): boolean;
+    setServiceFunction(option:string):void;
+    setServiceRole(option:string):void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -253,6 +259,7 @@ export class GeneralViewModel {
         this.$scope.progressService = this.progressService;
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
+        this.$scope.othersFlag = false;
 
         // Init UIModel
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
@@ -299,6 +306,7 @@ export class GeneralViewModel {
                         });
                         (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
                         this.$scope.onBaseTypeChange();
+                        this.setFunctionRole(service);
                     },
                     (error) => {
                         const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
@@ -312,6 +320,9 @@ export class GeneralViewModel {
                         this.$state.go('dashboard');
                     });
             }
+            
+            this.setFunctionRole(service);
+            
             if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
             }
@@ -382,6 +393,28 @@ export class GeneralViewModel {
         });
 
     };
+
+    private setFunctionRole = (service : Service) : void => {
+        if (service.serviceFunction) {
+            const functionList : string[] = this.$scope.getMetadataKeyValidValues('Service Function');
+            if (functionList.find(value => value == service.serviceFunction) != undefined) {
+                this.$scope.functionOption = service.serviceFunction;
+            } else {
+                this.$scope.functionOption = 'Others';
+                this.$scope.othersFlag = true;
+            }
+        }
+
+        if (service.serviceRole) {
+            const roleList : string[] = this.$scope.getMetadataKeyValidValues('Service Role');
+            if (roleList.find(value => value == service.serviceRole) != undefined) {
+                this.$scope.roleOption = service.serviceRole;
+            } else {
+                this.$scope.roleOption = 'Others';
+                this.$scope.othersRoleFlag = true;
+            }
+        }
+    }
 
     // Convert category string MainCategory_#_SubCategory to Array with one item (like the server except)
     private convertCategoryStringToOneArray = ():IMainCategory[] => {
@@ -775,6 +808,12 @@ export class GeneralViewModel {
                         if (!this.$scope.component.categorySpecificMetadata[metadataKey.name]) {
                             this.$scope.component.categorySpecificMetadata[metadataKey.name] = metadataKey.defaultValue ? metadataKey.defaultValue : "";
                         }
+                        if (metadataKey.name === 'Service Role') {
+                            this.$scope.roleOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                        }
+                        if (metadataKey.name === 'Service Function') {
+                            this.$scope.functionOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                        }
                     }
                 }
                 if (this.$scope.component.categories[0].subcategories && this.$scope.component.categories[0].subcategories[0].metadataKeys) {
@@ -852,6 +891,28 @@ export class GeneralViewModel {
             }
         };
 
+        this.$scope.setServiceFunction = (option:string): void => {
+            if (option === 'Others') {
+                this.$scope.othersFlag = true;
+                (<Service>this.$scope.component).serviceFunction = '';
+            } else {
+                this.$scope.othersFlag = false;
+                (<Service>this.$scope.component).serviceFunction = option;
+            }
+            
+        }
+
+        this.$scope.setServiceRole = (option:string): void => {
+            if (option === 'Others') {
+                this.$scope.othersRoleFlag = true;
+                (<Service>this.$scope.component).serviceRole = '';
+            } else {
+                this.$scope.othersRoleFlag = false;
+                (<Service>this.$scope.component).serviceRole = option;
+            }
+            
+        }
+
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
         this.$scope.isMetadataKeyMandatory = (key: string): boolean => {
@@ -862,7 +923,11 @@ export class GeneralViewModel {
         this.$scope.getMetadataKeyValidValues = (key: string): string[] => {
             let metadataKey = this.getMetadataKey(key);
             if (metadataKey) {
-                return metadataKey.validValues;
+                if (key == 'Service Function' || key == 'Service Role') {
+                    return metadataKey.validValues.concat("Others");
+                } else {
+                    return metadataKey.validValues;
+                }
             }
             return [];
         }
@@ -972,7 +1037,7 @@ export class GeneralViewModel {
     }
 
     private getSubcategoryMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
-        if (categories[0].subcategories && categories[0].subcategories[0].metadataKeys && categories[0].subcategories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
+                if (categories[0].subcategories && categories[0].subcategories[0].metadataKeys && categories[0].subcategories[0].metadataKeys.some(metadataKey => metadataKey.name == key)) {
             return categories[0].subcategories[0].metadataKeys.find(metadataKey => metadataKey.name == key);
         }
         return null;
