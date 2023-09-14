@@ -304,8 +304,8 @@ export class GeneralViewModel {
                         const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
                         console.error(errorMsg, error);
                         const errorDetails = {
-                            'Error': error.reason,
-                            'Details': error.message
+                            'Error': this.capitalize(error.reason),
+                            'Details': this.capitalize(error.message)
                         };
                         this.modalServiceSdcUI.openErrorDetailModal('Error', this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT'),
                             'error-modal', errorDetails);
@@ -339,7 +339,6 @@ export class GeneralViewModel {
             this.$scope.isShowOnboardingSelectionBrowse = false;
         }
 
-
         //init file extensions based on the file that was imported.
         if (this.$scope.component.isResource() && (<Resource>this.$scope.component).importedFile) {
             let fileName:string = (<Resource>this.$scope.component).importedFile.filename;
@@ -357,8 +356,6 @@ export class GeneralViewModel {
             //(<Resource>this.$scope.component).importedFile.filetype="csar";
         }
 
-
-
         this.$scope.setValidState(true);
 
         this.$scope.calculateUnique = (mainCategory:string, subCategory:string):string => {
@@ -375,13 +372,16 @@ export class GeneralViewModel {
             this.$scope.originComponent.contactId = this.$scope.component.contactId;
         }
 
-
         this.$scope.$on('$destroy', () => {
             this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE);
             this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         });
 
     };
+
+    private capitalize(s) {
+        return s && s[0].toUpperCase() + s.slice(1);
+    }
 
     // Convert category string MainCategory_#_SubCategory to Array with one item (like the server except)
     private convertCategoryStringToOneArray = ():IMainCategory[] => {

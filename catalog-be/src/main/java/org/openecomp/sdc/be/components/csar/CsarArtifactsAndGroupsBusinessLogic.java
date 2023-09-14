@@ -474,20 +474,22 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             jsonElement = gson.fromJson(artifactsMetaFile, jsonElement.getClass());
             JsonElement importStructureElement = jsonElement.get(Constants.IMPORT_STRUCTURE);
             if (importStructureElement == null || importStructureElement.isJsonNull()) {
-                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
+                log.error(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance()
                     .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
                         ErrorSeverity.ERROR);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName,
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName));
             }
             Map<String, List<Map<String, Object>>> artifactTemplateMap;
             artifactTemplateMap = ComponentsUtils.parseJsonToObject(importStructureElement.toString(), HashMap.class);
             if (artifactTemplateMap.isEmpty()) {
-                log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
+                log.error(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
                 BeEcompErrorManager.getInstance()
                     .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
                         ErrorSeverity.ERROR);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName,
+                    ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName));
             }
             Set<String> artifactsTypeKeys = artifactTemplateMap.keySet();
             Map<String, List<ArtifactTemplateInfo>> artifactsMap = new HashMap<>();
@@ -508,12 +510,13 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             }
             return Either.left(artifactsMap);
         } catch (Exception e) {
-            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
-            log.debug("failed with exception.", e);
+            log.error(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
+            log.error("failed with exception.", e);
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
                     ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName,
+                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName));
         }
     }
 
@@ -524,7 +527,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         List<Map<String, Object>> o = artifactTemplateMap.get(artifactsTypeKey);
         Either<List<ArtifactTemplateInfo>, ResponseFormat> artifactTemplateInfoListPairStatus = createArtifactTemplateInfoModule(artifactsTypeKey, o);
         if (artifactTemplateInfoListPairStatus.isRight()) {
-            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
+            log.error(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
                     ErrorSeverity.ERROR);
@@ -532,11 +535,12 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         }
         List<ArtifactTemplateInfo> artifactTemplateInfoList = artifactTemplateInfoListPairStatus.left().value();
         if (artifactTemplateInfoList == null) {
-            log.debug(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
+            log.error(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName);
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
                     ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName));
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, artifactFileName,
+                ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME, artifactFileName));
         }
         if (!artifactsTypeKey.equalsIgnoreCase(ArtifactTemplateInfo.CSAR_ARTIFACT)) {
             allGroups.addAll(artifactTemplateInfoList);
@@ -707,7 +711,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         if (op.isPresent()) {
             res = op.get();
             if (!res.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
+                log.error(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
                     res.getArtifactType());
                 BeEcompErrorManager.getInstance()
                     .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
@@ -784,7 +788,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource = artifactToscaOperation
                     .updateArtifactOnResource(artifactInfoHeatEnv, updatedResource, artifactInfoHeatEnv.getUniqueId(), null, null, true);
                 if (updateArtifactOnResource.isRight()) {
-                    log.debug("Failed to update heat env on CSAR flow for component {} artifact {} label {}", updatedResource.getUniqueId(),
+                    log.error("Failed to update heat env on CSAR flow for component {} artifact {} label {}", updatedResource.getUniqueId(),
                         artifactInfoHeatEnv.getUniqueId(), artifactInfoHeatEnv.getArtifactLabel());
                     return Either.right(
                         componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateArtifactOnResource.right().value())));
@@ -804,7 +808,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils
             .getHeatParamsWithoutImplicitTypes(heatDecodedPayload, artifactType);
         if (heatParameters.isRight()) {
-            log.debug("File {} is not in expected key-value form in csar ", fileName);
+            log.error("File {} is not in expected key-value form in csar ", fileName);
             BeEcompErrorManager.getInstance()
                 .logInternalDataError("File " + fileName + " is not in expected key-value form in csar ", "CSAR internals are invalid",
                     ErrorSeverity.ERROR);
@@ -844,7 +848,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             Either<ArtifactDefinition, StorageOperationStatus> updateArtifactOnResource = artifactToscaOperation
                 .updateArtifactOnResource(currentInfo, resource, currentInfo.getUniqueId(), null, null, true);
             if (updateArtifactOnResource.isRight()) {
-                log.debug("Failed to update heat parameters of heat on CSAR flow for component {} artifact {} label {}", resource.getUniqueId(),
+                log.error("Failed to update heat parameters of heat on CSAR flow for component {} artifact {} label {}", resource.getUniqueId(),
                     currentInfo.getUniqueId(), currentInfo.getArtifactLabel());
                 return Either
                     .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateArtifactOnResource.right().value())));
@@ -865,11 +869,11 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             result = artifactsBusinessLogic
                 .handleLoadedArtifact(component, user, operation, false, true, component.getComponentType(), artifactDefinitionFromJson);
         } catch (ComponentException e) {
-            log.debug(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, component.getComponentType(), component.getName());
+            log.error(FAILED_UPLOAD_ARTIFACT_TO_COMPONENT, component.getComponentType(), component.getName());
             return Either.right(componentsUtils.getResponseFormat(e));
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-            log.debug("Exception occurred when createOrUpdateCsarArtifactFromJson, error is:{}", e.getMessage(), e);
+            log.error("Exception occurred when createOrUpdateCsarArtifactFromJson, error is:{}", e.getMessage(), e);
             return Either.right(responseFormat);
         }
         return Either.left(result);
@@ -1239,7 +1243,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     artifactUid = artifactFromResource.getUniqueId();
                     artifactUUID = artifactFromResource.getArtifactUUID();
                     if (!artifactFromResource.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                        log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
+                        log.error(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
                             artifactFromResource.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                             ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
@@ -1259,7 +1263,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     artifactUid = createdArtifact.getUniqueId();
                     artifactUUID = createdArtifact.getArtifactUUID();
                     if (!createdArtifact.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                        log.debug(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
+                        log.error(ARTIFACT_WITH_NAME_AND_TYPE_ALREADY_EXIST_WITH_TYPE, artifactFileName, artifactTemplateInfo.getType(),
                             createdArtifact.getArtifactType());
                         BeEcompErrorManager.getInstance().logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName,
                             ARTIFACT_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
@@ -1374,17 +1378,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             List<ArtifactTemplateInfo> associatedArtifact = associateEntry.getValue();
             Set<String> arifactsUids = new HashSet<>();
             Set<String> arifactsUuids = new HashSet<>();
-            for (ArtifactTemplateInfo artifactTemplate : associatedArtifact) { // try
-
-                // to
-
-                // find
-
-                // artifact
-
-                // in
-
-                // resource
+            for (ArtifactTemplateInfo artifactTemplate : associatedArtifact) { // try to find artifact in resource
                 boolean isCreate = true;
                 for (ArtifactDefinition createdArtifact : createdDeploymentArtifactsAfterDelete) {
                     if (artifactTemplate.getFileName().equalsIgnoreCase(createdArtifact.getArtifactName())) {
@@ -1474,7 +1468,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         for (ArtifactDefinition updatedArtifact : updatedArtifacts) {
             if (updatedArtifact.getArtifactName().equals(artifactFileName)) {
                 if (!updatedArtifact.getArtifactType().equalsIgnoreCase(artifactTemplateInfo.getType())) {
-                    log.debug("Artifact with name {} and type {} already updated with type  {}", artifactFileName, artifactTemplateInfo.getType(),
+                    log.error("Artifact with name {} and type {} already updated with type  {}", artifactFileName, artifactTemplateInfo.getType(),
                         updatedArtifact.getArtifactType());
                     BeEcompErrorManager.getInstance()
                         .logInternalDataError(ARTIFACT_FILE_IS_NOT_IN_EXPECTED_FORMAT_FILE_NAME + artifactFileName, ARTIFACT_INTERNALS_ARE_INVALID,
@@ -1507,7 +1501,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         Either<ArtifactDefinition, ResponseFormat> updateEnvEither = updateHeatParamsFromCsar(resource, csarInfo, artifactTemplateInfo, currentInfo,
             true);
         if (updateEnvEither.isRight()) {
-            log.debug("failed to update parameters to artifact {}", artifactFileName);
+            log.error("failed to update parameters to artifact {}", artifactFileName);
             return Either.right(updateEnvEither.right().value());
         }
         artifactsBusinessLogic.updateGroupForHeat(previousInfo, updateEnvEither.left().value(), resource);
@@ -1529,7 +1523,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                             .handleDelete(updatedResource.getUniqueId(), artifactId, csarInfo.getModifier(), updatedResource, shouldLock,
                                 inTransaction);
                         if (handleDelete.isRight()) {
-                            log.debug("Couldn't delete  artifact {}", artifactId);
+                            log.error("Couldn't delete  artifact {}", artifactId);
                             return Either.right(handleDelete.right().value());
                         }
                     }
@@ -1574,7 +1568,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                     Either<ArtifactDefinition, ResponseFormat> handleDelete = artifactsBusinessLogic
                         .handleDelete(resource.getUniqueId(), artifactId, csarInfo.getModifier(), resource, shouldLock, inTransaction);
                     if (handleDelete.isRight()) {
-                        log.debug("Couldn't delete  artifact {}", artifactId);
+                        log.error("Couldn't delete  artifact {}", artifactId);
                         return Either.right(handleDelete.right().value());
                     }
                 }
