@@ -5,6 +5,125 @@
 Release Notes
 =============
 
+Version: 1.13.4
+===============
+
+:Release Date: 2023-09-15
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC Montreal early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4623 <https://jira.onap.org/browse/SDC-4623>`_ - Improved error handling on service import
+*  `SDC-4605 <https://jira.onap.org/browse/SDC-4605>`_ - UI support for service update via csar import
+*  `SDC-4578 <https://jira.onap.org/browse/SDC-4578>`_ - Create plugin point for csar generation
+*  `SDC-4579 <https://jira.onap.org/browse/SDC-4579>`_ - Add endpoint to update service by csar import
+*  `SDC-4616 <https://jira.onap.org/browse/SDC-4616>`_ - User specified output name
+*  `SDC-4614 <https://jira.onap.org/browse/SDC-4614>`_ - Support for the policy type definition upgrade
+*  `SDC-4602 <https://jira.onap.org/browse/SDC-4602>`_ - UI support for interface definitions on VFC instances
+*  `SDC-4613 <https://jira.onap.org/browse/SDC-4613>`_ - Import service with outputs mapped to implicit attributes
+*  `SDC-4612 <https://jira.onap.org/browse/SDC-4612>`_ - Implicit attributes in get_attribute list
+*  `SDC-4611 <https://jira.onap.org/browse/SDC-4611>`_ - Declare implicit attributes as outputs
+*  `SDC-4604 <https://jira.onap.org/browse/SDC-4604>`_ - UI support for service update via tosca template import
+*  `SDC-4588 <https://jira.onap.org/browse/SDC-4588>`_ - Import VFC with timeout in interface operation implementation
+*  `SDC-4593 <https://jira.onap.org/browse/SDC-4593>`_ - System should validate JSON anywhere it is added as property value
+*  `SDC-4575 <https://jira.onap.org/browse/SDC-4575>`_ - UI support for timeout in interface operation implementation
+*  `SDC-4576 <https://jira.onap.org/browse/SDC-4576>`_ - Add endpoint to update service by tosca template import
+*  `SDC-4580 <https://jira.onap.org/browse/SDC-4580>`_ - Add backend support for timeout in interface operation implementation
+*  `SDC-4562 <https://jira.onap.org/browse/SDC-4562>`_ - Support TOSCA functions of complex list/map entries in composition view
+
+
+**Bug Fixes**
+
+*  `SDC-4618 <https://jira.onap.org/browse/SDC-4618>`_ - Error when importing output with common name in attributes and properties
+*  `SDC-4615 <https://jira.onap.org/browse/SDC-4615>`_ - Stringbuilder UI - two scroll bars overlapping
+*  `SDC-4603 <https://jira.onap.org/browse/SDC-4603>`_ - Unable to add metadata on inputs
+*  `SDC-4610 <https://jira.onap.org/browse/SDC-4610>`_ - Surrounding a value in quotes can lead to failure to parse the value
+*  `SDC-4606 <https://jira.onap.org/browse/SDC-4606>`_ - Error thrown from Jsoup validation for < char
+*  `SDC-4599 <https://jira.onap.org/browse/SDC-4599>`_ - Fail to import service with CP
+*  `SDC-4554 <https://jira.onap.org/browse/SDC-4554>`_ - Custom tosca functions with valid_values and in_range operators not showing properly
+*  `SDC-4586 <https://jira.onap.org/browse/SDC-4586>`_ - Changing VFC version on template wipes previously assigned property values based on get_input
+*  `SDC-4598 <https://jira.onap.org/browse/SDC-4598>`_ - 'Tosca Function' get_input in Properties Assignment error
+*  `SDC-4591 <https://jira.onap.org/browse/SDC-4591>`_ - Import use case fails when interfaces in template do not exist in system
+*  `SDC-4591 <https://jira.onap.org/browse/SDC-4591>`_ - Import use case fails when interfaces in template do not exist in system
+*  `SDC-4596 <https://jira.onap.org/browse/SDC-4596>`_ - Fail to import service with get_property of map-of-string
+*  `SDC-4587 <https://jira.onap.org/browse/SDC-4587>`_ - Creation date only works with requests that return 1 service (API)
+*  `SDC-4583 <https://jira.onap.org/browse/SDC-4583>`_ - Unable to drag a VFC on to composition if an existing VFC instance has the same name
+*  `SDC-4581 <https://jira.onap.org/browse/SDC-4581>`_ - Unable to save yaml content in node filter
+*  `SDC-4556 <https://jira.onap.org/browse/SDC-4556>`_ - Upgrading a node does not bring its new capabilities
+
+
+**Tasks**
+
+*  `SDC-4608 <https://jira.onap.org/browse/SDC-4608>`_ - Improve handling 'empty'/null string in Service fields
+*  `SDC-4563 <https://jira.onap.org/browse/SDC-4563>`_ - Remove unused code
+*  `SDC-4600 <https://jira.onap.org/browse/SDC-4600>`_ - Replace deprecated maven parameters
+*  `SDC-4597 <https://jira.onap.org/browse/SDC-4597>`_ - Add DOT to property's name permitted chars
+*  `SDC-4592 <https://jira.onap.org/browse/SDC-4592>`_ - Update error message for missing sub mapping properties
+*  `SDC-4589 <https://jira.onap.org/browse/SDC-4589>`_ - Introduce error message for missing properties during the service import
+*  `SDC-4585 <https://jira.onap.org/browse/SDC-4585>`_ - Rollback nested transaction
+*  `SDC-4569 <https://jira.onap.org/browse/SDC-4569>`_ - Replace/remove outdated dependencies
+*  `SDC-4565 <https://jira.onap.org/browse/SDC-4565>`_ - Improvement to maven multi-thread run
+
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+    
+    
 Version: 1.13.3
 ===============
 
