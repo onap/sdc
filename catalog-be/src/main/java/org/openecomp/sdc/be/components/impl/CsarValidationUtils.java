@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -60,7 +59,7 @@ public class CsarValidationUtils {
     private static final String[] TOSCA_METADATA_FIELDS = {TOSCA_META_FILE_VERSION, CSAR_VERSION, CREATED_BY, TOSCA_META_ENTRY_DEFINITIONS};
     private static final String ARTIFACTS_METADATA_FILE = "HEAT.meta";
     private static final String TOSCA_CSAR_EXTENSION = ".csar";
-    private static final String TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID = "TOSCA-Metadata/TOSCA.meta file is not in expected key-value form in csar, csar ID {}";
+    private static final String TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID = "TOSCA-Metadata/TOSCA.meta file is not in expected key-value form in csar, csar ID '%s'";
     private static final String TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID = "TOSCA-Metadata/TOSCA.meta file not in expected key-value form in CSAR with id ";
     private static final String CSAR_INTERNALS_ARE_INVALID = "CSAR internals are invalid";
     private static final String ENTRY_DEFINITIONS_ENTRY_NOT_FOUND_IN_TOSCA_METADATA_TOSCA_META_FILE_CSAR_ID = "Entry-Definitions entry not found in TOSCA-Metadata/TOSCA.meta file, csar ID {}";
@@ -148,23 +147,23 @@ public class CsarValidationUtils {
         Pattern pattern = Pattern.compile(TOSCA_METADATA_PATH_PATTERN);
         Optional<String> keyOp = csar.keySet().stream().filter(k -> pattern.matcher(k).matches()).findAny();
         if (keyOp.isEmpty()) {
-            log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID);
+            log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
                     CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
+                String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
         }
         Properties props = new Properties();
         try {
             props.load(new StringReader(new String(csar.get(keyOp.get())).replace("\\", "\\\\")));
         } catch (IOException e) {
-            log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID, e);
+            log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID), e);
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
                     CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
+                String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
         }
         String yamlFileName = props.getProperty(TOSCA_META_ENTRY_DEFINITIONS);
         String result = Arrays.asList(yamlFileName.split(DEL_PATTERN)).stream().map(x -> x).collect(Collectors.joining(DEL_PATTERN));
@@ -239,44 +238,43 @@ public class CsarValidationUtils {
         Pattern pattern = Pattern.compile(TOSCA_METADATA_PATH_PATTERN);
         Optional<String> keyOp = csar.keySet().stream().filter(k -> pattern.matcher(k).matches()).findAny();
         if (keyOp.isEmpty()) {
-            log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID);
+            log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
                     CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
+                String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
         }
         String toscaMetadata = new String(csar.get(keyOp.get()));
-        String[] splited = toscaMetadata.split(NEW_LINE_DELM);
-        if (splited == null || splited.length < TOSCA_METADATA_FIELDS.length) {
-            log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID);
-            BeEcompErrorManager.getInstance()
-                .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
-                    CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
-        }
-        Either<Boolean, ResponseFormat> blockStatus = validateBlock(csarUUID, splited, componentsUtils);
+        Either<Boolean, ResponseFormat> blockStatus = validateBlock(csarUUID, componentsUtils, toscaMetadata);
         if (blockStatus.isRight()) {
             return blockStatus;
         }
         return Either.left(true);
     }
 
-    private static Either<Boolean, ResponseFormat> validateBlock(String csarUUID, String[] splited, ComponentsUtils componentsUtils) {
-        int index = 0;
-        for (String toscaField : TOSCA_METADATA_FIELDS) {
-            Properties props = new Properties();
-            try {
-                props.load(new ByteArrayInputStream(splited[index].getBytes()));
-            } catch (IOException e) {
-                log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID, e);
-                BeEcompErrorManager.getInstance()
-                    .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
-                        CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                    TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
-            }
+    private static Either<Boolean, ResponseFormat> validateBlock(String csarUUID, ComponentsUtils componentsUtils, String toscaMetadata) {
+        final String[] splited = toscaMetadata.split(NEW_LINE_DELM);
+        if (splited == null || splited.length < TOSCA_METADATA_FIELDS.length) {
+            log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
+            BeEcompErrorManager.getInstance()
+                .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
+                    CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
+                String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
+        }
+        final Properties props = new Properties();
+        try {
+            props.load(new ByteArrayInputStream(toscaMetadata.getBytes()));
+        } catch (final IOException e) {
+            log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID), e);
+            BeEcompErrorManager.getInstance()
+                .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
+                    CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
+                String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
+        }
+        for (final String toscaField : TOSCA_METADATA_FIELDS) {
             if (!props.containsKey(toscaField)) {
                 final String msg = "TOSCA.meta file format is invalid: No new line after block_0 as expected in csar, csar ID {}";
                 log.error(msg, csarUUID);
@@ -287,12 +285,12 @@ public class CsarValidationUtils {
             }
             final String value = props.getProperty(toscaField);
             if (value == null || value.isEmpty()) {
-                log.error(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID);
+                log.error(String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
                 BeEcompErrorManager.getInstance()
                     .logInternalDataError(TOSCA_METADATA_TOSCA_META_FILE_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_WITH_ID + csarUUID,
                         CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID,
-                    TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID));
+                    String.format(TOSCA_METADATA_TOSCA_META_FILE_IS_NOT_IN_EXPECTED_KEY_VALUE_FORM_IN_CSAR_CSAR_ID, csarUUID)));
             }
             // TOSCA-Meta-File-Version & CSAR-Version : digit.digit - format validation
             if ((toscaField.equals(TOSCA_META_FILE_VERSION) || toscaField.equals(CSAR_VERSION)) && !validateTOSCAMetaProperty(value)) {
@@ -303,7 +301,6 @@ public class CsarValidationUtils {
                         CSAR_INTERNALS_ARE_INVALID, ErrorSeverity.ERROR);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID_FORMAT, csarUUID, msg, toscaField, csarUUID));
             }
-            index++;
         }
         return Either.left(true);
     }

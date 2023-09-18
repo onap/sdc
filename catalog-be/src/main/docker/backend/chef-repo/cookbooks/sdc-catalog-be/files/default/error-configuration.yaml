@@ -1327,7 +1327,7 @@ errors:
     # %1 - csar file name
     CSAR_INVALID_FORMAT: {
         code: 400,
-        message: "Error: TOSCA CSAR '%1' is invalid. Invalid 'TOSCA-Metadata/Tosca.meta' file format.",
+        message: "Error: TOSCA CSAR '%1' is invalid. Invalid 'TOSCA-Metadata/Tosca.meta' file format.\n%2",
         messageId: "SVC4605"
     }
     #---------SVC4606------------------------------
