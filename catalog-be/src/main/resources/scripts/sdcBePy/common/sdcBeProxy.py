@@ -14,13 +14,13 @@ class SdcBeProxy:
     BODY_SEPARATOR = "\r\n\r\n"
     CHARTSET = 'UTF-8'
 
-    def __init__(self, be_ip, be_port, header, scheme, user_id="jh0003",
+    def __init__(self, be_ip, be_port, header, scheme, tls_cert, tls_key, tls_key_pw, ca_cert, user_id="jh0003",
                  debug=False, connector=None):
         if not check_arguments_not_none(be_ip, be_port, scheme, user_id):
             raise AttributeError("The be_host, be_port, scheme or admin_user are missing")
         url = get_url(be_ip, be_port, scheme)
         self.con = connector if connector \
-            else CurlConnector(url, user_id, header, protocol=scheme, debug=debug)
+            else CurlConnector(url, user_id, header, tls_cert, tls_key, tls_key_pw, ca_cert, protocol=scheme, debug=debug)
 
     def check_backend(self):
         return self.con.get('/sdc2/rest/v1/user/jh0003')
@@ -75,9 +75,13 @@ class CurlConnector:
     CONTENT_TYPE_HEADER = "Content-Type: application/json"
     ACCEPT_HEADER = "Accept: application/json; charset=UTF-8"
 
-    def __init__(self, url, user_id_header, header, buffer=None, protocol="http", debug=False):
+    def __init__(self, url, user_id_header, header, tls_cert, tls_key, tls_key_pw, ca_cert, buffer=None, protocol="http", debug=False):
         self.__debug = debug
         self.__protocol = protocol
+        self.__tls_cert = tls_cert
+        self.__tls_key = tls_key
+        self.__tls_key_pw = tls_key_pw
+        self.__ca_cert = ca_cert
         self.c = self.__build_default_curl()
 
         self.user_header = "USER_ID: " + user_id_header
@@ -172,6 +176,15 @@ class CurlConnector:
         if self.__protocol == 'https':
             curl.setopt(pycurl.SSL_VERIFYPEER, 0)
             curl.setopt(pycurl.SSL_VERIFYHOST, 0)
+            if self.__tls_cert is not None and self.__tls_key is not None:
+                curl.setopt(curl.SSLCERT, self.__tls_cert)
+                curl.setopt(curl.SSLKEY, self.__tls_key)
+                if self.__tls_key_pw is not None:
+                  curl.setopt(curl.KEYPASSWD, self.__tls_key_pw)
+                if self.__ca_cert is not None:
+                    curl.setopt(pycurl.SSL_VERIFYPEER, 1)
+                    curl.setopt(pycurl.SSL_VERIFYHOST, 2)
+                    curl.setopt(curl.CAINFO, self.__ca_cert)
         curl.setopt(pycurl.HEADER, True)
         return curl
 

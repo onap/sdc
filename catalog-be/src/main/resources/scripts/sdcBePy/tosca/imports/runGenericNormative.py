@@ -20,12 +20,12 @@ def get_normative_prams():
 
 
 def main():
-    scheme, be_host, be_port, admin_user, _, debug = get_args()
+    scheme, be_host, be_port, admin_user, _, debug, tls_cert, tls_key, tls_key_pw, ca_cert = get_args()
 
     candidate = NormativeTypeCandidate(*get_normative_prams())
     try:
         process_and_create_normative_types(candidate,
-                                           scheme, be_host, be_port, admin_user,
+                                           scheme, be_host, be_port, admin_user, tls_cert, tls_key, tls_key_pw, ca_cert,
                                            debug=debug,
                                            exit_on_success=True)
     except AttributeError:

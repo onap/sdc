@@ -9,13 +9,14 @@ from sdcBePy.common.sdcBeProxy import SdcBeProxy
 
 
 def process_and_create_normative_types(normative_type,
-                                       scheme=None, be_host=None, be_port=None, header=None, admin_user=None,
+                                       scheme=None, be_host=None, be_port=None, header=None,
+                                       tls_cert=None, tls_key=None, tls_key_pw=None, ca_cert=None, admin_user=None,
                                        sdc_be_proxy=None,
                                        update_version=False,
                                        debug=False,
                                        exit_on_success=False):
     if sdc_be_proxy is None:
-        sdc_be_proxy = SdcBeProxy(be_host, be_port, header, scheme, admin_user, debug=debug)
+        sdc_be_proxy = SdcBeProxy(be_host, be_port, header, scheme, tls_cert, tls_key, tls_key_pw, ca_cert, admin_user, debug=debug)
 
     file_dir, normative_type_list = normative_type.get_parameters()
 

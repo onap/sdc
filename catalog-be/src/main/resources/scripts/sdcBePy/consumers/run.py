@@ -7,8 +7,8 @@ from sdcBePy.consumers.models.consumerCandidateList import get_consumers
 from sdcBePy.users.run import colors
 
 
-def be_consumers_init(be_ip, be_port, header, protocol, consumer_candidate_list):
-    sdc_be_proxy = SdcBeProxy(be_ip, be_port, header, protocol)
+def be_consumers_init(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_key_pw, ca_cert, consumer_candidate_list):
+    sdc_be_proxy = SdcBeProxy(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_key_pw, ca_cert)
     if check_backend(sdc_be_proxy, properties.retry_attempts):
         for consumer in consumer_candidate_list:
             if sdc_be_proxy.check_user(consumer.consumer_name) != 200:
@@ -28,8 +28,8 @@ def be_consumers_init(be_ip, be_port, header, protocol, consumer_candidate_list)
 
 
 def main():
-    be_ip, be_port, header, protocol = get_args()
-    be_consumers_init(be_ip, be_port, header, protocol, get_consumers())
+    be_ip, be_port, header, protocol, tls_key, tls_cert, tls_key_pw, ca_cert = get_args()
+    be_consumers_init(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_key_pw, ca_cert, get_consumers())
 
 
 if __name__ == '__main__':

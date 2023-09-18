@@ -9,10 +9,10 @@ from sdcBePy.tosca.models.normativeElementsList import get_capability, get_data,
 
 
 def run(candidate):
-    scheme, be_host, be_port, header, admin_user, _, debug = get_args()
+    scheme, be_host, be_port, header, admin_user, _, debug, tls_cert, tls_key, tls_key_pw, ca_cert = get_args()
     try:
         process_and_create_normative_element(candidate,
-                                             scheme, be_host, be_port, header, admin_user,
+                                             scheme, be_host, be_port, header, admin_user, tls_cert, tls_key, tls_key_pw, ca_cert,
                                              debug=debug,
                                              exit_on_success=True)
     except AttributeError:

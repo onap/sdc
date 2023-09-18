@@ -33,18 +33,22 @@ def parse_param():
     parser.add_argument('--https', action='store_true')
     parser.add_argument('--updateVersion', action='store_false')
     parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--tls_cert')
+    parser.add_argument('--tls_key')
+    parser.add_argument('--tls_key_pw')
+    parser.add_argument('--ca_cert')
 
     args, _ = parser.parse_known_args()
 
     return [args.conf, 'https' if args.https else 'http',
             args.ip, args.port, args.header, args.adminUser, args.updateVersion,
-            args.debug]
+            args.debug, args.tls_cert, args.tls_key, args.tls_key_pw, args.ca_cert]
 
 
 def get_args():
     print('Number of arguments:', len(sys.argv), 'arguments.')
 
-    conf_path, scheme, be_host, be_port, header, admin_user, update_version, debug = parse_param()
+    conf_path, scheme, be_host, be_port, header, admin_user, update_version, debug, tls_cert, tls_key, tls_key_pw, ca_cert = parse_param()
     defaults = load_be_config(conf_path)
 
     # Use defaults if param not provided by the user
@@ -63,18 +67,18 @@ def get_args():
               ', debug =', debug, ', update_version =', update_version)
 
     init_properties(defaults["retryTime"], defaults["retryAttempt"], defaults["resourceLen"])
-    return scheme, be_host, be_port, header, admin_user, update_version, debug
+    return scheme, be_host, be_port, header, admin_user, update_version, debug, tls_cert, tls_key, tls_key_pw, ca_cert
 
 
 def parse_and_create_proxy():
-    scheme, be_host, be_port, header, admin_user, update_version, debug = get_args()
+    scheme, be_host, be_port, header, admin_user, update_version, debug, tls_cert, tls_key, tls_key_pw, ca_cert = get_args()
 
     if debug is False:
         print('Disabling debug mode')
         logger.debugFlag = debug
 
     try:
-        sdc_be_proxy = SdcBeProxy(be_host, be_port, header, scheme, admin_user, debug=debug)
+        sdc_be_proxy = SdcBeProxy(be_host, be_port, header, scheme, tls_cert, tls_key, tls_key_pw, ca_cert, admin_user, debug=debug)
     except AttributeError:
         usage()
         sys.exit(3)
