@@ -116,6 +116,7 @@ public class DataForMergeHolder {
         Optional.ofNullable(origComponentInstanceProperties).orElse(Collections.emptyList()).forEach(property -> {
             ComponentInstanceProperty propertyCopy = new ComponentInstanceProperty();
             propertyCopy.setType(property.getType());
+            propertyCopy.setSchema(property.getSchema());
             propertyCopy.setName(property.getName());
             propertyCopy.setValue(property.getValue());
             propertyCopy.setUniqueId(property.getUniqueId());
