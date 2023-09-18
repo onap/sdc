@@ -19,8 +19,8 @@ def load_users(conf_path):
         return json.load(f)
 
 
-def be_user_init(be_ip, be_port, header, protocol, conf_path):
-    sdc_be_proxy = SdcBeProxy(be_ip, be_port, header, protocol)
+def be_user_init(be_ip, be_port, header, protocol, conf_path, tls_cert, tls_key, tls_key_pw, ca_cert):
+    sdc_be_proxy = SdcBeProxy(be_ip, be_port, header, protocol, tls_cert, tls_key, tls_key_pw, ca_cert)
     if check_backend(sdc_be_proxy, properties.retry_attempts):
         users = load_users(conf_path)
         for user in users:
@@ -53,11 +53,15 @@ def get_args():
     parser.add_argument('--https', action='store_true')
     path = os.path.dirname(__file__)
     parser.add_argument('--conf', default=os.path.join(path, 'data', 'users.json'))
+    parser.add_argument('--tls_cert')
+    parser.add_argument('--tls_key')
+    parser.add_argument('--tls_key_pw')
+    parser.add_argument('--ca_cert')
 
     args = parser.parse_args()
 
     init_properties(10, 10)
-    return [args.ip, args.port, args.header, 'https' if args.https else 'http', args.conf]
+    return [args.ip, args.port, args.header, 'https' if args.https else 'http', args.conf, args.tls_cert, args.tls_key, args.tls_key_pw, args.ca_cert]
 
 
 def main():

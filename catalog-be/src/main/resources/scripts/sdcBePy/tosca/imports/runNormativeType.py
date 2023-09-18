@@ -8,13 +8,14 @@ from sdcBePy.tosca.models.normativeTypesList import get_normative, get_heat, get
 
 
 def run(candidate, exit_on_success=True):
-    scheme, be_host, be_port, admin_user, update_version, debug = get_args()
+    scheme, be_host, be_port, admin_user, update_version, debug, tls_cert, tls_key, tls_key_pw, ca_cert = get_args()
     try:
         process_and_create_normative_types(candidate,
                                            scheme,
                                            be_host,
                                            be_port,
                                            admin_user,
+                                           tls_cert, tls_key, tls_key_pw, ca_cert,
                                            update_version=update_version,
                                            debug=debug,
                                            exit_on_success=exit_on_success)
