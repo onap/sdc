@@ -67,7 +67,7 @@ public class CsarValidationUtils {
     private static final String FILE_NOT_FOUND_IN_CSAR_WITH_ID = " file not found in CSAR with id ";
     private static final String CSAR_STRUCTURE_IS_INVALID = "CSAR structure is invalid";
     private static final String ENTRY_DEFINITIONS = "Entry-Definitions ";
-    private static final Pattern floatPattern = Pattern.compile("^\\d{1}[.]\\d{1}$");
+    private static final Pattern floatPattern = Pattern.compile("^\\d+\\.\\d+$");
 
     /**
      * Utility classes, which are collections of static members, are not meant to be instantiated
