@@ -3051,8 +3051,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
 
             Component eitherOriginComponent = getInstanceOriginNode(currentResourceInstance);
-            DataForMergeHolder dataHolder = compInstMergeDataBL
-                .saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
+            DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
             ComponentInstance resResourceInfo = deleteComponentInstance(containerComponent, componentInstanceId,
                 containerComponentType);
 
@@ -3143,8 +3142,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
                 maintainNodeFilters(currentResourceInstance, newComponentInstance, containerComponentId);
 
-                resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(),
-                    updatedComponentInstance.getUniqueId());
+                resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(), updatedComponentInstance.getUniqueId());
                 if (resourceInstanceStatus.isRight()) {
                     throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse
                         (resourceInstanceStatus.right().value()), updatedComponentInstance.getUniqueId());
