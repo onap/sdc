@@ -37,6 +37,10 @@ public class ComponentInstanceAttribOutput extends ComponentInstanceAttribute {
     public ComponentInstanceAttribOutput(ComponentInstanceAttribute p) {
         super(p);
     }
+    public ComponentInstanceAttribOutput(ComponentInstanceAttribute p,String outputName) {
+        super(p);
+        this.outputName = outputName;
+    }
 
     public String[] getParsedAttribNames() {
         String[] tokens = null;

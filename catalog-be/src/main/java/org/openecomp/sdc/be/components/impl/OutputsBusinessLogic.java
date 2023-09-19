@@ -300,7 +300,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                     final var optionalComponentInstance = component.getComponentInstanceByName(getAttribute.get(0));
                     if (optionalComponentInstance.isPresent()) {
                         final var createdOutputs
-                            = createOutputs(component.getUniqueId(), userId, getAttribute.get(1), optionalComponentInstance.get());
+                            = createOutputs(component.getUniqueId(), userId, getAttribute.get(1), optionalComponentInstance.get(),outputDefinitionValue.getName());
                         if (createdOutputs.isRight()) {
                             return Either.right((createdOutputs.right().value()));
                         }
@@ -318,7 +318,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
 
     private Either<List<OutputDefinition>, ResponseFormat> createOutputs(final String componentUniqueId, final String userId,
                                                                          final String attributeName,
-                                                                         final ComponentInstance componentInstance) {
+                                                                         final ComponentInstance componentInstance,
+                                                                         final String outputName) {
         // From Instance
         final var componentInstanceAttributes = componentInstance.getAttributes();
         if (CollectionUtils.isNotEmpty(componentInstanceAttributes)) {
@@ -327,7 +328,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             if (componentInstanceAttributeOptional.isPresent()) {
                 final var componentInstOutputsMap = new ComponentInstOutputsMap();
                 componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
-                    Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get()))));
+                    Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get(),outputName))));
                 return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE,
                     componentInstOutputsMap, true, false);
             }
@@ -341,7 +342,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 final ComponentInstOutputsMap componentInstOutputsMap = new ComponentInstOutputsMap();
                 ComponentInstanceAttribOutput attribute = getComponentInstanceAttribOutput(propertyDefinition);
                 componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
-                    Collections.singletonList(new ComponentInstanceAttribOutput(attribute))));
+                    Collections.singletonList(new ComponentInstanceAttribOutput(attribute,outputName))));
                 return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE, componentInstOutputsMap, true, false);
             }
         }
