@@ -198,10 +198,9 @@ export class Service extends Component {
         return 'services/';
     }
 
-
     public setComponentMetadata(componentMetadata: ComponentMetadata) {
         super.setComponentMetadata(componentMetadata);
-        this.ecompGeneratedNaming = componentMetadata.ecompGeneratedNaming;
+        this.ecompGeneratedNaming = componentMetadata.ecompGeneratedNaming != undefined && componentMetadata.ecompGeneratedNaming;
         this.namingPolicy = componentMetadata.namingPolicy;
         this.serviceType = componentMetadata.serviceType;
         this.serviceRole = componentMetadata.serviceRole;
