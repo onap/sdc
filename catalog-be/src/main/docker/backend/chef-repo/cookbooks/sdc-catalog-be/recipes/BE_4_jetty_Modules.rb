@@ -41,3 +41,19 @@ template "https-ini" do
   mode "0755"
   variables :https_port => "#{node['BE'][:https_port]}"
 end
+
+template "ssl-ini" do
+  path "#{ENV['JETTY_BASE']}/start.d/ssl.ini"
+  source "ssl-ini.erb"
+  owner "#{ENV['JETTY_USER']}"
+  group "#{ENV['JETTY_GROUP']}"
+  mode "0755"
+  variables ({
+    :https_port => "#{node['BE'][:https_port]}" ,
+    :keystore_path => "#{node['BE'][:keystore_path]}" ,
+    :keystore_password => "#{node['BE'][:keystore_password]}" ,
+    :truststore_path => "#{node['BE'][:truststore_path]}" ,
+    :truststore_password => "#{node['BE'][:truststore_password]}"
+  })
+end
+
