@@ -223,7 +223,8 @@ export class ServiceDependenciesEditorComponent implements OnInit {
     }
 
     private initSelectedSourceType(): void {
-        if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC) {
+        if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC
+            || (this.currentRule.sourceType === SourceType.SEVERAL && !ToscaFunctionHelper.convertObjectToToscaFunction(this.currentRule.value[0]))) {
             this.selectedSourceType = SourceType.STATIC;
         } else {
             if (!this.isValidValuesOperator() && !this.isRangeType() && !this.isInRangeOperator()) {
@@ -309,11 +310,22 @@ export class ServiceDependenciesEditorComponent implements OnInit {
         } else if (ToscaFunctionHelper.isValueToscaFunction(this.currentRule.value)) {
             newProperty.toscaFunction = ToscaFunctionHelper.convertObjectToToscaFunction(this.currentRule.value);
             newProperty.value = newProperty.toscaFunction.buildValueString();
-        } else if (Array.isArray(this.currentRule.value) &&
-            typeof this.currentRule.value[0] === "object") {
-            this.validValuesToscaFunctionList = this.currentRule.value;
-            this.rangeToscaFunctionList = this.currentRule.value;
-            newProperty.toscaFunction = this.currentRule.value;
+        } else if (Array.isArray(this.currentRule.value)) {
+            if (typeof this.currentRule.value[0] === 'object') {
+                this.rangeToscaFunctionList = [];
+                this.validValuesToscaFunctionList = [];
+                this.currentRule.value.forEach(val => {
+                    this.rangeToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val));
+                    this.validValuesToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val));
+                });
+                newProperty.toscaFunction = this.currentRule.value;
+                newProperty.value = this.currentRule.value;
+            }
+            else {
+                this.validValuesToscaFunctionList = this.currentRule.value;
+                this.rangeToscaFunctionList = this.currentRule.value;
+                newProperty.toscaFunction = this.currentRule.value;
+            }
         } else {
             newProperty.value = JSON.stringify(this.currentRule.value);
             this.propertiesUtils.initValueObjectRef(newProperty);
