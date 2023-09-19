@@ -34,6 +34,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
@@ -66,11 +67,6 @@ public class PropertyFilterConstraintDataDefinitionHelper {
         final Object valueYaml = operatorYaml.get(operator);
         final Optional<ToscaFunction> toscaFunction = createToscaFunctionFromLegacyConstraintValue(valueYaml);
         if (toscaFunction.isPresent()) {
-            propertyFilterConstraint.setValue(toscaFunction.get());
-            propertyFilterConstraint.setValueType(detectValueType(valueYaml));
-        }
-        else {
-            propertyFilterConstraint.setValue(valueYaml);
             if (valueYaml instanceof List) {
                 List<ToscaFunction> listToscaFunction = new ArrayList<>();
                 ((List<?>) valueYaml).stream().forEach(val -> {
@@ -83,16 +79,38 @@ public class PropertyFilterConstraintDataDefinitionHelper {
                 propertyFilterConstraint.setValueType(FilterValueType.SEVERAL);
             }
             else {
+                propertyFilterConstraint.setValue(toscaFunction.get());
                 propertyFilterConstraint.setValueType(detectValueType(valueYaml));
             }
+        }
+        else {
+            propertyFilterConstraint.setValue(valueYaml);
+            propertyFilterConstraint.setValueType(detectValueType(valueYaml));
         }
         propertyFilterConstraint.setTargetType(PropertyFilterTargetType.PROPERTY);
         return propertyFilterConstraint;
     }
 
     public static Optional<ToscaFunction> createToscaFunctionFromLegacyConstraintValue(final Object filterValue) {
-        if (!(filterValue instanceof Map)) {
+        if (!(filterValue instanceof Map) && !(filterValue instanceof List)) {
             return Optional.empty();
+        }
+        if (filterValue instanceof List) {
+            final Map<String, Object>[] filterValueAsMap = new Map[] {new HashMap<>()};
+            final String[] toscaFunctionType = new String[1];
+            try {
+                ((List<?>) filterValue).stream().forEach(filterArrayValue -> {
+
+                    filterValueAsMap[0] = (Map<String, Object>) filterArrayValue;
+                    final Set<?> keys = filterValueAsMap[0].keySet();
+                    toscaFunctionType[0] = (String) keys.iterator().next();
+
+                });
+            }
+            catch (Exception ex) {
+                return Optional.empty();
+            }
+            return buildToscaFunctionBasedOnPropertyValue(filterValueAsMap[0]);
         }
         final Map<?, ?> filterValueAsMap = (Map<?, ?>) filterValue;
         final Set<?> keys = filterValueAsMap.keySet();
@@ -504,45 +522,44 @@ public class PropertyFilterConstraintDataDefinitionHelper {
     private static FilterValueType detectValueType(final Object value) {
         if (value instanceof Map) {
             final Map<?, ?> valueAsMap = (Map<?, ?>) value;
-            if (valueAsMap.containsKey(ToscaFunctionType.CONCAT.getName())) {
-                return FilterValueType.CONCAT;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_ATTRIBUTE.getName())) {
-                return FilterValueType.GET_ATTRIBUTE;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_PROPERTY.getName())) {
-                return FilterValueType.GET_PROPERTY;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_INPUT.getName())) {
-                return FilterValueType.GET_INPUT;
-            }
-            if (valueAsMap.containsKey("$get_input_ext") ||
-                valueAsMap.containsKey("$juel") ||
-                valueAsMap.containsKey("$other")) {
-                return FilterValueType.CUSTOM;
+            FilterValueType filterValueType = getFilterValueType(valueAsMap);
+            if (filterValueType != null) {
+                return filterValueType;
             }
         }
         else if (value instanceof List) {
-            final Map<?, ?> valueAsMap = (Map<?, ?>) ((List<?>) value).get(0);
-            if (valueAsMap.containsKey(ToscaFunctionType.CONCAT.getName())) {
-                return FilterValueType.CONCAT;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_ATTRIBUTE.getName())) {
-                return FilterValueType.GET_ATTRIBUTE;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_PROPERTY.getName())) {
-                return FilterValueType.GET_PROPERTY;
-            }
-            if (valueAsMap.containsKey(ToscaFunctionType.GET_INPUT.getName())) {
-                return FilterValueType.GET_INPUT;
-            }
-            if (valueAsMap.containsKey("$get_input_ext") ||
-                valueAsMap.containsKey("$juel") ||
-                valueAsMap.containsKey("$other")) {
-                return FilterValueType.CUSTOM;
+            try {
+                final Map<?, ?> valueAsMap = (Map<?, ?>) ((List<?>) value).get(0);
+                FilterValueType filterValueType = getFilterValueType(valueAsMap);
+                if (filterValueType != null) {
+                    return filterValueType;
+                }
+            } catch (ClassCastException ex) {
+                return FilterValueType.SEVERAL;
             }
         }
         return FilterValueType.STATIC;
     }
 
+    @Nullable
+    private static FilterValueType getFilterValueType(Map<?, ?> valueAsMap) {
+        if (valueAsMap.containsKey(ToscaFunctionType.CONCAT.getName())) {
+            return FilterValueType.CONCAT;
+        }
+        if (valueAsMap.containsKey(ToscaFunctionType.GET_ATTRIBUTE.getName())) {
+            return FilterValueType.GET_ATTRIBUTE;
+        }
+        if (valueAsMap.containsKey(ToscaFunctionType.GET_PROPERTY.getName())) {
+            return FilterValueType.GET_PROPERTY;
+        }
+        if (valueAsMap.containsKey(ToscaFunctionType.GET_INPUT.getName())) {
+            return FilterValueType.GET_INPUT;
+        }
+        if (valueAsMap.containsKey("$get_input_ext") ||
+            valueAsMap.containsKey("$juel") ||
+            valueAsMap.containsKey("$other")) {
+            return FilterValueType.CUSTOM;
+        }
+        return null;
+    }
 }

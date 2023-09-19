@@ -34,6 +34,7 @@ import {CustomToscaFunction} from "../../../../models/default-custom-functions";
 
 export enum SourceType {
     STATIC = 'static',
+    SEVERAL = 'several',
     TOSCA_FUNCTION = 'tosca_function',
     TOSCA_FUNCTION_LIST = 'tosca_function_list'
 }
