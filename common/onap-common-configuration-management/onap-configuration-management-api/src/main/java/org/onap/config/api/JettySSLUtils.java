@@ -27,19 +27,27 @@ import java.security.KeyStore;
 import java.util.Properties;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public class JettySSLUtils {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettySSLUtils.class);
 
     private JettySSLUtils() {
     }
 
-    public static JettySslConfig getSSLConfig() throws IOException {
+    public static JettySslConfig getSSLConfig() {
         Properties sslProperties = new Properties();
         String sslPropsPath = System.getenv("JETTY_BASE") + File.separator + "/start.d/ssl.ini";
         File sslPropsFile = new File(sslPropsPath);
         try (FileInputStream fis = new FileInputStream(sslPropsFile)) {
             sslProperties.load(fis);
+        } catch (IOException exception) {
+            LOGGER.error("Failed to read '{}'", sslPropsPath, exception);
         }
         return new JettySslConfig(sslProperties);
     }
@@ -47,16 +55,22 @@ public class JettySSLUtils {
     public static SSLContext getSslContext() throws GeneralSecurityException, IOException {
         JettySslConfig sslProperties = JettySSLUtils.getSSLConfig();
         KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
-            trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
+        
+        final SSLContextBuilder contextBuilder = SSLContexts.custom();
+        if (!StringUtils.isEmpty(sslProperties.getTruststorePath())) {
+            try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
+                trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
+                contextBuilder.loadTrustMaterial(trustStore, new TrustSelfSignedStrategy());
+            }
         }
         KeyStore keystore = KeyStore.getInstance(sslProperties.getKeystoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));) {
-            keystore.load(instream, sslProperties.getKeystorePass().toCharArray());
+        if (!StringUtils.isEmpty(sslProperties.getKeystorePath())) {
+            try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));) {
+                keystore.load(instream, sslProperties.getKeystorePass().toCharArray());
+                contextBuilder.loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray());
+            }
         }
-        // Trust own CA and all self-signed certs
-        return SSLContexts.custom().loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray())
-            .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
+        return contextBuilder.build();
     }
 
     public static class JettySslConfig {
