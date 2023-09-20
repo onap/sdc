@@ -12,6 +12,7 @@
   "run_list": [
     "recipe[sdc-catalog-be::BE_1_cleanup_jettydir]",
     "recipe[sdc-catalog-be::BE_2_setup_configuration]",
+    "recipe[sdc-catalog-be::BE_3_setup_key_and_trust_store]",
     "recipe[sdc-catalog-be::BE_4_jetty_Modules]",
     "recipe[sdc-catalog-be::BE_6_setup_portal_and_key_properties]",
     "recipe[sdc-catalog-be::BE_7_logback]",
