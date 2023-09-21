@@ -2157,6 +2157,7 @@ public class ServiceImportBusinessLogic {
         if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty()) {
             instAttributes.put(resourceInstanceId, originResource.getAttributes());
             addAttributeValueToResourceInstance(instAttributes, uploadComponentInstanceInfo.getAttributes());
+            instAttributes.get(resourceInstanceId).addAll(addImplicitAttributeValues(originResource, uploadComponentInstanceInfo));
         }
         if (uploadComponentInstanceInfo.getUploadNodeFilterInfo() == null) {
             instNodeFilter.put(resourceInstanceId, new UploadNodeFilterInfo());
@@ -2185,6 +2186,41 @@ public class ServiceImportBusinessLogic {
         } else {
             addInputsValuesToRi(uploadComponentInstanceInfo, component, originResource, currentCompInstance, instInputs, allDataTypes);
         }
+    }
+
+    private List<AttributeDefinition> addImplicitAttributeValues(Resource originResource, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
+        List<String> origAttributes = originResource.getAttributes().stream().map(AttributeDefinition::getName).collect(toList());
+        Map<String, UploadAttributeInfo> uploadAttributes = uploadComponentInstanceInfo.getAttributes();
+        List<String> newAttributesToAdd =
+            uploadAttributes.keySet().stream().filter(newAttribute -> !origAttributes.contains(newAttribute))
+                .collect(toList());
+        List<PropertyDefinition> propsToAddAsAttributes =
+            originResource.getProperties().stream().filter(prop -> newAttributesToAdd.contains(prop.getName())).collect(toList());
+        propsToAddAsAttributes.stream().forEach(prop -> {
+            Object value = uploadAttributes.get(prop.getName()).getValue();
+            if (value instanceof Collection<?> || value instanceof Map<?, ?>) {
+                Gson gson = new Gson();
+                String json = gson.toJson(value);
+                prop.setValue(json);
+            } else {
+                prop.setValue(String.valueOf(value));
+            }
+        });
+        List<AttributeDefinition> attributesToAdd = new ArrayList<>();
+        for (PropertyDefinition prop: propsToAddAsAttributes) {
+            attributesToAdd.add(getPropertyAsAttribute(prop));
+        }
+        return attributesToAdd;
+    }
+
+    private AttributeDefinition getPropertyAsAttribute(PropertyDefinition property) {
+        AttributeDefinition attribute = new AttributeDefinition();
+        attribute.setName(property.getName());
+        attribute.setType(property.getType());
+        attribute.setSchema(property.getSchema());
+        attribute.setValue(property.getValue());
+        attribute.setDefaultValue(property.getDefaultValue());
+        return attribute;
     }
 
     protected void addInputsValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo, Component component, Resource originResource,
