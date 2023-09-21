@@ -84,7 +84,7 @@
                         [attributeNameSearchText]="attributeNameSearchText"
                         [readonly]="readonly"
                         (attributeChanged)="onAttributeChanged(property)"
-                        (expandChild)="property.updateExpandedChildPropertyId($event)"
+                        (expandChild)="property.updateExpandedChildAttributeId($event)"
                         (clickOnAttributeRow)="onClickAttributeInnerRow($event, instanceId)"
                         (checkAttribute)="attributeChecked(property, $event)"
                         >

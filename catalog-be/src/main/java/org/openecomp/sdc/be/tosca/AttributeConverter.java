@@ -16,6 +16,7 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.tosca;
 
 import com.google.gson.JsonElement;
@@ -183,7 +184,7 @@ public class AttributeConverter {
     public void convertAndAddValue(final Map<String, Object> attribs,
                                    final AttributeDefinition attribute) {
         final Object convertedValue = convertToToscaObject(attribute, attribute.getValue(), false);
-        if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
+        if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue) && !attribute.isGetOutputAttribute()) {
             attribs.put(attribute.getName(), convertedValue);
         }
     }
