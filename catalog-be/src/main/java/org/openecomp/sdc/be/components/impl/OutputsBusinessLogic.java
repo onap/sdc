@@ -136,7 +136,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
             ImmutablePair<StorageOperationStatus, String> status = validateOutputName(component, componentInstOutputsMapUi);
             if (status.getLeft() != StorageOperationStatus.OK) {
-                throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.OUTPUT_NAME_ALREADY_EXIST, status.getRight()));
+                throw new ByResponseFormatComponentException(
+                    componentsUtils.getResponseFormat(ActionStatus.OUTPUT_NAME_ALREADY_EXIST, status.getRight()));
             }
             result = attributeDeclarationOrchestrator.declareAttributesToOutputs(component, componentInstOutputsMapUi)
                 .left().bind(outputsToCreate -> prepareOutputsForCreation(userId, componentId, outputsToCreate))
@@ -164,7 +165,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
     }
 
     private ImmutablePair<StorageOperationStatus, String> validateOutputName(final Component component,
-                                                                            final ComponentInstOutputsMap componentInstOutputsMapUi) {
+                                                                             final ComponentInstOutputsMap componentInstOutputsMapUi) {
         final Map<String, List<ComponentInstanceAttribOutput>> outputDeclaredProperties = new HashMap<>();
         if (MapUtils.isNotEmpty(componentInstOutputsMapUi.getComponentInstanceOutputsMap())) {
             outputDeclaredProperties.putAll(componentInstOutputsMapUi.getComponentInstanceOutputsMap());
@@ -300,7 +301,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                     final var optionalComponentInstance = component.getComponentInstanceByName(getAttribute.get(0));
                     if (optionalComponentInstance.isPresent()) {
                         final var createdOutputs
-                            = createOutputs(component.getUniqueId(), userId, getAttribute.get(1), optionalComponentInstance.get(),outputDefinitionValue.getName());
+                            = createOutputs(component.getUniqueId(), userId, getAttribute.get(1), optionalComponentInstance.get(),
+                            outputDefinitionValue.getName());
                         if (createdOutputs.isRight()) {
                             return Either.right((createdOutputs.right().value()));
                         }
@@ -328,7 +330,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             if (componentInstanceAttributeOptional.isPresent()) {
                 final var componentInstOutputsMap = new ComponentInstOutputsMap();
                 componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
-                    Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get(),outputName))));
+                    Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get(), outputName))));
                 return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE,
                     componentInstOutputsMap, true, false);
             }
@@ -342,7 +344,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                 final ComponentInstOutputsMap componentInstOutputsMap = new ComponentInstOutputsMap();
                 ComponentInstanceAttribOutput attribute = getComponentInstanceAttribOutput(propertyDefinition);
                 componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
-                    Collections.singletonList(new ComponentInstanceAttribOutput(attribute,outputName))));
+                    Collections.singletonList(new ComponentInstanceAttribOutput(attribute, outputName))));
                 return createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE, componentInstOutputsMap, true, false);
             }
         }

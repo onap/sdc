@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.attribute;
 
 import fj.data.Either;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
@@ -70,13 +72,25 @@ public class ComponentInstanceAttributeDeclarator extends DefaultAttributeDeclar
 
     @Override
     public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output) {
-        final List<ComponentInstanceAttribute> componentInstancePropertiesDeclaredAsInput = componentInstanceBusinessLogic
+        final List<ComponentInstanceAttribute> componentInstanceAttributesDeclaredAsOutput = componentInstanceBusinessLogic
             .getComponentInstanceAttributesByOutputId(component, output.getUniqueId());
-        if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
+        if (CollectionUtils.isEmpty(componentInstanceAttributesDeclaredAsOutput)) {
             return StorageOperationStatus.OK;
         }
+        unDeclareOutput(output, componentInstanceAttributesDeclaredAsOutput);
         return toscaOperationFacade
-            .updateComponentInstanceAttributes(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(),
-                componentInstancePropertiesDeclaredAsInput);
+            .updateComponentInstanceAttributes(component, componentInstanceAttributesDeclaredAsOutput.get(0).getComponentInstanceId(),
+                componentInstanceAttributesDeclaredAsOutput);
+    }
+
+    private void unDeclareOutput(OutputDefinition output,
+                                 List<ComponentInstanceAttribute> componentInstanceAttributesDeclaredAsOutput) {
+        componentInstanceAttributesDeclaredAsOutput.forEach(attribute -> {
+            Optional<GetOutputValueDataDefinition> attributeOutput =
+                attribute.getGetOutputValues().stream().filter(attOut -> output.getUniqueId().equals(attOut.getOutputId())).findFirst();
+            if (attributeOutput.isPresent()) {
+                attribute.getGetOutputValues().remove(attributeOutput.get());
+            }
+        });
     }
 }

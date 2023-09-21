@@ -655,6 +655,8 @@ export class AttributesOutputsComponent {
           if (this.isAttributesTabSelected) {
             this.checkedAttributesCount = 0;
           }
+          this.hasChangedData = false;
+          this.isValidChangedData = false;
         },
         () => {
           this.Notification.error({

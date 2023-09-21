@@ -105,8 +105,6 @@ export class AttributeModel extends AttributeBEModel implements IAttributeModel 
       // forcing creating new object, so editing different one than the object in the table
       this.schema = new SchemaAttributeGroupModel(new SchemaAttribute(this.schema.property));
     }
-
-    this.convertValueToView();
   }
 
   public convertToServerObject(): string {

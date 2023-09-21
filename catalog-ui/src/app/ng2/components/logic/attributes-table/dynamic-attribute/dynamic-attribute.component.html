@@ -89,7 +89,7 @@
             [attributeNameSearchText]="attributeNameSearchText"
             [readonly]="readonly"
             [hasChildren]="getHasChildren(prop)"
-            (propertyChanged)="childValueChanged(prop)"
+            (attributeChanged)="childValueChanged(prop)"
             (mapKeyChanged)="updateChildKeyInParent(prop, $event)"
             (expandChild)="expandChildById($event)"
             (deleteItem)="deleteListOrMapItem($event)"
