@@ -2248,14 +2248,35 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private ComponentInstanceAttribute validateAttributeExistsOnComponent(final ComponentInstanceAttribute attribute,
                                                                           final Component containerComponent,
                                                                           final ComponentInstance foundResourceInstance) {
-        final List<ComponentInstanceAttribute> instanceProperties =
+        final List<ComponentInstanceAttribute> instanceAttributes =
             containerComponent.getComponentInstancesAttributes().get(foundResourceInstance.getUniqueId());
+        final List<ComponentInstanceProperty> instanceProperties =
+            containerComponent.getComponentInstancesProperties().get(foundResourceInstance.getUniqueId());
         final Optional<ComponentInstanceAttribute> instanceAttribute =
+            instanceAttributes.stream().filter(p -> p.getName().equals(attribute.getName())).findAny();
+        final Optional<ComponentInstanceProperty> instanceProperty =
             instanceProperties.stream().filter(p -> p.getName().equals(attribute.getName())).findAny();
-        if (!instanceAttribute.isPresent()) {
-            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, attribute.getName());
+        if (instanceAttribute.isPresent()) {
+            return instanceAttribute.get();
         }
-        return instanceAttribute.get();
+        if (instanceProperty.isPresent()) {
+            ComponentInstanceAttribute propAttribute = getComponentInstanceAttribute(instanceProperty.get());
+            return propAttribute;
+        }
+        throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, attribute.getName());
+    }
+
+    private ComponentInstanceAttribute getComponentInstanceAttribute(ComponentInstanceProperty property) {
+        ComponentInstanceAttribute attribute = new ComponentInstanceAttribute();
+        attribute.setParentUniqueId(property.getParentUniqueId());
+        attribute.setName(property.getName());
+        attribute.setOwnerId(property.getOwnerId());
+        attribute.setType(property.getType());
+        attribute.setSchema(property.getSchema());
+        attribute.setUniqueId(property.getUniqueId());
+        attribute.setValue(property.getValue());
+        attribute.setDefaultValue(property.getDefaultValue());
+        return attribute;
     }
 
     private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
@@ -3051,7 +3072,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
 
             Component eitherOriginComponent = getInstanceOriginNode(currentResourceInstance);
-            DataForMergeHolder dataHolder = compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
+            DataForMergeHolder dataHolder =
+                compInstMergeDataBL.saveAllDataBeforeDeleting(containerComponent, currentResourceInstance, eitherOriginComponent);
             ComponentInstance resResourceInfo = deleteComponentInstance(containerComponent, componentInstanceId,
                 containerComponentType);
 
