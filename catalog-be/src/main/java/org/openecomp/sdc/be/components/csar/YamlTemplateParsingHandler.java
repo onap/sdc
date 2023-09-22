@@ -109,7 +109,6 @@ import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
@@ -201,14 +200,12 @@ public class YamlTemplateParsingHandler {
         if (substitutionMappings != null) {
             if (component.isService()) {
                 if (interfaceTemplateYaml.isEmpty()) {
-                    Resource resource = serviceBusinessLogic.fetchDerivedFromGenericType(component, null);
-                    List<PropertyDefinition> properties = resource.getProperties();
+                    List<PropertyDefinition> properties = serviceBusinessLogic.fetchDerivedFromGenericType(component, null).getProperties();
                     parsedToscaYamlInfo.setProperties(properties.stream().collect(Collectors.toMap(PropertyDefinition::getName, prop -> prop)));
-                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
                 } else {
                     parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
-                    parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
                 }
+                parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
             }
             if (substitutionMappings.get("properties") != null) {
                 parsedToscaYamlInfo.setSubstitutionMappingProperties((Map<String, List<String>>) substitutionMappings.get("properties"));
@@ -1442,7 +1439,7 @@ public class YamlTemplateParsingHandler {
         for (Object objValue : propValueList) {
             if (objValue instanceof Map) {
                 Map<String, Object> objMap = (Map<String, Object>) objValue;
-                Map<String, Object> propValueMap = new HashMap<String, Object>();
+                Map<String, Object> propValueMap = new HashMap<>();
                 propValueMap.put(String.valueOf(index), objValue);
                 final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions =
                     buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());

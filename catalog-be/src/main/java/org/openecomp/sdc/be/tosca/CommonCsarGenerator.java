@@ -643,7 +643,7 @@ public class CommonCsarGenerator {
             final List<ToscaImportByModel> modelDefaultImportList = modelOperation.findAllModelImports(modelName, true);
             final Set<Path> writtenEntryPathList = new HashSet<>();
             final var defsPath = Path.of(definitionsPath);
-            Map<Path, byte[]> contentToMerge = new HashMap();
+            Map<Path, byte[]> contentToMerge = new HashMap<>();
             for (final ToscaImportByModel toscaImportByModel : modelDefaultImportList) {
                 var importPath = Path.of(toscaImportByModel.getFullPath());
                 if (!isSingleImportsFile) {
@@ -675,15 +675,15 @@ public class CommonCsarGenerator {
             }
             if (!isSingleImportsFile) {
                 byte[] mergingContent = new byte[0];
-                for (Map.Entry entry : contentToMerge.entrySet()) {
+                for (Map.Entry<Path, byte[]> entry : contentToMerge.entrySet()) {
                     if (ADDITIONAL_TYPE_DEFINITIONS.equals(Paths.get(String.valueOf(entry.getKey())).normalize().toString())) {
-                        mergingContent = (byte[]) entry.getValue();
+                        mergingContent = Bytes.concat(mergingContent, entry.getValue());
                     } else {
                         final var zipEntry = new ZipEntry(entry.getKey().toString());
                         zipOutputStream.putNextEntry(zipEntry);
-                        writtenEntryPathList.add((Path) entry.getKey());
-                        zipOutputStream.write(Bytes.concat(mergingContent, (byte[]) entry.getValue()), 0,
-                            ((byte[]) entry.getValue()).length);
+                        writtenEntryPathList.add(entry.getKey());
+                        final var concat = Bytes.concat(mergingContent, entry.getValue());
+                        zipOutputStream.write(concat, 0, concat.length);
                         zipOutputStream.closeEntry();
                     }
                 }
