@@ -1329,6 +1329,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             log.debug("Failed to disassociate capabilities for {} error {}", toscaElementVertex.getUniqueId(), status);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
         }
+        status = janusGraphDao.disassociateAndDeleteLast(toscaElementVertex, Direction.OUT, EdgeLabelEnum.SUBSTITUTION_FILTER_TEMPLATE);
+        if (status != JanusGraphOperationStatus.OK) {
+            log.debug("Failed to disassociate substitution filter template for {} error {}", toscaElementVertex.getUniqueId(), status);
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+        }
 
         toscaElementVertex.getVertex().remove();
         log.trace("Tosca element vertex for {} was removed", toscaElementVertex.getUniqueId());

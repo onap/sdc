@@ -212,11 +212,13 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString(), any())).thenReturn(csarInfo);
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class), any(Service.class)))
             .thenReturn(Either.left(new HashMap<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>()));
-        doReturn(getParsedToscaYamlInfo()).when(csarBusinessLogic).getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class));
+        doReturn(getParsedToscaYamlInfo()).when(csarBusinessLogic)
+            .getParsedToscaYamlInfo(anyString(), anyString(), any(), any(CsarInfo.class), any(), any(Service.class));
         doReturn(getParsedToscaYamlInfo()).when(csarBusinessLogic).getParsedToscaYamlInfo(any(ServiceCsarInfo.class), any(Service.class));
         when(serviceBusinessLogic.lockComponentByName(newService.getSystemName(), oldService, CREATE_RESOURCE)).thenReturn(Either.left(true));
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(createOldResource()));
-        when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false, AuditingActionEnum.CREATE_RESOURCE)).thenReturn(newService);
+        when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false,
+            AuditingActionEnum.CREATE_RESOURCE)).thenReturn(newService);
         when(serviceImportParseLogic.createInputsOnService(eq(oldService), anyMap())).thenReturn(newService);
         Assertions.assertDoesNotThrow(() -> {
             when(serviceImportParseLogic.createSubstitutionFilterOnService(eq(oldService), any())).thenReturn(newService);
@@ -258,14 +260,16 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         properties.add(versionProperty);
         typeToBeUpdated.setProperties(properties);
         when(applicationDataTypeCache.get(any(), eq("onap.datatypes.ToscaConceptIdentifier.datatype"))).thenReturn(Either.left(typeToBeUpdated));
-        when(applicationDataTypeCache.get(any(), matches("^((?!(tosca.datatypes.test_|onap.datatypes.ToscaConceptIdentifier)).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
+        when(applicationDataTypeCache.get(any(), matches("^((?!(tosca.datatypes.test_|onap.datatypes.ToscaConceptIdentifier)).)*$"))).thenReturn(
+            Either.left(new DataTypeDefinition()));
 
-        when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(
+            Either.right(StorageOperationStatus.NOT_FOUND));
         when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
 
         when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces"))).thenReturn(Either.left(new InterfaceDefinition()));
-        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces.test"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-
+        when(interfaceLifecycleTypeOperation.getInterface(contains("tosca.interfaces.test"))).thenReturn(
+            Either.right(StorageOperationStatus.NOT_FOUND));
 
         when(capabilityTypeOperation.getCapabilityType(anyString()))
             .thenReturn(Either.left(new CapabilityTypeDefinition()));
@@ -273,12 +277,15 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
-                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(updatedNodeType, null)).thenReturn(Either.left(resource));
-        when(artifactsBusinessLogic.handleDownloadRequestById(resourceUniqueId, artifactUniqueId, user.getUserId(), ComponentTypeEnum.RESOURCE, null, null))
-                .thenReturn(resourceTemplate);
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.service."), isNull()))
+            .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(artifactsBusinessLogic.handleDownloadRequestById(resourceUniqueId, artifactUniqueId, user.getUserId(), ComponentTypeEnum.RESOURCE, null,
+            null))
+            .thenReturn(resourceTemplate);
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
         when(groupTypeOperation.getGroupTypeByUid(anyString())).thenReturn(Either.left(new GroupTypeDefinition()));
@@ -304,7 +311,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertNotNull(yamlMap.get("onap.datatypes.ToscaConceptIdentifier"));
 
         ArgumentCaptor<String> artifactTypes = ArgumentCaptor.forClass(String.class);
-        verify(artifactTypeImportManager).createArtifactTypes(artifactTypes.capture(),isNull(), anyBoolean());
+        verify(artifactTypeImportManager).createArtifactTypes(artifactTypes.capture(), isNull(), anyBoolean());
         Map<String, Object> artifactTypesMap = new Yaml().load(artifactTypes.getValue());
         assertEquals(1, artifactTypesMap.size());
         assertNotNull(artifactTypesMap.get("tosca.testartifacts.Name"));
@@ -320,7 +327,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         ArgumentCaptor<Map<String, Object>> nodeTypes = ArgumentCaptor.forClass(Map.class);
         verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(), any(),
-                anyBoolean(), anyBoolean());
+            anyBoolean(), anyBoolean());
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
         assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());

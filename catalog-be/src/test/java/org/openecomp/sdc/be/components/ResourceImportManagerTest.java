@@ -477,7 +477,7 @@ class ResourceImportManagerTest {
         NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
         List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
         Map<String, Object> allTypesToCreate = new HashMap<>();
-        ServiceCsarInfo csarInfo= getCsarInfo();
+        ServiceCsarInfo csarInfo = getCsarInfo();
         List<NodeTypeDefinition> nodeTypesToCreate = csarInfo.getNodeTypesUsed();
         nodeTypesToCreate.stream().forEach(nodeType -> {
             allTypesToCreate.put(nodeType.getMappedNodeType().getKey(), nodeType.getMappedNodeType().getValue());
@@ -487,13 +487,24 @@ class ResourceImportManagerTest {
 
         when(toscaOperationFacade.getLatestByName(any(), any())).thenReturn(Either.left(null)).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName("org.openecomp.resource.VFC-root", "ETSI SOL001 v2.5.1"))
-                .thenReturn(Either.left(null));
-        when(resourceBusinessLogic
-                .createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null), eq(null), eq(false)))
-                .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK)).thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
+            .thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName("tosca.nodes.nfv.NS", ""))
+            .thenReturn(Either.left(createResourceNS()));
+        when(toscaOperationFacade.getLatestByToscaResourceName("org.openecomp.service.Etsiwithchild", ""))
+            .thenReturn(Either.right(null));
+        when(resourceBusinessLogic.createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null),
+            eq(null), eq(false))).thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK))
+            .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
+        when(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(mock(ResponseFormat.class));
 
         importManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, null, user, "", false, false);
         verify(janusGraphDao).commit();
+    }
+
+    private Resource createResourceNS() {
+        Resource ns = new Resource();
+        ns.setName("tosca.nodes.nfv.NS");
+        return ns;
     }
 
     private void setResourceBusinessLogicMock() {
@@ -768,7 +779,8 @@ class ResourceImportManagerTest {
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
 
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false, mock(ModelOperation.class));
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false,
+                mock(ModelOperation.class));
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }
