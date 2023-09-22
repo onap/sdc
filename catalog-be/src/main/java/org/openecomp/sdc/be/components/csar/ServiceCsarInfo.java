@@ -22,6 +22,7 @@
 package org.openecomp.sdc.be.components.csar;
 
 import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.DEFAULT_ICON;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 
 import fj.data.Either;
@@ -282,16 +283,18 @@ public class ServiceCsarInfo extends CsarInfo {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<String> getNodeTypesUsedInToscaTemplate(Map<String, Object> mappedToscaTemplate) {
-        final Either<Object, ResultStatusEnum> nodeTemplatesEither = findToscaElement(mappedToscaTemplate,
-            TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
-        final Set<String> nodeTypesUsedInNodeTemplates = new HashSet<>();
+    private Set<String> getNodeTypesUsedInToscaTemplate(final Map<String, Object> mappedToscaTemplate) {
+        final var nodeTemplatesEither = findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
+        final Set<String> nodeTypesUsedInToscaTemplate = new HashSet<>();
         if (nodeTemplatesEither.isLeft()) {
-            final Map<String, Map<String, Object>> nodeTemplates =
-                (Map<String, Map<String, Object>>) nodeTemplatesEither.left().value();
-            nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
+            final var nodeTemplates = (Map<String, Map<String, Object>>) nodeTemplatesEither.left().value();
+            nodeTypesUsedInToscaTemplate.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
         }
-        return nodeTypesUsedInNodeTemplates;
+        final var substitutionMappingsNodeType = findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPE);
+        if (substitutionMappingsNodeType.isLeft()){
+            nodeTypesUsedInToscaTemplate.add(substitutionMappingsNodeType.left().value());
+        }
+        return nodeTypesUsedInToscaTemplate;
     }
 
     private NodeTypeMetadata getMetaDataFromTemplate(Map<String, Object> mappedResourceTemplate, String nodeTemplateType) {
@@ -320,7 +323,6 @@ public class ServiceCsarInfo extends CsarInfo {
         category.setName((String) metadata.get("category"));
         category.setNormalizedName(((String) metadata.get("category")).toLowerCase());
         category.setIcons(List.of(DEFAULT_ICON));
-        category.setNormalizedName(((String) metadata.get("category")).toLowerCase());
         category.addSubCategory(subCategory);
         List<CategoryDefinition> categories = new ArrayList<>();
         categories.add(category);
