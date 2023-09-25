@@ -2190,7 +2190,7 @@ public class ServiceImportBusinessLogic {
 
     private List<AttributeDefinition> addImplicitAttributeValues(Resource originResource, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         List<String> origAttributes = originResource.getAttributes().stream().map(AttributeDefinition::getName).collect(toList());
-        Map<String, UploadAttributeInfo> uploadAttributes = uploadComponentInstanceInfo.getAttributes();
+        Map<String, UploadAttributeInfo> uploadAttributes = uploadComponentInstanceInfo.getAttributes() == null ? Collections.emptyMap() : uploadComponentInstanceInfo.getAttributes();
         List<String> newAttributesToAdd =
             uploadAttributes.keySet().stream().filter(newAttribute -> !origAttributes.contains(newAttribute))
                 .collect(toList());
