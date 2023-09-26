@@ -218,12 +218,14 @@ public class Configuration extends BasicConfiguration {
         private String username;
         private String password;
         private boolean ssl;
+        private String keystorePath;
+        private String keystorePassword;
         private String truststorePath;
         private String truststorePassword;
         private int maxWaitSeconds = 120;
 
         public Integer getCassandraPort() {
-            return cassandraPort != null ? cassandraPort : Configuration.CassandrConfig.CASSANDRA_DEFAULT_PORT;
+            return cassandraPort != null ? cassandraPort : CASSANDRA_DEFAULT_PORT;
         }
 
         @Getter

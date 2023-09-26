@@ -46,7 +46,6 @@ default['Pair_EnvName'] = ""
 #|  Portal                          |
 #|                                  |
 #+----------------------------------+
-
 default['ECompP']['cipher_key'] = "AGLDdG4D04BKm2IxIWEr8o=="
 default['ECompP']['portal_user'] = "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3ePIA="
 default['ECompP']['portal_pass'] = "j85yNhyIs7zKYbR1VlwEfNhS6b7Om4l0Gx5O8931sCI="
@@ -58,7 +57,6 @@ default['ECompP']['portal_app_name'] = "Ipwxi2oLvDxctMA1royaRw1W0jhucLx+grHzci3e
 #|  DMAAP Consumer                  |
 #|                                  |
 #+----------------------------------+
-
 default['DMAAP']['active'] = false
 default['DMAAP']['consumer']['aftEnvironment'] = "AFTUAT"
 default['DMAAP']['consumer']['consumerGroup'] = "ccd_onap"
