@@ -99,7 +99,7 @@ export class DerivedFEProperty extends PropertyBEModel {
                             this.toscaPath.push((Number(toscaIndex) + 1).toString());
                         }
                     } else {
-                        this.toscaPath.push("0");
+                        this.toscaPath.push((property.valueObj.length).toString());
                     }
                 } else {
                     if (property instanceof PropertyFEModel && property.valueObj != '') {
@@ -111,6 +111,9 @@ export class DerivedFEProperty extends PropertyBEModel {
                         }
                     } else {
                         parentKey = "0";
+                        if (property instanceof PropertyFEModel) {
+                            parentKey = (property.flattenedChildren.length).toString();
+                        }
                     }
                     this.toscaPath.push(parentKey);
                 }

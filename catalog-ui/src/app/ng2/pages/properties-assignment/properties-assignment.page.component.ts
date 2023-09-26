@@ -629,18 +629,6 @@ export class PropertiesAssignmentComponent {
         modal.instance.open();
     }
 
-    private deleteToscaValue(valueJson : any, currentKey: string[]) {
-        if(currentKey.length == 1) {
-            if (Array.isArray(valueJson) && !isNaN(Number(currentKey[0]))) {
-                valueJson.splice(Number(currentKey[0]),1);
-            } else {
-                delete valueJson[currentKey[0]];
-            }
-        } else {
-            this.deleteToscaValue(valueJson[currentKey[0]],currentKey.splice(1,currentKey.length -1));
-        }
-    }
-
     private clearCheckedInstancePropertyValue() {
         const checkedInstanceProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
         const currentValue : any = checkedInstanceProperty.value;
@@ -655,10 +643,9 @@ export class PropertiesAssignmentComponent {
                 const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, currentKey.length > 0 ? currentKey : parts.slice(1)));
                 checkedInstanceProperty.subPropertyToscaFunctions.splice(index, 1);
             }
-            if(currentValue !== null && currentKey.length > 0){
-                let valueJson = JSON.parse(currentValue);
-                this.deleteToscaValue(valueJson, currentKey);
-                checkedInstanceProperty.value = JSON.stringify(valueJson);
+            if (this.enableToscaFunction) {
+                this.processSubtoscaFunction(checkedInstanceProperty,null);
+                return;
             }
         }
         if (this.selectedInstanceData instanceof ComponentInstance) {
@@ -677,6 +664,34 @@ export class PropertiesAssignmentComponent {
         }
     }
 
+    private processSubtoscaFunction(checkedProperty : PropertyDeclareAPIModel, toscaFunction: ToscaFunction) {
+        const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
+        const instanceId: string = instancesIds[0];
+        this.instanceFePropertiesMap[instanceId].forEach(prop => {
+            if (prop.flattenedChildren) {
+                prop.flattenedChildren.forEach((child) => {
+                    if (child.isSelected && !child.isDeclared && !child.isDisabled) {
+                        prop.subPropertyToscaFunctions = checkedProperty.subPropertyToscaFunctions;
+                        if (toscaFunction) {
+                            child.value = toscaFunction.buildValueString();
+                            child.valueObj = toscaFunction.buildValueObject();
+                            child.toscaFunction = toscaFunction;
+                            this.hasChangedData = true;
+                            if (this.changedData.length == 0) {
+                                this.changedData.push(prop);
+                            }
+                        } else {
+                            child.valueObj = null;
+                            child.toscaFunction = null;
+                        }
+                        child.isSelected = false;
+                        this.togggleToscaBtn(false);                                
+                    }
+                });
+            }
+        });
+    }
+
     private updateCheckedInstancePropertyFunctionValue(toscaFunction: ToscaFunction) {
         const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
         if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
@@ -693,7 +708,10 @@ export class PropertiesAssignmentComponent {
             }
             subPropertyToscaFunction.toscaFunction = toscaFunction;
             subPropertyToscaFunction.subPropertyPath = currentKey.length > 0 ? currentKey : parts.slice(1);
-   
+            if (this.enableToscaFunction) {
+                this.processSubtoscaFunction(checkedProperty,toscaFunction);
+                return;
+            }
         } else {
             checkedProperty.subPropertyToscaFunctions = null;
             checkedProperty.toscaFunction = toscaFunction;
