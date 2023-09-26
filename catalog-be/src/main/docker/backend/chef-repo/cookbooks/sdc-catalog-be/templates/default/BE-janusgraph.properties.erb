@@ -7,6 +7,8 @@ storage.connection-timeout=<%= @janus_connection_timeout %>
 storage.cql.keyspace=sdctitan
 
 storage.cql.ssl.enabled=<%= @cassandra_ssl_enabled %>
+storage.cql.ssl.keystore.location=<%= @cassandra_keystore_path %>
+storage.cql.ssl.keystore.password=<%= @cassandra_keystore_password %>
 storage.cql.ssl.truststore.location=<%= @cassandra_truststore_path %>
 storage.cql.ssl.truststore.password=<%= @cassandra_truststore_password %>
 
