@@ -112,15 +112,16 @@ cassandraConfig:
     username: <%= @cassandra_usr %>
     password: <%= @cassandra_pwd %>
     ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath : <%= node['jetty']['truststore_path'] %>
-    truststorePassword : <%= @cassandra_truststore_password %>
+    keystorePath: <%= @cassandra_keystore_password %>
+    keystorePassword: <%= @cassandra_ssl_enabled %>
+    truststorePath: <%= @cassandra_truststore_path %>
+    truststorePassword: <%= @cassandra_truststore_password %>
     keySpaces:
         - { name: dox,           replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdcaudit,      replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdcartifact,   replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdccomponent,  replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
         - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @REP_STRING %>']}
-
 
 licenseTypes:
    - User
@@ -921,7 +922,6 @@ serviceApiArtifacts:
       displayName: Testing
       type: OTHER
 
-
 additionalInformationMaxNumberOfKeys: 50
 
 systemMonitoring:
@@ -1181,7 +1181,6 @@ dmaapProducerConfiguration:
     aftDme2ClientKeystore: <%= node['jetty']['truststore_path'] %>
     aftDme2ClientKeystorePassword: <%= node['jetty']['dmaap_truststore_pwd'] %>
     aftDme2ClientSslCertAlias: certman
-
 
 # ToDo: AF - had to remove due to configuration laod class failure
 #dmeConfiguration:
