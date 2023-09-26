@@ -91,7 +91,11 @@
          "socket_read_timeout": "40000",
          "socket_connect_timeout": "40000",
          "janusgraph_connection_timeout": "20000",
-         "replication_factor": "1"
+         "replication_factor": "1",
+         "cassandra_keystore_path": "cassandra_keystore_path",
+         "cassandra_keystore_password": "cassandra_keystore_password",
+         "cassandra_truststore_path": "cassandra_truststore_path",
+         "cassandra_truststore_password": "cassandra_truststore_password"
       },
       "DMAAP": {
          "consumer": {
