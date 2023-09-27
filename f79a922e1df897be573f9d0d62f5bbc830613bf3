@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "374a498f_8ee03fa6",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-09-27T09:58:44Z",
+      "side": 1,
+      "message": "missing\nthis.validValuesToscaFunctionList \u003d [];",
+      "range": {
+        "startLine": 315,
+        "startChar": 0,
+        "endLine": 315,
+        "endChar": 49
+      },
+      "revId": "f79a922e1df897be573f9d0d62f5bbc830613bf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
