@@ -69,6 +69,23 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "efc1cb29_4a07ce8b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-09-27T09:10:15Z",
+      "side": 1,
+      "message": "comment done",
+      "revId": "f1af7ad0fec949df38ba557eb87c8b2c6c5fe1fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f20ca2b_92b6a9c7",
@@ -82,6 +99,30 @@
       "writtenOn": "2023-09-26T14:42:32Z",
       "side": 1,
       "message": "do same for \u0027valid_value\u0027\n\n\n            if (typeof this.currentRule.value[0] \u003d\u003d\u003d \u0027object\u0027) {\n                this.rangeToscaFunctionList \u003d [];\n                this.validValuesToscaFunctionList \u003d [];\n                this.currentRule.value.forEach(val \u003d\u003e {\n                    this.rangeToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val))\n                    this.validValuesToscaFunctionList.push(ToscaFunctionHelper.convertObjectToToscaFunction(val))\n                });\n                newProperty.toscaFunction \u003d this.currentRule.value;\n                newProperty.value \u003d this.currentRule.value;\n            }\n            else {\n                this.validValuesToscaFunctionList \u003d this.currentRule.value;\n                this.rangeToscaFunctionList \u003d this.currentRule.value;\n                newProperty.toscaFunction \u003d this.currentRule.value;\n            }",
+      "range": {
+        "startLine": 314,
+        "startChar": 63,
+        "endLine": 322,
+        "endChar": 18
+      },
+      "revId": "f1af7ad0fec949df38ba557eb87c8b2c6c5fe1fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a27310c_39f7a8cd",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-09-27T09:10:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f20ca2b_92b6a9c7",
       "range": {
         "startLine": 314,
         "startChar": 63,
