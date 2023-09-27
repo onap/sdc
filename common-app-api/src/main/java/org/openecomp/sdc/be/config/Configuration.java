@@ -66,6 +66,9 @@ public class Configuration extends BasicConfiguration {
      * backend protocol. http | https
      */
     private String beProtocol = "http";
+    private String tlsCert;
+    private String tlsKey;
+    private String caCert;
     private Date released;
     private String version = "1111";
     private String toscaConformanceLevel = "3.0";

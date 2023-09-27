@@ -21,6 +21,10 @@ beProtocol: https
 beProtocol: http
 <% end -%>
 
+tlsCert: <%= node['BE']['tls_cert'] %>
+tlsKey: <%= node['BE']['tls_key'] %>
+caCert: <%= node['BE']['ca_cert'] %>
+
 # catalog backend ssl port
 beSslPort: <%= @ssl_port %>
 version: 1.1.0
