@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -108,6 +109,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -652,8 +654,7 @@ public class CommonCsarGenerator {
                         contentToMerge.put(entryPath, toscaImportByModel.getContent().getBytes(StandardCharsets.UTF_8));
                     } else {
                         if (writtenEntryPathList.contains(defsPath.resolve(importPath))) {
-                            importPath =
-                                ToscaDefaultImportHelper.addModelAsFilePrefix(importPath, toscaImportByModel.getModelId());
+                            importPath = ToscaDefaultImportHelper.addModelAsFilePrefix(importPath, toscaImportByModel.getModelId());
                         }
                         final Path entryPath = defsPath.resolve(importPath);
                         writtenEntryPathList.add(entryPath);
@@ -661,12 +662,10 @@ public class CommonCsarGenerator {
                     }
                 } else {
                     if (writtenEntryPathList.contains(defsPath.resolve(importPath))) {
-                        importPath =
-                            ToscaDefaultImportHelper.addModelAsFilePrefix(importPath, toscaImportByModel.getModelId());
+                        importPath = ToscaDefaultImportHelper.addModelAsFilePrefix(importPath, toscaImportByModel.getModelId());
                     }
                     final Path entryPath = defsPath.resolve(importPath);
-                    final var zipEntry = new ZipEntry(entryPath.toString());
-                    zipOutputStream.putNextEntry(zipEntry);
+                    zipOutputStream.putNextEntry(new ZipEntry(entryPath.toString()));
                     writtenEntryPathList.add(entryPath);
                     final byte[] content = toscaImportByModel.getContent().getBytes(StandardCharsets.UTF_8);
                     zipOutputStream.write(content, 0, content.length);
@@ -677,13 +676,13 @@ public class CommonCsarGenerator {
                 byte[] mergingContent = new byte[0];
                 for (Map.Entry<Path, byte[]> entry : contentToMerge.entrySet()) {
                     if (ADDITIONAL_TYPE_DEFINITIONS.equals(Paths.get(String.valueOf(entry.getKey())).normalize().toString())) {
-                        mergingContent = Bytes.concat(mergingContent, entry.getValue());
+                        mergingContent = mergeContent(mergingContent, entry.getValue());
                     } else {
                         final var zipEntry = new ZipEntry(entry.getKey().toString());
                         zipOutputStream.putNextEntry(zipEntry);
                         writtenEntryPathList.add(entry.getKey());
-                        final var concat = Bytes.concat(mergingContent, entry.getValue());
-                        zipOutputStream.write(concat, 0, concat.length);
+                        mergingContent = mergeContent(mergingContent, entry.getValue());
+                        zipOutputStream.write(mergingContent, 0, mergingContent.length);
                         zipOutputStream.closeEntry();
                     }
                 }
@@ -693,6 +692,34 @@ public class CommonCsarGenerator {
                 "Error while writing the schema files by model to the CSAR", e);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.CSAR_TOSCA_IMPORTS_ERROR));
         }
+    }
+
+    private byte[] mergeContent(final byte[] first, final byte[] second) {
+        byte[] merged = new byte[0];
+        final Map<String, Object> firstMap = new Yaml().load(new String(first));
+        final Map<String, Object> secondMap = new Yaml().load(new String(second));
+        if (MapUtils.isNotEmpty(secondMap)) {
+            for (final Entry<String, Object> secondMapEntry : secondMap.entrySet()) {
+                final Map<String, Object> newMap = new HashMap<>();
+                if (secondMapEntry.getKey().endsWith("_types")) {
+                    if (MapUtils.isNotEmpty(firstMap) && firstMap.containsKey(secondMapEntry.getKey())) {
+                        final Map<String, Object> secondMapEntryValue = (Map<String, Object>) secondMapEntry.getValue();
+                        final Map<String, Object> firstMapValue = (Map<String, Object>) firstMap.get(secondMapEntry.getKey());
+                        secondMapEntryValue.putAll(firstMapValue);
+                        newMap.put(secondMapEntry.getKey(), secondMapEntryValue);
+                    } else {
+                        newMap.put(secondMapEntry.getKey(), secondMapEntry.getValue());
+                    }
+                } else {
+                    newMap.put(secondMapEntry.getKey(), secondMapEntry.getValue());
+                }
+                final DumperOptions options = new DumperOptions();
+                options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                final Yaml yaml = new Yaml(options);
+                merged = Bytes.concat(merged, yaml.dumpAsMap(newMap).getBytes());
+            }
+        }
+        return merged;
     }
 
     private Either<CsarDefinition, ResponseFormat> collectComponentCsarDefinition(Component component) {
