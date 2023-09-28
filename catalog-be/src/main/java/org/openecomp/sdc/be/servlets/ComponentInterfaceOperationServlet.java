@@ -212,7 +212,6 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         @ApiResponse(responseCode = "201", description = "Create Interface Operation"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response createComponentInstanceInterfaceOperation(
         @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
             ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") String componentType,
