@@ -16,6 +16,29 @@
       "message": "recheck",
       "revId": "7ecea821798e79b3f9263657601ce496cfa7befc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39cefaf2_01bfef5a",
+        "filename": "integration-tests/environments/integration-test.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-09-28T14:41:34Z",
+      "side": 1,
+      "message": "no need to add this, we are not (at the moment at least) turning on TLS in the integration tests",
+      "range": {
+        "startLine": 93,
+        "startChar": 34,
+        "endLine": 97,
+        "endChar": 73
+      },
+      "revId": "7ecea821798e79b3f9263657601ce496cfa7befc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
