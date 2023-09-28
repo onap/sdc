@@ -674,7 +674,7 @@ public class ToscaExportHandler {
                 toscaMetadata.put(JsonPresentationFields.INSTANTIATION_TYPE.getPresentation(),
                         service.getEnvironmentContext() == null ? StringUtils.EMPTY : service.getInstantiationType());
                 if (!isInstance) {
-                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(), service.isEcompGeneratedNaming());
+                    toscaMetadata.put(JsonPresentationFields.ECOMP_GENERATED_NAMING.getPresentation(), service.isEcompGeneratedNaming().toString());
                     toscaMetadata.put(JsonPresentationFields.NAMING_POLICY.getPresentation(), service.getNamingPolicy());
                 }
                 break;
