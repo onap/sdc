@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,7 +44,6 @@ import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.ComponentType;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -76,8 +74,6 @@ public class CsarUtils {
     private static final Logger log = Logger.getLogger(CsarUtils.class);
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(CsarUtils.class.getName());
     private static final String PATH_DELIMITER = "/";
-    private static final String CSAR_META_VERSION = "1.0";
-    private static final String CSAR_META_PATH_FILE_NAME = "csar.meta";
     private static final String DEFINITION = "Definitions";
     private static final String DEL_PATTERN = "([/\\\\]+)";
     private static final String WORD_PATTERN = "\\w\\_\\@\\-\\.\\s]+)";
@@ -97,7 +93,6 @@ public class CsarUtils {
         ARTIFACTS + DEL_PATTERN + ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS + DEL_PATTERN
             + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS + DEL_PATTERN + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS + DEL_PATTERN
             + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS;
-    private static final String BLOCK_0_TEMPLATE = "SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
 
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentsUtils componentsUtils;
@@ -279,11 +274,8 @@ public class CsarUtils {
     public Either<byte[], ResponseFormat> createCsar(final Component component, final boolean getFromCS, final boolean isInCertificationRequest) {
         loggerSupportability
             .log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.STARTED, "Starting to create Csar for component {} ", component.getName());
-        final String toscaConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
-        final byte[] csarBlock0Byte = createCsarBlock0(CSAR_META_VERSION, toscaConformanceLevel).getBytes();
 
-        return generateCsarZip(csarBlock0Byte,
-            isAsdPackage(component), component, getFromCS, isInCertificationRequest).left().map(responseFormat -> {
+        return generateCsarZip(isAsdPackage(component), component, getFromCS, isInCertificationRequest).left().map(responseFormat -> {
             loggerSupportability
                 .log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.COMPLETE, "Ended create Csar for component {} ", component.getName());
             return responseFormat;
@@ -310,14 +302,11 @@ public class CsarUtils {
         return false;
     }
 
-    private Either<byte[], ResponseFormat> generateCsarZip(byte[] csarBlock0Byte,
-                                                           boolean isAsdPackage,
+    private Either<byte[], ResponseFormat> generateCsarZip(boolean isAsdPackage,
                                                            Component component,
                                                            boolean getFromCS,
                                                            boolean isInCertificationRequest) {
         try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-            zip.putNextEntry(new ZipEntry(CSAR_META_PATH_FILE_NAME));
-            zip.write(csarBlock0Byte);
             Either<ZipOutputStream, ResponseFormat> populateZip = mapFromModelCsarGeneratorService.generateCsarZip(
                 component, getFromCS, zip, isInCertificationRequest, isAsdPackage);
             if (populateZip.isRight()) {
@@ -331,10 +320,6 @@ public class CsarUtils {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             return Either.right(responseFormat);
         }
-    }
-
-    private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
-        return String.format(BLOCK_0_TEMPLATE, metaFileVersion, toscaConformanceLevel);
     }
 
     /************************************ Artifacts Structure END******************************************************************/
