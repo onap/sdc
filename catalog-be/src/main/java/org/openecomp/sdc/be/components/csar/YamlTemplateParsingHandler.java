@@ -257,21 +257,30 @@ public class YamlTemplateParsingHandler {
         return ImportUtils.getProperties(toscaJson).left().on(err -> new HashMap<>());
     }
 
-    private ListDataDefinition<SubstitutionFilterPropertyDataDefinition> getSubstitutionFilterProperties(Map<String, Object> toscaJson) {
-        ListDataDefinition<SubstitutionFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
-        Map<String, Object> substitutionFilters = findFirstToscaMapElement(toscaJson, SUBSTITUTION_FILTERS).left().on(err -> new HashMap<>());
+    private ListDataDefinition<SubstitutionFilterPropertyDataDefinition> getSubstitutionFilterProperties(final Map<String, Object> toscaJson) {
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
+        final Map<String, Object> substitutionFilters = findFirstToscaMapElement(toscaJson, SUBSTITUTION_FILTERS).left().on(err -> new HashMap<>());
         if (MapUtils.isEmpty(substitutionFilters)) {
             return propertyList;
         }
-        ArrayList<Map<String, List<Map<String, Object>>>> substitutionFilterProperties =
-            (ArrayList<Map<String, List<Map<String, Object>>>>) substitutionFilters.get("properties");
+        final List<Map<String, Object>> substitutionFilterProperties = (List<Map<String, Object>>) substitutionFilters.get("properties");
         if (CollectionUtils.isEmpty(substitutionFilterProperties)) {
             return propertyList;
         }
-        for (Map<String, List<Map<String, Object>>> filterProps : substitutionFilterProperties) {
-            for (Map.Entry<String, List<Map<String, Object>>> propertyFilterEntry : filterProps.entrySet()) {
+        for (final Map<String, Object> filterProps : substitutionFilterProperties) {
+            for (final Map.Entry<String, Object> propertyFilterEntry : filterProps.entrySet()) {
                 final String propertyName = propertyFilterEntry.getKey();
-                for (Map<String, Object> filterValueMap : propertyFilterEntry.getValue()) {
+                final Object value = propertyFilterEntry.getValue();
+                if (value instanceof List) {
+                    final List<Map<String, Object>> propertyFilterEntryValue = (List<Map<String, Object>>) value;
+                    for (final Map<String, Object> filterValueMap : propertyFilterEntryValue) {
+                        final var substitutionFilterPropertyDataDefinition = new SubstitutionFilterPropertyDataDefinition();
+                        substitutionFilterPropertyDataDefinition.setName(propertyName);
+                        substitutionFilterPropertyDataDefinition.setConstraints(createSubstitutionFilterConstraints(propertyName, filterValueMap));
+                        propertyList.add(substitutionFilterPropertyDataDefinition);
+                    }
+                } else if (value instanceof Map) {
+                    final Map<String, Object> filterValueMap = (Map<String, Object>) value;
                     final var substitutionFilterPropertyDataDefinition = new SubstitutionFilterPropertyDataDefinition();
                     substitutionFilterPropertyDataDefinition.setName(propertyName);
                     substitutionFilterPropertyDataDefinition.setConstraints(createSubstitutionFilterConstraints(propertyName, filterValueMap));
