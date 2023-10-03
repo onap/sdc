@@ -22,6 +22,30 @@
       },
       "revId": "67378272684edacc8016af84e4643d18882cd830",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "39637678_20571128",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CommonCsarGenerator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-03T13:57:06Z",
+      "side": 1,
+      "message": "yes, would be better to protect",
+      "parentUuid": "6470161e_3adf8483",
+      "range": {
+        "startLine": 723,
+        "startChar": 12,
+        "endLine": 727,
+        "endChar": 138
+      },
+      "revId": "67378272684edacc8016af84e4643d18882cd830",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
