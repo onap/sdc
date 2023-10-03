@@ -15,7 +15,7 @@
     "recipe[sdc-catalog-fe::FE_3_errors_config]",
     "recipe[sdc-catalog-fe::FE_4_logback]",
     "recipe[sdc-catalog-fe::FE_5_rest_configuration]",
-    "recipe[sdc-catalog-fe::FE_6_locate_keystore]",
+    "recipe[sdc-catalog-fe::FE_6_setup_key_and_trust_store]",
     "recipe[sdc-catalog-fe::FE_7_create_jetty_modules]",
     "recipe[sdc-catalog-fe::FE_8_prepareProbeFile]"
   ],

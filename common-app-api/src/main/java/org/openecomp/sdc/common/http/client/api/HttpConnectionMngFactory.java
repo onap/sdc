@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.common.http.client.api;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,9 +71,10 @@ public class HttpConnectionMngFactory {
         SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
         SSLConnectionSocketFactory sslsf = null;
         try {
-            sslContextBuilder.loadTrustMaterial(new TrustSelfSignedStrategy());
             if (clientCertificate != null) {
                 setClientSsl(clientCertificate, sslContextBuilder);
+            } else {
+                sslContextBuilder.loadTrustMaterial(new TrustSelfSignedStrategy());
             }
             sslsf = new SSLConnectionSocketFactory(sslContextBuilder.build(), NoopHostnameVerifier.INSTANCE);
         } catch (GeneralSecurityException e) {
@@ -93,6 +95,11 @@ public class HttpConnectionMngFactory {
             char[] keyStorePassword = clientCertificate.getKeyStorePassword().toCharArray();
             KeyStore clientKeyStore = createClientKeyStore(clientCertificate.getKeyStore(), keyStorePassword);
             sslContextBuilder.loadKeyMaterial(clientKeyStore, keyStorePassword);
+            if (StringUtils.isEmpty(clientCertificate.getTrustStore())) {
+                sslContextBuilder.loadTrustMaterial(new TrustSelfSignedStrategy());
+            } else {
+                sslContextBuilder.loadTrustMaterial(new File(clientCertificate.getTrustStore()), clientCertificate.getTrustStorePassword().toCharArray());
+            }
             logger.debug("#setClientSsl - Set Client Certificate authentication");
         } catch (IOException | GeneralSecurityException e) {
             logger.debug("#setClientSsl - Set Client Certificate authentication failed with exception, diasable client SSL authentication ", e);
@@ -107,6 +114,7 @@ public class HttpConnectionMngFactory {
         }
         return keyStore;
     }
+    
 
     private String getKeyStoreType(String keyStore) {
         if (!StringUtils.isEmpty(keyStore)) {

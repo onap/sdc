@@ -37,15 +37,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.config.EcompErrorEnum;
 import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
+import org.openecomp.sdc.common.http.config.ClientCertificate;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 import org.openecomp.sdc.common.http.config.Timeouts;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -116,7 +123,9 @@ public class HealthCheckScheduledTask implements Runnable {
         if (healthCheckUrl != null) {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                HttpResponse<String> response = HttpRequest.get(healthCheckUrl, new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs)));
+                HttpClientConfig clientConfig = new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs), getHttpClientCertificate());
+                
+                HttpResponse<String> response = HttpRequest.get(healthCheckUrl, clientConfig);
                 int beStatus = response.getStatusCode();
                 if (beStatus == HttpStatus.SC_OK || beStatus == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                     String beJsonResponse = response.getResponse();
@@ -134,6 +143,15 @@ public class HealthCheckScheduledTask implements Runnable {
         }
         String compName = requestedByBE ? Constants.HC_COMPONENT_FE : baseComponent;
         return Collections.singletonList(new HealthCheckInfo(compName, HealthCheckInfo.HealthCheckStatus.DOWN, null, description.toString()));
+    }
+    
+    private ClientCertificate getHttpClientCertificate() {
+        ClientCertificate clientCertificate = new ClientCertificate();
+        clientCertificate.setKeyStore(JettySSLUtils.getSSLConfig().getKeystorePath());
+        clientCertificate.setKeyStorePassword(JettySSLUtils.getSSLConfig().getKeystorePass(), false);
+        clientCertificate.setTrustStore(JettySSLUtils.getSSLConfig().getTruststorePath());
+        clientCertificate.setTrustStorePassword(JettySSLUtils.getSSLConfig().getTruststorePass());
+        return clientCertificate;
     }
 
     private String getExternalComponentHcUri(String baseComponent) {
@@ -197,7 +215,8 @@ public class HealthCheckScheduledTask implements Runnable {
         ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(LOG_TARGET_ENTITY_BE)
             .targetServiceName(LOG_SERVICE_NAME).build();
         try {
-            HttpResponse<String> response = HttpRequest.get(redirectedUrl, new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs)));
+            HttpClientConfig clientConfig = new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs), getHttpClientCertificate());
+            HttpResponse<String> response = HttpRequest.get(redirectedUrl, clientConfig);
             log.debug("HC call to BE - status code is {}", response.getStatusCode());
             String beJsonResponse = response.getResponse();
             feAggHealthCheck = getFeHealthCheckInfos(gson, beJsonResponse);

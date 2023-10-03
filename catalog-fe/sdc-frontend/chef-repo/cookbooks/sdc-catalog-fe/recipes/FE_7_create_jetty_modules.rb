@@ -49,8 +49,9 @@ template "ssl-ini" do
    mode "0755"
    variables({
      :https_port => "#{node['FE'][:https_port]}" ,
-     :jetty_keystore_pwd => "#{node['jetty'][:keystore_pwd]}" ,
-     :jetty_keymanager_pwd => "#{node['jetty'][:keymanager_pwd]}" ,
-     :jetty_truststore_pwd => "#{node['jetty'][:truststore_pwd]}"
+     :keystore_path => "#{node['FE'][:keystore_path]}" ,
+     :keystore_password => "#{node['FE'][:keystore_password]}" ,
+     :truststore_path => "#{node['FE'][:truststore_path]}" ,
+     :truststore_password => "#{node['FE'][:truststore_password]}"
    })
 end

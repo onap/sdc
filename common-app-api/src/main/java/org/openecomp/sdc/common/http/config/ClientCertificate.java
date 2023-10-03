@@ -21,24 +21,33 @@ package org.openecomp.sdc.common.http.config;
 
 import fj.data.Either;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.security.SecurityUtil;
 
 @EqualsAndHashCode
+@Getter
+@Setter
 public class ClientCertificate {
 
     private String keyStore;
     private String keyStorePassword;
-
+    private String trustStore;
+    private String trustStorePassword;
+    
     public ClientCertificate() {
     }
 
     public ClientCertificate(ClientCertificate clientCertificate) {
         setKeyStore(clientCertificate.getKeyStore());
         setKeyStorePassword(clientCertificate.getKeyStorePassword(), false);
+        setTrustStore(clientCertificate.getTrustStore());
+        setTrustStorePassword(clientCertificate.getTrustStorePassword());
     }
 
-    private void setKeyStorePassword(String keyStorePassword, boolean isEncoded) {
+    public void setKeyStorePassword(String keyStorePassword, boolean isEncoded) {
         validate(keyStorePassword);
         if (isEncoded) {
             Either<String, String> passkey = SecurityUtil.decrypt(keyStorePassword);
@@ -52,30 +61,13 @@ public class ClientCertificate {
         }
     }
 
-    public String getKeyStore() {
-        return keyStore;
-    }
-
     public void setKeyStore(String keyStore) {
         validate(keyStore);
         this.keyStore = keyStore;
     }
 
-    public String getKeyStorePassword() {
-        return keyStorePassword;
-    }
-
     public void setKeyStorePassword(String keyStorePassword) {
         setKeyStorePassword(keyStorePassword, true);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ClientCertificate [keyStore=");
-        builder.append(keyStore);
-        builder.append("]");
-        return builder.toString();
     }
 
     private void validate(String str) {
