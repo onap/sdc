@@ -42,33 +42,42 @@ jetty.ssl.port=<%= @https_port %>
 ## See http://www.eclipse.org/jetty/documentation/current/configuring-security-secure-passwords.html
 
 ## Keystore file path (relative to $jetty.base)
-jetty.sslContext.keyStorePath=etc/org.onap.sdc.p12
+<% unless @keystore_path.nil? || @keystore_path.strip.empty?  -%>
+jetty.sslContext.keyStorePath=<%= @keystore_path %>
+<% end -%>
 
 ## Truststore file path (relative to $jetty.base)
-jetty.sslContext.trustStorePath=etc/org.onap.sdc.trust.jks
+<% unless @truststore_path.nil? || @truststore_path.strip.empty? -%>
+jetty.sslContext.trustStorePath=<%= @truststore_path %>
+<% end -%>
 
 ## Keystore password
-# jetty.sslContext.keyStorePassword=OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
-jetty.sslContext.keyStorePassword=<%= @jetty_keystore_pwd %>
+<% unless @keystore_password.nil? || @keystore_password.strip.empty? -%>
+jetty.sslContext.keyStorePassword=<%= @keystore_password %>
+<% end -%>
 
 ## Keystore type and provider
 # jetty.sslContext.keyStoreType=JKS
 # jetty.sslContext.keyStoreProvider=
 
 ## KeyManager password
-# jetty.sslContext.keyManagerPassword=OBF:1u2u1wml1z7s1z7a1wnl1u2g
-jetty.sslContext.keyManagerPassword=<%= @jetty_keymanager_pwd %>
+<% unless @keystore_password.nil? || @keystore_password.strip.empty? -%>
+jetty.sslContext.keyManagerPassword=<%= @keystore_password %>
+<% end -%>
 
 ## Truststore password
-# jetty.sslContext.trustStorePassword=OBF:1vny1zlo1x8e1vnw1vn61x8g1zlu1vn4
-jetty.sslContext.trustStorePassword=<%= @jetty_truststore_pwd %>
+# tp<%= @truststore_password %>end
+# kp<%= @keystore_password %>end
+<% unless @truststore_password.nil? || @truststore_password.strip.empty? -%>
+jetty.sslContext.trustStorePassword=<%= @truststore_password %>
+<% end -%>
 
 ## Truststore type and provider
 # jetty.sslContext.trustStoreType=JKS
 # jetty.sslContext.trustStoreProvider=
 
 ## whether client certificate authentication is required
-# jetty.sslContext.needClientAuth=false
+jetty.sslContext.needClientAuth=<%= !@truststore_password.nil? && !@truststore_password.strip.empty? %>
 
 ## Whether client certificate authentication is desired
 # jetty.sslContext.wantClientAuth=false

@@ -20,9 +20,11 @@
 package org.openecomp.sdc.fe.servlets;
 
 import javax.servlet.ServletException;
+
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.proxy.ProxyServlet;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.onap.config.api.JettySSLUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -52,8 +54,17 @@ public abstract class SSLProxyServlet extends ProxyServlet {
     }
 
     private HttpClient getSecureHttpClient() throws ServletException {
+        final JettySSLUtils.JettySslConfig sslConfig = JettySSLUtils.getSSLConfig();
+        SslContextFactory sslContextFactory = new SslContextFactory.Client();
+        sslContextFactory.setKeyStorePath(sslConfig.getKeystorePath());
+        sslContextFactory.setKeyStorePassword(sslConfig.getKeystorePass());
+        sslContextFactory.setKeyManagerPassword(sslConfig.getKeystorePass());
+        sslContextFactory.setTrustStorePath(sslConfig.getTruststorePath());
+        sslContextFactory.setTrustStorePassword(sslConfig.getTruststorePass());
+        sslContextFactory.setKeyStorePath(sslConfig.getKeystorePath());
+        
         // Instantiate HttpClient with the SslContextFactory
-        final var httpClient = new HttpClient(new SslContextFactory.Client(true));
+        final var httpClient = new HttpClient(sslContextFactory);
         // Configure HttpClient, for example:
         httpClient.setFollowRedirects(false);
         // Start HttpClient
