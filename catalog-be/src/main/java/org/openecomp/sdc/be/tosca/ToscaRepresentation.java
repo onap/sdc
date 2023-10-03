@@ -26,11 +26,10 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 
+@Getter
 public class ToscaRepresentation {
 
-    @Getter
     private final byte[] mainYaml;
-    @Getter
     private final Option<List<Triple<String, String, Component>>> dependencies;
 
     private ToscaRepresentation(byte[] mainYaml, Option<List<Triple<String, String, Component>>> dependencies) {

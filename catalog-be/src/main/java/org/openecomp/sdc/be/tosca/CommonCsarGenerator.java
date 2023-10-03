@@ -77,6 +77,7 @@ import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -110,6 +111,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -240,7 +242,8 @@ public class CommonCsarGenerator {
             addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage, definitionsPath);
         } else {
             //retrieve schema files by model from Cassandra
-            addSchemaFilesByModel(zip, component.getModel(), definitionsPath, addDependencies);
+            addSchemaFilesByModel(zip, component.getModel(), definitionsPath, addDependencies,
+                dependencies.stream().map(d -> d.getRight()).collect(Collectors.toList()));
         }
         Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
         if (collectedComponentCsarDefinition.isRight()) {
@@ -396,8 +399,7 @@ public class CommonCsarGenerator {
             for (Triple<String, String, Component> d : dependencies) {
                 String cassandraId = d.getMiddle();
                 Component childComponent = d.getRight();
-                Either<byte[], ResponseFormat> entryData = getEntryData(cassandraId, childComponent).right()
-                    .map(componentsUtils::getResponseFormat);
+                Either<byte[], ResponseFormat> entryData = getEntryData(cassandraId, childComponent).right().map(componentsUtils::getResponseFormat);
                 if (entryData.isRight()) {
                     return Either.right(entryData.right().value());
                 }
@@ -548,9 +550,9 @@ public class CommonCsarGenerator {
                                              final String definitionsPath) {
         final int initSize = 2048;
         LOGGER.debug("Starting copy from Schema file zip to CSAR zip");
-        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(
-            schemaFileZip)); final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-            byteArrayOutputStream, initSize)) {
+        try (final ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+            final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream, initSize)) {
             ZipEntry entry;
             while ((entry = zipInputStream.getNextEntry()) != null) {
                 ZipUtils.checkForZipSlipInRead(entry);
@@ -652,12 +654,13 @@ public class CommonCsarGenerator {
     }
 
     private void addSchemaFilesByModel(final ZipOutputStream zipOutputStream, final String modelName,
-                                       final String definitionsPath, final boolean isSingleImportsFile) {
+                                       final String definitionsPath, final boolean isSingleImportsFile,
+                                       final List<Component> dependencies) {
         try {
-            final List<ToscaImportByModel> modelDefaultImportList = modelOperation.findAllModelImports(modelName, true);
             final Set<Path> writtenEntryPathList = new HashSet<>();
-            final var defsPath = Path.of(definitionsPath);
-            Map<Path, byte[]> contentToMerge = new HashMap<>();
+            final Path defsPath = Path.of(definitionsPath);
+            final Map<Path, byte[]> contentToMerge = new HashMap<>();
+            final List<ToscaImportByModel> modelDefaultImportList = modelOperation.findAllModelImports(modelName, true);
             for (final ToscaImportByModel toscaImportByModel : modelDefaultImportList) {
                 var importPath = Path.of(toscaImportByModel.getFullPath());
                 if (!isSingleImportsFile) {
@@ -694,6 +697,7 @@ public class CommonCsarGenerator {
                         zipOutputStream.putNextEntry(zipEntry);
                         writtenEntryPathList.add(entry.getKey());
                         mergingContent = mergeContent(mergingContent, entry.getValue());
+                        mergingContent = updateMergingContentFromDependencies(mergingContent, dependencies);
                         zipOutputStream.write(mergingContent, 0, mergingContent.length);
                         zipOutputStream.closeEntry();
                     }
@@ -706,13 +710,70 @@ public class CommonCsarGenerator {
         }
     }
 
+    private byte[] updateMergingContentFromDependencies(final byte[] mergingContent, final List<Component> dependencies) {
+        final DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(FlowStyle.BLOCK);
+        final Yaml yaml = new Yaml(options);
+        final Map<String, Object> stringObjectMap = (Map<String, Object>) yaml.load(new String(mergingContent));
+        final Map<String, Object> nodeTypes = (Map<String, Object>) stringObjectMap.get("node_types");
+        for (final Component dependency : dependencies) {
+            final Map<String, Object> dependencyAsMap = yaml.load(yaml.dumpAsMap(dependency));
+            final String toscaResourceName = ((ResourceMetadataDataDefinition) dependency.getComponentMetadataDefinition()
+                .getMetadataDataDefinition()).getToscaResourceName();
+            final Map<String, Object> nodeType = (Map<String, Object>) nodeTypes.get(toscaResourceName);
+            final Map<String, Object> propertiesFromDependency = (Map<String, Object>) ((List) dependencyAsMap.get("properties"))
+                .stream().collect(Collectors.toMap(s -> ((Map<String, Object>) s).get("name"), s -> s));
+            final Map<String, Object> propertiesFromMergingContent = (Map<String, Object>) nodeType.get("properties");
+            final Map<String, Object> updatedMap = updatePropertiesFromDependency(propertiesFromMergingContent, propertiesFromDependency);
+            nodeType.replace("properties", updatedMap);
+            nodeTypes.replace(toscaResourceName, nodeType);
+        }
+        stringObjectMap.replace("node_types", nodeTypes);
+        return yaml.dumpAsMap(stringObjectMap).getBytes();
+    }
+
+    private Map<String, Object> updatePropertiesFromDependency(final Map<String, Object> propertiesFromMergingContent,
+                                                               final Map<String, Object> propertiesFromDependency) {
+        final Map<String, Object> result = new HashMap<>();
+        for (final Entry<String, Object> entry : propertiesFromDependency.entrySet()) {
+            final Map<String, Object> propertiesMap = new HashMap<>();
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+            if (propertiesFromMergingContent instanceof Map) {
+                final Object object = propertiesFromMergingContent.get(key);
+                if (object instanceof Map) {
+                    ((Map<String, Object>) object).keySet().forEach(s ->
+                        propertiesMap.put(s, ((Map<String, Object>) value).get(s))
+                    );
+                } else {
+                    propertiesMap.putAll(createProperties(value));
+                }
+            } else {
+                propertiesMap.putAll(createProperties(value));
+            }
+            result.put(key, propertiesMap);
+        }
+        return result;
+    }
+
+    private Map<String, Object> createProperties(final Object value) {
+        final Map<String, Object> propertiesMap = new HashMap<>();
+        propertiesMap.put("type", ((Map<String, Object>) value).get("type"));
+        propertiesMap.put("required", ((Map<String, Object>) value).get("required"));
+        final Object entrySchema = ((Map<String, Object>) value).get("entry_schema");
+        if (entrySchema != null) {
+            propertiesMap.put("entry_schema", entrySchema);
+        }
+        return propertiesMap;
+    }
+
     private byte[] mergeContent(final byte[] first, final byte[] second) {
         byte[] merged = new byte[0];
         final Map<String, Object> firstMap = new Yaml().load(new String(first));
         final Map<String, Object> secondMap = new Yaml().load(new String(second));
         if (MapUtils.isNotEmpty(secondMap)) {
             final DumperOptions options = new DumperOptions();
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            options.setDefaultFlowStyle(FlowStyle.BLOCK);
             final Yaml yaml = new Yaml(options);
             for (final Entry<String, Object> secondMapEntry : secondMap.entrySet()) {
                 final Map<String, Object> newMap = new HashMap<>();
@@ -1270,5 +1331,6 @@ public class CommonCsarGenerator {
             super("Error while exporting component's interface (toscaError:" + error + ")");
         }
     }
+
 
 }
