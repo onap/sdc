@@ -795,7 +795,7 @@ public class ToscaExportHandler {
     private void addDependencies(final List<Map<String, Map<String, String>>> imports, final List<Triple<String, String, Component>> dependencies,
                                  final Component fetchedComponent, final boolean isSkipImports) {
         final Set<Component> componentsList = new LinkedHashSet<>();
-        if (fetchedComponent instanceof Resource && !isSkipImports) {
+        if (fetchedComponent instanceof Resource) {
             log.debug("fetchedComponent is a resource {}", fetchedComponent);
             final Optional<Map<String, String>> derivedFromMapOfIdToName = getDerivedFromMapOfIdToName(fetchedComponent, componentsList);
             if (derivedFromMapOfIdToName.isPresent() && !derivedFromMapOfIdToName.get().isEmpty()) {
@@ -808,9 +808,9 @@ public class ToscaExportHandler {
                         }
                     }
                 });
-                setImports(imports, dependencies, componentsList);
+                setImports(imports, dependencies, componentsList, isSkipImports);
             } else {
-                setImports(imports, dependencies, fetchedComponent);
+                setImports(imports, dependencies, fetchedComponent, isSkipImports);
             }
         }
     }
@@ -844,12 +844,12 @@ public class ToscaExportHandler {
      * Creates a resource map and adds it to the import list.
      */
     private void setImports(final List<Map<String, Map<String, String>>> imports, final List<Triple<String, String, Component>> dependencies,
-                            final Set<Component> componentsList) {
-        componentsList.forEach(component ->  setImports(imports, dependencies, component));
+                            final Set<Component> componentsList, boolean isSkipImports) {
+        componentsList.forEach(component ->  setImports(imports, dependencies, component, isSkipImports));
     }
 
     private void setImports(final List<Map<String, Map<String, String>>> imports, final List<Triple<String, String, Component>> dependencies,
-                            final Component component) {
+                            final Component component, boolean isSkipImports) {
         final Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
         final ArtifactDefinition artifactDefinition = toscaArtifacts.get(ASSET_TOSCA_TEMPLATE);
         if (artifactDefinition != null) {
@@ -860,9 +860,11 @@ public class ToscaExportHandler {
             keyNameBuilder.append(component.getComponentType().toString().toLowerCase());
             keyNameBuilder.append("-");
             keyNameBuilder.append(component.getName());
-            addImports(imports, keyNameBuilder, files);
+            if (!isSkipImports) {
+                addImports(imports, keyNameBuilder, files);
+            }
             dependencies.add(new ImmutableTriple<>(artifactName, artifactDefinition.getEsId(), component));
-            if (!ModelConverter.isAtomicComponent(component)) {
+            if (!ModelConverter.isAtomicComponent(component) && !isSkipImports) {
                 final Map<String, String> interfaceFiles = new HashMap<>();
                 interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactName));
                 keyNameBuilder.append("-interface");
