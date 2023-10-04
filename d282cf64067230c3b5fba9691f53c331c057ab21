@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "443892da_3aa92271",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-04T23:05:01Z",
+      "side": 1,
+      "message": "Working through this I think there is a much simpler solution. In YamlTemplateParsingHandler there is already an attempt to handle this scenario where the properties are fetched from the subsitution mapping node type and added to the parsedToscaYamlInfo. Where it is falling down though is the derivedFromGenericType is not set. It is available though so can fixed by setting:\n\ncomponent.setDerivedFromGenericType((String) substitutionMappings.get(NODE_TYPE.getElementName()));\n\nbefore the call to (line 203):\n\nList\u003cPropertyDefinition\u003e properties \u003d serviceBusinessLogic.fetchDerivedFromGenericType(component, null).getProperties();",
+      "revId": "d282cf64067230c3b5fba9691f53c331c057ab21",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
