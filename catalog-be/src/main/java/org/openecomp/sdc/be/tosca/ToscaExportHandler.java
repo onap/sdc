@@ -1871,24 +1871,47 @@ public class ToscaExportHandler {
         if (component == null || CollectionUtils.isEmpty(component.getInputs())) {
             return Collections.emptyMap();
         }
-        Map<String, String[]> propertyMapping = new HashMap<>();
-        List<InputDefinition> propertyMappedInputList = component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).collect(
-                Collectors.toList());
+        final Map<String, String[]> propertyMapping = new HashMap<>();
+        final List<InputDefinition> propertyMappedInputList =
+            component.getInputs().stream().filter(InputDefinition::isMappedToComponentProperty).collect(Collectors.toList());
+        final Either<Component, StorageOperationStatus> substitutionMappingNode = toscaOperationFacade.getLatestByName(
+            getSimplifiedName(component.getDerivedFromGenericType()), component.getModel());
 
         if (CollectionUtils.isNotEmpty(propertyMappedInputList)) {
-            propertyMappedInputList.forEach(inputDefinition -> {
-                if (StringUtils.isNotEmpty(inputDefinition.getPropertyId())) {
-                    Optional<PropertyDefinition> property = component.getProperties().stream()
+            propertyMappedInputList.stream()
+                .filter(inputDefinition -> StringUtils.isNotEmpty(inputDefinition.getPropertyId()))
+                .forEach(inputDefinition -> {
+                    final List<PropertyDefinition> properties = component.getProperties();
+                    if (CollectionUtils.isNotEmpty(properties)) {
+                        final Optional<PropertyDefinition> property = properties.stream()
                             .filter(propertyDefinition -> propertyDefinition.getUniqueId().equals(inputDefinition.getPropertyId())).findFirst();
-                    if (property.isPresent()) {
-                        propertyMapping.put(property.get().getName(), new String[]{inputDefinition.getName()});
+                        if (property.isPresent()) {
+                            propertyMapping.put(property.get().getName(), new String[]{inputDefinition.getName()});
+                        } else if (substitutionMappingNode.isLeft()) {
+                            final List<PropertyDefinition> substitutionMappingNodeProperties = substitutionMappingNode.left().value().getProperties();
+                            if (CollectionUtils.isNotEmpty(substitutionMappingNodeProperties)) {
+                                final Optional<PropertyDefinition> substitutionMappingNodeProperty = substitutionMappingNodeProperties.stream().filter
+                                    (propertyDefinition -> propertyDefinition.getUniqueId().equals(inputDefinition.getPropertyId())).findFirst();
+                                if (substitutionMappingNodeProperty.isPresent()) {
+                                    propertyMapping.put(substitutionMappingNodeProperty.get().getName(), new String[]{inputDefinition.getName()});
+                                }
+                            }
+                        }
+                    } else {
+                        propertyMapping.put(inputDefinition.getName(), new String[]{inputDefinition.getName()});
                     }
-                } else {
-                    propertyMapping.put(inputDefinition.getName(), new String[]{inputDefinition.getName()});
-                }
-            });
+                });
         }
         return propertyMapping;
+    }
+
+    private String getSimplifiedName(final String fullName) {
+        final String[] split = fullName.split("\\.");
+        if (split.length > 0) {
+            return split[split.length - 1];
+        } else {
+            return fullName;
+        }
     }
 
     private Map<String, String[]> buildSubstitutionMappingAttributesMapping(final Component component) {
