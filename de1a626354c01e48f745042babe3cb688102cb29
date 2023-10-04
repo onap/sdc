@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a2ba91c_8d2d26d5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-04T14:25:53Z",
+      "side": 1,
+      "message": "In the properties assignment view for a service, when I add a tosca function value to a list property and then click save -\u003e no call to the backend is made and the value is not saved. It works fine if I add a literal value or a mix of literal values and tosca functions, but not when only add tosca function values",
+      "revId": "de1a626354c01e48f745042babe3cb688102cb29",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
