@@ -25,6 +25,7 @@ import static org.openecomp.sdc.be.components.impl.CsarValidationUtils.TOSCA_MET
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
+import static org.openecomp.sdc.be.dao.api.ActionStatus.MISSING_PROPERTIES_ERROR;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 import com.google.gson.Gson;
@@ -343,6 +344,8 @@ public class ServiceImportBusinessLogic {
         newService.setUniqueId(serviceOriginal.getUniqueId());
         newService.setName(serviceOriginal.getName());
         newService.setUUID(serviceOriginal.getUUID());
+        newService.setDerivedFromGenericType(serviceOriginal.getDerivedFromGenericType());
+        newService.setDerivedFromGenericVersion(serviceOriginal.getDerivedFromGenericVersion());
         return newService;
     }
 
@@ -880,7 +883,7 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
-            service = updateInputs(service, userId, parsedToscaYamlInfo.getSubstitutionMappingProperties());
+            service = updateInputs(service, userId, parsedToscaYamlInfo);
 
             ASDCKpiApi.countCreatedResourcesKPI();
             return service;
@@ -902,19 +905,24 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    private Service updateInputs(final Service component, final String userId, final Map<String, List<String>> substitutionMappingProperties) {
+    private Service updateInputs(final Service component, final String userId, final ParsedToscaYamlInfo parsedToscaYamlInfo) {
         final List<InputDefinition> inputs = component.getInputs();
         if (CollectionUtils.isNotEmpty(inputs)) {
+            final Map<String, List<String>> substitutionMappingProperties = parsedToscaYamlInfo.getSubstitutionMappingProperties();
             final List<ComponentInstance> componentInstances = component.getComponentInstances();
             final String componentUniqueId = component.getUniqueId();
-            List<String> propertyMissingNames = new ArrayList<>();
+            final List<String> propertyMissingNames = new ArrayList<>();
             for (final InputDefinition input : inputs) {
-                boolean isSubMapProp = false;
-                if (substitutionMappingProperties != null && !substitutionMappingProperties.isEmpty()) {
-                    isSubMapProp = substitutionMappingProperties.entrySet().stream()
-                        .anyMatch(stringEntry -> stringEntry.getValue().get(0).equals(input.getName()));
+                Optional<Entry<String, List<String>>> subMapPropOptional = Optional.empty();
+                if (MapUtils.isNotEmpty(substitutionMappingProperties)) {
+                    subMapPropOptional = substitutionMappingProperties.entrySet().stream().filter(s -> s.getValue().get(0).equals(input.getName())).findAny();
                 }
-                if (!isSubMapProp && isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
+                final Either<Component, StorageOperationStatus> substitutionMappingNode = toscaOperationFacade.getLatestByName(
+                    getSimplifiedName(parsedToscaYamlInfo.getSubstitutionMappingNodeType()), component.getModel());
+                if (subMapPropOptional.isPresent() && substitutionMappingNode.isLeft()
+                    && isInputFromSubstitutionMappingNodeProperty(substitutionMappingNode.left().value(), subMapPropOptional.get().getKey())) {
+                    associateInputToSubstitutionMappingNodeProperty(userId, input, substitutionMappingNode.left().value(), componentUniqueId, subMapPropOptional.get().getKey());
+                } else if (subMapPropOptional.isEmpty() && isInputFromComponentInstanceProperty(input.getName(), componentInstances)) {
                     associateInputToComponentInstanceProperty(userId, input, componentInstances, componentUniqueId);
                 } else {
                     String propertyName = associateInputToServiceProperty(userId, input, component, substitutionMappingProperties);
@@ -924,8 +932,7 @@ public class ServiceImportBusinessLogic {
                 }
             }
             if (CollectionUtils.isNotEmpty(propertyMissingNames)) {
-                throw new ComponentException(
-                    componentsUtils.getResponseFormat(ActionStatus.MISSING_PROPERTIES_ERROR, propertyMissingNames.toString()));
+                throw new ComponentException(componentsUtils.getResponseFormat(MISSING_PROPERTIES_ERROR, propertyMissingNames.toString()));
             }
             Either<List<InputDefinition>, StorageOperationStatus> either = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
             if (either.isRight()) {
@@ -936,8 +943,44 @@ public class ServiceImportBusinessLogic {
         return component;
     }
 
-    private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances) {
+    private String getSimplifiedName(final String fullName) {
+        if (fullName == null) {
+            return fullName;
+        }
+        final String[] split = fullName.split("\\.");
+        if (split.length > 0) {
+            return split[split.length - 1];
+        } else {
+            return fullName;
+        }
+    }
 
+    private void associateInputToSubstitutionMappingNodeProperty(String userId, InputDefinition input, Component component,
+                                                                 String componentUniqueId, String inputName) {
+
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
+
+        outer:
+        for (final PropertyDefinition instanceProperty : component.getProperties()) {
+            if (inputName.equals(instanceProperty.getName())) {
+                componentInstanceProperty = new ComponentInstanceProperty(instanceProperty);
+                break outer;
+            }
+        }
+
+        //mapping instance property declared inputs from substitution mapping
+        input.setMappedToComponentProperty(true);
+
+        // From Instance
+        updateInput(input, componentInstanceProperty, userId, component.getUniqueId());
+
+    }
+
+    private boolean isInputFromSubstitutionMappingNodeProperty(final Component substitutionMappingNode, final String inputName) {
+        return substitutionMappingNode.getProperties().stream().anyMatch(pr -> pr.getName().equals(inputName));
+    }
+
+    private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances) {
         if (CollectionUtils.isNotEmpty(componentInstances)) {
             for (ComponentInstance instance : componentInstances) {
                 for (PropertyDefinition instanceProperty : instance.getProperties()) {
@@ -1003,8 +1046,7 @@ public class ServiceImportBusinessLogic {
             });
 
             final Optional<PropertyDefinition> propDefOptional =
-                properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get()))
-                    .findFirst();
+                properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput.get())).findFirst();
             if (propDefOptional.isPresent()) {
                 // From SELF
                 final String componentUniqueId = component.getUniqueId();
