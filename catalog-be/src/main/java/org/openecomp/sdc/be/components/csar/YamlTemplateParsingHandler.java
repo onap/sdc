@@ -200,6 +200,7 @@ public class YamlTemplateParsingHandler {
         if (substitutionMappings != null) {
             if (component.isService()) {
                 if (interfaceTemplateYaml.isEmpty()) {
+                    component.setDerivedFromGenericType((String) substitutionMappings.get(NODE_TYPE.getElementName()));
                     List<PropertyDefinition> properties = serviceBusinessLogic.fetchDerivedFromGenericType(component, null).getProperties();
                     parsedToscaYamlInfo.setProperties(properties.stream().collect(Collectors.toMap(PropertyDefinition::getName, prop -> prop)));
                 } else {
