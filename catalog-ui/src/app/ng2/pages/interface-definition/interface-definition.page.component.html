@@ -28,7 +28,7 @@
     <div class="top-add-btn add-btn" [ngClass]="{'disabled': readonly}" *ngIf="!component.isService()" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
     {{ 'INTERFACE_ADD_OPERATION' | translate }}
     </div>
-    <div class="operation-list">
+    <div class="operation-list" *ngIf="!this.component.isService() || this.enableFlag || this.selectedInstanceData && !this.selectedInstanceData.name === 'SELF'">
       <div *ngIf="!isInterfaceListEmpty()">
         <div class="expand-collapse" *ngIf="isOperationListEmpty()">
           <a class="link"
@@ -87,7 +87,7 @@
     </div>
   </div>
   <div class="right-column" *ngIf="component.isService()">
-    <div class="add-btn" [ngClass]="{'disabled': disableFlag}" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
+    <div class="add-btn" [ngClass]="{'disabled': !enableFlag}" data-tests-id="add-operation" (click)="onSelectInterfaceOperation(undefined, undefined)">
       {{ 'INTERFACE_ADD_OPERATION' | translate }}
     </div>
     <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">

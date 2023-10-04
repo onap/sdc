@@ -103,6 +103,7 @@ export class InterfaceOperationHandlerComponent {
     customToscaFunctions: Array<CustomToscaFunction>;
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
+    showActivities: boolean = false;
     inputTypeOptions: any[];
     timeoutValue = new FormControl('');
     timeoutType = new FormControl('');
@@ -157,6 +158,7 @@ export class InterfaceOperationHandlerComponent {
             this.dataTypeService.findAllDataTypesByModel(this.modelName)
             .then((dataTypesMap: Map<string, DataTypeModel>) => {
                 subscriber.next(dataTypesMap);
+                this.showActivities = dataTypesMap.has("tosca.dataTypes.tmf.milestoneJeopardyData");
             });
         });
         this.dataTypeMap$.subscribe(value => {

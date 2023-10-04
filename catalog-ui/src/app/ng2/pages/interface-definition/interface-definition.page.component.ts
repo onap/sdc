@@ -139,7 +139,7 @@ export class InterfaceDefinitionComponent {
     loadingInstances: boolean = false;
     selectedInstanceData: any = null;
     hierarchyInstancesDisplayOptions: HierarchyDisplayOptions = new HierarchyDisplayOptions('uniqueId', 'name', 'archived', null, 'iconClass');
-    disableFlag : boolean = true;
+    enableFlag : boolean = false;
 
     deploymentArtifactsFilePath: Array<DropdownValue> = [];
 
@@ -241,7 +241,7 @@ export class InterfaceDefinitionComponent {
         this.interfaces = [];
         this.selectedInstanceData = instance;
         if (instance.name != "SELF") {
-            this.disableFlag = !this.isAllowAddOperation(instance.originType);
+            this.enableFlag = this.isAllowAddOperation(instance.originType);
             if (!instance.interfaces) {
                 return;
             }
@@ -284,7 +284,7 @@ export class InterfaceDefinitionComponent {
             }
             this.interfaces = newInterfaces.map((interf) => new UIInterfaceModel(interf));
         } else {
-            this.disableFlag = true;
+            this.enableFlag = false;
             this.interfaces = this.serviceInterfaces.map((interf) => new UIInterfaceModel(interf));
         }
         this.sortInterfaces();
