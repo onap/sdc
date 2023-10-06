@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b422edba_21538bd3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-06T13:19:28Z",
+      "side": 1,
+      "message": "Three issues found in testing:\n- Adding 2 entries to list first and then setting first to literal value and second to tosca function results in first literal value being lost on saving\n- Adding an entry and setting ti to tosca function value, then adding a second entry and open the toca function for the second value reulsts in the tosca function for the first value being shown\n- setting a tosca function value for the above second entry results in the first entry being lost on saving",
+      "revId": "5309e06a2fd4e3c98184694c518e142c7722c9de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
