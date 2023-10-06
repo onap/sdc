@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f3d8940d_327601db",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-06T14:31:25Z",
+      "side": 1,
+      "message": "do we need LinkedHashMap, or Map is enough?",
+      "range": {
+        "startLine": 280,
+        "startChar": 30,
+        "endLine": 280,
+        "endChar": 43
+      },
+      "revId": "265bba90b45fa2fe9ab8b536fd755b22862a3367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4dd3506c_8b0fac18",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-06T14:31:25Z",
+      "side": 1,
+      "message": "no reasons to create if not used,\nmove it inside the IF",
+      "range": {
+        "startLine": 282,
+        "startChar": 0,
+        "endLine": 282,
+        "endChar": 94
+      },
+      "revId": "265bba90b45fa2fe9ab8b536fd755b22862a3367",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
