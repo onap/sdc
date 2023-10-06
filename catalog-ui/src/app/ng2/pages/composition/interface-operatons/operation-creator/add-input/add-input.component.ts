@@ -145,7 +145,7 @@ export class AddInputComponent implements OnInit {
 
   showAddInput() {
     if (this.defaultType) {
-      this.inputToAdd.type = this.dataTypeMap.get(this.defaultType) ? this.defaultType : undefined;
+      this.onChangeInputType(this.defaultType);
     }
     this.showForm = true;
     this.showAddLink = false;

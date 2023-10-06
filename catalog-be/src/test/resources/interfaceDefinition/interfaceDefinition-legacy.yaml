@@ -49,34 +49,34 @@ start:
   milestones:
     on_failure:
       activities:
-        - type: delegate
-          workflow: workflow1
-        - type: delegate
-          workflow: workflow2
+        - delegate:
+            workflow: workflow1
+        - delegate:
+            workflow: workflow2
     on_success:
       activities:
-        - type: delegate
-          workflow: workflow1
-        - type: delegate
-          workflow: workflow2
-          inputs:
-            string:
-              type: string
-              value: testString
-            complex:
-              type: tosca.datatypes.nfv.VirtualCpu
-              value:
-                virtual_cpu_oversubscription_policy: pol
-                cpu_architecture: cpu
-                virtual_cpu_clock: 27Hz
-                vdu_cpu_requirements:
-                  'k1': 'v1'
-                  'k2': 'v2'
-                virtual_cpu_pinning:
-                  virtual_cpu_pinning_policy: pol
-                  virtual_cpu_pinning_rule:
-                    - 1
-                    - 2
+        - delegate:
+            workflow: workflow1
+        - delegate:
+            workflow: workflow2
+            inputs:
+              string:
+                type: string
+                value: testString
+              complex:
+                type: tosca.datatypes.nfv.VirtualCpu
+                value:
+                  virtual_cpu_oversubscription_policy: pol
+                  cpu_architecture: cpu
+                  virtual_cpu_clock: 27Hz
+                  vdu_cpu_requirements:
+                    'k1': 'v1'
+                    'k2': 'v2'
+                  virtual_cpu_pinning:
+                    virtual_cpu_pinning_policy: pol
+                    virtual_cpu_pinning_rule:
+                      - 1
+                      - 2
       filters:
         - my_attribute:
             equal:
@@ -100,10 +100,10 @@ start:
             minLength: 4
     on_timeout:
       activities:
-        - type: delegate
-          workflow: workflow1
-        - type: delegate
-          workflow: workflow2
+        - delegate:
+            workflow: workflow1
+        - delegate:
+            workflow: workflow2
 stop:
   implementation: "camunda/executeAction"
   inputs:

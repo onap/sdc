@@ -143,20 +143,30 @@ export class ActivitiesListComponent implements OnInit {
   }
 
   collectInputNames(index: number) {
-    return this.activities[index].inputs.listToscaDataDefinition.map((input) => input.name);
+    if (this.activities[index].inputs) {
+      return this.activities[index].inputs.listToscaDataDefinition.map((input) => input.name);
+    }
+    return [];
 }
 
   onAddInput(inputOperationParameter: InputOperationParameter, index: number) {
+    if (!this.activities[index].inputs) {
+      let input = new class implements IOperationParamsList {
+        listToscaDataDefinition: Array<InputOperationParameter> = [];
+      }
+      this.activities[index].inputs = input;
+    }
     this.activities[index].inputs.listToscaDataDefinition.push(inputOperationParameter);
     this.activities[index].inputs.listToscaDataDefinition = Array.from(this.activities[index].inputs.listToscaDataDefinition);
+    this.emitOnActivityChange();
   }
 
   getInputs(index: number) {
-    if (this.activities[index].inputs.listToscaDataDefinition) {
+    if (this.activities[index].inputs && this.activities[index].inputs.listToscaDataDefinition) {
       let test: InputOperationParameter[] = this.activities[index].inputs.listToscaDataDefinition;
       return test;
     }
-    return {};
+    return [];
   }
 
   onInputValueChange(changedInput: InputOperationParameter, index: number) {
