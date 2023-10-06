@@ -360,7 +360,7 @@ public class InterfacesOperationsConverter {
                 ToscaActivity toscaActivity = new ToscaActivity();
                 toscaActivity.setWorkflow(activity.getWorkflow());
                 Map<String, Object> inputs = getToscaActivityInputs(activity.getInputs(), dataTypes);
-                if (!inputs.isEmpty()) {
+                if (MapUtils.isNotEmpty(inputs)) {
                     toscaActivity.setInputs(inputs);
                 }
                 toscaActivityMap.put(activity.getType(), toscaActivity);
