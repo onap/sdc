@@ -44,22 +44,22 @@ operations:
     milestones:
       on_failure:
         activities:
-          - type: delegate
-            workflow: workflow1
-          - type: delegate
-            workflow: workflow2
+          - delegate:
+              workflow: workflow1
+          - delegate:
+              workflow: workflow2
       on_success:
         activities:
-          - type: delegate
-            workflow: workflow1
-          - type: delegate
-            workflow: workflow2
+          - delegate:
+              workflow: workflow1
+          - delegate:
+              workflow: workflow2
       on_timeout:
         activities:
-          - type: delegate
-            workflow: workflow1
-          - type: delegate
-            workflow: workflow2
+          - delegate:
+              workflow: workflow1
+          - delegate:
+              workflow: workflow2
   stop:
     implementation: "camunda/executeAction"
     inputs:
