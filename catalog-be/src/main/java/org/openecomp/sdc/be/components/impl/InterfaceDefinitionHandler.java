@@ -46,6 +46,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -65,6 +66,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -273,22 +275,29 @@ public class InterfaceDefinitionHandler {
             final LinkedHashMap<String, Object> activitiesValue = (LinkedHashMap<String, Object>) value;
             if (activitiesValue.containsKey(ACTIVITIES.getElementName())) {
                 final List<Object> milestoneActivities = (List<Object>) activitiesValue.get(ACTIVITIES.getElementName());
-                for (Object activityValue : milestoneActivities) {
-                    ActivityDataDefinition activity = new ActivityDataDefinition();
-                    if (activityValue instanceof Map) {
-                        Map<String, Object> activityMap = (Map<String, Object>) activityValue;
-                        if (activityMap.containsKey(INPUTS.getElementName())) {
-                            activity.setInputs(handleInterfaceOperationInputs((Map<String, Object>) activityMap.get(INPUTS.getElementName())));
+                for (Object activity : milestoneActivities) {
+                    if (activity instanceof Map) {
+                        final Map<String, Object> activityMap = (Map<String, Object>) activity;
+                        for (Entry<String, Object> activityValue : activityMap.entrySet()) {
+                            if (activityValue.getValue() instanceof Map) {
+                                ActivityDataDefinition activityDef = new ActivityDataDefinition();
+                                Map<String, Object> activityValueMap = (Map<String, Object>) activityValue.getValue();
+                                if (activityValueMap.containsKey(INPUTS.getElementName())) {
+                                    activityDef.setInputs(
+                                        handleActivityInterfaceOperationInputs((Map<String, Object>) activityValueMap.get(INPUTS.getElementName())));
+                                }
+                                if (ActivityTypeEnum.getEnum(activityValue.getKey()).isPresent() &&
+                                    activityValueMap.containsKey(WORKFLOW.getElementName())) {
+                                    activityDef.setWorkflow((String) activityValueMap.get(WORKFLOW.getElementName()));
+                                    activityDef.setType(activityValue.getKey());
+                                    activities.add(activityDef);
+                                } else {
+                                    return new ListDataDefinition<>();
+                                }
+                            } else {
+                                return new ListDataDefinition<>();
+                            }
                         }
-                        if (activityMap.containsKey(TYPE.getElementName()) && activityMap.containsKey(WORKFLOW.getElementName())) {
-                            activity.setType((String) activityMap.get(TYPE.getElementName()));
-                            activity.setWorkflow((String) activityMap.get(WORKFLOW.getElementName()));
-                            activities.add(activity);
-                        } else {
-                            return new ListDataDefinition<>();
-                        }
-                    } else {
-                        return new ListDataDefinition<>();
                     }
                 }
             } else {
@@ -296,6 +305,30 @@ public class InterfaceDefinitionHandler {
             }
         }
         return activities;
+    }
+
+    private ListDataDefinition<OperationInputDefinition> handleActivityInterfaceOperationInputs(Map<String, Object> activityInputs) {
+        final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+        final String defaultType = "tosca.dataTypes.tmf.milestoneJeopardyData";
+        for (final Entry<String, Object> interfaceInput : activityInputs.entrySet()) {
+            final OperationInputDefinition operationInput = new OperationInputDefinition();
+            operationInput.setUniqueId(UUID.randomUUID().toString());
+            operationInput.setInputId(operationInput.getUniqueId());
+            operationInput.setName(interfaceInput.getKey());
+            operationInput.setType(defaultType);
+            if (Objects.nonNull(interfaceInput.getValue())) {
+                if (interfaceInput.getValue() instanceof Map) {
+                    Map<String, Object> valueMap = (Map<String, Object>) interfaceInput.getValue();
+                    if (valueMap.containsKey("jeopardyType") && valueMap.containsKey("name") &&
+                        valueMap.containsKey("eventType") && valueMap.containsKey("message")) {
+                        operationInput.setValue(new Gson().toJson(interfaceInput.getValue()));
+                    }
+                }
+            }
+            inputs.add(operationInput);
+        }
+        return inputs;
+
     }
 
     private ListDataDefinition<OperationInputDefinition> handleInterfaceOperationInputs(final Map<String, Object> interfaceInputs) {
@@ -406,7 +439,7 @@ public class InterfaceDefinitionHandler {
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
             ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("timeout")) {
             final Object timeOut = ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("timeout");
-            artifactDataDefinition.setTimeout((Integer)timeOut);
+            artifactDataDefinition.setTimeout((Integer) timeOut);
         }
 
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
