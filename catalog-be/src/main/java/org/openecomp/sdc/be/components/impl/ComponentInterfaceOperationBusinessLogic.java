@@ -140,7 +140,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
         final Optional<ComponentInstanceInterface> optionalComponentInstanceInterface = componentInstanceInterfaceList.stream().filter(
                 ci -> ci.getOperations().values().stream().anyMatch(
-                    operationDataDefinition -> operationDataDefinition.getUniqueId().equalsIgnoreCase(updatedOperationDataDefinition.getUniqueId())))
+                    operationDataDefinition -> operationDataDefinition.getName().equalsIgnoreCase(updatedOperationDataDefinition.getName())))
             .findFirst();
         if (optionalComponentInstanceInterface.isEmpty()) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT);
