@@ -197,7 +197,7 @@ public class InterfaceDefinitionHandler {
         return operation;
     }
 
-    private Map<String, MilestoneDataDefinition> handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones) {
+    public Map<String, MilestoneDataDefinition> handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones) {
         final Map<String, MilestoneDataDefinition> milestones = new HashMap<>();
         for (final Entry<String, Object> interfaceInput : interfaceMilestones.entrySet()) {
             final MilestoneDataDefinition operationMilestone = new MilestoneDataDefinition();
@@ -319,8 +319,8 @@ public class InterfaceDefinitionHandler {
             if (Objects.nonNull(interfaceInput.getValue())) {
                 if (interfaceInput.getValue() instanceof Map) {
                     Map<String, Object> valueMap = (Map<String, Object>) interfaceInput.getValue();
-                    if (valueMap.containsKey("jeopardyType") && valueMap.containsKey("name") &&
-                        valueMap.containsKey("eventType") && valueMap.containsKey("message")) {
+                    if (valueMap.containsKey("jeopardyType") || valueMap.containsKey("name") ||
+                        valueMap.containsKey("eventType") || valueMap.containsKey("message")) {
                         operationInput.setValue(new Gson().toJson(interfaceInput.getValue()));
                     }
                 }
