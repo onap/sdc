@@ -45,6 +45,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MILESTONES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
@@ -88,6 +89,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.InterfaceDefinitionHandler;
 import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
@@ -96,10 +98,13 @@ import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.FilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -108,8 +113,8 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefin
 import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
-import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
@@ -125,7 +130,6 @@ import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
@@ -159,13 +163,15 @@ public class YamlTemplateParsingHandler {
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
+    private final InterfaceDefinitionHandler interfaceDefinitionHandler;
 
     public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao,
                                       GroupTypeBusinessLogic groupTypeBusinessLogic,
                                       AnnotationBusinessLogic annotationBusinessLogic,
                                       PolicyTypeBusinessLogic policyTypeBusinessLogic,
                                       ServiceBusinessLogic serviceBusinessLogic,
-                                      final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler
+                                      final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler,
+                                      final InterfaceDefinitionHandler interfaceDefinitionHandler
     ) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
@@ -173,6 +179,7 @@ public class YamlTemplateParsingHandler {
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.toscaFunctionYamlParsingHandler = toscaFunctionYamlParsingHandler;
+        this.interfaceDefinitionHandler = interfaceDefinitionHandler;
     }
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
@@ -1295,6 +1302,10 @@ public class YamlTemplateParsingHandler {
                 if (operationValue.containsKey(INPUTS.getElementName())) {
                     final Map<String, Object> interfaceInputs = (Map<String, Object>) operationValue.get(INPUTS.getElementName());
                     operationDef.setInputs(handleInterfaceOperationInputs(interfaceInputs));
+                }
+                if (operationValue.containsKey(MILESTONES.getElementName())) {
+                    final Map<String, Object> interfaceMilestones = (Map<String, Object>) operationValue.get(MILESTONES.getElementName());
+                    operationDef.setMilestones(interfaceDefinitionHandler.handleInterfaceOperationMilestones(interfaceMilestones));
                 }
                 operations.put(operationEntry.getKey(), operationDef);
             }
