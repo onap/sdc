@@ -133,6 +133,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         artifactDataDefinition.setArtifactName("EO Implementation info");
         operationDataDefinition.setImplementation(artifactDataDefinition);
@@ -180,6 +181,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         final ListDataDefinition<OperationInputDefinition> inputsDefinitionListData = new ListDataDefinition<>();
         OperationInputDefinition input1 = new OperationInputDefinition();
@@ -238,6 +240,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         final ListDataDefinition<OperationInputDefinition> inputsDefinitionListData = new ListDataDefinition<>();
         OperationInputDefinition input1 = new OperationInputDefinition();
@@ -299,6 +302,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
 
         artifactDataDefinition.setArtifactName("EO Implementation info");
@@ -364,6 +368,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
 
         artifactDataDefinition.setArtifactName("EO Implementation info");
@@ -429,6 +434,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         artifactDataDefinition.setArtifactName("EO Implementation info");
         operationDataDefinition.setImplementation(artifactDataDefinition);
@@ -468,6 +474,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
         final Map<String, OperationDataDefinition> operations = new HashMap<>();
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        operationDataDefinition.setName("myOperationName");
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         artifactDataDefinition.setArtifactName("EO Implementation info");
         operationDataDefinition.setImplementation(artifactDataDefinition);
