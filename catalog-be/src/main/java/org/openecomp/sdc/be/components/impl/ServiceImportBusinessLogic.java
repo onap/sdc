@@ -2511,6 +2511,7 @@ public class ServiceImportBusinessLogic {
                     templateOperation.setImplementation(instanceOperation.getImplementation());
                     //Description
                     templateOperation.setDescription(instanceOperation.getDescription());
+                    templateOperation.setMilestones(instanceOperation.getMilestones());
                     operationsToAdd.put(operation.getKey(), templateOperation);
                 }
                 InterfaceDefinition interfaceDef = new InterfaceDefinition();

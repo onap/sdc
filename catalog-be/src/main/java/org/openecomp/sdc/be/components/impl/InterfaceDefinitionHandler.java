@@ -42,12 +42,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
@@ -197,7 +199,7 @@ public class InterfaceDefinitionHandler {
         return operation;
     }
 
-    private Map<String, MilestoneDataDefinition> handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones) {
+    public Map<String, MilestoneDataDefinition> handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones) {
         final Map<String, MilestoneDataDefinition> milestones = new HashMap<>();
         for (final Entry<String, Object> interfaceInput : interfaceMilestones.entrySet()) {
             final MilestoneDataDefinition operationMilestone = new MilestoneDataDefinition();
@@ -311,24 +313,33 @@ public class InterfaceDefinitionHandler {
         final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
         final String defaultType = "tosca.dataTypes.tmf.milestoneJeopardyData";
         for (final Entry<String, Object> interfaceInput : activityInputs.entrySet()) {
-            final OperationInputDefinition operationInput = new OperationInputDefinition();
-            operationInput.setUniqueId(UUID.randomUUID().toString());
-            operationInput.setInputId(operationInput.getUniqueId());
-            operationInput.setName(interfaceInput.getKey());
-            operationInput.setType(defaultType);
-            if (Objects.nonNull(interfaceInput.getValue())) {
-                if (interfaceInput.getValue() instanceof Map) {
-                    Map<String, Object> valueMap = (Map<String, Object>) interfaceInput.getValue();
-                    if (valueMap.containsKey("jeopardyType") && valueMap.containsKey("name") &&
-                        valueMap.containsKey("eventType") && valueMap.containsKey("message")) {
-                        operationInput.setValue(new Gson().toJson(interfaceInput.getValue()));
-                    }
-                }
+            if (isMilestoneJeopardyData(interfaceInput.getValue())) {
+                final OperationInputDefinition operationInput = new OperationInputDefinition();
+                operationInput.setUniqueId(UUID.randomUUID().toString());
+                operationInput.setInputId(operationInput.getUniqueId());
+                operationInput.setName(interfaceInput.getKey());
+                operationInput.setType(defaultType);
+                operationInput.setValue(new Gson().toJson(interfaceInput.getValue()));
+                inputs.add(operationInput);
             }
-            inputs.add(operationInput);
         }
         return inputs;
-
+    }
+    
+    private boolean isMilestoneJeopardyData(Object value) {
+        if (Objects.nonNull(value)) {
+            if (value instanceof Map) {
+                Set<String> allowedKeys = new HashSet<>();
+                allowedKeys.add("jeopardyType");
+                allowedKeys.add("name");
+                allowedKeys.add("eventType");
+                allowedKeys.add("message");
+                
+                Map<String, Object> valueMap = (Map<String, Object>) value;
+                return allowedKeys.containsAll(valueMap.keySet());
+            }
+        }
+        return false;
     }
 
     private ListDataDefinition<OperationInputDefinition> handleInterfaceOperationInputs(final Map<String, Object> interfaceInputs) {
