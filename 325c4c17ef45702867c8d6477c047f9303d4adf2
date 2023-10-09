@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c91c58da_218fdb29",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-09T16:43:26Z",
+      "side": 1,
+      "message": "order of multi-module build is not same as order of modules in pom\nthis will not fix the problem",
+      "revId": "325c4c17ef45702867c8d6477c047f9303d4adf2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
