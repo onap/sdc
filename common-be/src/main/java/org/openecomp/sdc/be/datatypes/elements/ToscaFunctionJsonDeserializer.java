@@ -246,7 +246,9 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
                 );
             if (toscaFunctionType == ToscaFunctionType.STRING) {
                 final ToscaStringParameter toscaStringParameter = new ToscaStringParameter();
-                toscaStringParameter.setValue(CharMatcher.anyOf("\"\'").trimFrom(parameterNode.get("value").asText()));
+                String value = CharMatcher.anyOf("\"").removeFrom(parameterNode.get("value").asText());
+                value = CharMatcher.anyOf("\\[\\] ").trimFrom(value);
+                toscaStringParameter.setValue(value);
                 functionParameterList.add(toscaStringParameter);
             } else {
                 final ToscaFunction toscaFunction = this.deserializeToscaFunction(parameterNode, context);
