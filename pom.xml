@@ -802,6 +802,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <module>onboarding</module>
         <module>common-app-logging</module>
         <module>common-app-api</module>
+	<module>common-be-tests-utils</module>
         <module>common-be</module>
         <module>catalog-dao</module>
         <module>catalog-model</module>
@@ -829,6 +830,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <module>common</module>
         <module>common-app-logging</module>
         <module>common-app-api</module>
+	<module>common-be-tests-utils</module>
         <module>common-be</module>
         <module>catalog-dao</module>
         <module>catalog-model</module>
