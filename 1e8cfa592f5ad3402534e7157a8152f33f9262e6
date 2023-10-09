@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab2d712e_6c0ba496",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-09T14:03:37Z",
+      "side": 1,
+      "message": "Is it required for the string to start with a $? I would have thought not",
+      "range": {
+        "startLine": 79,
+        "startChar": 20,
+        "endLine": 81,
+        "endChar": 21
+      },
+      "revId": "1e8cfa592f5ad3402534e7157a8152f33f9262e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
