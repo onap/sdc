@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "305dee38_60248e82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2023-10-09T08:38:59Z",
+      "side": 1,
+      "message": "comment on jira",
+      "range": {
+        "startLine": 322,
+        "startChar": 20,
+        "endLine": 323,
+        "endChar": 95
+      },
+      "revId": "c481fd0140fd66cdd90368b163e068b75fa183e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
