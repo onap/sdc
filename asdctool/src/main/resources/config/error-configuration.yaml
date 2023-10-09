@@ -2910,3 +2910,10 @@ errors:
     message: "Error: The following properties:\n%1\nused in the substitution mapping node type in CSAR are missing from the system. Please add these to the node in the SDC catalog prior to importing the template",
     messageId: "SVC4021"
   }
+
+  #---------SVC4023-----------------------------
+  INVALID_PROPERTY_VALUE_FOR_CUSTOM_FUNCTION: {
+    code: 400,
+    message: "Error: Invalid property value for custom function",
+    messageId: "SVC4023"
+  }
