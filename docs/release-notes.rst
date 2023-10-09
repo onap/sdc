@@ -5,6 +5,111 @@
 Release Notes
 =============
 
+Version: 1.13.5
+===============
+
+:Release Date: 2023-10-09
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.0.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.8.0
+
+Release Purpose
+----------------
+SDC Montreal early release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4647 <https://jira.onap.org/browse/SDC-4647>`_ - Import service with milestones on instance operations
+*  `SDC-4635 <https://jira.onap.org/browse/SDC-4635>`_ - Persisting of map entry property values
+*  `SDC-4646 <https://jira.onap.org/browse/SDC-4646>`_ - Import VFC with operation milestones
+*  `SDC-4636 <https://jira.onap.org/browse/SDC-4636>`_ - Hide or disable milestone filters
+*  `SDC-4621 <https://jira.onap.org/browse/SDC-4621>`_ - TLS support in sdc-BE (partially)
+*  `SDC-4620 <https://jira.onap.org/browse/SDC-4620>`_ - Support setting interfaces on instances
+*  `SDC-4601 <https://jira.onap.org/browse/SDC-4601>`_ - UI Support for operation milestones
+*  `SDC-4590 <https://jira.onap.org/browse/SDC-4590>`_ - Backend support for operation milestone filters
+*  `SDC-4582 <https://jira.onap.org/browse/SDC-4582>`_ - Backend support for operation milestones with activity inputs
+*  `SDC-4577 <https://jira.onap.org/browse/SDC-4577>`_ - Backend support for operation milestones with activities
+*  `SDC-4622 <https://jira.onap.org/browse/SDC-4622>`_ - Provide the ability to add user defined values to Service Role / Function metadata
+
+
+**Bug Fixes**
+
+*  `SDC-4648 <https://jira.onap.org/browse/SDC-4648>`_ - Error updating milestone in operation on instance in service
+*  `SDC-4628 <https://jira.onap.org/browse/SDC-4628>`_ - Fail to import service with node filter using 'in_range'
+*  `SDC-4645 <https://jira.onap.org/browse/SDC-4645>`_ - Missing Substitution Map Node after update Service
+*  `SDC-4644 <https://jira.onap.org/browse/SDC-4644>`_ - Issues found when trying to create activities in interface operations
+*  `SDC-4643 <https://jira.onap.org/browse/SDC-4643>`_ - missing properties after service import
+*  `SDC-4638 <https://jira.onap.org/browse/SDC-4638>`_ - CSAR contains duplicate syntax
+*  `SDC-4634 <https://jira.onap.org/browse/SDC-4634>`_ - NPE on service import
+*  `SDC-4633 <https://jira.onap.org/browse/SDC-4633>`_ - Substitution Node not updated during import
+*  `SDC-4632 <https://jira.onap.org/browse/SDC-4632>`_ - Outputs - default values / template attributes
+*  `SDC-4627 <https://jira.onap.org/browse/SDC-4627>`_ - Order of TOSCA.meta field is hardcoded
+*  `SDC-4626 <https://jira.onap.org/browse/SDC-4626>`_ - TOSCA-Meta-File-Version and CSAR-Version accept only following format X.Y
+*  `SDC-4629 <https://jira.onap.org/browse/SDC-4629>`_ - Unable to import service with missing 'ecompGeneratedNaming' in metadata
+*  `SDC-4630 <https://jira.onap.org/browse/SDC-4630>`_ - Output names are changed after import
+*  `SDC-4625 <https://jira.onap.org/browse/SDC-4625>`_ - Changing VFC version wipes List type property values
+
+
+**Tasks**
+
+*  `SDC-4641 <https://jira.onap.org/browse/SDC-4641>`_ - Allow import of handcrafted templates with specific substitution filter format
+*  `SDC-4640 <https://jira.onap.org/browse/SDC-4640>`_ - Remove generation of csar.meta
+
+
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+    
+    
 Version: 1.13.4
 ===============
 
