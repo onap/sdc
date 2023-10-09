@@ -2934,3 +2934,10 @@ errors:
         message: "Output name '%1' already exist.",
         messageId: "SVC4022"
     }
+
+    #---------SVC4023-----------------------------
+    INVALID_PROPERTY_VALUE_FOR_CUSTOM_FUNCTION: {
+        code: 400,
+        message: "Error: Invalid property value for custom function",
+        messageId: "SVC4023"
+    }

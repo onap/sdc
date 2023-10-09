@@ -33,4 +33,8 @@ public class ToscaFunctionExceptionSupplier {
         return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_MISSING_ATTRIBUTE, "type");
     }
 
+    public static Supplier<ByActionStatusComponentException> invalidPropertyValueForCustomFunction() {
+        return () -> new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_VALUE_FOR_CUSTOM_FUNCTION);
+    }
+
 }
