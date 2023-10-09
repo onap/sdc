@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7785462_a277a2ab",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-09T13:32:41Z",
+      "side": 1,
+      "message": "remove redundant check, \u0027value instanceof Map\u0027 checks for null already",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 37
+      },
+      "revId": "a7f0a6649ac7c923e6777758be7ed6400e5c3d25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
