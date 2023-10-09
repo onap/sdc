@@ -67,6 +67,23 @@
       "message": "what change are you suggesting? the pom in common-be already has common-be-test-utils as a dependency",
       "revId": "325c4c17ef45702867c8d6477c047f9303d4adf2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec3c127f_0fa2a246",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-09T16:58:42Z",
+      "side": 1,
+      "message": "Maybe some change in here caused this?:\nhttps://gerrit.onap.org/r/c/sdc/+/135923",
+      "revId": "325c4c17ef45702867c8d6477c047f9303d4adf2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
