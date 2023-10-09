@@ -33,6 +33,8 @@ import org.openecomp.sdc.be.components.impl.exceptions.ToscaFunctionExceptionSup
 import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaCustomFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
@@ -42,6 +44,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.ToscaPropertyData;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
+import org.yaml.snakeyaml.Yaml;
 
 @org.springframework.stereotype.Component
 public class ToscaFunctionValidatorImpl implements ToscaFunctionValidator {
@@ -59,6 +62,25 @@ public class ToscaFunctionValidatorImpl implements ToscaFunctionValidator {
         }
         if (property.isToscaGetFunction()) {
             validateToscaGetFunction(property, containerComponent);
+        }
+        if (ToscaFunctionType.CUSTOM.equals(property.getToscaFunction().getType())) {
+            validateCustomToscaFunction(property);
+        }
+    }
+
+    private <T extends PropertyDataDefinition> void validateCustomToscaFunction(T property) {
+        final Object objectMap = new Yaml().load(property.getToscaFunction().getValue());
+        if (objectMap instanceof Map) {
+            final Map<String, Object> valueMap = (Map<String, Object>) objectMap;
+            final Object object = valueMap.get("$" + ((ToscaCustomFunction) property.getToscaFunction()).getName());
+            if (object instanceof List) {
+                final List<Object> values = (List<Object>) object;
+                for (final Object value : values) {
+                    if (!((String) value).startsWith("$")) {
+                        throw ToscaFunctionExceptionSupplier.invalidPropertyValueForCustomFunction().get();
+                    }
+                }
+            }
         }
     }
 
