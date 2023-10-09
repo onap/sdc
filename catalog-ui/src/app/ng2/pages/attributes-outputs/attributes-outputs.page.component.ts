@@ -655,6 +655,7 @@ export class AttributesOutputsComponent {
           if (this.isAttributesTabSelected) {
             this.checkedAttributesCount = 0;
           }
+          this.instanceFeAttributesMap[this.selectedInstanceData.uniqueId].forEach(prop => prop.isSelected = false);
           this.hasChangedData = false;
           this.isValidChangedData = false;
         },
