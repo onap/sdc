@@ -89,6 +89,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     unsavedFile: boolean;
     hasNoDependencies: boolean;
     models: Array<string>;
+    triple: Triple;
 
     startProgress(message: string): void;
     stopProgress(): void;
@@ -123,6 +124,12 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     updateMenuComponentName(ComponentName: string): void;
     getTabTitle(): string;
     reload(component: Component): void;
+}
+
+export interface Triple  {
+    model: string;
+    category: string;
+    subNodeType: string;
 }
 
 export class WorkspaceViewModel {
