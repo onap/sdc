@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a85569e_5e363da2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-11T08:38:45Z",
+      "side": 1,
+      "message": "the values do not have to start with $ so this solution is overly restrictive.\nBetter approach is to ask what is it about the value that is causing the problem - I believe the problem is the value is enclosed in [] making it an array when a string is required.\nI suggest stripping the surrounding [] like we already do for quotation marks, see https://gerrit.onap.org/r/c/sdc/+/135876",
+      "range": {
+        "startLine": 87,
+        "startChar": 87,
+        "endLine": 87,
+        "endChar": 119
+      },
+      "revId": "321d18de1fd75a8b459bc002a215fe5cde40e728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
