@@ -306,6 +306,13 @@ export class GeneralViewModel {
                             }
                         });
                         (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
+                        if (serviceCsar.serviceMetadata.model && serviceCsar.serviceMetadata.selectedCategory && serviceCsar.substitutionNodeType) {
+                            this.$scope.triple = {
+                                model: serviceCsar.serviceMetadata.model,
+                                category: serviceCsar.serviceMetadata.selectedCategory,
+                                subNodeType: serviceCsar.substitutionNodeType
+                            };
+                        }
                         this.$scope.onBaseTypeChange();
                         this.setFunctionRole(service);
                     },
@@ -988,25 +995,30 @@ export class GeneralViewModel {
         baseTypeResponseList.baseTypes.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
         if (this.$scope.isBaseTypeRequired || defaultBaseType != null) {
             let baseType = baseTypeResponseList.baseTypes[0];
-            if(defaultBaseType != null){
+            if (defaultBaseType != null) {
                 baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
-                    if(baseTypeObj.toscaResourceName == defaultBaseType) {
+                    if (baseTypeObj.toscaResourceName == defaultBaseType) {
                         baseType = baseTypeObj;
                     }
                 });
-            }
-            if((<Service>this.$scope.component).derivedFromGenericType) {
+            } else if ((<Service>this.$scope.component).derivedFromGenericType) {
                 baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
-                    if(baseTypeObj.toscaResourceName == (<Service>this.$scope.component).derivedFromGenericType) {
+                    if (baseTypeObj.toscaResourceName == (<Service>this.$scope.component).derivedFromGenericType) {
                         baseType = baseTypeObj;
                     }
                 });
             }
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            if (this.$scope.triple.model === (<Service>this.$scope.component).model &&
+                this.$scope.triple.category === (<Service>this.$scope.component).selectedCategory /*&&
+                this.$scope.triple.subNodeType === (<Service>this.$scope.component).substitutionNodeType*/) {
+                this.$scope.component.derivedFromGenericType = this.$scope.triple.subNodeType;
+            } else {
+                this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            }
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
-            this.$scope.showBaseTypeVersions = true;
-            return
+            this.$scope.showBaseTypeVersions = this.$scope.component.derivedFromGenericVersion !== undefined;
+            return;
         }
         this.$scope.component.derivedFromGenericType = undefined;
         this.$scope.component.derivedFromGenericVersion = undefined;
