@@ -22,6 +22,30 @@
       },
       "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4416f65_eea2055f",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-12T15:58:02Z",
+      "side": 1,
+      "message": "all of this for cover following example\n{ $juel: [ \"Hi, ${arg[0]}\", { get_input: name } ] }\nresult of trimming this expression is\n{ $juel: [ Hi, ${arg[0]}\", { get_input: name } ] }\nbecause no trailing quote , and it will break Download \n\nremoved single quote from matcher to have, at least, one way to separate strings",
+      "parentUuid": "1fc40a24_5796b6e5",
+      "range": {
+        "startLine": 249,
+        "startChar": 15,
+        "endLine": 251,
+        "endChar": 53
+      },
+      "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
