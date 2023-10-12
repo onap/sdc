@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.servlets;
+package org.openecomp.sdc.asdctool.enums;
 
-import java.io.File;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ExportImportJanusGraphServletTest {
+public class LifecycleStateEnumTest {
 
-    private ExportImportJanusGraphServlet createTestSubject() {
-        return new ExportImportJanusGraphServlet();
+    private LifecycleStateEnum createTestSubject() {
+        return LifecycleStateEnum.CERTIFIED;
     }
 
     @Test
-    public void testExport() throws Exception {
-        ExportImportJanusGraphServlet testSubject;
-        File janusGraphPropertiesFile = null;
-        String exportGraphMetadata = "";
-
-        // default test
-        testSubject = createTestSubject();
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            testSubject.export(janusGraphPropertiesFile, exportGraphMetadata);
-        });
-
+    public void testEnumValue() throws Exception {
+        LifecycleStateEnum testSubject = createTestSubject();
+        Assert.assertEquals(LifecycleStateEnum.CERTIFIED,testSubject);
     }
-
 }

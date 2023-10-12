@@ -18,31 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.servlets;
+package com.att.nsa.cambria.client;
 
-import java.io.File;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-public class ExportImportJanusGraphServletTest {
+public class CambriaConsumerTest {
 
-    private ExportImportJanusGraphServlet createTestSubject() {
-        return new ExportImportJanusGraphServlet();
+    private CambriaConsumer createTestSubject() {
+        return new CambriaConsumer();
     }
 
     @Test
-    public void testExport() throws Exception {
-        ExportImportJanusGraphServlet testSubject;
-        File janusGraphPropertiesFile = null;
-        String exportGraphMetadata = "";
-
-        // default test
-        testSubject = createTestSubject();
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            testSubject.export(janusGraphPropertiesFile, exportGraphMetadata);
-        });
-
+    public void testCtor() throws Exception {
+        new CambriaConsumer();
     }
 
 }

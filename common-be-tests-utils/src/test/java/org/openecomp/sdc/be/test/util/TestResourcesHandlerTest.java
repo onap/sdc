@@ -18,31 +18,24 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.servlets;
+package org.openecomp.sdc.be.test.util;
 
-import java.io.File;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import static junit.framework.TestCase.assertTrue;
 
-public class ExportImportJanusGraphServletTest {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import org.junit.Test;
 
-    private ExportImportJanusGraphServlet createTestSubject() {
-        return new ExportImportJanusGraphServlet();
-    }
+public class TestResourcesHandlerTest {
 
     @Test
-    public void testExport() throws Exception {
-        ExportImportJanusGraphServlet testSubject;
-        File janusGraphPropertiesFile = null;
-        String exportGraphMetadata = "";
-
-        // default test
-        testSubject = createTestSubject();
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            testSubject.export(janusGraphPropertiesFile, exportGraphMetadata);
-        });
-
+    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException,
+        InvocationTargetException, InstantiationException {
+        Constructor<TestResourcesHandler> constructor = TestResourcesHandler.class.getDeclaredConstructor();
+        assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
 }

@@ -18,31 +18,23 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.servlets;
+package org.openecomp.sdc.be.model;
 
-import java.io.File;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class ExportImportJanusGraphServletTest {
+public class LifecycleStateEnumTest {
 
-    private ExportImportJanusGraphServlet createTestSubject() {
-        return new ExportImportJanusGraphServlet();
+    @Test
+    public void testFindState() {
+        LifecycleStateEnum result = LifecycleStateEnum.findState("CERTIFIED");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(LifecycleStateEnum.CERTIFIED,result);
     }
 
     @Test
-    public void testExport() throws Exception {
-        ExportImportJanusGraphServlet testSubject;
-        File janusGraphPropertiesFile = null;
-        String exportGraphMetadata = "";
-
-        // default test
-        testSubject = createTestSubject();
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            testSubject.export(janusGraphPropertiesFile, exportGraphMetadata);
-        });
-
+    public void testFindStateNull() {
+        LifecycleStateEnum result = LifecycleStateEnum.findState("mock");
+        Assert.assertNull(result);
     }
-
 }

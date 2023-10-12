@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -89,13 +90,75 @@ class FilterConstraintDtoTest {
         final ToscaGetFunctionDataDefinition toscaGetFunctionDataDefinition = readGetFunctionOpt.get();
         assertEquals(toscaGetFunctionDataDefinition.getPropertyUniqueId(), propertyUniqueId);
         assertEquals(toscaGetFunctionDataDefinition.getPropertyName(), propertyName);
-        assertEquals(toscaGetFunctionDataDefinition.getPropertySource(), PropertySource.SELF);
+        assertEquals(PropertySource.SELF, toscaGetFunctionDataDefinition.getPropertySource());
         assertEquals(toscaGetFunctionDataDefinition.getSourceUniqueId(), sourceUniqueId);
         assertEquals(toscaGetFunctionDataDefinition.getSourceName(), sourceName);
-        assertEquals(toscaGetFunctionDataDefinition.getFunctionType(), ToscaGetFunctionType.GET_INPUT);
-        assertEquals(toscaGetFunctionDataDefinition.getPropertyPathFromSource().size(), 2);
+        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunctionDataDefinition.getFunctionType());
+        assertEquals(2, toscaGetFunctionDataDefinition.getPropertyPathFromSource().size());
         assertEquals(toscaGetFunctionDataDefinition.getPropertyPathFromSource().get(0), propertyPathFromSource.get(0));
         assertEquals(toscaGetFunctionDataDefinition.getPropertyPathFromSource().get(1), propertyPathFromSource.get(1));
     }
 
+    @Test
+    void readGetFunctionWithGetFunctionAsListValueAsMap() {
+        //given
+        final List<String> propertyPathFromSource1 = List.of("input1", "path1");
+        final String propertyUniqueId1 = "propertyUniqueIdValue1";
+        final String propertyName1 = "propertyNameValue1";
+        final String sourceUniqueId1 = "sourceUniqueIdValue1";
+        final String sourceName1 = "sourceNameValue1";
+        final Map<String, Object> toscaGetFunctionAsMap1 = Map.of(
+            "propertyUniqueId", propertyUniqueId1,
+            "propertyName", propertyName1,
+            "propertySource", PropertySource.SELF.getName(),
+            "sourceUniqueId", sourceUniqueId1,
+            "sourceName", sourceName1,
+            "functionType", ToscaGetFunctionType.GET_INPUT.getFunctionName(),
+            "propertyPathFromSource", propertyPathFromSource1
+        );
+        final List<String> propertyPathFromSource2 = List.of("input2", "path2");
+        final String propertyUniqueId2 = "propertyUniqueIdValue2";
+        final String propertyName2 = "propertyNameValue2";
+        final String sourceUniqueId2 = "sourceUniqueIdValue2";
+        final String sourceName2 = "sourceNameValue2";
+        final Map<String, Object> toscaGetFunctionAsMap2 = Map.of(
+            "propertyUniqueId", propertyUniqueId2,
+            "propertyName", propertyName2,
+            "propertySource", PropertySource.SELF.getName(),
+            "sourceUniqueId", sourceUniqueId2,
+            "sourceName", sourceName2,
+            "functionType", ToscaGetFunctionType.GET_INPUT.getFunctionName(),
+            "propertyPathFromSource", propertyPathFromSource2
+        );
+
+        List<Object> toscaGetFunctionDataDefinitionList = new ArrayList<>();
+        toscaGetFunctionDataDefinitionList.add(toscaGetFunctionAsMap1);
+        toscaGetFunctionDataDefinitionList.add(toscaGetFunctionAsMap2);
+
+        final var filterConstraintDto = new FilterConstraintDto();
+        filterConstraintDto.setValue(toscaGetFunctionDataDefinitionList);
+        //when
+        final Optional<List<ToscaGetFunctionDataDefinition>> readListGetFunctionOpt = filterConstraintDto.getAsListToscaGetFunction();
+        //then
+        assertTrue(readListGetFunctionOpt.isPresent());
+        final List<ToscaGetFunctionDataDefinition> toscaGetFunctionDataDefinition = readListGetFunctionOpt.get();
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getPropertyUniqueId(), propertyUniqueId1);
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getPropertyUniqueId(), propertyUniqueId2);
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getPropertyName(), propertyName1);
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getPropertyName(), propertyName2);
+        assertEquals(PropertySource.SELF, toscaGetFunctionDataDefinition.get(0).getPropertySource());
+        assertEquals(PropertySource.SELF, toscaGetFunctionDataDefinition.get(1).getPropertySource());
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getSourceUniqueId(), sourceUniqueId1);
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getSourceUniqueId(), sourceUniqueId2);
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getSourceName(), sourceName1);
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getSourceName(), sourceName2);
+        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunctionDataDefinition.get(0).getFunctionType());
+        assertEquals(ToscaGetFunctionType.GET_INPUT, toscaGetFunctionDataDefinition.get(1).getFunctionType());
+        assertEquals(2, toscaGetFunctionDataDefinition.get(0).getPropertyPathFromSource().size());
+        assertEquals(2, toscaGetFunctionDataDefinition.get(1).getPropertyPathFromSource().size());
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getPropertyPathFromSource().get(0), propertyPathFromSource1.get(0));
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getPropertyPathFromSource().get(0), propertyPathFromSource2.get(0));
+        assertEquals(toscaGetFunctionDataDefinition.get(0).getPropertyPathFromSource().get(1), propertyPathFromSource1.get(1));
+        assertEquals(toscaGetFunctionDataDefinition.get(1).getPropertyPathFromSource().get(1), propertyPathFromSource2.get(1));
+    }
 }
