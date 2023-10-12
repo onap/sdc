@@ -76,10 +76,6 @@ public class TestResourcesHandler {
         }
     }
 
-    public static byte[] getResourceAsByteArray(final Path resourcePath) throws IOException {
-        return getResourceAsByteArray(resourcePath.toString());
-    }
-
     /**
      * Reads a file in the given path.
      * The method forces an assertion fail if the resource could not be loaded.
@@ -101,16 +97,5 @@ public class TestResourcesHandler {
 
     public static byte[] getResourceBytesOrFail(final Path resourcePath) {
         return getResourceBytesOrFail(resourcePath.toString());
-    }
-
-    /**
-     * Gets the input stream of a resource file
-     *
-     * @param resourcePath      The resource file path
-     * @return
-     *  The resource input stream
-     */
-    public static URL getFileUrl(final String resourcePath) {
-        return Thread.currentThread().getContextClassLoader().getResource(resourcePath);
     }
 }

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,36 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.asdctool.servlets;
+package org.openecomp.sdc.asdctool.configuration;
 
-import java.io.File;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 
-public class ExportImportJanusGraphServletTest {
+public class SdcSchemaFileImportConfigurationTest {
 
-    private ExportImportJanusGraphServlet createTestSubject() {
-        return new ExportImportJanusGraphServlet();
+    private SdcSchemaFileImportConfiguration createTestSubject() {
+        return new SdcSchemaFileImportConfiguration();
     }
 
     @Test
-    public void testExport() throws Exception {
-        ExportImportJanusGraphServlet testSubject;
-        File janusGraphPropertiesFile = null;
-        String exportGraphMetadata = "";
+    public void testCassandraClient() throws Exception {
+        SdcSchemaFileImportConfiguration testSubject;
+        CassandraClient result;
 
         // default test
         testSubject = createTestSubject();
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            testSubject.export(janusGraphPropertiesFile, exportGraphMetadata);
-        });
+        result = testSubject.cassandraClient();
+    }
 
+    @Test
+    public void testCassandraDao() throws Exception {
+        SdcSchemaFileImportConfiguration testSubject;
+        SdcSchemaFilesCassandraDao result;
+
+        // default test
+        testSubject = createTestSubject();
+        result = testSubject.sdcSchemaFilesCassandraDao();
     }
 
 }
