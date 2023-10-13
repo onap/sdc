@@ -168,7 +168,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <togglz.version>3.3.3</togglz.version>
 
     <!--sdc-security-utils-->
-    <security.util.lib.version>1.8.0</security.util.lib.version>
+    <security.util.lib.version>1.9.0</security.util.lib.version>
     <!--jacoco-->
     <jacoco.version>0.8.7</jacoco.version>
 
