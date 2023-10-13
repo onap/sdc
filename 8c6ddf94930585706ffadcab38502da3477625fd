@@ -46,6 +46,30 @@
       },
       "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcb2b80d_5dc55b43",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-13T08:55:13Z",
+      "side": 1,
+      "message": "The string part of { $juel: [ \"Hi, ${arg[0]}\", { get_input: name } ] } is:\n\"Hi, ${arg[0]}\"\nit will be trimmed to:\nHi, ${arg[0]}\nI am not seeing any issue with this in testing\n\nIf I remember correctly the single quote was also removed as it was causing issues",
+      "parentUuid": "f4416f65_eea2055f",
+      "range": {
+        "startLine": 249,
+        "startChar": 15,
+        "endLine": 251,
+        "endChar": 53
+      },
+      "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
