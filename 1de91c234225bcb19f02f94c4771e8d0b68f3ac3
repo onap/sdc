@@ -58,6 +58,30 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e410eeb9_129ecd17",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-13T16:53:09Z",
+      "side": 1,
+      "message": "see comment in original ticket",
+      "parentUuid": "11075b2d_9921f5e2",
+      "range": {
+        "startLine": 309,
+        "startChar": 1,
+        "endLine": 315,
+        "endChar": 25
+      },
+      "revId": "1de91c234225bcb19f02f94c4771e8d0b68f3ac3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "39d3b2c2_3e7a57a2",
