@@ -70,6 +70,30 @@
       },
       "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "564506db_6c312d1b",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-13T16:48:45Z",
+      "side": 1,
+      "message": "right, I see what is the problem\nI was testing \n\"Hi, ${arg[0]}\", { get_input: name }\nas one string\nbut it need to be split in two\n\"Hi, ${arg[0]}\"\nand\n{ get_input: name }",
+      "parentUuid": "bcb2b80d_5dc55b43",
+      "range": {
+        "startLine": 249,
+        "startChar": 15,
+        "endLine": 251,
+        "endChar": 53
+      },
+      "revId": "8c6ddf94930585706ffadcab38502da3477625fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
