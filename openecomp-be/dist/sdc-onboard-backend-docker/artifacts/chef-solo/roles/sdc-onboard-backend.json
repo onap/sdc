@@ -11,7 +11,7 @@
   "chef_type": "role",
   "run_list": [
     "recipe[sdc-onboard-backend::ON_1_cleanup_jettydir]",
-    "recipe[sdc-onboard-backend::ON_2_locate_keystore]",
+    "recipe[sdc-onboard-backend::ON_2_setup_key_and_trust_store]",
     "recipe[sdc-onboard-backend::ON_3_logback]",
     "recipe[sdc-onboard-backend::ON_4_setup_jetty_modules]",
     "recipe[sdc-onboard-backend::ON_5_setup_configuration]",
