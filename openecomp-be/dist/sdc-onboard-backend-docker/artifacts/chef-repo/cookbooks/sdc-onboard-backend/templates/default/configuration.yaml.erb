@@ -75,3 +75,7 @@ permittedAncestors: <%= @permittedAncestors %>
 
 # Comma separated list of excluded URLs by the DataValidatorFilter
 dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
+
+tlsCert: <%= node['ONBOARDING_BE']['tls_cert'] %>
+tlsKey: <%= node['ONBOARDING_BE']['tls_key'] %>
+caCert: <%= node['ONBOARDING_BE']['ca_cert'] %>
