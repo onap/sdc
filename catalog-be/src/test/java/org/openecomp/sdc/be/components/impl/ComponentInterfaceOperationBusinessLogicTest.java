@@ -23,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -452,7 +454,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
             .thenReturn(Optional.of(componentInstance));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId))
+        when(toscaOperationFacade.createOrUpdateComponentInstanceInterfaces(eq(component), eq(componentInstanceId), anyMap()))
             .thenReturn(StorageOperationStatus.OK);
         when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
@@ -492,7 +494,7 @@ class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLogicMock
             .thenReturn(Optional.of(componentInstance));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId))
+        when(toscaOperationFacade.createOrUpdateComponentInstanceInterfaces(eq(component), eq(componentInstanceId), anyMap()))
             .thenReturn(StorageOperationStatus.GENERAL_ERROR);
         when(janusGraphDao.rollback()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
