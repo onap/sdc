@@ -47,6 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -3312,6 +3313,28 @@ public class ToscaOperationFacade {
                                                                       final CapabilityDataDefinition capabilityDataDefinition) {
 
         return nodeTemplateOperation.updateComponentInstanceCapabilities(containerComponentId, componentInstanceUniqueId, capabilityDataDefinition);
+    }
+
+    public StorageOperationStatus createOrUpdateComponentInstanceInterfaces(Component containerComponent, String componentInstanceUniqueId,
+                                                                            Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaceMap                                                                            ) {
+        Either<GraphVertex, JanusGraphOperationStatus> toscaElement = janusGraphDao.getVertexById(containerComponent.getUniqueId(),
+            JsonParseFlagEnum.NoParse);
+        Either<GraphVertex, JanusGraphOperationStatus> childVertex = janusGraphDao.getChildVertex(toscaElement.left().value(),
+            EdgeLabelEnum.INST_INTERFACES, JsonParseFlagEnum.ParseJson);
+        if (childVertex.isLeft()) {
+            return updateComponentInstanceInterfaces(containerComponent, componentInstanceUniqueId);
+        } else {
+            Map<String, Map<String, InterfaceDefinition>> interfaces = new HashMap<>();
+            componentInstancesInterfaceMap.entrySet().forEach(cii -> {
+                interfaces.put(cii.getKey(),
+                    cii.getValue().stream().collect(Collectors.toMap(ComponentInstanceInterface::getInterfaceId, Function.identity())));
+            });
+            final var statusEither = associateComponentInstanceInterfacesToComponent(interfaces, containerComponent.getUniqueId());
+            if (statusEither.isLeft()){
+                return StorageOperationStatus.OK;
+            }
+            return statusEither.right().value();
+        }
     }
 
     public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent, String componentInstanceUniqueId) {

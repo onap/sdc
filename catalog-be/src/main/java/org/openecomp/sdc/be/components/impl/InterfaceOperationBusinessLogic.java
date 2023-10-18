@@ -18,6 +18,7 @@ package org.openecomp.sdc.be.components.impl;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedCapabilityPropertyDefaultValue;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedInputPropertyDefaultValue;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.createMappedOutputDefaultValue;
+import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getAllInterfaceDefinitionByByInterfaceIdAndOperationIds;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceId;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getInterfaceDefinitionFromComponentByInterfaceType;
 import static org.openecomp.sdc.be.components.utils.InterfaceOperationUtils.getOperationFromInterfaceDefinition;
@@ -113,77 +114,83 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         Component storedComponent = componentEither.left().value();
         lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
         try {
-            Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(storedComponent, interfaceId);
-            if (optionalInterface.isEmpty()) {
+            final var interfaceDefinitionList = getAllInterfaceDefinitionByByInterfaceIdAndOperationIds(storedComponent, interfaceId,
+                operationsToDelete);
+            if (interfaceDefinitionList.isEmpty()) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceId));
             }
-            InterfaceDefinition interfaceDefinition = optionalInterface.get();
-            Map<String, Operation> operationsCollection = new HashMap<>();
-            for (String operationId : operationsToDelete) {
-                Optional<Map.Entry<String, Operation>> optionalOperation = getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
-                if (optionalOperation.isEmpty()) {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
-                }
-                Operation storedOperation = optionalOperation.get().getValue();
-                Either<Boolean, ResponseFormat> validateDeleteOperationContainsNoMappedOutputResponse = interfaceOperationValidation
-                    .validateDeleteOperationContainsNoMappedOutput(storedOperation, storedComponent, interfaceDefinition);
-                if (validateDeleteOperationContainsNoMappedOutputResponse.isRight()) {
-                    return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
-                }
-                final ArtifactDataDefinition implementation = storedOperation.getImplementation();
-                if (implementation != null && implementation.getUniqueId() != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, implementation.getUniqueId())) {
-                    final String artifactUniqueId = implementation.getUniqueId();
-                    Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
-                        .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
-                    if (getArtifactEither.isLeft()) {
-                        Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent = artifactToscaOperation
-                            .removeArifactFromResource(componentId, artifactUniqueId,
-                                NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()), true);
-                        if (removeArifactFromComponent.isRight()) {
-                            janusGraphDao.rollback();
-                            ResponseFormat responseFormatByArtifactId = componentsUtils
-                                .getResponseFormatByArtifactId(componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
+            for (final InterfaceDefinition interfaceDefinition : interfaceDefinitionList) {
+                final Map<String, Operation> operationsCollection = new HashMap<>();
+                for (final String operationId : operationsToDelete) {
+                    final var optionalOperation = getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
+                    if (optionalOperation.isEmpty()) {
+                        return Either.right(
+                            componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
+                    }
+                    Operation storedOperation = optionalOperation.get().getValue();
+                    Either<Boolean, ResponseFormat> validateDeleteOperationContainsNoMappedOutputResponse = interfaceOperationValidation
+                        .validateDeleteOperationContainsNoMappedOutput(storedOperation, storedComponent, interfaceDefinition);
+                    if (validateDeleteOperationContainsNoMappedOutputResponse.isRight()) {
+                        return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
+                    }
+                    final ArtifactDataDefinition implementation = storedOperation.getImplementation();
+                    if (implementation != null && implementation.getUniqueId() != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent,
+                        operationId, implementation.getUniqueId())) {
+                        final String artifactUniqueId = implementation.getUniqueId();
+                        Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
+                            .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
+                        if (getArtifactEither.isLeft()) {
+                            Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent = artifactToscaOperation
+                                .removeArifactFromResource(componentId, artifactUniqueId,
+                                    NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()), true);
+                            if (removeArifactFromComponent.isRight()) {
+                                janusGraphDao.rollback();
+                                ResponseFormat responseFormatByArtifactId = componentsUtils
+                                    .getResponseFormatByArtifactId(
+                                        componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
                                         implementation.getArtifactDisplayName());
-                            return Either.right(responseFormatByArtifactId);
-                        }
-                        CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
-                        if (cassandraStatus != CassandraOperationStatus.OK) {
-                            janusGraphDao.rollback();
-                            ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
-                                componentsUtils.convertFromStorageResponse(componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
-                                implementation.getArtifactDisplayName());
-                            return Either.right(responseFormatByArtifactId);
+                                return Either.right(responseFormatByArtifactId);
+                            }
+                            CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
+                            if (cassandraStatus != CassandraOperationStatus.OK) {
+                                janusGraphDao.rollback();
+                                ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                    componentsUtils.convertFromStorageResponse(componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
+                                    implementation.getArtifactDisplayName());
+                                return Either.right(responseFormatByArtifactId);
+                            }
                         }
                     }
+                    operationsCollection.put(operationId, interfaceDefinition.getOperationsMap().get(operationId));
+                    final Optional<String> operationKeyOptional = interfaceDefinition.getOperations().entrySet()
+                        .stream().filter(entry -> operationId.equals(entry.getValue().getUniqueId()))
+                        .map(Entry::getKey).findFirst();
+                    if (operationKeyOptional.isEmpty()) {
+                        return Either.right(
+                            componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
+                    }
+                    interfaceDefinition.getOperations().remove(operationKeyOptional.get());
                 }
-                operationsCollection.put(operationId, interfaceDefinition.getOperationsMap().get(operationId));
-                final Optional<String> operationKeyOptional = interfaceDefinition.getOperations().entrySet()
-                    .stream().filter(entry -> operationId.equals(entry.getValue().getUniqueId()))
-                    .map(Entry::getKey).findFirst();
-                if (operationKeyOptional.isEmpty()) {
-                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
-                }
-                interfaceDefinition.getOperations().remove(operationKeyOptional.get());
-            }
-            final Either<List<InterfaceDefinition>, StorageOperationStatus> updateInterfaceResultEither;
-            updateInterfaceResultEither = interfaceOperation.updateInterfaces(storedComponent, Collections.singletonList(interfaceDefinition));
-            if (updateInterfaceResultEither.isRight()) {
-                janusGraphDao.rollback();
-                return Either.right(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(updateInterfaceResultEither.right().value(), storedComponent.getComponentType())));
-            }
-            if (interfaceDefinition.getOperations().isEmpty()) {
-                final var deleteInterfaceEither = interfaceOperation.deleteInterface(storedComponent, interfaceDefinition.getUniqueId());
-                if (deleteInterfaceEither.isRight()) {
+                final Either<List<InterfaceDefinition>, StorageOperationStatus> updateInterfaceResultEither;
+                updateInterfaceResultEither = interfaceOperation.updateInterfaces(storedComponent, Collections.singletonList(interfaceDefinition));
+                if (updateInterfaceResultEither.isRight()) {
                     janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(
-                        componentsUtils.convertFromStorageResponse(deleteInterfaceEither.right().value(), storedComponent.getComponentType())));
+                        componentsUtils.convertFromStorageResponse(updateInterfaceResultEither.right().value(), storedComponent.getComponentType())));
                 }
+                if (interfaceDefinition.getOperations().isEmpty()) {
+                    final var deleteInterfaceEither = interfaceOperation.deleteInterface(storedComponent, interfaceDefinition.getUniqueId());
+                    if (deleteInterfaceEither.isRight()) {
+                        janusGraphDao.rollback();
+                        return Either.right(componentsUtils.getResponseFormat(
+                            componentsUtils.convertFromStorageResponse(deleteInterfaceEither.right().value(), storedComponent.getComponentType())));
+                    }
+                }
+                janusGraphDao.commit();
+                interfaceDefinition.getOperations().putAll(operationsCollection);
+                interfaceDefinition.getOperations().keySet().removeIf(key -> !(operationsToDelete.contains(key)));
             }
-            janusGraphDao.commit();
-            interfaceDefinition.getOperations().putAll(operationsCollection);
-            interfaceDefinition.getOperations().keySet().removeIf(key -> !(operationsToDelete.contains(key)));
-            return Either.left(Collections.singletonList(interfaceDefinition));
+            return Either.left(interfaceDefinitionList);
         } catch (Exception e) {
             LOGGER.error(EXCEPTION_OCCURRED_DURING_INTERFACE_OPERATION, "delete", e);
             janusGraphDao.rollback();
