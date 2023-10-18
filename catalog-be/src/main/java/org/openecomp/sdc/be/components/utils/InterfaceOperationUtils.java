@@ -18,7 +18,9 @@ package org.openecomp.sdc.be.components.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +34,6 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
@@ -59,6 +60,31 @@ public class InterfaceOperationUtils {
         return component.getInterfaces().values().stream()
             .filter(interfaceDefinition -> interfaceDefinition.getUniqueId() != null && interfaceDefinition.getUniqueId().equals(interfaceId))
             .findAny();
+    }
+
+    public static List<InterfaceDefinition> getAllInterfaceDefinitionByByInterfaceIdAndOperationIds(Component component,
+                                                                                                    String interfaceId,
+                                                                                                    List<String> operationsToDelete) {
+        List<InterfaceDefinition> interfaceDefinitionsFromComponentInstance = getInterfaceDefinitionFromComponentInstanceByInterfaceId(
+            component, interfaceId, operationsToDelete);
+        Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(component, interfaceId);
+        if (optionalInterface.isPresent()) {
+            interfaceDefinitionsFromComponentInstance.add(optionalInterface.get());
+        }
+        return interfaceDefinitionsFromComponentInstance;
+    }
+
+    private static List<InterfaceDefinition> getInterfaceDefinitionFromComponentInstanceByInterfaceId(Component component,
+                                                                                                      String interfaceId,
+                                                                                                      List<String> operationsToDelete) {
+        if (MapUtils.isEmpty(component.getComponentInstancesInterfaces())) {
+            return new ArrayList<>();
+        }
+        return component.getComponentInstancesInterfaces().values().stream().flatMap(Collection::stream)
+            .filter(i -> interfaceId.equals(i.getUniqueId()))
+            .filter(i -> new HashSet<>(i.getOperations().values().stream()
+                .map(OperationDataDefinition::getUniqueId).collect(Collectors.toList())).containsAll(operationsToDelete))
+            .collect(Collectors.toList());
     }
 
     public static Optional<Map.Entry<String, Operation>> getOperationFromInterfaceDefinition(InterfaceDefinition interfaceDefinition,
