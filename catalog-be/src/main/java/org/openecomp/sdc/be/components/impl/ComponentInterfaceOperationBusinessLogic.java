@@ -37,7 +37,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
@@ -352,6 +351,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         if (componentInstanceInterface.isEmpty()) {
             componentInstanceInterfaceList.add(new ComponentInstanceInterface(interfaceKey, interfaceDefinition));
             componentInstanceOptional.get().addInterface(interfaceKey, interfaceDefinition);
+            componentInstancesInterfaceMap.put(componentInstanceId, componentInstanceInterfaceList);
         } else {
             componentInstanceInterface.get().getOperations().put(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
         }
@@ -362,7 +362,10 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
                 lockComponent(componentId, component, UPDATE_INTERFACE_OPERATION_ON_COMPONENT_INSTANCE);
                 wasLocked = true;
             }
-            StorageOperationStatus status = toscaOperationFacade.updateComponentInstanceInterfaces(component, componentInstanceId);
+            // call createOrUpdateComponentInstanceInterfaces instead of updateComponentInstanceInterfaces
+            // for cases when service does not have any ComponentInstanceInterfaces
+            final var status = toscaOperationFacade.createOrUpdateComponentInstanceInterfaces(component, componentInstanceId,
+                componentInstancesInterfaceMap);
             if (status != StorageOperationStatus.OK) {
                 janusGraphDao.rollback();
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
