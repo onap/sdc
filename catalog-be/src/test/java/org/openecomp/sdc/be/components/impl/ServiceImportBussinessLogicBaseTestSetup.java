@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,6 +66,8 @@ import org.openecomp.sdc.be.components.validation.service.ServiceTypeValidator;
 import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractResourceInfo;
@@ -93,6 +96,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
@@ -117,19 +121,17 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
     protected static final String COMPONENT_ID = "myUniqueId";
     protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     protected static final String RESOURCE_TOSCA_NAME = "org.openecomp.resource.cp.extCP";
+    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
-
-    private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
-    private final ServletUtils servletUtils = mock(ServletUtils.class);
-
     protected final ServletContext servletContext = mock(ServletContext.class);
     protected final ComponentValidator componentValidator = mock(ComponentValidator.class);
     final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = mock(ComponentInstanceBusinessLogic.class);
     final CsarBusinessLogic csarBusinessLogic = mock(CsarBusinessLogic.class);
     final CompositionBusinessLogic compositionBusinessLogic = mock(CompositionBusinessLogic.class);
+    private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
+    private final ServletUtils servletUtils = mock(ServletUtils.class);
     protected UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
     protected WebAppContextWrapper webAppContextWrapper = mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = mock(WebApplicationContext.class);
@@ -404,6 +406,23 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         Map<String, List<UploadCapInfo>> uploadCapInfoMap = new HashMap<>();
         uploadCapInfoMap.put("tosca.capabilities.Node", uploadCapInfoList);
         return uploadCapInfoMap;
+    }
+
+    protected Map<String, UploadInterfaceInfo> getInterfaces() {
+        UploadInterfaceInfo uploadInterfaceInfo = new UploadInterfaceInfo();
+        uploadInterfaceInfo.setName("TestInterface");
+        uploadInterfaceInfo.setDescription("Description used for testing interfaces");
+        OperationDataDefinition operation = new OperationDataDefinition();
+        operation.setDescription("Description used for testing operations");
+        ArtifactDataDefinition implementation = new ArtifactDataDefinition();
+        implementation.setArtifactName("desc");
+        operation.setImplementation(implementation);
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        operations.put("TestInterface", operation);
+        uploadInterfaceInfo.setOperations(operations);
+        Map<String, UploadInterfaceInfo> uploadInterfaceInfoMap = new HashMap<>();
+        uploadInterfaceInfoMap.put("tosca.capabilities.Node", uploadInterfaceInfo);
+        return uploadInterfaceInfoMap;
     }
 
     protected List<ComponentInstance> creatComponentInstances() {

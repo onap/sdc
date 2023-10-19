@@ -221,10 +221,10 @@ public class ServiceImportBusinessLogic {
     private final GroupTypeOperation groupTypeOperation;
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final CapabilityTypeOperation capabilityTypeOperation;
-    private ApplicationDataTypeCache applicationDataTypeCache;
     private final InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
     private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
     private final ModelOperation modelOperation;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -2190,7 +2190,7 @@ public class ServiceImportBusinessLogic {
 
     private List<AttributeDefinition> addImplicitAttributeValues(Resource originResource, UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         if (uploadComponentInstanceInfo.getAttributes() == null) {
-            return  Collections.emptyList();
+            return Collections.emptyList();
         }
         List<String> origAttributes = originResource.getAttributes().stream().map(AttributeDefinition::getName).collect(toList());
         Map<String, UploadAttributeInfo> uploadAttributes = uploadComponentInstanceInfo.getAttributes();
@@ -2210,7 +2210,7 @@ public class ServiceImportBusinessLogic {
             }
         });
         List<AttributeDefinition> attributesToAdd = new ArrayList<>();
-        for (PropertyDefinition prop: propsToAddAsAttributes) {
+        for (PropertyDefinition prop : propsToAddAsAttributes) {
             attributesToAdd.add(getPropertyAsAttribute(prop));
         }
         return attributesToAdd;
@@ -2463,12 +2463,12 @@ public class ServiceImportBusinessLogic {
         Map<String, UploadInterfaceInfo> instanceInterfacesMap = uploadComponentInstanceInfo.getInterfaces();
         Map<String, InterfaceDefinition> currInterfacesMap = new HashMap<>();
         Map<String, InterfaceDefinition> interfacesFromNodeType = originResource.getInterfaces();
-        if ((MapUtils.isNotEmpty(instanceInterfacesMap)) && (MapUtils.isEmpty(interfacesFromNodeType))) {
+        if (interfacesFromNodeType == null) {
+            interfacesFromNodeType = new HashMap<>();
+        }
+        if (MapUtils.isEmpty(instanceInterfacesMap) && MapUtils.isEmpty(instanceInterfacesMap)) {
             log.debug("failed to find interfaces ");
             return componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT);
-        }
-        if (interfacesFromNodeType == null || interfacesFromNodeType.isEmpty()) {
-            return componentsUtils.getResponseFormat(ActionStatus.OK);
         }
         for (Map.Entry<String, InterfaceDefinition> entryInstances : interfacesFromNodeType.entrySet()) {
             String interfaceName = entryInstances.getKey().substring(entryInstances.getKey().lastIndexOf(".") + 1);
@@ -2481,11 +2481,16 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(instanceInterfacesMap)) {
             for (UploadInterfaceInfo uploadInterfaceInfo : instanceInterfacesMap.values()) {
                 String interfaceName = uploadInterfaceInfo.getName();
+                InterfaceDefinition currentInterfaceDef;
                 if (!currInterfacesMap.containsKey(interfaceName)) {
-                    log.debug("failed to find interface {} ", interfaceName);
-                    return componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceName);
+                    currentInterfaceDef = getInterfaceDef(interfaceName, component.getModel());
+                    if (currentInterfaceDef == null) {
+                        log.debug("failed to find interface {} ", interfaceName);
+                        return componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceName);
+                    }
+                } else {
+                    currentInterfaceDef = currInterfacesMap.get(interfaceName);
                 }
-                InterfaceDefinition currentInterfaceDef = currInterfacesMap.get(interfaceName);
                 Map<String, OperationDataDefinition> operationsToAdd = new HashMap<>();
 
                 Map<String, OperationDataDefinition> operations = uploadInterfaceInfo.getOperations();
@@ -2531,6 +2536,21 @@ public class ServiceImportBusinessLogic {
         }
         instInterfaces.put(currentCompInstance.getUniqueId(), instInterfacesMap);
         return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    private InterfaceDefinition getInterfaceDef(String interfaceName, String model) {
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> interfaceLifecycleTypesEither =
+            interfaceLifecycleTypeOperation.getAllInterfaceLifecycleTypes(model);
+        if (interfaceLifecycleTypesEither.isRight()) {
+            return null;
+        }
+        Map<String, InterfaceDefinition> interfaceLifecycleTypes = interfaceLifecycleTypesEither.left().value();
+        Optional<InterfaceDefinition> interfaceType =
+            interfaceLifecycleTypes.values().stream().filter(interfaceDef -> interfaceDef.getUniqueId().contains(interfaceName)).findFirst();
+        if (interfaceType.isEmpty()) {
+            return null;
+        }
+        return interfaceType.get();
     }
 
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
