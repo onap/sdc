@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3655f7f3_1735251d",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-19T15:47:32Z",
+      "side": 1,
+      "message": "is the double \\\\ for escaping? There is no need to escape the \u0027[\u0027 or \u0027]\u0027 chars, in fact it is adding \\ to the list of chars to trim",
+      "range": {
+        "startLine": 248,
+        "startChar": 69,
+        "endLine": 248,
+        "endChar": 74
+      },
+      "revId": "24169893e1ffc5e70db99c91bfed093968af554e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
