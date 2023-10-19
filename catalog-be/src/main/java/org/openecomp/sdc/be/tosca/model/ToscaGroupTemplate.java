@@ -21,7 +21,11 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class ToscaGroupTemplate {
 
     private String type;
@@ -30,58 +34,9 @@ public class ToscaGroupTemplate {
     private Map<String, Object> properties;
     private Map<String, ToscaTemplateCapability> capabilities;
 
-    public ToscaGroupTemplate(String type, List<String> members, IToscaMetadata metadata, Map<String, Object> properties,
-                              Map<String, ToscaTemplateCapability> capabilities) {
-        this.type = type;
-        this.members = members;
-        this.metadata = metadata;
-        this.properties = properties;
-        this.capabilities = capabilities;
-    }
-
     public ToscaGroupTemplate(String type, IToscaMetadata metadata, Map<String, Object> properties) {
         this.type = type;
         this.metadata = metadata;
         this.properties = properties;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<String> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<String> members) {
-        this.members = members;
-    }
-
-    public IToscaMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(IToscaMetadata metadata) {
-        this.metadata = metadata;
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, ToscaTemplateCapability> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, ToscaTemplateCapability> capabilities) {
-        this.capabilities = capabilities;
     }
 }

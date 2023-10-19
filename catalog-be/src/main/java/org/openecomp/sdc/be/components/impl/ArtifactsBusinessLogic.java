@@ -3744,7 +3744,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                     errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
                 }
                 if (errorWrapper.isEmpty()) {
-                    NodeTypeEnum parentType = convertParentType(componentType);
                     final List<ArtifactDefinition> existingDeploymentArtifacts = getDeploymentArtifacts(toscaComponentEither.left().value(), null);
                     for (ArtifactDefinition artifactDefinition : existingDeploymentArtifacts) {
                         if (artifactInfo.getArtifactName().equalsIgnoreCase(artifactDefinition.getArtifactName())) {
@@ -4032,7 +4031,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         String componentId = component.getUniqueId();
         String artifactId = artifactDefinition.getUniqueId();
         Either<ArtifactDefinition, Operation> result;
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         //artifact validation
         artifactDefinition = validateArtifact(componentId, componentType, operation, artifactId, artifactDefinition, auditingAction, user, component,
             shouldLock, inTransaction);
@@ -4224,7 +4222,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Component checkoutParentComponent(ComponentTypeEnum componentType, String parentId, String userId) {
-        Component component = null;
         User modifier = userBusinessLogic.getUser(userId, false);
         LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction("External API checkout",
             LifecycleChanceActionEnum.UPDATE_FROM_EXTERNAL_API);

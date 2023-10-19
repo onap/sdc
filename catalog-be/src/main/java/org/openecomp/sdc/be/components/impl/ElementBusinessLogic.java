@@ -265,9 +265,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return elementOperation.getAllResourceCategories();
     }
 
-    public Either<List<CategoryDefinition>, ActionStatus> getAllServiceCategories() {
-        return elementOperation.getAllServiceCategories();
-    }
 
     public Either<CategoryDefinition, ResponseFormat> createCategory(CategoryDefinition category, String componentTypeParamName, String userId) {
         AuditingActionEnum auditingAction = AuditingActionEnum.ADD_CATEGORY;

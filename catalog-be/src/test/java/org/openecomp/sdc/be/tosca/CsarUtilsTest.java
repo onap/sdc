@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -90,7 +88,6 @@ import org.openecomp.sdc.be.tosca.ComponentCache.CacheEntry;
 import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
@@ -99,809 +96,797 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 class CsarUtilsTest extends BaseConfDependent {
 
-	@InjectMocks
-	private CsarUtils testSubject;
-
+    private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
+    private final byte[] contentData;
     @InjectMocks
-	private CommonCsarGenerator commonCsarGenerator;
-
-	@Mock
-	private ArtifactCassandraDao artifactCassandraDao;
-
-	@Mock
-	private ComponentsUtils componentsUtils;
-
-	@Mock
-	private ToscaExportHandler toscaExportUtils;
-
-	@Mock
-	private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
-
-	@Mock
-	private ToscaOperationFacade toscaOperationFacade;
-
-	@Mock
-	private ArtifactsBusinessLogic artifactsBusinessLogic;
-
-	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
-
-	private final byte[] contentData;
+    private CsarUtils testSubject;
+    @InjectMocks
+    private CommonCsarGenerator commonCsarGenerator;
+    @Mock
+    private ArtifactCassandraDao artifactCassandraDao;
+    @Mock
+    private ComponentsUtils componentsUtils;
+    @Mock
+    private ToscaExportHandler toscaExportUtils;
+    @Mock
+    private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
+    @Mock
+    private ToscaOperationFacade toscaOperationFacade;
+    @Mock
+    private ArtifactsBusinessLogic artifactsBusinessLogic;
 
     public CsarUtilsTest() throws IOException {
-		contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
-	}
+        contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
+    }
 
-	@BeforeAll
-	public static void setupBeforeClass() {
-		componentName = "catalog-be";
-		confPath = "src/test/resources/config";
-		setUp();
-	}
+    @BeforeAll
+    public static void setupBeforeClass() {
+        componentName = "catalog-be";
+        confPath = "src/test/resources/config";
+        setUp();
+    }
 
-	@BeforeEach
-	public void setUpMock() {
-		ExternalConfiguration.setAppName("catalog-be");
-		MockitoAnnotations.openMocks(this);
-		initConfigurationManager();
-	}
+    private static void initConfigurationManager() {
+        final String confPath = new File(Objects
+            .requireNonNull(
+                CsarUtilsTest.class.getClassLoader().getResource("config/catalog-be/configuration.yaml"))
+            .getFile()).getParent();
+        final ConfigurationSource confSource =
+            new FSConfigurationSource(ExternalConfiguration.getChangeListener(), confPath);
+        new ConfigurationManager(confSource);
+    }
 
-	private static void initConfigurationManager() {
-		final String confPath = new File(Objects
-			.requireNonNull(
-				CsarUtilsTest.class.getClassLoader().getResource("config/catalog-be/configuration.yaml"))
-			.getFile()).getParent();
-		final ConfigurationSource confSource =
-			new FSConfigurationSource(ExternalConfiguration.getChangeListener(), confPath);
-		new ConfigurationManager(confSource);
-	}
+    @BeforeEach
+    public void setUpMock() {
+        ExternalConfiguration.setAppName("catalog-be");
+        MockitoAnnotations.openMocks(this);
+        initConfigurationManager();
+    }
 
-	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
-		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL.getType(),
-				ArtifactGroupTypeEnum.DEPLOYMENT, new byte[0], "mock", true);
-	}
+    @Test
+    void testCreateCsar() throws IOException {
+        Component component = new Resource();
+        Map<String, ArtifactDefinition> artifactDefinitionHashMap = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifactDefinitionHashMap.put("assettoscatemplate", artifact);
 
-	@Test
-	void testCreateCsar() throws IOException {
-		Component component = new Resource();
-		Map<String, ArtifactDefinition> artifactDefinitionHashMap = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifactDefinitionHashMap.put("assettoscatemplate", artifact);
-
-		component.setToscaArtifacts(artifactDefinitionHashMap);
-		component.setArtifacts(artifactDefinitionHashMap);
-		component.setDeploymentArtifacts(artifactDefinitionHashMap);
+        component.setToscaArtifacts(artifactDefinitionHashMap);
+        component.setArtifacts(artifactDefinitionHashMap);
+        component.setDeploymentArtifacts(artifactDefinitionHashMap);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(out);
 
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
-				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
+            .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
-				.thenReturn(ActionStatus.GENERAL_ERROR);
-
-        assertNotNull(commonCsarGenerator.generateCsarZip(component, false, zip,
-            false,  true,
-            "Definitions/", true, false).right());
-	}
-
-	@Test
-	void testCreateCsarWithGenerateCsarZipResponseIsLeft() throws IOException {
-		Component component = new Resource();
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
-
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
-		artifactData.setData(bufferData);
-
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		toscaTemplate.setDependencies(dependencies);
-
-		List<SdcSchemaFilesData> filesData = new ArrayList<>();
-		SdcSchemaFilesData filedata = new SdcSchemaFilesData();
-		filedata.setPayloadAsArray(data);
-		filesData.add(filedata);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ZipOutputStream zip = new ZipOutputStream(out);
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
-
-		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
-				.thenReturn(ActionStatus.GENERAL_ERROR);
-
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
-
-		Mockito.when(
-				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
-				.thenReturn(Either.left(filesData));
+        Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
 
         assertNotNull(commonCsarGenerator.generateCsarZip(component, false, zip,
             false, true,
             "Definitions/", true, false).right());
-	}
+    }
 
-	@Test
-	void testPopulateZipWhenGetDependenciesIsRight() {
-		Component component = new Service();
-		boolean getFromCS = false;
+    @Test
+    void testCreateCsarWithGenerateCsarZipResponseIsLeft() throws IOException {
+        Component component = new Resource();
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        DAOArtifactData artifactData = new DAOArtifactData();
+        byte[] data = "value".getBytes();
+        ByteBuffer bufferData = ByteBuffer.wrap(data);
+        artifactData.setData(bufferData);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
-		artifactData.setData(bufferData);
+        ToscaTemplate toscaTemplate = new ToscaTemplate("version");
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        toscaTemplate.setDependencies(dependencies);
 
-		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
+        List<SdcSchemaFilesData> filesData = new ArrayList<>();
+        SdcSchemaFilesData filedata = new SdcSchemaFilesData();
+        filedata.setPayloadAsArray(data);
+        filesData.add(filedata);
 
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(out);
 
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
+        Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.left(toscaTemplate));
 
-	@Test
-	void testPopulateZipWhenExportComponentIsRight() {
-		Component component = new Resource();
-		boolean getFromCS = false;
+        Mockito.when(
+                sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
+            .thenReturn(Either.left(filesData));
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        assertNotNull(commonCsarGenerator.generateCsarZip(component, false, zip,
+            false, true,
+            "Definitions/", true, false).right());
+    }
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
-		artifactData.setData(bufferData);
+    @Test
+    void testPopulateZipWhenGetDependenciesIsRight() {
+        Component component = new Service();
+        boolean getFromCS = false;
 
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class)))
-				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        DAOArtifactData artifactData = new DAOArtifactData();
+        byte[] data = "value".getBytes();
+        ByteBuffer bufferData = ByteBuffer.wrap(data);
+        artifactData.setData(bufferData);
 
-	@Test
-	void testPopulateZipWhenComponentIsServiceAndCollectComponentCsarDefinitionIsRight() {
-		Component component = new Service();
-		boolean getFromCS = false;
+        ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		component.setVersion("1.0");
-		component.setLastUpdaterUserId("userId");
-		component.setUniqueId("uid");
-		DAOArtifactData artifactData = new DAOArtifactData();
-		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
-		artifactData.setData(bufferData);
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
 
-		List<SdcSchemaFilesData> filesData = new ArrayList<>();
-		SdcSchemaFilesData filedata = new SdcSchemaFilesData();
-		filedata.setPayloadAsArray(contentData);
-		filesData.add(filedata);
-
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
-		dependencies.add(triple);
-		toscaTemplate.setDependencies(dependencies);
-
-		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
-
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
-
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
-
-		Mockito.when(
-				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
-				.thenReturn(Either.left(filesData));
-
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
-				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
-
-		Mockito.when(artifactsBusinessLogic.validateUserExists(Mockito.any(User.class))).thenReturn(new User());
-
-
-		Mockito.when(artifactsBusinessLogic.validateAndHandleArtifact(Mockito.any(String.class),
-				Mockito.any(ComponentTypeEnum.class), Mockito.any(ArtifactOperationInfo.class), Mockito.isNull(),
-				Mockito.any(ArtifactDefinition.class), Mockito.any(String.class), Mockito.any(String.class),
-				Mockito.isNull(), Mockito.isNull(), Mockito.any(User.class), Mockito.any(Component.class),
-				Mockito.any(Boolean.class), Mockito.any(Boolean.class), Mockito.any(Boolean.class)))
-				.thenReturn(Either.left(Mockito.any(ArtifactDefinition.class)));
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "/Definitions", true, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	void testPopulateZipWhenGetEntryDataIsRight() {
-		Component component = new Service();
-		boolean getFromCS = true;
-
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
-
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		component.setVersion("1.0");
-		component.setLastUpdaterUserId("userId");
-		component.setUniqueId("uid");
-		DAOArtifactData artifactData = new DAOArtifactData();
-		byte[] data = "value".getBytes();
-		ByteBuffer bufferData = ByteBuffer.wrap(data);
-		artifactData.setData(bufferData);
-
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		Triple<String, String, Component> triple = Triple.of("fileName", "", component);
-		dependencies.add(triple);
-		toscaTemplate.setDependencies(dependencies);
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
-
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class)))
-				.thenReturn(Either.right(ToscaError.GENERAL_ERROR));
-
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
             Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Test
-	void testPopulateZipWhenGetEntryDataOfInnerComponentIsRight() {
-		Component component = new Service();
-		boolean getFromCS = false;
+    @Test
+    void testPopulateZipWhenExportComponentIsRight() {
+        Component component = new Resource();
+        boolean getFromCS = false;
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		component.setVersion("1.0");
-		component.setLastUpdaterUserId("userId");
-		component.setUniqueId("uid");
-		DAOArtifactData artifactData = new DAOArtifactData();
-		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
-		artifactData.setData(bufferData);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        DAOArtifactData artifactData = new DAOArtifactData();
+        byte[] data = "value".getBytes();
+        ByteBuffer bufferData = ByteBuffer.wrap(data);
+        artifactData.setData(bufferData);
 
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		Triple<String, String, Component> triple = Triple.of("fileName", "", component);
-		dependencies.add(triple);
-		toscaTemplate.setDependencies(dependencies);
-
-		ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
-
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
-
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca),
-				Either.left(tosca), Either.right(ToscaError.GENERAL_ERROR));
-
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class)))
+            .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
             Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
-	}
+    }
 
-	@Test
-	void testPopulateZipWhenLatestSchemaFilesFromCassandraIsRight() {
-		Component component = new Service();
-		boolean getFromCS = false;
+    @Test
+    void testPopulateZipWhenComponentIsServiceAndCollectComponentCsarDefinitionIsRight() {
+        Component component = new Service();
+        boolean getFromCS = false;
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
-		component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		component.setVersion("1.0");
-		component.setLastUpdaterUserId("userId");
-		component.setUniqueId("uid");
-		DAOArtifactData artifactData = new DAOArtifactData();
-		ByteBuffer bufferData = ByteBuffer.wrap(contentData);
-		artifactData.setData(bufferData);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        component.setVersion("1.0");
+        component.setLastUpdaterUserId("userId");
+        component.setUniqueId("uid");
+        DAOArtifactData artifactData = new DAOArtifactData();
+        ByteBuffer bufferData = ByteBuffer.wrap(contentData);
+        artifactData.setData(bufferData);
 
-		ToscaTemplate toscaTemplate = new ToscaTemplate("version");
-		List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		Triple<String, String, Component> triple = Triple.of("fileName", "", component);
-		dependencies.add(triple);
-		toscaTemplate.setDependencies(dependencies);
+        List<SdcSchemaFilesData> filesData = new ArrayList<>();
+        SdcSchemaFilesData filedata = new SdcSchemaFilesData();
+        filedata.setPayloadAsArray(contentData);
+        filesData.add(filedata);
 
-		ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
+        ToscaTemplate toscaTemplate = new ToscaTemplate("version");
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
+        dependencies.add(triple);
+        toscaTemplate.setDependencies(dependencies);
 
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
+        ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
-		Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
 
-		Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
-				.thenReturn(Either.left(toscaTemplate));
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
 
-		Mockito.when(
-				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
-				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.left(toscaTemplate));
 
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
-			Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, "toscaMetaFileName", true, "Definitions/", true, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        Mockito.when(
+                sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
+            .thenReturn(Either.left(filesData));
 
-	@Test
-	void testAddInnerComponentsToCache() {
-		ComponentCache componentCache = ComponentCache.overwritable(overwriteIfSameVersions());
-		Component childComponent = new Resource();
-		Component componentRI = new Service();
-		List<ComponentInstance> componentInstances = new ArrayList<>();
-		ComponentInstance instance = new ComponentInstance();
-		instance.setComponentUid("resourceUid");
-		componentInstances.add(instance);
-		childComponent.setComponentInstances(componentInstances);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
-
-		componentRI.setToscaArtifacts(toscaArtifacts);
-
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
-				.thenReturn(Either.left(componentRI));
-
-		Deencapsulation.invoke(commonCsarGenerator, "addInnerComponentsToCache", componentCache, childComponent);
-
-		io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId","artifactName",componentRI));
-		assertEquals(expected, componentCache.all().toList());
-	}
-
-	@Test
-	void testAddInnerComponentsToCacheWhenGetToscaElementIsRight() {
-		Map<String, ImmutableTriple<String, String, Component>> componentCache = new HashMap<>();
-		Component childComponent = new Resource();
-
-		List<ComponentInstance> componentInstances = new ArrayList<>();
-		ComponentInstance instance = new ComponentInstance();
-		instance.setComponentUid("abc");
-		componentInstances.add(instance);
-		childComponent.setComponentInstances(componentInstances);
-
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
-		artifact.setDescription("description");
-		artifact.setArtifactLabel("artifactLabel");
-		toscaArtifacts.put("assettoscatemplate", artifact);
-
-		Component componentRI = new Service();
-
-		componentRI.setToscaArtifacts(toscaArtifacts);
-
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
-				.thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        Mockito.when(artifactsBusinessLogic.validateUserExists(Mockito.any(User.class))).thenReturn(new User());
 
 
-		assertTrue(componentCache.isEmpty());
-	}
+        Mockito.when(artifactsBusinessLogic.validateAndHandleArtifact(Mockito.any(String.class),
+                Mockito.any(ComponentTypeEnum.class), Mockito.any(ArtifactOperationInfo.class), Mockito.isNull(),
+                Mockito.any(ArtifactDefinition.class), Mockito.any(String.class), Mockito.any(String.class),
+                Mockito.isNull(), Mockito.isNull(), Mockito.any(User.class), Mockito.any(Component.class),
+                Mockito.any(Boolean.class), Mockito.any(Boolean.class), Mockito.any(Boolean.class)))
+            .thenReturn(Either.left(Mockito.any(ArtifactDefinition.class)));
 
-	@Test
-	void testWriteComponentInterface() throws IOException {
-		String fileName = "name.hello";
-		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
+            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "/Definitions", true, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		Mockito.when(toscaExportUtils.exportComponentInterface(Mockito.any(Component.class), Mockito.any(Boolean.class)))
-				.thenReturn(Either.left(tosca));
+    @Test
+    void testPopulateZipWhenGetEntryDataIsRight() {
+        Component component = new Service();
+        boolean getFromCS = true;
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
+
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        component.setVersion("1.0");
+        component.setLastUpdaterUserId("userId");
+        component.setUniqueId("uid");
+        DAOArtifactData artifactData = new DAOArtifactData();
+        byte[] data = "value".getBytes();
+        ByteBuffer bufferData = ByteBuffer.wrap(data);
+        artifactData.setData(bufferData);
+
+        ToscaTemplate toscaTemplate = new ToscaTemplate("version");
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        Triple<String, String, Component> triple = Triple.of("fileName", "", component);
+        dependencies.add(triple);
+        toscaTemplate.setDependencies(dependencies);
+
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
+
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class)))
+            .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
+
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.left(toscaTemplate));
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
+            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testPopulateZipWhenGetEntryDataOfInnerComponentIsRight() {
+        Component component = new Service();
+        boolean getFromCS = false;
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
+
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        component.setVersion("1.0");
+        component.setLastUpdaterUserId("userId");
+        component.setUniqueId("uid");
+        DAOArtifactData artifactData = new DAOArtifactData();
+        ByteBuffer bufferData = ByteBuffer.wrap(contentData);
+        artifactData.setData(bufferData);
+
+        ToscaTemplate toscaTemplate = new ToscaTemplate("version");
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        Triple<String, String, Component> triple = Triple.of("fileName", "", component);
+        dependencies.add(triple);
+        toscaTemplate.setDependencies(dependencies);
+
+        ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
+
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
+
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca),
+            Either.left(tosca), Either.right(ToscaError.GENERAL_ERROR));
+
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.left(toscaTemplate));
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
+            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, true, "Definitions/", true, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testPopulateZipWhenLatestSchemaFilesFromCassandraIsRight() {
+        Component component = new Service();
+        boolean getFromCS = false;
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
+
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+        component.setVersion("1.0");
+        component.setLastUpdaterUserId("userId");
+        component.setUniqueId("uid");
+        DAOArtifactData artifactData = new DAOArtifactData();
+        ByteBuffer bufferData = ByteBuffer.wrap(contentData);
+        artifactData.setData(bufferData);
+
+        ToscaTemplate toscaTemplate = new ToscaTemplate("version");
+        List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        Triple<String, String, Component> triple = Triple.of("fileName", "", component);
+        dependencies.add(triple);
+        toscaTemplate.setDependencies(dependencies);
+
+        ToscaRepresentation tosca = ToscaRepresentation.make(contentData);
+
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class))).thenReturn(Either.left(artifactData));
+
+        Mockito.when(toscaExportUtils.exportComponent(Mockito.any(Component.class))).thenReturn(Either.left(tosca));
+
+        Mockito.when(toscaExportUtils.getDependencies(Mockito.any(Component.class)))
+            .thenReturn(Either.left(toscaTemplate));
+
+        Mockito.when(
+                sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
+            .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out);) {
+            Deencapsulation.invoke(commonCsarGenerator, "generateCsarZip", component, getFromCS, zip, true, "toscaMetaFileName", true, "Definitions/",
+                true, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testAddInnerComponentsToCache() {
+        ComponentCache componentCache = ComponentCache.overwritable(overwriteIfSameVersions());
+        Component childComponent = new Resource();
+        Component componentRI = new Service();
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setComponentUid("resourceUid");
+        componentInstances.add(instance);
+        childComponent.setComponentInstances(componentInstances);
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
+
+        componentRI.setToscaArtifacts(toscaArtifacts);
+
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
+            .thenReturn(Either.left(componentRI));
+
+        Deencapsulation.invoke(commonCsarGenerator, "addInnerComponentsToCache", componentCache, childComponent);
+
+        io.vavr.collection.List<CacheEntry> expected = io.vavr.collection.List.of(entry("esId", "artifactName", componentRI));
+        assertEquals(expected, componentCache.all().toList());
+    }
+
+    @Test
+    void testAddInnerComponentsToCacheWhenGetToscaElementIsRight() {
+        Map<String, ImmutableTriple<String, String, Component>> componentCache = new HashMap<>();
+        Component childComponent = new Resource();
+
+        List<ComponentInstance> componentInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setComponentUid("abc");
+        componentInstances.add(instance);
+        childComponent.setComponentInstances(componentInstances);
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        artifact.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
+        artifact.setDescription("description");
+        artifact.setArtifactLabel("artifactLabel");
+        toscaArtifacts.put("assettoscatemplate", artifact);
+
+        Component componentRI = new Service();
+
+        componentRI.setToscaArtifacts(toscaArtifacts);
+
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class)))
+            .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
 
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(commonCsarGenerator, "writeComponentInterface", new Resource(),
+        assertTrue(componentCache.isEmpty());
+    }
+
+    @Test
+    void testWriteComponentInterface() throws IOException {
+        String fileName = "name.hello";
+        ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
+
+        Mockito.when(toscaExportUtils.exportComponentInterface(Mockito.any(Component.class), Mockito.any(Boolean.class)))
+            .thenReturn(Either.left(tosca));
+
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
+            List<Triple<String, String, Component>> output = Deencapsulation.invoke(commonCsarGenerator, "writeComponentInterface", new Resource(),
                 zip, fileName, "Definitions/");
-			assertNotNull(output);
-		}
-	}
+            assertNotNull(output);
+        }
+    }
 
-	@Test
-	void testGetEntryData() {
-		String cassandraId = "id";
-		Component childComponent = new Resource();
+    @Test
+    void testGetEntryData() {
+        String cassandraId = "id";
+        Component childComponent = new Resource();
 
-		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
-				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
+            .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
-		Either<byte[], ActionStatus> output = Deencapsulation.invoke(commonCsarGenerator, "getEntryData", cassandraId, childComponent);
+        Either<byte[], ActionStatus> output = Deencapsulation.invoke(commonCsarGenerator, "getEntryData", cassandraId, childComponent);
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+    }
 
-	@Test
-	void testGetLatestSchemaFilesFromCassandraWhenListOfSchemasIsEmpty() {
-		List<SdcSchemaFilesData> filesData = new ArrayList<>();
+    @Test
+    void testGetLatestSchemaFilesFromCassandraWhenListOfSchemasIsEmpty() {
+        List<SdcSchemaFilesData> filesData = new ArrayList<>();
 
-		Mockito.when(
-				sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
-				.thenReturn(Either.left(filesData));
+        Mockito.when(
+                sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(Mockito.any(String.class), Mockito.any(String.class)))
+            .thenReturn(Either.left(filesData));
 
-		Either<byte[], ResponseFormat> output = Deencapsulation.invoke(commonCsarGenerator, "getLatestSchemaFilesFromCassandra");
+        Either<byte[], ResponseFormat> output = Deencapsulation.invoke(commonCsarGenerator, "getLatestSchemaFilesFromCassandra");
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+    }
 
-	@Test
-	void testExtractVfcsArtifactsFromCsar() {
-		String key = "Artifacts/org.openecomp.resource.some/Deployment/to/resource";
-		byte[] data = "value".getBytes();
+    @Test
+    void testExtractVfcsArtifactsFromCsar() {
+        String key = "Artifacts/org.openecomp.resource.some/Deployment/to/resource";
+        byte[] data = "value".getBytes();
 
-		Map<String, byte[]> csar = new HashMap<>();
-		csar.put(key, data);
+        Map<String, byte[]> csar = new HashMap<>();
+        csar.put(key, data);
 
-		Map<String, List<ArtifactDefinition>> output = CsarUtils.extractVfcsArtifactsFromCsar(csar);
+        Map<String, List<ArtifactDefinition>> output = CsarUtils.extractVfcsArtifactsFromCsar(csar);
 
-		assertNotNull(output);
-		assertTrue(output.containsKey("org.openecomp.resource.some"));
-		assertEquals(1, output.get("org.openecomp.resource.some").size());
-	}
+        assertNotNull(output);
+        assertTrue(output.containsKey("org.openecomp.resource.some"));
+        assertEquals(1, output.get("org.openecomp.resource.some").size());
+    }
 
-	@Test
-	void testAddExtractedVfcArtifactWhenArtifactsContainsExtractedArtifactKey() {
-		ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
-				"key", new ArtifactDefinition());
-		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
-		artifacts.put("key", new ArrayList<>());
+    @Test
+    void testAddExtractedVfcArtifactWhenArtifactsContainsExtractedArtifactKey() {
+        ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
+            "key", new ArtifactDefinition());
+        Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
+        artifacts.put("key", new ArrayList<>());
 
-		Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+        Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
 
-		assertEquals(1, artifacts.get("key").size());
-	}
+        assertEquals(1, artifacts.get("key").size());
+    }
 
-	@Test
-	void testAddExtractedVfcArtifactWhenArtifactsDoesntContainsExtractedArtifactKey() {
-		ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
-				"key", new ArtifactDefinition());
-		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
-		artifacts.put("key1", new ArrayList<>());
+    @Test
+    void testAddExtractedVfcArtifactWhenArtifactsDoesntContainsExtractedArtifactKey() {
+        ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
+            "key", new ArtifactDefinition());
+        Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
+        artifacts.put("key1", new ArrayList<>());
 
-		Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
+        Deencapsulation.invoke(testSubject, "addExtractedVfcArtifact", extractedVfcArtifact, artifacts);
 
-		assertEquals(0, artifacts.get("key1").size());
-		assertEquals(1, artifacts.get("key").size());
-		assertEquals(2, artifacts.size());
-	}
+        assertEquals(0, artifacts.get("key1").size());
+        assertEquals(1, artifacts.get("key").size());
+        assertEquals(2, artifacts.size());
+    }
 
-	@Test
-	void testExtractVfcArtifact() {
-		String path = "path/to/informational/artificat";
-		Map<String, byte[]> map = new HashMap<>();
-		map.put(path, "value".getBytes());
-		Entry<String, byte[]> entry = map.entrySet().iterator().next();
+    @Test
+    void testExtractVfcArtifact() {
+        String path = "path/to/informational/artificat";
+        Map<String, byte[]> map = new HashMap<>();
+        map.put(path, "value".getBytes());
+        Entry<String, byte[]> entry = map.entrySet().iterator().next();
 
-		Optional<ImmutablePair<String, ArtifactDefinition>> output =
-			Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
+        Optional<ImmutablePair<String, ArtifactDefinition>> output =
+            Deencapsulation.invoke(testSubject, "extractVfcArtifact", entry, new HashMap<>());
 
-		if(output.isPresent()) {
-			assertEquals("to", output.get().left);
-		} else {
-			fail("`output` is empty!");
-		}
-	}
+        if (output.isPresent()) {
+            assertEquals("to", output.get().left);
+        } else {
+            fail("`output` is empty!");
+        }
+    }
 
-	@Test
-	void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
-		Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", Map.class);
+    @Test
+    void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
+        Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", Map.class);
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-		assertFalse(output.right().value());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+        assertFalse(output.right().value());
+    }
 
-	@Test
-	void testDetectArtifactGroupTypeWWhenCollectedWarningMessagesContainesKey() {
-		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
+    @Test
+    void testDetectArtifactGroupTypeWWhenCollectedWarningMessagesContainesKey() {
+        Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
 
-		collectedWarningMessages.put("Warning - unrecognized artifact group type {} was received.", new HashSet<>());
-		Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", collectedWarningMessages);
+        collectedWarningMessages.put("Warning - unrecognized artifact group type {} was received.", new HashSet<>());
+        Either<ArtifactGroupTypeEnum, Boolean> output =
+            Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", collectedWarningMessages);
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-		assertFalse(output.right().value());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+        assertFalse(output.right().value());
+    }
 
-	@Test
-	void testValidateNonMetaArtifactWithExceptionCaught() {
-		CsarUtils.validateNonMetaArtifact("", new byte[0], new HashMap<>());
-	}
+    @Test
+    void testValidateNonMetaArtifactWithExceptionCaught() {
+        CsarUtils.validateNonMetaArtifact("", new byte[0], new HashMap<>());
+    }
 
-	@Test
-	void testCollectComponentCsarDefinitionWhenComponentIsServiceAndGetToscaElementIsLeft() {
-		Component component = new Service();
-		component.setUniqueId("uniqueId");
-		List<ComponentInstance> resourceInstances = new ArrayList<>();
-		ComponentInstance instance = new ComponentInstance();
-		instance.setComponentUid("resourceUid");
-		instance.setOriginType(OriginTypeEnum.SERVICE);
-		resourceInstances.add(instance);
-		component.setComponentInstances(resourceInstances);
+    @Test
+    void testCollectComponentCsarDefinitionWhenComponentIsServiceAndGetToscaElementIsLeft() {
+        Component component = new Service();
+        component.setUniqueId("uniqueId");
+        List<ComponentInstance> resourceInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setComponentUid("resourceUid");
+        instance.setOriginType(OriginTypeEnum.SERVICE);
+        resourceInstances.add(instance);
+        component.setComponentInstances(resourceInstances);
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
 
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
-				Either.right(StorageOperationStatus.BAD_REQUEST));
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
+            Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+    }
 
-	@Test
-	void testCollectComponentTypeArtifactsWhenFetchedComponentHasComponentInstances() {
-		Component component = new Service();
-		Component fetchedComponent = new Resource();
-		component.setUniqueId("uniqueId");
-		List<ComponentInstance> resourceInstances = new ArrayList<>();
-		ComponentInstance instance = new ComponentInstance();
-		instance.setComponentUid("resourceUid");
-		instance.setOriginType(OriginTypeEnum.SERVICE);
-		resourceInstances.add(instance);
-		component.setComponentInstances(resourceInstances);
-		fetchedComponent.setComponentInstances(resourceInstances);
+    @Test
+    void testCollectComponentTypeArtifactsWhenFetchedComponentHasComponentInstances() {
+        Component component = new Service();
+        Component fetchedComponent = new Resource();
+        component.setUniqueId("uniqueId");
+        List<ComponentInstance> resourceInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setComponentUid("resourceUid");
+        instance.setOriginType(OriginTypeEnum.SERVICE);
+        resourceInstances.add(instance);
+        component.setComponentInstances(resourceInstances);
+        fetchedComponent.setComponentInstances(resourceInstances);
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("YANG");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("YANG");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
 
-		fetchedComponent.setToscaArtifacts(toscaArtifacts);
-		fetchedComponent.setDeploymentArtifacts(toscaArtifacts);
-		fetchedComponent.setArtifacts(toscaArtifacts);
+        fetchedComponent.setToscaArtifacts(toscaArtifacts);
+        fetchedComponent.setDeploymentArtifacts(toscaArtifacts);
+        fetchedComponent.setArtifacts(toscaArtifacts);
 
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
-				Either.left(fetchedComponent), Either.right(StorageOperationStatus.BAD_REQUEST));
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
+            Either.left(fetchedComponent), Either.right(StorageOperationStatus.BAD_REQUEST));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
 
-		assertNotNull(output);
-		assertTrue(output.isRight());
-	}
+        assertNotNull(output);
+        assertTrue(output.isRight());
+    }
 
-	@Test
-	void testCollectComponentTypeArtifactsWhenFetchedComponentDontHaveComponentInstances() {
-		Component component = new Service();
-		Component fetchedComponent = new Resource();
-		component.setUniqueId("uniqueId");
-		List<ComponentInstance> resourceInstances = new ArrayList<>();
-		ComponentInstance instance = new ComponentInstance();
-		instance.setComponentUid("resourceUid");
-		instance.setOriginType(OriginTypeEnum.SERVICE);
+    @Test
+    void testCollectComponentTypeArtifactsWhenFetchedComponentDontHaveComponentInstances() {
+        Component component = new Service();
+        Component fetchedComponent = new Resource();
+        component.setUniqueId("uniqueId");
+        List<ComponentInstance> resourceInstances = new ArrayList<>();
+        ComponentInstance instance = new ComponentInstance();
+        instance.setComponentUid("resourceUid");
+        instance.setOriginType(OriginTypeEnum.SERVICE);
 
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
-		artifact.setArtifactName("artifactName");
-		artifact.setEsId("esId");
-		artifact.setArtifactUUID("artifactUUID");
-		artifact.setArtifactType("PLAN");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifact = new ArtifactDefinition();
+        artifact.setArtifactName("artifactName");
+        artifact.setEsId("esId");
+        artifact.setArtifactUUID("artifactUUID");
+        artifact.setArtifactType("PLAN");
+        toscaArtifacts.put("assettoscatemplate", artifact);
 
-		instance.setDeploymentArtifacts(toscaArtifacts);
+        instance.setDeploymentArtifacts(toscaArtifacts);
 
-		resourceInstances.add(instance);
-		component.setComponentInstances(resourceInstances);
+        resourceInstances.add(instance);
+        component.setComponentInstances(resourceInstances);
 
-		component.setToscaArtifacts(toscaArtifacts);
-		component.setDeploymentArtifacts(toscaArtifacts);
-		component.setArtifacts(toscaArtifacts);
+        component.setToscaArtifacts(toscaArtifacts);
+        component.setDeploymentArtifacts(toscaArtifacts);
+        component.setArtifacts(toscaArtifacts);
 
-		fetchedComponent.setToscaArtifacts(toscaArtifacts);
-		fetchedComponent.setDeploymentArtifacts(toscaArtifacts);
-		fetchedComponent.setArtifacts(toscaArtifacts);
+        fetchedComponent.setToscaArtifacts(toscaArtifacts);
+        fetchedComponent.setDeploymentArtifacts(toscaArtifacts);
+        fetchedComponent.setArtifacts(toscaArtifacts);
 
-		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
-				Either.left(fetchedComponent));
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.any(String.class))).thenReturn(Either.left(component),
+            Either.left(fetchedComponent));
 
-		Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
+        Either<Object, ResponseFormat> output = Deencapsulation.invoke(testSubject, "collectComponentCsarDefinition", component);
 
-		assertNotNull(output);
-		assertTrue(output.isLeft());
-	}
+        assertNotNull(output);
+        assertTrue(output.isLeft());
+    }
 
-	@Test
-	void testValidateNonMetaArtifactHappyScenario() {
-		String artifactPath = "Artifacts/Deployment/YANG_XML/myYang.xml";
-		byte[] payloadData = "some payload data".getBytes();
-		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
-		Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
-				payloadData, collectedWarningMessages);
-		assertTrue(eitherNonMetaArtifact.isLeft());
-		assertTrue(collectedWarningMessages.isEmpty());
+    @Test
+    void testValidateNonMetaArtifactHappyScenario() {
+        String artifactPath = "Artifacts/Deployment/YANG_XML/myYang.xml";
+        byte[] payloadData = "some payload data".getBytes();
+        Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
+        Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
+            payloadData, collectedWarningMessages);
+        assertTrue(eitherNonMetaArtifact.isLeft());
+        assertTrue(collectedWarningMessages.isEmpty());
 
-		artifactPath = "Artifacts/Informational/OTHER/someArtifact.xml";
-		eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath, payloadData, collectedWarningMessages);
-		assertTrue(eitherNonMetaArtifact.isLeft());
-		assertTrue(collectedWarningMessages.isEmpty());
-	}
+        artifactPath = "Artifacts/Informational/OTHER/someArtifact.xml";
+        eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath, payloadData, collectedWarningMessages);
+        assertTrue(eitherNonMetaArtifact.isLeft());
+        assertTrue(collectedWarningMessages.isEmpty());
+    }
 
-	@Test
-	void testValidateNonMetaArtifactScenarioWithWarnnings() {
-		String artifactPath = "Artifacts/Deployment/Buga/myYang.xml";
-		byte[] payloadData = "some payload data".getBytes();
-		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
-		Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
-				payloadData, collectedWarningMessages);
-		assertTrue(eitherNonMetaArtifact.isLeft());
+    @Test
+    void testValidateNonMetaArtifactScenarioWithWarnnings() {
+        String artifactPath = "Artifacts/Deployment/Buga/myYang.xml";
+        byte[] payloadData = "some payload data".getBytes();
+        Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
+        Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
+            payloadData, collectedWarningMessages);
+        assertTrue(eitherNonMetaArtifact.isLeft());
 
-		artifactPath = "Artifacts/Informational/Buga2/someArtifact.xml";
-		eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath, payloadData, collectedWarningMessages);
-		assertTrue(eitherNonMetaArtifact.isLeft());
+        artifactPath = "Artifacts/Informational/Buga2/someArtifact.xml";
+        eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath, payloadData, collectedWarningMessages);
+        assertTrue(eitherNonMetaArtifact.isLeft());
 
-		assertEquals(1, collectedWarningMessages.size());
-		assertEquals(2, collectedWarningMessages.values().iterator().next().size());
-	}
+        assertEquals(1, collectedWarningMessages.size());
+        assertEquals(2, collectedWarningMessages.values().iterator().next().size());
+    }
 
-	@Test
-	void testValidateNonMetaArtifactUnhappyScenario() {
-		String artifactPath = "Artifacts/Buga/YANG_XML/myYang.xml";
-		byte[] payloadData = "some payload data".getBytes();
-		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
-		Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
-				payloadData, collectedWarningMessages);
-		assertTrue(eitherNonMetaArtifact.isRight());
-		assertFalse(collectedWarningMessages.isEmpty());
-	}
+    @Test
+    void testValidateNonMetaArtifactUnhappyScenario() {
+        String artifactPath = "Artifacts/Buga/YANG_XML/myYang.xml";
+        byte[] payloadData = "some payload data".getBytes();
+        Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
+        Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
+            payloadData, collectedWarningMessages);
+        assertTrue(eitherNonMetaArtifact.isRight());
+        assertFalse(collectedWarningMessages.isEmpty());
+    }
 
-	@Test
-	void testAddSchemaFilesFromCassandraAddingDuplicatedEntry() throws IOException {
-		final String rootPath = System.getProperty("user.dir");
-		final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
-		final byte[] data = Files.readAllBytes(path);
-		try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zip = new ZipOutputStream(out)) {
-			Deencapsulation.invoke(commonCsarGenerator, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage, "Definitions/");
-			final IOException actualException = assertThrows(IOException.class, () -> zip.putNextEntry(new ZipEntry("Definitions/nodes.yml")));
-			assertEquals("duplicate entry: Definitions/nodes.yml", actualException.getMessage());
-		}
-	}
+    @Test
+    void testAddSchemaFilesFromCassandraAddingDuplicatedEntry() throws IOException {
+        final String rootPath = System.getProperty("user.dir");
+        final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
+        final byte[] data = Files.readAllBytes(path);
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zip = new ZipOutputStream(out)) {
+            Deencapsulation.invoke(commonCsarGenerator, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage, "Definitions/");
+            final IOException actualException = assertThrows(IOException.class, () -> zip.putNextEntry(new ZipEntry("Definitions/nodes.yml")));
+            assertEquals("duplicate entry: Definitions/nodes.yml", actualException.getMessage());
+        }
+    }
 
-	@Test
-	void testFindNonRootNodesFromPackage() {
-		final Resource resource = new Resource();
-		resource.setDerivedList(nodesFromPackage);
-		final Component component = resource;
-		final List<Triple<String, String, Component>> dependencies = new ArrayList<>();
-		final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
-		dependencies.add(triple);
-		final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
-		final List<String> result = Deencapsulation.invoke(commonCsarGenerator,
-			"findNonRootNodesFromPackage", dependencies);
-		assertTrue(CollectionUtils.isNotEmpty(result));
-		assertEquals(expectedResult, result);
-	}
+    @Test
+    void testFindNonRootNodesFromPackage() {
+        final Resource resource = new Resource();
+        resource.setDerivedList(nodesFromPackage);
+        final Component component = resource;
+        final List<Triple<String, String, Component>> dependencies = new ArrayList<>();
+        final Triple<String, String, Component> triple = Triple.of("fileName", "cassandraId", component);
+        dependencies.add(triple);
+        final List<String> expectedResult = Arrays.asList("tosca.nodes.Container.Application");
+        final List<String> result = Deencapsulation.invoke(commonCsarGenerator,
+            "findNonRootNodesFromPackage", dependencies);
+        assertTrue(CollectionUtils.isNotEmpty(result));
+        assertEquals(expectedResult, result);
+    }
 
     private byte[] getFileResource(final String filePath) throws IOException {
         try (final InputStream inputStream = getFileResourceAsInputStream(filePath)) {

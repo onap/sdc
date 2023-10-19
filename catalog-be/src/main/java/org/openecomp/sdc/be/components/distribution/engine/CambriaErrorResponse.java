@@ -25,7 +25,6 @@ import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
 
 public class CambriaErrorResponse {
 
-    public static final int HTTP_OK = 200;
     public static final int HTTP_INTERNAL_SERVER_ERROR = 500;
     CambriaOperationStatus operationStatus;
     Integer httpCode;

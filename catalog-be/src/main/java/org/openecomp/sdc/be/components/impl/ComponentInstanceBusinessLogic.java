@@ -1888,43 +1888,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
      * @param userId
      * @return
      */
-    public Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValue(ComponentTypeEnum componentTypeEnum, String componentId,
-                                                                                          String resourceInstanceId,
-                                                                                          ComponentInstanceProperty attribute, String userId) {
-        Either<ComponentInstanceProperty, ResponseFormat> result = null;
-        Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-        validateUserExists(userId);
-        if (errorWrapper.isEmpty()) {
-            validateComponentTypeEnum(componentTypeEnum, "CreateOrUpdateAttributeValue", errorWrapper);
-        }
-        if (errorWrapper.isEmpty()) {
-            validateCanWorkOnComponent(componentId, componentTypeEnum, userId, errorWrapper);
-        }
-        if (errorWrapper.isEmpty()) {
-            validateComponentLock(componentId, componentTypeEnum, errorWrapper);
-        }
-        try {
-            if (errorWrapper.isEmpty()) {
-                final boolean isCreate = Objects.isNull(attribute.getValueUniqueUid());
-                if (isCreate) {
-                    result = createAttributeValue(attribute, resourceInstanceId);
-                } else {
-                    result = updateAttributeValue(attribute, resourceInstanceId);
-                }
-            } else {
-                result = Either.right(errorWrapper.getInnerElement());
-            }
-            return result;
-        } finally {
-            if (result == null || result.isRight()) {
-                janusGraphDao.rollback();
-            } else {
-                janusGraphDao.commit();
-            }
-            // unlock resource
-            graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
-        }
-    }
 
     public Either<List<ComponentInstanceProperty>, ResponseFormat> createOrUpdatePropertiesValues(ComponentTypeEnum componentTypeEnum,
                                                                                                   String componentId, String resourceInstanceId,
@@ -2107,19 +2070,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             } else {
                 addE((JSONArray) objectForPath, path.subList(1, path.size()), value);
             }
-        }
-    }
-
-    private void setJsonObjectForSubProperty(final JSONObject jObject, final List<String> path, String value) {
-        if (path.size() == 1) {
-            Object valueAsObject = new Yaml().loadAs(value, Object.class);
-            jObject.put(path.get(0), valueAsObject);
-        } else {
-            if (!jObject.has(path.get(0))) {
-                jObject.put(path.get(0), new JSONObject());
-            }
-            final JSONObject jsonObject = jObject.getJSONObject(path.get(0));
-            setJsonObjectForSubProperty(jsonObject, path.subList(1, path.size()), value);
         }
     }
 
@@ -2517,42 +2467,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
         }
         return Either.left(newValue);
-    }
-
-    private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
-        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
-        validateGetToscaFunctionAttributes(toscaGetFunction);
-        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
-            validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
-            return;
-        }
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
-            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
-                validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
-            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
-                final ComponentInstance componentInstance =
-                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
-                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
-                validateGetFunction(property, componentInstance.getProperties(), parentComponent.getModel());
-            }
-
-            return;
-        }
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_ATTRIBUTE) {
-            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
-                validateGetFunction(property, parentComponent.getAttributes(), parentComponent.getModel());
-            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
-                final ComponentInstance componentInstance =
-                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
-                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
-                validateGetFunction(property, componentInstance.getAttributes(), parentComponent.getModel());
-            }
-
-            return;
-        }
-
-        throw ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get();
     }
 
     private <T extends PropertyDefinition> void validateGetFunction(final T property,

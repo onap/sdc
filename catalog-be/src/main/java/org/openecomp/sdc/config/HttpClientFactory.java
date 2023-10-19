@@ -45,7 +45,6 @@ public class HttpClientFactory {
     private static final int DEFAULT_MAX_CONNECTION_PER_ROUTE = 5;
     private static final int VALIDATE_CONNECTION_AFTER_INACTIVITY_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
-    private static final Logger log = Logger.getLogger(HttpClientFactory.class);
     private static final UserTokenHandler userTokenHandler = context -> null;
 
     private HttpClientConnectionManager createConnectionManager() {
