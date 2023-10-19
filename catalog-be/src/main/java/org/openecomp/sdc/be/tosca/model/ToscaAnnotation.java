@@ -21,41 +21,15 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ToscaAnnotation {
 
     private String type;
     private Map<String, Object> properties;
     private String description;
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void addProperty(String name, Object property) {
-        if (properties == null) {
-            properties = new HashMap<>();
-        }
-        properties.put(name, property);
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
 }

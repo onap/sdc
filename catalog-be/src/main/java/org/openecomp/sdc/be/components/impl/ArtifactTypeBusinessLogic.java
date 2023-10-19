@@ -39,8 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component("artifactTypeBusinessLogic")
 public class ArtifactTypeBusinessLogic extends BaseBusinessLogic {
 
-    private static final Logger log = Logger.getLogger(ArtifactTypeBusinessLogic.class.getName());
-
     private final ArtifactTypeOperation artifactTypeOperation;
 
     @Autowired

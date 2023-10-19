@@ -331,10 +331,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         return servletUtils;
     }
 
-    public Gson getGson() {
-        return getServletUtils().getGson();
-    }
-
     @Override
     public ComponentsUtils getComponentsUtils() {
         return getServletUtils().getComponentsUtils();
@@ -837,30 +833,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    void validateComponentInstanceBusinessLogic(HttpServletRequest request, String containerComponentType,
-                                                Wrapper<ComponentInstanceBusinessLogic> blWrapper, Wrapper<ResponseFormat> errorWrapper) {
-        ServletContext context = request.getSession().getServletContext();
-        ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context);
-        if (componentInstanceLogic == null) {
-            log.debug("Unsupported component type {}", containerComponentType);
-            errorWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
-        } else {
-            blWrapper.setInnerElement(componentInstanceLogic);
-        }
-    }
-
-    <T> Response buildResponseFromElement(Wrapper<ResponseFormat> errorWrapper, Wrapper<T> attributeWrapper) throws IOException {
-        Response response;
-        if (errorWrapper.isEmpty()) {
-            ObjectMapper mapper = new ObjectMapper();
-            String result = mapper.writeValueAsString(attributeWrapper.getInnerElement());
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
-        } else {
-            response = buildErrorResponse(errorWrapper.getInnerElement());
-        }
-        return response;
-    }
-
     protected void validateXECOMPInstanceIDHeader(String instanceIdHeader, Wrapper<ResponseFormat> responseWrapper) {
         ResponseFormat responseFormat;
         if (StringUtils.isEmpty(instanceIdHeader)) {
@@ -886,17 +858,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         } catch (Exception e) {
             log.debug("Failed to parse json to {} object", classSupplier.get().getName(), e);
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-            return Either.right(responseFormat);
-        }
-    }
-
-    public <T> Either<List<T>, ResponseFormat> parseListOfObjects(String json, Type type) {
-        try {
-            List<T> listOfObjects = gson.fromJson(json, type);
-            return Either.left(listOfObjects);
-        } catch (Exception e) {
-            log.debug("Failed to parse json to {} object", type.getClass().getName(), e);
-            ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
             return Either.right(responseFormat);
         }
     }

@@ -36,11 +36,6 @@ public class AuditDistributionDownloadEventFactory extends AuditBaseEventFactory
         this.event = new DistributionDownloadEvent(getAction().getName(), commonFields, distributionData);
     }
 
-    public AuditDistributionDownloadEventFactory(CommonAuditData commonFields, DistributionData distributionData, String timestamp) {
-        this(commonFields, distributionData);
-        this.event.setTimestamp1(timestamp);
-    }
-
     @Override
     public String getLogPattern() {
         return LOG_STR;

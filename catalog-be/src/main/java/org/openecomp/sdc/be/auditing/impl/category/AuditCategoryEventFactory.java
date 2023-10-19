@@ -43,12 +43,6 @@ public class AuditCategoryEventFactory extends AuditBaseEventFactory {
         this(action, commonFields, buildUserName(modifier), categoryName, subCategoryName, groupingName, resourceType);
     }
 
-    public AuditCategoryEventFactory(AuditingActionEnum action, CommonAuditData commonFields, String modifier, String categoryName,
-                                     String subCategoryName, String groupingName, String resourceType, String timestamp) {
-        this(action, commonFields, modifier, categoryName, subCategoryName, groupingName, resourceType);
-        event.setTimestamp1(timestamp);
-    }
-
     @Override
     public String getLogPattern() {
         return LOG_STR;
