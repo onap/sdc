@@ -1547,6 +1547,37 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     }
 
     @Test
+    void testProcessComponentInstanceInterfaces() {
+        Service service = createServiceObject(true);
+        service.setModel("testModel");
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces = new HashMap<>();
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        uploadComponentInstanceInfo.setInterfaces(getInterfaces());
+        ComponentInstance currentCompInstance = new ComponentInstance();
+        Resource originResource = createParseResourceObject(false);
+        Assertions.assertNotNull(originResource);
+
+        InterfaceDefinition interfaceDef = new InterfaceDefinition();
+        interfaceDef.setUniqueId("tosca.interfaces.lifecycle.TestInterface");
+        Map<String, InterfaceDefinition> interfaceLifecycleTypes = new HashMap<>();
+        interfaceLifecycleTypes.put("tosca.interfaces.lifecycle.TestInterface", interfaceDef);
+        when(interfaceLifecycleTypeOperation.getAllInterfaceLifecycleTypes("testModel")).thenReturn(Either.left(interfaceLifecycleTypes));
+
+        sIBL.addInterfaceValuesToRi(uploadComponentInstanceInfo, service, originResource, currentCompInstance, instInterfaces);
+    }
+
+    @Test
+    void testProcessComponentInstanceInterfaces_null() {
+        Service service = createServiceObject(true);
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces = new HashMap<>();
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        ComponentInstance currentCompInstance = new ComponentInstance();
+        Resource originResource = createParseResourceObject(false);
+        Assertions.assertNotNull(originResource);
+        sIBL.addInterfaceValuesToRi(uploadComponentInstanceInfo, service, originResource, currentCompInstance, instInterfaces);
+    }
+
+    @Test
     void testUpdateCapabilityPropertiesValues() {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = null;
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
@@ -2506,7 +2537,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
 
-            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false, mock(ModelOperation.class));
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, null, mainTemplateName, mainTemplateContent, false,
+                mock(ModelOperation.class));
         } catch (URISyntaxException | ZipException e) {
             fail(e);
         }
@@ -2516,7 +2548,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private ImmutablePair<String, byte[]> getNodeType() {
         try {
             File resource = new File(
-                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("node-types/resource-Extcp-template.yml").toURI());
+                ServiceImportBusinessLogicTest.class.getClassLoader().getResource("node-types/resource-Extcp-template.yml").toURI());
             byte[] extcpResource = Files.readAllBytes(resource.toPath());
 
             return new ImmutablePair<>("org.openecomp.resource.cp.extCP", extcpResource);
