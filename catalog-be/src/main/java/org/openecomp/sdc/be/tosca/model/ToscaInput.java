@@ -17,32 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ToscaInput extends ToscaProperty {
 
     private Map<String, ToscaAnnotation> annotations;
 
-    //copy constructor
     public ToscaInput(ToscaProperty toscaProperty) {
         super(toscaProperty);
     }
 
-    public Map<String, ToscaAnnotation> getAnnotations() {
-        return annotations;
-    }
-
-    public void setAnnotations(Map<String, ToscaAnnotation> annotations) {
-        this.annotations = annotations;
-    }
-
-    public void addAnnotation(String name, ToscaAnnotation annotaion) {
+    public void addAnnotation(String name, ToscaAnnotation annotation) {
         if (annotations == null) {
             annotations = new HashMap<>();
         }
-        annotations.put(name, annotaion);
+        annotations.put(name, annotation);
     }
 }

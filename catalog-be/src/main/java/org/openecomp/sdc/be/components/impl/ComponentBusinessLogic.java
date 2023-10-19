@@ -634,20 +634,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         return Either.left(deleteMarkedElements.left().value());
     }
 
-    public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType) {
-        List<ArtifactDefinition> artifacts = new ArrayList<>();
-        Either<Map<String, ArtifactDefinition>, StorageOperationStatus> artifactsResponse = artifactToscaOperation.getArtifacts(parentId);
-        if (artifactsResponse.isRight()) {
-            if (artifactsResponse.right().value() != StorageOperationStatus.NOT_FOUND) {
-                log.debug("failed to retrieve artifacts for {} {}", parentType, parentId);
-                return Either.right(artifactsResponse.right().value());
-            }
-        } else {
-            artifacts.addAll(artifactsResponse.left().value().values());
-        }
-        return Either.left(artifacts);
-    }
-
     /**
      * @param componentId
      * @param user
@@ -1017,10 +1003,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(status));
         }
         return Either.left(component);
-    }
-
-    public CatalogOperation getCatalogOperations() {
-        return catalogOperations;
     }
 
     @Autowired

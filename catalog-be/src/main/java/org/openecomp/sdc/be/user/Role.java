@@ -26,12 +26,4 @@ package org.openecomp.sdc.be.user;
 public enum Role {
     ADMIN, TESTER, DESIGNER, PRODUCT_MANAGER, PRODUCT_STRATEGIST;
 
-    public static Role getByNameIgnoreCase(String name) {
-        for (Role inst : Role.values()) {
-            if (inst.name().equalsIgnoreCase(name)) {
-                return inst;
-            }
-        }
-        return null;
-    }
 }

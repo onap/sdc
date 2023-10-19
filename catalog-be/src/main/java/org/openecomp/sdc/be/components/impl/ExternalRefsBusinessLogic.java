@@ -42,7 +42,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 @org.springframework.stereotype.Component
 public class ExternalRefsBusinessLogic {
 
-    private static final Logger log = Logger.getLogger(ExternalRefsBusinessLogic.class);
     private final ExternalReferencesOperation externalReferencesOperation;
     private final ToscaOperationFacade toscaOperationFacade;
     private final AccessValidations accessValidations;

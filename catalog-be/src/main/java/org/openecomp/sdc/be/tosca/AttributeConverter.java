@@ -97,16 +97,6 @@ public class AttributeConverter {
         return toscaAttribute;
     }
 
-    private ToscaSchemaDefinition convert(final EntrySchema entrySchema) {
-        if (entrySchema == null) {
-            return null;
-        }
-        final ToscaSchemaDefinition toscaSchemaDefinition = new ToscaSchemaDefinition();
-        toscaSchemaDefinition.setType(entrySchema.getType());
-        toscaSchemaDefinition.setDescription(entrySchema.getDescription());
-        return toscaSchemaDefinition;
-    }
-
     private Object convertToToscaObject(final AttributeDefinition attributeDefinition,
                                         String value,
                                         final boolean preserveEmptyValue) {

@@ -42,13 +42,6 @@ public class AuditDistributionNotificationEventFactory extends AuditBaseEventFac
         this(commonAuditData, resourceCommonInfo, resourceVersionInfo, did, AuditBaseEventFactory.buildUserName(modifier), topicName, opEnvFields);
     }
 
-    public AuditDistributionNotificationEventFactory(CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
-                                                     ResourceVersionInfo resourceVersionInfo, String did, String modifier, String topicName,
-                                                     OperationalEnvAuditData opEnvFields, String timestamp) {
-        this(commonAuditData, resourceCommonInfo, resourceVersionInfo, did, modifier, topicName, opEnvFields);
-        this.event.setTimestamp1(timestamp);
-    }
-
     private AuditDistributionNotificationEventFactory(CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
                                                       ResourceVersionInfo resourceVersionInfo, String did, String modifier, String topicName,
                                                       OperationalEnvAuditData opEnvFields) {

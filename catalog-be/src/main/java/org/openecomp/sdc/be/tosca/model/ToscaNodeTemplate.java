@@ -51,10 +51,4 @@ public class ToscaNodeTemplate {
         this.directives = CollectionUtils.isEmpty(directives) ? null : directives;
     }
 
-    public void addInterface(String interfaceName, Object interfaceDataDefinition) {
-        if (MapUtils.isEmpty(this.interfaces)) {
-            this.interfaces = new HashMap<>();
-        }
-        this.interfaces.put(interfaceName, interfaceDataDefinition);
-    }
 }

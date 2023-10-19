@@ -195,10 +195,6 @@ public class RepresentationUtils {
             .writeValueAsString(elementToRepresent);
     }
 
-    public static class ResourceRep {
-
-    }
-
     @JsonFilter(REMOVE_IS_EMPTY_FROM_COLLECTIONS_FILTER)
     private static class IsEmptyFilterMixIn {
 

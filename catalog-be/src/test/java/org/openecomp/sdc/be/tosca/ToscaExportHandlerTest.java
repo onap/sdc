@@ -69,6 +69,9 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
@@ -104,6 +107,7 @@ import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
@@ -162,6 +166,9 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
     @Mock
     private InterfacesOperationsConverter interfacesOperationsConverter;
+
+    @Mock
+    ModelOperation modelOperation;
 
     @Mock
     private PolicyExportParser policyExportParser;
@@ -303,8 +310,15 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     void testExportDataType() {
         DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
         dataTypeDefinition.setUniqueId("uniqueId");
+        PropertyDefinition propData = new PropertyDataDefinitionBuilder()
+            .setName("property")
+            .setType("type")
+            .build();
+        List<PropertyDefinition> propDataList = Arrays.asList(propData);
+        dataTypeDefinition.setProperties(propDataList);
         Either<ToscaRepresentation, ToscaError> result;
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
+        when(propertyConvertor.convertProperty(any(), any(), any() )).thenReturn(new ToscaProperty());
         result = testSubject.exportDataType(dataTypeDefinition);
         assertNotNull(result);
     }
@@ -459,6 +473,44 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
         when(capabilityRequirementConverter.convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
                 .thenReturn(Either.left(Collections.emptyMap()));
+
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
+
+        when(inputConverter.convertInputs(anyList(), anyMap())).thenReturn(new HashMap<>());
+
+        when(groupExportParser.getGroups(component)).thenReturn(null);
+
+        final Map<String, ToscaProperty> map = new HashMap<>();
+        map.put("mock", new ToscaProperty());
+        doReturn(map).when(outputConverter).convert(any(), any());
+
+        // test component contains group
+        final var result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode, false);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testConvertToscaTemplateWithSubstitutionFilter() throws ToscaConversionException {
+        Component component = getNewResource();
+        ToscaTemplate toscaNode = new ToscaTemplate("");
+        component.setComponentInstances(new ArrayList<>());
+
+        SubstitutionFilterPropertyDataDefinition filterProp = new SubstitutionFilterPropertyDataDefinition();
+        ListDataDefinition<SubstitutionFilterPropertyDataDefinition> filterProperties = new ListDataDefinition<>();
+        filterProperties.add(filterProp);
+        SubstitutionFilterDataDefinition subFilter = new SubstitutionFilterDataDefinition();
+        subFilter.setProperties(filterProperties);
+        component.setSubstitutionFilter(subFilter);
+
+        Map<String, String[]> substitutionMappingMap = new HashMap<>();
+        String[] array = {"value1", "value2"};
+        substitutionMappingMap.put("key", array);
+
+        when(capabilityRequirementConverter.convertSubstitutionMappingCapabilities(anyMap(),
+            any(Component.class))).thenReturn(Either.left(substitutionMappingMap));
+
+        when(capabilityRequirementConverter.convertSubstitutionMappingRequirements(any(Component.class), anyMap()))
+            .thenReturn(Either.left(Collections.emptyMap()));
 
         when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
@@ -717,6 +769,16 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         instance.setUniqueId("uuid");
         instance.setDescription("desc");
         instance.setSourceModelUid("sourceModelUid");
+        instance.setMinOccurrences("0");
+        instance.setMaxOccurrences("10");
+        instance.setInstanceCount("{get_input:int}");
+
+        RequirementNodeFilterCapabilityDataDefinition filterCap = new RequirementNodeFilterCapabilityDataDefinition();
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> instanceFilterCapabilities = new ListDataDefinition<>();
+        instanceFilterCapabilities.add(filterCap);
+        CINodeFilterDataDefinition nodeFilter = new CINodeFilterDataDefinition();
+        nodeFilter.setCapabilities(instanceFilterCapabilities);
+        instance.setNodeFilter(nodeFilter);
 
         componentInstances.add(instance);
 
@@ -781,6 +843,18 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
         assertNotNull(toscaRepresentationToscaErrorEither);
 
+    }
+
+    @Test
+    void test () {
+        Component component = getNewService();
+        component.setModel("test");
+
+        when(modelOperation.findAllModelImports("test", true)).thenReturn(new ArrayList<>());
+
+        final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component, false);
+        assertNotNull(toscaRepresentationToscaErrorEither);
+        assertTrue(toscaRepresentationToscaErrorEither.isRight());
     }
 
     @Test

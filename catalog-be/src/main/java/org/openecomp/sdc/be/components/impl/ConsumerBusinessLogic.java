@@ -248,10 +248,6 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
         return Either.left(consumer);
     }
 
-    public Either<ConsumerDefinition, ResponseFormat> getConsumer(String consumerId) {
-        return getConsumer(consumerId, null);
-    }
-
     public Either<ConsumerDefinition, ResponseFormat> deleteConsumer(String consumerId, User user) {
         ConsumerDefinition tmpConsumer = new ConsumerDefinition();
         tmpConsumer.setConsumerName(consumerId);
