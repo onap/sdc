@@ -130,8 +130,6 @@ public class CommonCsarGenerator {
     private static final String TOSCA_META_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta";
     private static final String TOSCA_META_VERSION = "1.0";
     private static final String CSAR_VERSION = "1.1";
-    private static final String BLOCK_0_TEMPLATE = "SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
-    private static final String CSAR_META_PATH_FILE_NAME = "csar.meta";
     private static final String SDC_VERSION = ExternalConfiguration.getAppVersion();
     public static final String NODES_YML = "nodes.yml";
     private static final String CONFORMANCE_LEVEL = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
@@ -201,16 +199,9 @@ public class CommonCsarGenerator {
         } else {
             return Either.right(toscaRepresentation.right().value());
         }
-
-        if (!isSkipImports) {
-            final String toscaConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
-            zip.putNextEntry(new ZipEntry(CSAR_META_PATH_FILE_NAME));
-            zip.write(createCsarBlock0(TOSCA_META_VERSION, toscaConformanceLevel).getBytes());
-        }
-
         final String fileName = artifactDef.getArtifactName();
-        final byte[] toscaBlock0Byte = createToscaBlock0(
-            TOSCA_META_VERSION, CSAR_VERSION, component.getCreatorFullName(), fileName, isAsdPackage, definitionsPath, isSkipImports).getBytes();
+        final byte[] toscaBlock0Byte =
+            createToscaBlock0(TOSCA_META_VERSION, CSAR_VERSION, component.getCreatorFullName(), fileName, isAsdPackage, definitionsPath).getBytes();
         zip.putNextEntry(new ZipEntry(TOSCA_META_PATH_FILE_NAME));
         zip.write(toscaBlock0Byte);
         zip.putNextEntry(new ZipEntry(definitionsPath + fileName));
@@ -260,10 +251,6 @@ public class CommonCsarGenerator {
             }
         }
         return writeAllFilesToCsar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
-    }
-
-    private String createCsarBlock0(String metaFileVersion, String toscaConformanceLevel) {
-        return String.format(BLOCK_0_TEMPLATE, metaFileVersion, toscaConformanceLevel);
     }
 
     private Either<ToscaRepresentation, ResponseFormat> fetchToscaRepresentation(Component component, boolean getFromCS,
@@ -1234,9 +1221,9 @@ public class CommonCsarGenerator {
     }
 
     private String createToscaBlock0(String metaFileVersion, String csarVersion, String createdBy, String entryDef, boolean isAsdPackage,
-                                     String definitionsPath, boolean isSkipImports) {
+                                     String definitionsPath) {
         final String block0template = "TOSCA-Meta-File-Version: %s\nCSAR-Version: %s\nCreated-By: %s\nEntry-Definitions: "
-            + definitionsPath + "%s\n%s\n" + (!isSkipImports ? "Name: csar.meta\nContent-Type: text/plain\n" : "");
+            + definitionsPath + "%s\n%s\nName: csar.meta\nContent-Type: text/plain\n";
         return String.format(block0template, metaFileVersion, csarVersion, createdBy, entryDef, isAsdPackage ? "entry_definition_type: asd" : "");
     }
 
