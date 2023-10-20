@@ -215,8 +215,8 @@ public class CommonCsarGenerator {
         zip.putNextEntry(new ZipEntry(definitionsPath + fileName));
         zip.write(mainYaml);
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
-        addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml, definitionsPath);
         if (addDependencies) {
+            addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml, definitionsPath);
             //US798487 - Abstraction of complex types
             if (hasToWriteComponentSubstitutionType(component)) {
                 LOGGER.debug("Component {} is complex - generating abstract type for it..", component.getName());
@@ -271,13 +271,13 @@ public class CommonCsarGenerator {
         boolean shouldBeFetchedFromCassandra =
             getFromCS || !(lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKIN || lifecycleState == LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         Either<ToscaRepresentation, ResponseFormat> toscaRepresentation =
-            shouldBeFetchedFromCassandra ? fetchToscaRepresentation(artifactDef) : generateToscaRepresentation(component, isSkipImports);
+            shouldBeFetchedFromCassandra && !isSkipImports ? fetchToscaRepresentation(artifactDef) : generateToscaRepresentation(component, isSkipImports);
         return toscaRepresentation.left()
-            .bind(iff(myd -> !myd.getDependencies().isDefined(), myd -> fetchToscaTemplateDependencies(myd.getMainYaml(), component)));
+            .bind(iff(myd -> !myd.getDependencies().isDefined(), myd -> fetchToscaTemplateDependencies(myd.getMainYaml(), component, isSkipImports)));
     }
 
-    private Either<ToscaRepresentation, ResponseFormat> fetchToscaTemplateDependencies(byte[] mainYml, Component component) {
-        return toscaExportUtils.getDependencies(component).right().map(toscaError -> {
+    private Either<ToscaRepresentation, ResponseFormat> fetchToscaTemplateDependencies(byte[] mainYml, Component component, boolean isSkipImports) {
+        return toscaExportUtils.getDependencies(component, isSkipImports).right().map(toscaError -> {
             LOGGER.debug("Failed to retrieve dependencies for component {}, error {}", component.getUniqueId(), toscaError);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromToscaError(toscaError));
         }).left().map(tt -> ToscaRepresentation.make(mainYml, tt));
