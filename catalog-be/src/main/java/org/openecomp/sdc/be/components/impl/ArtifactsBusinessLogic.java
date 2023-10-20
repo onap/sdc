@@ -377,7 +377,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 return new ByResponseFormatComponentException(error);
             });
         } else {
-            return toscaExportUtils.exportComponent(parent).left().map(toscaRepresentation -> {
+            return toscaExportUtils.exportComponent(parent, checkIfSkipImports(parent.getModel())).left().map(toscaRepresentation -> {
                 log.debug("Tosca yaml exported for component {} ", parent.getUniqueId());
                 return toscaRepresentation.getMainYaml();
             }).right().map(toscaError -> {
@@ -385,6 +385,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 return new ByActionStatusComponentException(componentsUtils.convertFromToscaError(toscaError));
             });
         }
+    }
+
+    private boolean checkIfSkipImports(final String model) {
+        return null != model && !model.equalsIgnoreCase("ETSI SOL001 v2.5.1")
+            && !model.equalsIgnoreCase("AUTOMATION COMPOSITION");
     }
 
     private Either<ArtifactDefinition, Operation> doAction(String componentId, ComponentTypeEnum componentType, ArtifactOperationInfo operation,

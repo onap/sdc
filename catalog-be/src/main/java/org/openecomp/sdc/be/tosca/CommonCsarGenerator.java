@@ -215,8 +215,8 @@ public class CommonCsarGenerator {
         zip.putNextEntry(new ZipEntry(definitionsPath + fileName));
         zip.write(mainYaml);
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
-        addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml, definitionsPath);
         if (addDependencies) {
+            addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml, definitionsPath);
             //US798487 - Abstraction of complex types
             if (hasToWriteComponentSubstitutionType(component)) {
                 LOGGER.debug("Component {} is complex - generating abstract type for it..", component.getName());
