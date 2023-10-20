@@ -223,6 +223,12 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             throw context.instantiationException(List.class, "Custom GET_INPUT function must contain a GET_INPUT parameter");
         }
     }
+    
+    public static void main(String...args) {
+        final String value = "\\abc[";
+        final String result = CharMatcher.anyOf("\"\'[] ").trimFrom(value);
+        System.out.println(result);
+    }
 
     private List<ToscaFunctionParameter> getParameters(final JsonNode functionJsonNode, final DeserializationContext context) throws IOException {
         final List<ToscaFunctionParameter> functionParameterList = new ArrayList<>();
