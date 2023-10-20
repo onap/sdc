@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -745,7 +746,7 @@ public class CommonCsarGenerator {
                 final Object object = propertiesFromMergingContent.get(key);
                 if (object instanceof Map) {
                     ((Map<String, Object>) object).keySet().forEach(s ->
-                        propertiesMap.put(s, ((Map<String, Object>) value).get(s))
+                        propertiesMap.put(s, getValue(s, (Map<String, Object>) value))
                     );
                 } else {
                     propertiesMap.putAll(createProperties(value));
@@ -756,6 +757,24 @@ public class CommonCsarGenerator {
             result.put(key, propertiesMap);
         }
         return result;
+    }
+
+    private Object getValue(final String key, Map<String, Object> value) {
+        final String mappedKey = mapKey(key);
+        if (mappedKey.equals("schemaType")) {
+            return Collections.singletonMap("type", value.get(mappedKey));
+        }
+        return value.get(mappedKey);
+    }
+
+    private String mapKey(final String key) {
+        if (key.equals("entry_schema")) {
+            return "schemaType";
+        }
+        if (key.equals("default")) {
+            return "defaultValue";
+        }
+        return key;
     }
 
     private Map<String, Object> createProperties(final Object value) {
