@@ -777,11 +777,12 @@ public class CommonCsarGenerator {
         return key;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> createProperties(final Object value) {
         final Map<String, Object> propertiesMap = new HashMap<>();
         propertiesMap.put("type", ((Map<String, Object>) value).get("type"));
         propertiesMap.put("required", ((Map<String, Object>) value).get("required"));
-        final Object entrySchema = ((Map<String, Object>) value).get("entry_schema");
+        final Object entrySchema = getValue("entry_schema", (Map<String, Object>) value);
         if (entrySchema != null) {
             propertiesMap.put("entry_schema", entrySchema);
         }
