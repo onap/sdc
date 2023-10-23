@@ -46,54 +46,53 @@ start:
         service_restoration_sla: service_restoration_sla_value
         battery_backup: true
         partner_priorty_assist: false
-  milestones:
-    on_failure:
-      activities:
-        - delegate:
-            workflow: workflow1
-        - delegate:
-            workflow: workflow2
-    on_success:
-      activities:
-        - delegate:
-            workflow: workflow1
-        - delegate:
-            workflow: workflow2
-            inputs:
-              string:
-                testString
-              complex:
-                jeopardyType: test
-                name: name
-                eventType: type
-                message: message
-      filters:
-        - my_attribute:
-            equal:
-              get_attribute:
-                - SELF
-                - role
-        - my_attribute1:
-            greaterThan: my_other_value
-        - my_attribute2:
-            inRange:
-              - test1
-              - test99
-        - my_attribute3:
-            validValues:
-              - test1
-              - test2
-              - test3
-        - my_attribute4:
-            length: 12
-        - my_attribute5:
-            minLength: 4
-    on_timeout:
-      activities:
-        - delegate:
-            workflow: workflow1
-        - delegate:
-            workflow: workflow2
+  on_failure:
+    activities:
+      - delegate:
+          workflow: workflow1
+      - delegate:
+          workflow: workflow2
+  on_success:
+    activities:
+      - delegate:
+          workflow: workflow1
+      - delegate:
+          workflow: workflow2
+          inputs:
+            string:
+              testString
+            complex:
+              jeopardyType: test
+              name: name
+              eventType: type
+              message: message
+    filters:
+      - my_attribute:
+          equal:
+            get_attribute:
+              - SELF
+              - role
+      - my_attribute1:
+          greaterThan: my_other_value
+      - my_attribute2:
+          inRange:
+            - test1
+            - test99
+      - my_attribute3:
+          validValues:
+            - test1
+            - test2
+            - test3
+      - my_attribute4:
+          length: 12
+      - my_attribute5:
+          minLength: 4
+  on_timeout:
+    activities:
+      - delegate:
+          workflow: workflow1
+      - delegate:
+          workflow: workflow2
 stop:
   implementation: "camunda/executeAction"
   inputs:

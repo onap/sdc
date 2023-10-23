@@ -27,7 +27,6 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILTERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MILESTONES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NOTIFICATIONS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
@@ -47,7 +46,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -70,6 +68,7 @@ import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -192,29 +191,38 @@ public class InterfaceDefinitionHandler {
             final Map<String, Object> interfaceInputs = (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());
             operation.setInputs(handleInterfaceOperationInputs(interfaceInputs));
         }
-        if (operationDefinitionMap.containsKey(MILESTONES.getElementName())) {
-            final Map<String, Object> interfaceMilestones = (Map<String, Object>) operationDefinitionMap.get(MILESTONES.getElementName());
-            operation.setMilestones(handleInterfaceOperationMilestones(interfaceMilestones));
+        for (MilestoneTypeEnum milestone : MilestoneTypeEnum.values()) {
+            String milestoneType = milestone.getValue();
+            if (operationDefinitionMap.containsKey(milestone.getValue())) {
+                final Map<String, Object> interfaceMilestones = (Map<String, Object>) operationDefinitionMap.get(milestoneType);
+                if (operation.getMilestones() == null || operation.getMilestones().isEmpty()) {
+                    operation.setMilestones(new HashMap<>());
+                    operation.getMilestones().put(milestoneType, handleInterfaceOperationMilestones(interfaceMilestones, milestoneType));
+                    continue;
+                }
+                operation.getMilestones().put(milestoneType, handleInterfaceOperationMilestones(interfaceMilestones, milestoneType));
+            }
         }
         return operation;
     }
 
-    public Map<String, MilestoneDataDefinition> handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones) {
-        final Map<String, MilestoneDataDefinition> milestones = new HashMap<>();
-        for (final Entry<String, Object> interfaceInput : interfaceMilestones.entrySet()) {
-            final MilestoneDataDefinition operationMilestone = new MilestoneDataDefinition();
-            ListDataDefinition<ActivityDataDefinition> activities = handleMilestoneActivities(interfaceInput.getValue());
-            if (activities.isEmpty()) {
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_OPERATION_MILESTONE, interfaceInput.getKey());
-            }
-            ListDataDefinition<FilterDataDefinition> filters = handleMilestoneFilters(interfaceInput.getValue());
+    public MilestoneDataDefinition handleInterfaceOperationMilestones(final Map<String, Object> interfaceMilestones, String key) {
+        final MilestoneDataDefinition operationMilestone = new MilestoneDataDefinition();
+        if (interfaceMilestones != null && !interfaceMilestones.containsKey(ACTIVITIES.getElementName())) {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_OPERATION_MILESTONE, key);
+        }
+        ListDataDefinition<ActivityDataDefinition> activities = handleMilestoneActivities(interfaceMilestones);
+        if (activities.isEmpty()) {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_OPERATION_MILESTONE, key);
+        }
+        if (interfaceMilestones.containsKey(FILTERS.getElementName())) {
+            ListDataDefinition<FilterDataDefinition> filters = handleMilestoneFilters(interfaceMilestones);
             if (!filters.isEmpty()) {
                 operationMilestone.setFilters(filters);
             }
-            operationMilestone.setActivities(activities);
-            milestones.put(interfaceInput.getKey(), operationMilestone);
         }
-        return milestones;
+        operationMilestone.setActivities(activities);
+        return operationMilestone;
     }
 
     private ListDataDefinition<FilterDataDefinition> handleMilestoneFilters(Object milestone) {
@@ -325,7 +333,7 @@ public class InterfaceDefinitionHandler {
         }
         return inputs;
     }
-    
+
     private boolean isMilestoneJeopardyData(Object value) {
         if (value instanceof Map) {
             Set<String> allowedKeys = new HashSet<>();

@@ -26,7 +26,7 @@
         <div *ngFor="let activity of activities; let idx = index">
           <div class="side-by-side group-with-border-blue">
             <div class="form-item">
-              <label class="sdc-timeout-label">Type: </label>
+              <label class="sdc-timeout-label">Activity Type: </label>
               <div class="sdc-dropdown">
                 <select class="i-sdc-form-select"
                         data-tests-id="activity-type"
@@ -47,9 +47,9 @@
             <div class="form-item">
               <div class="side-by-side">
                 <div class="form-item-big">
-                  <label>Workflow: </label>
+                  <label>Activity Implementation: </label>
                   <input type="text"
-                     class="i-sdc-form-input"
+                     class="sdc-input"
                      [disabled]="isViewOnly"
                      (input)="onActivityValueChange($event.target.value, idx)"
                      [value]="activity.workflow"

@@ -158,7 +158,7 @@
         </div>
 
         <div class="group-with-border content-row" *ngIf="showActivities">
-            <label class="sub-operations-label"> Sub operations </label>
+            <label class="sub-operations-label"> Progress Points </label>
             <tabs tabStyle="basic-tabs" [hideIndicationOnTabChange]="true" (tabChanged)="tabChanged($event)">
                 <div *ngFor="let milestone of milestones">
                   <tab tabTitle="{{milestone}}" [active]="isActiveTab(milestone)" [highlight]="isInvalidActivity(milestone)">

@@ -45,7 +45,6 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MILESTONES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
@@ -98,13 +97,10 @@ import org.openecomp.sdc.be.components.utils.PropertiesUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
-import org.openecomp.sdc.be.datatypes.elements.ActivityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.FilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MilestoneDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -114,9 +110,9 @@ import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
-import org.openecomp.sdc.be.datatypes.enums.ActivityTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.MilestoneTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -969,7 +965,7 @@ public class YamlTemplateParsingHandler {
         if (nodeTemplateJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.INSTANCE_COUNT.getElementName())) {
             Object instanceCount = nodeTemplateJsonMap.get(TypeUtils.ToscaTagNamesEnum.INSTANCE_COUNT.getElementName());
             if (instanceCount instanceof Map) {
-                String instanceCountAsString = "{get_input:" + (String)((Map)instanceCount).get("get_input") + "}";
+                String instanceCountAsString = "{get_input:" + (String) ((Map) instanceCount).get("get_input") + "}";
                 nodeTemplateInfo.setInstanceCount(instanceCountAsString);
             } else {
                 nodeTemplateInfo.setInstanceCount(instanceCount.toString());
@@ -1303,9 +1299,19 @@ public class YamlTemplateParsingHandler {
                     final Map<String, Object> interfaceInputs = (Map<String, Object>) operationValue.get(INPUTS.getElementName());
                     operationDef.setInputs(handleInterfaceOperationInputs(interfaceInputs));
                 }
-                if (operationValue.containsKey(MILESTONES.getElementName())) {
-                    final Map<String, Object> interfaceMilestones = (Map<String, Object>) operationValue.get(MILESTONES.getElementName());
-                    operationDef.setMilestones(interfaceDefinitionHandler.handleInterfaceOperationMilestones(interfaceMilestones));
+                for (MilestoneTypeEnum milestone : MilestoneTypeEnum.values()) {
+                    String milestoneType = milestone.getValue();
+                    if (operationValue.containsKey(milestoneType)) {
+                        final Map<String, Object> interfaceMilestones = (Map<String, Object>) operationValue.get(milestoneType);
+                        if (operationDef.getMilestones() == null || operationDef.getMilestones().isEmpty()) {
+                            operationDef.setMilestones(new HashMap<>());
+                            operationDef.getMilestones().put(milestoneType,
+                                interfaceDefinitionHandler.handleInterfaceOperationMilestones(interfaceMilestones, milestoneType));
+                            continue;
+                        }
+                        operationDef.getMilestones()
+                            .put(milestoneType, interfaceDefinitionHandler.handleInterfaceOperationMilestones(interfaceMilestones, milestoneType));
+                    }
                 }
                 operations.put(operationEntry.getKey(), operationDef);
             }
@@ -1415,7 +1421,7 @@ public class YamlTemplateParsingHandler {
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
             ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("timeout")) {
             final Object timeOut = ((Map) operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("timeout");
-            artifactDataDefinition.setTimeout((Integer)timeOut);
+            artifactDataDefinition.setTimeout((Integer) timeOut);
         }
 
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {

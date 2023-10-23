@@ -129,7 +129,7 @@ class InterfaceDefinitionHandlerTest {
             assertThrows(ByActionStatusComponentException.class, () -> interfaceDefinitionHandler.create(load, StringUtils.EMPTY));
         assertEquals(ActionStatus.INVALID_OPERATION_MILESTONE, actualException.getActionStatus());
         assertEquals(1, actualException.getParams().length);
-        assertEquals("on_failure", actualException.getParams()[0]);
+        assertEquals("on_success", actualException.getParams()[0]);
     }
 
     private void assertInterfaceDefinition(final InterfaceDefinition actualInterfaceDefinition) {

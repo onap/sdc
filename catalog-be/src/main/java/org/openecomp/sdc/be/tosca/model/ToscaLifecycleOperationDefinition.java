@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.tosca.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
 import lombok.Data;
 
@@ -28,6 +31,12 @@ public class ToscaLifecycleOperationDefinition {
     private String description;
     private Object implementation;
     private Map<String, ToscaProperty> inputs;
+    @JsonIgnore
     private Map<String, ToscaMilestone> milestones;
+
+    @JsonAnyGetter
+    public Map<String, ToscaMilestone> getMilestonesMap() {
+        return milestones;
+    }
 
 }
