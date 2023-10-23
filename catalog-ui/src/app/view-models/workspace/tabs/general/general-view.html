@@ -475,7 +475,7 @@
           <div ng-if="component.isService() && !isNotApplicableMetadataKeys('Service Role')"
                class="i-sdc-form-item"
                data-ng-class="{'error': validateField(editForm.serviceRole)}">
-            <div ng-if="component.selectedCategory">
+            <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategoryService('Service Role', 'serviceRole')">
               <div ng-if="isMetadataKeyMandatory('Service Role')">
                 <label class="i-sdc-form-label required" translate="GENERAL_TAB_LABEL_SERVICE_ROLE"></label>
               </div>
@@ -530,7 +530,7 @@
           <div ng-if="component.isService() && !isNotApplicableMetadataKeys('Service Function')"
                class="i-sdc-form-item"
                data-ng-class="{'error': validateField(editForm.serviceFunction)}">
-            <div ng-if="component.selectedCategory">
+            <div ng-if="component.selectedCategory && isMetadataKeyForComponentCategoryService('Service Function', 'serviceFunction')">
               <div ng-if="isMetadataKeyMandatory('Service Function')">
                 <label class="i-sdc-form-label required" translate="GENERAL_TAB_LABEL_SERVICE_FUNCTION"></label>
               </div>
