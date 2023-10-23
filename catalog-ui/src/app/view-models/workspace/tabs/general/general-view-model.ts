@@ -802,6 +802,13 @@ export class GeneralViewModel {
             }
             this.$scope.component.selectedCategory = this.$scope.componentCategories.selectedCategory;
             if (this.$scope.component.selectedCategory) {
+                this.$scope.roleOption = null;
+                (<Service>this.$scope.component).serviceRole = null;
+                this.$scope.othersFlag = false;
+                this.$scope.functionOption = null;
+                (<Service>this.$scope.component).serviceFunction = null;
+                this.$scope.othersRoleFlag = false;
+
                 this.$scope.component.categories = this.convertCategoryStringToOneArray();
                 this.$scope.component.icon = DEFAULT_ICON;
                 if (this.$scope.component.categories[0].metadataKeys) {
@@ -811,6 +818,7 @@ export class GeneralViewModel {
                         }
                         if (metadataKey.name === 'Service Role') {
                             this.$scope.roleOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                            (<Service>this.$scope.component).serviceRole = this.$scope.roleOption;
                         }
                         if (metadataKey.name === 'Service Function') {
                             this.$scope.functionOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
@@ -951,8 +959,10 @@ export class GeneralViewModel {
 
         this.$scope.isMetadataKeyForComponentCategoryService = (key: string, attribute: string): boolean => {
             let metadatakey = this.getMetadataKey(key);
-            if (metadatakey && (!this.$scope.component[attribute] || !metadatakey.validValues.find(v => v === this.$scope.component[attribute]))) {
-                this.$scope.component[attribute] = metadatakey.defaultValue;
+            if (attribute != 'serviceFunction' && attribute != 'serviceRole') {
+                if (metadatakey && (!this.$scope.component[attribute] || !metadatakey.validValues.find(v => v === this.$scope.component[attribute]))) {
+                    this.$scope.component[attribute] = metadatakey.defaultValue;
+                }
             }
             return metadatakey != null;
         }
