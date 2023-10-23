@@ -802,6 +802,7 @@ export class GeneralViewModel {
             }
             this.$scope.component.selectedCategory = this.$scope.componentCategories.selectedCategory;
             if (this.$scope.component.selectedCategory) {
+                (<Service>this.$scope.component).serviceRole = undefined;
                 this.$scope.component.categories = this.convertCategoryStringToOneArray();
                 this.$scope.component.icon = DEFAULT_ICON;
                 if (this.$scope.component.categories[0].metadataKeys) {
@@ -810,7 +811,7 @@ export class GeneralViewModel {
                             this.$scope.component.categorySpecificMetadata[metadataKey.name] = metadataKey.defaultValue ? metadataKey.defaultValue : "";
                         }
                         if (metadataKey.name === 'Service Role') {
-                            this.$scope.roleOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                            (<Service>this.$scope.component).serviceRole = this.$scope.component.categorySpecificMetadata[metadataKey.name];
                         }
                         if (metadataKey.name === 'Service Function') {
                             this.$scope.functionOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
@@ -911,7 +912,6 @@ export class GeneralViewModel {
                 this.$scope.othersRoleFlag = false;
                 (<Service>this.$scope.component).serviceRole = option;
             }
-
         }
 
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
