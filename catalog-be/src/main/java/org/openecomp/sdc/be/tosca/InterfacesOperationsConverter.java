@@ -67,7 +67,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MaxLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
-import org.openecomp.sdc.be.model.tosca.constraints.PatternConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaActivity;
@@ -92,7 +91,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessOrEqual;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintLessThan;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMaxLength;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintMinLength;
-import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintPattern;
 import org.openecomp.sdc.be.tosca.model.ToscaPropertyConstraintValidValues;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
@@ -489,7 +487,8 @@ public class InterfacesOperationsConverter {
             } else {
                 if (toscaInterfaceOperationImplementation.getTimeout() != null) {
                     final ToscaArtifactDefinition toscaArtifactDefinition = new ToscaArtifactDefinition();
-                    toscaArtifactDefinition.setFile(StringUtils.isBlank(operationArtifactPath) || "null".equals(operationArtifactPath) ? null : operationArtifactPath);
+                    toscaArtifactDefinition.setFile(
+                        StringUtils.isBlank(operationArtifactPath) || "null".equals(operationArtifactPath) ? null : operationArtifactPath);
                     toscaInterfaceOperationImplementation.setPrimary(toscaArtifactDefinition);
                     toscaOperation.setImplementation(toscaInterfaceOperationImplementation);
                 } else {

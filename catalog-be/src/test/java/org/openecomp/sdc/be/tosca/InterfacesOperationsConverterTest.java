@@ -661,10 +661,8 @@ class InterfacesOperationsConverterTest {
         Map<String, Object> resource = (Map<String, Object>) resourceName;
         assertTrue(resource.containsKey("name_for_op_0"));
         Map<String, Object> operation0 = (Map<String, Object>) resource.get("name_for_op_0");
-        assertTrue(operation0.containsKey("milestones"));
-        Map<String, Object> operation0Milestones = (Map<String, Object>) operation0.get("milestones");
-        assertTrue(operation0Milestones.containsKey(MilestoneTypeEnum.ON_ENTRY.getValue()));
-        Map<String, Object> milestone = (Map<String, Object>) operation0Milestones.get(MilestoneTypeEnum.ON_ENTRY.getValue());
+        assertTrue(operation0.containsKey(MilestoneTypeEnum.ON_ENTRY.getValue()));
+        Map<String, Object> milestone = (Map<String, Object>) operation0.get(MilestoneTypeEnum.ON_ENTRY.getValue());
         assertTrue(milestone.containsKey("activities"));
         List<Map<String, Object>> activities = (List<Map<String, Object>>) milestone.get("activities");
         assertEquals(1, activities.size());
@@ -676,7 +674,7 @@ class InterfacesOperationsConverterTest {
         assertEquals("workflow1", activityVariables.get("workflow"));
         assertTrue(activityVariables.containsKey("inputs"));
         assertTrue(activityVariables.get("inputs") instanceof Map);
-        Map<String, Object> inputs =  (Map<String, Object>) activityVariables.get("inputs");
+        Map<String, Object> inputs = (Map<String, Object>) activityVariables.get("inputs");
         assertNotNull(inputs);
         assertTrue(inputs.containsKey("stringName"));
         assertTrue(inputs.get("stringName") instanceof String);
