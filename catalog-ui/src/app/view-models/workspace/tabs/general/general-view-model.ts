@@ -396,6 +396,12 @@ export class GeneralViewModel {
     }
 
     private setFunctionRole = (service : Service) : void => {
+        if (!service.serviceFunction && service.componentMetadata) {
+            service.serviceFunction = service.componentMetadata.serviceFunction;
+        }
+        if (!service.serviceRole && service.componentMetadata) {
+            service.serviceRole = service.componentMetadata.serviceRole;
+        }
         if (service.serviceFunction) {
             const functionList : string[] = this.$scope.getMetadataKeyValidValues('Service Function');
             if (functionList.find(value => value == service.serviceFunction) != undefined) {
@@ -817,7 +823,12 @@ export class GeneralViewModel {
                             this.$scope.component.categorySpecificMetadata[metadataKey.name] = metadataKey.defaultValue ? metadataKey.defaultValue : "";
                         }
                         if (metadataKey.name === 'Service Role') {
-                            this.$scope.roleOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                            if ((<Service>this.$scope.component).componentMetadata && (<Service>this.$scope.component).componentMetadata.serviceRole) {
+                                this.$scope.roleOption = (<Service>this.$scope.component).componentMetadata.serviceRole;
+                            }
+                            else {
+                                this.$scope.roleOption = this.$scope.component.categorySpecificMetadata[metadataKey.name];
+                            }
                             (<Service>this.$scope.component).serviceRole = this.$scope.roleOption;
                         }
                         if (metadataKey.name === 'Service Function') {
