@@ -396,6 +396,12 @@ export class GeneralViewModel {
     }
 
     private setFunctionRole = (service : Service) : void => {
+        if (!service.serviceFunction && service.componentMetadata) {
+            service.serviceFunction = service.componentMetadata.serviceFunction;
+        }
+        if (!service.serviceRole && service.componentMetadata) {
+            service.serviceRole = service.componentMetadata.serviceRole;
+        }
         if (service.serviceFunction) {
             const functionList : string[] = this.$scope.getMetadataKeyValidValues('Service Function');
             if (functionList.find(value => value == service.serviceFunction) != undefined) {
