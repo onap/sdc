@@ -748,7 +748,7 @@ public class CommonCsarGenerator {
 
     private Object getValue(final String key, Map<String, Object> value) {
         final String mappedKey = mapKey(key);
-        if (mappedKey.equals("schemaType")) {
+        if (mappedKey.equals("schemaType") && value.get(mappedKey) != null) {
             return Collections.singletonMap("type", value.get(mappedKey));
         }
         return value.get(mappedKey);
