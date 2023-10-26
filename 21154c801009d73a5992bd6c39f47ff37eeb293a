@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c7b78e6_a3d81bb0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-26T17:06:09Z",
+      "side": 1,
+      "message": "The changes look good for the first two bullet points in the JIRA, but are the third and fourth bullets points are covered",
+      "revId": "21154c801009d73a5992bd6c39f47ff37eeb293a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
