@@ -89,6 +89,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     functionOption: string;
     othersRoleFlag: boolean;
     roleOption: string;
+    blob:any;
 
     save():Promise<any>;
     revert():void;
@@ -291,8 +292,8 @@ export class GeneralViewModel {
             if (service.importedFile) {
                 this.$scope.isShowFileBrowse = true;
                 (<Service>this.$scope.component).ecompGeneratedNaming = true;
-                let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
-                new ServiceCsarReader().read(blob).then(
+                this.$scope.blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
+                new ServiceCsarReader().read(this.$scope.blob).then(
                     (serviceCsar) => {
                         serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
                         (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
@@ -825,13 +826,13 @@ export class GeneralViewModel {
                     }
                 }
                 if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component.categories[0]) {
-                    const modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
+                    const modelName: string = this.$scope.component.model ? this.$scope.component.model : null;
                     this.elementService.getCategoryBaseTypes(this.$scope.component.categories[0].name, modelName)
                     .subscribe((data: ListBaseTypesResponse) => {
                         if (this.$scope.isCreateMode()) {
                             this.loadBaseTypes(data);
                         } else {
-                            let isValidForBaseType:boolean = data.baseTypes.some(baseType => {
+                            let isValidForBaseType: boolean = data.baseTypes.some(baseType => {
                                 return !this.$scope.component.derivedFromGenericType ||
                                     baseType.toscaResourceName === this.$scope.component.derivedFromGenericType;
                             });
@@ -862,17 +863,19 @@ export class GeneralViewModel {
             }
 
             const modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
-            const categoryName = this.$scope.component.categories[0].name;
-            this.elementService.getCategoryBaseTypes(categoryName, modelName).subscribe((baseTypeResponseList: ListBaseTypesResponse) => {
-                this.$scope.baseTypeVersions = []
-                baseTypeResponseList.baseTypes.forEach(baseType => {
-                    if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
-                        baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                        this.$scope.component.derivedFromGenericVersion = baseType.versions[0];
-                    }
+            if (this.$scope.component.categories) {
+                const categoryName = this.$scope.component.categories[0].name;
+                this.elementService.getCategoryBaseTypes(categoryName, modelName).subscribe((baseTypeResponseList: ListBaseTypesResponse) => {
+                    this.$scope.baseTypeVersions = [];
+                    baseTypeResponseList.baseTypes.forEach(baseType => {
+                        if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
+                            baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                            this.$scope.component.derivedFromGenericVersion = baseType.versions[0];
+                        }
+                    });
+                    this.$scope.showBaseTypeVersions = true;
                 });
-                this.$scope.showBaseTypeVersions = true;
-            });
+            }
         };
 
         this.$scope.onModelChange = (): void => {
@@ -988,25 +991,44 @@ export class GeneralViewModel {
         baseTypeResponseList.baseTypes.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
         if (this.$scope.isBaseTypeRequired || defaultBaseType != null) {
             let baseType = baseTypeResponseList.baseTypes[0];
-            if(defaultBaseType != null){
+            if (defaultBaseType != null) {
                 baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
-                    if(baseTypeObj.toscaResourceName == defaultBaseType) {
+                    if (baseTypeObj.toscaResourceName == defaultBaseType) {
                         baseType = baseTypeObj;
                     }
                 });
-            }
-            if((<Service>this.$scope.component).derivedFromGenericType) {
+            } else if ((<Service>this.$scope.component).derivedFromGenericType) {
                 baseTypeResponseList.baseTypes.forEach(baseTypeObj => {
-                    if(baseTypeObj.toscaResourceName == (<Service>this.$scope.component).derivedFromGenericType) {
+                    if (baseTypeObj.toscaResourceName == (<Service>this.$scope.component).derivedFromGenericType) {
                         baseType = baseTypeObj;
                     }
                 });
             }
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+
+            new ServiceCsarReader().read(this.$scope.blob).then(
+                (serviceCsar) => {
+                    if (serviceCsar.substitutionNodeType) {
+                        this.$scope.component.derivedFromGenericType = serviceCsar.substitutionNodeType;
+                    } else {
+                        this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+                    }
+                },
+                (error) => {
+                    const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
+                    console.error(errorMsg, error);
+                    const errorDetails = {
+                        'Error': this.capitalize(error.reason),
+                        'Details': this.capitalize(error.message)
+                    };
+                    this.modalServiceSdcUI.openErrorDetailModal('Error', this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT'),
+                        'error-modal', errorDetails);
+                    this.$state.go('dashboard');
+                });
+
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
-            this.$scope.showBaseTypeVersions = true;
-            return
+            this.$scope.showBaseTypeVersions = this.$scope.component.derivedFromGenericVersion !== undefined;
+            return;
         }
         this.$scope.component.derivedFromGenericType = undefined;
         this.$scope.component.derivedFromGenericVersion = undefined;
