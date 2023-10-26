@@ -22,6 +22,30 @@
       },
       "revId": "24169893e1ffc5e70db99c91bfed093968af554e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a3a232f_0a9c32cc",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaFunctionJsonDeserializer.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2023-10-26T09:56:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3655f7f3_1735251d",
+      "range": {
+        "startLine": 248,
+        "startChar": 69,
+        "endLine": 248,
+        "endChar": 74
+      },
+      "revId": "24169893e1ffc5e70db99c91bfed093968af554e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
