@@ -1,0 +1,9 @@
+Verified+1: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Code-Review+2: Michael Morris <michael.morris@est.tech>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Code-Review+2: Vasyl Razinkov <vasyl.razinkov@est.tech>
+Submitted-by: Michael Morris <michael.morris@est.tech>
+Submitted-at: Thu, 26 Oct 2023 18:31:15 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/136122
+Project: sdc
+Branch: refs/heads/master
