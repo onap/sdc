@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8808529e_eed89a34",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-26T16:21:15Z",
+      "side": 1,
+      "message": "re-read the info from csar on category change instead of storing here",
+      "range": {
+        "startLine": 309,
+        "startChar": 0,
+        "endLine": 315,
+        "endChar": 25
+      },
+      "revId": "56c3fe6fb4ad70490246553fbbd42e0bb058e5b4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
