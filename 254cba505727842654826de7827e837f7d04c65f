@@ -67,6 +67,24 @@
       "message": "Im still see the default service role instead of the serviceRole defined in the csar during import\nServiceFunction looks ok though",
       "revId": "254cba505727842654826de7827e837f7d04c65f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1740021d_ace7f0a6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2023-10-26T14:19:58Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "32d49064_fdc4b51d",
+      "revId": "254cba505727842654826de7827e837f7d04c65f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
