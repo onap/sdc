@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f54915d6_7c3377b6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2023-10-27T08:40:16Z",
+      "side": 1,
+      "message": "Im seeing errors in console and also error thrown from backend when I try to create a service.",
+      "revId": "2ff9492f1915311ec3f0d4cf3aa2f64b50629d62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
