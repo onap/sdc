@@ -147,11 +147,22 @@ public class HealthCheckScheduledTask implements Runnable {
     
     private ClientCertificate getHttpClientCertificate() {
         ClientCertificate clientCertificate = new ClientCertificate();
-        clientCertificate.setKeyStore(JettySSLUtils.getSSLConfig().getKeystorePath());
-        clientCertificate.setKeyStorePassword(JettySSLUtils.getSSLConfig().getKeystorePass(), false);
-        clientCertificate.setTrustStore(JettySSLUtils.getSSLConfig().getTruststorePath());
-        clientCertificate.setTrustStorePassword(JettySSLUtils.getSSLConfig().getTruststorePass());
-        return clientCertificate;
+        boolean certificateInfoConfigured = false;
+        if (StringUtils.isNotBlank(JettySSLUtils.getSSLConfig().getKeystorePath())) {
+            clientCertificate.setKeyStore(JettySSLUtils.getSSLConfig().getKeystorePath());
+            if (StringUtils.isNotBlank(JettySSLUtils.getSSLConfig().getKeystorePass())) {
+                clientCertificate.setKeyStorePassword(JettySSLUtils.getSSLConfig().getKeystorePass(), false);
+            }
+            certificateInfoConfigured = true;
+        }
+        if (StringUtils.isNotBlank(JettySSLUtils.getSSLConfig().getTruststorePath())) {
+            clientCertificate.setTrustStore(JettySSLUtils.getSSLConfig().getTruststorePath());
+            if (StringUtils.isNotBlank(JettySSLUtils.getSSLConfig().getTruststorePass())) {
+                clientCertificate.setTrustStorePassword(JettySSLUtils.getSSLConfig().getTruststorePass());
+            }
+            certificateInfoConfigured = true;
+        }
+        return certificateInfoConfigured ? clientCertificate: null;
     }
 
     private String getExternalComponentHcUri(String baseComponent) {
