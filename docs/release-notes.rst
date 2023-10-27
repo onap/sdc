@@ -5,6 +5,101 @@
 Release Notes
 =============
 
+Version: 1.13.6
+===============
+
+:Release Date: 2023-10-27
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC Montreal release
+
+**Epics**
+
+N/A
+
+
+**Stories**
+
+*  `SDC-4674 <https://jira.onap.org/browse/SDC-4674>`_ - Exception thrown from sdc-FE healthcheck when using http
+*  `SDC-4642 <https://jira.onap.org/browse/SDC-4642>`_ - Add support for TLS to sdc-FE
+*  `SDC-4639 <https://jira.onap.org/browse/SDC-4639>`_ - Add support for TLS to sdc-BE
+*  `SDC-4654 <https://jira.onap.org/browse/SDC-4654>`_ - Increase unit test coverage
+
+
+**Bug Fixes**
+
+*  `SDC-4650 <https://jira.onap.org/browse/SDC-4650>`_ - JUEL expression syntax prevents download
+*  `SDC-4650 <https://jira.onap.org/browse/SDC-4650>`_ - JUEL expression syntax prevents download
+*  `SDC-4667 <https://jira.onap.org/browse/SDC-4667>`_ - service role and service function metadata not imported
+*  `SDC-4668 <https://jira.onap.org/browse/SDC-4668>`_ - Schema being added to non list properties
+*  `SDC-4665 <https://jira.onap.org/browse/SDC-4665>`_ - service role metadata cleared after service creation
+*  `SDC-4661 <https://jira.onap.org/browse/SDC-4661>`_ - Unable to import service template with interface
+*  `SDC-4664 <https://jira.onap.org/browse/SDC-4664>`_ - Null value in model node type properties after VFC update
+*  `SDC-4663 <https://jira.onap.org/browse/SDC-4663>`_ - Null value in model node type properties
+*  `SDC-4662 <https://jira.onap.org/browse/SDC-4662>`_ - Certifying mechanism changing structure of csar
+*  `SDC-4607 <https://jira.onap.org/browse/SDC-4607>`_ - No properties found when trying to add a node filter to a component instance
+*  `SDC-4649 <https://jira.onap.org/browse/SDC-4649>`_ - Declare Output button disabled after saving a default value
+
+
+**Tasks**
+
+*  `SDC-4666 <https://jira.onap.org/browse/SDC-4666>`_ - Milestone updates required
+*  `SDC-4640 <https://jira.onap.org/browse/SDC-4640>`_ - Revert SDC-4640 Remove generation of csar.meta
+*  `SDC-4653 <https://jira.onap.org/browse/SDC-4653>`_ - PACKAGES UPGRADES IN DIRECT DEPENDENCIES FOR MONTREAL RELEASE
+
+
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.13.5
 ===============
 
