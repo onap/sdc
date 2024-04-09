@@ -1,4 +1,4 @@
-FROM onap/integration-java11:12.0.0
+FROM onap/integration-java11:9.0.0
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
@@ -13,7 +13,7 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
-    gem update --system --no-document && \
+    # gem update --system --no-document && \
     gem install --no-update-sources public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
     gem cleanup && \
     apk update
@@ -28,7 +28,7 @@ RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 USER onap
 
 #Download jetty
-RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
+RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.51.v20230217/jetty-distribution-9.4.51.v20230217.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
         tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
