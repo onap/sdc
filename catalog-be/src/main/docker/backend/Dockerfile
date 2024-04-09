@@ -1,4 +1,4 @@
-FROM onap/integration-java11:12.0.0
+FROM onap/integration-java11:10.0.0
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
@@ -13,7 +13,6 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
-    gem update --system --no-document && \
     gem install --no-update-sources public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
     gem cleanup && \
     apk update
