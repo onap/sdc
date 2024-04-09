@@ -20,11 +20,12 @@
 package org.openecomp.sdc.be.info;
 
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class DistributionStatusOfServiceListResponce {
 
     private List<DistributionStatusOfServiceInfo> distributionStatusOfServiceList;
