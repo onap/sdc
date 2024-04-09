@@ -1,4 +1,4 @@
-FROM onap/integration-python:8.0.0
+FROM onap/integration-python:9.0.0
 
 USER root
 
