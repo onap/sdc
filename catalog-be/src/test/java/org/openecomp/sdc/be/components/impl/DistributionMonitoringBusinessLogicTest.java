@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.info.DistributionStatusListResponse;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
@@ -49,21 +50,16 @@ import static org.mockito.Mockito.when;
 
 public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMock {
 
-    private String uId;
+    private String userId;
     private User user;
-    private String ditributionId;
+    private String distributionId;
     private String serviceId;
 
     private DistributionMonitoringBusinessLogic businessLogic;
 
-    @Mock
-    private AuditCassandraDao cassandraDao;
-
-    @Mock
-    private UserValidations userValidations;
-
-    @Mock
-    private ComponentsUtils componentsUtils;
+    @Mock private AuditCassandraDao cassandraDao;
+    @Mock private UserValidations userValidations;
+    @Mock private ComponentsUtils componentsUtils;
 
     @Before
     public void setUp() {
@@ -75,20 +71,20 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         businessLogic.setComponentsUtils(componentsUtils);
 
         user = new User();
-        uId = "userId";
-        ditributionId = "did";
+        userId = "userId";
+        distributionId = "did";
         serviceId = "serviceId";
 
-        when(userValidations.validateUserExists(Mockito.eq(uId)))
+        when(userValidations.validateUserExists(Mockito.eq(userId)))
                 .thenReturn(user);
     }
 
     @Test
     public void testGetListOfDistribution_givenInvalidDistributionId_thenReturnsError() {
-        when(cassandraDao.getListOfDistributionStatuses(ditributionId))
+        when(cassandraDao.getListOfDistributionStatuses(distributionId))
                 .thenReturn(Either.right(ActionStatus.DISTRIBUTION_NOT_FOUND));
 
-        assertTrue(businessLogic.getListOfDistributionStatus(ditributionId, uId).isRight());
+        assertTrue(businessLogic.getListOfDistributionStatus(distributionId, userId).isRight());
     }
 
     @Test
@@ -98,10 +94,10 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         DistributionStatusEvent event = new DistributionStatusEvent();
         distributionEvents.add(event);
 
-        when(cassandraDao.getListOfDistributionStatuses(ditributionId))
+        when(cassandraDao.getListOfDistributionStatuses(distributionId))
                 .thenReturn(Either.left(distributionEvents));
 
-        Either<DistributionStatusListResponse, ResponseFormat> result = businessLogic.getListOfDistributionStatus(ditributionId, uId);
+        Either<DistributionStatusListResponse, ResponseFormat> result = businessLogic.getListOfDistributionStatus(distributionId, userId);
 
         assertTrue(result.isLeft());
         assertEquals(1, result.left().value().getDistributionStatusList().size());
@@ -112,7 +108,7 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
 
         when(cassandraDao.getServiceDistributionStatusesList(serviceId))
                 .thenReturn(Either.right(ActionStatus.DISTRIBUTION_NOT_FOUND));
-        assertTrue(businessLogic.getListOfDistributionServiceStatus(serviceId, uId).isRight());
+        assertTrue(businessLogic.getListOfDistributionServiceStatus(serviceId, userId).isRight());
     }
 
     @Test
@@ -128,12 +124,12 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         event1Fields.put("DID", "event1");
         event1Fields.put("ACTION", "DRequest");
         event1Fields.put("STATUS", "200");
-        event1Fields.put("MODIFIER", uId);
+        event1Fields.put("MODIFIER", userId);
 
         event2Fields.put("DID", "event2");
         event2Fields.put("ACTION", "DNotify");
         event2Fields.put("STATUS", "200");
-        event2Fields.put("MODIFIER", uId);
+        event2Fields.put("MODIFIER", userId);
 
         event1.setFields(event1Fields);
         event2.setFields(event2Fields);
@@ -144,6 +140,38 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
         when(cassandraDao.getServiceDistributionStatusesList(serviceId))
                 .thenReturn(Either.left(serviceEvents));
 
-        assertTrue(businessLogic.getListOfDistributionServiceStatus(serviceId, uId).isLeft());
+        assertTrue(businessLogic.getListOfDistributionServiceStatus(serviceId, userId).isLeft());
+    }
+
+    @Test
+    public void testGetDistributionServiceStatus_givenLongTimeStamp_thenReturnsSuccessful() {
+
+        Map<String, Object> event1Fields = new HashMap<>();
+        event1Fields.put("DID", "event1");
+        event1Fields.put("ACTION", "DRequest");
+        event1Fields.put("STATUS", "200");
+        event1Fields.put("MODIFIER", userId);
+        event1Fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), "2024-04-05 07:29:10.735 UTC");
+
+        Map<String, Object> event2Fields = new HashMap<>();
+        event2Fields.put("DID", "event2");
+        event2Fields.put("ACTION", "DNotify");
+        event2Fields.put("STATUS", "200");
+        event2Fields.put("MODIFIER", userId);
+        event1Fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), 1712645750L);
+
+        List<AuditingGenericEvent> serviceEvents = new ArrayList<>();
+        AuditingGenericEvent event1 = new AuditingGenericEvent();
+        AuditingGenericEvent event2 = new AuditingGenericEvent();
+        event1.setFields(event1Fields);
+        event2.setFields(event2Fields);
+
+        serviceEvents.add(event1);
+        serviceEvents.add(event2);
+
+        when(cassandraDao.getServiceDistributionStatusesList(serviceId))
+                .thenReturn(Either.left(serviceEvents));
+
+        assertTrue(businessLogic.getListOfDistributionServiceStatus(serviceId, userId).isLeft());
     }
 }
