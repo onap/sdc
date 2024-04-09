@@ -20,12 +20,16 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.http.HttpStatus;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
@@ -44,6 +48,7 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionStatusEvent;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +57,11 @@ import org.springframework.stereotype.Component;
 @Component("distributionMonitoringBusinessLogic")
 public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
 
+    private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
     private static final String DEPLOYED = "Deployed";
     private static final String ERROR = "Error";
     private static final String DISTRIBUTED = "Distributed";
     private static final String IN_PROGRESS = "In Progress";
-    private static final Logger log = Logger.getLogger(ArtifactsBusinessLogic.class.getName());
     private final AuditCassandraDao cassandraDao;
 
     @Autowired
@@ -77,13 +82,11 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
             log.debug("not found distribution statuses for did {}   status is {} ", did, distributionStatus.right().value());
             return Either.right(componentsUtils.getResponseFormat(distributionStatus.right().value(), did));
         }
-        List<DistributionStatusInfo> distribStatusInfoList = new ArrayList<>();
-        List<DistributionStatusEvent> distributionStatusEventList = distributionStatus.left().value();
-        if (distributionStatusEventList != null) {
-            for (AuditingGenericEvent distributionStatusEvent : distributionStatusEventList) {
-                distribStatusInfoList.add(new DistributionStatusInfo(distributionStatusEvent));
-            }
-        }
+        List<DistributionStatusInfo> distribStatusInfoList = distributionStatus.left().value().stream()
+            .filter(Objects::nonNull)
+            .map(DistributionStatusInfo::new)
+            .collect(Collectors.toList());
+
         DistributionStatusListResponse distributionStatusListResponse = new DistributionStatusListResponse();
         distributionStatusListResponse.setDistributionStatusList(distribStatusInfoList);
         log.trace("list statuses for did {} is {} ", did, distribStatusInfoList);
@@ -98,11 +101,9 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
             log.debug("failed to find service distribution statuses. error: {}", status);
             return Either.right(componentsUtils.getResponseFormat(status.right().value(), serviceUuid));
         }
-        List<DistributionStatusOfServiceInfo> distribStatusInfoList;
         List<? extends AuditingGenericEvent> distributionStatusEventList = status.left().value();
-        distribStatusInfoList = handleAuditingDaoResponse(distributionStatusEventList);
-        DistributionStatusOfServiceListResponce distributionStatusListResponse = new DistributionStatusOfServiceListResponce();
-        distributionStatusListResponse.setDistributionStatusOfServiceList(distribStatusInfoList);
+        List<DistributionStatusOfServiceInfo> distributionStatusInfoList = handleAuditingDaoResponse(distributionStatusEventList);
+        DistributionStatusOfServiceListResponce distributionStatusListResponse = new DistributionStatusOfServiceListResponce(distributionStatusInfoList);
         return Either.left(distributionStatusListResponse);
     }
 
@@ -140,7 +141,7 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
                 Map<String, Object> fields = resAuditingGenericEvent.getFields();
                 if (fields != null) {
                     Optional.ofNullable(fields.get(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName()))
-                        .ifPresent(timestamp -> distributionStatusOfServiceInfo.setTimestamp((String) timestamp));
+                        .ifPresent(timestamp -> distributionStatusOfServiceInfo.setTimestamp(formatTimestamp(timestamp)));
                 }
             }
             if (!isResult) {
@@ -163,6 +164,21 @@ public class DistributionMonitoringBusinessLogic extends BaseBusinessLogic {
             reslist.add(distributionStatusOfServiceInfo);
         }
         return reslist;
+    }
+
+    private String formatTimestamp(Object timestamp) {
+        if(timestamp instanceof String) {
+            return (String) timestamp;
+        } else if (timestamp instanceof Long) {
+            try {
+                return Instant.ofEpochMilli((Long) timestamp).atOffset(ZoneOffset.UTC).toString();
+            } catch (Exception e) {
+                log.warn(EcompLoggerErrorCode.DATA_ERROR, "sdc-be", "Failed to format timestamp: {}. Returning without formatting", timestamp, e);
+                return String.valueOf(timestamp);
+            }
+        } else {
+            return String.valueOf(timestamp);
+        }
     }
 
     private String getStatusFromAuditEvent(AuditingGenericEvent auditingGenericEvent) {
