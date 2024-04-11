@@ -25,6 +25,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,20 +52,13 @@ public class ToscaElementOperationCatalogTest {
     private static final String UPDATER_ID = "m08740";
     private ArrayList<Vertex> vertexList = new ArrayList<>();
 
-    @Mock
-    Vertex vertex;
-    @Mock
-    Edge edge;
-    @Mock
-    Vertex outVertex;
-    @Mock
-    Iterator<Edge> edges;
-    @Mock
-    JanusGraphDao janusGraphDao;
-    @Mock
-    VertexProperty<Object> property;
-    @Mock
-    VertexProperty<Object> updaterProperty;
+    @Mock Edge edge;
+    @Mock Vertex vertex;
+    @Mock Vertex outVertex;
+    @Mock Iterator<Edge> edges;
+    @Mock JanusGraphDao janusGraphDao;
+    @Mock VertexProperty<Object> property;
+    @Mock VertexProperty<Object> updaterProperty;
 
     @InjectMocks
     private ToscaElementOperation toscaOperation = new TopologyTemplateOperation();
@@ -117,6 +111,15 @@ public class ToscaElementOperationCatalogTest {
         List<CatalogComponent> componentList = toscaOperation.getElementCatalogData(true, null).left().value();
         assertEquals(1, componentList.size());
         assertEquals(UPDATER_ID, componentList.get(0).getLastUpdaterUserId());
+    }
+
+    @Test
+    public void thatVertexIsSkippedIfItHasNoMetadataProperty() {
+        VertexProperty<Object> emptyVertexProperty = new EmptyVertexProperty<>();
+        when(vertex.property(GraphPropertiesDictionary.METADATA.getProperty())).thenReturn(emptyVertexProperty);
+
+        List<CatalogComponent> componentList = toscaOperation.getElementCatalogData(true, null).left().value();
+        assertEquals(0, componentList.size());
     }
 
 }
