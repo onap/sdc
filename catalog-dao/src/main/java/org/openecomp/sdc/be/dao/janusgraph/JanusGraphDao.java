@@ -619,31 +619,31 @@ public class JanusGraphDao {
     }
 
     public Either<Iterator<Vertex>, JanusGraphOperationStatus> getCatalogOrArchiveVertices(boolean isCatalog) {
-        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
-        if (graph.isLeft()) {
+        Either<JanusGraph, JanusGraphOperationStatus> graphEither = janusGraphClient.getGraph();
+        if (graphEither.isLeft()) {
             try {
-                JanusGraph tGraph = graph.left().value();
-                String name = isCatalog ? VertexTypeEnum.CATALOG_ROOT.getName() : VertexTypeEnum.ARCHIVE_ROOT.getName();
-                Iterable<JanusGraphVertex> vCatalogIter = tGraph.query().has(GraphPropertyEnum.LABEL.getProperty(), name).vertices();
-                if (vCatalogIter == null) {
+                JanusGraph graph = graphEither.left().value();
+                String vertexType = isCatalog ? VertexTypeEnum.CATALOG_ROOT.getName() : VertexTypeEnum.ARCHIVE_ROOT.getName();
+                Iterable<JanusGraphVertex> vertexIterable = graph.query().has(GraphPropertyEnum.LABEL.getProperty(), vertexType).vertices();
+                if (vertexIterable == null) {
                     logger.debug("Failed to fetch catalog vertex");
                     return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
                 }
-                JanusGraphVertex catalogV = vCatalogIter.iterator().next();
-                if (catalogV == null) {
+                JanusGraphVertex catalogVertex = vertexIterable.iterator().next();
+                if (catalogVertex == null) {
                     logger.debug("Failed to fetch catalog vertex");
                     return Either.right(JanusGraphOperationStatus.GENERAL_ERROR);
                 }
                 String edgeLabel = isCatalog ? EdgeLabelEnum.CATALOG_ELEMENT.name() : EdgeLabelEnum.ARCHIVE_ELEMENT.name();
-                Iterator<Vertex> vertices = catalogV.vertices(Direction.OUT, edgeLabel);
-                return Either.left(vertices);
+                Iterator<Vertex> adjacentVertices = catalogVertex.vertices(Direction.OUT, edgeLabel);
+                return Either.left(adjacentVertices);
             } catch (Exception e) {
                 logger.debug("Failed  get by  criteria: ", e);
                 return Either.right(JanusGraphClient.handleJanusGraphException(e));
             }
         } else {
-            logger.debug("Failed get by criteria : {}", graph.right().value());
-            return Either.right(graph.right().value());
+            logger.debug("Failed get by criteria : {}", graphEither.right().value());
+            return Either.right(graphEither.right().value());
         }
     }
 

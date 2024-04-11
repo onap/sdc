@@ -37,13 +37,13 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.apache.tinkerpop.gremlin.structure.util.empty.EmptyVertexProperty;
 import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -1347,7 +1347,13 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         Iterator<Vertex> vertices = verticesEither.left().value();
         while (vertices.hasNext()) {
-            handleCatalogComponent(existInCatalog, vertices.next(), excludeTypes);
+            Vertex vertex = vertices.next();
+            VertexProperty<?> vertexProperty = vertex.property(GraphPropertiesDictionary.METADATA.getProperty());
+            if(!(vertexProperty instanceof EmptyVertexProperty)) {
+                handleCatalogComponent(existInCatalog, vertex, excludeTypes);
+            } else {
+                log.info("Vertex with id {} has no metadata property", vertex.id());
+            }
         }
         stopWatch.stop();
         String timeToFetchElements = stopWatch.prettyPrint();
@@ -1361,58 +1367,61 @@ public abstract class ToscaElementOperation extends BaseOperation {
         Map<String, Object> metadatObj = JsonParserUtils.toMap(json);
         String uniqueId = (String) metadatObj.get(JsonPresentationFields.UNIQUE_ID.getPresentation());
         Boolean isDeleted = (Boolean) metadatObj.get(JsonPresentationFields.IS_DELETED.getPresentation());
-        if (isAddToCatalog(excludeTypes, metadatObj) && (existInCatalog.get(uniqueId) == null && (isDeleted == null || !isDeleted.booleanValue()))) {
-            CatalogComponent catalogComponent = new CatalogComponent();
-            catalogComponent.setUniqueId(uniqueId);
-            catalogComponent.setModel((String) metadatObj.get(JsonPresentationFields.MODEL.getPresentation()));
-            catalogComponent
-                .setComponentType(ComponentTypeEnum.valueOf((String) metadatObj.get(JsonPresentationFields.COMPONENT_TYPE.getPresentation())));
-            catalogComponent.setVersion((String) metadatObj.get(JsonPresentationFields.VERSION.getPresentation()));
-            catalogComponent.setName((String) metadatObj.get(JsonPresentationFields.NAME.getPresentation()));
-            catalogComponent.setIcon((String) metadatObj.get(JsonPresentationFields.ICON.getPresentation()));
-            catalogComponent.setLifecycleState((String) metadatObj.get(JsonPresentationFields.LIFECYCLE_STATE.getPresentation()));
-            Object lastUpdateDate = metadatObj.get(JsonPresentationFields.LAST_UPDATE_DATE.getPresentation());
-            catalogComponent.setLastUpdateDate((lastUpdateDate != null ? (Long) lastUpdateDate : 0L));
-            catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
-            catalogComponent.setDescription((String) metadatObj.get(JsonPresentationFields.DESCRIPTION.getPresentation()));
-            catalogComponent.setTenant((String) metadatObj.get(JsonPresentationFields.TENANT.getPresentation()));
-            catalogComponent.setSystemName((String) metadatObj.get(JsonPresentationFields.SYSTEM_NAME.getPresentation()));
-            catalogComponent.setUuid((String) metadatObj.get(JsonPresentationFields.UUID.getPresentation()));
-            catalogComponent.setInvariantUUID((String) metadatObj.get(JsonPresentationFields.INVARIANT_UUID.getPresentation()));
-            catalogComponent.setIsHighestVersion((Boolean) metadatObj.get(JsonPresentationFields.HIGHEST_VERSION.getPresentation()));
-            Iterator<Edge> edges = vertex.edges(Direction.IN, EdgeLabelEnum.STATE.name());
-            if (edges.hasNext()) {
-                catalogComponent
-                    .setLastUpdaterUserId((String) edges.next().outVertex().property(GraphPropertiesDictionary.USERID.getProperty()).value());
-            }
-            Object resourceType = metadatObj.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation());
-            if (resourceType != null) {
-                catalogComponent.setResourceType((String) resourceType);
-            }
-            if (catalogComponent.getComponentType() == ComponentTypeEnum.SERVICE) {
-                setServiceCategoryFromGraphV(vertex, catalogComponent);
-            } else {
-                setResourceCategoryFromGraphV(vertex, catalogComponent);
-            }
-            List<String> tags = (List<String>) metadatObj.get(JsonPresentationFields.TAGS.getPresentation());
-            if (tags != null) {
-                catalogComponent.setTags(tags);
-            }
+        if (isNotExcluded(excludeTypes, metadatObj) && (existInCatalog.get(uniqueId) == null && (isDeleted == null || !isDeleted.booleanValue()))) {
+            CatalogComponent catalogComponent = createCatalogComponent(vertex, metadatObj, uniqueId);
             existInCatalog.put(uniqueId, catalogComponent);
         }
     }
 
-    private boolean isAddToCatalog(List<ResourceTypeEnum> excludeTypes, Map<String, Object> metadatObj) {
+    private CatalogComponent createCatalogComponent(Vertex vertex, Map<String, Object> metadatObj, String uniqueId) {
+        CatalogComponent catalogComponent = new CatalogComponent();
+        catalogComponent.setUniqueId(uniqueId);
+        catalogComponent.setModel((String) metadatObj.get(JsonPresentationFields.MODEL.getPresentation()));
+        catalogComponent
+            .setComponentType(ComponentTypeEnum.valueOf((String) metadatObj.get(JsonPresentationFields.COMPONENT_TYPE.getPresentation())));
+        catalogComponent.setVersion((String) metadatObj.get(JsonPresentationFields.VERSION.getPresentation()));
+        catalogComponent.setName((String) metadatObj.get(JsonPresentationFields.NAME.getPresentation()));
+        catalogComponent.setIcon((String) metadatObj.get(JsonPresentationFields.ICON.getPresentation()));
+        catalogComponent.setLifecycleState((String) metadatObj.get(JsonPresentationFields.LIFECYCLE_STATE.getPresentation()));
+        Object lastUpdateDate = metadatObj.get(JsonPresentationFields.LAST_UPDATE_DATE.getPresentation());
+        catalogComponent.setLastUpdateDate((lastUpdateDate != null ? (Long) lastUpdateDate : 0L));
+        catalogComponent.setDistributionStatus((String) metadatObj.get(JsonPresentationFields.DISTRIBUTION_STATUS.getPresentation()));
+        catalogComponent.setDescription((String) metadatObj.get(JsonPresentationFields.DESCRIPTION.getPresentation()));
+        catalogComponent.setTenant((String) metadatObj.get(JsonPresentationFields.TENANT.getPresentation()));
+        catalogComponent.setSystemName((String) metadatObj.get(JsonPresentationFields.SYSTEM_NAME.getPresentation()));
+        catalogComponent.setUuid((String) metadatObj.get(JsonPresentationFields.UUID.getPresentation()));
+        catalogComponent.setInvariantUUID((String) metadatObj.get(JsonPresentationFields.INVARIANT_UUID.getPresentation()));
+        catalogComponent.setIsHighestVersion((Boolean) metadatObj.get(JsonPresentationFields.HIGHEST_VERSION.getPresentation()));
+        Iterator<Edge> edges = vertex.edges(Direction.IN, EdgeLabelEnum.STATE.name());
+        if (edges.hasNext()) {
+            catalogComponent
+                .setLastUpdaterUserId((String) edges.next().outVertex().property(GraphPropertiesDictionary.USERID.getProperty()).value());
+        }
+        Object resourceType = metadatObj.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation());
+        if (resourceType != null) {
+            catalogComponent.setResourceType((String) resourceType);
+        }
+        if (catalogComponent.getComponentType() == ComponentTypeEnum.SERVICE) {
+            setServiceCategoryFromGraphV(vertex, catalogComponent);
+        } else {
+            setResourceCategoryFromGraphV(vertex, catalogComponent);
+        }
+        List<String> tags = (List<String>) metadatObj.get(JsonPresentationFields.TAGS.getPresentation());
+        if (tags != null) {
+            catalogComponent.setTags(tags);
+        }
+        return catalogComponent;
+    }
+
+    private boolean isNotExcluded(List<ResourceTypeEnum> excludeTypes, Map<String, Object> metadatObj) {
         boolean isAddToCatalog = true;
         Object resourceTypeStr = metadatObj.get(JsonPresentationFields.RESOURCE_TYPE.getPresentation());
         if (resourceTypeStr != null) {
             ResourceTypeEnum resourceType = ResourceTypeEnum.getType((String) resourceTypeStr);
-            if (!CollectionUtils.isEmpty(excludeTypes)) {
-                Optional<ResourceTypeEnum> op = excludeTypes.stream().filter(rt -> rt == resourceType).findAny();
-                if (op.isPresent()) {
-                    isAddToCatalog = false;
-                }
-            }
+            return !excludeTypes.stream()
+                .filter(type -> type == resourceType)
+                .findAny()
+                .isPresent();
         }
         return isAddToCatalog;
     }
