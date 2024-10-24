@@ -1,4 +1,4 @@
-FROM onap/integration-python:9.0.0
+FROM onap/integration-python:12.0.0
 
 USER root
 
@@ -12,16 +12,16 @@ RUN apk update && \
         libcurl \
         ruby && \
     apk add --no-cache --virtual .build-dependencies \
-        libressl-dev \
         ruby-dev \
         libffi-dev \
         libxml2-dev \
         build-base \
         curl-dev && \
     # needed libcurl to install correctly \
-    python -m pip install --upgrade pip \
+    python -m pip install --upgrade pip && \
     pip install 'pycurl==7.44.1' && \
     set -ex && \
+    gem update --system --no-document && \
     gem install --no-update-sources public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
     apk del .build-dependencies && \
     gem cleanup
