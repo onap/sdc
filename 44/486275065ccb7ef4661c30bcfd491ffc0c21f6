@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Code-Review+2: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-by: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-at: Mon, 04 Nov 2024 14:16:19 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/139264
+Project: sdc
+Branch: refs/heads/master
