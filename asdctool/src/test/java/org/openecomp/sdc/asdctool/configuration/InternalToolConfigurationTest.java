@@ -22,7 +22,7 @@ package org.openecomp.sdc.asdctool.configuration;
 
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.impl.internal.tool.DeleteComponentHandler;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;

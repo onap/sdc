@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.simulator.tenant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.OperationalEnvironmentDao;
 

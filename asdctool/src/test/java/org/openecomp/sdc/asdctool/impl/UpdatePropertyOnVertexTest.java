@@ -21,10 +21,12 @@
 package org.openecomp.sdc.asdctool.impl;
 
 import org.janusgraph.core.JanusGraph;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UpdatePropertyOnVertexTest {
 
@@ -32,27 +34,31 @@ public class UpdatePropertyOnVertexTest {
 		return new UpdatePropertyOnVertex();
 	}
 
-	@Test(expected=IllegalArgumentException.class)
-	public void testOpenGraph() throws Exception {
-		UpdatePropertyOnVertex testSubject;
-		String janusGraphFileLocation = "";
-		JanusGraph result;
+	@Test
+	public void testOpenGraph() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            UpdatePropertyOnVertex testSubject;
+            String janusGraphFileLocation = "";
+            JanusGraph result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.openGraph("");
-	}
+            // default test
+            testSubject = createTestSubject();
+            result = testSubject.openGraph("");
+        });
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testUpdatePropertyOnServiceAtLeastCertified() throws Exception {
-		UpdatePropertyOnVertex testSubject;
-		String janusGraphFile = "";
-		Map<String, Object> keyValueToSet = null;
-		List<Map<String, Object>> orCriteria = null;
-		Integer result;
+	@Test
+	public void testUpdatePropertyOnServiceAtLeastCertified() {
+        assertThrows(NullPointerException.class, () -> {
+            UpdatePropertyOnVertex testSubject;
+            String janusGraphFile = "";
+            Map<String, Object> keyValueToSet = null;
+            List<Map<String, Object>> orCriteria = null;
+            Integer result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.updatePropertyOnServiceAtLeastCertified(janusGraphFile, keyValueToSet, orCriteria);
-	}
+            // default test
+            testSubject = createTestSubject();
+            result = testSubject.updatePropertyOnServiceAtLeastCertified(janusGraphFile, keyValueToSet, orCriteria);
+        });
+    }
 }

@@ -20,12 +20,11 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.NoSuchFileException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GraphJsonValidatorTest {
 
@@ -55,12 +54,14 @@ public class GraphJsonValidatorTest {
 		assertFalse(result);
 	}
 	
-	@Test(expected=NoSuchFileException.class)
-	public void testVerifyJanusGraphJsonNoFile() throws Exception {
-		GraphJsonValidator testSubject;
+	@Test
+	public void testVerifyJanusGraphJsonNoFile() {
+        assertThrows(NoSuchFileException.class, () -> {
+            GraphJsonValidator testSubject;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.verifyJanusGraphJson("stam");
-	}
+            // default test
+            testSubject = createTestSubject();
+            testSubject.verifyJanusGraphJson("stam");
+        });
+    }
 }

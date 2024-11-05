@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.configuration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.impl.internal.tool.CsarGenerator;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;

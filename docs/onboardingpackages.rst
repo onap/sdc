@@ -38,11 +38,11 @@ Examples of heat packages are the packages with .zip extension available in `SDC
 ONAP Tosca CSAR Package
 ^^^^^^^^^^^^^^^^^^^^^^^
 The ONAP Tosca CSAR package is a zip archive with a .csar extension. The structure of the CSAR package is as described
-in `ONAP wiki page <https://wiki.onap.org/display/DW/Csar+Structure>`_
- 
+in `ONAP wiki page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16244889/Csar+Structure>`_
+
 ASD CSAR Package
 ^^^^^^^^^^^^^^^^
-The Application Service Descriptor CSAR package is a zip archive with a .csar extension. The structure of the CSAR and the descriptor it shall contain is described in `Application Service Descriptor (ASD) and packaging Proposals for CNF <https://wiki.onap.org/display/DW/Application+Service+Descriptor+%28ASD%29+and+packaging+Proposals+for+CNF>`_. 
+The Application Service Descriptor CSAR package is a zip archive with a .csar extension. The structure of the CSAR and the descriptor it shall contain is described in `Application Service Descriptor (ASD) and packaging Proposals for CNF <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16478023/Application+Service+Descriptor+ASD+and+packaging+Proposals+for+CNF>`_.
 
 ETSI SOL004 Tosca CSAR Package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

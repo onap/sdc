@@ -8,4 +8,4 @@ SDC Architecture
 
 Please refer to the SDC Kohn architecture description page, to get a full picture of SDC and its relationships within ONAP
 
-- `SDC Kohn Architecture Description <https://wiki.onap.org/display/DW/ARC+SDC+Component+Description+-+Kohn-R11>`_
+- `SDC Kohn Architecture Description <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16503773/ARC+SDC+Component+Description+-+Kohn-R11>`_

@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.migration.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
 import org.openecomp.sdc.asdctool.migration.dao.MigrationTasksDao;
 import org.openecomp.sdc.asdctool.migration.resolver.MigrationResolver;

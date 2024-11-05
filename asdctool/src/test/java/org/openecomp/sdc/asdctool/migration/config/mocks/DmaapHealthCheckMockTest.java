@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.migration.config.mocks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.distribution.engine.DmaapHealth;
 
 public class DmaapHealthCheckMockTest {

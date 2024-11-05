@@ -20,12 +20,13 @@
 
 package org.openecomp.sdc.asdctool.migration.dao;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 
 import java.math.BigInteger;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class MigrationTasksDaoTest {
@@ -43,34 +44,40 @@ public class MigrationTasksDaoTest {
 		testSubject.init();
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testGetLatestMinorVersion() throws Exception {
-		MigrationTasksDao testSubject;
-		BigInteger majorVersion = null;
-		BigInteger result;
+	@Test
+	public void testGetLatestMinorVersion() {
+        assertThrows(NullPointerException.class, () -> {
+            MigrationTasksDao testSubject;
+            BigInteger majorVersion = null;
+            BigInteger result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getLatestMinorVersion(majorVersion);
-	}
+            // default test
+            testSubject = createTestSubject();
+            result = testSubject.getLatestMinorVersion(majorVersion);
+        });
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testDeleteAllTasksForVersion() throws Exception {
-		MigrationTasksDao testSubject;
-		BigInteger majorVersion = null;
+	@Test
+	public void testDeleteAllTasksForVersion() {
+        assertThrows(NullPointerException.class, () -> {
+            MigrationTasksDao testSubject;
+            BigInteger majorVersion = null;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.deleteAllTasksForVersion(majorVersion);
-	}
+            // default test
+            testSubject = createTestSubject();
+            testSubject.deleteAllTasksForVersion(majorVersion);
+        });
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testCreateMigrationTask() throws Exception {
-		MigrationTasksDao testSubject;
-		MigrationTaskEntry migrationTask = null;
+	@Test
+	public void testCreateMigrationTask() {
+        assertThrows(NullPointerException.class, () -> {
+            MigrationTasksDao testSubject;
+            MigrationTaskEntry migrationTask = null;
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.createMigrationTask(migrationTask);
-	}
+            // default test
+            testSubject = createTestSubject();
+            testSubject.createMigrationTask(migrationTask);
+        });
+    }
 }
