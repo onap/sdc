@@ -21,7 +21,7 @@
 package org.openecomp.sdc.asdctool.cli;
 
 import org.apache.commons.cli.Option;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CLIUtilsTest {
 

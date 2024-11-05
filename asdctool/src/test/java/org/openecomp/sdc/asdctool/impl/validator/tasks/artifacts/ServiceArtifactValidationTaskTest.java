@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.makeTxtFile;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileWriterTestFactory;
 import org.openecomp.sdc.asdctool.impl.validator.utils.VertexResult;

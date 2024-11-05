@@ -18,14 +18,14 @@
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
 import fj.data.Either;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -61,11 +61,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CsarGeneratorTest {
 
     @InjectMocks
@@ -113,18 +113,18 @@ public class CsarGeneratorTest {
     private final List<GraphVertex> criteria = new ArrayList<>();
     private final GraphVertex graphVertex = new GraphVertex();
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         initConfigurationManager();
     }
 
-    @Before
+    @BeforeEach
     public void setupSystemOut() {
         systemOut = System.out;
         System.setOut(new PrintStream(outContent));
     }
 
-    @After
+    @AfterEach
     public void revertSystemOut() {
         System.setOut(systemOut);
     }

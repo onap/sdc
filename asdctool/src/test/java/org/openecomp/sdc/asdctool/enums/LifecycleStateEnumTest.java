@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.asdctool.enums;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LifecycleStateEnumTest {
 
@@ -32,6 +32,6 @@ public class LifecycleStateEnumTest {
     @Test
     public void testEnumValue() throws Exception {
         LifecycleStateEnum testSubject = createTestSubject();
-        Assert.assertEquals(LifecycleStateEnum.CERTIFIED,testSubject);
+        Assertions.assertEquals(LifecycleStateEnum.CERTIFIED,testSubject);
     }
 }

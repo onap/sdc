@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ArtifactsVertexResultTest {
 

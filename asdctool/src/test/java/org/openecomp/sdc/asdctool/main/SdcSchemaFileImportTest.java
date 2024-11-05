@@ -20,10 +20,12 @@
 
 package org.openecomp.sdc.asdctool.main;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.enums.SchemaZipFileEnum;
 
 import java.nio.file.NoSuchFileException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SdcSchemaFileImportTest {
 
@@ -31,37 +33,43 @@ public class SdcSchemaFileImportTest {
 		return new SdcSchemaFileImport();
 	}
 
-	@Test(expected=NoSuchFileException.class)
-	public void testCreateAndSaveNodeSchemaFile() throws Exception {
+	@Test
+	public void testCreateAndSaveNodeSchemaFile() {
+        assertThrows(NoSuchFileException.class, () ->
 
-		// default test
-		SdcSchemaFileImport.createAndSaveNodeSchemaFile("");
-	}
+            // default test
+            SdcSchemaFileImport.createAndSaveNodeSchemaFile(""));
+    }
 
-	@Test(expected=NoSuchFileException.class)
-	public void testCreateAndSaveNodeSchemaFileOnap() throws Exception {
+	@Test
+	public void testCreateAndSaveNodeSchemaFileOnap() {
+        assertThrows(NoSuchFileException.class, () ->
 
-		// default test
-		SdcSchemaFileImport.createAndSaveNodeSchemaFile("onap");
-	}
+            // default test
+            SdcSchemaFileImport.createAndSaveNodeSchemaFile("onap"));
+    }
 
-	@Test(expected=NullPointerException.class)
-	public void testCreateAndSaveSchemaFileYaml() throws Exception {
-		SchemaZipFileEnum schemaZipFileEnum = null;
-		Object content = null;
+	@Test
+	public void testCreateAndSaveSchemaFileYaml() {
+        assertThrows(NullPointerException.class, () -> {
+            SchemaZipFileEnum schemaZipFileEnum = null;
+            Object content = null;
 
-		// default test
-		SdcSchemaFileImport.createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
-	}
+            // default test
+            SdcSchemaFileImport.createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
+        });
+    }
 
-	@Test(expected=IllegalArgumentException.class)
-	public void testCreateAndSaveSchemaFileYaml_1() throws Exception {
-		String fileName = "";
-		String[] importFileList = new String[] { "" };
-		String collectionTitle = "";
-		Object content = null;
+	@Test
+	public void testCreateAndSaveSchemaFileYaml_1() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            String fileName = "";
+            String[] importFileList = new String[]{""};
+            String collectionTitle = "";
+            Object content = null;
 
-		// default test
-		SdcSchemaFileImport.createAndSaveSchemaFileYaml(fileName, importFileList, collectionTitle, content);
-	}
+            // default test
+            SdcSchemaFileImport.createAndSaveSchemaFileYaml(fileName, importFileList, collectionTitle, content);
+        });
+    }
 }

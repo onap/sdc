@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
-import static org.junit.Assert.fail;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Provides facilities to for creating report file writers when testing

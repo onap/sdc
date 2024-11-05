@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.simulator.tenant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 
 public class OperationalEnvironmentTest {

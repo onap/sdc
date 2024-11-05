@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.servlets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class EntryPointTest {

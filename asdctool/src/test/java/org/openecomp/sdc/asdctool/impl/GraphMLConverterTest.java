@@ -21,15 +21,12 @@
 package org.openecomp.sdc.asdctool.impl;
 
 import org.janusgraph.core.JanusGraph;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class GraphMLConverterTest {
@@ -65,11 +62,13 @@ public class GraphMLConverterTest {
         assertTrue(testSubject.findErrorInJsonGraph(args));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testOpenGraphWithBadPath() {
+        assertThrows(IllegalArgumentException.class, () -> {
 
-        GraphMLConverter testSubject = new GraphMLConverter();
-        testSubject.openGraph("badPath");
+            GraphMLConverter testSubject = new GraphMLConverter();
+            testSubject.openGraph("badPath");
+        });
     }
 
     @Test
