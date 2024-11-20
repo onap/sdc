@@ -3,47 +3,43 @@ FROM onap/integration-java11:10.0.0
 USER root
 ARG JETTY_FOLDER=/app/jetty
 
-# Install Chef
-RUN set -ex && \
-    apk update && \
-    apk add --no-cache \
-        wget \
-        build-base \
-        ruby \
-        ruby-dev \
-        libffi-dev \
-        libxml2-dev && \
-    gem install --no-update-sources \
-        public_suffix:5.1.1 multipart-post:2.4.1 etc:1.4.3 bundler:2.4.22 chef:14.15.6 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:7.0.10 \
-        io-console:0.7.2 \
-        webrick \
-        json \
-        --no-document && \
-    gem cleanup
-
 ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
 ENV JETTY_GROUP=onap
 
-RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
+# Create the jetty folder and necessary config directories
+RUN mkdir -p $JETTY_FOLDER/config/catalog-fe && chown -R onap:onap $JETTY_FOLDER
 
-USER onap
+# Install curl for Alpine
+RUN apk update && apk add curl
 
-#Download jetty
-RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
-        tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
-        rm -rf $JETTY_FOLDER/jetty.tar.gz
+#USER onap
+
+# Download Jetty
+RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.51.v20230217/jetty-distribution-9.4.51.v20230217.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
+    tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
+    rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-RUN mkdir -p $JETTY_FOLDER/config/catalog-fe
-COPY --chown=onap:onap chef-solo $JETTY_FOLDER/chef-solo/
-COPY --chown=onap:onap  chef-repo/cookbooks $JETTY_FOLDER/chef-solo/cookbooks/
+# Add WAR files
 ADD --chown=onap:onap onboarding*.war         $JETTY_FOLDER/webapps/
-ADD --chown=onap:onap  catalog-fe-*.war        $JETTY_FOLDER/webapps/
-COPY --chown=onap:onap  startup.sh $JETTY_FOLDER
+ADD --chown=onap:onap catalog-fe-*.war        $JETTY_FOLDER/webapps/
 
-RUN chmod 770 $JETTY_FOLDER/startup.sh
+# Copy startup script
+COPY --chown=onap:onap scripts/cleanup_jettydir.sh $JETTY_FOLDER/
+COPY --chown=onap:onap scripts/set-http-module.sh $JETTY_FOLDER/
+COPY --chown=onap:onap scripts/setup-keystore-truststore.sh $JETTY_FOLDER/
 
-ENTRYPOINT [ "sh", "-c", "${JETTY_HOME}/startup.sh"]
+RUN chown -R onap:onap $JETTY_FOLDER/*
+RUN chmod 770 $JETTY_FOLDER/cleanup_jettydir.sh && $JETTY_FOLDER/cleanup_jettydir.sh
+RUN chmod 770 $JETTY_FOLDER/set-http-module.sh && $JETTY_FOLDER/set-http-module.sh
+
+COPY --chown=onap:onap files/org.onap.sdc.p12 $JETTY_FOLDER/etc/
+COPY --chown=onap:onap files/org.onap.sdc.trust.jks $JETTY_FOLDER/etc/
+
+RUN echo "etc/rewrite-root-to-sdc1.xml" >> "/app/jetty/start.d/rewrite.ini"
+RUN echo "jetty.httpConfig.sendServerVersion=false" >> "/app/jetty/start.d/start.ini"
+
+USER onap
+WORKDIR $JETTY_FOLDER
