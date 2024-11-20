@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>sdc-main</artifactId>
-    <version>1.13.7-SNAPSHOT</version>
+    <version>1.13.8-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -703,7 +703,7 @@
           <files>
             <file>
               <path>
-                ${project.basedir}\sdc-cassandra-init\chef-repo\cookbooks\cassandra-actions\attributes\version.rb
+                ${project.basedir}\sdc-cassandra-init\version.sh
               </path>
               <lines>
                 <line>
@@ -791,29 +791,6 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-clean-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>clean.sdctool.tar</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>clean</goal>
-                </goals>
-                <configuration>
-                  <filesets>
-                    <fileset>
-                      <directory>${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default</directory>
-                      <includes>
-                        <include>sdctool.tar</include>
-                      </includes>
-                    </fileset>
-                  </filesets>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
               <execution>
@@ -824,7 +801,7 @@
                 </goals>
                 <configuration>
                   <outputDirectory>
-                    ${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default
+                    ${basedir}/sdc-cassandra-init
                   </outputDirectory>
                   <overwrite>true</overwrite>
                   <resources>
