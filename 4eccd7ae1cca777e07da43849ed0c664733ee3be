@@ -35,6 +35,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "116dc1ea_f603c8a6",
+        "filename": "asdctool/sdc-cassandra-init/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-11-20T12:25:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d6441f1_633f51e2",
+      "revId": "4eccd7ae1cca777e07da43849ed0c664733ee3be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a84a25c_35825ce0",
@@ -48,6 +66,24 @@
       "writtenOn": "2024-11-20T10:50:02Z",
       "side": 1,
       "message": "Please remove the startup.sh if it is not doing anything",
+      "revId": "4eccd7ae1cca777e07da43849ed0c664733ee3be",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4ba563d_9e660841",
+        "filename": "asdctool/sdc-cassandra-init/startup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-11-20T12:25:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a84a25c_35825ce0",
       "revId": "4eccd7ae1cca777e07da43849ed0c664733ee3be",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
