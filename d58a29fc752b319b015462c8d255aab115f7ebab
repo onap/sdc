@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "28449dc1_7c25e4e6",
+        "filename": "catalog-fe/sdc-frontend/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-11-20T12:35:18Z",
+      "side": 1,
+      "message": "I think we shouldn\u0027t hardcode the jetty version if it is not necessary here",
+      "revId": "d58a29fc752b319b015462c8d255aab115f7ebab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e47525c9_69dc3816",
+        "filename": "catalog-fe/sdc-frontend/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2024-11-20T12:35:18Z",
+      "side": 1,
+      "message": "Why was the `startup.sh` removed? Don\u0027t we need something that runs `java -jar ...` here?",
+      "revId": "d58a29fc752b319b015462c8d255aab115f7ebab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
