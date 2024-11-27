@@ -29,8 +29,7 @@ RUN apk update &&  \
         io-console:0.7.2 \
         webrick \
         json \
-        --no-document && \
-    gem cleanup
+        --no-document || echo "Gem installation failed"
 
 USER sdc
 COPY --chown=sdc:sdc chef-solo /home/sdc/chef-solo/
