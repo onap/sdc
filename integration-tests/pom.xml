@@ -713,12 +713,6 @@ limitations under the License.
                                     <HEAP_NEWSIZE>512M</HEAP_NEWSIZE>
                                 </env>
                                 <hostname>sdc-cs</hostname>
-                                <volumes>
-                                    <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments
-                                        </volume>
-                                    </bind>
-                                </volumes>
                                 <ulimits>
                                     <ulimit>
                                         <name>memlock</name>
@@ -766,13 +760,6 @@ limitations under the License.
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                 </env>
                                 <hostname>sdc-cs-init</hostname>
-                                <volumes>
-                                    <bind>
-                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments
-                                        </volume>
-
-                                    </bind>
-                                </volumes>
                                 <wait>
                                     <time>300000</time>
                                     <log>SdcSchemaFileImport successfully completed</log>
