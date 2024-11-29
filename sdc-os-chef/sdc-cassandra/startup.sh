@@ -1,17 +1,14 @@
 #!/bin/bash
+set -x  # Enable debug mode
 
-cd /root/chef-solo
-chef-solo -c solo.rb -o recipe[cassandra-actions::01-configureCassandra] -E ${ENVNAME}
-rc=$?
-if [[ $rc != 0 ]]; then exit $rc; fi
+cd /root/scripts || exit 1
+cp -pr /root/scripts/cassandra.yaml /etc/cassandra/cassandra.yaml || exit 1
+cp -pr /root/scripts/cassandra-rackdc.properties /etc/cassandra/cassandra-rackdc.properties || exit 1
 
 echo "########### starting cassandra ###########"
-
 /docker-entrypoint.sh cassandra -f &
 
-chef-solo -c solo.rb  -E ${ENVNAME}
-rc=$?
-if [[ $rc != 0 ]]; then exit $rc; fi
+/root/scripts/change_cassandra_pass.sh || echo "Password change failed"
+/var/lib/ready_probe.sh || echo "Ready probe failed"
+
 while true; do sleep 30; done
-
-
