@@ -7,7 +7,7 @@
 
 # The name of the cluster. This is mainly used to prevent machines in
 # one logical cluster from joining another.
-cluster_name: '<%= @cassandra_cluster %>'
+cluster_name: cluster_name
 
 # This defines the number of tokens randomly assigned to this node on the ring
 # The more tokens, relative to other nodes, the larger the proportion of data
@@ -22,7 +22,7 @@ cluster_name: '<%= @cassandra_cluster %>'
 #
 # If you already have a cluster with 1 token per node, and wish to migrate to
 # multiple tokens per node, see http://wiki.apache.org/cassandra/Operations
-num_tokens: <%= @num_tokens %>
+num_tokens: 256
 
 # initial_token allows you to specify tokens manually.  While you can use # it with
 # vnodes (num_tokens > 1, above) -- in which case you should provide a
@@ -34,7 +34,8 @@ num_tokens: <%= @num_tokens %>
 # of data centers to enable per-datacenter.
 # hinted_handoff_enabled: DC1,DC2
 # See http://wiki.apache.org/cassandra/HintedHandoff
-hinted_handoff_enabled: <%= node['cassandra']['hinted_handoff_enabled'] %>
+#hinted_handoff_enabled: <%= node['cassandra']['hinted_handoff_enabled'] %>
+hinted_handoff_enabled: true
 
 # this defines the maximum amount of time a dead host will have hints
 # generated.  After it has been dead this long, new hints for it will not be
@@ -105,14 +106,16 @@ partitioner: org.apache.cassandra.dht.Murmur3Partitioner
 # Directories where Cassandra should store data on disk.  Cassandra
 # will spread data evenly across them, subject to the granularity of
 # the configured compaction strategy.
+#data_file_directories:
+#    - <%= @cassandra_data_dir %>
 data_file_directories:
-    - <%= @cassandra_data_dir %>
-
+    - /var/lib/cassandra/data
 
 # commit log.  when running on magnetic HDD, this should be a
 # separate spindle than the data directories.
 # If not set, the default directory is $CASSANDRA_HOME/data/commitlog.
-commitlog_directory: <%= @cassandra_commitlog_dir %>
+#commitlog_directory: <%= @cassandra_commitlog_dir %>
+commitlog_directory: /var/lib/cassandra/commitlog
 
 # policy for data disk failures:
 # stop_paranoid: shut down gossip and Thrift even for single-sstable errors.
@@ -267,11 +270,12 @@ seed_provider:
     # Cassandra nodes use this list of hosts to find each other and learn
     # the topology of the ring.  You must change this if you are running
     # multiple nodes!
-    - class_name: org.apache.cassandra.locator.SimpleSeedProvider
-      parameters:
-          # seeds is actually a comma-delimited list of addresses.
-          # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: "<%= @seeds_address %>"
+  - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+    parameters:
+        # seeds is actually a comma-delimited list of addresses.
+        # Ex: "<ip1>,<ip2>,<ip3>"
+        # - seeds: "<%= @seeds_address %>"
+        - seeds: 127.0.0.1
 
 # For workloads with more data than can fit in memory, Cassandra's
 # bottleneck will be reads that need to fetch data from
@@ -284,10 +288,13 @@ seed_provider:
 # On the other hand, since writes are almost never IO bound, the ideal
 # number of "concurrent_writes" is dependent on the number of cores in
 # your system; (8 * number_of_cores) is a good rule of thumb.
-concurrent_reads: <%= node['cassandra']['concurrent_reads'] %>
-concurrent_writes: <%= node['cassandra']['concurrent_writes'] %>
-concurrent_counter_writes: 32  
+#concurrent_reads: <%= node['cassandra']['concurrent_reads'] %>
+#concurrent_writes: <%= node['cassandra']['concurrent_writes'] %>
+#concurrent_counter_writes: 32  
 
+concurrent_reads: 32
+concurrent_writes: 32
+concurrent_counter_writes: 32
 
 # Total memory to use for sstable-reading buffers.  Defaults to
 # the smaller of 1/4 of heap or 512MB.
@@ -385,13 +392,15 @@ ssl_storage_port: 7001
 # you can specify which should be chosen using listen_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-listen_address: <%= @listen_address %>
+#listen_address: <%= @listen_address %>
+listen_address: 127.0.0.1
 # listen_interface: eth0
 # listen_interface_prefer_ipv6: false
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-broadcast_address: <%= @broadcast_address %>
+# broadcast_address: <%= @broadcast_address %>
+broadcast_address: 127.0.0.1
 
 # Internode authentication backend, implementing IInternodeAuthenticator;
 # used to allow/disallow connections from peer nodes.
@@ -405,7 +414,8 @@ start_native_transport: true
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
 #Default value 9042
 #native_transport_port: 9042
-native_transport_port: <%= @cassandra_port %>
+#native_transport_port: <%= @cassandra_port %>
+native_transport_port: 9042
 # The maximum threads for handling requests when the native transport is used.
 # This is similar to rpc_max_threads though the default differs slightly (and
 # there is no native_transport_min_threads, idle threads will always be stopped
@@ -425,7 +435,7 @@ native_transport_port: <%= @cassandra_port %>
 # native_transport_max_concurrent_connections_per_ip: -1
 
 # Whether to start the thrift rpc server.
-start_rpc: true
+# start_rpc: true
 
 # The address or interface to bind the Thrift RPC service and native transport
 # server to.
@@ -445,7 +455,8 @@ start_rpc: true
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_address: <%= @rpc_address %>
+#rpc_address: <%= @rpc_address %>
+rpc_address: 0.0.0.0
 # rpc_interface: eth1
 # rpc_interface_prefer_ipv6: false
 
@@ -453,7 +464,8 @@ rpc_address: <%= @rpc_address %>
 # be set to 0.0.0.0. If left blank, this will be set to the value of
 # rpc_address. If rpc_address is set to 0.0.0.0, broadcast_rpc_address must
 # be set.
-broadcast_rpc_address: <%= @broadcast_rpc_address %>
+# broadcast_rpc_address: <%= @broadcast_rpc_address %>
+broadcast_rpc_address: 127.0.0.1
 
 # enable or disable keepalive on rpc/native connections
 rpc_keepalive: true
@@ -476,7 +488,7 @@ rpc_keepalive: true
 #
 # Alternatively,  can provide your own RPC server by providing the fully-qualified class name
 # of an o.a.c.t.TServerFactory that can create an instance of it.
-rpc_server_type: sync
+#rpc_server_type: sync
 
 # Uncomment rpc_min|max_thread to set request pool size limits.
 #
@@ -508,7 +520,7 @@ rpc_server_type: sync
 # internode_recv_buff_size_in_bytes:
 
 # Frame size for thrift (maximum message length).
-thrift_framed_transport_size_in_mb: 15
+#thrift_framed_transport_size_in_mb: 15
 
 # Set to true to have Cassandra create a hard link to each sstable
 # flushed or streamed locally in a backups/ subdirectory of the
@@ -646,7 +658,8 @@ cross_node_timeout: false
 # phi value that must be reached for a host to be marked down.
 # most users should never need to adjust this.
 # phi_convict_threshold: 8
-phi_convict_threshold: <%= node['cassandra']['phi_convict_threshold'] %>
+# phi_convict_threshold: <%= node['cassandra']['phi_convict_threshold'] %>
+phi_convict_threshold: 8
 
 # endpoint_snitch -- Set this to a class that implements
 # IEndpointSnitch.  The snitch has two functions:
@@ -732,7 +745,7 @@ dynamic_snitch_badness_threshold: 0.1
 # client requests to a node with a separate queue for each
 # request_scheduler_id. The scheduler is further customized by
 # request_scheduler_options as described below.
-request_scheduler: org.apache.cassandra.scheduler.NoScheduler
+#request_scheduler: org.apache.cassandra.scheduler.NoScheduler
 
 # Scheduler Options vary based on the type of scheduler
 # NoScheduler - Has no options
@@ -776,11 +789,17 @@ request_scheduler: org.apache.cassandra.scheduler.NoScheduler
 # the keystore and truststore.  For instructions on generating these files, see:
 # http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore
 #
+#server_encryption_options:
+    #internode_encryption: none
+    #keystore: <%= @cassandra_truststore_dir %>/.keystore
+    #keystore_password: Aa123456
+    #truststore: <%= @cassandra_truststore_dir %>/.truststore
+    #truststore_password: Aa123456
 server_encryption_options:
     internode_encryption: none
-    keystore: <%= @cassandra_truststore_dir %>/.keystore
+    keystore: /etc/cassandra/cs_trust #check
     keystore_password: Aa123456
-    truststore: <%= @cassandra_truststore_dir %>/.truststore
+    truststore: /etc/cassandra/cs_trust
     truststore_password: Aa123456
     # More advanced defaults below:
     # protocol: TLS
@@ -790,9 +809,13 @@ server_encryption_options:
     # require_client_auth: false
 
 # enable or disable client/server encryption.
+#client_encryption_options:
+#    enabled: false
+#    keystore: <%= @cassandra_truststore_dir %>/.keystore
+#    keystore_password: Aa123456
 client_encryption_options:
     enabled: false
-    keystore: <%= @cassandra_truststore_dir %>/.keystore
+    keystore: <keystore_directory>
     keystore_password: Aa123456
     # require_client_auth: false
     # Set trustore and truststore_password if require_client_auth is true

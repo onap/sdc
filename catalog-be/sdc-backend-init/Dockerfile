@@ -1,4 +1,4 @@
-FROM onap/integration-python:9.1.0
+FROM onap/integration-python:9.0.0
 
 USER root
 
@@ -12,6 +12,7 @@ RUN apk update && \
         libcurl \
         ruby && \
     apk add --no-cache --virtual .build-dependencies \
+        libressl-dev \
         ruby-dev \
         libffi-dev \
         libxml2-dev \
@@ -22,11 +23,11 @@ RUN apk update && \
     pip install 'pycurl==7.44.1' && \
     set -ex && \
     gem install --no-update-sources \
-        public_suffix:5.1.1 multipart-post:2.4.1 etc:1.4.3 bundler:2.4.22 chef:14.15.6 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:7.0.10 \
-        io-console:0.7.2 \
+        rspec-its:1.3.0 hitimes:1.3.1 \
+        public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
+        berkshelf:6.3.1 \
+        io-console:0.4.6 \
         webrick \
-        json \
         --no-document && \
     apk del .build-dependencies && \
     gem cleanup
