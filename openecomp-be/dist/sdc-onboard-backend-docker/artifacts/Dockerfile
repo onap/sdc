@@ -1,26 +1,17 @@
 FROM onap/integration-java11:10.0.0
 
+# Switch to root user for system installations
 USER root
 ARG JETTY_FOLDER=/app/jetty
 
-# Install Chef
+# Install necessary packages and dependencies
 RUN set -ex && \
     apk update && \
     apk add --no-cache \
         wget \
         build-base \
-        ruby \
-        ruby-dev \
         libffi-dev \
-        libxml2-dev && \
-    gem install --no-update-sources \
-        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        webrick \
-        json \
-        --no-document && \
-    gem cleanup
+        libxml2-dev
 
 ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
@@ -37,12 +28,19 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-COPY --chown=onap:onap chef-solo $JETTY_FOLDER/chef-solo/
-COPY --chown=onap:onap chef-repo/cookbooks $JETTY_FOLDER/chef-solo/cookbooks/
-ADD --chown=onap:onap onboarding-be-*.war $JETTY_FOLDER/webapps/
-ADD --chown=onap:onap api-docs.war $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap onboarding-be-*.war    $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap api-docs.war           $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
-
+COPY --chown=onap:onap scripts/cleanup_jettydir.sh $JETTY_FOLDER/
+COPY --chown=onap:onap scripts/create_jetty_modules.sh $JETTY_FOLDER/
+# Set executable permissions on the startup script
 RUN chmod 770 $JETTY_FOLDER/startup.sh
+RUN chmod 770 $JETTY_FOLDER/cleanup_jettydir.sh && $JETTY_FOLDER/cleanup_jettydir.sh
+RUN chmod +x $JETTY_FOLDER/create_jetty_modules.sh && $JETTY_FOLDER/create_jetty_modules.sh
 
+COPY --chown=onap:onap files/logback.xml $JETTY_FOLDER/config/onboarding-be/
+COPY --chown=onap:onap files/org.onap.sdc.p12 $JETTY_FOLDER/etc/
+COPY --chown=onap:onap files/org.onap.sdc.trust.jks $JETTY_FOLDER/etc/
+COPY --chown=onap:onap files/base_template.yaml $JETTY_BASE/resources/
+COPY --chown=onap:onap files/base_template.env $JETTY_BASE/resources/
 ENTRYPOINT [ "sh", "-c", "${JETTY_HOME}/startup.sh"]
