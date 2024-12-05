@@ -65,6 +65,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 			throws Exception {
 
 		Config config = Utils.getConfig();
+		System.out.println("config = " + config);
 		String url = String.format(Urls.CREATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort());
 
 		String userId = sdncModifierDetails.getUserId();
@@ -77,6 +78,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
 		HttpRequest http = new HttpRequest();
 		RestResponse createResourceResponse = http.httpSendPost(url, userBodyJson, headersMap);
+		System.out.println("createResourceResponse = " + createResourceResponse);
 		if (createResourceResponse.getErrorCode() == STATUS_CODE_CREATED) {
 			resourceDetails.setUUID(ResponseParser.getUuidFromResponse(createResourceResponse));
 			resourceDetails.setVersion(ResponseParser.getVersionFromResponse(createResourceResponse));

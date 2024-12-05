@@ -118,6 +118,7 @@ public class Config {
             throw new RuntimeException("The config file " + configFile + " cannot be found.");
         }
 
+	System.out.println("configFile = " + configFile);
         final Config config;
 
         try (final InputStream in = Files.newInputStream(Paths.get(configFile));) {
@@ -125,6 +126,7 @@ public class Config {
             setPackagesAndBugs(configFile, config);
         }
 
+	System.out.println("configFile = " + configFile);
         return config;
     }
 
