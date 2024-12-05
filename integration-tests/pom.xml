@@ -841,7 +841,6 @@ limitations under the License.
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
                                         <volume>${project.basedir}/src/test/resources/cert/onboarding-be:/app/jetty/onap/cert
                                         </volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
