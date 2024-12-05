@@ -12,9 +12,6 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
 
 cd $JETTY_BASE
 
-cd $JETTY_BASE/chef-solo
-chef-solo -c solo.rb -E ${ENVNAME}
-
 cd $JETTY_HOME
 echo "jetty.httpConfig.sendServerVersion=false" >> $JETTY_HOME/start.d/start.ini
 

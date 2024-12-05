@@ -1,6 +1,5 @@
-FROM onap/policy-jdk-alpine:2.4.4
+FROM onap/policy-jdk-debian:2.0.2
 
-USER root
 RUN addgroup sdc
 RUN adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 USER sdc
@@ -9,28 +8,25 @@ RUN mkdir ~/.cassandra/ && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc
 USER root
 
-RUN apk update &&  \
+RUN apt-get update --allow-releaseinfo-change &&  \
+    apt-get purge python* -y && \
+    apt-get install -y python3-pip && \
     python3 -m pip install --upgrade pip && \
     pip3 install cqlsh==6.1.0 && \
     mkdir ~/.cassandra/ && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
     set -ex && \
-    apk add --no-cache \
-        wget \
-        build-base \
-        ruby \
-        ruby-dev \
-        libffi-dev \
-        libxml2-dev && \
-    gem install --no-update-sources \
-        public_suffix:5.1.1 multipart-post:2.4.1 etc:1.4.3 bundler:2.4.22 chef:14.15.6 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:7.0.10 \
-        io-console:0.7.2 \
-        webrick \
-        json \
-        --no-document && \
-    gem cleanup
+    apt-get install -y \
+    make \
+    gcc \
+    ruby \
+    ruby-dev \
+    libffi-dev \
+    libxml2-dev && \
+    gem install --no-update-sources public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 webrick --no-document && \
+    apt-get update -y && apt-get remove bash -y --allow-remove-essential && \
+    apt-get install -y binutils && apt-get clean && gem cleanup
 
 USER sdc
 
