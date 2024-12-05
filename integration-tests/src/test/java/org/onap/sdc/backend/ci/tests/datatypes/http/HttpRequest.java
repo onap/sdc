@@ -58,17 +58,23 @@ public class HttpRequest {
 
         int responseCode = con.getResponseCode();
         logger.debug("Send GET http request, url: {}", url);
+	logger.info("Send GET http request, url: {}", url);
         logger.debug("Response Code: {}", responseCode);
+	logger.info("Response Code: {}", responseCode);
 
         StringBuffer response = new StringBuffer();
         String result;
 		result = IOUtils.toString(con.getInputStream());
+		logger.info("result: {}", result);
 		response.append(result);
+		logger.info("Response is: {}", response);
         if (con.getErrorStream() != null) {
+		logger.info("the con error stream: {}", con.getErrorStream());
             throw new IOException(IOUtils.toString(con.getErrorStream()));
         }
 
         logger.debug("Response body: {}", response);
+	logger.info("Response body: {}", response);
 
         // print result
         setHttpResponseToObject(restResponse, con, responseCode, response);
@@ -83,9 +89,11 @@ public class HttpRequest {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod(method);
+	System.out.println("con = " + con);
         addHttpRequestHEaders(headers, con);
         if (body != null && !body.isEmpty() && !method.equals("DELETE")) {
-            con.setDoOutput(true);
+            System.out.println("In condition..");
+	    con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(body);
             wr.flush();
@@ -94,12 +102,15 @@ public class HttpRequest {
 
         int responseCode = con.getResponseCode();
         logger.debug("Send {} http request, url: {}", method, url);
+	logger.info("Send {} http request, url: {}", method, url);
         logger.debug("Response Code: {}", responseCode);
+	logger.info("Response Code: {}", responseCode);
         StringBuffer response = generateHttpResponse(con, false);
         if (con.getErrorStream() != null) {
             throw new IOException(IOUtils.toString(con.getErrorStream()));
         }
         logger.debug("Response body: {}", response);
+	logger.info("Response body: {}", response);
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
 
