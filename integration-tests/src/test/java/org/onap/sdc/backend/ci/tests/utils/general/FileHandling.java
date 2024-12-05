@@ -98,6 +98,7 @@ public class FileHandling {
 	 */
 	public static String getFilePath(String folder) {
 		// return folder from perspective of working directory ( in general for nightly run from Linux, should already contain "Files" directory )
+		System.out.println("System.getProperty(\"user.dir\") = " + System.getProperty("user.dir"));
 		return FileHandling.getBasePath() + "src/test/resources/Files" + File.separator + folder + File.separator;
 	}
 

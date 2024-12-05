@@ -3,6 +3,7 @@
 JAVA_OPTIONS="$JAVA_OPTIONS \
             -Dcom.datastax.driver.USE_NATIVE_CLOCK=false \
             -Dconfig.home=$JETTY_BASE/config \
+	    -Duser.dir=$JETTY_BASE \
             -Dlog.home=$JETTY_BASE/logs \
             -Dlogback.configurationFile=$JETTY_BASE/config/onboarding-be/logback.xml \
             -Dconfiguration.yaml=$JETTY_BASE/config/onboarding-be/onboarding_configuration.yaml \
@@ -10,11 +11,7 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
             -XX:+HeapDumpOnOutOfMemoryError \
             -Dconfig.location=$JETTY_BASE/config/onboarding-be/."
 
-cd $JETTY_BASE
-
-cd $JETTY_BASE/chef-solo
-chef-solo -c solo.rb -E ${ENVNAME}
-
+chmod 0755 $JETTY_BASE/start.d/*.ini
 cd $JETTY_HOME
 echo "jetty.httpConfig.sendServerVersion=false" >> $JETTY_HOME/start.d/start.ini
 
