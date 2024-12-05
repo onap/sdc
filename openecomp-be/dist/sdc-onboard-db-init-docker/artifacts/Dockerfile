@@ -42,3 +42,4 @@ COPY --chown=sdc:sdc startup.sh /home/sdc/
 RUN chmod 770 /home/sdc/startup.sh
 
 ENTRYPOINT [ "/home/sdc/startup.sh" ]
+
