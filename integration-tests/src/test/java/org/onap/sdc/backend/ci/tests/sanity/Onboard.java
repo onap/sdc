@@ -45,10 +45,13 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.onap.sdc.backend.ci.tests.api.ComponentBaseTest;
 import org.onap.sdc.backend.ci.tests.api.ExtentTestActions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.*;
 
 public class Onboard extends ComponentBaseTest {
 
+	private static final Logger log = LoggerFactory.getLogger(Onboard.class);
 	private String makeDistributionValue;
 	private String makeToscaValidationValue;
 	@Rule
@@ -120,7 +123,8 @@ public class Onboard extends ComponentBaseTest {
 	private void runOnboardToDistributionFlow(String packageFilePath, String packageFileName, ResourceTypeEnum resourceTypeEnum) throws Exception {
 		ExtentTestActions.log(Status.INFO, String.format("Going to onboard the %s %s", resourceTypeEnum.getValue(), packageFileName));
 		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-     	ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+     		ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+		System.out.println("resourceReqDetails = " + resourceReqDetails);
 		resourceReqDetails.setResourceType(resourceTypeEnum.getValue());
 		VendorSoftwareProductObject vendorSoftwareProductObject = OnboardingUtillViaApis.createVspViaApis(resourceReqDetails, packageFilePath, packageFileName, user);
 
@@ -128,6 +132,7 @@ public class Onboard extends ComponentBaseTest {
 		OnboardingUtillViaApis.prepareOnboardedResourceDetailsBeforeCreate(resourceReqDetails, vendorSoftwareProductObject);
 		resourceReqDetails.setResourceType(resourceTypeEnum.getValue());
 		ExtentTestActions.log(Status.INFO, String.format("Create %s %s From VSP", resourceTypeEnum.getValue(), resourceReqDetails.getName()));
+		log.info("Create %s %s From VSP", resourceTypeEnum.getValue(), resourceReqDetails.getName());
 		Resource resource = OnboardingUtillViaApis.createResourceFromVSP(resourceReqDetails, UserRoleEnum.DESIGNER);
 		ExtentTestActions.log(Status.INFO, String.format("Certify %s", resourceTypeEnum.getValue()));
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
