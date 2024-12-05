@@ -1,6 +1,5 @@
-FROM onap/policy-jdk-alpine:2.4.4
+FROM onap/policy-jdk-debian:2.0.2
 
-USER root
 RUN addgroup sdc
 RUN adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 USER sdc
@@ -9,7 +8,9 @@ RUN mkdir ~/.cassandra/ && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc
 USER root
 
-RUN apk update &&  \
+RUN apt-get update --allow-releaseinfo-change &&  \
+    apt-get purge python* -y && \
+    apt-get install -y python3-pip && \
     python3 -m pip install --upgrade pip && \
     pip3 install cqlsh==6.1.0 && \
     mkdir ~/.cassandra/ && \
