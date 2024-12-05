@@ -94,12 +94,15 @@ public class HttpRequest {
 
         int responseCode = con.getResponseCode();
         logger.debug("Send {} http request, url: {}", method, url);
+	logger.info("Send {} http request, url: {}", method, url);
         logger.debug("Response Code: {}", responseCode);
+	logger.info("Response Code: {}", responseCode);
         StringBuffer response = generateHttpResponse(con, false);
         if (con.getErrorStream() != null) {
             throw new IOException(IOUtils.toString(con.getErrorStream()));
         }
         logger.debug("Response body: {}", response);
+	logger.info("Response body: {}", response);
         setHttpResponseToObject(restResponse, con, responseCode, response);
         con.disconnect();
 

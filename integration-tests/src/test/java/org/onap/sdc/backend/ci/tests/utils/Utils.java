@@ -100,7 +100,20 @@ public final class Utils {
     }
 
     public static Config getConfig() throws FileNotFoundException {
-        return Config.instance();
+        try {
+            return Config.instance();
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: Configuration file not found.");
+            System.err.println("Detailed exception message: " + e.getMessage());
+
+            // Re-throw the exception to make it clear to the caller
+            throw e;
+        } catch (Exception e) {
+            // Handle any other unexpected exceptions
+            System.err.println("An unexpected error occurred while loading the configuration.");
+            System.err.println("Detailed exception message: " + e.getMessage());
+            throw new RuntimeException("Unexpected error while loading configuration", e);
+        }
     }
 
     public static Config getConfigHandleException() {
