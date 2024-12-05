@@ -99,8 +99,17 @@ public final class Utils {
         }
     }
 
-    public static Config getConfig() throws FileNotFoundException {
-        return Config.instance();
+    public static Config getConfig() {
+        try {
+            Config config = Config.instance();
+            System.out.println("Config instance successfully loaded: " + config);
+            return config;
+        } catch (Exception e) {
+            System.err.println("An error occurred while loading the configuration.");
+            System.err.println("Exception message: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error while loading configuration", e);
+        }
     }
 
     public static Config getConfigHandleException() {
