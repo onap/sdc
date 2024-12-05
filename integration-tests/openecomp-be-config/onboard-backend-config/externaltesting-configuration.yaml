@@ -1,0 +1,6 @@
+client:
+  enabled: true
+endpoints:
+  - vtp,VTP,true,http://refrepo:8702/onapapi/vnfsdk-marketplace,onap.*
+  - repository,Repository,false,,.*
+
