@@ -76,9 +76,11 @@ public class CatalogRestUtils extends BaseRestUtils {
 	public static RestResponse getOnboardVersion() throws IOException {
 
 		Config config = Utils.getConfig();
+		System.out.println("config to see the onboard version= " + config);
 		String url = String.format(Urls.ONBOARD_VERSION, config.getOnboardingBeHost(),
 				config.getOnboardingBePort());
 
+		System.out.println(" = " +UserRoleEnum.DESIGNER.getUserId());
 		return sendGet(url, UserRoleEnum.DESIGNER.getUserId());
 	}
 	

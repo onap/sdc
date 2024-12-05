@@ -1,37 +1,32 @@
 catalogNotificationsConfig:
   # catalog backend protocol
-  <% if node[:disableHttp] -%>
-  catalogBeProtocol: https
-  <% else %>
   catalogBeProtocol: http
-  <% end -%>
-  catalogBeHttpPort: <%= @catalog_be_http_port %>
-  catalogBeSslPort: <%= @catalog_be_ssl_port %>
-  catalogBeFqdn: <%= @catalog_be_fqdn %>
+  catalogBeHttpPort: 8080
+  catalogBeSslPort: 8443
+  catalogBeFqdn: sdc-BE
   # do not remove the "" from catalog_notification_url. it is escaping % characters coming from AUTO.json
-  catalogNotificationUrl: "<%= @catalog_notification_url %>"
+  catalogNotificationUrl: "%s://%s:%s/sdc2/rest/v1/catalog/notif/vsp/"
 
 notifications:
   pollingIntervalMsec: 2000
   selectionSize: 100
-  beHost: <%= @onboard_ip %>
-  beHttpPort: <%= @onboard_port %>
+  beHost: sdc-onboard-BE
+  beHttpPort: 8081
 
 cassandraConfig:
-  cassandraHosts: [ <%= @cassandra_ip %> ]
-  cassandraPort: <%= @cassandra_port %>
-  localDataCenter: <%= @DC_NAME %>
+  cassandraHosts: sdc-cs
+  cassandraPort: 9042
+  datacenter_name: SDC-CS-integration-test
   reconnectTimeout: 30000
-  socketReadTimeout: <%= @socket_read_timeout %>
-  socketConnectTimeout: <%= @socket_connect_timeout %>
+  socketReadTimeout: 40000
+  socketConnectTimeout: 40000
   authenticate: true
-  username: <%= @cassandra_usr %>
-  password: <%= @cassandra_pwd %>
-  ssl: <%= @cassandra_ssl_enabled %>
-  truststorePath: <%= node['jetty']['truststore_path'] %>
-  truststorePassword: <%= @cassandra_truststore_password %>
+  username: asdc_user
+  password: Aa1234%^!
+  ssl: false
+  truststorePath: /app/jetty/etc/truststore
+  truststorePassword: Aa123456
 
-# access restriction
 authCookie:
   securityKey: MlB1WHFpSHNVTWdJZU1PcQ==
   maxSessionTimeOut: 86400000
@@ -46,9 +41,9 @@ authCookie:
   onboardingExcludedUrls: [ '/.*' ]
 
 basicAuth:
-  enabled: <%= @basic_auth_enabled %>
-  userName: <%= @basic_auth_username %>
-  userPass: <%= @basic_auth_password %>
+  enabled: true
+  userName: testName
+  userPass: testPass
   excludedUrls: "/v1.0/healthcheck"
 
 zipValidation:
@@ -71,7 +66,8 @@ externalCsarStore:
   uploadPartSize: 200000000
 
 #Space separated list of permitted ancestors
-permittedAncestors: <%= @permittedAncestors %>
+permittedAncestors: 
 
 # Comma separated list of excluded URLs by the DataValidatorFilter
 dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
+

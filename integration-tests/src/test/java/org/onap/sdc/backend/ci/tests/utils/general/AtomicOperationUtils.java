@@ -181,6 +181,7 @@ public final class AtomicOperationUtils {
                                                                                  final Boolean validateState) {
         try {
             User defaultUser = ElementFactory.getDefaultUser(userRole);
+	    System.out.println("defaultUser = " + defaultUser);
             RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
 
             if (validateState) {
