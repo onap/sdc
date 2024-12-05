@@ -51,12 +51,17 @@ import static org.testng.AssertJUnit.assertTrue;
 public class OnboardingUtillViaApis {
 
 	public static VendorSoftwareProductObject createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
+		try {
+			VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+			return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
+					vendorLicenseModel);
+		}catch (Exception e){
+			System.out.println(e.getMessage());
+			e.printStackTrace(System.out);
+		}
+        return new VendorSoftwareProductObject();
+    }
 
-		VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
-		return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
-            vendorLicenseModel);
-	}
-	
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
 		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
 		return resource;

@@ -40,6 +40,8 @@ public class AutomationUtils extends BaseRestUtils {
 			onboardVersionStr = ResponseParser.getValueFromJsonResponse(onboardVersion.getResponse() , "Version");
 						
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace(System.out);
 			System.out.println("UnknownOnboardVersion");
 		}
 		return onboardVersionStr != null ? onboardVersionStr : "UnknownOnboardVersion";
