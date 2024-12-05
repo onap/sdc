@@ -110,6 +110,7 @@ public class Config {
     private static Config init() throws IOException {
 
         String configFile = System.getProperty("config.resource");
+	System.out.println("configFile = " + configFile);
         if (configFile == null) {
             configFile = SDC_DEFAULT_CONFIG_FILE;
         }
