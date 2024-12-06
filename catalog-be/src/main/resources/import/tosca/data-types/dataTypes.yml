@@ -3496,3 +3496,244 @@ tosca.dataTypes.tmf.milestoneJeopardyData:
       type: string
       required: false
       valid_values: [normal, critical, hazard]
+
+tosca.datatypes.3gpp.ServAttrCom:
+  derived_from: tosca.datatypes.Root
+  properties:
+    category:
+      type: string
+      required: false
+      description: >
+        This attribute specifies the category of a service requirement/attribute of GST (see GSMA NG.116 ).
+      constraints:
+        - valid_values: ["CHARACTER", "SCALABILITY"]
+    exposure:
+      type: string
+      required: false
+      description: >
+        This attribute specifies exposure mode of a service requirement/attribute of GST (see GSMA NG.116 ).
+      constraints:
+        - valid_values: ["API", "KPI"]
+    tagging:
+      type: string
+      required: false
+      description: >
+        This attribute specifies the tagging of a service requirement/attribute of GST in character category (see GSMA NG.116).
+      constraints:
+        - valid_values: ["PERFORMANCE", "FUNCTION", "OPERATION"]
+
+tosca.datatypes.3gpp.PlmnId:
+  derived_from: tosca.datatypes.Root
+  properties:
+    mcc:
+      type: string
+      required: false
+      description: >
+        Mobile Country Code (MCC) of the PLMN identifier. See 3GPP TS 23.003 subclause 2.2 and 12.1.
+    mnc:
+      type: string
+      required: false
+      description: >
+        Mobile Network Code (MNC) of the PLMN identifier. See 3GPP TS 23.003 subclause 2.2 and 12.1.
+
+tosca.datatypes.3gpp.Snssai:
+  derived_from: tosca.datatypes.Root
+  properties:
+    sst:
+      type: string
+      required: false
+      description: >
+        This attribute specifies the Slice/Service type (SST) of the network slice.
+    sd:
+      type: integer
+      required: false
+      description: >
+        This attribute specifies the Slice Differentiator (SD), which is optional information that complements the slice/service type(s) to differentiate amongst multiple Network Slices.
+        Pattern: '^[A-Fa-f0-9]{6}$'
+ 
+tosca.datatypes.3gpp.CoverageArea:
+  derived_from: tosca.datatypes.Root
+  properties:
+    geoPoint:
+      type: tosca.datatypes.3gpp.GeoCoordinate
+      required: false
+      description: >
+        Sample description
+    convexGeoPolygon:
+      type: list
+      required: false
+      description: >
+        Sample description
+      entry_schema:
+        type: tosca.datatypes.3gpp.GeoCoordinate
+
+tosca.datatypes.3gpp.DelayTolerance:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    support:
+      type: string
+      required: false
+      description: >
+        An attribute specifies whether or not the network slice supports service delivery flexibility, especially for the vertical services that are not chasing a high system performance.
+      constraints:
+        - valid_values: ["NOT_SUPPORTED", "SUPPORTED"]
+
+tosca.datatypes.3gpp.DeterministicComm:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    availability:
+      type: string
+      required: false
+      description: >
+        This parameter describes if the network slice supports deterministic communication.
+      constraints:
+        - valid_values: ["NOT_SUPPORTED", "SUPPORTED"]
+    periodicityList:
+      type: list
+      required: false
+      description: >
+        An attribute specifies a list of periodicities supported by the network slice for deterministic communication. Each instance of periodicity is expressed in seconds, refer to GSMA NG.116.
+      entry_schema:
+        type: integer
+
+tosca.datatypes.3gpp.GeoCoordinate:
+  derived_from: tosca.datatypes.Root
+  properties:
+    latitude:
+      type: float
+      required: false
+      description: >
+        Latitude value
+    longitude:
+      type: float
+      required: false
+      description: >
+        Longitude value
+    altitude:
+      type: float
+      required: false
+      description: >
+        Altitude value
+
+tosca.datatypes.3gpp.KpiMonitoring:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    kpiList:
+      type: list
+      required: false
+      description: >
+        An attribute specifies the name list of KQIs and KPIs available for performance monitoring.
+      entry_schema:
+        type: string
+
+tosca.datatypes.3gpp.PlmnInfo:
+  derived_from: tosca.datatypes.Root
+  properties:
+    plmnId:
+      type: tosca.datatypes.3gpp.PlmnId
+      required: false
+      description: >
+        Represents the information of a PLMN identification.
+    snssai:
+      type: tosca.datatypes.3gpp.Snssai
+      required: false
+      description: >
+        In order to identify a Network Slice end to end, the 5GS uses information called S-NSSAI (Single Network Slice Selection Assistance Information)
+
+tosca.datatypes.3gpp.Positioning:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    availability:
+      type: string
+      required: false
+      description: >
+        Specifies if this attribute is provided by the RAN domain of the network slice and contains a list of positioning methods provided by the RAN domain. If the list is empty this attribute is not available in the RAN domain and the other parameters might be ignored, see GSMA NG.116 . Comma separated multiple values are allowed
+        Allowed Values: CIDE_CID, OTDOA, RF_FINGERPRINTING, AECID, HYBRID_POSITIONING, NET_RTK.
+    predictionFrequency:
+      type: string
+      required: false
+      description: >
+        Specifies how often location information is provided. This parameter simply defines how often the customer is allowed to request location information. This is not related to the time it takes to determine the location, which is a characteristic of the positioning method, see GSMA NG.116.
+      constraints:
+        - valid_values: ["PERSEC", "PERMIN", "PERHOUR"]
+    accuracy:
+      type: string
+      required: false
+      description: >
+        Specifies the accuracy of the location information. Accuracy depends on the respective positioning solution applied in the RAN domain of the network slice, measurement unit is meter, see GSMA NG.116.
+        
+tosca.datatypes.3gpp.Synchronicity:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    availability:
+      type: string
+      required: false
+      description: >
+        The synchronicity between devices over PC5 in absence of the network is not in scope of this parameter.
+        Note: Not including this parameter is equal to setting it to Not supported.
+      constraints:
+        - valid_values: ["NOT_SUPPORTED", "BETWEEN_BS_AND_UE", "BETWEEN_BS_AND_UE_AND_UE_AND_UE"]
+    accuracy:
+      type: float
+      required: false
+      description: >
+        Specifies the accuracy of the synchronicity, see GSMA NG.116
+        
+tosca.datatypes.3gpp.TermDensity:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    density:
+      type: integer
+      required: false
+      description: >
+        An attribute specifies the overall user density over the coverage area of the network slice. See Table 7.1-1 of 3GPP TS 22.261 .
+
+tosca.datatypes.3gpp.XlThpt:
+  derived_from: tosca.datatypes.Root
+  properties:
+    servAttrCom:
+      type: tosca.datatypes.3gpp.ServAttrCom
+      required: false
+      description: >
+        Represents the common properties of service requirement related attributes (see GSMA NG.116  corresponding to Attribute categories, tagging and exposure).
+    guaThpt:
+      type: float
+      required: false
+      description: >
+        This attribute describes the guaranteed data rate.
+    maxThpt:
+      type: float
+      required: false
+      description: >
+        This attribute describes the maximum data rate.
+
