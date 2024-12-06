@@ -61,6 +61,12 @@ services:
       models: [
           "AUTOMATION COMPOSITION"
       ]
+    NSST:
+      name: "NSST"
+      icons: [ 'nsst' ]
+      models: [
+        "SDC AID"
+      ]
 resources:
   NetworkLayer23:
     name: "Network L2-3"
