@@ -47,6 +47,7 @@ limitations under the License.
         <it.sdc.user>asdc_user</it.sdc.user>
         <it.sdc.password>Aa1234%^!</it.sdc.password>
         <it.chef.config>${project.build.directory}/chef-config</it.chef.config>
+        <it.catalog.resource>${project.build.directory}/catalog-be-resources</it.catalog.resource>
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
@@ -425,6 +426,63 @@ limitations under the License.
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${it.catalog.resource}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>catalog-be-resources</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Set executable permissions for the scripts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>set-executable-permissions</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+
+                                <chmod file="${it.catalog.resource}/create_directories.sh" perm="755" />
+                                <chmod file="${it.catalog.resource}/create_jetty_modules.sh" perm="755" />
+                                <chmod file="${it.catalog.resource}/ready-probe.sh" perm="755" />
+
+                                <!-- <chmod file="${project.build.directory}/catalog-be-resources/create_directories.sh" perm="755" />
+                                <chmod file="${project.build.directory}/catalog-be-resources/create_jetty_modules.sh" perm="755" />
+                                <chmod file="${project.build.directory}/catalog-be-resources/ready-probe.sh" perm="755" /> -->
+
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
             <!-- Section for Integration tests -->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -455,6 +513,9 @@ limitations under the License.
                             </resources>
                         </configuration>
                     </execution>
+
+
+
                     <execution>
                         <id>copy-sdc-be-plugins</id>
                         <phase>pre-integration-test</phase>
@@ -545,6 +606,10 @@ limitations under the License.
                     </execution>
                 </executions>
             </plugin>
+
+
+
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>wagon-maven-plugin</artifactId>
@@ -784,6 +849,7 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+
                         <image>
                             <name>${docker.namespace}/sdc-onboard-cassandra-init:${it.docker.version}</name>
                             <alias>sdc-cassandra-onboard-init</alias>
@@ -818,6 +884,7 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+
                         <image>
                             <name>${docker.namespace}/sdc-onboard-backend:${it.docker.version}</name>
                             <alias>sdc-onboard-backend</alias>
@@ -871,6 +938,7 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+
                         <image>
                             <name>${docker.namespace}/sdc-backend-all-plugins:${it.docker.version}</name>
                             <alias>sdc-backend</alias>
@@ -892,16 +960,49 @@ limitations under the License.
                                 <hostname>sdc-BE</hostname>
                                 <volumes>
                                     <bind>
+
                                         <volume>
-                                            ${project.basedir}/integration-tests-init/BE-configuration.yaml.erb:/app/jetty/chef-solo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb
+                                            ${project.basedir}/integration-tests-init/BE-configuration.yaml.erb:/app/jetty/BE-configuration.yaml.erb
                                         </volume>
-                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
-                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
+
+                                        <volume>${it.chef.config}:/app/jetty/</volume>
                                         <volume>
                                             ${project.basedir}/src/test/resources/cert/catalog-be:/app/jetty/onap/cert
                                         </volume>
+                                        <volume>${it.catalog.resource}:/app/jetty/</volume>
+                                        <volume>${it.catalog.resource}:/app/jetty/config/catalog-be/</volume>
+                                        <volume>${it.catalog.resource}:/app/jetty/resource/</volume>
+                                        <volume>${it.catalog.resource}:/app/jetty/config/start.d/</volume>
+
+                                        <volume>${it.catalog.resource}/catalog-be/configuration.yaml:/app/jetty/config/catalog-be/configuration.yaml</volume>
+                                        <volume>${it.catalog.resource}/catalog-be/distrubution-engine-configuration.yaml:/app/jetty/config/catalog-be/distrubution-engine-configuration.yaml</volume>
+                                        <volume>${it.catalog.resource}/catalog-be/janusgraph.properties:/app/jetty/config/catalog-be/janusgraph.properties</volume>
+                                        <volume>${it.catalog.resource}/resource/key.properties:/app/jetty/resource/key.properties</volume>
+                                        <volume>${it.catalog.resource}/resource/portal.properties:/app/jetty/resource/portal.properties</volume>
+                                        <volume>${it.catalog.resource}/start.d/http.ini:/app/jetty/start.d/http.ini</volume>
+                                        <volume>${it.catalog.resource}/start.d/https.ini:/app/jetty/start.d/https.ini</volume>
+                                        <volume>${it.catalog.resource}/start.d/ssl.ini:/app/jetty/start.d/ssl.ini</volume>
+                                        <volume>${it.catalog.resource}/create_directories.sh:/app/jetty/create_directories.sh</volume>
+                                        <volume>${it.catalog.resource}/create_jetty_modules.sh:/app/jetty/create_jetty_modules.sh</volume>
+                                        <volume>${it.catalog.resource}/ready-probe.sh:/app/jetty/ready-probe.sh</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume>
+
+
+                                        <!-- <volume>${project.basedir}/catalog-be-resources/catalog-be/configuration.yaml:/app/jetty/config/catalog-be/configuration.yaml</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/catalog-be/distrubution-engine-configuration.yaml:/app/jetty/config/catalog-be/distrubution-engine-configuration.yaml</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/catalog-be/janusgraph.properties:/app/jetty/config/catalog-be/janusgraph.properties</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/resource/key.properties:/app/jetty/resource/key.properties</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/resource/portal.properties:/app/jetty/resource/portal.properties</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/start.d/http.ini:/app/jetty/start.d/http.ini</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/start.d/https.ini:/app/jetty/start.d/https.ini</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/start.d/ssl.ini:/app/jetty/start.d/ssl.ini</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/create_directories.sh:/app/jetty/create_directories.sh</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/create_jetty_modules.sh:/app/jetty/create_jetty_modules.sh</volume>
+                                        <volume>${project.basedir}/catalog-be-resources/ready-probe.sh:/app/jetty/ready-probe.sh</volume>
+                                        <volume>${it.shared.volume}:/app/jetty/logs</volume> -->
                                     </bind>
                                 </volumes>
+                                <cmd>/bin/sh -c "/app/jetty/create_directories.sh &amp;&amp; /app/jetty/create_jetty_modules.sh &amp;&amp; /app/jetty/ready-probe.sh "</cmd>
                                 <wait>
                                     <time>60000</time>
                                     <tcp>
@@ -926,9 +1027,26 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+
                         <image>
                             <name>${docker.namespace}/sdc-backend-init:${it.docker.version}</name>
                             <alias>sdc-backend-init</alias>
+                            <build>
+                                <dockerFileDir>${project.basedir}/../catalog-be/sdc-backend-init</dockerFileDir>
+                                <args>
+                                    <DISABLE_HTTP>false</DISABLE_HTTP>
+                                    <BE_HTTP_PORT>8080</BE_HTTP_PORT>
+                                    <BE_HTTPS_PORT>8443</BE_HTTPS_PORT>
+                                    <BE_IP>sdc-BE-init</BE_IP>
+                                    <BASIC_AUTH_ENABLED>true</BASIC_AUTH_ENABLED>
+                                    <BASIC_AUTH_USER>testName</BASIC_AUTH_USER>
+                                    <BASIC_AUTH_PASS>testPass</BASIC_AUTH_PASS>
+                                    <TLS_CERT>""</TLS_CERT>
+                                    <TLS_KEY>""</TLS_KEY>
+                                    <TLS_KEY_PW>""</TLS_KEY_PW>
+                                    <CA_CERT>""</CA_CERT>
+                                </args>
+                            </build>
                             <run>
                                 <dependsOn>
                                     <container>sdc-backend</container>
@@ -939,15 +1057,22 @@ limitations under the License.
                                 <hostname>sdc-BE-init</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>
-                                            ${it.chef.config}:/home/onap/chef-solo/environments
-                                        </volume>
+                                        <volume>${it.chef.config}:/home/onap/</volume>
+                                        <volume>${it.catalog.resource}:/home/onap/</volume>
+                                        <volume>${it.catalog.resource}/init-script/check_backend.sh:/home/onap/check_backend.sh</volume>
+                                        <volume>${it.catalog.resource}/init-script/create_consumer_and_user.sh:/home/onap/create_consumer_and_user.sh</volume>
+                                        <volume>${it.catalog.resource}/init-script/import_normatives.sh:/home/onap/import_normatives.sh</volume>
                                         <volume>${it.shared.volume}:/home/onap/logs</volume>
+
                                     </bind>
                                 </volumes>
+                                <cmd>/bin/sh -c "/home/onap/check_backend.sh"</cmd>
+                                <cmd>/bin/sh -c "/home/onap/create_consumer_and_user.sh"</cmd>
+                                <cmd>/bin/sh -c "/home/onap/import_normatives.sh"</cmd>
+
                                 <wait>
                                     <time>660000</time>
-                                    <log>Chef Client finished</log>
+                                    <log>Done</log>
                                 </wait>
                                 <network>
                                     <mode>custom</mode>
@@ -956,7 +1081,9 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
-                        <image>
+
+
+                       <image>
                             <name>${docker.namespace}/sdc-frontend:${it.docker.version}</name>
                             <alias>sdc-frontend</alias>
                             <run>
@@ -1157,6 +1284,7 @@ limitations under the License.
                                 </network>
                             </run>
                         </image>
+
                     </images>
                 </configuration>
                 <executions>
