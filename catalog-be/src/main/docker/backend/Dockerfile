@@ -3,24 +3,6 @@ FROM onap/integration-java11:10.0.0
 USER root
 ARG JETTY_FOLDER=/app/jetty
 
-# Install Chef
-RUN set -ex && \
-    apk update && \
-    apk add --no-cache \
-        wget \
-        build-base \
-        ruby \
-        ruby-dev \
-        libffi-dev \
-        libxml2-dev && \
-    gem install --no-update-sources \
-        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
-        berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        webrick \
-        --no-document && \
-    gem cleanup
-
 ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
@@ -37,12 +19,21 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
 
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-COPY --chown=onap:onap chef-solo $JETTY_FOLDER/chef-solo/
-COPY --chown=onap:onap chef-repo/cookbooks $JETTY_FOLDER/chef-solo/cookbooks/
 COPY --chown=onap:onap onap-sdc-backend/catalog-be.war       $JETTY_FOLDER/webappwar/
 COPY --chown=onap:onap context.xml       $JETTY_FOLDER/webapps/
+COPY --chown=onap:onap files/rewrite-root-to-swagger-ui.xml $JETTY_FOLDER/etc/rewrite-root-to-swagger-ui.xml
+
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
+COPY --chown=onap:onap files/create_directories.sh $JETTY_FOLDER/
+COPY --chown=onap:onap files/create_jetty_modules.sh $JETTY_FOLDER/
+COPY --chown=onap:onap files/logback.xml $JETTY_FOLDER/config/catalog-be/
+COPY --chown=onap:onap files/ecomp-error-configuration.yaml $JETTY_FOLDER/config/catalog-be/ecomp-error-configuration.yaml
+COPY --chown=onap:onap files/error-configuration.yaml $JETTY_FOLDER/config/catalog-be/error-configuration.yaml
+COPY --chown=onap:onap files/BE_3_setup_key_and_trust_store.sh $JETTY_FOLDER/
+RUN chmod +x /app/jetty/BE_3_setup_key_and_trust_store.sh
 
 RUN chmod 770 $JETTY_FOLDER/startup.sh
+RUN chmod +x $JETTY_FOLDER/create_directories.sh && $JETTY_FOLDER/create_directories.sh
+RUN chmod +x $JETTY_FOLDER/create_jetty_modules.sh && $JETTY_FOLDER/create_jetty_modules.sh
 
 ENTRYPOINT [ "sh", "-c", "${JETTY_HOME}/startup.sh"]
