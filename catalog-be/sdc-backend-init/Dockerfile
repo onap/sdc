@@ -1,4 +1,4 @@
-FROM onap/integration-python:9.1.0
+FROM onap/integration-python:9.0.0
 
 USER root
 
@@ -9,10 +9,9 @@ ENV PYCURL_SSL_LIBRARY=openssl
 RUN apk update && \
     apk add binutils jq libpng && \
     apk add --no-cache \
-        libcurl \
-        ruby && \
+        libcurl && \
     apk add --no-cache --virtual .build-dependencies \
-        ruby-dev \
+        libressl-dev \
         libffi-dev \
         libxml2-dev \
         build-base \
@@ -20,16 +19,7 @@ RUN apk update && \
     # needed libcurl to install correctly \
     python -m pip install --upgrade pip && \
     pip install 'pycurl==7.44.1' && \
-    set -ex && \
-    gem install --no-update-sources \
-        public_suffix:5.1.1 multipart-post:2.4.1 etc:1.4.3 bundler:2.4.22 chef:14.15.6 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:7.0.10 \
-        io-console:0.7.2 \
-        webrick \
-        json \
-        --no-document && \
-    apk del .build-dependencies && \
-    gem cleanup
+    apk del .build-dependencies
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir $ONAP_LOG && chown onap:onap $ONAP_LOG
@@ -48,12 +38,14 @@ RUN chmod 770 -R /home/onap/scripts && \
 
 ENV PATH=$PATH:/home/onap/.local/bin
 
-COPY --chown=onap:onap chef-solo /home/onap/chef-solo/
-COPY --chown=onap:onap chef-repo/cookbooks /home/onap/chef-solo/cookbooks/
-COPY --chown=onap:onap startup.sh /home/onap/
+COPY --chown=onap:onap normatives.tar.gz /home/onap/
+COPY --chown=onap:onap custom-scripts/create_consumer_and_user.sh /home/onap/create_consumer_and_user.sh
+RUN chmod +x /home/onap/create_consumer_and_user.sh;
+COPY --chown=onap:onap custom-scripts/check_backend.sh /home/onap/check_backend.sh
+RUN chmod +x /home/onap/check_backend.sh
+COPY --chown=onap:onap custom-scripts/import_normatives.sh /home/onap/import_normatives.sh
+RUN chmod +x /home/onap/import_normatives.sh
 
-RUN chmod 770 /home/onap/startup.sh
 
 WORKDIR /home/onap/
 
-ENTRYPOINT /home/${user}/startup.sh
