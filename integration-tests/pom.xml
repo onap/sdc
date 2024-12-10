@@ -704,7 +704,7 @@ limitations under the License.
                         <image>
                             <name>${docker.namespace}/sdc-cassandra:${it.docker.version}</name>
                             <alias>sdc-cassandra</alias>
-                            <run>
+			    <run>
                                 <env>
                                     <RELEASE>${project.version}</RELEASE>
                                     <CS_PASSWORD>${it.cassandra.password}</CS_PASSWORD>
@@ -713,12 +713,6 @@ limitations under the License.
                                     <HEAP_NEWSIZE>512M</HEAP_NEWSIZE>
                                 </env>
                                 <hostname>sdc-cs</hostname>
-                                <volumes>
-                                    <bind>
-                                        <volume>${it.chef.config}:/root/chef-solo/environments
-                                        </volume>
-                                    </bind>
-                                </volumes>
                                 <ulimits>
                                     <ulimit>
                                         <name>memlock</name>
@@ -766,13 +760,6 @@ limitations under the License.
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                 </env>
                                 <hostname>sdc-cs-init</hostname>
-                                <volumes>
-                                    <bind>
-                                        <volume>${it.chef.config}:/home/sdc/chef-solo/environments
-                                        </volume>
-
-                                    </bind>
-                                </volumes>
                                 <wait>
                                     <time>300000</time>
                                     <log>SdcSchemaFileImport successfully completed</log>
@@ -848,7 +835,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>300000</time>
+                                    <time>500000</time>
                                     <tcp>
                                         <host>sdc-onboard-BE</host>
                                         <mode>direct</mode>
