@@ -78,13 +78,13 @@ describe('Software Product Validation Action Helper Tests', function() {
             'softwareProduct.softwareProductValidation.vspChecks',
             vspChecksList
         );
-        mockRest.addHandler('fetch', ({ baseUrl }) => {
+        mockRest.addHandler('fetch', ({ options, data, baseUrl }) => {
             expect(baseUrl).toEqual(
                 `${restPrefix}/v1.0/externaltesting/testcasetree`
             );
             return vspChecksList;
         });
-        return SoftwareProductValidationActionHelper.fetchVspChecks(
+        SoftwareProductValidationActionHelper.fetchVspChecks(
             store.dispatch
         )
             .then(() => {
