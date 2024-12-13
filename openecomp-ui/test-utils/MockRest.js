@@ -41,7 +41,7 @@ export default {
 	fetch(baseUrl, options) {
 		const {fetch} = queue;
 		if(!fetch.length) {
-			throw new Error(`Fetch operation was called without proper handler. baseUrl: '${baseUrl}' options: '${options}'`);
+			throw new Error(`Fetch operation was called without proper handler. baseUrl: ${baseUrl} options: ${options}`);
 		}
 		return handleOperation(fetch.shift(), {options, baseUrl});
 	},
