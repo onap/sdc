@@ -1,5 +1,6 @@
 FROM cassandra:3.11.15
 
+# Install necessary packages
 RUN apt-get -o Acquire::Check-Valid-Until=false update && \
     apt-get -y --no-install-recommends install \
       apt-transport-https \
@@ -11,13 +12,20 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update && \
       ntp && \
     apt-get -y autoremove && \
     pip3 install cqlsh==6.1.0 && \
-    rm -rf "/opt/cassandra/bin/cqlsh*" && \
-    curl -L https://omnitruck.chef.io/install.sh | bash -s -- -v 13.12.14
+    rm -rf "/opt/cassandra/bin/cqlsh*"
 
-COPY chef-solo /root/chef-solo/
-COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
+# Copy scripts or configuration files
+RUN mkdir /root/scripts
+COPY scripts /root/scripts
+RUN chmod +x /root/scripts/*
+RUN cp -pr /root/scripts/ready_probe.sh /var/lib/ready_probe.sh
+RUN chmod +x /var/lib/ready_probe.sh
+
+# Copy startup script
 COPY startup.sh /root/
 
+# Set executable permissions for the startup script
 RUN chmod 770 /root/startup.sh
 
+# Define the entrypoint for the container
 ENTRYPOINT [ "/root/startup.sh" ]
