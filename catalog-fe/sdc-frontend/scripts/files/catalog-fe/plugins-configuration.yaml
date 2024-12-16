@@ -1,0 +1,11 @@
+pluginsList:
+   - pluginId: WORKFLOW
+     pluginDiscoveryUrl: "http://sdc-wfd-fe:8080/workflows"
+     pluginSourceUrl: "https://sdc.workflow.plugin.simpledemo.onap.org:30256/workflows/"
+     pluginStateUrl: "workflowDesigner"
+     pluginDisplayOptions:
+        tab:
+            displayName: "WORKFLOW"
+            displayRoles: ["DESIGNER", "TESTER"]
+
+connectionTimeout: 1000

@@ -1,0 +1,6 @@
+notifications:
+  pollingIntervalMsec: 2000
+  selectionSize: 100
+  beHost: onboarding-be
+ 
+  beHttpPort: ${onboarding_be_http_port} #8081
