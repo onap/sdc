@@ -85,6 +85,23 @@
       "parentUuid": "c6f128a7_e52d6ffa",
       "revId": "896f20e6c6c8816ce0d2d5f46230c264b2228b47",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "91e0cc4e_86d36cca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8435
+      },
+      "writtenOn": "2025-01-02T15:47:25Z",
+      "side": 1,
+      "message": "stage-release",
+      "revId": "896f20e6c6c8816ce0d2d5f46230c264b2228b47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ],
   "submitRequirementResults": [
