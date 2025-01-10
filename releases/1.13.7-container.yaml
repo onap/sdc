@@ -1,5 +1,5 @@
 distribution_type: 'container'
-container_release_tag: '1.13.7'
+container_release_tag: '1.13.8'
 project: 'sdc'
 log_dir: 'sdc-maven-docker-stage-master/1433/'
 ref: 0e1a3ddc9fae2b9ce74be0f14c4f6e08fac7e85b
