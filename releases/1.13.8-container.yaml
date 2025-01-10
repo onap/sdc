@@ -1,0 +1,23 @@
+distribution_type: 'container'
+container_release_tag: '1.13.8'
+project: 'sdc'
+log_dir: 'sdc-maven-docker-stage-master/1439/'
+ref: 896f20e6c6c8816ce0d2d5f46230c264b2228b47
+containers:
+  - name: 'sdc-backend'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-backend-init'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-backend-all-plugins'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-cassandra'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-cassandra-init'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-frontend'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-onboard-backend'
+    version: '1.13-20250109T184539Z'
+  - name: 'sdc-onboard-cassandra-init'
+    version: '1.13-20250109T184539Z'
+
