@@ -1,1 +1,5 @@
 /sdc-backend-init/scripts/**
+# Ignore everything except what's needed
+**
+!Dockerfile
+!scripts/
