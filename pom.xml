@@ -26,7 +26,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
   <groupId>org.openecomp.sdc</groupId>
   <artifactId>sdc-main</artifactId>
-    <version>1.13.8-SNAPSHOT</version>
+    <version>1.13.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>sdc</name>
 
@@ -45,7 +45,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <lang3.version>3.12.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
-    <janusgraph.version>0.3.3</janusgraph.version>
+    <janusgraph.version>0.4.1</janusgraph.version>
     <spring.version>5.3.27</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
@@ -411,6 +411,36 @@ Modifications copyright (c) 2018-2019 Nokia
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <version>5.6.3</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-context</artifactId>
+       </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+     <groupId>org.springframework</groupId>
+     <artifactId>spring-context</artifactId>
+     <version>${spring.version}</version>
+     <exclusions>
+       <exclusion>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-expression</artifactId>
+       </exclusion>
+       <exclusion>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-core</artifactId>
+       </exclusion>
+     </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
     </dependency>
   </dependencies>
 

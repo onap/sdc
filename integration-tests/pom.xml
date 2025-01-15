@@ -32,7 +32,7 @@ limitations under the License.
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-        <version>1.13.8-SNAPSHOT</version>
+        <version>1.13.7-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -421,6 +421,21 @@ limitations under the License.
             <version>${functionaljava.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>
@@ -774,7 +789,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>400000</time>
+                                    <time>300000</time>
                                     <log>SdcSchemaFileImport successfully completed</log>
                                 </wait>
                                 <network>
@@ -979,7 +994,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>360000</time>
+                                    <time>60000</time>
                                     <tcp>
                                         <host>sdc-FE</host>
                                         <mode>direct</mode>

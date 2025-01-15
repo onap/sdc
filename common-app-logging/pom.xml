@@ -9,10 +9,26 @@
   <parent>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>sdc-main</artifactId>
-    <version>1.13.8-SNAPSHOT</version>
+    <version>1.13.7-SNAPSHOT</version>
   </parent>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+      <exclusions>
+          <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-expression</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
