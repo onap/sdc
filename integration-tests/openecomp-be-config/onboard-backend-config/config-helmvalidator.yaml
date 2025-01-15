@@ -1,0 +1,7 @@
+hValidatorEnabled: true
+hValidatorUrl: http://helm-validator:8080/validate
+hValidatorVersion: v3
+hValidatorDeployable: true
+hValidatorLintable: true
+hValidatorStrictLintable: false
+
