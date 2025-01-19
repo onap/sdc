@@ -1232,7 +1232,7 @@
                             <filesets>
                                 <fileset>
                                     <directory>
-                                        sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                                        sdc-backend-init
                                     </directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
@@ -1386,7 +1386,7 @@
                                 </goals>
                                 <configuration>
                                     <outputDirectory>
-                                        sdc-backend-init/chef-repo/cookbooks/sdc-catalog-be-setup/files/default
+                                        sdc-backend-init
                                     </outputDirectory>
                                     <resources>
                                         <resource>
