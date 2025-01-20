@@ -392,7 +392,7 @@ public abstract class SetupCDTest extends DriverFactory {
             LOGGER.info(msg);
             loginToSystem(role);
             LOGGER.debug("Going to home page");
-            goToHomePage(role);
+            // goToHomePage(role);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         } finally {

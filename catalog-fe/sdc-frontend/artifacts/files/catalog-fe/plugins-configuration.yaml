@@ -1,0 +1,11 @@
+pluginsList:
+   - pluginId: WORKFLOW
+     pluginDiscoveryUrl: "{{ .Values.config.plugins.workflow_discovery_url.http }}"
+     pluginSourceUrl: "{{ .Values.config.plugins.workflow_source_url }}"
+     pluginStateUrl: "workflowDesigner"
+     pluginDisplayOptions:
+        tab:
+            displayName: "WORKFLOW"
+            displayRoles: ["DESIGNER", "TESTER"]
+
+connectionTimeout: 1000
