@@ -1,9 +1,0 @@
-notifications:
-    pollingIntervalMsec: 2000
-    selectionSize: 100
-    beHost: <%= node['ONBOARDING_BE_VIP'] %>
-    <% if node[:disableHttp] -%>
-    beHttpPort: <%= node['ONBOARDING_BE'][:https_port] %>
-    <% else %>
-    beHttpPort: <%= node['ONBOARDING_BE'][:http_port] %>
-    <% end -%>

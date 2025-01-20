@@ -32,7 +32,7 @@ limitations under the License.
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-        <version>1.13.8-SNAPSHOT</version>
+        <version>1.13.9-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -970,12 +970,7 @@ limitations under the License.
                                 <hostname>sdc-FE</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
-                                        <volume>
-                                            ${it.chef.config}/plugins-configuration.yaml:/app/jetty/config/catalog-fe/plugins-configuration.yaml
-                                        </volume>
-
                                     </bind>
                                 </volumes>
                                 <wait>
