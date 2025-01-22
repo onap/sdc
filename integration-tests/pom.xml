@@ -47,7 +47,10 @@ limitations under the License.
         <it.sdc.user>asdc_user</it.sdc.user>
         <it.sdc.password>Aa1234%^!</it.sdc.password>
         <it.chef.config>${project.build.directory}/chef-config</it.chef.config>
-        <it.catalog.resource>${project.build.directory}/catalog-be-resources</it.catalog.resource>
+	<it.catalog.resource>${project.build.directory}/catalog-be-resources</it.catalog.resource>
+	<it.sdc-onboard.probe>${project.build.directory}/openecomp-be-config</it.sdc-onboard.probe>
+        <it.sdc-onboard.config>${project.build.directory}/openecomp-be-config/onboard-backend-config</it.sdc-onboard.config>
+        <it.sdc-onboard.jetty>${project.build.directory}/openecomp-be-config/jetty-config</it.sdc-onboard.jetty>
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
@@ -514,7 +517,63 @@ limitations under the License.
                         </configuration>
                     </execution>
 
-
+		    <execution>
+                        <id>copy-onboard-backend-config</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${it.sdc-onboard.config}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>openecomp-be-config/onboard-backend-config/</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-onboard-backend-http-config</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${it.sdc-onboard.jetty}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>openecomp-be-config/jetty-config</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-onboard-backend-probe</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${it.sdc-onboard.probe}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>openecomp-be-config</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>ready-probe.sh</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
 
                     <execution>
                         <id>copy-sdc-be-plugins</id>
@@ -898,7 +957,6 @@ limitations under the License.
                                     <SDC_CLUSTER_NAME>${it.sdc.cluster.name}</SDC_CLUSTER_NAME>
                                     <SDC_USER>${it.sdc.user}</SDC_USER>
                                     <SDC_PASSWORD>${it.sdc.password}</SDC_PASSWORD>
-                                    <ENVNAME>${it.env.name}</ENVNAME>
                                     <SDC_CERT_DIR>onap/cert</SDC_CERT_DIR>
                                     <JAVA_OPTIONS>
                                         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4001
@@ -907,8 +965,16 @@ limitations under the License.
                                 </env>
                                 <hostname>sdc-onboard-BE</hostname>
                                 <volumes>
-                                    <bind>
-                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
+				    <bind>
+					<volume>${it.sdc-onboard.config}/config-vnfrepo.yaml:/app/jetty/config/onboarding-be/config-vnfrepo.yaml</volume>
+                                        <volume>${it.sdc-onboard.config}/onboarding_configuration.yaml:/app/jetty/config/onboarding-be/onboarding_configuration.yaml</volume>
+                                        <volume>${it.sdc-onboard.config}/config-helmvalidator.yaml:/app/jetty/config/onboarding-be/config-helmvalidator.yaml</volume>
+                                        <volume>${it.sdc-onboard.config}/externaltesting-configuration.yaml:/app/jetty/config/onboarding-be/externaltesting-configuration.yaml</volume>
+                                        <volume>${it.sdc-onboard.config}/features.properties:/app/jetty/config/onboarding-be/features.properties</volume>
+                                        <volume>${it.sdc-onboard.jetty}/http.ini:/app/jetty/start.d/http.ini</volume>
+                                        <volume>${it.sdc-onboard.jetty}/https.ini:/app/jetty/start.d/https.ini</volume>
+                                        <volume>${it.sdc-onboard.jetty}/ssl.ini:/app/jetty/start.d/ssl.ini</volume>
+                                        <volume>${it.sdc-onboard.probe}/ready-probe.sh:/app/jetty/ready.probe.sh</volume>
                                         <volume>${project.basedir}/src/test/resources/cert/onboarding-be:/app/jetty/onap/cert
                                         </volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
@@ -1145,7 +1211,7 @@ limitations under the License.
                             <run>
                                 <hostname>firefox-standalone</hostname>
                                 <wait>
-                                    <time>20000</time>
+                                    <time>30000</time>
                                     <tcp>
                                         <host>firefox-standalone</host>
                                         <mode>direct</mode>
