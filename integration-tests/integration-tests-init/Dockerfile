@@ -19,7 +19,7 @@ RUN apk update && \
         build-base \
         curl-dev && \
     # needed libcurl to install correctly \
-    python -m pip install --upgrade pip \
+    python -m pip install --upgrade pip && \
     pip install 'pycurl==7.44.1' &&  \
     set -ex && \
     gem install --no-update-sources \
