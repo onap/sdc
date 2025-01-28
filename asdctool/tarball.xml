@@ -26,5 +26,9 @@
             <directory>tosca</directory>
             <outputDirectory>tosca</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}/openecomp-be/tools</directory>
+            <outputDirectory>tools</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>
