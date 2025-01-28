@@ -7,29 +7,25 @@ identificationHeaderFields:
 
 
 # catalog backend hostname
-beFqdn: <%= @host_ip %>
+beFqdn: sdc-BE
 
 # catalog backend http port
-beHttpPort: <%= @catalog_port %>
+beHttpPort: 8080
 
 # catalog backend http context
 beContext: /sdc/rest/config/get
 
 # catalog backend protocol
-<% if node[:disableHttp] -%>
-beProtocol: https
-<% else %>
 beProtocol: http
-<% end -%>
 
 # catalog backend ssl port
-beSslPort: <%= @ssl_port %>
+beSslPort: 8443
 version: 1.0
 released: 2012-11-30
 toscaConformanceLevel: 11.0
 minToscaConformanceLevel: 3.0
 
-janusGraphCfgFile: <%= @janusgraph_Path %>/janusgraph.properties
+janusGraphCfgFile: /tmp/sdctool/config/janusgraph.properties
 janusGraphInMemoryGraph: false
 janusGraphLockTimeout: 1800
 # The interval to try and reconnect to JanusGraph DB when it is down during ASDC startup:
@@ -71,12 +67,12 @@ users:
 
 
 cassandraConfig:
-    cassandraHosts: [<%= @cassandra_ip %>]
-    cassandraPort: <%= @cassandra_port %>
-    localDataCenter: <%= @DC_NAME %>
+    cassandraHosts: [sdc-cs]
+    cassandraPort: 9042
+    localDataCenter: SDC-CS-integration-test
     reconnectTimeout : 30000
-    socketReadTimeout: <%= @socket_read_timeout %>
-    socketConnectTimeout: <%= @socket_connect_timeout %>
+    socketReadTimeout: 40000
+    socketConnectTimeout: 40000
     authenticate: true
     username: asdc_user
     password: Aa1234%^!
@@ -85,11 +81,11 @@ cassandraConfig:
     truststorePassword : Aa123456
     maxWaitSeconds: 120
     keySpaces:
-        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
-        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['SDC-CS-integration-test','1']}
+        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['SDC-CS-integration-test','1']}
+        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['SDC-CS-integration-test','1']}
+        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['SDC-CS-integration-test','1']}
+        - { name: sdcrepository, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['SDC-CS-integration-test','1']}
 
 licenseTypes:
    - User
