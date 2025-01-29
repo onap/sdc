@@ -74,7 +74,7 @@ public class SdcSchemaUtilsTest {
 	@Test
 	public void testExecuteStatementsSessionFail() throws Exception {
 		SdcSchemaUtils sdcSchemaUtils = new SdcSchemaUtils();
-		final boolean result = sdcSchemaUtils.executeStatements(CassandraTestHelper::createClusterWithNoSession, MULTIPLE_STATEMENTS);
+		final boolean result = sdcSchemaUtils.executeStatements(() -> null, MULTIPLE_STATEMENTS);
 		Assert.assertFalse(result);
 	}
 
