@@ -9,11 +9,6 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
                -Djavax.net.ssl.trustStore=$JETTY_BASE/etc/org.onap.sdc.trust.jks \
                -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0"
 
-cd $JETTY_BASE/chef-solo
-chef-solo -c solo.rb -E ${ENVNAME}
-
 cd $JETTY_HOME
-echo "etc/rewrite-root-to-sdc1.xml" >> $JETTY_HOME/start.d/rewrite.ini
-echo "jetty.httpConfig.sendServerVersion=false" >> $JETTY_HOME/start.d/start.ini
 
 java $JAVA_OPTIONS -jar "${JETTY_HOME}/start.jar"

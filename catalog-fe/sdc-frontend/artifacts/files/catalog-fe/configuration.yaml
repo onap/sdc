@@ -1,24 +1,20 @@
 # Needed for logging purposes. To be populated by DevOps - currently dummy
-feFqdn: <%= @fe_host_ip %>
+feFqdn: sdc-FE
 
 # catalog backend hostname
-beHost: <%= @be_host_ip %>
+beHost: sdc-BE
 
 # catalog backend http port
-beHttpPort: <%= @catalog_port %>
+beHttpPort: 8080
 
 # catalog backend http context
 beContext: /sdc2/rest/v1/catalog/upload/resources
 
 # catalog backend protocol
-<% if node[:disableHttp] -%>
-beProtocol: https
-<% else %>
 beProtocol: http
-<% end -%>
 
 # catalog backend ssl port
-beSslPort: <%= @ssl_port %>
+beSslPort: 8443
 
 # threadpool size for handling requests
 threadpoolSize: 50
@@ -29,8 +25,8 @@ requestTimeout: 1200
 # catalog ms (the host-port values need to be changed once it is deployed)
 catalogFacadeMs:
   protocol: http
-  host: <%= node['FACADE_VIP'] %>
-  port: <%= @facade_port %>
+  host: 
+  port: 
   healthCheckUri: "/healthCheck"
   path: "/uicache"
 
@@ -40,28 +36,18 @@ healthCheckSocketTimeoutInMs: 5000
 healthCheckIntervalInSeconds: 5
 
 basicAuth:
-  enabled: <%= @basic_auth_flag %>
-  userName: <%= @user_name %>
-  userPass: <%= @user_pass %>
+  enabled: true
+  userName: testName
+  userPass: testPass
 
 onboarding:
-    hostFe: <%= @fe_host_ip %>
-    <% if node[:disableHttp] -%>
-    protocolFe: https
-    portFe: <%= node['FE'][:https_port] %>
-    <% else %>
+    hostFe: sdc-FE
     protocolFe: http
-    portFe: <%= node['FE'][:http_port] %>
-    <% end -%>
+    portFe: 8181
     healthCheckUriFe: "/onboarding/v1.0/healthcheck"
-    hostBe: <%= node['ONBOARDING_BE_VIP'] %>
-    <% if node[:disableHttp] -%>
-    protocolBe: https
-    portBe: <%= node['ONBOARDING_BE'][:https_port] %>
-    <% else %>
+    hostBe: sdc-onboard-BE
     protocolBe: http
-    portBe: <%= node['ONBOARDING_BE'][:http_port] %>
-    <% end -%>
+    portBe: 8081
 
 identificationHeaderFields:
    -
@@ -96,7 +82,7 @@ authCookie:
   cookieName: "AuthenticationCookie"
   path: /
   domain: ""
-  securityKey: <%= node['access_restriction_key'] %>
+  securityKey: 
 
 
 # Connection parameters
@@ -126,4 +112,4 @@ healthStatusExclude:
    - External API
 
 #Space separated list of permitted ancestors
-permittedAncestors: <%= @permittedAncestors %>
+permittedAncestors: 
