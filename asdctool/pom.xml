@@ -703,7 +703,7 @@
           <files>
             <file>
               <path>
-                ${project.basedir}\sdc-cassandra-init\chef-repo\cookbooks\cassandra-actions\attributes\version.rb
+                ${project.basedir}\sdc-cassandra-init\version.sh
               </path>
               <lines>
                 <line>
@@ -802,7 +802,7 @@
                 <configuration>
                   <filesets>
                     <fileset>
-                      <directory>${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default</directory>
+                      <directory>${basedir}/sdc-cassandra-init</directory>
                       <includes>
                         <include>sdctool.tar</include>
                       </includes>
@@ -824,7 +824,7 @@
                 </goals>
                 <configuration>
                   <outputDirectory>
-                    ${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default
+                    ${basedir}/sdc-cassandra-init
                   </outputDirectory>
                   <overwrite>true</overwrite>
                   <resources>
