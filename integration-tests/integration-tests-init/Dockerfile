@@ -23,8 +23,8 @@ RUN apk update && \
     pip install 'pycurl==7.44.1' &&  \
     set -ex && \
     gem install --no-update-sources \
-        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:6.3.1 \
+        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 \
+        faraday:2.8.1 minitar:0.12.1 \
         io-console:0.4.6 \
         webrick \
         json \
@@ -49,8 +49,7 @@ RUN chmod 770 -R /home/onap/scripts && \
 
 ENV PATH=$PATH:/home/onap/.local/bin
 
-COPY --chown=onap:onap chef-solo /home/onap/chef-solo/
-COPY --chown=onap:onap chef-repo/cookbooks /home/onap/chef-solo/cookbooks/
+COPY --chown=onap:onap init-script /home/onap/init-script/
 COPY --chown=onap:onap startup.sh /home/onap/
 
 RUN chmod 770 /home/onap/startup.sh
