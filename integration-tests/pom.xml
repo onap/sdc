@@ -620,7 +620,7 @@ limitations under the License.
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                integration-tests-init/chef-repo/cookbooks/sdc-integration-tests-setup/files/default
+                                integration-tests-init
                             </outputDirectory>
                             <resources>
                                 <resource>
@@ -669,10 +669,10 @@ limitations under the License.
                             <resources>
                                 <resource>
                                     <directory>
-                                        ${project.parent.basedir}/catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/
+                                        ${project.parent.basedir}/integration-tests/catalog-be/
                                     </directory>
                                     <includes>
-                                        <include>BE-configuration.yaml.erb</include>
+                                        <include>configuration.yaml</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -812,7 +812,7 @@ limitations under the License.
                             <filesets>
                                 <fileset>
                                     <directory>
-                                        integration-tests-init/chef-repo/cookbooks/sdc-integration-tests-setup/files/default
+                                        integration-tests-init
                                     </directory>
                                     <followSymlinks>false</followSymlinks>
                                     <includes>
@@ -1138,7 +1138,6 @@ limitations under the License.
                                         <volume>
                                             ${it.chef.config}/plugins-configuration.yaml:/app/jetty/config/catalog-fe/plugins-configuration.yaml
                                         </volume>
-
                                     </bind>
                                 </volumes>
                                 <wait>
@@ -1302,16 +1301,9 @@ limitations under the License.
                                     <ENVNAME>${it.env.name}</ENVNAME>
                                 </env>
                                 <hostname>integration-tests-init</hostname>
-                                <volumes>
-                                    <bind>
-                                        <volume>
-                                            ${it.chef.config}:/home/onap/chef-solo/environments
-                                        </volume>
-                                    </bind>
-                                </volumes>
                                 <wait>
                                     <time>660000</time>
-                                    <log>Chef Client finished</log>
+                                    <log>Done</log>
                                 </wait>
                                 <network>
                                     <mode>custom</mode>
@@ -1495,4 +1487,3 @@ limitations under the License.
         </profile>
     </profiles>
 </project>
-

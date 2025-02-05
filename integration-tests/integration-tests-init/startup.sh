@@ -1,4 +1,5 @@
 #!/bin/sh
 
-cd /home/"${user}"/chef-solo || exit $?
-chef-solo -c solo.rb -E "${ENVNAME}"
+cd /home/onap/init-script
+sh -x /home/onap/check_backend.sh
+sh -x /home/onap/import_normatives.sh
