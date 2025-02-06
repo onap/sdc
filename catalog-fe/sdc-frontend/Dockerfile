@@ -4,7 +4,7 @@ USER root
 ARG JETTY_FOLDER=/app/jetty
 
 # Install curl for Alpine
-RUN apk update && apk add curl && apk add gettext
+RUN apk update && apk add curl jq gettext
 
 # Create the Jetty folder and necessary config directories
 RUN mkdir -p $JETTY_FOLDER/ && chown onap:onap $JETTY_FOLDER
