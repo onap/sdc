@@ -4,7 +4,7 @@
 working_directory="/home/sdc"
 
 # Extract the cl_release version
-version="1.13.9"
+version="1.14.0"
 cl_release=$(echo $version | cut -d. -f1-3 | cut -d- -f1)
 echo -e "\033[33mcl_release=[$cl_release]\033[0m"
 
