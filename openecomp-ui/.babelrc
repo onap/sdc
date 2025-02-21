@@ -1,14 +1,29 @@
 {
-	"presets": [["env", {
-		"targets": {
-			"browsers": ["last 2 versions", "Firefox >= 47"]
-		}
-	}], "react"],
+	"presets": [
+		[
+		  "@babel/preset-env",
+		  {
+			"targets": {
+			  "browsers": [
+				"last 2 versions",
+				"Firefox >= 47"
+			  ]
+			}
+		  }
+		],
+		"@babel/preset-react"
+	  ],
 	"plugins": [
-		"transform-object-rest-spread",
-		"transform-class-properties",
-		"transform-runtime",
-		"transform-decorators-legacy"
+	    "@babel/plugin-proposal-object-rest-spread",
+		"@babel/plugin-proposal-class-properties",
+		"@babel/plugin-transform-runtime",
+		"@babel/plugin-transform-modules-commonjs",
+		[
+			"@babel/plugin-proposal-decorators",
+			{
+			  "legacy": true
+			}
+		]
 	],
 	"sourceMap": "inline"
 }

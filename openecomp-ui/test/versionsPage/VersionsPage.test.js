@@ -16,7 +16,7 @@
 
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import {mount} from 'enzyme';
+// import {mount} from 'enzyme';
 import {Provider} from 'react-redux';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';

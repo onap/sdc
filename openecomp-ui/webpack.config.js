@@ -59,7 +59,15 @@ module.exports = (env, argv) => {
                 {
                     test: /\.(js|jsx)$/,
                     include: path.resolve(__dirname, 'src'),
-                    use: [{ loader: 'babel-loader' }]
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: ['@babel/preset-env'],  // Add any additional presets like @babel/preset-react if necessary
+                                cacheDirectory: true
+                            }
+                        }
+                    ]
                 },
                 {
                     test: /\.(js|jsx)$/,

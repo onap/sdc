@@ -34,25 +34,24 @@ describe('Software Product Components Monitoring Module Tests', function () {
 	});
 
 
-	it('Fetch for existing files - no files', done => {
-
+	it('Fetch for existing files - no files', (done) => {
 		let emptyResult = VSPComponentsMonitoringRestFactory.build();
-
-		mockRest.addHandler('fetch', ({ baseUrl}) => {
+	
+		mockRest.addHandler('fetch', ({ baseUrl }) => {
 			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/uploads`);
 			return emptyResult;
 		});
-
-		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
-			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
+	
+		// Return the promise so Jest knows to wait for it
+		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, { softwareProductId, version, componentId }).then(() => {
+			var { softwareProduct: { softwareProductComponents: { monitoring } } } = store.getState();
 			expect(monitoring[trap]).toEqual(emptyResult[trap]);
 			expect(monitoring[poll]).toEqual(emptyResult[poll]);
 			expect(monitoring[ves]).toEqual(emptyResult[ves]);
 			done();
 		});
-
-
 	});
+	
 
 	it('Fetch for existing files - only snmp trap file exists', done => {
 		let response = VSPComponentsMonitoringRestFactory.build({}, {createTrap: true});
@@ -62,7 +61,7 @@ describe('Software Product Components Monitoring Module Tests', function () {
 			return response;
 		});
 
-		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
+		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
 
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
 			expect(monitoring[poll]).toEqual(undefined);
@@ -81,7 +80,7 @@ describe('Software Product Components Monitoring Module Tests', function () {
 			return response;
 		});
 
-		return SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
+		SoftwareProductComponentsMonitoringActionHelper.fetchExistingFiles(store.dispatch, {softwareProductId, version, componentId}).then(() => {
 
 			var {softwareProduct: {softwareProductComponents: {monitoring}}} = store.getState();
 			expect(monitoring[trap]).toEqual(response[trap]);
@@ -101,7 +100,7 @@ describe('Software Product Components Monitoring Module Tests', function () {
 		let file = new Blob([JSON.stringify(debug, null, 2)], {type: 'application/json'});;
 		let formData = new FormData();
 		formData.append('upload', file);
-		return SoftwareProductComponentsMonitoringActionHelper.uploadFile(store.dispatch, {
+		SoftwareProductComponentsMonitoringActionHelper.uploadFile(store.dispatch, {
 			softwareProductId,
 			version,
 			componentId,
@@ -125,7 +124,7 @@ describe('Software Product Components Monitoring Module Tests', function () {
 		});
 
 
-		return SoftwareProductComponentsMonitoringActionHelper.deleteFile(store.dispatch, {
+		SoftwareProductComponentsMonitoringActionHelper.deleteFile(store.dispatch, {
 			softwareProductId,
 			version,
 			componentId,

@@ -16,12 +16,15 @@
 
 import React from 'react';
 import {mount} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
 import TestUtils from 'react-dom/test-utils';
 import ListEditorView from 'src/nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'src/nfvo-components/listEditor/ListEditorItemView.jsx';
 
 describe('listEditor Module Tests', function () {
 
+	Enzyme.configure({ adapter: new Adapter() })
 
 	it('list editor view should exist', () => {
 		expect(ListEditorView).toBeTruthy();

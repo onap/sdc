@@ -30,11 +30,15 @@ import VersionFactory from 'test-utils/factories/common/VersionFactory.js';
 import { UserFactory } from 'test-utils/factories/users/UsersFactories.js';
 
 import { actionTypes as userActionTypes } from 'sdc-app/onboarding/users/UsersConstants.js';
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
 
 describe('Activity Log Module Tests', function() {
     const LICENSE_MODEL_ID = '555';
     const version = VersionFactory.build();
     const usersList = UserFactory.buildList(3);
+
+    Enzyme.configure({ adapter: new Adapter() })
 
     it('mapStateToProps mapper exists', () => {
         expect(mapStateToProps).toBeTruthy();

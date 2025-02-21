@@ -45,7 +45,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <lang3.version>3.12.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
-    <janusgraph.version>0.3.3</janusgraph.version>
+    <janusgraph.version>0.5.0</janusgraph.version>
     <spring.version>5.3.27</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
@@ -848,12 +848,12 @@ Modifications copyright (c) 2018-2019 Nokia
     <profile>
       <id>fast-build-no-ui</id>
       <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <skipYamlJsonValidator>true</skipYamlJsonValidator>
+        <!-- <maven.test.skip>true</maven.test.skip>
+        <skipYamlJsonValidator>true</skipYamlJsonValidator> -->
         <checkstyle.skip>true</checkstyle.skip>
-        <jacoco.skip>true</jacoco.skip>
+        <!-- <jacoco.skip>true</jacoco.skip>
         <maven.antrun.skip>true</maven.antrun.skip>
-        <swagger.skip>true</swagger.skip>
+        <swagger.skip>true</swagger.skip> -->
       </properties>
       <modules>
         <module>openecomp-be</module>

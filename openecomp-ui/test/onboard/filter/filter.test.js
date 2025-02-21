@@ -60,7 +60,7 @@ describe('Onboard Filter Tests', () => {
             type: actionTypes.FILTER_DATA_CHANGED,
             deltaData: {}
         });
-        return timeoutPromise.then(function() {
+        timeoutPromise.then(function() {
             expect(store.getState()).toEqual(expectedStore);
             done();
         });
@@ -107,7 +107,7 @@ describe('Onboard Filter Tests', () => {
             deltaData: { versionStatus: versionStatus.CERTIFIED }
         });
 
-        return timeoutPromise.then(function() {
+        timeoutPromise.then(function() {
             expect(store.getState()).toEqual(expectedStoreWithFilteredLists);
             done();
         });
@@ -136,7 +136,7 @@ describe('Onboard Filter Tests', () => {
             tabsMapping.CATALOG
         );
 
-        return timeoutPromise.then(() => {
+        timeoutPromise.then(function() {
             expect(store.getState().onboard.filter.versionStatus).toEqual(
                 versionStatus.CERTIFIED
             );
