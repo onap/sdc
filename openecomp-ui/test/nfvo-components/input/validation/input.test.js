@@ -20,8 +20,13 @@ import {scryRenderedDOMComponentsWithTestId} from 'test-utils/Util.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import Overlay from 'react-bootstrap/lib/Overlay.js';
 import {shallow} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
 
 describe('Input', function () {
+
+	Enzyme.configure({ adapter: new Adapter() })
+
 	it('should render with type text', () => {
 		let renderedOutput = TestUtils.renderIntoDocument(<Input type='text' data-test-id='mytest' />);
 		const elem = scryRenderedDOMComponentsWithTestId(renderedOutput,'mytest');

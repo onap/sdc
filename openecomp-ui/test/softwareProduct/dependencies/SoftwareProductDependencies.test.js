@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {mount} from 'enzyme';
+// import {mount} from 'enzyme';
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/dependencies/SoftwareProductDependencies.js';
 import {
 	SoftwareProductDependenciesResponseFactory,

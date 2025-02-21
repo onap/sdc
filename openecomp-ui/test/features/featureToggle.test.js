@@ -19,8 +19,13 @@ import {mount} from 'enzyme';
 import deepFreeze from 'deep-freeze';
 import FeatureFactory  from 'test-utils/factories/features/FeaturesFactory.js';
 import {FeatureComponent} from 'sdc-app/features/featureToggle.js';
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
 
 describe('feature toggle decorator test', () => {
+
+	Enzyme.configure({ adapter: new Adapter() })
+
 	it('feature on toggle test', () => {
 		const featuresList = [FeatureFactory.build({name: 'TEST', active: true})];
 		deepFreeze(featuresList);		

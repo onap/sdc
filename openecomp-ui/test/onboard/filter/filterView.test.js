@@ -19,9 +19,12 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { storeCreator } from 'sdc-app/AppStore.js';
 import Filter from 'sdc-app/onboarding//onboard/filter/Filter.jsx';
+import Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme';
 
 describe('Filter component view Tests', () => {
     it('simple jsx test', () => {
+        Enzyme.configure({ adapter: new Adapter() })
         const store = storeCreator();
         const wrapper = mount(
             <Provider store={store}>
