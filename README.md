@@ -34,7 +34,21 @@ There are four major components of SDC:
 * Certification Studio - Available in a future release, is used to test new assets at all levels. It will be used for sandbox experimentation, and will include support for automated testing.
 * Distribution Studio - Used to deploy certified assets. From the Distribution studio, new Product assets, including their underlying Resources and Services, are deployed into lab environments for testing purposes, and into production after certification is complete. In a future release, there will be a way to export Product information to external Business Support Systems for customer ordering and billing.
 
-## Git Configuration
+## Development
+
+The SDC repo is a monorepo with multiple modules. The naming of the modules does not match that of the deployed artifacts in Kubernetes. The following table provides a mapping between the component name [in the helm chart](https://git.onap.org/oom/tree/kubernetes/sdc/components) and the maven modules and repositories.
+
+| [Deployed Service](https://git.onap.org/oom/tree/kubernetes/sdc/components)             | Module/Repo                     |
+|------------------------------|---------------------------------|
+| sdc-be                       | catalog-be                      |
+| sdc-fe                       | catalog-fe                      |
+| sdc-cs                       | asdctool                        |
+| sdc-onboarding-be            | openecomp-be                    |
+| sdc-helm-validator           | sdc-helm-validator ([repo](https://gerrit.onap.org/r/admin/repos/sdc/sdc-helm-validator))        |
+| sdc-wfd-be                   | sdc-workflow-designer ([repo](https://gerrit.onap.org/r/admin/repos/sdc/sdc-workflow-designer))     |
+| sdc-wfd-fe                   | sdc-workflow-designer ([repo](https://gerrit.onap.org/r/admin/repos/sdc/sdc-workflow-designer))     |
+
+### Git Configuration
 
 Note that if you're working on Windows, it's important to enable long paths for your machine; otherwise git won't be able to handle some files.
 
@@ -42,38 +56,41 @@ In order to do so just add this section to your global git.config file under the
 
     longpaths = true
 
-## Compiling the Project
+### Compiling the Project
 
 SDC is built from several projects while the parent "sdc" contains the main pom.xml for all of them:
-- asdctool		- set of utilities used for scheme creation and data migration in SDC
-- catalog-be		- backend code
-- catalog-fe		- frontend java code (servlet, proxy)
-- catalog-dao		- database layer
-- catalog-model		- data model of the application
-- catalog-ui		- front end code (javascript, html, css)
-- common		    - set of utilities used by the onboarding project
-- common-app-api	- common code for frontend and backend
-- common-be		    - utilities, datatypes and enums
-- security-utils	- handle encryption/decryption of passwords
-- onboarding-be		- onboarding backend code
-- onboarding-ui		- onboarding frontend code
-- integration-tests - The integration tests using the docker images to validate Backend API calls and FE with Selenium
-- sdc-os-chef		- chefs scripts used for docker creation and startup
-- utils			    - set of dev utils used for working with the project locally
+
+* asdctool          - set of utilities used for scheme creation and data migration in SDC
+* catalog-be        - backend code
+* catalog-fe        - frontend java code (servlet, proxy)
+* catalog-dao       - database layer
+* catalog-model     - data model of the application
+* catalog-ui        - front end code (javascript, html, css)
+* common            - set of utilities used by the onboarding project
+* common-app-api    - common code for frontend and backend
+* common-be         - utilities, datatypes and enums
+* security-utils    - handle encryption/decryption of passwords
+* onboarding-be     - onboarding backend code
+* onboarding-ui     - onboarding frontend code
+* integration-tests - The integration tests using the docker images to validate Backend API calls and FE with Selenium
+* sdc-os-chef       - chefs scripts used for docker creation and startup
+* utils             - set of dev utils used for working with the project locally
 
 
-In order to build all the projects, as mentioned in the onap wiki https://wiki.onap.org/display/DW/Setting+Up+Your+Development+Environment, the settings.xml (https://git.onap.org/oparent/plain/settings.xml) from the oparent project must be installed in your ~/.m2 folder and referenced by your IDE.
+In order to build all the projects, as mentioned in the [ONAP wiki](https://wiki.onap.org/display/DW/Setting+Up+Your+Development+Environment), the [settings.xml](https://git.onap.org/oparent/plain/settings.xml) from the oparent project must be installed in your `~/.m2` folder and referenced by your IDE.
 Once maven is set up properly, go to sdc project and run the command: `mvn clean install`
 
 By default, the "all" maven profile will be executed but others exist:
+
 * fast-build - A fast build skipping all tests and useless maven plugins (only builds the jars)
-* start-sdc - Once docker containers have been build, triggering this profile starts SDC CS, BE, FE, simulator
-* stop-sdc - Stop all SDC containers started by using the profile "start-sdc"
+* start-sdc  - Once docker containers have been build, triggering this profile starts SDC CS, BE, FE, simulator
+* stop-sdc   - Stop all SDC containers started by using the profile "start-sdc"
 * run-integration-tests - This runs only the integration tests against a running SDC started by using "start-sdc" profile.
-* docker - This enables the docker images build for each SDC module
+* docker     - This enables the docker images build for each SDC module
     **Note: If you're working on Windows, you'll need to define an environment variable on your machine with key `DOCKER_HOST` and value: `tcp://<ip_address>:2375` in order to build and upload local dockers to a local environment.**
 
 More flags to use in the build process are:
+
 * -DskipITs - Skips integration tests only
 * -DskipTests - Skips unit tests execution and integration tests
 * -DskipUICleanup=true - Skips deleting the UI folders
@@ -107,26 +124,28 @@ The following table shows the SDC containers found after a maven "start-sdc":
 
 For further information and an image explaining the containers dependency map please refer to the following page: [SDC Docker Diagram](https://wiki.onap.org/display/DW/SDC+Troubleshooting)
 
-
 ### Accessing the logs
 
 To access the logs, there are different options:
-* Connect to the docker container you want to inspect by doing `docker exec -it -u root sdc-XXXXXXXX-1 sh` 
-    * Then look at the logs generally in /var/lib/jetty/logs or /var/log/onap (that may differ !)
+
+* Connect to the docker container you want to inspect by doing `docker exec -it -u root sdc-XXXXXXXX-1 sh`
+  * Then look at the logs generally in /var/lib/jetty/logs or /var/log/onap (that may differ !)
 * A volume is shared between the BE, onboard-BE and FE containers, this volume is mapped to `/tmp/sdc-integration-tests`,
-    * In that folder you can obtain the logs of the different containers 
+  * In that folder you can obtain the logs of the different containers
 
 ### Debugging SDC
 
 After having started SDC with the command `mvn clean install -P start-sdc`, different java remote debug ports are opened by default:
-* Onboard Backend - 4001 (jetty)
-* Backend - 4000 (jetty)
-* Frontend - 6000 (jetty)
+
+* Onboard Backend - `4001` (jetty)
+* Backend - `4000` (jetty)
+* Frontend - `6000` (jetty)
 It's therefore possible to connect your IDE to those debug ports remotely to walk through the code and add some breakpoints.
 
 **Look at the pom.xml of the integration-tests module to have a better understanding of all the docker settings provided to start SDC.**
 
 ### Integration tests
+
 The integration are composed of 2 parts, one to test the BE Apis and another one to test the FE with selenium.
 
 The selenium tests make use of the selenium/standalone-firefox:2.53.1 container.
@@ -136,7 +155,7 @@ Onboarding E2E flow cover following SDC functionality:
 
     Onboard of VNF
     Create VF from VSP
-    Certify VF 
+    Certify VF
     Create Service
     Add VF to service
 
@@ -174,6 +193,7 @@ List of VNFs/PNFs that proceed by onboarding flow, located in `integration-tests
 
 Those tests execute the following
 There are 2 options to start them:
+
 * After having started SDC with the command `mvn clean install -P start-sdc`, run the command `mvn clean install -P run-integration-tests`
 * If you want to debug them and run them from your IDE, you must start them from the testNG Suites files, otherwise this won't work.
   The test suites are located here:
@@ -186,8 +206,10 @@ Those tests use container built externally in other ONAP repository: [sdc/sdc-he
 
 You can run those tests same as default integration tests by adding additional profile to maven commands:
 `integration-tests-with-helm-validator`
+
 * To start SDC with Helm Validator run: `mvn clean install -P start-sdc,integration-tests-with-helm-validator`
 * To execute tests that use Helm Validator use: `mvn clean install -P run-integration-tests,integration-tests-with-helm-validator`
+
 ## Accessing SDC UI in Dev Mode (Legacy way)
 
 In order to access the SDC UI from your dev environment you need to do the following:
@@ -201,13 +223,14 @@ For more information regarding SDC on OOM please refer to the following page: [S
 
 ## Frontend Local Env - onboarding
 
-### Steps:
+### Steps
 
 Install nodejs & gulp
+
 1. download nodejs from here: https://nodejs.org/en/ (take the "current" version with latest features) & install it.
 2. install gulp by running the following command: npm install --global gulp-cli
 
-### Install DOX-UI a:
+### Install DOX-UI a
 
 1. pull for latest changes
 2. go to folder dox-sequence-diagram-ui
@@ -220,7 +243,7 @@ Install nodejs & gulp
 9. after everything is successful, run gulp
 10. after server is up, your favorite UI will wait for you at: http://localhost:9000/sdc1/proxy-designer1#/onboardVendor
 
-### Troubleshooting:
+### Troubleshooting
 
 | Problem                       |   Why is this happening | Solution                                                                                   |
 |-------------------------------|-------------------------|--------------------------------------------------------------------------------------------|
