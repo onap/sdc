@@ -58,7 +58,7 @@ public class ValidationTool {
             log.info("Validation finished successfully");
             System.exit(0);
         } else {
-            log.info("Validation finished with warnings");
+            log.error("Validation finished with warnings");
             System.exit(2);
         }
     }
