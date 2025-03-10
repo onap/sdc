@@ -80,20 +80,20 @@ public class CassandraHealthCheck {
         sdcSchemaUtils = new SdcSchemaUtils();
         //Calculate the Formula of Health Check
         try {
-            log.info("creating cluster for Cassandra Health Check.");
+            log.debug("creating cluster for Cassandra Health Check.");
             //Create cluster from nodes in cassandra configuration
             Metadata metadata = sdcSchemaUtils.getMetadata();
             if (metadata == null) {
                 log.error("Failure get cassandra metadata.");
                 return;
             }
-            log.info("Cluster Metadata: {}", metadata);
+            log.debug("Cluster Metadata: {}", metadata);
             List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
             List<Integer> replactionFactorList = new ArrayList<>();
             //Collect the keyspaces Replication Factor of current localDataCenter
             for (KeyspaceMetadata keyspace : keyspaces) {
                 if (sdcKeyspaces.contains(keyspace.getName())) {
-                    log.info("keyspace : {} , replication: {}", keyspace.getName(), keyspace.getReplication());
+                    log.debug("keyspace : {} , replication: {}", keyspace.getName(), keyspace.getReplication());
                     Map<String, String> replicationOptions = keyspace.getReplication();
                     //In 1 site with one data center
                     if (replicationOptions.containsKey("replication_factor")) {
@@ -110,11 +110,11 @@ public class CassandraHealthCheck {
                 return;
             }
             int maxReplicationFactor = Collections.max(replactionFactorList);
-            log.info("maxReplication Factor is: {}", maxReplicationFactor);
+            log.debug("maxReplication Factor is: {}", maxReplicationFactor);
             int localQuorum = maxReplicationFactor / 2 + 1;
-            log.info("localQuorum is: {}", localQuorum);
+            log.debug("localQuorum is: {}", localQuorum);
             HC_FormulaNumber = maxReplicationFactor - localQuorum;
-            log.info("Health Check formula : Replication Factor – Local_Quorum = {}", HC_FormulaNumber);
+            log.debug("Health Check formula : Replication Factor – Local_Quorum = {}", HC_FormulaNumber);
         } catch (Exception e) {
             log.error("create cassandra cluster failed with exception.", e);
         }
@@ -126,8 +126,8 @@ public class CassandraHealthCheck {
             return false;
         }
         try (final Session session = sdcSchemaUtils.connect()) {
-            log.info("creating cluster for Cassandra for monitoring.");
-            log.info("The cassandra session is {}", session);
+            log.debug("creating cluster for Cassandra for monitoring.");
+            log.debug("The cassandra session is {}", session);
             if (session == null) {
                 log.error("Failed to connect to cassandra ");
                 return false;
@@ -137,10 +137,14 @@ public class CassandraHealthCheck {
                 log.error("Failure get cassandra metadata.");
                 return false;
             }
-            log.info("The number of cassandra nodes is:{}", metadata.getAllHosts().size());
+            log.debug("The number of cassandra nodes is:{}", metadata.getAllHosts().size());
             //Count the number of data center nodes that are down
             Long downHostsNumber = metadata.getAllHosts().stream().filter(x -> x.getDatacenter().equals(localDataCenterName) && !x.isUp()).count();
-            log.info("The cassandra down nodes number is {}", downHostsNumber);
+            if(downHostsNumber > 0) {
+                log.warn("{} cassandra nodes are down", downHostsNumber);
+            } else {
+                log.debug("The cassandra down nodes number is {}", downHostsNumber);
+            }
             return HC_FormulaNumber >= downHostsNumber;
         } catch (Exception e) {
             log.error("create cassandra cluster failed with exception.", e);

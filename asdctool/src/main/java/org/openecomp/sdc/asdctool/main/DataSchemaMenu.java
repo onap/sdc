@@ -52,7 +52,7 @@ public class DataSchemaMenu {
                         log.debug("create cassandra keyspace, tables and indexes successfull");
                         System.exit(0);
                     } else {
-                        log.debug("create cassandra keyspace, tables and indexes failed");
+                        log.error("create cassandra keyspace, tables and indexes failed");
                         System.exit(2);
                     }
                 case "create-janusgraph-structures":
@@ -62,7 +62,7 @@ public class DataSchemaMenu {
                         log.debug("create janusgraph keyspace successfull");
                         System.exit(0);
                     } else {
-                        log.debug("create janusgraph keyspace failed");
+                        log.error("create janusgraph keyspace failed");
                         System.exit(2);
                     }
                 case "clean-cassndra":
@@ -71,7 +71,7 @@ public class DataSchemaMenu {
                         log.debug(" successfull");
                         System.exit(0);
                     } else {
-                        log.debug(" failed");
+                        log.error(" failed");
                         System.exit(2);
                     }
                 default:
@@ -79,7 +79,7 @@ public class DataSchemaMenu {
             }
         } catch (Throwable t) {
             t.printStackTrace();
-            log.debug("create cassandra keyspace, tables and indexes failed");
+            log.error("create cassandra keyspace, tables and indexes failed");
             System.exit(3);
         }
     }

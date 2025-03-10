@@ -46,7 +46,7 @@ public class ArtifactUUIDFixMenu {
         if (isSuccessful) {
             log.info("Fixing artifacts UUID for 1707  was finished successfully");
         } else {
-            log.info("Fixing artifacts UUID for 1707  has failed");
+            log.warn("Fixing artifacts UUID for 1707  has failed");
             System.exit(2);
         }
         System.exit(0);
