@@ -1,4 +1,4 @@
-FROM onap/policy-jdk-debian:2.0.2
+FROM eclipse-temurin:11-jre-jammy
 
 # Create a new group and user
 RUN addgroup sdc && \
@@ -18,7 +18,7 @@ RUN apt-get update --allow-releaseinfo-change && \
     apt-get purge python* -y && \
     apt-get install -y python3-pip && \
     python3 -m pip install --upgrade pip && \
-    pip3 install cqlsh==6.1.0 && \
+    pip3 install --no-cache-dir cqlsh==6.1.0 && \
     mkdir -p ~/.cassandra/ && \
     echo '[cql]' > ~/.cassandra/cqlshrc && \
     echo 'version=3.4.4' >> ~/.cassandra/cqlshrc && \
