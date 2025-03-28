@@ -9,9 +9,9 @@
     <property name="logDirectory" value="${logDir}/${componentName}" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+        <!-- <encoder>
             <pattern>${defaultPattern}</pattern>
-        </encoder>
+        </encoder> -->
     </appender>
 
     <root level="INFO">
