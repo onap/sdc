@@ -1,0 +1,7 @@
+server:
+  servlet:
+    context-path: /onboarding-api
+spring:
+  mvc:
+    servlet:
+      path: /ws

@@ -36,8 +36,6 @@
     </modules>
 
     <properties>
-
-        <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Maven plugin versions -->
