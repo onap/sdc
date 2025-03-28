@@ -44,6 +44,7 @@ public class CassandraConfigurationManager extends CommonConfigurationManager {
     private static final String CASSANDRA_TRUSTSTORE_PASSWORD = CASSANDRA + ".TruststorePassword";
     private static final String CASSANDRA_HOSTS_KEY = CASSANDRA + "Hosts";
     private static final String CASSANDRA_PORT_KEY = "cassandraPort";
+    private static final String CASSANDRA_PORT = CASSANDRA + ".cassandraPort";
     private static final String CASSANDRA_USERNAME_KEY = "username";
     private static final String CASSANDRA_RECONNECT_TIMEOUT = "reconnectTimeout";
     @SuppressWarnings("squid:S2068")
@@ -56,9 +57,14 @@ public class CassandraConfigurationManager extends CommonConfigurationManager {
     private static final String CONSISTENCY_LEVEL = CASSANDRA + ".consistencyLevel";
     private static final String CONSISTENCY_LEVEL_KEY = "consistencyLevel";
     private static final String DEFAULT_KEYSPACE_NAME = "dox";
+    private static final String CREATE_KEYSPACE_IF_NOT_EXISTS_KEY = "createKeyspaceIfNotExists";
+    private static final String CREATE_KEYSPACE_IF_NOT_EXISTS = CASSANDRA + ".createKeyspaceIfNotExists";
     private static final Integer DEFAULT_CASSANDRA_PORT = 9042;
+    private static final Integer DEFAULT_REPLICATION_FACTOR = 3;
     private static final String LOCAL_DATA_CENTER_KEY = "localDataCenter";
     private static final String LOCAL_DATA_CENTER = CASSANDRA + ".localDataCenter";
+    private static final String REPLICATION_FACTOR_KEY = "replicationFactor";
+    private static final String REPLICATION_FACTOR = CASSANDRA + ".replicationFactor";
     private static final Logger LOG = LoggerFactory.getLogger(CassandraConfigurationManager.class);
 
     private static CassandraConfigurationManager singletonInstance;
@@ -99,11 +105,11 @@ public class CassandraConfigurationManager extends CommonConfigurationManager {
      * @return the port
      */
     public int getCassandraPort() {
-        Integer cassandraPort = this.getConfigValue(CASSANDRA_PORT_KEY, null);
+        String cassandraPort = System.getProperty(CASSANDRA_PORT);
         if (Objects.isNull(cassandraPort)) {
-            cassandraPort = DEFAULT_CASSANDRA_PORT;
+            cassandraPort = this.getConfigValue(CASSANDRA_PORT_KEY, String.valueOf(DEFAULT_CASSANDRA_PORT));
         }
-        return cassandraPort;
+        return Integer.parseInt(cassandraPort);
     }
 
     /**
@@ -225,5 +231,17 @@ public class CassandraConfigurationManager extends CommonConfigurationManager {
             localDataCenter = this.getConfigValue(LOCAL_DATA_CENTER_KEY, null);
         }
         return localDataCenter;
+    }
+
+
+    public boolean createKeyspaceIfNotExists() {
+        return getBooleanResult(CREATE_KEYSPACE_IF_NOT_EXISTS, CREATE_KEYSPACE_IF_NOT_EXISTS_KEY);
+    }
+    public int getReplicationFactor() {
+        String replicationFactor = System.getProperty(REPLICATION_FACTOR);
+        if (Objects.isNull(replicationFactor)) {
+            replicationFactor = this.getConfigValue(REPLICATION_FACTOR_KEY, String.valueOf(DEFAULT_REPLICATION_FACTOR));
+        }
+        return Integer.parseInt(replicationFactor);
     }
 }
