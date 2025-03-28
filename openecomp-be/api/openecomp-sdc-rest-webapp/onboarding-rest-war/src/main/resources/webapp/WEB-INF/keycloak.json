@@ -1,0 +1,11 @@
+{
+"realm": "sdc",
+"auth-server-url": "http://10.32.243.37:31613/",
+"ssl-required": "external",
+"resource": "sdc-app",
+"public-client":true,
+"bearer-only":true,
+"use-resource-role-mappings": true,
+"principal-attribute":"preferred_username",
+"confidential-port": 0
+}
