@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <!-- CXF -->
+    <context:component-scan base-package="org.openecomp.sdcrests"/>
+    <context:component-scan base-package="org.openecomp.sdc.vendorsoftwareproduct.dao"/>
+    <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+    <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
+    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+
+    <bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+        <property name="mapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <bean id="outEmptyResponseInterceptor" class="org.openecomp.server.interceptors.EmptyOutputOutInterceptor"/>
+
+    <!-- ASDC -->
+    <bean id="uploadValidationManager" class="org.openecomp.sdc.validation.impl.UploadValidationManagerImpl"/>
+    <bean id="actionManager" class="org.openecomp.sdc.action.impl.ActionManagerImpl"/>
+    <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>
+
+    <!-- aspect beans -->
+    <!-- These are already defined through automatic dependency injection -->
+    <!-- <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/> -->
+    <!-- <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/> -->
+    <!-- <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/> -->
+    <bean id = "togglz" class="org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl"/>
+    <!-- <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/> -->
+    <!-- <bean id = "uniqueTypes" class="org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl"/> -->
+
+    <!-- External Testing Interface Beans -->
+    <bean id = "externalTestingManager" class="org.openecomp.core.externaltesting.impl.ExternalTestingManagerImpl"/>
+
+    <!-- RESTful Services -->
+    <jaxrs:server id="restContainer" address="/">
+
+        <jaxrs:serviceBeans>
+            <ref bean="versions"/>
+            <ref bean="conflicts"/>
+            <ref bean="vendorLicenseModels"/>
+            <ref bean="licenseAgreements"/>
+            <ref bean="featureGroups"/>
+            <ref bean="entitlementPools"/>
+            <ref bean="entitlementPoolLimits"/>
+            <ref bean="licenseKeyGroups"/>
+            <ref bean="licenseKeyGroupLimits"/>
+            <ref bean="vendorSoftwareProducts"/>
+            <ref bean="packageUploadManagerController"/>
+            <ref bean="networks"/>
+            <ref bean="components"/>
+            <ref bean="nics"/>
+            <ref bean="computes"/>
+            <ref bean="processes"/>
+            <ref bean="componentProcesses"/>
+            <ref bean="validation"/>
+            <ref bean="externaltesting"/>
+            <ref bean="actions"/>
+            <ref bean="applicationConfiguration"/>
+            <ref bean="componentMonitoringUploads"/>
+            <ref bean="deploymentFlavors"/>
+            <ref bean="images"/>
+            <ref bean="orchestrationTemplateCandidate"/>
+            <ref bean="vnfPackageRepository"/>
+            <ref bean="componentDependencies"/>
+            <ref bean="healthCheck"/>
+            <ref bean="itemPermissions"/>
+            <ref bean="notifications"/>
+            <ref bean="togglz"/>
+            <ref bean="items"/>
+            <ref bean="uniqueTypes"/>
+            <ref bean="prometheusMetricsController"/>
+        </jaxrs:serviceBeans>
+
+        <jaxrs:providers>
+            <ref bean="jsonProvider"/>
+            <bean class="org.openecomp.sdc.action.errors.ActionExceptionMapper"/>
+            <bean class="org.openecomp.sdc.common.errors.DefaultExceptionMapper"/>
+            <bean class="org.openecomp.sdcrests.errors.ZusammenExceptionMapper"/>
+            <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingRequestFilter">
+                <property name="requestIdHeaders" value="X-ONAP-RequestID,X-RequestID,X-TransactionId,X-ECOMP-RequestID"/>
+                <property name="partnerNameHeaders" value="USER_ID,X-ONAP-PartnerName,User-Agent"/>
+            </bean>
+            <bean class="org.openecomp.sdc.logging.servlet.jaxrs.LoggingResponseFilter"/>
+        </jaxrs:providers>
+
+        <jaxrs:outInterceptors>
+            <ref bean="outEmptyResponseInterceptor"/>
+        </jaxrs:outInterceptors>
+    </jaxrs:server>
+
+</beans>
