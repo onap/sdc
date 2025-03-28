@@ -37,12 +37,13 @@
     <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>
 
     <!-- aspect beans -->
-    <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/>
-    <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/>
-    <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/>
+    <!-- These are already defined through automatic dependency injection -->
+    <!-- <bean id = "healthCheck" class="org.openecomp.sdcrests.health.rest.services.HealthCheckImpl"/> -->
+    <!-- <bean id = "itemPermissions" class="org.openecomp.sdcrests.itempermissions.rest.services.ItemPermissionsImpl"/> -->
+    <!-- <bean id = "notifications" class="org.openecomp.sdcrests.notifications.rest.services.impl.NotificationsImpl"/> -->
     <bean id = "togglz" class="org.openecomp.sdcrests.togglz.rest.services.TogglzFeaturesImpl"/>
-    <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/>
-    <bean id = "uniqueTypes" class="org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl"/>
+    <!-- <bean id = "items" class="org.openecomp.sdcrests.item.rest.services.ItemsImpl"/> -->
+    <!-- <bean id = "uniqueTypes" class="org.openecomp.sdcrests.uniquevalue.rest.services.UniqueTypesImpl"/> -->
 
     <!-- External Testing Interface Beans -->
     <bean id = "externalTestingManager" class="org.openecomp.core.externaltesting.impl.ExternalTestingManagerImpl"/>

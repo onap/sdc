@@ -14,6 +14,33 @@
         <version>1.14.3-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <junitJupiter.version>5.8.2</junitJupiter.version>
+        <testcontainers.version>1.19.1</testcontainers.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Remove this override once the cassandra driver is >= 4.0.0
+                 The 3.X version requires metrics core 3.X, but spring boot
+                 dependency management would lift it to 4 without this entry
+                 here -->
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>3.2.6</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -169,6 +196,26 @@
             <version>${spring.framework.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.framework.version}</version>
@@ -255,11 +302,28 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>cassandra</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -283,6 +347,9 @@
                     <execution>
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                         <configuration>
                             <target>
                                 <property name="version" value="${project.version}"/>
@@ -292,9 +359,30 @@
                                 </echo>
                             </target>
                         </configuration>
+                    </execution>
+                    <!-- This is required for the SdcOnboardingBackendTest.
+                        The test is using testcontainers to spin up a cassandra container.
+                        The testcontainers api allows to specify a cql file that is run during
+                        the container startup to initialize the schema.
+                        However, there are two files that are used in the 'normal' schema creation
+                        and they thus need to be merged into one before copying it into the test
+                        resources directory -->
+                    <execution>
+                        <id>copy-schema-cql-files-for-test</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
+                        <configuration>
+                            <target>
+                                <concat destfile="${project.build.testOutputDirectory}/init_keyspaces_and_schema.cql">
+                                    <filelist>
+                                        <file name="${project.basedir}/../../../tools/install/database/init_keyspaces.cql"/>
+                                        <file name="${project.basedir}/../../../tools/install/database/init_schemas.cql"/>
+                                    </filelist>
+                                </concat>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -319,6 +407,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
             </plugin>
         </plugins>
 

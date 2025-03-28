@@ -89,4 +89,12 @@ public class CassandraUtils {
     public static String getLocalDataCenter() {
         return CassandraConfigurationManager.getInstance().getLocalDataCenter();
     }
+
+    public static boolean createKeyspaceIfNotExists() {
+        return CassandraConfigurationManager.getInstance().createKeyspaceIfNotExists();
+    }
+
+    public static int getReplicationFactor() {
+        return CassandraConfigurationManager.getInstance().getReplicationFactor();
+    }
 }

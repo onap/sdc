@@ -26,6 +26,10 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.DefaultRetryPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
+import com.datastax.driver.core.schemabuilder.SchemaBuilder;
+import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import com.google.common.collect.ImmutableMap;
+
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -81,10 +85,14 @@ public class CassandraSessionFactory {
         setConsistencyLevel(builder, addresses);
         setLocalDataCenter(builder);
         Cluster cluster = builder.build();
-        String keyStore = SessionContextProviderFactory.getInstance().createInterface().get().getTenant();
+        String keyspace = SessionContextProviderFactory.getInstance().createInterface().get().getTenant();
         LOGGER
             .info("Cassandra client created hosts: {} port: {} SSL enabled: {} reconnectTimeout", addresses, cassandraPort, isSsl, reconnectTimeout);
-        return cluster.connect(keyStore);
+        Boolean createKeyspaceIfNotExists = CassandraUtils.createKeyspaceIfNotExists();
+        if(createKeyspaceIfNotExists) {
+            createKeyspaceIfNotExists(cluster, keyspace);
+        }
+        return cluster.connect(keyspace);
     }
 
     private static void setLocalDataCenter(Cluster.Builder builder) {
@@ -135,6 +143,18 @@ public class CassandraSessionFactory {
         } catch (Exception exception) {
             throw new SdcConfigurationException("Failed to get SSL Contexts for Cassandra connection", exception);
         }
+    }
+
+    private static void createKeyspaceIfNotExists(Cluster cluster, String keyspace) {
+        Session session = cluster.connect();
+
+        int replicationFactor = CassandraUtils.getReplicationFactor();
+        SchemaStatement stmnt = SchemaBuilder.createKeyspace(keyspace).ifNotExists()
+        .with()
+        .replication(ImmutableMap.of("class", "SimpleStrategy", "replication_factor", replicationFactor));
+
+        session.execute(stmnt);
+        session.close();
     }
 
     private static class ReferenceHolder {
