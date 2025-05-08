@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-        <version>1.14.1-SNAPSHOT</version>
+        <version>1.14.2-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -388,7 +388,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>3.4.1.201406201815-r</version>
+            <version>3.5.3.201412180710-r</version>
         </dependency>
 
         <!-- spring - used by A4C -->

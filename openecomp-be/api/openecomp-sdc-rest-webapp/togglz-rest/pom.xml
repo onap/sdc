@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-rest-webapp</artifactId>
-        <version>1.14.1-SNAPSHOT</version>
+        <version>1.14.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>togglz-rest</artifactId>
@@ -18,5 +18,5 @@
         <module>togglz-rest-types</module>
         <module>togglz-rest-services</module>
      </modules>
-    
+
 </project>
