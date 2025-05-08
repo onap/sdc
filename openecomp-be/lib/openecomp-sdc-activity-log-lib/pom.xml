@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-lib</artifactId>
-        <version>1.14.1-SNAPSHOT</version>
+        <version>1.14.2-SNAPSHOT</version>
     </parent>
 
     <modules>
@@ -17,5 +17,5 @@
         <module>openecomp-sdc-activity-log-core</module>
     </modules>
 
-    
+
 </project>
