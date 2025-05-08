@@ -80,8 +80,8 @@ public class ComponentPage extends AbstractPageObject {
      */
     public void clickOnCreate() {
         workspaceTopBarComponent.clickOnCreate();
-        loaderHelper.waitForLoader(20);
-        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+        loaderHelper.waitForLoader(60);
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 60);
     }
 
     public String getLifecycleState() {

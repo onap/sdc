@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>openecomp-sdc-healing-api</artifactId>
-    
+
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-healing-lib</artifactId>
-        <version>1.14.1-SNAPSHOT</version>
+        <version>1.14.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
