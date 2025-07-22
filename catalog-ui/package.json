@@ -82,7 +82,7 @@
   "engines": {},
   "dependencies": {
     "@angular/animations": "^5.0.0",
-    "@angular/cli": "^1.0.0",
+    "@angular/cli": "^1.0.6",
     "@angular/common": "^5.0.0",
     "@angular/compiler": "^5.0.0",
     "@angular/compiler-cli": "^5.0.0",
