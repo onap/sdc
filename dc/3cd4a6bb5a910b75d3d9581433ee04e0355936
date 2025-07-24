@@ -1,0 +1,11 @@
+Verified+1: ONAP Bypass GHA <releng+onap.bypass.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Code-Review+2: Micha? Jagie??o <michal.jagiello@t-mobile.pl>
+Verified+1: Micha? Jagie??o <michal.jagiello@t-mobile.pl>
+Code-Review+1: Fiete Ostkamp <fiete.ostkamp@telekom.de>
+Submitted-by: Micha? Jagie??o <michal.jagiello@t-mobile.pl>
+Submitted-at: Thu, 24 Jul 2025 08:48:31 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/141565
+Project: sdc
+Branch: refs/heads/master
