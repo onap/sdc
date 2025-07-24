@@ -30,7 +30,7 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-ADD --chown=onap:onap onboarding-be-*.war    $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap onboarding-be-*.jar    $JETTY_FOLDER/webapps/
 ADD --chown=onap:onap api-docs.war           $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
 COPY --chown=onap:onap scripts/cleanup_jettydir.sh $JETTY_FOLDER/

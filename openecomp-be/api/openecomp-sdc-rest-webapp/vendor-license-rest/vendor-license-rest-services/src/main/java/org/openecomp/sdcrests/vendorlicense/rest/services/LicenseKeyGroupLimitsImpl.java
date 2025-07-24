@@ -36,6 +36,7 @@ import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -47,7 +48,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
     private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
 
     @Override
-    public Response createLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String user) {
+    public ResponseEntity createLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
         LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
@@ -58,11 +59,11 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
         LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
         MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
         LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
-        return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
+        return ResponseEntity.ok(createdLimitDto != null ? createdLimitDto : null);
     }
 
     @Override
-    public Response listLimits(String vlmId, String versionId, String licenseKeyGroupId, String user) {
+    public ResponseEntity listLimits(String vlmId, String versionId, String licenseKeyGroupId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
         Collection<LimitEntity> limits = vendorLicenseManager.listLimits(vlmId, version, licenseKeyGroupId);
@@ -71,11 +72,11 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
         for (LimitEntity limit : limits) {
             result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
         }
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response updateLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+    public ResponseEntity updateLimit(LimitRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
         LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
@@ -85,7 +86,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
         limitEntity.setId(limitId);
         limitEntity.setParent(PARENT);
         vendorLicenseManager.updateLimit(limitEntity);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -97,7 +98,7 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
      * @param user              the user
      * @return the response
      */
-    public Response deleteLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+    public ResponseEntity deleteLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
         LimitEntity limitInput = new LimitEntity();
@@ -107,11 +108,11 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
         limitInput.setId(limitId);
         limitInput.setParent(PARENT);
         vendorLicenseManager.deleteLimit(limitInput);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
+    public ResponseEntity getLimit(String vlmId, String versionId, String licenseKeyGroupId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getLicenseKeyGroup(new LicenseKeyGroupEntity(vlmId, version, licenseKeyGroupId));
         LimitEntity limitInput = new LimitEntity();
@@ -121,6 +122,6 @@ public class LicenseKeyGroupLimitsImpl implements LicenseKeyGroupLimits {
         limitInput.setId(limitId);
         LimitEntity limit = vendorLicenseManager.getLimit(limitInput);
         LimitEntityDto entitlementPoolEntityDto = limit == null ? null : new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-        return Response.ok(entitlementPoolEntityDto).build();
+        return ResponseEntity.ok(entitlementPoolEntityDto);
     }
 }

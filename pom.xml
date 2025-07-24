@@ -73,7 +73,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <org.json.version>20220320</org.json.version>
-
+    <spring-cloud.version>2021.0.9</spring-cloud.version>
     <commons.collections.version>4.3</commons.collections.version>
     <ws.rs.version>2.1.6</ws.rs.version>
     <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -278,7 +278,21 @@ Modifications copyright (c) 2018-2019 Nokia
         <artifactId>swagger-maven-plugin</artifactId>
         <version>${swagger-core-mvn-plugin.version}</version>
       </dependency>
-    </dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.7.18</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+     <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>  
   </dependencyManagement>
 
   <dependencies>
@@ -442,6 +456,34 @@ Modifications copyright (c) 2018-2019 Nokia
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
     </dependency>
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-el</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-core</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-websocket</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <reporting>

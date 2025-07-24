@@ -105,10 +105,8 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.action.ActionConstants;
@@ -131,9 +129,14 @@ import org.openecomp.sdcrests.action.types.ListResponseWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Implements various CRUD API that can be performed on Action
@@ -180,7 +183,7 @@ public class ActionsImpl implements Actions {
     private String invalidFilenameRegex = ".*[" + whitespaceCharacters + invalidFilenameChars + "].*";
 
     @Autowired
-    public ActionsImpl(ActionManager actionManager) {
+    public ActionsImpl(@Qualifier("actionManager") ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
@@ -199,35 +202,44 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response getActionsByActionInvariantUuId(String invariantID, String actionUUID, HttpServletRequest servletRequest) {
+    public ResponseEntity getActionsByActionInvariantUuId(String actionInvariantUuId, String actionUUID, HttpServletRequest servletRequest) {
         ListResponseWrapper responseList = new ListResponseWrapper();
         try {
-            LOGGER.debug(" entering getActionsByActionInvariantUuId ");
-            initializeRequestMDC(servletRequest, invariantID, ActionRequest.GET_ACTIONS_INVARIANT_ID);
-            MDC.put(SERVICE_INSTANCE_ID, invariantID);
-            if (StringUtils.isEmpty(servletRequest.getQueryString())) {
-                responseList = getActionsByInvId(servletRequest, invariantID);
+            LOGGER.debug("Entering getActionsByActionInvariantUuId with actionInvariantUuId={}, actionUUID={}", actionInvariantUuId, actionUUID);
+
+            initializeRequestMDC(servletRequest, actionInvariantUuId, ActionRequest.GET_ACTIONS_INVARIANT_ID);
+            MDC.put(SERVICE_INSTANCE_ID, actionInvariantUuId);
+
+            String queryString = servletRequest.getQueryString();
+            LOGGER.debug("Received query string: {}", queryString);
+
+            if (StringUtils.isEmpty(queryString)) {
+                LOGGER.debug("No query string found. Fetching actions by invariant ID: {}", actionInvariantUuId);
+                responseList = getActionsByInvId(servletRequest, actionInvariantUuId);
             } else {
-                Response response = getActionByUUID(servletRequest, invariantID, actionUUID);
+                LOGGER.debug("Query string present. Fetching action by UUID: {} for invariant ID: {}", actionUUID, actionInvariantUuId);
+                ResponseEntity response = getActionByUUID(servletRequest, actionInvariantUuId, actionUUID);
                 actionLogPostProcessor(COMPLETE, true);
+                LOGGER.debug("Successfully fetched action by UUID. Returning response.");
                 return response;
             }
         } catch (ActionException exception) {
+            LOGGER.error("ActionException occurred: {} - {}", exception.getErrorCode(), exception.getDescription(), exception);
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-            LOGGER.error("");
             throw exception;
         } catch (Exception exception) {
+            LOGGER.error("Unexpected error occurred while fetching actions. Error: {}", exception.getMessage(), exception);
             actionLogPostProcessor(ERROR, true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-            LOGGER.error("");
             throw exception;
         }
-        LOGGER.debug(" exit getActionsByActionInvariantUuId ");
-        actionLogPostProcessor(COMPLETE, true);
-        return Response.ok(responseList).build();
-    }
 
+        LOGGER.debug("Exiting getActionsByActionInvariantUuId successfully for invariant ID: {}", actionInvariantUuId);
+        actionLogPostProcessor(COMPLETE, true);
+        return ResponseEntity.ok(responseList);
+    }
+    
     private ListResponseWrapper getActionsByInvId(HttpServletRequest servletRequest, String invariantID) {
         LOGGER.debug(" entering getActionsByInvId with invariantID= " + invariantID);
         ListResponseWrapper responseList = new ListResponseWrapper();
@@ -252,9 +264,9 @@ public class ActionsImpl implements Actions {
         return responseList;
     }
 
-    private Response getActionByUUID(HttpServletRequest servletRequest, String invariantID, String actionUUID) throws ActionException {
+    private ResponseEntity getActionByUUID(HttpServletRequest servletRequest, String invariantID, String actionUUID) throws ActionException {
         int noOfFilterParams = 0;
-        Response response = null;
+        ResponseEntity response = null;
         LOGGER.debug(" entering getActionByUUID with invariantID= " + invariantID + " and actionUUID= " + actionUUID);
         if (!StringUtils.isEmpty(actionUUID)) {
             noOfFilterParams++;
@@ -268,7 +280,7 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response getOpenEcompComponents(HttpServletRequest servletRequest) {
+    public ResponseEntity getOpenEcompComponents(HttpServletRequest servletRequest) {
         try {
             LOGGER.debug(" entering getEcompComponents ");
             initializeRequestMDC(servletRequest, "", ActionRequest.GET_OPEN_ECOMP_COMPONENTS);
@@ -281,7 +293,7 @@ public class ActionsImpl implements Actions {
             response.setComponentList(openEcompComponents);
             LOGGER.debug(" exit getEcompComponents ");
             actionLogPostProcessor(COMPLETE, true);
-            return Response.ok(response).build();
+            return ResponseEntity.ok(response);
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -296,11 +308,11 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response getFilteredActions(String vendor, String category, String name, String modelID, String componentID,
+    public ResponseEntity getFilteredActions(String vendor, String category, String name, String modelID, String componentID,
                                        HttpServletRequest servletRequest) {
         try {
             LOGGER.debug(" entering getFilteredActions ");
-            Response response;
+            ResponseEntity response;
             initializeRequestMDC(servletRequest, "", ActionRequest.GET_FILTERED_ACTIONS);
             int noOfFilterParams = getNoOfFilterParams(vendor, category, name, modelID, componentID);
             if (StringUtils.isEmpty(servletRequest.getQueryString())) {
@@ -369,7 +381,7 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response createAction(String requestJSON, HttpServletRequest servletRequest) {
+    public ResponseEntity createAction(String requestJSON, HttpServletRequest servletRequest) {
         try {
             initializeRequestMDC(servletRequest, null, ActionRequest.CREATE_ACTION);
             LOGGER.debug(" entering API createAction ");
@@ -389,7 +401,7 @@ public class ActionsImpl implements Actions {
             }
             actionLogPostProcessor(COMPLETE, true);
             LOGGER.debug(" exit API createAction with ActionInvariantUUID= " + MDC.get(SERVICE_INSTANCE_ID));
-            return Response.ok(actionResponseDTO).build();
+            return ResponseEntity.ok(actionResponseDTO);
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -404,7 +416,7 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response updateAction(String invariantUUID, String requestJSON, HttpServletRequest servletRequest) {
+    public ResponseEntity updateAction(String invariantUUID, String requestJSON, HttpServletRequest servletRequest) {
         ActionResponseDto actionResponseDTO = null;
         try {
             initializeRequestMDC(servletRequest, invariantUUID, ActionRequest.UPDATE_ACTION);
@@ -434,11 +446,11 @@ public class ActionsImpl implements Actions {
             LOGGER.error(exception.getMessage());
             throw exception;
         }
-        return Response.ok(actionResponseDTO).build();
+        return ResponseEntity.ok(actionResponseDTO);
     }
 
     @Override
-    public Response deleteAction(String actionInvariantUUID, HttpServletRequest servletRequest) {
+    public ResponseEntity deleteAction(String actionInvariantUUID, HttpServletRequest servletRequest) {
         try {
             initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.DELETE_ACTION);
             Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -449,7 +461,7 @@ public class ActionsImpl implements Actions {
                 checkAndThrowError(errorMap);
             }
             actionLogPostProcessor(COMPLETE, true);
-            return Response.ok(new ActionResponseDto()).build();
+            return ResponseEntity.ok(new ActionResponseDto());
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -464,8 +476,8 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response actOnAction(String invariantUUID, String requestJSON, HttpServletRequest servletRequest) {
-        Response response = null;
+    public ResponseEntity actOnAction(String invariantUUID, String requestJSON, HttpServletRequest servletRequest) {
+        ResponseEntity response = null;
         try {
             initializeRequestMDC(servletRequest, invariantUUID, ActionRequest.ACTION_VERSIONING);
             LOGGER.debug("entering actOnAction with invariantUUID= " + invariantUUID + " and requestJSON= " + requestJSON);
@@ -485,7 +497,7 @@ public class ActionsImpl implements Actions {
                     actionManager.undoCheckout(invariantUUID, user);
                     StringWrapperResponse responseText = new StringWrapperResponse();
                     responseText.setValue(ActionConstants.UNDO_CHECKOUT_RESPONSE_TEXT);
-                    response = Response.status(Response.Status.OK).entity(responseText).build();
+                    response = ResponseEntity.ok(responseText);
                     return response;
                 case "Checkin":
                     action = actionManager.checkin(invariantUUID, user);
@@ -498,7 +510,7 @@ public class ActionsImpl implements Actions {
             }
             ActionResponseDto actionResponseDTO = new ActionResponseDto();
             new MapActionToActionResponseDto().doMapping(action, actionResponseDTO);
-            response = Response.ok(actionResponseDTO).build();
+            response = ResponseEntity.ok(actionResponseDTO);
             actionLogPostProcessor(COMPLETE, true);
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
@@ -517,17 +529,34 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response uploadArtifact(String actionInvariantUUID, String artifactName, String artifactLabel, String artifactCategory,
-                                   String artifactDescription, String artifactProtection, String checksum, Attachment artifactToUpload,
-                                   HttpServletRequest servletRequest) {
-        Response response = null;
+    public ResponseEntity uploadArtifact(String actionInvariantUUID,
+                                        String artifactName,
+                                        String artifactLabel,
+                                        String artifactCategory,
+                                        String artifactDescription,
+                                        String artifactProtection,
+                                        String checksum,
+                                        MultipartFile artifactToUpload,
+                                        HttpServletRequest servletRequest) {
+        ResponseEntity response;
         try {
             initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.UPLOAD_ARTIFACT);
-            LOGGER.debug("entering uploadArtifact with actionInvariantUuId= " + actionInvariantUUID + "artifactName= " + artifactName);
-            response = uploadArtifactInternal(actionInvariantUUID, artifactName, artifactLabel, artifactCategory, artifactDescription,
-                artifactProtection, checksum, artifactToUpload, servletRequest);
+            LOGGER.debug("Entering uploadArtifact with actionInvariantUuId= " + actionInvariantUUID + ", artifactName= " + artifactName);
+
+            response = uploadArtifactInternal(
+                    actionInvariantUUID,
+                    artifactName,
+                    artifactLabel,
+                    artifactCategory,
+                    artifactDescription,
+                    artifactProtection,
+                    checksum,
+                    artifactToUpload,
+                    servletRequest
+            );
+
             actionLogPostProcessor(COMPLETE, true);
-            LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID + "artifactName= " + artifactName);
+            LOGGER.debug("Exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID + ", artifactName= " + artifactName);
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
@@ -539,57 +568,90 @@ public class ActionsImpl implements Actions {
             LOGGER.error(exception.getMessage());
             throw exception;
         }
-        LOGGER.debug("exiting uploadArtifact with actionInvariantUuId= " + actionInvariantUUID + "artifactName= " + artifactName);
+
         return response;
     }
+    
+    private ResponseEntity uploadArtifactInternal(String actionInvariantUUID,
+                                                String artifactName,
+                                                String artifactLabel,
+                                                String artifactCategory,
+                                                String artifactDescription,
+                                                String artifactProtection,
+                                                String checksum,
+                                                MultipartFile artifactToUpload,
+                                                HttpServletRequest servletRequest) {
+        LOGGER.debug("Entered uploadArtifactInternal with actionInvariantUUID={}, artifactName={}", actionInvariantUUID, artifactName);
 
-    private Response uploadArtifactInternal(String actionInvariantUUID, String artifactName, String artifactLabel, String artifactCategory,
-                                            String artifactDescription, String artifactProtection, String checksum, Attachment artifactToUpload,
-                                            HttpServletRequest servletRequest) {
         byte[] payload = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
-        //Artifact name empty validation
+
+        // Artifact name empty validation
         if (StringUtils.isEmpty(artifactName)) {
             errorMap.put(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_MISSING_MANDATORY_PARAM + ARTIFACT_NAME);
+            LOGGER.debug("Artifact name is empty");
         } else {
-            //Artifact name syntax check for whitespaces and invalid characters
+            // Artifact name syntax check for whitespaces and invalid characters
             if (artifactName.matches(invalidFilenameRegex)) {
                 errorMap.put(ACTION_ARTIFACT_INVALID_NAME_CODE, ACTION_ARTIFACT_INVALID_NAME);
+                LOGGER.debug("Artifact name '{}' failed invalid character check", artifactName);
             }
         }
-        //Content-Type Header Validation
+
+        // Content-Type Header Validation
         String contentType = servletRequest.getContentType();
+        LOGGER.debug("Content-Type header: {}", contentType);
         if (StringUtils.isEmpty(contentType)) {
             errorMap.put(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_CONTENT_TYPE_INVALID);
+            LOGGER.debug("Content-Type header is missing or empty");
         }
-        if (artifactToUpload == null) {
+
+        // Validate file presence
+        if (artifactToUpload == null || artifactToUpload.isEmpty()) {
+            LOGGER.error("Artifact file is missing or empty");
             throw new ActionException(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_MISSING_MANDATORY_PARAM + ARTIFACT_FILE);
         }
-        try (InputStream artifactInputStream = artifactToUpload.getDataHandler().getInputStream()) {
+
+        try (InputStream artifactInputStream = artifactToUpload.getInputStream()) {
             payload = FileUtils.toByteArray(artifactInputStream);
+            LOGGER.debug("Read artifact payload of length {}", payload.length);
         } catch (IOException exception) {
             LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
             throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
         }
-        //Validate Artifact size
+
+        // Validate artifact size
         if (payload != null && payload.length > MAX_ACTION_ARTIFACT_SIZE) {
+            LOGGER.error("Artifact size {} exceeds max allowed {}", payload.length, MAX_ACTION_ARTIFACT_SIZE);
             throw new ActionException(ACTION_ARTIFACT_TOO_BIG_ERROR_CODE, ACTION_ARTIFACT_TOO_BIG_ERROR);
         }
-        //Validate Checksum
-        if (StringUtils.isEmpty(checksum) || !checksum.equalsIgnoreCase(calculateCheckSum(payload))) {
+
+        // Validate checksum
+        String calculatedChecksum = calculateCheckSum(payload);
+        LOGGER.debug("Provided checksum: {}, Calculated checksum: {}", checksum, calculatedChecksum);
+        if (StringUtils.isEmpty(checksum) || !checksum.equalsIgnoreCase(calculatedChecksum)) {
             errorMap.put(ACTION_ARTIFACT_CHECKSUM_ERROR_CODE, ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR);
+            LOGGER.debug("Checksum validation failed");
         }
-        //Validate artifact protection values
+
+        // Validate artifact protection values
         if (StringUtils.isEmpty(artifactProtection)) {
             artifactProtection = ActionArtifactProtection.readWrite.name();
+            LOGGER.debug("artifactProtection was empty, defaulted to {}", artifactProtection);
         }
-        if (!artifactProtection.equals(ActionArtifactProtection.readOnly.name()) && !artifactProtection
-            .equals(ActionArtifactProtection.readWrite.name())) {
+
+        if (!artifactProtection.equals(ActionArtifactProtection.readOnly.name()) &&
+            !artifactProtection.equals(ActionArtifactProtection.readWrite.name())) {
             errorMap.put(ACTION_ARTIFACT_INVALID_PROTECTION_CODE, ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE);
+            LOGGER.debug("Artifact protection validation failed: invalid value '{}'", artifactProtection);
         }
+
         ActionArtifact uploadedArtifact = new ActionArtifact();
+
         if (errorMap.isEmpty()) {
             String user = servletRequest.getRemoteUser();
+            LOGGER.debug("No validation errors found, proceeding to upload artifact. User: {}", user);
+
             ActionArtifact upload = new ActionArtifact();
             upload.setArtifactName(artifactName);
             upload.setArtifactLabel(artifactLabel);
@@ -597,16 +659,21 @@ public class ActionsImpl implements Actions {
             upload.setArtifact(payload);
             upload.setArtifactCategory(artifactCategory);
             upload.setArtifactProtection(artifactProtection);
+
             uploadedArtifact = actionManager.uploadArtifact(upload, actionInvariantUUID, user);
+            LOGGER.debug("Artifact uploaded successfully: {}", uploadedArtifact);
         } else {
+            LOGGER.debug("Validation errors found: {}", errorMap);
             checkAndThrowError(errorMap);
         }
-        return Response.ok(uploadedArtifact).build();
+
+        LOGGER.debug("Exiting uploadArtifactInternal");
+        return ResponseEntity.ok(uploadedArtifact);
     }
 
     @Override
-    public Response downloadArtifact(String actionUUID, String artifactUUID, HttpServletRequest servletRequest) {
-        Response response = null;
+    public ResponseEntity downloadArtifact(String actionUUID, String artifactUUID, HttpServletRequest servletRequest) {
+        ResponseEntity response = null;
         try {
             initializeRequestMDC(servletRequest, "", ActionRequest.DOWNLOAD_ARTIFACT);
             LOGGER.debug(" entering downloadArtifact with actionUUID= " + actionUUID + " and artifactUUID= " + artifactUUID);
@@ -627,8 +694,8 @@ public class ActionsImpl implements Actions {
         return response;
     }
 
-    private Response downloadArtifactInternal(String actionUUID, String artifactUUID, HttpServletRequest servletRequest) {
-        Response response;
+    private ResponseEntity downloadArtifactInternal(String actionUUID, String artifactUUID, HttpServletRequest servletRequest) {
+        ResponseEntity response;
         ActionArtifact actionartifact = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         Map<String, String> queryParamErrors = validateQueryParam(actionUUID);
@@ -645,8 +712,8 @@ public class ActionsImpl implements Actions {
     }
 
     @Override
-    public Response deleteArtifact(String actionInvariantUUID, String artifactUUID, HttpServletRequest servletRequest) {
-        Response response = null;
+    public ResponseEntity deleteArtifact(String actionInvariantUUID, String artifactUUID, HttpServletRequest servletRequest) {
+        ResponseEntity response = null;
         try {
             initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.DELETE_ARTIFACT);
             LOGGER.debug(" entering deleteArtifact with actionInvariantUuId= " + actionInvariantUUID + " and artifactUUID= " + artifactUUID);
@@ -667,7 +734,7 @@ public class ActionsImpl implements Actions {
         return response;
     }
 
-    private Response deleteArtifactInternal(String actionInvariantUUID, String artifactUUID, HttpServletRequest servletRequest) {
+    private ResponseEntity deleteArtifactInternal(String actionInvariantUUID, String artifactUUID, HttpServletRequest servletRequest) {
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         Map<String, String> queryParamErrors = validateQueryParam(actionInvariantUUID);
         errorMap.putAll(queryParamErrors);
@@ -678,74 +745,112 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response updateArtifact(String actionInvariantUUID, String artifactUUID, String artifactName, String artifactLabel,
-                                   String artifactCategory, String artifactDescription, String artifactProtection, String checksum,
-                                   Attachment artifactToUpdate, HttpServletRequest servletRequest) {
-        Response response = null;
-        LOGGER.debug(
-            " entering updateArtifact with actionInvariantUuId= " + actionInvariantUUID + " and artifactUUID= " + artifactUUID + " and artifactName= "
-                + artifactName + " and artifactLabel= " + artifactLabel + " and artifactCategory= " + artifactCategory + " and artifactDescription= "
-                + artifactDescription + " and artifactProtection= " + artifactProtection + " and checksum= " + checksum);
+    public ResponseEntity updateArtifact(String actionInvariantUUID,
+                                     String artifactUUID,
+                                     String artifactName,
+                                     String artifactLabel,
+                                     String artifactCategory,
+                                     String artifactDescription,
+                                     String artifactProtection,
+                                     String checksum,
+                                     MultipartFile artifactToUpdate,
+                                     HttpServletRequest servletRequest) {
+    ResponseEntity response;
+    LOGGER.debug("Entering updateArtifact with actionInvariantUUID={}, artifactUUID={}, artifactName={}, artifactLabel={}, artifactCategory={}, artifactDescription={}, artifactProtection={}, checksum={}",
+        actionInvariantUUID, artifactUUID, artifactName, artifactLabel, artifactCategory, artifactDescription, artifactProtection, checksum);
+
         try {
             initializeRequestMDC(servletRequest, actionInvariantUUID, ActionRequest.UPDATE_ARTIFACT);
-            response = updateArtifactInternal(actionInvariantUUID, artifactUUID, artifactName, artifactLabel, artifactCategory, artifactDescription,
-                artifactProtection, checksum, artifactToUpdate, servletRequest);
+            response = updateArtifactInternal(actionInvariantUUID, artifactUUID, artifactName, artifactLabel, artifactCategory,
+                    artifactDescription, artifactProtection, checksum, artifactToUpdate, servletRequest);
             actionLogPostProcessor(COMPLETE, true);
         } catch (ActionException exception) {
             actionLogPostProcessor(ERROR, exception.getErrorCode(), exception.getDescription(), true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, exception.getErrorCode(), exception.getDescription());
-            LOGGER.error(MDC.get(ERROR_DESCRIPTION));
+            LOGGER.error("ActionException: {}", MDC.get(ERROR_DESCRIPTION));
             throw exception;
         } catch (Exception exception) {
             actionLogPostProcessor(ERROR, true);
             actionErrorLogProcessor(CategoryLogLevel.ERROR, ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
-            LOGGER.error(exception.getMessage());
+            LOGGER.error("Unhandled Exception: {}", exception.getMessage(), exception);
             throw exception;
         }
-        LOGGER.debug(
-            " exit updateArtifact with actionInvariantUuId= " + actionInvariantUUID + " and artifactUUID= " + artifactUUID + " and artifactName= "
-                + artifactName + " and artifactLabel= " + artifactLabel + " and artifactCategory= " + artifactCategory + " and artifactDescription= "
-                + artifactDescription + " and artifactProtection= " + artifactProtection + " and checksum= " + checksum);
+
+        LOGGER.debug("Exiting updateArtifact with actionInvariantUUID={}, artifactUUID={}, artifactName={}, artifactLabel={}, artifactCategory={}, artifactDescription={}, artifactProtection={}, checksum={}",
+            actionInvariantUUID, artifactUUID, artifactName, artifactLabel, artifactCategory, artifactDescription, artifactProtection, checksum);
+
         return response;
     }
+    
+    private ResponseEntity updateArtifactInternal(String actionInvariantUUID,
+                                                String artifactUUID,
+                                                String artifactName,
+                                                String artifactLabel,
+                                                String artifactCategory,
+                                                String artifactDescription,
+                                                String artifactProtection,
+                                                String checksum,
+                                                MultipartFile artifactToUpdate,
+                                                HttpServletRequest servletRequest) {
+        LOGGER.debug("Entered updateArtifactInternal with actionInvariantUUID={}, artifactUUID={}", actionInvariantUUID, artifactUUID);
 
-    private Response updateArtifactInternal(String actionInvariantUUID, String artifactUUID, String artifactName, String artifactLabel,
-                                            String artifactCategory, String artifactDescription, String artifactProtection, String checksum,
-                                            Attachment artifactToUpdate, HttpServletRequest servletRequest) {
         byte[] payload = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
-        //Content-Type Header Validation
+
+        // Content-Type Header Validation
         String contentType = servletRequest.getContentType();
+        LOGGER.debug("Content-Type from request: {}", contentType);
         if (StringUtils.isEmpty(contentType)) {
             errorMap.put(ACTION_REQUEST_INVALID_GENERIC_CODE, ACTION_REQUEST_CONTENT_TYPE_INVALID);
+            LOGGER.debug("Content-Type validation failed: {}", ACTION_REQUEST_CONTENT_TYPE_INVALID);
         }
-        if (artifactToUpdate != null) {
-            try (InputStream artifactInputStream = artifactToUpdate.getDataHandler().getInputStream()) {
-                payload = FileUtils.toByteArray(artifactInputStream);
+
+        // Process file if provided
+        if (artifactToUpdate != null && !artifactToUpdate.isEmpty()) {
+            try {
+                payload = artifactToUpdate.getBytes();
+                LOGGER.debug("Read artifact payload of length {}", payload.length);
             } catch (IOException exception) {
                 LOGGER.error(ACTION_ARTIFACT_READ_FILE_ERROR, exception);
                 throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ARTIFACT_READ_FILE_ERROR);
             }
-            //Validate Artifact size
-            if (payload != null && payload.length > MAX_ACTION_ARTIFACT_SIZE) {
+
+            // Validate artifact size
+            if (payload.length > MAX_ACTION_ARTIFACT_SIZE) {
+                LOGGER.error("Artifact size {} exceeds max allowed {}", payload.length, MAX_ACTION_ARTIFACT_SIZE);
                 throw new ActionException(ACTION_ARTIFACT_TOO_BIG_ERROR_CODE, ACTION_ARTIFACT_TOO_BIG_ERROR);
             }
-            //Validate Checksum
-            if (StringUtils.isEmpty(checksum) || !checksum.equalsIgnoreCase(calculateCheckSum(payload))) {
+
+            // Validate checksum
+            String calculatedChecksum = calculateCheckSum(payload);
+            LOGGER.debug("Provided checksum: {}, Calculated checksum: {}", checksum, calculatedChecksum);
+            if (StringUtils.isEmpty(checksum) || !checksum.equalsIgnoreCase(calculatedChecksum)) {
                 errorMap.put(ACTION_ARTIFACT_CHECKSUM_ERROR_CODE, ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR);
+                LOGGER.debug("Checksum validation failed: {}", ACTION_REQUEST_ARTIFACT_CHECKSUM_ERROR);
             }
+        } else {
+            LOGGER.debug("No artifact file provided or file is empty");
         }
-        if (artifactProtection != null && (artifactProtection.isEmpty() || (!artifactProtection.equals(ActionArtifactProtection.readOnly.name())
-            && !artifactProtection.equals(ActionArtifactProtection.readWrite.name())))) {
+
+        // Validate artifactProtection
+        LOGGER.debug("artifactProtection value: {}", artifactProtection);
+        if (artifactProtection != null &&
+                (artifactProtection.isEmpty() ||
+                        (!artifactProtection.equals(ActionArtifactProtection.readOnly.name()) &&
+                        !artifactProtection.equals(ActionArtifactProtection.readWrite.name())))) {
             errorMap.put(ACTION_ARTIFACT_INVALID_PROTECTION_CODE, ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE);
+            LOGGER.debug("Artifact protection validation failed: {}", ACTION_REQUEST_ARTIFACT_INVALID_PROTECTION_VALUE);
         }
-        ActionArtifact updateArtifact = new ActionArtifact();
+
+        // If no validation errors, proceed to update
         if (errorMap.isEmpty()) {
             String user = servletRequest.getRemoteUser();
+            LOGGER.debug("No validation errors, proceeding to update artifact. User: {}", user);
+
             ActionArtifact update = new ActionArtifact();
             update.setArtifactUuId(artifactUUID);
             update.setArtifactName(artifactName);
@@ -754,17 +859,22 @@ public class ActionsImpl implements Actions {
             update.setArtifact(payload);
             update.setArtifactCategory(artifactCategory);
             update.setArtifactProtection(artifactProtection);
+
             actionManager.updateArtifact(update, actionInvariantUUID, user);
+            LOGGER.debug("Artifact updated successfully");
         } else {
+            LOGGER.debug("Validation errors found: {}", errorMap);
             checkAndThrowError(errorMap);
         }
-        return Response.ok().build();
+
+        LOGGER.debug("Exiting updateArtifactInternal");
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Get List of all actions
      */
-    private Response getAllActions(HttpServletRequest servletRequest) {
+    private ResponseEntity getAllActions(HttpServletRequest servletRequest) {
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         if (errorMap.isEmpty()) {
@@ -773,13 +883,13 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
      * Get Actions by OPENECOMP component ID
      */
-    private Response getActionsByOpenEcompComponents(String componentID, HttpServletRequest servletRequest) {
+    private ResponseEntity getActionsByOpenEcompComponents(String componentID, HttpServletRequest servletRequest) {
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         Map<String, String> queryParamErrors = validateQueryParam(componentID);
@@ -790,13 +900,13 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
      * Get Actions by Model ID
      */
-    private Response getActionsByModel(String modelId, HttpServletRequest servletRequest) {
+    private ResponseEntity getActionsByModel(String modelId, HttpServletRequest servletRequest) {
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         Map<String, String> queryParamErrors = validateQueryParam(modelId);
@@ -807,13 +917,13 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
      * Get all actions with given action name
      */
-    private Response getActionsByName(String name, HttpServletRequest servletRequest) {
+    private ResponseEntity getActionsByName(String name, HttpServletRequest servletRequest) {
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
         Map<String, String> queryParamErrors = validateQueryParam(name);
@@ -824,13 +934,13 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
      * Get an action with given ActionUUID
      */
-    private Response getActionsByUniqueID(String actionUUID, HttpServletRequest servletRequest, String actionInvariantUUID) {
+    private ResponseEntity getActionsByUniqueID(String actionUUID, HttpServletRequest servletRequest, String actionInvariantUUID) {
         LOGGER.debug(" entering getActionByUUID with invariantID= " + actionInvariantUUID + " and actionUUID= " + actionUUID);
         Map<String, Object> responseDTO = new LinkedHashMap<>();
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -850,13 +960,13 @@ public class ActionsImpl implements Actions {
             checkAndThrowError(errorMap);
         }
         LOGGER.debug(" exit getActionByUUID with invariantID= " + actionInvariantUUID + " and actionUUID= " + actionUUID);
-        return Response.ok(responseDTO).build();
+        return ResponseEntity.ok(responseDTO);
     }
 
     /**
      * Get all actions with given Vendor Name
      */
-    private Response getActionsByVendor(String vendor, HttpServletRequest servletRequest) {
+    private ResponseEntity getActionsByVendor(String vendor, HttpServletRequest servletRequest) {
         //Validate request syntax before passing to the manager
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -868,13 +978,13 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
      * Get all actions with given Category Name
      */
-    private Response getActionsByCategory(String category, HttpServletRequest servletRequest) {
+    private ResponseEntity getActionsByCategory(String category, HttpServletRequest servletRequest) {
         //Validate request syntax before passing to the manager
         ListResponseWrapper responseList = null;
         Map<String, String> errorMap = validateRequestHeaders(servletRequest);
@@ -886,7 +996,7 @@ public class ActionsImpl implements Actions {
         } else {
             checkAndThrowError(errorMap);
         }
-        return Response.ok(responseList).build();
+        return ResponseEntity.ok(responseList);
     }
 
     /**
@@ -1026,7 +1136,7 @@ public class ActionsImpl implements Actions {
         return responseList;
     }
 
-    private Response createArtifactDownloadResponse(ActionArtifact actionartifact) {
+    private ResponseEntity createArtifactDownloadResponse(ActionArtifact actionartifact) {
         if (actionartifact != null && actionartifact.getArtifact() != null) {
             byte[] artifactsBytes = actionartifact.getArtifact();
             File artifactFile = new File(actionartifact.getArtifactName());
@@ -1037,11 +1147,11 @@ public class ActionsImpl implements Actions {
                 throw new ActionException(ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE,
                     ActionErrorConstants.ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
             }
-            Response.ResponseBuilder responseBuilder = Response.ok(artifactFile);
-            responseBuilder.header("Content-Disposition", "attachment; filename=" + actionartifact.getArtifactName());
-            responseBuilder.header("Content-MD5", CalcMD5CheckSum(artifactsBytes));
-            responseBuilder.header("Content-Length", artifactFile.length());
-            return responseBuilder.build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=" + actionartifact.getArtifactName());
+            headers.add("Content-MD5", CalcMD5CheckSum(artifactsBytes));
+            headers.add("Content-Length", String.valueOf(artifactFile.length()));
+            return new ResponseEntity<>(artifactFile, headers, HttpStatus.OK);
         } else {
             throw new ActionException(ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST_CODE,
                 ActionErrorConstants.ACTION_ARTIFACT_ENTITY_NOT_EXIST);

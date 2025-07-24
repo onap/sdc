@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
             <artifactId>onboarding-be</artifactId>
-            <type>war</type>
+            <type>jar</type>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

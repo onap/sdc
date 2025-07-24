@@ -16,30 +16,22 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
 import static org.openecomp.core.utilities.file.FileUtils.getFileExtension;
 import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
-
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.inject.Named;
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.onap.config.api.ConfigurationManager;
 import org.onap.config.api.JettySSLUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
@@ -51,11 +43,18 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdcrests.errors.ErrorCodeAndMessage;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vsp.rest.VnfPackageRepository;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Enables integration API interface with VNF Repository (VNFSDK).
@@ -73,57 +72,65 @@ import org.springframework.stereotype.Service;
 public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImpl.class);
-    private static final Client CLIENT = trustSSLClient();
+    private RestTemplate restTemplate = trustSSLClient();
 
-    private static Client trustSSLClient() {
-        try {
-            SSLContext sslcontext = JettySSLUtils.getSslContext();
-            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((requestedHost, remoteServerSession)
-                    -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
+    public RestTemplate trustSSLClient() throws Exception {
 
-        } catch (IOException | GeneralSecurityException e) {
-            LOGGER.error("Failed to initialize SSL context", e);
-        }
-        return ClientBuilder.newClient();
+        SSLContext sslcontext = JettySSLUtils.getSslContext();
+
+        HttpClient httpClient = HttpClients.custom()
+                .setSSLContext(sslcontext) // Use the SSLContext obtained
+                .setSSLHostnameVerifier((requestedHost, remoteServerSession) ->
+                        requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())) // Custom hostname verifier
+                .build();
+
+        return new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
     }
 
 
     private final Configuration config;
 
-    public VnfPackageRepositoryImpl(Configuration config) {
+    public VnfPackageRepositoryImpl(Configuration config) throws Exception {
         this.config = config;
     }
 
-    public VnfPackageRepositoryImpl() {
+    public VnfPackageRepositoryImpl() throws Exception {
         this(new FileConfiguration());
+        this.restTemplate = trustSSLClient();
     }
 
     @Override
-    public Response getVnfPackages(String vspId, String versionId, String user) {
+    public ResponseEntity getVnfPackages(String vspId, String versionId, String user) {
         LOGGER.debug("Get VNF Packages from Repository: {}", vspId);
         final String getVnfPackageUri = config.getGetUri();
-        Response remoteResponse = CLIENT.target(getVnfPackageUri).request().get();
-        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-            return handleUnexpectedStatus("querying VNF package metadata", getVnfPackageUri, remoteResponse);
+        ResponseEntity<String> remoteResponse;
+        try {
+            remoteResponse = restTemplate.getForEntity(getVnfPackageUri, String.class);
+            if (remoteResponse.getStatusCode() != HttpStatus.OK) {
+                return handleUnexpectedStatus("querying VNF package metadata", getVnfPackageUri, remoteResponse);
+            }
+        } catch (HttpClientErrorException.Forbidden e) {
+            LOGGER.error("Forbidden error while downloading VNF package: URI={}", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         LOGGER.debug("Response from VNF Repository: {}", remoteResponse);
-        return Response.ok(remoteResponse.readEntity(String.class)).build();
+        return new ResponseEntity<>(remoteResponse.getBody(), HttpStatus.OK);
     }
 
     @Override
-    public Response importVnfPackage(String vspId, String versionId, String csarId, String user) {
+    public ResponseEntity importVnfPackage(String vspId, String versionId, String csarId, String user) {
         LOGGER.debug("Import VNF Packages from Repository: {}", csarId);
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
-        Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
-        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+        ResponseEntity<String> remoteResponse = restTemplate.getForEntity(downloadPackageUri, String.class);
+        if (remoteResponse.getStatusCode() != HttpStatus.OK) {
             return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
         }
         LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
-        byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
+        byte[] payload = remoteResponse.getBody().getBytes(StandardCharsets.ISO_8859_1);
         return uploadVnfPackage(vspId, versionId, csarId, payload);
     }
 
-    private Response uploadVnfPackage(final String vspId, final String versionId, final String csarId, final byte[] payload) {
+    private ResponseEntity uploadVnfPackage(final String vspId, final String versionId, final String csarId, final byte[] payload) {
         try {
             final OrchestrationTemplateCandidateManager candidateManager = OrchestrationTemplateCandidateManagerFactory.getInstance()
                 .createInterface();
@@ -135,7 +142,7 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
             final UploadFileResponse response = candidateManager.upload(vspDetails, onboardPackageInfo);
             final UploadFileResponseDto uploadFileResponse = new MapUploadFileResponseToUploadFileResponseDto()
                 .applyMapping(response, UploadFileResponseDto.class);
-            return Response.ok(uploadFileResponse).build();
+            return ResponseEntity.ok(uploadFileResponse);
         } catch (final Exception e) {
             ErrorCode error = new GeneralErrorBuilder().build();
             LOGGER.error("Exception while uploading package received from VNF Repository", new CoreException(error, e));
@@ -144,18 +151,24 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
     }
 
     @Override
-    public Response downloadVnfPackage(String vspId, String versionId, String csarId, String user) {
+    public ResponseEntity downloadVnfPackage(String vspId, String versionId, String csarId, String user) {
         LOGGER.debug("Download VNF package from repository: csarId={}", csarId);
         final String downloadPackageUri = String.format(config.getDownloadUri(), csarId);
-        Response remoteResponse = CLIENT.target(downloadPackageUri).request().get();
-        if (remoteResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-            return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
+        ResponseEntity<String> remoteResponse = null;
+        try {
+            remoteResponse = restTemplate.getForEntity(downloadPackageUri, String.class);
+            if (remoteResponse.getStatusCode() != HttpStatus.OK) {
+                return handleUnexpectedStatus("downloading VNF package", downloadPackageUri, remoteResponse);
+            }
+        } catch (HttpClientErrorException.Forbidden e) {
+            LOGGER.error("Forbidden error while downloading VNF package: URI={}", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        byte[] payload = remoteResponse.readEntity(String.class).getBytes(StandardCharsets.ISO_8859_1);
-        Response.ResponseBuilder response = Response.ok(payload);
-        response.header(CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
+        byte[] payload = remoteResponse.getBody().getBytes(StandardCharsets.ISO_8859_1);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + formatFilename(csarId));
         LOGGER.debug("Response from VNF Repository for download package is success. URI={}", downloadPackageUri);
-        return response.build();
+        return new ResponseEntity<>(payload, headers, HttpStatus.OK);
     }
 
     private Version getVersion(String vspId, String versionId) {
@@ -167,19 +180,19 @@ public class VnfPackageRepositoryImpl implements VnfPackageRepository {
         return versions.stream().filter(ver -> Objects.equals(ver.getId(), requestedVersion)).findAny();
     }
 
-    private static Response handleUnexpectedStatus(String action, String uri, Response response) {
+    private static ResponseEntity handleUnexpectedStatus(String action, String uri, ResponseEntity response) {
         ErrorCode error = new GeneralErrorBuilder().build();
         if (LOGGER.isErrorEnabled()) {
-            String body = response.hasEntity() ? response.readEntity(String.class) : "";
-            LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri, response.getStatus(), body,
+            String body = (response.getBody() != null) ? (String) response.getBody() : "";
+            LOGGER.error("Unexpected response status while {}: URI={}, status={}, body={}", action, uri, response.getStatusCodeValue(), body,
                 new CoreException(error));
         }
         return generateInternalServerError(error);
     }
 
-    private static Response generateInternalServerError(ErrorCode error) {
-        ErrorCodeAndMessage payload = new ErrorCodeAndMessage(Response.Status.INTERNAL_SERVER_ERROR, error);
-        return Response.serverError().entity(payload).build();
+    private static ResponseEntity<ErrorCodeAndMessage> generateInternalServerError(ErrorCode error) {
+        ErrorCodeAndMessage payload = new ErrorCodeAndMessage(HttpStatus.INTERNAL_SERVER_ERROR, error);
+        return new ResponseEntity<>(payload, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private static String formatFilename(String csarId) {

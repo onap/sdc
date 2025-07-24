@@ -21,7 +21,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
@@ -47,6 +46,8 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDat
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -65,70 +66,70 @@ public class ComponentsImpl implements Components {
     }
 
     @Override
-    public Response list(String vspId, String versionId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String user) {
         Collection<ComponentEntity> components = componentManager.listComponents(vspId, new Version(versionId));
         MapComponentEntityToComponentDto mapper = new MapComponentEntityToComponentDto();
         GenericCollectionWrapper<ComponentDto> results = new GenericCollectionWrapper<>();
         for (ComponentEntity component : components) {
             results.add(mapper.applyMapping(component, ComponentDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response deleteList(String vspId, String versionId, String user) {
+    public ResponseEntity deleteList(String vspId, String versionId, String user) {
         componentManager.deleteComponents(vspId, new Version(versionId));
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response create(ComponentRequestDto request, String vspId, String versionId, String user) {
+    public ResponseEntity create(ComponentRequestDto request, String vspId, String versionId, String user) {
         ComponentEntity component = new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
         component.setVspId(vspId);
         component.setVersion(new Version(versionId));
         ComponentEntity createdComponent = componentManager.createComponent(component);
         MapComponentEntityToComponentCreationDto mapping = new MapComponentEntityToComponentCreationDto();
         ComponentCreationDto createdComponentDto = mapping.applyMapping(createdComponent, ComponentCreationDto.class);
-        return Response.ok(createdComponent != null ? createdComponentDto : null).build();
+        return ResponseEntity.ok(createdComponent != null ? createdComponentDto : null);
     }
 
     @Override
-    public Response get(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity get(String vspId, String versionId, String componentId, String user) {
         CompositionEntityResponse<ComponentData> response = componentManager.getComponent(vspId, new Version(versionId), componentId);
         CompositionEntityResponseDto<ComponentDto> responseDto = new CompositionEntityResponseDto<>();
         new MapCompositionEntityResponseToDto<>(new MapComponentDataToComponentDto(), ComponentDto.class).doMapping(response, responseDto);
-        return Response.ok(responseDto).build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity delete(String vspId, String versionId, String componentId, String user) {
         componentManager.deleteComponent(vspId, new Version(versionId), componentId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response update(ComponentRequestDto request, String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity update(ComponentRequestDto request, String vspId, String versionId, String componentId, String user) {
         ComponentEntity componentEntity = new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
         componentEntity.setVspId(vspId);
         componentEntity.setVersion(new Version(versionId));
         componentEntity.setId(componentId);
         CompositionEntityValidationData validationData = componentManager.updateComponent(componentEntity);
-        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? Response.status(Response.Status.EXPECTATION_FAILED)
-            .entity(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class)).build()
-            : Response.ok().build();
+        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+            .body(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class))
+            : ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getQuestionnaire(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity getQuestionnaire(String vspId, String versionId, String componentId, String user) {
         QuestionnaireResponse questionnaireResponse = componentManager.getQuestionnaire(vspId, new Version(versionId), componentId);
         QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
             .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String user) {
         componentManager.updateQuestionnaire(vspId, new Version(versionId), componentId, questionnaireData);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

@@ -50,6 +50,8 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -71,7 +73,7 @@ public class ComputeImpl implements Compute {
     }
 
     @Override
-    public Response list(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String componentId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         Collection<ListComputeResponse> computes = computetManager.listComputes(vspId, version, componentId);
@@ -80,21 +82,21 @@ public class ComputeImpl implements Compute {
         for (ListComputeResponse compute : computes) {
             results.add(mapper.applyMapping(compute, ComputeDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response get(String vspId, String versionId, String componentId, String computeId, String user) {
+    public ResponseEntity get(String vspId, String versionId, String componentId, String computeId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         CompositionEntityResponse<ComputeData> response = computetManager.getCompute(vspId, version, componentId, computeId);
         CompositionEntityResponseDto<ComputeDetailsDto> responseDto = new CompositionEntityResponseDto<>();
         new MapCompositionEntityResponseToDto<>(new MapComputeDataToComputeDetailsDto(), ComputeDetailsDto.class).doMapping(response, responseDto);
-        return Response.ok(responseDto).build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @Override
-    public Response create(ComputeDetailsDto request, String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity create(ComputeDetailsDto request, String vspId, String versionId, String componentId, String user) {
         ComputeEntity compute = new MapComputeDetailsDtoToComputeEntity().applyMapping(request, ComputeEntity.class);
         compute.setVspId(vspId);
         compute.setVersion(new Version(versionId));
@@ -103,11 +105,11 @@ public class ComputeImpl implements Compute {
         ComputeEntity createdCompute = computetManager.createCompute(compute);
         MapComputeEntityToComputeCreationDto mapper = new MapComputeEntityToComputeCreationDto();
         ComputeCreationDto createdComputeDto = mapper.applyMapping(createdCompute, ComputeCreationDto.class);
-        return Response.ok(createdComputeDto != null ? createdComputeDto : null).build();
+        return ResponseEntity.ok(createdComputeDto != null ? createdComputeDto : null);
     }
 
     @Override
-    public Response update(ComputeDetailsDto request, String vspId, String versionId, String componentId, String computeFlavorId, String user) {
+    public ResponseEntity update(ComputeDetailsDto request, String vspId, String versionId, String componentId, String computeFlavorId, String user) {
         ComputeEntity compute = new MapComputeDetailsDtoToComputeEntity().applyMapping(request, ComputeEntity.class);
         compute.setVspId(vspId);
         compute.setVersion(new Version(versionId));
@@ -115,35 +117,35 @@ public class ComputeImpl implements Compute {
         compute.setId(computeFlavorId);
         componentManager.validateComponentExistence(vspId, compute.getVersion(), componentId);
         CompositionEntityValidationData validationData = computetManager.updateCompute(compute);
-        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? Response.status(Response.Status.EXPECTATION_FAILED)
-            .entity(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class)).build()
-            : Response.ok().build();
+        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+            .body(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class))
+            : ResponseEntity.ok().build();
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String componentId, String computeFlavorId, String user) {
+    public ResponseEntity delete(String vspId, String versionId, String componentId, String computeFlavorId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         computetManager.deleteCompute(vspId, version, componentId, computeFlavorId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getQuestionnaire(String vspId, String versionId, String componentId, String computeFlavorId, String user) {
+    public ResponseEntity getQuestionnaire(String vspId, String versionId, String componentId, String computeFlavorId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         QuestionnaireResponse questionnaireResponse = computetManager.getComputeQuestionnaire(vspId, version, componentId, computeFlavorId);
         QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
             .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String computeFlavorId,
+    public ResponseEntity updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String computeFlavorId,
                                         String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         computetManager.updateComputeQuestionnaire(vspId, version, componentId, computeFlavorId, questionnaireData);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

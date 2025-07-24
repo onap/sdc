@@ -40,6 +40,7 @@ COPY --chown=sdc:sdc upgrade-scripts /home/sdc/upgrade-scripts
 COPY --chown=sdc:sdc startup.sh /home/sdc/
 
 RUN chmod 770 /home/sdc/startup.sh
+RUN chmod -R go+rwx /home/sdc
 
 ENTRYPOINT [ "/home/sdc/startup.sh" ]
 

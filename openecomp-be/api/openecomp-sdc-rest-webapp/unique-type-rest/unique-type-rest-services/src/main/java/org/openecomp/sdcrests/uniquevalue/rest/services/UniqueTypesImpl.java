@@ -18,8 +18,6 @@
  */
 package org.openecomp.sdcrests.uniquevalue.rest.services;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-
 import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,16 +25,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdcrests.errors.ErrorCodeAndMessage;
 import org.openecomp.sdcrests.uniquevalue.rest.UniqueTypes;
 import org.openecomp.sdcrests.uniquevalue.types.UniqueTypesProvider;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -57,19 +56,26 @@ public class UniqueTypesImpl implements UniqueTypes {
     private UniqueValueUtil uniqueValueUtil;
 
     @Override
-    public Response listUniqueTypes(String user) {
-        return Response.ok(new GenericCollectionWrapper<>(new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet()))).build();
+    public ResponseEntity<GenericCollectionWrapper<String>> listUniqueTypes(String user) {
+        GenericCollectionWrapper<String> wrapper = new GenericCollectionWrapper<>(
+                new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet())
+        );
+        return ResponseEntity.ok(wrapper);
+       // return Response.ok(new GenericCollectionWrapper<>(new ArrayList<>(UNIQUE_TYPE_TO_INTERNAL.keySet()))).build();
     }
 
     @Override
-    public Response getUniqueValue(String type, String value, String user) {
+    public ResponseEntity getUniqueValue(String type, String value, String user) {
         String internalType = UNIQUE_TYPE_TO_INTERNAL.get(type);
         if (internalType == null) {
-            ErrorCode error = new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).withId(UNIQUE_TYPE_NOT_FOUND_ERR_ID)
-                .withMessage(String.format(UNIQUE_TYPE_NOT_FOUND_MSG, type)).build();
-            return Response.status(NOT_FOUND).entity(new ErrorCodeAndMessage(NOT_FOUND, error)).build();
+            ErrorCode error = new ErrorCode.ErrorCodeBuilder()
+                    .withCategory(ErrorCategory.APPLICATION)
+                    .withId(UNIQUE_TYPE_NOT_FOUND_ERR_ID)
+                    .withMessage(String.format(UNIQUE_TYPE_NOT_FOUND_MSG, type))
+                    .build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorCodeAndMessage(HttpStatus.NOT_FOUND,error));
         }
-        return Response.ok(Collections.singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value))).build();
+        return ResponseEntity.ok(Collections.singletonMap("occupied", getUniqueValueUtil().isUniqueValueOccupied(internalType, value)));
     }
 
     private UniqueValueUtil getUniqueValueUtil() {

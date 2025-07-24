@@ -43,7 +43,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -117,6 +116,9 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToVspDetails;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDetailsToDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.keycloak.representations.AccessToken;
 
@@ -176,13 +178,13 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response createVsp(VspRequestDto vspRequestDto, String user, HttpServletRequest hreq) {
+    public ResponseEntity createVsp(VspRequestDto vspRequestDto, String user, HttpServletRequest hreq) {
         ItemCreationDto vspCreationDto = createVspItem(vspRequestDto, user, hreq);
         if (vspCreationDto != null) {
-            return Response.ok(vspCreationDto).build();
+            return ResponseEntity.ok(vspCreationDto);
         }
-        else return Response.status(401, "Unauthorized Tenant").build();
-        }
+        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Tenant");
+    }
 
     private ItemCreationDto createVspItem(VspRequestDto vspRequestDto, String user, HttpServletRequest hreq) {
         OnboardingMethod onboardingMethod = null;
@@ -204,7 +206,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private ItemCreationDto createItem(VspRequestDto vspRequestDto, String user, OnboardingMethod onboardingMethod , HttpServletRequest hreq) {
         Multitenancy keyaccess= new Multitenancy();
         if (keyaccess.multiTenancyCheck()) {
-           AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
             boolean match = realmroles.contains(vspRequestDto.getTenant());
             if (match) {
@@ -265,10 +267,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response listVsps(String versionStatus, String itemStatus, String user, HttpServletRequest hreq ) {
+    public ResponseEntity listVsps(String versionStatus, String itemStatus, String user, HttpServletRequest hreq ) {
         Multitenancy keyaccess = new Multitenancy();
         if (keyaccess.multiTenancyCheck()) {
-           AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
+            AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
             Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
             GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
@@ -276,18 +278,18 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             realmroles.stream().forEach(role -> itemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                     .filter(vspItem -> vspItem.getTenant().contains(role))
                     .forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class))));
-            return Response.ok(results).build();
+            return ResponseEntity.ok().build();
         }
         else {
             GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
             MapItemToVspDetailsDto mapper = new MapItemToVspDetailsDto();
             getVspList(versionStatus, itemStatus, user).forEach(vspItem -> results.add(mapper.applyMapping(vspItem, VspDetailsDto.class)));
-            return Response.ok(results).build();
+            return ResponseEntity.ok(results);
         }
     }
 
     @Override
-    public Response getVsp(String vspId, String versionId, String user) {
+    public ResponseEntity getVsp(String vspId, String versionId, String user) {
         Version version = versioningManager.get(vspId, new Version(versionId));
         VspDetails vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
         try {
@@ -302,15 +304,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
         VspDetailsDto vspDetailsDto = new MapVspDetailsToDto().applyMapping(vspDetails, VspDetailsDto.class);
         addNetworkPackageInfo(vspId, vspDetails.getVersion(), vspDetailsDto);
-        return Response.ok(vspDetailsDto).build();
+        return ResponseEntity.ok(vspDetailsDto);
     }
 
     @Override
-    public Response getLatestVsp(final String vspId, final String user) {
+    public ResponseEntity getLatestVsp(final String vspId, final String user) {
         final List<Version> versions = versioningManager.list(vspId);
         final Version version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
-            .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
-            .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+                .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
+                .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
         return getVsp(vspId, version.getId(), user);
     }
 
@@ -330,38 +332,54 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response updateVsp(String vspId, String versionId, VspDescriptionDto vspDescriptionDto, String user) {
+    public ResponseEntity updateVsp(String vspId, String versionId, VspDescriptionDto vspDescriptionDto, String user) {
         VspDetails vspDetails = new MapVspDescriptionDtoToVspDetails().applyMapping(vspDescriptionDto, VspDetails.class);
         vspDetails.setId(vspId);
         vspDetails.setVersion(new Version(versionId));
         vendorSoftwareProductManager.updateVsp(vspDetails);
         updateVspItem(vspId, vspDescriptionDto);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response deleteVsp(final String vspId, final String user) {
+    public ResponseEntity deleteVsp(final String vspId, final String user) {
+        LOGGER.debug("Request to delete VSP with ID: [{}] by user: [{}]", vspId, user);
+         LOGGER.debug("itemManager: [{}] ", itemManager);
         final Item vsp = itemManager.get(vspId);
-        if (!ItemType.vsp.getName().equals(vsp.getType())) {
+        if (vsp == null) {
+            LOGGER.debug("VSP with ID [{}] not found in itemManager.", vspId);
             throw VendorSoftwareProductsExceptionSupplier.vspNotFound(vspId).get();
         }
 
+        if (!ItemType.vsp.getName().equals(vsp.getType())) {
+            LOGGER.debug("Item with ID [{}] is not of type VSP. Actual type: [{}]", vspId, vsp.getType());
+            throw VendorSoftwareProductsExceptionSupplier.vspNotFound(vspId).get();
+        }
+
+        LOGGER.debug("Valid VSP found with ID [{}]. Proceeding with pre-deletion checks.", vspId);
         checkIfCanDeleteVsp(vsp, user);
 
         try {
+            LOGGER.debug("Attempting to delete VSP [{}] from storage.", vspId);
             deleteVspFromStorage(vspId, user);
+            LOGGER.info("Successfully deleted VSP [{}] from storage.", vspId);
         } catch (final Exception e) {
+            LOGGER.error("Failed to delete VSP [{}] from storage for user [{}]: {}", vspId, user, e.getMessage(), e);
             logDeleteFromStorageFailure(vspId, user);
             throw VendorSoftwareProductsExceptionSupplier.deleteVspFromStorageFailure(vspId).get();
         }
 
         try {
+            LOGGER.debug("Attempting to delete VSP [{}] from database.", vspId);
             deleteVsp(vspId, user, vsp);
+            LOGGER.info("Successfully deleted VSP [{}] from database.", vspId);
         } catch (final Exception e) {
+            LOGGER.error("Failed to delete VSP [{}] from database for user [{}]: {}", vspId, user, e.getMessage(), e);
             throw VendorSoftwareProductsExceptionSupplier.deleteVspFromDatabaseFailure(vspId).get();
         }
 
-        return Response.ok().build();
+        LOGGER.info("Completed deletion of VSP [{}] by user [{}].", vspId, user);
+        return ResponseEntity.ok().build();
     }
 
     private void checkIfCanDeleteVsp(final Item vsp, final String user) {
@@ -411,7 +429,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         final String message = Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId);
         try {
             versioningManager.list(vspId).forEach(version -> activityLogManager.logActivity(
-                new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, false, message, message)
+                    new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, false, message, message)
             ));
         } catch (final Exception e) {
             LOGGER.error("Could not log activity '{}'", message, e);
@@ -421,7 +439,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         final String message = String.format("VSP '%s' fully deleted from the storage", vspId);
         try {
             versioningManager.list(vspId).forEach(version -> activityLogManager.logActivity(
-                new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, true, message, message)
+                    new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, true, message, message)
             ));
         } catch (final Exception e) {
             LOGGER.error("Could not log activity '{}'", message, e);
@@ -460,31 +478,31 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request, String vspId, String versionId, String user)
-        throws IOException {
+    public ResponseEntity actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request, String vspId, String versionId, String user)
+            throws IOException {
         Version version = new Version(versionId);
         if (request.getAction() == VendorSoftwareProductAction.Submit) {
             if (!permissionsManager.isAllowed(vspId, user, SUBMIT_ITEM_ACTION)) {
-                return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage()));
             }
             String message = request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
             Optional<ValidationResponse> validationResponse = submit(vspId, version, message, user);
             if (validationResponse.isPresent()) {
                 ValidationResponseDto validationResponseDto = new MapValidationResponseToDto()
-                    .applyMapping(validationResponse.get(), ValidationResponseDto.class);
-                return Response.status(Response.Status.EXPECTATION_FAILED).entity(validationResponseDto).build();
+                        .applyMapping(validationResponse.get(), ValidationResponseDto.class);
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(validationResponseDto);
             }
             notifyUsers(vspId, null, version, message, user, NotificationEventTypes.SUBMIT);
         } else if (request.getAction() == VendorSoftwareProductAction.Create_Package) {
             return createPackage(vspId, version);
         }
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getValidationVsp(String user, HttpServletRequest hreq) {
+    public ResponseEntity getValidationVsp(String user, HttpServletRequest hreq) {
         ItemCreationDto validationVsp = retrieveValidationVsp(hreq);
-        return Response.ok(validationVsp).build();
+        return ResponseEntity.ok(validationVsp);
     }
 
     private ItemCreationDto retrieveValidationVsp(HttpServletRequest req) {
@@ -501,10 +519,10 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             } catch (CoreException vspCreateException) {
                 LOGGER.debug("Failed to create validation VSP", vspCreateException);
                 Predicate<Item> validationVspFilter = item -> ItemType.vsp.name().equals(item.getType()) && VALIDATION_VSP_NAME
-                    .equals(item.getName());
+                        .equals(item.getName());
                 String validationVspId = itemManager.list(validationVspFilter).stream().findFirst().orElseThrow(() -> new IllegalStateException(
-                        "Vsp with name " + VALIDATION_VSP_NAME + " does not exist even though the name exists according to " + "unique value util"))
-                    .getId();
+                                "Vsp with name " + VALIDATION_VSP_NAME + " does not exist even though the name exists according to " + "unique value util"))
+                        .getId();
                 Version validationVspVersion = versioningManager.list(validationVspId).iterator().next();
                 cachedValidationVsp = new ItemCreationDto();
                 cachedValidationVsp.setItemId(validationVspId);
@@ -515,20 +533,20 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response getOrchestrationTemplate(String vspId, String versionId, String user) {
+    public ResponseEntity getOrchestrationTemplate(String vspId, String versionId, String user) {
         byte[] orchestrationTemplateFile = vendorSoftwareProductManager.getOrchestrationTemplateFile(vspId, new Version(versionId));
         if (orchestrationTemplateFile == null || orchestrationTemplateFile.length == 0) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);
-        response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + "LatestHeatPackage.zip");
-        return response.build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=LatestHeatPackage.zip");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(orchestrationTemplateFile);
     }
 
     @Override
-    public Response listPackages(String status, String category, String subCategory, String user) {
+    public ResponseEntity listPackages(String status, String category, String subCategory, String user) {
         List<String> vspsIds = getVspList(null, status != null ? ItemStatus.valueOf(status).name() : null, user).stream().map(Item::getId)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
         List<PackageInfo> packageInfoList = vendorSoftwareProductManager.listPackages(category, subCategory);
         packageInfoList = packageInfoList.stream().filter(packageInfo -> vspsIds.contains(packageInfo.getVspId())).collect(Collectors.toList());
         GenericCollectionWrapper<PackageInfoDto> results = new GenericCollectionWrapper<>();
@@ -538,80 +556,79 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 results.add(mapper.applyMapping(packageInfo, PackageInfoDto.class));
             }
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response getTranslatedFile(String vspId, String versionId, String user) {
+    public ResponseEntity getTranslatedFile(String vspId, String versionId, String user) {
         final List<Version> versions = versioningManager.list(vspId);
         final Version version;
         if (versionId == null) {
             version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
-                .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
-                .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+                    .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
+                    .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
         } else {
             version = versions.stream()
-                .filter(ver -> versionId.equals(ver.getName()) || versionId.equals(ver.getId()))
-                .findFirst()
-                .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId, versionId).build()));
+                    .filter(ver -> versionId.equals(ver.getName()) || versionId.equals(ver.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId, versionId).build()));
             if (version.getStatus() != VersionStatus.Certified) {
                 throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
             }
         }
         File zipFile = vendorSoftwareProductManager.getTranslatedFile(vspId, version);
-        Response.ResponseBuilder response = Response.ok(zipFile);
         if (zipFile == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
-        return response.build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + zipFile.getName());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(zipFile);
     }
 
     @Override
-    public Response getQuestionnaire(String vspId, String versionId, String user) {
+    public ResponseEntity getQuestionnaire(String vspId, String versionId, String user) {
         QuestionnaireResponse questionnaireResponse = vendorSoftwareProductManager.getVspQuestionnaire(vspId, new Version(versionId));
         if (questionnaireResponse.getErrorMessage() != null) {
-            return Response.status(Response.Status.EXPECTATION_FAILED)
-                .entity(new MapQuestionnaireResponseToQuestionnaireResponseDto().applyMapping(questionnaireResponse, QuestionnaireResponseDto.class))
-                .build();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new MapQuestionnaireResponseToQuestionnaireResponseDto().applyMapping(questionnaireResponse, QuestionnaireResponseDto.class));
         }
         QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
-            .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
+                .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String user) {
+    public ResponseEntity updateQuestionnaire(String questionnaireData, String vspId, String versionId, String user) {
         vendorSoftwareProductManager.updateVspQuestionnaire(vspId, new Version(versionId), questionnaireData);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response heal(String vspId, String versionId, String user) {
+    public ResponseEntity heal(String vspId, String versionId, String user) {
         HealingManagerFactory.getInstance().createInterface().healItemVersion(vspId, new Version(versionId), ItemType.vsp, true);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getVspInformationArtifact(String vspId, String versionId, String user) {
+    public ResponseEntity getVspInformationArtifact(String vspId, String versionId, String user) {
         File textInformationArtifact = vendorSoftwareProductManager.getInformationArtifact(vspId, new Version(versionId));
-        Response.ResponseBuilder response = Response.ok(textInformationArtifact);
         if (textInformationArtifact == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        response.header(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + textInformationArtifact.getName());
-        return response.build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + textInformationArtifact.getName());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(textInformationArtifact);
     }
 
     @Override
-    public Response listComputes(String vspId, String version, String user) {
+    public ResponseEntity listComputes(String vspId, String version, String user) {
         Collection<ComputeEntity> computes = vendorSoftwareProductManager.getComputeByVsp(vspId, new Version(version));
         MapComputeEntityToVspComputeDto mapper = new MapComputeEntityToVspComputeDto();
         GenericCollectionWrapper<VspComputeDto> results = new GenericCollectionWrapper<>();
         for (ComputeEntity compute : computes) {
             results.add(mapper.applyMapping(compute, VspComputeDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     private void updateVspItem(String vspId, VspDescriptionDto vspDescriptionDto) {
@@ -637,7 +654,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         Map<String, List<ErrorMessage>> compilationErrors = vendorSoftwareProductManager.compile(vspId, version);
         if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
             activityLogManager
-                .logActivity(new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false, "Failed on validation before submit", ""));
+                    .logActivity(new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false, "Failed on validation before submit", ""));
             return Optional.of(validationResponse);
         }
         versioningManager.submit(vspId, version, message);
@@ -663,18 +680,18 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
     }
 
-    private Response createPackage(String vspId, Version version) throws IOException {
+    private ResponseEntity createPackage(String vspId, Version version) throws IOException {
         Version retrievedVersion = versioningManager.get(vspId, version);
         if (retrievedVersion.getStatus() != VersionStatus.Certified) {
             throw new CoreException(new CreatePackageForNonFinalVendorSoftwareProductErrorBuilder(vspId, version).build());
         }
         PackageInfo packageInfo = vendorSoftwareProductManager.createPackage(vspId, retrievedVersion);
-        return Response.ok(packageInfo == null ? null : new MapPackageInfoToPackageInfoDto().applyMapping(packageInfo, PackageInfoDto.class)).build();
+        return ResponseEntity.ok(packageInfo == null ? null : new MapPackageInfoToPackageInfoDto().applyMapping(packageInfo, PackageInfoDto.class));
     }
 
     private void addNetworkPackageInfo(String vspId, Version version, VspDetailsDto vspDetailsDto) {
         Optional<OrchestrationTemplateCandidateData> candidateInfo = OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface()
-            .getInfo(vspId, version);
+                .getInfo(vspId, version);
         if (candidateInfo.isPresent()) {
             if (candidateInfo.get().getValidationDataStructure() != null) {
                 vspDetailsDto.setValidationData(candidateInfo.get().getValidationDataStructure());
@@ -695,7 +712,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
     private boolean userHasPermission(String itemId, String userId) {
         return permissionsManager.getUserItemPermission(itemId, userId)
-            .map(permission -> permission.matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name())).orElse(false);
+                .map(permission -> permission.matches(PermissionTypes.Contributor.name() + "|" + PermissionTypes.Owner.name())).orElse(false);
     }
 
     private Predicate<Item> createItemPredicate(String versionStatus, String itemStatus, String user) {
@@ -708,7 +725,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 itemPredicate = itemPredicate.and(item -> item.getVersionStatusCounters().containsKey(VersionStatus.Certified));
             } else if (VersionStatus.Draft.name().equals(versionStatus)) {
                 itemPredicate = itemPredicate
-                    .and(item -> item.getVersionStatusCounters().containsKey(VersionStatus.Draft) && userHasPermission(item.getId(), user));
+                        .and(item -> item.getVersionStatusCounters().containsKey(VersionStatus.Draft) && userHasPermission(item.getId(), user));
             }
         }
         return itemPredicate;
@@ -717,7 +734,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private List<Item> getVspList(String versionStatus, String itemStatus, String user) {
         Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
         return itemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private class SyncEvent implements Event {

@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
@@ -43,6 +43,7 @@ import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementUpdateRequestD
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -60,13 +61,13 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @param user      the user
      * @return the response
      */
-    public Response listLicenseAgreements(String vlmId, String versionId, String user) {
+    public ResponseEntity listLicenseAgreements(String vlmId, String versionId, String user) {
         MapLicenseAgreementEntityToLicenseAgreementDescriptorDto outputMapper = new MapLicenseAgreementEntityToLicenseAgreementDescriptorDto();
         GenericCollectionWrapper<LicenseAgreementEntityDto> results = new GenericCollectionWrapper<>(
             vendorLicenseManager.listLicenseAgreements(vlmId, new Version(versionId)).stream()
                 .sorted(Comparator.comparing(LicenseAgreementEntity::getName)).map(lae -> getLicenseAgreementEntityDto(outputMapper, lae))
                 .collect(Collectors.toList()));
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     /**
@@ -77,7 +78,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @param user    the user
      * @return the response
      */
-    public Response createLicenseAgreement(LicenseAgreementRequestDto request, String vlmId, String versionId, String user) {
+    public ResponseEntity createLicenseAgreement(LicenseAgreementRequestDto request, String vlmId, String versionId, String user) {
         LicenseAgreementEntity licenseAgreementEntity = new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
         licenseAgreementEntity.setVendorLicenseModelId(vlmId);
@@ -85,7 +86,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         licenseAgreementEntity.setFeatureGroupIds(request.getAddedFeatureGroupsIds());
         LicenseAgreementEntity createdLicenseAgreement = vendorLicenseManager.createLicenseAgreement(licenseAgreementEntity);
         StringWrapperResponse result = createdLicenseAgreement != null ? new StringWrapperResponse(createdLicenseAgreement.getId()) : null;
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -97,7 +98,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @param user               the user
      * @return the response
      */
-    public Response updateLicenseAgreement(LicenseAgreementUpdateRequestDto request, String vlmId, String versionId, String licenseAgreementId,
+    public ResponseEntity updateLicenseAgreement(LicenseAgreementUpdateRequestDto request, String vlmId, String versionId, String licenseAgreementId,
                                            String user) {
         LicenseAgreementEntity licenseAgreementEntity = new MapLicenseAgreementDescriptorDtoToLicenseAgreementEntity()
             .applyMapping(request, LicenseAgreementEntity.class);
@@ -105,7 +106,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
         licenseAgreementEntity.setVersion(new Version(versionId));
         licenseAgreementEntity.setId(licenseAgreementId);
         vendorLicenseManager.updateLicenseAgreement(licenseAgreementEntity, request.getAddedFeatureGroupsIds(), request.getRemovedFeatureGroupsIds());
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -117,11 +118,11 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @param user               the user
      * @return the license agreement
      */
-    public Response getLicenseAgreement(String vlmId, String versionId, String licenseAgreementId, String user) {
+    public ResponseEntity getLicenseAgreement(String vlmId, String versionId, String licenseAgreementId, String user) {
         LicenseAgreementModel licenseAgreementModel = vendorLicenseManager
             .getLicenseAgreementModel(vlmId, new Version(versionId), licenseAgreementId);
         if (licenseAgreementModel == null) {
-            return Response.ok().build();
+            return ResponseEntity.ok().build();
         }
         LicenseAgreementModelDto lamDto = new LicenseAgreementModelDto();
         lamDto.setId(licenseAgreementModel.getLicenseAgreement().getId());
@@ -138,7 +139,7 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
                 lamDto.getFeatureGroups().add(fgeDto);
             }
         }
-        return Response.ok(lamDto).build();
+        return ResponseEntity.ok(lamDto);
     }
 
     /**
@@ -150,9 +151,9 @@ public class LicenseAgreementsImpl implements LicenseAgreements {
      * @param user               the user
      * @return the response
      */
-    public Response deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId, String user) {
+    public ResponseEntity deleteLicenseAgreement(String vlmId, String versionId, String licenseAgreementId, String user) {
         vendorLicenseManager.deleteLicenseAgreement(vlmId, new Version(versionId), licenseAgreementId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     private LicenseAgreementEntityDto getLicenseAgreementEntityDto(MapLicenseAgreementEntityToLicenseAgreementDescriptorDto mapper,

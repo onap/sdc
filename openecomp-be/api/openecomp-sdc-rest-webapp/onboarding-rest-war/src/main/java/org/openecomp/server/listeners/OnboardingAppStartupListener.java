@@ -31,12 +31,9 @@ public class OnboardingAppStartupListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         SessionContextProviderFactory.getInstance().createInterface().create("onboarding", "dox");
-        springListener = new ContextLoaderListener();
-        springListener.initWebApplicationContext(servletContextEvent.getServletContext());
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        springListener.closeWebApplicationContext(servletContextEvent.getServletContext());
     }
 }

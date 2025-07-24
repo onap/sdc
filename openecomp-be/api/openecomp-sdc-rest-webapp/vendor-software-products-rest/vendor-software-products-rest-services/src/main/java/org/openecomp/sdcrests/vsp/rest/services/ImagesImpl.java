@@ -21,7 +21,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
@@ -46,6 +45,8 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapImageRequestDtoToImageEntity;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -67,7 +68,7 @@ public class ImagesImpl implements Images {
     }
 
     @Override
-    public Response create(ImageRequestDto request, String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity create(ImageRequestDto request, String vspId, String versionId, String componentId, String user) {
         ImageEntity image = new MapImageRequestDtoToImageEntity().applyMapping(request, ImageEntity.class);
         image.setVspId(vspId);
         image.setComponentId(componentId);
@@ -76,25 +77,25 @@ public class ImagesImpl implements Images {
         ImageEntity createdImage = imageManager.createImage(image);
         MapImageEntityToImageCreationDto mapping = new MapImageEntityToImageCreationDto();
         ImageCreationDto createdImageDto = mapping.applyMapping(createdImage, ImageCreationDto.class);
-        return Response.ok(createdImage != null ? createdImageDto : null).build();
+        return ResponseEntity.ok(createdImage != null ? createdImageDto : null);
     }
 
     @Override
-    public Response getImageSchema(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity getImageSchema(String vspId, String versionId, String componentId, String user) {
         CompositionEntityResponse<Image> response = imageManager.getImageSchema(vspId);
-        return Response.ok(response).build();
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public Response get(String vspId, String versionId, String componentId, String imageId, String user) {
+    public ResponseEntity get(String vspId, String versionId, String componentId, String imageId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         CompositionEntityResponse<Image> response = imageManager.getImage(vspId, version, componentId, imageId);
-        return Response.ok(response).build();
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public Response list(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String componentId, String user) {
         Version vspVersion = new Version(versionId);
         componentManager.validateComponentExistence(vspId, vspVersion, componentId);
         Collection<ImageEntity> images = imageManager.listImages(vspId, vspVersion, componentId);
@@ -103,19 +104,19 @@ public class ImagesImpl implements Images {
         for (ImageEntity image : images) {
             results.add(mapper.applyMapping(image, ImageDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String componentId, String imageId, String user) {
+    public ResponseEntity delete(String vspId, String versionId, String componentId, String imageId, String user) {
         Version vspVersion = new Version(versionId);
         componentManager.validateComponentExistence(vspId, vspVersion, componentId);
         imageManager.deleteImage(vspId, vspVersion, componentId, imageId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response update(ImageRequestDto request, String vspId, String versionId, String componentId, String imageId, String user) {
+    public ResponseEntity update(ImageRequestDto request, String vspId, String versionId, String componentId, String imageId, String user) {
         ImageEntity imageEntity = new MapImageRequestDtoToImageEntity().applyMapping(request, ImageEntity.class);
         imageEntity.setVspId(vspId);
         imageEntity.setVersion(new Version(versionId));
@@ -123,26 +124,26 @@ public class ImagesImpl implements Images {
         imageEntity.setId(imageId);
         componentManager.validateComponentExistence(vspId, imageEntity.getVersion(), componentId);
         CompositionEntityValidationData validationData = imageManager.updateImage(imageEntity);
-        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? Response.status(Response.Status.EXPECTATION_FAILED)
-            .entity(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class)).build()
-            : Response.ok().build();
+        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+            .body(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class))
+            : ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getQuestionnaire(String vspId, String versionId, String componentId, String imageId, String user) {
+    public ResponseEntity getQuestionnaire(String vspId, String versionId, String componentId, String imageId, String user) {
         Version vspVersion = new Version(versionId);
         componentManager.validateComponentExistence(vspId, vspVersion, componentId);
         QuestionnaireResponse questionnaireResponse = imageManager.getImageQuestionnaire(vspId, vspVersion, componentId, imageId);
         QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
             .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String imageId, String user) {
+    public ResponseEntity updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId, String imageId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         imageManager.updateImageQuestionnaire(vspId, version, componentId, imageId, questionnaireData);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

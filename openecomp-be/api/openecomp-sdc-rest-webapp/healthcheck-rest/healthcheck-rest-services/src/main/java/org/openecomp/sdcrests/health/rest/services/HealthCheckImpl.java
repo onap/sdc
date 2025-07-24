@@ -22,8 +22,6 @@ package org.openecomp.sdcrests.health.rest.services;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.health.HealthCheckManager;
 import org.openecomp.sdc.health.HealthCheckManagerFactory;
@@ -33,6 +31,8 @@ import org.openecomp.sdc.health.data.HealthInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Named
@@ -52,7 +52,7 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
     }
 
     @Override
-    public Response checkHealth() {
+    public ResponseEntity checkHealth() {
         HealthCheckResult healthCheckResult = new HealthCheckResult();
         SessionContextProviderFactory.getInstance().createInterface().create("public", "dox");
         try {
@@ -60,20 +60,18 @@ public class HealthCheckImpl implements org.openecomp.sdcrests.health.rest.Healt
             healthCheckResult.setComponentsInfo(healthInfos);
             boolean someIsDown = healthInfos.stream().anyMatch(healthInfo -> healthInfo.getHealthCheckStatus().equals(HealthCheckStatus.DOWN));
             healthInfos.stream().filter(healthInfo -> healthInfo.getHealthCheckComponent().equals(org.openecomp.sdc.health.data.MonitoredModules.BE))
-                .findFirst().ifPresent(healthInfo -> healthCheckResult.setSdcVersion(healthInfo.getVersion()));
+                    .findFirst().ifPresent(healthInfo -> healthCheckResult.setSdcVersion(healthInfo.getVersion()));
             if (someIsDown) {
-                Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
-                return responseBuilder.entity(healthCheckResult).status(500).build();
+                return new ResponseEntity<>(healthCheckResult, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return Response.ok(healthCheckResult).build();
+            return ResponseEntity.ok(healthCheckResult);
         } catch (Exception ex) {
             logger.error("Health check failed", ex);
-            Response.ResponseBuilder responseBuilder = new ResponseBuilderImpl();
             HealthInfo healthInfo = new HealthInfo(org.openecomp.sdc.health.data.MonitoredModules.BE, HealthCheckStatus.DOWN, "",
-                "Failed to perform Health Check");
+                    "Failed to perform Health Check");
             Collection<HealthInfo> healthInfos = Arrays.asList(healthInfo);
             healthCheckResult.setComponentsInfo(healthInfos);
-            return responseBuilder.entity(healthCheckResult).status(500).build();
+            return new ResponseEntity<>(healthCheckResult, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

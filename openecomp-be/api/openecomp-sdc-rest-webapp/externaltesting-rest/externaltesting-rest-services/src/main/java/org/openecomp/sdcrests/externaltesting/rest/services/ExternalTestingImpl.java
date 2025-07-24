@@ -45,9 +45,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdcrests.externaltesting.rest.ExternalTesting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @SuppressWarnings("unused")
 @Named
@@ -63,13 +66,13 @@ public class ExternalTestingImpl implements ExternalTesting {
     private static final Logger logger = LoggerFactory.getLogger(ExternalTestingImpl.class);
 
     @Autowired
-    public ExternalTestingImpl(ExternalTestingManager testingManager) {
+    public ExternalTestingImpl(@Qualifier("testingManager") ExternalTestingManager testingManager) {
         this.testingManager = testingManager;
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
     }
 
     public ExternalTestingImpl(ExternalTestingManager testingManager,
-        VendorSoftwareProductManager vendorSoftwareProductManager) {
+                               VendorSoftwareProductManager vendorSoftwareProductManager) {
         this.testingManager = testingManager;
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
     }
@@ -80,9 +83,9 @@ public class ExternalTestingImpl implements ExternalTesting {
      * @return JSON response content.
      */
     @Override
-    public Response getConfig() {
+    public ResponseEntity getConfig() {
         try {
-            return Response.ok(testingManager.getConfig()).build();
+            return ResponseEntity.ok(testingManager.getConfig());
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -95,9 +98,9 @@ public class ExternalTestingImpl implements ExternalTesting {
      * @return JSON response content.
      */
     @Override
-    public Response setConfig(ClientConfiguration config) {
+    public ResponseEntity setConfig(ClientConfiguration config) {
         try {
-            return Response.ok(testingManager.setConfig(config)).build();
+            return ResponseEntity.ok(testingManager.setConfig(config));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -110,18 +113,18 @@ public class ExternalTestingImpl implements ExternalTesting {
      * @return JSON response content.
      */
     @Override
-    public Response getTestCasesAsTree() {
+    public ResponseEntity getTestCasesAsTree() {
         try {
-            return Response.ok(testingManager.getTestCasesAsTree()).build();
+            return ResponseEntity.ok(testingManager.getTestCasesAsTree());
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
     @Override
-    public Response getEndpoints() {
+    public ResponseEntity getEndpoints() {
         try {
-            return Response.ok(testingManager.getEndpoints()).build();
+            return ResponseEntity.ok(testingManager.getEndpoints());
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -133,18 +136,18 @@ public class ExternalTestingImpl implements ExternalTesting {
      * @return JSON response content.
      */
     @Override
-    public Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints) {
+    public ResponseEntity setEndpoints(List<RemoteTestingEndpointDefinition> endpoints) {
         try {
-            return Response.ok(testingManager.setEndpoints(endpoints)).build();
+            return ResponseEntity.ok(testingManager.setEndpoints(endpoints));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
     @Override
-    public Response getScenarios(String endpoint) {
+    public ResponseEntity getScenarios(String endpoint) {
         try {
-            return Response.ok(testingManager.getScenarios(endpoint)).build();
+            return ResponseEntity.ok(testingManager.getScenarios(endpoint));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -152,41 +155,41 @@ public class ExternalTestingImpl implements ExternalTesting {
     }
 
     @Override
-    public Response getTestsuites(String endpoint, String scenario) {
+    public ResponseEntity getTestsuites(String endpoint, String scenario) {
         try {
-            return Response.ok(testingManager.getTestSuites(endpoint, scenario)).build();
+            return ResponseEntity.ok(testingManager.getTestSuites(endpoint, scenario));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
     @Override
-    public Response getTestcases(String endpoint, String scenario) {
+    public ResponseEntity getTestcases(String endpoint, String scenario) {
         try {
-            return Response.ok(testingManager.getTestCases(endpoint, scenario)).build();
+            return ResponseEntity.ok(testingManager.getTestCases(endpoint, scenario));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
     @Override
-    public Response getTestcase(String endpoint, String scenario, String testsuite, String testcase) {
+    public ResponseEntity getTestcase(String endpoint, String scenario, String testsuite, String testcase) {
         try {
-            return Response.ok(testingManager.getTestCase(endpoint, scenario, testsuite, testcase)).build();
+            return ResponseEntity.ok(testingManager.getTestCase(endpoint, scenario, testsuite, testcase));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
     @Override
-    public Response execute(String vspId, String vspVersionId, String requestId, List<Attachment> files,
-            String testDataString) {
+    public ResponseEntity execute(String vspId, String vspVersionId, String requestId, List<MultipartFile> files,
+                                  String testDataString) {
         try {
             List<VtpTestExecutionRequest> req = getVtpTestExecutionRequestObj(testDataString);
             Map<String, byte[]> fileMap = getFileMap(files);
             List<VtpTestExecutionResponse> vtpTestExecutionResponses =
                     testingManager.execute(req, vspId, vspVersionId, requestId, fileMap);
-            return Response.status(HttpStatus.OK.value()).entity(vtpTestExecutionResponses).build();
+            return ResponseEntity.status(HttpStatus.OK.value()).body(vtpTestExecutionResponses);
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -194,18 +197,18 @@ public class ExternalTestingImpl implements ExternalTesting {
     }
 
     @Override
-    public Response getValidationResult(String requestId, List<String> endPoints) {
+    public ResponseEntity getValidationResult(String requestId, List<String> endPoints) {
         try {
             List<VtpTestExecutionResponse> resultsFromVtp = new ArrayList<>();
             for (String endPoint : endPoints) {
                 List<VtpTestExecutionOutput> vtpTestExecutionOutput =
                         testingManager.getExecutionIds(endPoint, requestId);
                 List<String> execIds = vtpTestExecutionOutput.stream().map(VtpTestExecutionOutput::getExecutionId)
-                                               .collect(Collectors.toList());
+                        .collect(Collectors.toList());
                 List<VtpTestExecutionResponse> resultFromVtp = getVtpResultbyExecutionId(execIds, endPoint);
                 resultsFromVtp.addAll(resultFromVtp);
             }
-            return Response.status(HttpStatus.OK.value()).entity(resultsFromVtp).build();
+            return ResponseEntity.status(HttpStatus.OK.value()).body(resultsFromVtp);
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
@@ -214,7 +217,7 @@ public class ExternalTestingImpl implements ExternalTesting {
     private List<VtpTestExecutionRequest> getVtpTestExecutionRequestObj(String testDataString) {
         try {
             return new ObjectMapper().configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true).reader()
-                           .forType(new TypeReference<List<VtpTestExecutionRequest>>() { }).readValue(testDataString);
+                    .forType(new TypeReference<List<VtpTestExecutionRequest>>() { }).readValue(testDataString);
         } catch (IOException e) {
             throw new ExternalTestingException(TESTING_INTERNAL_ERROR, 500, e.getMessage(), e);
 
@@ -232,35 +235,38 @@ public class ExternalTestingImpl implements ExternalTesting {
 
 
     @Override
-    public Response getExecution(String endpoint, String executionId) {
+    public ResponseEntity getExecution(String endpoint, String executionId) {
         try {
-            return Response.ok(testingManager.getExecution(endpoint, executionId)).build();
+            return ResponseEntity.ok(testingManager.getExecution(endpoint, executionId));
         } catch (ExternalTestingException e) {
             return convertTestingException(e);
         }
     }
 
-    private Map<String, byte[]> getFileMap(List<Attachment> files) {
+    private Map<String, byte[]> getFileMap(List<MultipartFile> files) {
         if (files != null && !files.isEmpty()) {
-
             return files.stream().collect(
-                    Collectors.toMap(attachment -> attachment.getDataHandler().getName(), attachment -> {
+                Collectors.toMap(
+                    MultipartFile::getOriginalFilename,   // Use original filename as key
+                    file -> {
                         try {
-                            return IOUtils.toByteArray(attachment.getDataHandler().getInputStream());
+                            return file.getBytes();  // Get file content as byte[]
                         } catch (IOException e) {
                             throw new ExternalTestingException(TESTING_INTERNAL_ERROR, 500, e.getMessage(), e);
                         }
-                    }));
+                    }
+                )
+            );
         }
-
         return null;
     }
 
-    private Response convertTestingException(ExternalTestingException e) {
+
+    private ResponseEntity convertTestingException(ExternalTestingException e) {
         if (logger.isErrorEnabled()) {
             logger.error("testing exception {} {} {}", e.getMessageCode(), e.getHttpStatus(), e.getDetail(), e);
         }
         TestErrorBody body = new TestErrorBody(e.getMessageCode(), e.getHttpStatus(), e.getDetail());
-        return Response.status(e.getHttpStatus()).entity(body).build();
+        return ResponseEntity.status(e.getHttpStatus()).body(body);
     }
 }

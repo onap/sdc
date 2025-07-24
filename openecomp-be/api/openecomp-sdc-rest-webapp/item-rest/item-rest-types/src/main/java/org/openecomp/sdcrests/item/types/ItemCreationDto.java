@@ -28,6 +28,10 @@ public class ItemCreationDto {
     private String itemId;
     private VersionDto version;
 
+    public void setVersion(VersionDto version) {
+        this.version = version;
+    }
+
     public void setItemId(final String itemId) {
         this.itemId = ValidationUtils.sanitizeInputString(itemId);
     }

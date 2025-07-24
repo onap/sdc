@@ -19,10 +19,7 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import java.io.InputStream;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.errors.Messages;
@@ -36,7 +33,10 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.MonitoringUploadStatu
 import org.openecomp.sdcrests.vsp.rest.ComponentMonitoringUploads;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapMonitoringUploadStatusToDto;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author katyr
@@ -62,14 +62,22 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     }
 
     @Override
-    public Response upload(Attachment attachment, String vspId, String versionId, String componentId, String type, String user) throws Exception {
+    public ResponseEntity upload(MultipartFile multipartFile, String vspId, String versionId, String componentId, String type, String user) throws Exception {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
-        monitoringUploadsManager
-            .upload(attachment.getObject(InputStream.class), attachment.getContentDisposition().getParameter("filename"), vspId, version, componentId,
-                monitoringUploadType);
-        return Response.ok().build();
+
+        // Use MultipartFile's input stream and original filename
+        monitoringUploadsManager.upload(
+            multipartFile.getInputStream(),
+            multipartFile.getOriginalFilename(),
+            vspId,
+            version,
+            componentId,
+            monitoringUploadType
+        );
+
+        return ResponseEntity.ok().build();
     }
 
     private MonitoringUploadType getMonitoringUploadType(String vspId, String componentId, String type) throws Exception {
@@ -85,20 +93,20 @@ public class ComponentMonitoringUploadsImpl implements ComponentMonitoringUpload
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String componentId, String type, String user) throws Exception {
+    public ResponseEntity delete(String vspId, String versionId, String componentId, String type, String user) throws Exception {
         MonitoringUploadType monitoringUploadType = getMonitoringUploadType(vspId, componentId, type);
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         monitoringUploadsManager.delete(vspId, version, componentId, monitoringUploadType);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response list(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String componentId, String user) {
         Version version = new Version(versionId);
         componentManager.validateComponentExistence(vspId, version, componentId);
         MonitoringUploadStatus response = monitoringUploadsManager.listFilenames(vspId, version, componentId);
         MonitoringUploadStatusDto returnEntity = new MapMonitoringUploadStatusToDto().applyMapping(response, MonitoringUploadStatusDto.class);
-        return Response.status(Response.Status.OK).entity(returnEntity).build();
+        return ResponseEntity.status(HttpStatus.OK).body(returnEntity);
     }
 }

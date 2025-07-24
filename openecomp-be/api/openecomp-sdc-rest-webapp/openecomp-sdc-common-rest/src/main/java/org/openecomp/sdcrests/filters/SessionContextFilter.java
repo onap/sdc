@@ -29,8 +29,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.openecomp.sdc.common.session.SessionContextProvider;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 public abstract class SessionContextFilter implements Filter {
+
+    @Value("${custom.userId}")
+    private String userId;
+
+    @Value("${custom.tenant}")
+    private String tenant;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -42,7 +49,7 @@ public abstract class SessionContextFilter implements Filter {
         SessionContextProvider contextProvider = SessionContextProviderFactory.getInstance().createInterface();
         try {
             if (servletRequest instanceof HttpServletRequest) {
-                contextProvider.create(getUser(servletRequest), getTenant(servletRequest));
+                contextProvider.create(userId, tenant);
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {

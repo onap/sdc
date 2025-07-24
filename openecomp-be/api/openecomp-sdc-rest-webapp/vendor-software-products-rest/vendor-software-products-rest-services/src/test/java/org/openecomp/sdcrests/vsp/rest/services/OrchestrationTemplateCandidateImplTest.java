@@ -20,6 +20,7 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.vspUploadAlreadyInProgress;
@@ -45,8 +48,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.activation.DataHandler;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -86,8 +87,12 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-class OrchestrationTemplateCandidateImplTest {
+public class OrchestrationTemplateCandidateImplTest {
 
     private final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateImplTest.class);
     private final String candidateId = UUID.randomUUID().toString();
@@ -107,7 +112,7 @@ class OrchestrationTemplateCandidateImplTest {
     @Mock
     private StorageFactory storageFactory;
     @Mock
-    private Attachment fileToUpload;
+    private MultipartFile fileToUpload;
     @Mock
     private ArtifactStorageManager artifactStorageManager;
     @InjectMocks
@@ -167,16 +172,21 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.empty());
         final UUID lockId = UUID.randomUUID();
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
-        Response response = orchestrationTemplateCandidate
-            .upload(vspId, versionId, mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
+
+        // Use ResponseEntity instead of Response
+        ResponseEntity<UploadFileResponseDto> response = orchestrationTemplateCandidate.upload(vspId, versionId, new MockMultipartFile("file", "filename.zip", "application/zip", this.getClass().getResourceAsStream("/files/sample-signed.zip")), user);
+        // Assert that the status code is OK (HttpStatus.OK)
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Assert that the errors are empty in the response body
+        assertTrue(response.getBody().getErrors().isEmpty());
     }
+
 
     @Test
     void uploadNotSignedTest() throws IOException {
@@ -185,16 +195,22 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.empty());
         final UUID lockId = UUID.randomUUID();
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
-        Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
-            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
+
+        // Use ResponseEntity instead of Response
+        ResponseEntity<UploadFileResponseDto> response = orchestrationTemplateCandidate.upload(vspId, versionId, new MockMultipartFile("file", "filename.csar", "application/octet-stream", this.getClass().getResourceAsStream("/files/sample-not-signed.csar")), user);
+
+        // Assert that the status code is OK (HttpStatus.OK)
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Assert that the errors are empty in the response body
+        assertTrue(response.getBody().getErrors().isEmpty());
     }
+
 
     @Test
     void uploadArtifactStorageTest() throws IOException {
@@ -204,17 +220,17 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.empty());
         final UUID lockId = UUID.randomUUID();
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user))
-            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
+                .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
         when(artifactStorageManager.isEnabled()).thenReturn(true);
         final MinIoStorageArtifactStorageConfig minIoConfig =
-            new MinIoStorageArtifactStorageConfig(true,
-                new EndPoint("", 9000, true),
-                new Credentials("", ""), tempDir.toString(), 1000
-            );
+                new MinIoStorageArtifactStorageConfig(true,
+                        new EndPoint("", 9000, true),
+                        new Credentials("", ""), tempDir.toString(), 1000
+                );
 
         when(artifactStorageManager.getStorageConfiguration()).thenReturn(minIoConfig);
         final MinIoArtifactInfo artifactInfo = new MinIoArtifactInfo(vspId, versionId);
@@ -224,16 +240,19 @@ class OrchestrationTemplateCandidateImplTest {
         final ArgumentCaptor<Path> reduceTempDirectoryArg = ArgumentCaptor.forClass(Path.class);
         when(packageSizeReducer.reduce(reduceTempDirectoryArg.capture())).thenReturn(attachmentBytes);
         when(artifactStorageManager.upload(eq(vspId), eq(versionId), any(InputStream.class))).thenReturn(artifactInfo);
+
         //when
-        Response response = orchestrationTemplateCandidate.upload(vspId, versionId, attachmentMock, user);
+        ResponseEntity<UploadFileResponseDto> response = orchestrationTemplateCandidate.upload(vspId, versionId, new MockMultipartFile("file", "filename.csar", "application/octet-stream", this.getClass().getResourceAsStream("/files/sample-not-signed.csar")), user);
+
         //then
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().getErrors().isEmpty()); // Changed this to getBody() instead of getEntity()
         final Path actualReduceTempFolder = reduceTempDirectoryArg.getValue();
         final Path expectedReduceTempFolder = tempDir.resolve(Path.of(vspId, versionId));
         assertTrue(actualReduceTempFolder.startsWith(expectedReduceTempFolder),
-            String.format("Reduce temporary directory should be '%s'", expectedReduceTempFolder));
+                String.format("Reduce temporary directory should be '%s'", expectedReduceTempFolder));
     }
+
 
     @NotNull
     private VspUploadStatusDto createVspUploadStatus(final UUID lockId, final VspUploadStatus uploadStatus) {
@@ -247,7 +266,7 @@ class OrchestrationTemplateCandidateImplTest {
     void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
         when(artifactStorageManager.isEnabled()).thenReturn(true);
         when(artifactStorageManager.getStorageConfiguration()).thenReturn(new MinIoStorageArtifactStorageConfig
-            (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath", 10_000_000));
+                (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath", 10_000_000));
 
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
         final String vspId = "vspId";
@@ -262,11 +281,16 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
 
-        Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
-            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+        // Use ResponseEntity instead of Response
+       ResponseEntity<UploadFileResponseDto> response = orchestrationTemplateCandidate.upload(vspId, versionId, new MockMultipartFile("file", "filename.csar", "application/octet-stream", this.getClass().getResourceAsStream("/files/sample-not-signed.csar")), user);
+
+        // Assert that the status code is OK (HttpStatus.OK)
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Assert that the errors are empty in the response body
+        assertTrue(response.getBody().getErrors().isEmpty());
     }
+
 
     private Attachment mockAttachment(final String fileName, final URL fileToUpload) throws IOException {
         final Attachment attachment = Mockito.mock(Attachment.class);
@@ -296,46 +320,63 @@ class OrchestrationTemplateCandidateImplTest {
         final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
         vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
         when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user))
-            .thenReturn(Optional.of(vspUploadStatusDto));
+                .thenReturn(Optional.of(vspUploadStatusDto));
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(candidateId, versionId, user)).thenReturn(new VspUploadStatusDto());
+
         //when
-        Response response = orchestrationTemplateCandidate
-            .upload(candidateId, versionId, mockAttachment("filename.zip", null), user);
+       ResponseEntity<UploadFileResponseDto> response = orchestrationTemplateCandidate.upload(candidateId, versionId, new MockMultipartFile("file", "filename.zip", "application/octet-stream", (InputStream) null), user);
+
         //then
-        assertEquals(Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
-        assertFalse(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());  // Replaced Status.NOT_ACCEPTABLE with HttpStatus.NOT_ACCEPTABLE
+        assertFalse(response.getBody().getErrors().isEmpty());  // Replaced getEntity() with getBody()
     }
+
 
     @Test
     void testCandidateGet() throws IOException {
-        Response rsp = orchestrationTemplateCandidate.get(candidateId, versionId, user);
-        assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
-        assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Candidate"), -1);
-        byte[] content = (byte[]) rsp.getEntity();
+        ResponseEntity<byte[]> rsp = orchestrationTemplateCandidate.get(candidateId, versionId, user);
+
+        // Assert that the status code is OK (HttpStatus.OK)
+        assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
+
+        // Assert that the Content-Disposition header contains "Candidate"
+        assertNotEquals(rsp.getHeaders().getFirst("Content-Disposition").indexOf("Candidate"), -1);
+
+        // Assert the response body (content) is "World"
+        byte[] content = rsp.getBody();
         assertEquals("World", new String(content));
     }
+
 
     @Test
     void testVendorSoftwareProductGet() throws IOException {
-        Response rsp = orchestrationTemplateCandidate.get(softwareProductId, versionId, user);
-        assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
-        assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Processed"), -1);
-        byte[] content = (byte[]) rsp.getEntity();
+        ResponseEntity<byte[]> rsp = orchestrationTemplateCandidate.get(softwareProductId, versionId, user);
+
+        // Assert that the status code is OK (HttpStatus.OK)
+        assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
+
+        // Assert that the Content-Disposition header contains "Processed"
+        assertNotEquals(rsp.getHeaders().getFirst("Content-Disposition").indexOf("Processed"), -1);
+
+        // Assert the response body (content) is "World"
+        byte[] content = rsp.getBody();
         assertEquals("World", new String(content));
     }
 
+
     @Test
     void testMissingGet() throws IOException {
-        Response rsp = orchestrationTemplateCandidate.get(UUID.randomUUID().toString(), versionId, user);
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), rsp.getStatus(), "Response status equals");
+        ResponseEntity rsp = orchestrationTemplateCandidate.get(UUID.randomUUID().toString(), versionId, user);
+        assertEquals(HttpStatus.NOT_FOUND, rsp.getStatusCode(), "Response status equals");
+
     }
 
     @Test
     void testAbort() {
         try {
-            Response rsp = orchestrationTemplateCandidate.abort(candidateId, versionId);
-            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
-            assertNull(rsp.getEntity());
+            ResponseEntity rsp = orchestrationTemplateCandidate.abort(candidateId, versionId);
+            assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
+            assertNull(rsp.getBody());
         } catch (Exception ex) {
             logger.error("unexpected exception", ex);
             fail("abort should not throw an exception");
@@ -345,10 +386,10 @@ class OrchestrationTemplateCandidateImplTest {
     @Test
     void testProcess() {
         try {
-            Response rsp = orchestrationTemplateCandidate.process(candidateId, versionId, user);
-            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
-            assertNotNull(rsp.getEntity());
-            OrchestrationTemplateActionResponseDto dto = (OrchestrationTemplateActionResponseDto) rsp.getEntity();
+            ResponseEntity rsp = orchestrationTemplateCandidate.process(candidateId, versionId, user);
+            assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
+            assertNotNull(rsp.getBody());
+            OrchestrationTemplateActionResponseDto dto = (OrchestrationTemplateActionResponseDto) rsp.getBody();
             assertEquals(UploadFileStatus.Success, dto.getStatus(), "status check");
         } catch (Exception ex) {
             logger.error("unexpected exception", ex);
@@ -361,8 +402,8 @@ class OrchestrationTemplateCandidateImplTest {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
-            Response rsp = orchestrationTemplateCandidate.updateFilesDataStructure(candidateId, versionId, dto, user);
-            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+            ResponseEntity rsp = orchestrationTemplateCandidate.updateFilesDataStructure(candidateId, versionId, dto, user);
+            assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
         } catch (Exception ex) {
             logger.error("unexpected exception", ex);
             fail("abort should not throw an exception");
@@ -374,8 +415,8 @@ class OrchestrationTemplateCandidateImplTest {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
-            Response rsp = orchestrationTemplateCandidate.getFilesDataStructure(candidateId, versionId, user);
-            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+            ResponseEntity rsp = orchestrationTemplateCandidate.getFilesDataStructure(candidateId, versionId, user);
+            assertEquals(HttpStatus.OK, rsp.getStatusCode(), "Response status equals");
         } catch (Exception ex) {
             logger.error("unexpected exception", ex);
             fail("abort should not throw an exception");
@@ -383,20 +424,57 @@ class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    void finishUploadMustBeCalledWhenExceptionHappensTest() {
-        //given
-        final VspUploadStatusDto vspUploadStatusDto = createVspUploadStatus(UUID.randomUUID(), VspUploadStatus.UPLOADING);
-        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.empty());
-        when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(candidateId, versionId, user)).thenReturn(vspUploadStatusDto);
-        final RuntimeException forcedException = new RuntimeException();
-        when(fileToUpload.getDataHandler()).thenThrow(forcedException);
-        //when
-        final RuntimeException actualException = assertThrows(RuntimeException.class,
-            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, fileToUpload, user));
-        //then
-        assertEquals(forcedException, actualException);
-        verify(orchestrationTemplateCandidateUploadManager)
-            .putUploadAsFinished(candidateId, versionId, vspUploadStatusDto.getLockId(), VspUploadStatus.ERROR, user);
+    void finishUploadMustBeCalledWhenExceptionHappensTest() throws IOException {
+        // given
+        final UUID candidateId = UUID.randomUUID();
+        final String versionId = "1.0";
+        final String user = "test-user";
+
+        // Create a VspUploadStatusDto with UPLOADING status and a valid lockId
+        final VspUploadStatusDto vspUploadStatusDto = createVspUploadStatus(candidateId, VspUploadStatus.UPLOADING);
+        vspUploadStatusDto.setLockId(candidateId);
+
+        // Mock the status manager to return the above status when queried
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId.toString(), versionId, user))
+            .thenReturn(Optional.of(vspUploadStatusDto));
+
+        when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(candidateId.toString(), versionId, user))
+            .thenReturn(vspUploadStatusDto);
+
+        when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(candidateId.toString(), versionId, user))
+            .thenReturn(vspUploadStatusDto);
+
+        // Prepare MultipartFile mock to throw exception on getInputStream()
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getOriginalFilename()).thenReturn("file.csar");
+        when(multipartFile.getInputStream()).thenThrow(new NullPointerException("simulated NPE"));
+
+        // when
+        RuntimeException actualException = assertThrows(RuntimeException.class, () ->
+            orchestrationTemplateCandidate.upload(candidateId.toString(), versionId, multipartFile, user)
+        );
+
+        // then
+        // Check if cause chain contains our simulated NPE
+        boolean containsNPE = false;
+        Throwable cause = actualException;
+        while (cause != null) {
+            if (cause instanceof NullPointerException) {
+                containsNPE = true;
+                break;
+            }
+            cause = cause.getCause();
+        }
+        assertTrue(containsNPE, "Expected cause chain to contain NullPointerException");
+
+        // Verify putUploadAsFinished is called exactly once with ERROR status
+        verify(orchestrationTemplateCandidateUploadManager, times(1)).putUploadAsFinished(
+            candidateId.toString(),
+            versionId,
+            vspUploadStatusDto.getLockId(),
+            VspUploadStatus.ERROR,
+            user
+        );
     }
 
     @Test
@@ -404,18 +482,30 @@ class OrchestrationTemplateCandidateImplTest {
         final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
         vspUploadStatusDto.setComplete(false);
         vspUploadStatusDto.setStatus(VspUploadStatus.PROCESSING);
-        //given
-        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
-        final Attachment mock = Mockito.mock(Attachment.class);
-        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
-        //when
+
+        // given
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user))
+            .thenReturn(Optional.of(vspUploadStatusDto));
+
+        MultipartFile multipartFile = Mockito.mock(MultipartFile.class);
+        try {
+            when(multipartFile.getInputStream()).thenReturn(Mockito.mock(InputStream.class));
+        } catch (IOException e) {
+            fail("Unexpected IOException during test setup");
+        }
+
+        // when
         final CoreException actualException = assertThrows(CoreException.class,
-            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
+            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, multipartFile, user));
+
         final CoreException expectedException = vspUploadAlreadyInProgress(candidateId, versionId).get();
-        //then
+
+        // then
         assertEquals(expectedException.code().id(), actualException.code().id());
         assertEquals(expectedException.code().message(), actualException.code().message());
+
         verify(orchestrationTemplateCandidateUploadManager).findLatestStatus(candidateId, versionId, user);
     }
+
 
 }
