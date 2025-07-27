@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3afd7c68_184d7d7f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/application-config-rest/application-config-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-27T09:05:48Z",
+      "side": 1,
+      "message": "You don\u0027t need to declare this here, it is already declared in the pom further up",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38a942f6_70be598d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-27T09:05:48Z",
+      "side": 1,
+      "message": "I think you further",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8699101_2944f70b",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-27T09:05:48Z",
+      "side": 1,
+      "message": "When you are changing the packaging to `jar`, then you should fully adjust the `Dockerfile` to reflect that approach.\nRight now, this is a mix that doesn\u0027t make much sense.\n\nSince the jetty is now embedded in the `jar`, you don\u0027t need to separately download it here or even place those artifacts in some `/webapps/` folder.\nIt may be necessary for this to also change the packaging of the `api-docs` to also be `jar`",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
