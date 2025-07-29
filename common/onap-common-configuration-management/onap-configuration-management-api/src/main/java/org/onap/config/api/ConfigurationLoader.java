@@ -15,31 +15,43 @@
  */
 package org.onap.config.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
  * Loads a Java SPI binding for the configuration service.
- *
- * @author evitaliy
- * @since 29 Oct 2018
  */
+@Component
 class ConfigurationLoader {
+
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationLoader.class);
 
     private ConfigurationLoader() {
     }
 
     static Configuration load() {
+        logger.debug("Starting configuration service loading using ServiceLoader...");
+
         ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
         Iterator<ConfigurationManager> configManagers = loader.iterator();
+
         while (configManagers.hasNext()) {
             try {
-                return configManagers.next();
+                ConfigurationManager configManager = configManagers.next();
+                logger.debug("Found ConfigurationManager implementation: {}", configManager.getClass().getName());
+                return configManager;
             } catch (ServiceConfigurationError e) {
-                // this provider loading has failed, let's try next one
+                logger.warn("Failed to load ConfigurationManager implementation", e);
+                // continue to next provider
             }
         }
+
+        logger.error("No ConfigurationManager binding found using ServiceLoader");
         throw new IllegalStateException("No binding found for configuration service");
     }
 }

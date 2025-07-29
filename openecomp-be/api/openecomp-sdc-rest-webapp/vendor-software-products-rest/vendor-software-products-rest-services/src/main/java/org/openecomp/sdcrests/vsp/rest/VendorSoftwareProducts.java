@@ -17,7 +17,6 @@ package org.openecomp.sdcrests.vsp.rest;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,19 +30,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
@@ -53,121 +39,103 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.validation.IsValidJson;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-software-products")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor Software Products")})
 @Validated
+@RestController
+@RequestMapping("/v1.0/vendor-software-products")
 public interface VendorSoftwareProducts extends VspEntities {
 
-    @POST
-    @Path("/")
+    @PostMapping({ "", "/" })
     @Operation(description = "Create a new vendor software product", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ItemCreationDto.class)))
             , @ApiResponse(responseCode = "401", description = "Unauthorized Tenant")})
-    Response createVsp(@Valid VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
+    ResponseEntity createVsp(@Valid @RequestBody VspRequestDto vspRequestDto, @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user, HttpServletRequest req);
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "Get list of vendor software products and their description", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = VspDetailsDto.class)))))
-    Response listVsps(@Parameter(description = "Filter to return only Vendor Software Products with at"
-        + " least one version at this status. Currently supported values: 'Certified' , 'Draft'") @QueryParam("versionFilter") String versionStatus,
-                      @Parameter(description = "Filter to only return Vendor Software Products at this status."
-                              + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
-                              + "Default value = 'ACTIVE'.") @QueryParam("Status") String itemStatus,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest req);
+    ResponseEntity listVsps(@Parameter(description = "Filter to return only Vendor Software Products with at"
+            + " least one version at this status. Currently supported values: 'Certified' , 'Draft'") @RequestParam("versionFilter") String versionStatus,
+                            @Parameter(description = "Filter to only return Vendor Software Products at this status."
+                                    + "Currently supported values: 'ACTIVE' , 'ARCHIVED'."
+                                    + "Default value = 'ACTIVE'.") @RequestParam("Status") String itemStatus,
+                            @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user, HttpServletRequest req);
 
-    @GET
-    @Path("/{vspId}")
+    @GetMapping("/{vspId}")
     @Parameter(description = "Get details of the latest certified vendor software product")
-    Response getLatestVsp(@PathParam("vspId") String vspId,
-                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getLatestVsp(@PathVariable("vspId") String vspId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{vspId}/versions/{versionId}")
+    @GetMapping("/{vspId}/versions/{versionId}")
     @Parameter(description = "Get details of a vendor software product")
-    Response getVsp(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getVsp(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId,
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{vspId}/versions/{versionId}")
+    @PutMapping("/{vspId}/versions/{versionId}")
     @Parameter(description = "Update an existing vendor software product")
-    Response updateVsp(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId, @Valid VspDescriptionDto vspDescriptionDto,
-                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateVsp(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId, @Valid @RequestBody VspDescriptionDto vspDescriptionDto,
+                             @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{vspId}")
+    @DeleteMapping("/{vspId}")
     @Parameter(description = "Deletes vendor software product by given id")
-    Response deleteVsp(@PathParam("vspId") String vspId, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteVsp(@PathVariable("vspId") String vspId, @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/packages")
+    @GetMapping("/packages")
     @Operation(description = "Get list of translated CSAR files details", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = PackageInfoDto.class)))))
-    Response listPackages(@Parameter(description = "Vendor Software Product status filter. "
-        + "Currently supported values: 'ACTIVE', 'ARCHIVED'") @QueryParam("Status") String status,
-                          @Parameter(description = "Category") @QueryParam("category") String category,
-                          @Parameter(description = "Sub-category") @QueryParam("subCategory") String subCategory,
-                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listPackages(@Parameter(description = "Vendor Software Product status filter. "
+            + "Currently supported values: 'ACTIVE', 'ARCHIVED'") @RequestParam("Status") String status,
+                                @Parameter(description = "Category") @RequestParam("category") String category,
+                                @Parameter(description = "Sub-category") @RequestParam("subCategory") String subCategory,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{vspId}/versions/{versionId}/orchestration-template")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping("/{vspId}/versions/{versionId}/orchestration-template")
     @Operation(description = "Get Orchestration Template (HEAT) file", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response getOrchestrationTemplate(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                                      @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity<byte[]> getOrchestrationTemplate(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId,
+                                                    @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/validation-vsp")
-    Response getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq) throws Exception;
+    @GetMapping("/validation-vsp")
+    ResponseEntity getValidationVsp(@NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user, HttpServletRequest hreq) throws Exception;
 
-    @PUT
-    @Path("/{vspId}/versions/{versionId}/actions")
+    @PutMapping("/{vspId}/versions/{versionId}/actions")
     @Operation(description = "Actions on a vendor software product", summary = "Performs one of the following actions on a vendor software product: |"
-        + "Checkout: Locks it for edits by other users. Only the locking user sees the edited " + "version.|"
-        + "Undo_Checkout: Unlocks it and deletes the edits that were done.|" + "Checkin: Unlocks it and activates the edited version to all users.| "
-        + "Submit: Finalize its active version.|" + "Create_Package: Creates a CSAR zip file.|")
-    Response actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request, @PathParam("vspId") String vspId,
-                                        @PathParam("versionId") String versionId,
-                                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;
+            + "Checkout: Locks it for edits by other users. Only the locking user sees the edited " + "version.|"
+            + "Undo_Checkout: Unlocks it and deletes the edits that were done.|" + "Checkin: Unlocks it and activates the edited version to all users.| "
+            + "Submit: Finalize its active version.|" + "Create_Package: Creates a CSAR zip file.|")
+    ResponseEntity actOnVendorSoftwareProduct(@RequestBody VersionSoftwareProductActionRequestDto request, @PathVariable("vspId") String vspId,
+                                              @PathVariable("versionId") String versionId,
+                                              @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws IOException;
 
-    @GET
-    @Path("/packages/{vspId}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping(value = "/packages/{vspId}")
     @Operation(description = "Get translated CSAR file", summary = "Exports translated file to a zip file", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response getTranslatedFile(@PathParam("vspId") String vspId, @QueryParam("versionId") String versionId,
-                               @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getTranslatedFile(@PathVariable("vspId") String vspId, @RequestParam("versionId") String versionId,
+                                     @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{vspId}/versions/{versionId}/questionnaire")
+    @GetMapping("/{vspId}/versions/{versionId}/questionnaire")
     @Operation(description = "Get vendor software product questionnaire", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = QuestionnaireResponseDto.class))))
-    Response getQuestionnaire(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                              @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getQuestionnaire(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId,
+                                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{vspId}/versions/{versionId}/questionnaire")
+    @PutMapping("/{vspId}/versions/{versionId}/questionnaire")
     @Operation(description = "Update vendor software product questionnaire")
-    Response updateQuestionnaire(@NotNull @IsValidJson String questionnaireData, @PathParam("vspId") String vspId,
-                                 @PathParam("versionId") String versionId,
-                                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateQuestionnaire(@NotNull @IsValidJson @RequestBody String questionnaireData, @PathVariable("vspId") String vspId,
+                                       @PathVariable("versionId") String versionId,
+                                       @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{vspId}/versions/{versionId}/heal")
+    @PutMapping("/{vspId}/versions/{versionId}/heal")
     @Operation(description = "Checkout and heal vendor software product questionnaire", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = QuestionnaireResponseDto.class))))
-    Response heal(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity heal(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId,
+                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{vspId}/versions/{versionId}/vspInformationArtifact")
-    @Produces(MediaType.TEXT_PLAIN)
+    @GetMapping(value = "/{vspId}/versions/{versionId}/vspInformationArtifact", produces = "text/plain")
     @Operation(description = "Get vendor software product information artifact for specified version", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response getVspInformationArtifact(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,
-                                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getVspInformationArtifact(@PathVariable("vspId") String vspId, @PathVariable("versionId") String versionId,
+                                             @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{vspId}/versions/{versionId}/compute-flavors")
+    @GetMapping("/{vspId}/versions/{versionId}/compute-flavors")
     @Operation(description = "Get list of vendor software product compute-flavors", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = VspComputeDto.class)))))
-    Response listComputes(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                          @PathParam("versionId") String versionId,
-                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listComputes(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                                @PathVariable("versionId") String versionId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

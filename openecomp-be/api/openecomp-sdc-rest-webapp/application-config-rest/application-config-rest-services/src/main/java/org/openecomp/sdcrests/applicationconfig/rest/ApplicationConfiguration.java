@@ -26,42 +26,35 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import java.io.InputStream;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Path("/v1.0/application-configuration")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+import java.io.InputStream;
+
+@RestController
+@RequestMapping("/v1.0/application-configuration")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Application Configuration")})
 @Validated
 public interface ApplicationConfiguration {
 
-    @POST
-    @Path("/")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @PostMapping(
+    value = { "", "/" },
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(description = "Insert JSON schema into application config table")
-    Response insertToTable(@QueryParam("namespace") String namespace, @QueryParam("key") String key,
-                           @Multipart("description") InputStream fileContainingSchema);
+    ResponseEntity insertToTable(@RequestParam("namespace") String namespace, @RequestParam("key") String key,
+                                 @RequestPart("description") MultipartFile fileContainingSchema);
 
-    @GET
-    @Path("/{namespace}/{key}")
+    @GetMapping("/{namespace}/{key}")
     @Operation(description = "Get JSON schema by namespace and key", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ConfigurationDataDto.class))))
-    Response getFromTable(@PathParam("namespace") String namespace, @PathParam("key") String key);
+    ResponseEntity getFromTable(@PathVariable("namespace") String namespace, @PathVariable("key") String key);
 
-    @GET
-    @Path("/{namespace}")
+    @GetMapping("/{namespace}")
     @Operation(description = "Get List of keys and descriptions by namespace", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ApplicationConfigDto.class)))))
-    Response getListOfConfigurationByNamespaceFromTable(@PathParam("namespace") String namespace);
+    ResponseEntity getListOfConfigurationByNamespaceFromTable(@PathVariable("namespace") String namespace);
 }

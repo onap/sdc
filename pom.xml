@@ -73,7 +73,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <org.json.version>20220320</org.json.version>
-
+    
     <commons.collections.version>4.3</commons.collections.version>
     <ws.rs.version>2.1.6</ws.rs.version>
     <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -89,14 +89,14 @@ Modifications copyright (c) 2018-2019 Nokia
     <keycloak.version>21.1.1</keycloak.version>
 
     <!-- JSON and YAML Parsing -->
-    <jackson.version>2.14.2</jackson.version>
+    <jackson.version>2.13.3</jackson.version>
     <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
     <clearspring.version>2.1.1</clearspring.version>
     <skipYamlJsonValidator>false</skipYamlJsonValidator>
 
     <!-- Yaml for properties -->
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>1.29</snakeyaml.version>
     <functionaljava.version>4.9</functionaljava.version>
     <httpmime.version>4.5.14</httpmime.version>
     <httpclient.version>5.2.1</httpclient.version>
@@ -278,7 +278,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <artifactId>swagger-maven-plugin</artifactId>
         <version>${swagger-core-mvn-plugin.version}</version>
       </dependency>
-    </dependencies>
+    </dependencies>  
   </dependencyManagement>
 
   <dependencies>

@@ -21,7 +21,6 @@ package org.openecomp.sdcrests.vsp.rest;
 
 import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -33,99 +32,77 @@ import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessEntityDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor Software Product Processes")})
 @Validated
 public interface Processes {
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "List vendor software product processes", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProcessEntityDto.class)))))
-    Response list(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity list(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                        @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/")
+    @DeleteMapping({ "", "/" })
     @Operation(description = "Delete vendor software product processes", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = List.class))))
-    Response deleteList(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                        @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteList(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                              @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                              @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/")
+    @PostMapping({ "", "/" })
     @Operation(description = "Create a vendor software product process")
-    Response create(@Valid ProcessRequestDto request, @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                    @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity create(@Valid @RequestBody ProcessRequestDto request, @Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                          @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{processId}")
+    @GetMapping("/{processId}")
     @Operation(description = "Get vendor software product process", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ProcessEntityDto.class))))
-    Response get(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                 @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                 @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity get(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                       @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                       @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                       @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{processId}")
+    @DeleteMapping("/{processId}")
     @Operation(description = "Delete vendor software product process")
-    Response delete(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                    @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                    @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity delete(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                          @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                          @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{processId}")
+    @PutMapping("/{processId}")
     @Operation(description = "Update vendor software product process")
-    Response update(@Valid ProcessRequestDto request, @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                    @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                    @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity update(@Valid @RequestBody ProcessRequestDto request, @Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                          @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                          @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{processId}/upload")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping("/{processId}/upload")
     @Operation(description = "Get vendor software product process uploaded file")
-    Response getUploadedFile(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                             @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                             @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                             @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity<byte[]> getUploadedFile(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                                           @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                                           @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                                           @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{processId}/upload")
+    @DeleteMapping("/{processId}/upload")
     @Operation(description = "Delete vendor software product process uploaded file")
-    Response deleteUploadedFile(@Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                                @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                                @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteUploadedFile(@Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                                      @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                                      @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                                      @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/{processId}/upload")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @PostMapping("/{processId}/upload")
     @Operation(description = "Update vendor software product process upload")
-    Response uploadFile(@Multipart("upload") Attachment attachment,
-                        @Parameter(description = "Vendor software product Id") @PathParam("vspId") String vspId,
-                        @Parameter(description = "Vendor software product version Id") @PathParam("versionId") String versionId,
-                        @Parameter(description = "Vendor software product process Id") @PathParam("processId") String processId,
-                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity uploadFile(@RequestPart("upload") MultipartFile multipartFile,
+                              @Parameter(description = "Vendor software product Id") @PathVariable("vspId") String vspId,
+                              @Parameter(description = "Vendor software product version Id") @PathVariable("versionId") String versionId,
+                              @Parameter(description = "Vendor software product process Id") @PathVariable("processId") String processId,
+                              @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

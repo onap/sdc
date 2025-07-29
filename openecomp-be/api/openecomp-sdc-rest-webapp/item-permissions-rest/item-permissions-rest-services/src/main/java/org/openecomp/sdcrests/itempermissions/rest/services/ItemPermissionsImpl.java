@@ -25,30 +25,32 @@ import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsDto;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 /**
  * Created by ayalaben on 6/18/2017.
  */
 @Named
 @Service("itemPermissions")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ItemPermissionsImpl implements ItemPermissions {
 
     private PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
 
     @Override
-    public Response list(String itemId, String user) {
+    public ResponseEntity list(String itemId, String user) {
         GenericCollectionWrapper<ItemPermissionsDto> results = new GenericCollectionWrapper<>();
         MapItemPermissionsToItemPermissionsDto mapper = new MapItemPermissionsToItemPermissionsDto();
         permissionsManager.listItemPermissions(itemId)
             .forEach(itemPermission -> results.add(mapper.applyMapping(itemPermission, ItemPermissionsDto.class)));
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response updatePermissions(ItemPermissionsRequestDto request, String itemId, String permission, String user) {
+    public ResponseEntity updatePermissions(ItemPermissionsRequestDto request, String itemId, String permission, String user) {
         permissionsManager.updateItemPermissions(itemId, permission, request.getAddedUsersIds(), request.getRemovedUsersIds());
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

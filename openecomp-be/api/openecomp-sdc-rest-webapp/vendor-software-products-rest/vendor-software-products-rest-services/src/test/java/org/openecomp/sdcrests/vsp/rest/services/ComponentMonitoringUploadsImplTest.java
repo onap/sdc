@@ -20,8 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,13 +33,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
 import org.openecomp.sdc.vendorsoftwareproduct.MonitoringUploadsManager;
 import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.MonitoringUploadStatus;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.MonitoringUploadStatusDto;
-
-
-import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import java.util.UUID;
 
 import static org.mockito.MockitoAnnotations.openMocks;
+
 import static org.mockito.Mockito.when;
 
 public class ComponentMonitoringUploadsImplTest {
@@ -84,28 +81,32 @@ public class ComponentMonitoringUploadsImplTest {
 
   @Test
   public void testUpload() {
-    byte[] bytes = "Hello".getBytes();
-    Attachment a = new Attachment("foo", new ByteArrayInputStream(bytes), new ContentDisposition("filename"));
-    String type = MonitoringUploadType.SNMP_POLL.toString();
-    try {
-      Response rsp = bean.upload(a, vspId, versionId, componentId, type, user);
-      Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-      Assert.assertNull(rsp.getEntity());
-    }
-    catch (Exception ex) {
-      logger.error("test failed due to exception", ex);
-      Assert.fail("exception caught " + ex.getMessage());
-    }
+      byte[] bytes = "Hello".getBytes();
+      MockMultipartFile multipartFile = new MockMultipartFile(
+          "file",               // form field name
+          "file.txt",           // original filename
+          "application/octet-stream", // content type
+          bytes                 // file content
+      );
+
+      String type = MonitoringUploadType.SNMP_POLL.toString();
+      try {
+          // Pass all 6 parameters in correct order:
+          ResponseEntity rsp = bean.upload(multipartFile, vspId, versionId, componentId, type, user);
+          Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+          Assert.assertNull(rsp.getBody());
+      } catch (Exception ex) {
+          logger.error("test failed due to exception", ex);
+          Assert.fail("exception caught " + ex.getMessage());
+      }
   }
-
-
   @Test
   public void testDelete() {
     String type = MonitoringUploadType.SNMP_POLL.toString();
     try {
-      Response rsp = bean.delete(vspId, versionId, componentId, type, user);
-      Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-      Assert.assertNull(rsp.getEntity());
+      ResponseEntity rsp = bean.delete(vspId, versionId, componentId, type, user);
+      Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+      Assert.assertNull(rsp.getBody());
     }
     catch (Exception ex) {
       logger.error("test failed due to exception", ex);
@@ -116,10 +117,10 @@ public class ComponentMonitoringUploadsImplTest {
   @Test
   public void testList() {
     try {
-      Response rsp = bean.list(vspId, versionId, componentId, user);
-      Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-      Assert.assertNotNull(rsp.getEntity());
-      MonitoringUploadStatusDto dto = (MonitoringUploadStatusDto)rsp.getEntity();
+      ResponseEntity rsp = bean.list(vspId, versionId, componentId, user);
+      Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+      Assert.assertNotNull(rsp.getBody());
+      MonitoringUploadStatusDto dto = (MonitoringUploadStatusDto)rsp.getBody();
       Assert.assertEquals("p",dto.getSnmpPoll());
       Assert.assertEquals("v",dto.getVesEvent());
       Assert.assertEquals("t",dto.getSnmpTrap());

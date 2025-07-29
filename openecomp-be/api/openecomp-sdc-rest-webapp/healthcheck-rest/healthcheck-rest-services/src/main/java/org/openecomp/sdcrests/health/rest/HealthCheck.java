@@ -25,23 +25,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.health.types.HealthInfoDtos;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Path("/v1.0/healthcheck")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/healthcheck")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Health Check")})
 @Validated
 public interface HealthCheck {
 
-    @GET
+    @GetMapping({ "", "/" })
     @Operation(description = "Perform health check", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = HealthInfoDtos.class))))
-    Response checkHealth();
+    ResponseEntity checkHealth();
 }

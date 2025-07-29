@@ -26,7 +26,6 @@ import static org.mockito.MockitoAnnotations.openMocks;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +43,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
+import org.springframework.http.ResponseEntity;
 
 public class NetworksImplTest {
 
@@ -90,9 +90,9 @@ public class NetworksImplTest {
     public void testList() {
         NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
 
-        Response rsp = bean.list(vspId, versionId, user);
-        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-        Object e = rsp.getEntity();
+        ResponseEntity rsp = bean.list(vspId, versionId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        Object e = rsp.getBody();
         Assert.assertNotNull(e);
         @SuppressWarnings("unchecked")
         GenericCollectionWrapper<NetworkDto> results = (GenericCollectionWrapper<NetworkDto>) e;
@@ -108,9 +108,9 @@ public class NetworksImplTest {
         dto.setDhcp(true);
 
         NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
-        Response rsp = bean.create(dto, vspId, versionId, user);
-        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-        Object e = rsp.getEntity();
+        ResponseEntity rsp = bean.create(dto, vspId, versionId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        Object e = rsp.getBody();
         Assert.assertNotNull(e);
         try {
             StringWrapperResponse s = (StringWrapperResponse) e;
@@ -124,26 +124,26 @@ public class NetworksImplTest {
     @Test
     public void testDelete() {
         NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
-        Response rsp = bean.delete(vspId, versionId, networkId, user);
-        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-        Assert.assertNull(rsp.getEntity());
+        ResponseEntity rsp = bean.delete(vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        Assert.assertNull(rsp.getBody());
     }
 
 
     @Test
     public void testGet() {
         NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
-        Response rsp = bean.get(vspId, versionId, networkId, user);
-        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-        Assert.assertNotNull(rsp.getEntity());
+        ResponseEntity rsp = bean.get(vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        Assert.assertNotNull(rsp.getBody());
     }
 
     @Test
     public void testUpdate() {
         NetworksImpl bean = new NetworksImpl(mockedNetworkManager);
         NetworkRequestDto dto = new NetworkRequestDto();
-        Response rsp = bean.update(dto, vspId, versionId, networkId, user);
-        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-        Assert.assertNull(rsp.getEntity());
+        ResponseEntity rsp = bean.update(dto, vspId, versionId, networkId, user);
+        Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        Assert.assertNull(rsp.getBody());
     }
 }

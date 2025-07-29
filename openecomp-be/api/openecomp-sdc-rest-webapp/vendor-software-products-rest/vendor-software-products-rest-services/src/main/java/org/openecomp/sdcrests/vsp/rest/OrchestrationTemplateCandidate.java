@@ -30,68 +30,59 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Orchestration Template Candidate")})
 @Validated
 public interface OrchestrationTemplateCandidate extends VspEntities {
 
-    @POST
-    @Path("/")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response upload(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                    @Multipart("upload") Attachment fileToUpload,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    @PostMapping(value = { "", "/" }, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity upload(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                    @RequestPart("upload") MultipartFile fileToUpload,
+                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @Operation(description = "Get uploaded Network Package file", summary = "Downloads in uploaded Network Package file", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response get(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws IOException;
 
-    @DELETE
-    @Path("/")
+    @GetMapping(value = { "", "/" }, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Operation(
+        description = "Get uploaded Network Package file",
+        summary = "Downloads in uploaded Network Package file",
+        responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class)))
+    )
+    ResponseEntity get(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                       @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws IOException;
+
+
+    @DeleteMapping({ "", "/" })
     @Operation(description = "Delete orchestration template candidate file and its files data structure")
-    Response abort(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId)
+    ResponseEntity abort(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId)
         throws Exception;
 
-    @PUT
-    @Path("/process")
+
+    @PutMapping("/process")
     @Operation(description = "process Orchestration Template Candidate", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UploadFileResponseDto.class))))
-    Response process(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                     @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
+    ResponseEntity process(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                     @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user)
         throws InvocationTargetException, IllegalAccessException;
 
-    @PUT
-    @Path("/manifest")
-    @Operation(description = "Update an existing vendor software product")
-    Response updateFilesDataStructure(@PathParam("vspId") String vspId,
-                                      @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                                      @Valid FileDataStructureDto fileDataStructureDto,
-                                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
 
-    @GET
-    @Path("/manifest")
+    @PutMapping("/manifest")
+    @Operation(description = "Update an existing vendor software product")
+    ResponseEntity updateFilesDataStructure(@PathVariable("vspId") String vspId,
+                                      @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                                      @Valid @RequestBody FileDataStructureDto fileDataStructureDto,
+                                      @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws Exception;
+
+
+    @GetMapping("/manifest")
     @Operation(description = "Get uploaded HEAT file files data structure", summary = "Downloads the latest HEAT package", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FileDataStructureDto.class))))
-    Response getFilesDataStructure(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    ResponseEntity getFilesDataStructure(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                                   @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws Exception;
 }

@@ -22,8 +22,6 @@ package org.openecomp.sdc.notification.workers.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStreamReader;
 import java.util.UUID;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -33,6 +31,8 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.notification.config.NotificationConfigurationManager;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 import org.openecomp.sdc.notification.workers.NewNotificationsReader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
 
@@ -63,8 +63,8 @@ public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
             url = url + "&" + LAST_DELIVERED_QUERY_PARAM + "=" + eventId;
         }
         HttpGet request = new HttpGet(url);
-        request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        request.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         request.addHeader(USER_ID_HEADER_PARAM, ownerId);
         try {
             HttpResponse response = client.execute(request);

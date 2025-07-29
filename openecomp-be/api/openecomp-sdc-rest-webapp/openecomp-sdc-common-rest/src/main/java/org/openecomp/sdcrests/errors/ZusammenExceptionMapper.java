@@ -16,18 +16,20 @@
 package org.openecomp.sdcrests.errors;
 
 import com.amdocs.zusammen.datatypes.response.Module;
-import java.util.stream.Stream;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import org.openecomp.sdc.common.errors.ErrorCode;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.util.stream.Stream;
 
-public class ZusammenExceptionMapper implements ExceptionMapper<SdcRuntimeException> {
+@RestControllerAdvice
+public class ZusammenExceptionMapper {
 
     private static final String ZUSAMMEN_DB_PREFIX = Module.ZDB + "-";
     static final String VLM_VSP_VERSION_ID_DOES_NOT_EXISTS =
@@ -40,38 +42,31 @@ public class ZusammenExceptionMapper implements ExceptionMapper<SdcRuntimeExcept
         ZUSAMMEN_DB_PREFIX + com.amdocs.zusammen.datatypes.response.ErrorCode.ZU_ITEM_VERSION_PUBLISH_NOT_ALLOWED;
     private static final Logger LOGGER = LoggerFactory.getLogger(ZusammenExceptionMapper.class);
 
-    @Override
-    public Response toResponse(SdcRuntimeException exception) {
-        return transform(exception);
-    }
-
-    private Response transform(SdcRuntimeException exception) {
-        if (Stream.of(VLM_VSP_ITEM_ID_DOES_NOT_EXISTS, VLM_VSP_VERSION_ID_DOES_NOT_EXISTS).anyMatch(exception.getMessage()::contains)) {
-            return generateSdcErrorResponse(Messages.ENTITY_NOT_FOUND, Response.Status.NOT_FOUND,
-                new SdcRuntimeException(Messages.ENTITY_NOT_FOUND.getErrorMessage(), exception));
+    @ExceptionHandler(SdcRuntimeException.class)
+    public ResponseEntity handleSdcRuntimeException(SdcRuntimeException exception) {
+        if (Stream.of(VLM_VSP_ITEM_ID_DOES_NOT_EXISTS, VLM_VSP_VERSION_ID_DOES_NOT_EXISTS)
+                .anyMatch(exception.getMessage()::contains)) {
+            return generateSdcErrorResponse(Messages.ENTITY_NOT_FOUND, HttpStatus.NOT_FOUND, exception);
         } else if (exception.getMessage().contains(SUB_ENTITY_ID_DOES_NOT_EXISTS)) {
-            return generateSdcErrorResponse(Messages.SUB_ENTITY_NOT_FOUND, Response.Status.NOT_FOUND,
-                new SdcRuntimeException(Messages.SUB_ENTITY_NOT_FOUND.getErrorMessage(), exception));
+            return generateSdcErrorResponse(Messages.SUB_ENTITY_NOT_FOUND, HttpStatus.NOT_FOUND, exception);
         } else if (exception.getMessage().contains(FAILED_TO_SYNC)) {
-            return generateSdcErrorResponse(Messages.FAILED_TO_SYNC, Response.Status.EXPECTATION_FAILED,
-                new SdcRuntimeException(Messages.FAILED_TO_SYNC.getErrorMessage(), exception));
+            return generateSdcErrorResponse(Messages.FAILED_TO_SYNC, HttpStatus.EXPECTATION_FAILED, exception);
         } else if (exception.getMessage().contains(FAILED_TO_PUBLISH_OUT_OF_SYNC)) {
-            return generateSdcErrorResponse(Messages.FAILED_TO_PUBLISH_OUT_OF_SYNC, Response.Status.EXPECTATION_FAILED,
-                new SdcRuntimeException(Messages.FAILED_TO_PUBLISH_OUT_OF_SYNC.getErrorMessage(), exception));
+            return generateSdcErrorResponse(Messages.FAILED_TO_PUBLISH_OUT_OF_SYNC, HttpStatus.EXPECTATION_FAILED, exception);
         }
         return genericError(exception);
     }
 
-    private Response generateSdcErrorResponse(Messages messages, Response.Status status, Exception exception) {
+    private ResponseEntity generateSdcErrorResponse(Messages messages, HttpStatus status, Exception exception) {
         ErrorCode errorCode = new ErrorCode.ErrorCodeBuilder().withId(messages.name()).withMessage(exception.getMessage()).build();
         LOGGER.error(errorCode.message(), exception);
-        return Response.status(status).entity(new ErrorCodeAndMessage(status, errorCode)).build();
+        return ResponseEntity.status(status).body(new ErrorCodeAndMessage(status, errorCode));
     }
 
-    private Response genericError(Exception exception) {
+    private ResponseEntity genericError(Exception exception) {
         ErrorCode errorCode = new GeneralErrorBuilder().build();
         LOGGER.error(errorCode.message(), exception);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-            .entity(new ErrorCodeAndMessage(Response.Status.INTERNAL_SERVER_ERROR, errorCode)).build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new ErrorCodeAndMessage(HttpStatus.INTERNAL_SERVER_ERROR, errorCode));
     }
 }

@@ -21,22 +21,22 @@ package org.openecomp.server.listeners;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
-import org.springframework.web.context.ContextLoaderListener;
 
 public class OnboardingAppStartupListener implements ServletContextListener {
 
-    ContextLoaderListener springListener;
-
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+        System.out.println(">>> OnboardingAppStartupListener initializing <<<");
         SessionContextProviderFactory.getInstance().createInterface().create("onboarding", "dox");
-        springListener = new ContextLoaderListener();
-        springListener.initWebApplicationContext(servletContextEvent.getServletContext());
+        System.out.println(">>> OnboardingAppStartupListener initialized <<<");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        springListener.closeWebApplicationContext(servletContextEvent.getServletContext());
+        System.out.println(">>> OnboardingAppStartupListener destroying <<<");
+        SessionContextProviderFactory.getInstance().createInterface().close();
+        System.out.println(">>> OnboardingAppStartupListener destroyed <<<");
     }
 }

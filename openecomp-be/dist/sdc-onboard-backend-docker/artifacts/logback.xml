@@ -12,39 +12,10 @@
     <property name="all-log-pattern"
               value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${ECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceID}|%level|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
 
-    <property name="debug-log-pattern"
-              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|${p_debugInfo} ${p_ex}|^\n%n%nopex"/>
-
-    <property name="error-log-pattern"
-              value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestID}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{ErrorCategory}|%X{ErrorCode}|${p_msg} ${p_ex}|%n%nopex"/>
-
-    <property name="audit-log-pattern"
-              value="%X{EntryTimestamp}|%X{LogTimestamp}|%X{RequestID}|%X{ServiceInstanceID}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%.-5level|%X{Severity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{RemoteHost}|%logger{35}|%X{Unused}|%X{ProcessKey}|%marker|InvocationID=%X{InvocationID}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
-
-    <property name="metric-log-pattern"
-              value="%X{InvokeTimestamp}|%X{EndTimestamp}|%X{RequestID}|%X{ServiceInstanceID}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceID}|%.-5level|%X{Severity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|||%X{ClassName}|%X{Unused}|%X{ProcessKey}|%marker|InvocationID=%X{OutgoingInvocationId}|%X{CustomField3}|%X{CustomField4}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
-
-    <property name="supportability-log-pattern"
-              value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{SupportablityComponentName}|%X{SupportablityAction}|%thread|%X{SupportablityComponentUUID}|%X{SupportablityStatus}|ActivityType=&lt;%M&gt;, Desc=&lt;${p_msg}&gt;%n"/>
-
-
     <!-- All log -->
     <if condition='property("enable-all-log").equalsIgnoreCase("true")'>
         <then>
-            <appender name="ALL_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log</file>
-
-                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-                    <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/all.log.%i
-                    </fileNamePattern>
-                    <minIndex>1</minIndex>
-                    <maxIndex>10</maxIndex>
-                </rollingPolicy>
-
-                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-                    <maxFileSize>20MB</maxFileSize>
-                </triggeringPolicy>
-
+            <appender name="ALL_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
                 <encoder>
                     <pattern>${all-log-pattern}</pattern>
                 </encoder>
@@ -54,171 +25,39 @@
 
 
     <!-- Debug log -->
-    <appender name="DEBUG_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log</file>
-
-        <!-- Audit and Metric messages filter - deny audit and metric messages -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>ENTRY</marker>
-                <marker>EXIT</marker>
-                <marker>INVOKE</marker>
-                <marker>INVOKE-RETURN</marker>
-                <marker>INVOKE-SYNCHRONOUS</marker>
-            </evaluator>
-            <onMismatch>NEUTRAL</onMismatch>
-            <onMatch>DENY</onMatch>
-        </filter>
-
-        <!-- accept INFO, DEBUG and TRACE level -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-                <expression>return level &lt;= INFO;</expression>
-            </evaluator>
-            <OnMismatch>DENY</OnMismatch>
-            <OnMatch>ACCEPT</OnMatch>
-        </filter>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log.%i
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>20MB</maxFileSize>
-        </triggeringPolicy>
-
+    <appender name="DEBUG_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${debug-log-pattern}</pattern>
         </encoder>
     </appender>
 
-
     <!-- Error log -->
-    <appender name="ERROR_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/error.log</file>
-
-        <!-- deny all events with a level below WARN, that is INFO TRACE and DEBUG -->
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/error.log.%i
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>20MB</maxFileSize>
-        </triggeringPolicy>
-
+    <appender name="ERROR_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${error-log-pattern}</pattern>
         </encoder>
     </appender>
 
-
     <!-- Audit log -->
-    <appender name="AUDIT_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/audit.log</file>
-
-        <!-- Audit messages filter - accept audit messages -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>ENTRY</marker>
-                <marker>EXIT</marker>
-            </evaluator>
-            <onMismatch>DENY</onMismatch>
-            <onMatch>ACCEPT</onMatch>
-        </filter>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/audit.log.%i
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>20MB</maxFileSize>
-        </triggeringPolicy>
-
+    <appender name="AUDIT_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${audit-log-pattern}</pattern>
         </encoder>
     </appender>
 
-
     <!-- Metrics log -->
-    <appender name="METRICS_ROLLING"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-
-        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/metrics.log
-        </file>
-
-        <!-- Metric messages filter - accept metric messages -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>INVOKE</marker>
-                <marker>INVOKE-RETURN</marker>
-                <marker>INVOKE-SYNCHRONOUS</marker>
-            </evaluator>
-            <onMismatch>DENY</onMismatch>
-            <onMatch>ACCEPT</onMatch>
-        </filter>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/metrics.log.%i
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>20MB</maxFileSize>
-        </triggeringPolicy>
-
+    <appender name="METRICS_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${metric-log-pattern}</pattern>
         </encoder>
     </appender>
 
-
     <!-- Supportability log -->
-    <appender name="SUPPORTABILITY_ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-
-        <file>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/supportability.log</file>
-
-        <!-- Supportability messages filter - accept supportability messages -->
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
-                <marker>SUPPORTABILITY_MARKER</marker>
-            </evaluator>
-            <onMismatch>DENY</onMismatch>
-            <onMatch>ACCEPT</onMatch>
-        </filter>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${log.home}/${ECOMP-component-name}/${ECOMP-subcomponent-name}/supportability.log.%i
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>20MB</maxFileSize>
-        </triggeringPolicy>
-
+    <appender name="SUPPORTABILITY_ROLLING" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${supportability-log-pattern}</pattern>
         </encoder>
     </appender>
-
 
     <!-- Asynchronicity Configurations -->
     <appender name="ASYNC_DEBUG" class="ch.qos.logback.classic.AsyncAppender">
@@ -232,7 +71,6 @@
     <appender name="ASYNC_ALL" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="ALL_ROLLING"/>
     </appender>
-
 
     <root level="INFO">
         <appender-ref ref="ASYNC_DEBUG"/>
