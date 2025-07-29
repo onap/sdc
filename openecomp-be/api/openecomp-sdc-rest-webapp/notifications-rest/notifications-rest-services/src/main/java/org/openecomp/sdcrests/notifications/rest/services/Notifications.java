@@ -30,56 +30,45 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.notifications.types.NotificationsStatusDto;
 import org.openecomp.sdcrests.notifications.types.UpdateNotificationResponseStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/notifications")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Notifications")})
+@RestController
+@RequestMapping("/v1.0/notifications")
 @Validated
+@Tag(name = "SDCE-1 APIs")
+@Tag(name = "Notifications")
 public interface Notifications {
 
     String LIMIT_QUERY_PARAM = "NOTIFICATION_ROWS_LIMIT";
     String END_OF_PAGE_QUERY_PARAM = "END_OF_PAGE_EVENT_ID";
 
-    @GET
+    @GetMapping
     @Operation(description = "Retrieve all user notifications", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = NotificationsStatusDto.class)))))
-    Response getNotifications(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user,
-                              @QueryParam(LAST_DELIVERED_QUERY_PARAM) UUID lastDelvered, @QueryParam(END_OF_PAGE_QUERY_PARAM) UUID endOfPage);
+    ResponseEntity getNotifications(@NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user,
+                                    @RequestParam(LAST_DELIVERED_QUERY_PARAM) UUID lastDelvered, @RequestParam(END_OF_PAGE_QUERY_PARAM) UUID endOfPage);
 
-    @PUT
-    @Path("/{notificationId}")
+    @PutMapping("/{notificationId}")
     @Operation(description = "Mark notification as read", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UpdateNotificationResponseStatus.class))))
-    Response markAsRead(@Parameter(description = "Notification Id") @PathParam("notificationId") String notificationId,
-                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
+    ResponseEntity markAsRead(@Parameter(description = "Notification Id") @PathVariable("notificationId") String notificationId,
+                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user)
         throws InvocationTargetException, IllegalAccessException;
 
-    @PUT
-    @Path("/last-seen/{notificationId}")
+    @PutMapping("/last-seen/{notificationId}")
     @Operation(description = "Update Last Seen Notification", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UpdateNotificationResponseStatus.class))))
-    Response updateLastSeenNotification(@Parameter(description = "Notification Id") @PathParam("notificationId") String notificationId,
-                                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user)
+    ResponseEntity updateLastSeenNotification(@Parameter(description = "Notification Id") @PathVariable("notificationId") String notificationId,
+                                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user)
         throws InvocationTargetException, IllegalAccessException;
 
-    @GET
-    @Path("/worker")
+    @GetMapping("/worker")
     @Operation(description = "Retrive user not delivered notifications", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = NotificationsStatusDto.class)))))
-    Response getNewNotificationsByOwnerId(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user,
-                                          @QueryParam(LAST_DELIVERED_QUERY_PARAM) String eventId, @QueryParam(LIMIT_QUERY_PARAM) String limit);
+    ResponseEntity getNewNotificationsByOwnerId(@NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user,
+                                          @RequestParam(LAST_DELIVERED_QUERY_PARAM) String eventId, @RequestParam(LIMIT_QUERY_PARAM) String limit);
 }

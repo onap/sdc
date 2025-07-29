@@ -27,45 +27,32 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/vnfrepository")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/vnfrepository")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "VNF Repository packages")})
 @Validated
 public interface VnfPackageRepository extends VspEntities {
 
-    @GET
-    @Path("/vnfpackages")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping(value = "/vnfpackages", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Operation(description = "Get VNF packages from VNF Repository", summary = "Call VNF Repository to get VNF package details", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response getVnfPackages(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    ResponseEntity getVnfPackages(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                                  @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws Exception;
 
-    @GET
-    @Path("/vnfpackage/{csarId}/download")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping(value = "/vnfpackage/{csarId}/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Operation(description = "Download VNF package from VNF Repository", summary = "Download VNF package from VNF repository and send to client", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = File.class))))
-    Response downloadVnfPackage(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                                @PathParam("csarId") String csarId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    ResponseEntity downloadVnfPackage(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                                @PathVariable("csarId") String csarId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws Exception;
 
-    @POST
-    @Path("/vnfpackage/{csarId}/import")
-    @Produces(MediaType.APPLICATION_JSON)
+    @PostMapping(value = "/vnfpackage/{csarId}/import", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Import VNF package from VNF Repository", summary = "Call VNF Repository to download VNF package, validate it and send the response", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = UploadFileResponseDto.class))))
-    Response importVnfPackage(@PathParam("vspId") String vspId, @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                              @PathParam("csarId") String csarId,
-                              @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user) throws Exception;
+    ResponseEntity importVnfPackage(@PathVariable("vspId") String vspId, @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                              @PathVariable("csarId") String csarId,
+                              @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user) throws Exception;
 }

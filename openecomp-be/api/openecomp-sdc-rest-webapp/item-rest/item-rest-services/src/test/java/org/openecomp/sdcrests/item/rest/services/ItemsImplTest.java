@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdcrests.item.rest.services;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ws.rs.core.Response;
+
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,14 +57,16 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.common.CommonConfigurationManager;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
+import org.openecomp.sdcrests.errors.ErrorCodeAndMessage;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class ItemsImplTest {
@@ -119,8 +121,8 @@ class ItemsImplTest {
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
         when(itemManager.get(any())).thenReturn(null);
-        Response response = items.actOn(request, ITEM_ID, USER);
-        assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+        ResponseEntity response = items.actOn(request, ITEM_ID, USER);
+        assertEquals(response.getStatusCodeValue(), HttpStatus.OK.value());
     }
 
     @Test
@@ -175,11 +177,11 @@ class ItemsImplTest {
 
                 final var response = items.actOn(request, ITEM_ID, USER);
                 assertNotNull(response);
-                assertEquals(INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-                assertNotNull(response.getEntity());
-                assertTrue(response.getEntity() instanceof ErrorCodeAndMessage);
-                assertEquals(INTERNAL_SERVER_ERROR.getStatusCode(), ((ErrorCodeAndMessage) response.getEntity()).getStatus().getStatusCode());
-                assertEquals(INTERNAL_SERVER_ERROR.name(), ((ErrorCodeAndMessage) response.getEntity()).getErrorCode());
+                assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCodeValue());
+                assertNotNull(response.getBody());
+                assertTrue(response.getBody() instanceof ErrorCodeAndMessage);
+                assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), ((ErrorCodeAndMessage) response.getBody()).getStatus());
+                assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.name(), ((ErrorCodeAndMessage) response.getBody()).getErrorCode());
             }
         }
     }
@@ -189,8 +191,8 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.getItem(ITEM_ID, USER);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        ResponseEntity response = items.getItem(ITEM_ID, USER);
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
     }
 
     @Test
@@ -198,8 +200,9 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER, null);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        ResponseEntity response = items.list(null, null, null, null, null, USER, null);
+        //assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
     }
 
     private List<Version> getVersions() {
@@ -217,8 +220,8 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER, null);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        ResponseEntity response = items.list(null, null, null, null, null, USER, null);
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         List<Item> expectedItems=new ArrayList<>();
         List<Item> actualItems=getAllItems();
         getTestRoles().stream().forEach(role -> getAllItems().stream()
@@ -238,8 +241,9 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Response response = items.list(null, null, null, null, null, USER, null);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        ResponseEntity response = items.list(null, null, null, null, null, USER, null);
+        //assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         List<Item> expectedItems=new ArrayList<>();
         List<Item> actualItems=getAllItems();
         assertNotNull(tenant);

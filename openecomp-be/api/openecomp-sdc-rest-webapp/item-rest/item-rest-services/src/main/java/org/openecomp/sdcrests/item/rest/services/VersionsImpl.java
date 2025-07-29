@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -55,11 +55,14 @@ import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.item.types.VersionRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("versions")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class VersionsImpl implements Versions {
 
     private static final String COMMIT_ITEM_ACTION = "Commit_Item";
@@ -67,15 +70,15 @@ public class VersionsImpl implements Versions {
     private ManagersProvider managersProvider;
 
     @Override
-    public Response list(String itemId, String user) {
+    public ResponseEntity list(String itemId, String user) {
         GenericCollectionWrapper<VersionDto> results = new GenericCollectionWrapper<>();
         MapVersionToDto mapper = new MapVersionToDto();
         getManagersProvider().getVersioningManager().list(itemId).forEach(version -> results.add(mapper.applyMapping(version, VersionDto.class)));
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response create(VersionRequestDto request, String itemId, String baseVersionId, String user) {
+    public ResponseEntity create(VersionRequestDto request, String itemId, String baseVersionId, String user) {
         Version version = new Version();
         version.setBaseId(baseVersionId);
         version.setDescription(request.getDescription());
@@ -84,37 +87,37 @@ public class VersionsImpl implements Versions {
         VersionDto versionDto = new MapVersionToDto().applyMapping(version, VersionDto.class);
         getManagersProvider().getActivityLogManager()
             .logActivity(new ActivityLogEntity(itemId, version, ActivityType.Create_Version, user, true, "", ""));
-        return Response.ok(versionDto).build();
+        return ResponseEntity.ok(versionDto);
     }
 
     @Override
-    public Response get(String itemId, String versionId, String user) {
+    public ResponseEntity get(String itemId, String versionId, String user) {
         Version version = getVersion(itemId, new Version(versionId));
         VersionDto versionDto = new MapVersionToDto().applyMapping(version, VersionDto.class);
-        return Response.ok(versionDto).build();
+        return ResponseEntity.ok(versionDto);
     }
 
     @Override
-    public Response getActivityLog(String itemId, String versionId, String user) {
+    public ResponseEntity getActivityLog(String itemId, String versionId, String user) {
         GenericCollectionWrapper<ActivityLogDto> results = new GenericCollectionWrapper<>();
         MapActivityLogEntityToDto mapper = new MapActivityLogEntityToDto();
         getManagersProvider().getActivityLogManager().listLoggedActivities(itemId, new Version(versionId))
             .forEach(loggedActivity -> results.add(mapper.applyMapping(loggedActivity, ActivityLogDto.class)));
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response listRevisions(String itemId, String versionId, String user) {
+    public ResponseEntity listRevisions(String itemId, String versionId, String user) {
         List<Revision> revisions = getManagersProvider().getVersioningManager().listRevisions(itemId, new Version(versionId));
         filterRevisions(revisions);
         GenericCollectionWrapper<RevisionDto> results = new GenericCollectionWrapper<>();
         MapRevisionToDto mapper = new MapRevisionToDto();
         revisions.forEach(revision -> results.add(mapper.applyMapping(revision, RevisionDto.class)));
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response actOn(VersionActionRequestDto request, String itemId, String versionId, String user) {
+    public ResponseEntity actOn(VersionActionRequestDto request, String itemId, String versionId, String user) {
         Version version = new Version(versionId);
         switch (request.getAction()) {
             case Sync:
@@ -122,7 +125,9 @@ public class VersionsImpl implements Versions {
                 break;
             case Commit:
                 if (!getManagersProvider().getPermissionsManager().isAllowed(itemId, user, COMMIT_ITEM_ACTION)) {
-                    return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
+                    return ResponseEntity
+                            .status(HttpStatus.FORBIDDEN)  // 403 Forbidden status
+                            .body(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage()));
                 }
                 commit(request.getCommitRequest(), itemId, version, user);
                 break;
@@ -135,7 +140,7 @@ public class VersionsImpl implements Versions {
             default:
                 throw new UnsupportedOperationException(String.format("Action %s not supported.", request.getAction()));
         }
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     private Version getVersion(String itemId, Version version) {

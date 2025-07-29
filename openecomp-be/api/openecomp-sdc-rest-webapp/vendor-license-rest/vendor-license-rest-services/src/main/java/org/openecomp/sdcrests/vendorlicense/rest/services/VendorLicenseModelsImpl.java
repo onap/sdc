@@ -64,12 +64,15 @@ import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -77,27 +80,10 @@ import static org.openecomp.sdc.itempermissions.notifications.NotificationConsta
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.*;
 import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
-
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("vendorLicenseModels")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Validated
 public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
@@ -155,7 +141,7 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     }
 
     @Override
-    public Response listLicenseModels(String versionStatus, String itemStatus, String user, HttpServletRequest hreq) {
+    public ResponseEntity listLicenseModels(String versionStatus, String itemStatus, String user, HttpServletRequest hreq) {
         Predicate<Item> itemPredicate = createItemPredicate(versionStatus, itemStatus, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
@@ -166,18 +152,18 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             realmroles.stream().forEach(role -> asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                     .filter(item -> item.getTenant().contains(role))
                     .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
-            return Response.ok(results).build();
+            return ResponseEntity.ok(results);
         }
         else
         {
             asdcItemManager.list(itemPredicate).stream().sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                     .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-            return Response.ok(results).build();
+            return ResponseEntity.ok(results);
         }
     }
 
     @Override
-    public Response createLicenseModel(VendorLicenseModelRequestDto request, String user, HttpServletRequest hreq) {
+    public ResponseEntity createLicenseModel(VendorLicenseModelRequestDto request, String user, HttpServletRequest hreq) {
         Multitenancy keyaccess= new Multitenancy();
         if (keyaccess.multiTenancyCheck()) {
             AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
@@ -205,11 +191,11 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
                 itemCreationDto.setItemId(item.getId());
                 itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
                 activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
-                return Response.ok(itemCreationDto).build();
+                return ResponseEntity.ok(itemCreationDto);
             }
             else {
                 LOGGER.error("Unauthorized tenant");
-                return Response.status(401, "Unauthorized tenant").build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized tenant");
             }
         }
         else
@@ -234,22 +220,22 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             itemCreationDto.setItemId(item.getId());
             itemCreationDto.setVersion(new MapVersionToDto().applyMapping(version, VersionDto.class));
             activityLogManager.logActivity(new ActivityLogEntity(vlm.getId(), version, ActivityType.Create, user, true, "", ""));
-            return Response.ok(itemCreationDto).build();
+            return ResponseEntity.ok(itemCreationDto);
         }
     }
 
     @Override
-    public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId, String versionId, String user) {
+    public ResponseEntity updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId, String versionId, String user) {
         VendorLicenseModelEntity vlm = new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
             .applyMapping(request, VendorLicenseModelEntity.class);
         vlm.setId(vlmId);
         vlm.setVersion(new Version(versionId));
         vendorLicenseManager.updateVendorLicenseModel(vlm);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getLicenseModel(String vlmId, String versionId, String user) {
+    public ResponseEntity getLicenseModel(String vlmId, String versionId, String user) {
         Version version = versioningManager.get(vlmId, new Version(versionId));
         VendorLicenseModelEntity vlm = vendorLicenseManager.getVendorLicenseModel(vlmId, version);
         try {
@@ -263,11 +249,11 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             LOGGER.error(String.format("Error while auto healing VLM with Id %s and version %s", vlmId, versionId), e);
         }
         VendorLicenseModelEntityDto vlmDto = new MapVendorLicenseModelEntityToDto().applyMapping(vlm, VendorLicenseModelEntityDto.class);
-        return Response.ok(vlmDto).build();
+        return ResponseEntity.ok(vlmDto);
     }
 
     @Override
-    public Response deleteLicenseModel(final String vlmId, final String user) {
+    public ResponseEntity deleteLicenseModel(final String vlmId, final String user) {
         final Item vlm = asdcItemManager.get(vlmId);
         if (vlm == null || !ItemType.vlm.getName().equals(vlm.getType())) {
             throw VendorLicenseModelExceptionSupplier.couldNotFindVlm(vlmId).get();
@@ -288,21 +274,21 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
         permissionsManager.deleteItemPermissions(vlmId);
         uniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
         notifyUsers(vlmId, vlm.getName(), null, null, user, NotificationEventTypes.DELETE);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response actOnLicenseModel(VendorLicenseModelActionRequestDto request, String vlmId, String versionId, String user) {
+    public ResponseEntity actOnLicenseModel(VendorLicenseModelActionRequestDto request, String vlmId, String versionId, String user) {
         Version version = new Version(versionId);
         if (request.getAction() == Submit) {
             if (!permissionsManager.isAllowed(vlmId, user, SUBMIT_ITEM_ACTION)) {
-                return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage()));
             }
             String message = request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
             submit(vlmId, version, message, user);
             notifyUsers(vlmId, null, version, message, user, NotificationEventTypes.SUBMIT);
         }
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     private List<String> findVspsUsingVlm(final String vlmId) {

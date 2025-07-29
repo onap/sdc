@@ -30,63 +30,51 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.item.types.ActivityLogDto;
 import org.openecomp.sdcrests.item.types.VersionActionRequestDto;
 import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.item.types.VersionRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/items/{itemId}/versions")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/items/{itemId}/versions")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Item Versions")})
 @Validated
 public interface Versions {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     @Operation(description = "Lists item versions", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = VersionDto.class)))))
-    Response list(@PathParam("itemId") String itemId, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity list(@PathVariable("itemId") String itemId, @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/{versionId}")
+    @PostMapping("/{versionId}")
     @Operation(description = "Creates a new item version")
-    Response create(VersionRequestDto request, @PathParam("itemId") String itemId, @PathParam("versionId") String versionId,
-                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity create(@RequestBody VersionRequestDto request, @PathVariable("itemId") String itemId, @PathVariable("versionId") String versionId,
+                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{versionId}")
+    @GetMapping("/{versionId}")
     @Operation(description = "Gets item version", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = VersionDto.class))))
-    Response get(@PathParam("itemId") String itemId, @PathParam("versionId") String versionId,
-                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity get(@PathVariable("itemId") String itemId, @PathVariable("versionId") String versionId,
+                 @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{versionId}/activity-logs")
+    @GetMapping("/{versionId}/activity-logs")
     @Operation(description = "Gets item version activity log", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ActivityLogDto.class)))))
-    Response getActivityLog(@Parameter(description = "Item Id") @PathParam("itemId") String itemId,
-                            @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getActivityLog(@Parameter(description = "Item Id") @PathVariable("itemId") String itemId,
+                            @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                            @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{versionId}/revisions")
+    @GetMapping("/{versionId}/revisions")
     @Operation(description = "Gets item version revisions", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ActivityLogDto.class)))))
-    Response listRevisions(@PathParam("itemId") String itemId, @PathParam("versionId") String versionId,
-                           @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listRevisions(@PathVariable("itemId") String itemId, @PathVariable("versionId") String versionId,
+                           @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{versionId}/actions")
+    @PutMapping("/{versionId}/actions")
     @Operation(description = "Acts on item version")
-    Response actOn(VersionActionRequestDto request, @PathParam("itemId") String itemId, @PathParam("versionId") String versionId,
-                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity actOn(@RequestBody @Valid VersionActionRequestDto request, @PathVariable("itemId") String itemId, @PathVariable("versionId") String versionId,
+                         @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

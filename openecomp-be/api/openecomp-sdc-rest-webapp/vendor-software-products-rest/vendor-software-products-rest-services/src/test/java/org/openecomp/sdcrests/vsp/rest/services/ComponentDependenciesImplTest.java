@@ -37,6 +37,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDependencyRe
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRelationType;
 import org.openecomp.sdcrests.vsp.rest.ComponentDependencies;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -110,9 +111,9 @@ public class ComponentDependenciesImplTest {
     model.setSourceId("sourceid");
     model.setTargetId("targetid");
 
-    Response rsp = componentDependencies.create(model, vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = componentDependencies.create(model, vspId, versionId, user);
+    Assert.assertEquals("Response should be 200", 200, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       ComponentDependencyCreationDto dto = (ComponentDependencyCreationDto) e;
@@ -125,9 +126,9 @@ public class ComponentDependenciesImplTest {
   @Test
   public void testList() {
 
-    Response rsp = componentDependencies.list(vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = componentDependencies.list(vspId, versionId, user);
+    Assert.assertEquals("Response should be 200", 200, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       @SuppressWarnings("unchecked")
@@ -145,9 +146,9 @@ public class ComponentDependenciesImplTest {
   @Test
   public void testDelete() {
 
-    Response rsp = componentDependencies.delete(vspId, versionId, entityId, user);
-    Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = componentDependencies.delete(vspId, versionId, entityId, user);
+    Assert.assertEquals("Response should be 200", 200, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 
@@ -159,22 +160,22 @@ public class ComponentDependenciesImplTest {
     model.setSourceId("sourceid");
     model.setTargetId("targetid");
 
-    Response rsp = componentDependencies.update(model, vspId, versionId, entityId, user);
-    Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = componentDependencies.update(model, vspId, versionId, entityId, user);
+    Assert.assertEquals("Response should be 200", 200, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
   @Test
   public void testGet() {
 
-    Response rsp = componentDependencies.get(vspId, versionId, entityId, user);
-    Assert.assertEquals("Response should be 200", 200, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = componentDependencies.get(vspId, versionId, entityId, user);
+    Assert.assertEquals("Response should be 200", 200, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
     try {
-      ComponentDependencyResponseDto dto = (ComponentDependencyResponseDto) rsp.getEntity();
+      ComponentDependencyResponseDto dto = (ComponentDependencyResponseDto) rsp.getBody();
       Assert.assertEquals("resulting entityId must match", dto.getId(), entityId);
     } catch (ClassCastException ex) {
-      Assert.fail("unexpected class for DTO " + rsp.getEntity().getClass().getName());
+      Assert.fail("unexpected class for DTO " + rsp.getClass().getClass().getName());
     }
   }
 }

@@ -25,8 +25,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.Messages;
@@ -34,6 +32,8 @@ import org.openecomp.sdc.itempermissions.PermissionsServices;
 import org.openecomp.sdc.itempermissions.PermissionsServicesFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 /**
  * Created by ayalaben on 6/27/2017.
@@ -74,7 +74,7 @@ public class PermissionsFilter implements Filter {
             if (!itemId.equals(IRRELEVANT_REQUEST) && !permissionsServices.isAllowed(itemId, userId, EDIT_ITEM)) {
                 ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_FORBIDDEN);
                 servletResponse.getWriter()
-                    .print(buildResponse(Response.Status.FORBIDDEN, Messages.PERMISSIONS_ERROR.getErrorMessage(), Messages.PERMISSIONS_ERROR.name()));
+                    .print(buildResponse(HttpStatus.FORBIDDEN, Messages.PERMISSIONS_ERROR.getErrorMessage(), Messages.PERMISSIONS_ERROR.name()));
                 return false;
             }
         }
@@ -95,7 +95,7 @@ public class PermissionsFilter implements Filter {
         // required by serlvet API
     }
 
-    private String buildResponse(Response.Status status, String message, String id) {
+    private String buildResponse(HttpStatus status, String message, String id) {
         ErrorCode errorCode = new ErrorCode.ErrorCodeBuilder().withId(id).withMessage(message).build();
         return objectToJsonString(new ErrorCodeAndMessage(status, errorCode));
     }

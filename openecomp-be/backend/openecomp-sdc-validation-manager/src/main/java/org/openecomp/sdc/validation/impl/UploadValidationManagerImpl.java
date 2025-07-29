@@ -42,10 +42,13 @@ import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
 import org.openecomp.sdc.validation.UploadValidationManager;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by TALIO on 4/20/2016.
  */
+@Service("uploadValidationManager")
 public class UploadValidationManagerImpl implements UploadValidationManager {
 
     private static FileContentHandler getFileContentMapFromZip(byte[] uploadFileData) throws IOException {
@@ -67,12 +70,12 @@ public class UploadValidationManagerImpl implements UploadValidationManager {
     }
 
     @Override
-    public ValidationFileResponse validateFile(String type, InputStream fileToValidate) throws IOException {
+    public ValidationFileResponse validateFile(String type, MultipartFile fileToValidate) throws IOException {
         ValidationFileResponse validationFileResponse = new ValidationFileResponse();
         HeatTreeManager tree;
         ValidationStructureList validationStructureList = new ValidationStructureList();
         if (type.equalsIgnoreCase("heat")) {
-            FileContentHandler content = getFileContent(fileToValidate);
+             FileContentHandler content = this.getFileContent(fileToValidate.getInputStream());
             if (!content.containsFile(SdcCommon.MANIFEST_NAME)) {
                 throw new CoreException((new ErrorCode.ErrorCodeBuilder()).withMessage(Messages.MANIFEST_NOT_EXIST.getErrorMessage())
                     .withId(Messages.ZIP_SHOULD_NOT_CONTAIN_FOLDERS.getErrorMessage()).withCategory(ErrorCategory.APPLICATION).build());

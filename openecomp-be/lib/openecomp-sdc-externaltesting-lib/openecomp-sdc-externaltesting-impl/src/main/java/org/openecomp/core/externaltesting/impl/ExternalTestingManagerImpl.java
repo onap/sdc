@@ -66,6 +66,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -73,6 +74,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Service("testingManager")
 public class ExternalTestingManagerImpl implements ExternalTestingManager {
 
     static final String VSP_ID = "vspId";
@@ -168,7 +170,9 @@ public class ExternalTestingManagerImpl implements ExternalTestingManager {
      * that to locate the config-externaltesting.yaml file.
      */
     private void loadConfig() {
+        
         String loc = System.getProperty("config.location");
+        logger.debug("config.location: {}", loc);
         File file = new File(loc, "externaltesting-configuration.yaml");
         try (InputStream fileInput = new FileInputStream(file)) {
             YamlUtil yamlUtil = new YamlUtil();

@@ -45,6 +45,22 @@ public class VendorLicenseModelRequestDto {
         this.vendorName = ValidationUtils.sanitizeInputString(vendorName);
     }
 
+    public @NotNull @Size(max = 25) String getVendorName() {
+        return vendorName;
+    }
+
+    public @NotNull String getIconRef() {
+        return iconRef;
+    }
+
+    public @NotNull @Size(max = 1000) String getDescription() {
+        return description;
+    }
+
+    public @Size(max = 25) String getTenant() {
+        return tenant;
+    }
+
     public void setDescription(final String description) {
         this.description = ValidationUtils.sanitizeInputString(description);
     }

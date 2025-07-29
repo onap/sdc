@@ -24,10 +24,12 @@ import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Talio on 8/8/2016.
  */
+@Service("applicationConfigManager")
 public class ApplicationConfigManagerImpl implements ApplicationConfigManager {
 
     private static final String SCHEMA_GENERATOR_INITIALIZATION_ERROR = "SCHEMA_GENERATOR_INITIALIZATION_ERROR";

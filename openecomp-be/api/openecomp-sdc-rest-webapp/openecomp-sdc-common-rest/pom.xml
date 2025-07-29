@@ -80,12 +80,6 @@
       <artifactId>openecomp-session-lib</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-common</artifactId>
-      <version>${jersey-bom.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>
