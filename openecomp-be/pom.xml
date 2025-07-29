@@ -31,7 +31,28 @@
     <version>1.14.1-SNAPSHOT</version>
     <relativePath>../onboarding/pom.xml</relativePath>
   </parent>
-
+  
+  <properties>
+    <spring-cloud.version>2021.0.9</spring-cloud.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-dependencies</artifactId>
+          <version>2.7.18</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-dependencies</artifactId>
+          <version>${spring-cloud.version}</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -67,6 +88,33 @@
       <groupId>org.togglz</groupId>
       <artifactId>togglz-testing</artifactId>
       <version>${togglz.version}</version>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-el</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-core</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>tomcat-embed-websocket</artifactId>
+          <groupId>org.apache.tomcat.embed</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -353,11 +353,17 @@ limitations under the License.
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>com.paulhammant</groupId>
             <artifactId>ngwebdriver</artifactId>
             <version>0.9.7</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.markusbernhardt</groupId>

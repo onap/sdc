@@ -26,31 +26,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdcrests.action.types.ActionResponseDto;
 import org.openecomp.sdcrests.action.types.ListResponseWrapper;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Defines various CRUD API that can be performed on Action.
  */
-@Path("/workflow/v1.0/actions")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/workflow/v1.0/actions")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Actions")})
 @Validated
 public interface Actions {
@@ -61,53 +49,50 @@ public interface Actions {
      * @return List of All Major, Last Minor and Candidate version if any Of Action with given actionInvariantUuId. If actionUuId is provided then
      * only action with given actionInvariantUuId and actionUuId
      */
-    @GET
-    @Path("/{actionInvariantUuId}")
+    @GetMapping("/{actionInvariantUuId}")
     @Operation(description = "List Actions For Given Action Invariant UuId", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
-    Response getActionsByActionInvariantUuId(@PathParam("actionInvariantUuId") String actionInvariantUuId, @QueryParam("version") String actionUuId,
-                                             @Context HttpServletRequest servletRequest);
+    ResponseEntity getActionsByActionInvariantUuId(@PathVariable("actionInvariantUuId") String actionInvariantUuId, @RequestParam("version") String actionUuId,
+                                                   HttpServletRequest servletRequest);
 
     /**
      * Get list of actions based on a filter criteria. If no filter is sent all actions will be returned
      *
      * @return List Of Last Major and Last Minor of All Actions based on filter criteria
      */
-    @GET
+    @GetMapping({ "", "/" })
     @Operation(description = "List Filtered Actions ", summary = "Get list of actions based on a filter criteria | If no filter is sent all actions "
         + "will be returned", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
-    Response getFilteredActions(@QueryParam("vendor") String vendor, @QueryParam("category") String category, @QueryParam("name") String name,
-                                @QueryParam("modelId") String modelId, @QueryParam("componentId") String componentId,
-                                @Context HttpServletRequest servletRequest);
+    ResponseEntity getFilteredActions(@RequestParam("vendor") String vendor, @RequestParam("category") String category, @RequestParam("name") String name,
+                                @RequestParam("modelId") String modelId, @RequestParam("componentId") String componentId,
+                                HttpServletRequest servletRequest);
 
     /**
      * List OPENECOMP Components supported by Action Library.
      *
      * @return List of OPENECOMP Components supported by Action Library
      */
-    @GET
-    @Path("/components")
+    @GetMapping("/components")
     @Operation(description = "List OPENECOMP Components supported by Action Library", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ListResponseWrapper.class))))
-    Response getOpenEcompComponents(@Context HttpServletRequest servletRequest);
+    ResponseEntity getOpenEcompComponents(HttpServletRequest servletRequest);
 
     /**
      * Create a new Action based on request JSON.
      *
      * @return Metadata object {@link ActionResponseDto ActionResponseDto} object for created Action
      */
-    @POST
+    @PostMapping({ "", "/" })
     @Operation(description = "Create a new Action")
-    Response createAction(String requestJson, @Context HttpServletRequest servletRequest);
+    ResponseEntity createAction(String requestJson, HttpServletRequest servletRequest);
 
     /**
      * Update an existing action with parameters provided in requestJson.
      *
      * @return Metadata object {@link ActionResponseDto ActionResponseDto} object for created Action
      */
-    @PUT
-    @Path("/{actionInvariantUuId}")
+    @PutMapping("/{actionInvariantUuId}")
     @Operation(description = "Update an existing action")
-    Response updateAction(@PathParam("actionInvariantUuId") String actionInvariantUuId, String requestJson,
-                          @Context HttpServletRequest servletRequest);
+    ResponseEntity updateAction(@PathVariable("actionInvariantUuId") String actionInvariantUuId, @RequestBody String requestJson,
+                          HttpServletRequest servletRequest);
 
     /**
      * Delete an action.
@@ -116,24 +101,22 @@ public interface Actions {
      * @param servletRequest      Servlet request object
      * @return Empty response object
      */
-    @DELETE
-    @Path("/{actionInvariantUuId}")
+    @DeleteMapping("/{actionInvariantUuId}")
     @Operation(description = "Delete Action")
-    Response deleteAction(@PathParam("actionInvariantUuId") String actionInvariantUuId, @Context HttpServletRequest servletRequest);
+    ResponseEntity deleteAction(@PathVariable("actionInvariantUuId") String actionInvariantUuId, HttpServletRequest servletRequest);
 
     /**
      * Performs Checkout/Undo_Checkout/Checkin/Submit Operation on Action.
      *
      * @return Metadata object {@link ActionResponseDto ActionResponseDto} object for created Action
      */
-    @POST
-    @Path("/{actionInvariantUuId}")
+    @PostMapping("/{actionInvariantUuId}")
     @Operation(description = "Actions on a action", summary = "Performs one of the following actions on a action: |"
         + "Checkout: Locks it for edits by other users. Only the locking user sees the edited " + "version.|"
         + "Undo_Checkout: Unlocks it and deletes the edits that were done.|" + "Checkin: Unlocks it and activates the edited version to all users.| "
         + "Submit: Finalize its active version.|")
-    Response actOnAction(@PathParam("actionInvariantUuId") String actionInvariantUuId, String requestJson,
-                         @Context HttpServletRequest servletRequest);
+    ResponseEntity actOnAction(@PathVariable("actionInvariantUuId") String actionInvariantUuId, String requestJson,
+                        HttpServletRequest servletRequest);
 
     /**
      * Upload an artifact to an action.
@@ -149,42 +132,46 @@ public interface Actions {
      * @param servletRequest      Servlet request object
      * @return Generated UuId of the uploaded artifact
      */
-    @POST
-    @Path("/{actionInvariantUuId}/artifacts")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response uploadArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId,
-                            @Multipart(value = "artifactName", required = false) String artifactName,
-                            @Multipart(value = "artifactLabel", required = false) String artifactLabel,
-                            @Multipart(value = "artifactCategory", required = false) String artifactCategory,
-                            @Multipart(value = "artifactDescription", required = false) String artifactDescription,
-                            @Multipart(value = "artifactProtection", required = false) String artifactProtection,
-                            @HeaderParam("Content-MD5") String checksum,
-                            @Multipart(value = "uploadArtifact", required = false) Attachment artifactToUpload,
-                            @Context HttpServletRequest servletRequest);
+    @PostMapping(
+    value = "/{actionInvariantUuId}/artifacts",
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(description = "Upload new Artifact")
+    ResponseEntity uploadArtifact(
+            @PathVariable("actionInvariantUuId") String actionInvariantUuId,
+            @RequestPart(value = "artifactName", required = false) String artifactName,
+            @RequestPart(value = "artifactLabel", required = false) String artifactLabel,
+            @RequestPart(value = "artifactCategory", required = false) String artifactCategory,
+            @RequestPart(value = "artifactDescription", required = false) String artifactDescription,
+            @RequestPart(value = "artifactProtection", required = false) String artifactProtection,
+            @RequestHeader("Content-MD5") String checksum,
+            @RequestPart("uploadArtifact") MultipartFile artifactToUpload,
+            HttpServletRequest servletRequest
+    );
 
-    @GET
-    @Path("/{actionUuId}/artifacts/{artifactUuId}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @GetMapping(value = "/{actionUuId}/artifacts/{artifactUuId}", 
+    produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Operation(description = "Downloads artifact for action")
-    Response downloadArtifact(@PathParam("actionUuId") String actionUuId, @PathParam("artifactUuId") String artifactUuId,
-                              @Context HttpServletRequest servletRequest);
+    ResponseEntity downloadArtifact(@PathVariable("actionUuId") String actionUuId, @PathVariable("artifactUuId") String artifactUuId,
+                              HttpServletRequest servletRequest);
 
-    @DELETE
-    @Path("/{actionInvariantUuId}/artifacts/{artifactUuId}")
+    @DeleteMapping("/{actionInvariantUuId}/artifacts/{artifactUuId}")
     @Operation(description = "Delete Artifact")
-    Response deleteArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId, @PathParam("artifactUuId") String artifactUuId,
-                            @Context HttpServletRequest servletRequest);
+    ResponseEntity deleteArtifact(@PathVariable("actionInvariantUuId") String actionInvariantUuId, @PathVariable("artifactUuId") String artifactUuId,
+                            HttpServletRequest servletRequest);
 
-    @PUT
-    @Path("/{actionInvariantUuId}/artifacts/{artifactUuId}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response updateArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId, @PathParam("artifactUuId") String artifactUuId,
-                            @Multipart(value = "artifactName", required = false) String artifactName,
-                            @Multipart(value = "artifactLabel", required = false) String artifactLabel,
-                            @Multipart(value = "artifactCategory", required = false) String artifactCategory,
-                            @Multipart(value = "artifactDescription", required = false) String artifactDescription,
-                            @Multipart(value = "artifactProtection", required = false) String artifactProtection,
-                            @HeaderParam("Content-MD5") String checksum,
-                            @Multipart(value = "updateArtifact", required = false) Attachment artifactToUpdate,
-                            @Context HttpServletRequest servletRequest);
+    @PutMapping(
+    value = "/{actionInvariantUuId}/artifacts/{artifactUuId}",
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(description = "Update an existing artifact")
+    ResponseEntity updateArtifact(
+            @PathVariable("actionInvariantUuId") String actionInvariantUuId,
+            @PathVariable("artifactUuId") String artifactUuId,
+            @RequestPart(value = "artifactName", required = false) String artifactName,
+            @RequestPart(value = "artifactLabel", required = false) String artifactLabel,
+            @RequestPart(value = "artifactCategory", required = false) String artifactCategory,
+            @RequestPart(value = "artifactDescription", required = false) String artifactDescription,
+            @RequestPart(value = "artifactProtection", required = false) String artifactProtection,
+            @RequestHeader("Content-MD5") String checksum,
+            @RequestPart(value = "updateArtifact") MultipartFile artifactToUpdate,
+            HttpServletRequest servletRequest);
 }

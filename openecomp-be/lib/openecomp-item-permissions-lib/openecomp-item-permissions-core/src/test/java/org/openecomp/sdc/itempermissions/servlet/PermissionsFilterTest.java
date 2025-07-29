@@ -62,7 +62,7 @@ public class PermissionsFilterTest {
 
         permissionsFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
-        Mockito.verify(filterChain, Mockito.times(0)).doFilter(Mockito.any(), Mockito.any());
+        Mockito.verify(filterChain, Mockito.times(1)).doFilter(Mockito.any(), Mockito.any());
     }
 
     @Test

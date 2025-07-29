@@ -32,65 +32,51 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - Entitlement Pools")})
 @Validated
 public interface EntitlementPools {
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "List vendor entitlement pools", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = EntitlementPoolEntityDto.class)))))
-    Response listEntitlementPools(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                  @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listEntitlementPools(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                        @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/")
+    @PostMapping({ "", "/" })
     @Operation(description = "Create vendor entitlement pool")
-    Response createEntitlementPool(@Valid EntitlementPoolRequestDto request,
-                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createEntitlementPool(@RequestBody @Valid EntitlementPoolRequestDto request,
+                                         @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                         @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{entitlementPoolId}")
+    @PutMapping("/{entitlementPoolId}")
     @Operation(description = "Update vendor entitlement pool")
-    Response updateEntitlementPool(@Valid EntitlementPoolRequestDto request,
-                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @PathParam("entitlementPoolId") String entitlementPoolId,
-                                   @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateEntitlementPool(@RequestBody @Valid EntitlementPoolRequestDto request,
+                                         @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                         @NotNull(message = USER_MISSING_ERROR_MSG) @PathVariable("entitlementPoolId") String entitlementPoolId,
+                                         @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{entitlementPoolId}")
+    @GetMapping("/{entitlementPoolId}")
     @Operation(description = "Get vendor entitlement pool", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = EntitlementPoolEntityDto.class))))
-    Response getEntitlementPool(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                @PathParam("entitlementPoolId") String entitlementPoolId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getEntitlementPool(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                      @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                      @PathVariable("entitlementPoolId") String entitlementPoolId,
+                                      @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{entitlementPoolId}")
+    @DeleteMapping("/{entitlementPoolId}")
     @Operation(description = "Delete vendor entitlement pool")
-    Response deleteEntitlementPool(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @PathParam("entitlementPoolId") String entitlementPoolId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteEntitlementPool(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                         @PathVariable("entitlementPoolId") String entitlementPoolId,
+                                         @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

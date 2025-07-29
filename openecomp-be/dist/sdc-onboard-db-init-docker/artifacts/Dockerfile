@@ -16,21 +16,7 @@ RUN apk update &&  \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
     set -ex && \
-    apk add --no-cache \
-        wget \
-        build-base \
-        ruby \
-        ruby-dev \
-        libffi-dev \
-        libxml2-dev && \
-    gem install --no-update-sources \
-        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        webrick \
-        json \
-        --no-document && \
-    gem cleanup
+    apk add --no-cache wget
 
 USER sdc
 
@@ -40,6 +26,4 @@ COPY --chown=sdc:sdc upgrade-scripts /home/sdc/upgrade-scripts
 COPY --chown=sdc:sdc startup.sh /home/sdc/
 
 RUN chmod 770 /home/sdc/startup.sh
-
 ENTRYPOINT [ "/home/sdc/startup.sh" ]
-

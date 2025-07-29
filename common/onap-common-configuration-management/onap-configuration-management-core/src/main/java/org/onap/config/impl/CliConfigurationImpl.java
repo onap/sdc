@@ -38,7 +38,9 @@ import org.onap.config.api.Hint;
 import org.onap.config.type.ConfigurationQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 @NoArgsConstructor
 public final class CliConfigurationImpl extends ConfigurationImpl implements ConfigurationManager {
 

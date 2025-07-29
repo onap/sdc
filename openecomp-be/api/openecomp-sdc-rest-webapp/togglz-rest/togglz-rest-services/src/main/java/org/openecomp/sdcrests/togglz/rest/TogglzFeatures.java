@@ -22,41 +22,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/togglz")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Togglz")})
 @Validated
+@RestController
+@RequestMapping("/v1.0/togglz")
 public interface TogglzFeatures {
 
-    @GET
+    @GetMapping({ "", "/" })
     @Operation(description = "Get TOGGLZ Features", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = FeatureSetDto.class)))))
-    Response getFeatures();
+    ResponseEntity getFeatures();
 
-    @PUT
-    @Path("/state/{state}")
+    @PutMapping("/state/{state}")
     @Operation(description = "Update feature toggle state for all features")
-    Response setAllFeatures(@PathParam("state") boolean state);
+    ResponseEntity setAllFeatures(@PathVariable("state") boolean state);
 
-    @PUT
-    @Path("/{featureName}/state/{state}")
+    @PutMapping("/{featureName}/state/{state}")
     @Operation(description = "Update feature toggle state")
-    Response setFeatureState(@PathParam("featureName") String featureName, @PathParam("state") boolean state);
+    ResponseEntity setFeatureState(@PathVariable("featureName") String featureName, @PathVariable("state") boolean state);
 
-    @GET
-    @Path("/{featureName}/state")
+    @GetMapping("/{featureName}/state")
     @Operation(description = "Get feature toggle state", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FeatureDto.class))))
-    Response getFeatureState(@PathParam("featureName") String featureName);
+    ResponseEntity getFeatureState(@PathVariable("featureName") String featureName);
 }

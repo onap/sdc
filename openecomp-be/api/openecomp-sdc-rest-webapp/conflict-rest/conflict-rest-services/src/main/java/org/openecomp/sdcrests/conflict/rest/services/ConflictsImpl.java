@@ -20,7 +20,6 @@
 package org.openecomp.sdcrests.conflict.rest.services;
 
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.conflicts.types.Conflict;
 import org.openecomp.conflicts.types.ConflictResolution;
 import org.openecomp.conflicts.types.ItemVersionConflict;
@@ -35,36 +34,38 @@ import org.openecomp.sdcrests.conflict.types.ConflictDto;
 import org.openecomp.sdcrests.conflict.types.ConflictResolutionDto;
 import org.openecomp.sdcrests.conflict.types.ItemVersionConflictDto;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("conflicts")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ConflictsImpl implements Conflicts {
 
     @Override
-    public Response getConflict(String itemId, String versionId, String user) {
+    public ResponseEntity getConflict(String itemId, String versionId, String user) {
         ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
         ItemVersionConflict itemVersionConflict = conflictsManager.getConflict(itemId, new Version(versionId));
         ItemVersionConflictDto result = (new MapItemVersionConflictToDto()).applyMapping(itemVersionConflict, ItemVersionConflictDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response getConflict(String itemId, String versionId, String conflictId, String user) {
+    public ResponseEntity getConflict(String itemId, String versionId, String conflictId, String user) {
         ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
         Conflict conflict = conflictsManager.getConflict(itemId, new Version(versionId), conflictId);
         ConflictDto result = new MapConflictToDto().applyMapping(conflict, ConflictDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response resolveConflict(ConflictResolutionDto conflictResolution, String itemId, String versionId, String conflictId, String user) {
+    public ResponseEntity resolveConflict(ConflictResolutionDto conflictResolution, String itemId, String versionId, String conflictId, String user) {
         ConflictsManager conflictsManager = ConflictsManagerFactory.getInstance().createInterface();
         Version version = new Version(versionId);
         conflictsManager.resolveConflict(itemId, version, conflictId,
             new MapDtoToConflictResolution().applyMapping(conflictResolution, ConflictResolution.class));
         conflictsManager.finalizeMerge(itemId, version);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

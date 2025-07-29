@@ -44,9 +44,10 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.*;
 
 class VendorLicenseModelsImplTest {
 
@@ -107,9 +106,10 @@ class VendorLicenseModelsImplTest {
         when(vendorSoftwareProductInfoDao.list(null)).thenReturn(vspDetailsList);
 
         //when
-        final Response response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+        final ResponseEntity response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
         //then
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        //assertEquals(Status.OK.getStatusCode(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         verify(asdcItemManager).delete(vlmItem);
         verify(permissionsManager).deleteItemPermissions(vlmItem.getId());
         verify(uniqueValueUtil).deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlmItem.getName());
@@ -212,9 +212,10 @@ class VendorLicenseModelsImplTest {
         when(asdcItemManager.get(vlmId)).thenReturn(vlmItem);
 
         //when
-        final Response response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+        final ResponseEntity response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
         //then
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        //assertEquals(Status.OK.getStatusCode(), response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
         verify(asdcItemManager).delete(vlmItem);
         verify(permissionsManager).deleteItemPermissions(vlmItem.getId());
         verify(uniqueValueUtil).deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlmItem.getName());

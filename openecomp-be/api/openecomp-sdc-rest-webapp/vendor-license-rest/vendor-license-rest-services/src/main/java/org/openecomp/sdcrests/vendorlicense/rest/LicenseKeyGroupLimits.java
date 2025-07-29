@@ -32,68 +32,54 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups/{licenseKeyGroupId}/limits")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups/{licenseKeyGroupId}/limits")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - License Key Group Limits")})
 @Validated
 public interface LicenseKeyGroupLimits {
 
-    @POST
-    @Path("/")
+    @PostMapping({ "", "/" })
     @Operation(description = "Create vendor license key group limit")
-    Response createLimit(@Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model License Key Group Id") @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createLimit(@Valid @RequestBody LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                               @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                               @Parameter(description = "Vendor license model License Key Group Id") @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "List vendor license key group limits", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = LimitEntityDto.class)))))
-    Response listLimits(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                        @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                        @Parameter(description = "Vendor license model License Key Group Id") @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listLimits(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                        @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                        @Parameter(description = "Vendor license model License Key Group Id") @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{limitId}")
+    @PutMapping("/{limitId}")
     @Operation(description = "Update vendor license key group limit")
-    Response updateLimit(@Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model License Key Group Id") @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @PathParam("limitId") String limitId,
-                         @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateLimit(@Valid @RequestBody LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                         @Parameter(description = "Vendor license model License Key Group Id") @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                         @NotNull(message = USER_MISSING_ERROR_MSG) @PathVariable("limitId") String limitId,
+                         @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{limitId}")
+    @GetMapping("/{limitId}")
     @Operation(description = "Get vendor entitlement pool limit", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = LimitEntityDto.class))))
-    Response getLimit(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                      @Parameter(description = "Vendor license model License Key Group") @PathParam("licenseKeyGroupId") String entitlementPoolId,
-                      @Parameter(description = "Vendor license model License Key Group Limit Id") @PathParam("limitId") String limitId,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getLimit(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                      @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                      @Parameter(description = "Vendor license model License Key Group") @PathVariable("licenseKeyGroupId") String entitlementPoolId,
+                      @Parameter(description = "Vendor license model License Key Group Limit Id") @PathVariable("limitId") String limitId,
+                      @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{limitId}")
+    @DeleteMapping("/{limitId}")
     @Operation(description = "Delete vendor license key group limit")
-    Response deleteLimit(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model license key group Id") @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                         @PathParam("limitId") String limitId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteLimit(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                         @Parameter(description = "Vendor license model license key group Id") @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                         @PathVariable("limitId") String limitId,
+                         @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }
