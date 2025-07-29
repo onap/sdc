@@ -32,67 +32,53 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementModelDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseAgreementUpdateRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - License Agreements")})
 @Validated
 public interface LicenseAgreements {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     @Operation(description = "List vendor license agreements", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = LicenseAgreementEntityDto.class)))))
-    Response listLicenseAgreements(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listLicenseAgreements(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                         @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                         @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/")
+    @PostMapping
     @Operation(description = "Create vendor license agreement")
-    Response createLicenseAgreement(@Valid LicenseAgreementRequestDto request,
-                                    @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                    @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createLicenseAgreement(@RequestBody @Valid LicenseAgreementRequestDto request,
+                                    @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                    @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{licenseAgreementId}")
+    @PutMapping("/{licenseAgreementId}")
     @Operation(description = "Update vendor license agreement")
-    Response updateLicenseAgreement(@Valid LicenseAgreementUpdateRequestDto request,
-                                    @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                    @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                    @PathParam("licenseAgreementId") String licenseAgreementId,
-                                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateLicenseAgreement(@RequestBody @Valid LicenseAgreementUpdateRequestDto request,
+                                    @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                    @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                    @PathVariable("licenseAgreementId") String licenseAgreementId,
+                                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{licenseAgreementId}")
+    @GetMapping("/{licenseAgreementId}")
     @Operation(description = "Get vendor license agreement", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = LicenseAgreementModelDto.class))))
-    Response getLicenseAgreement(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                 @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                 @PathParam("licenseAgreementId") String licenseAgreementId,
-                                 @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getLicenseAgreement(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                 @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                 @PathVariable("licenseAgreementId") String licenseAgreementId,
+                                 @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{licenseAgreementId}")
+    @DeleteMapping("/{licenseAgreementId}")
     @Operation(description = "Delete vendor license agreement")
-    Response deleteLicenseAgreement(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                    @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                    @PathParam("licenseAgreementId") String licenseAgreementId,
-                                    @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteLicenseAgreement(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                    @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                    @PathVariable("licenseAgreementId") String licenseAgreementId,
+                                    @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

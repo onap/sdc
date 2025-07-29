@@ -52,7 +52,7 @@ public class PermissionsServicesImplTest {
     private static final String ITEM1_ID = "1";
     private static final String PERMISSION = "Owner";
     private static final String USER2_ID = "testUser2";
-    private static final String USER1_ID = "testUser1";
+    private static final String USER1_ID = "onboarding";
     private static final String ACTION_SUBMIT = "Submit_Item";
     private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
 

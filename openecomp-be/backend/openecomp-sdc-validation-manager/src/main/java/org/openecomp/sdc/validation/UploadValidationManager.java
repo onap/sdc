@@ -22,11 +22,12 @@ package org.openecomp.sdc.validation;
 import java.io.IOException;
 import java.io.InputStream;
 import org.openecomp.sdc.validation.types.ValidationFileResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by TALIO on 4/20/2016.
  */
 public interface UploadValidationManager {
 
-    ValidationFileResponse validateFile(String type, InputStream heatFileToUpload) throws IOException;
+    ValidationFileResponse validateFile(String type, MultipartFile fileToValidate) throws IOException;
 }

@@ -42,6 +42,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -126,9 +127,9 @@ public class ComputeImplTest {
   @Test
   public void testList() {
 
-    Response rsp = ci.list(vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = ci.list(vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     @SuppressWarnings("unchecked")
     GenericCollectionWrapper<ComputeDto> results = (GenericCollectionWrapper<ComputeDto>)e;
@@ -143,9 +144,9 @@ public class ComputeImplTest {
     dto.setDescription("hello");
     dto.setName("name");
 
-    Response rsp = ci.create(dto, vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = ci.create(dto, vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       ComputeCreationDto ccdto = (ComputeCreationDto)e;
@@ -158,33 +159,33 @@ public class ComputeImplTest {
 
   @Test
   public void testDelete() {
-    Response rsp = ci.delete(vspId, versionId, componentId, computeId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ci.delete(vspId, versionId, componentId, computeId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 
   @Test
   public void testGet() {
-    Response rsp = ci.get(vspId, versionId, componentId, computeId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = ci.get(vspId, versionId, componentId, computeId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
   }
 
   @Test
   public void testUpdate() {
     ComputeDetailsDto dto = new ComputeDetailsDto();
-    Response rsp = ci.update(dto, vspId, versionId, componentId, computeId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ci.update(dto, vspId, versionId, componentId, computeId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
   @Test
   public void testGetQuestionaire() {
-    Response rsp = ci.getQuestionnaire(vspId, versionId, componentId, computeId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+    ResponseEntity rsp = ci.getQuestionnaire(vspId, versionId, componentId, computeId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
     try {
-      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getEntity();
+      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getBody();
       Assert.assertEquals("helloworld", dto.getData());
     }
     catch (Exception ex) {
@@ -196,8 +197,8 @@ public class ComputeImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    Response rsp = ci.updateQuestionnaire("helloworld", vspId, versionId, componentId, computeId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ci.updateQuestionnaire("helloworld", vspId, versionId, componentId, computeId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 }

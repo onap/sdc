@@ -71,8 +71,9 @@ public class RestrictionAccessFilter extends SessionValidationFilter {
 
         private Configuration() {
             try {
+                LOGGER.debug("CONFIG_FILE_PROPERTY: {}", CONFIG_FILE_PROPERTY);
                 String file = Objects.requireNonNull(System.getProperty(CONFIG_FILE_PROPERTY),
-                    "Config file location must be specified via system property " + CONFIG_FILE_PROPERTY);
+                      "Config file location must be specified via system property " + CONFIG_FILE_PROPERTY);              
                 Object config = getAuthenticationConfiguration(file);
                 ObjectMapper mapper = new ObjectMapper();
                 CookieConfig cookieConfig = mapper.convertValue(config, CookieConfig.class);

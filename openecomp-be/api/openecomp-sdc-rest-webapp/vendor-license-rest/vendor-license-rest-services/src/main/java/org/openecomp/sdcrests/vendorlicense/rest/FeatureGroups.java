@@ -32,67 +32,53 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupModelDto;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupUpdateRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - Feature Groups")})
 @Validated
+@RestController
 public interface FeatureGroups {
 
-    @GET
-    @Path("/")
+
+    @GetMapping
     @Operation(description = "List vendor feature groups", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = FeatureGroupEntityDto.class)))))
-    Response listFeatureGroups(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                               @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listFeatureGroups(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                     @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                     @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/")
+    @PostMapping
     @Operation(description = "Create vendor feature group")
-    Response createFeatureGroup(@Valid FeatureGroupRequestDto request,
-                                @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createFeatureGroup(@Valid @RequestBody FeatureGroupRequestDto request,
+                                @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{featureGroupId}")
+    @PutMapping("/{featureGroupId}")
     @Operation(description = "Update vendor feature group")
-    Response updateFeatureGroup(@Valid FeatureGroupUpdateRequestDto request,
-                                @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                @PathParam("featureGroupId") String featureGroupId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateFeatureGroup(@Valid @RequestBody FeatureGroupUpdateRequestDto request,
+                                @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                @PathVariable("featureGroupId") String featureGroupId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{featureGroupId}")
+    @GetMapping("/{featureGroupId}")
     @Operation(description = "Get vendor feature group", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = FeatureGroupModelDto.class))))
-    Response getFeatureGroup(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                             @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                             @PathParam("featureGroupId") String featureGroupId,
-                             @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getFeatureGroup(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                             @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                             @PathVariable("featureGroupId") String featureGroupId,
+                             @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{featureGroupId}")
+    @DeleteMapping("/{featureGroupId}")
     @Operation(description = "Delete vendor feature group")
-    Response deleteFeatureGroup(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                @PathParam("featureGroupId") String featureGroupId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteFeatureGroup(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                @PathVariable("featureGroupId") String featureGroupId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

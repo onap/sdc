@@ -73,7 +73,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <org.json.version>20220320</org.json.version>
-
+    
     <commons.collections.version>4.3</commons.collections.version>
     <ws.rs.version>2.1.6</ws.rs.version>
     <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -278,7 +278,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <artifactId>swagger-maven-plugin</artifactId>
         <version>${swagger-core-mvn-plugin.version}</version>
       </dependency>
-    </dependencies>
+    </dependencies>  
   </dependencyManagement>
 
   <dependencies>

@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.ws.rs.core.Response;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultExceptionMapperTest {
@@ -50,9 +50,8 @@ class DefaultExceptionMapperTest {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         ErrorCode errorCode = new ErrorCodeBuilder().withId("VSP_NOT_FOUND").withCategory(ErrorCategory.APPLICATION).build();
         CoreException exception = new CoreException(errorCode);
-        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
-            assertEquals(404, response.getStatus());
-        }
+        ResponseEntity<ErrorCode> response = defaultExceptionMapper.handleCoreException(exception);
+            assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
@@ -62,26 +61,24 @@ class DefaultExceptionMapperTest {
         Set<ConstraintViolation<String>> violations = new HashSet<>();
         violations.add(constraintViolation);
         ConstraintViolationException exception = new ConstraintViolationException(TEST_MESSAGE, violations);
-        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
-            assertEquals(417, response.getStatus());
-        }
+        ResponseEntity<ErrorCode> response = defaultExceptionMapper.handleConstraintViolationException(exception);
+            assertEquals(417, response.getStatusCodeValue());
     }
 
     @Test
     void shouldMapJsonMappingExceptionToResponse() {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         JsonMappingException exception = new JsonMappingException(TEST_MESSAGE);
-        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
-            assertEquals(417, response.getStatus());
-        }
+        ResponseEntity response = defaultExceptionMapper.handleJsonMappingException(exception);
+            assertEquals(417, response.getStatusCodeValue());
     }
 
     @Test
     void shouldMapOtherExceptionToResponse() {
         DefaultExceptionMapper defaultExceptionMapper = new DefaultExceptionMapper();
         Exception exception = new Exception(TEST_MESSAGE);
-        try (final Response response = defaultExceptionMapper.toResponse(exception)) {
-            assertEquals(500, response.getStatus());
-        }
+        ResponseEntity<ErrorCode> response = defaultExceptionMapper.handleException(exception);
+            assertEquals(500, response.getStatusCodeValue());
+
     }
 }

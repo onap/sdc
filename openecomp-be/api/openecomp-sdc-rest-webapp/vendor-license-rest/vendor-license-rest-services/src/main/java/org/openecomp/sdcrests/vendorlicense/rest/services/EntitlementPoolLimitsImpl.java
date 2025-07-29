@@ -19,9 +19,6 @@
  */
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import java.util.Collection;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
@@ -36,18 +33,23 @@ import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Named;
+import java.util.Collection;
+
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("entitlementPoolLimits")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
 
     private static final String PARENT = "EntitlementPool";
     private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
 
     @Override
-    public Response createLimit(LimitRequestDto request, String vlmId, String versionId, String entitlementPoolId, String user) {
+    public ResponseEntity createLimit(LimitRequestDto request, String vlmId, String versionId, String entitlementPoolId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
         LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
@@ -58,11 +60,11 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
         LimitEntity createdLimit = vendorLicenseManager.createLimit(limitEntity);
         MapLimitEntityToLimitCreationDto mapper = new MapLimitEntityToLimitCreationDto();
         LimitCreationDto createdLimitDto = mapper.applyMapping(createdLimit, LimitCreationDto.class);
-        return Response.ok(createdLimitDto != null ? createdLimitDto : null).build();
+        return ResponseEntity.ok(createdLimitDto != null ? createdLimitDto : null);
     }
 
     @Override
-    public Response listLimits(String vlmId, String versionId, String entitlementPoolId, String user) {
+    public ResponseEntity listLimits(String vlmId, String versionId, String entitlementPoolId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
         Collection<LimitEntity> limits = vendorLicenseManager.listLimits(vlmId, version, entitlementPoolId);
@@ -71,11 +73,11 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
         for (LimitEntity limit : limits) {
             result.add(outputMapper.applyMapping(limit, LimitEntityDto.class));
         }
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response getLimit(String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
+    public ResponseEntity getLimit(String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
         LimitEntity limitInput = new LimitEntity();
@@ -85,11 +87,11 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
         limitInput.setId(limitId);
         LimitEntity limit = vendorLicenseManager.getLimit(limitInput);
         LimitEntityDto entitlementPoolEntityDto = limit == null ? null : new MapLimitEntityToLimitDto().applyMapping(limit, LimitEntityDto.class);
-        return Response.ok(entitlementPoolEntityDto).build();
+        return ResponseEntity.ok(entitlementPoolEntityDto);
     }
 
     @Override
-    public Response updateLimit(LimitRequestDto request, String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
+    public ResponseEntity updateLimit(LimitRequestDto request, String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
         LimitEntity limitEntity = new MapLimitRequestDtoToLimitEntity().applyMapping(request, LimitEntity.class);
@@ -99,7 +101,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
         limitEntity.setId(limitId);
         limitEntity.setParent(PARENT);
         vendorLicenseManager.updateLimit(limitEntity);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -111,7 +113,7 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
      * @param user              the user
      * @return the response
      */
-    public Response deleteLimit(String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
+    public ResponseEntity deleteLimit(String vlmId, String versionId, String entitlementPoolId, String limitId, String user) {
         Version version = new Version(versionId);
         vendorLicenseManager.getEntitlementPool(new EntitlementPoolEntity(vlmId, version, entitlementPoolId));
         LimitEntity limitInput = new LimitEntity();
@@ -121,6 +123,6 @@ public class EntitlementPoolLimitsImpl implements EntitlementPoolLimits {
         limitInput.setId(limitId);
         limitInput.setParent(PARENT);
         vendorLicenseManager.deleteLimit(limitInput);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }
