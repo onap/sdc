@@ -38,6 +38,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorCreationDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.DeploymentFlavorRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
 
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -106,9 +107,9 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testList() {
-    Response rsp = dfi.list(vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = dfi.list(vspId, versionId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     @SuppressWarnings("unchecked")
     GenericCollectionWrapper<DeploymentFlavorCreationDto> results = (GenericCollectionWrapper<DeploymentFlavorCreationDto>) e;
@@ -123,9 +124,9 @@ public class DeploymentFlavorsImplTest {
     dto.setModel("model");
     dto.setFeatureGroupId("fgi");
 
-    Response rsp = dfi.create(dto, vspId, versionId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = dfi.create(dto, vspId, versionId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       DeploymentFlavorCreationDto responseDto = (DeploymentFlavorCreationDto)e;
@@ -138,32 +139,32 @@ public class DeploymentFlavorsImplTest {
 
   @Test
   public void testDelete() {
-    Response rsp = dfi.delete(vspId, versionId, deploymentFlavorId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = dfi.delete(vspId, versionId, deploymentFlavorId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 
   @Test
   public void testGet() {
-    Response rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
   }
 
   @Test
   public void testGetSchema() {
-    Response rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = dfi.get(vspId, versionId, deploymentFlavorId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
   }
 
   @Test
   public void testUpdate() {
     DeploymentFlavorRequestDto dto = new DeploymentFlavorRequestDto();
-    Response rsp = dfi.update(dto, vspId, versionId, deploymentFlavorId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = dfi.update(dto, vspId, versionId, deploymentFlavorId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 }

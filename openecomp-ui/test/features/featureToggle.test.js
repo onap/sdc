@@ -27,6 +27,8 @@ describe('feature toggle decorator test', () => {
 	Enzyme.configure({ adapter: new Adapter() })
 
 	it('feature on toggle test', () => {
+		Enzyme.configure({ adapter: new Adapter() })
+
 		const featuresList = [FeatureFactory.build({name: 'TEST', active: true})];
 		deepFreeze(featuresList);		
 		const wrapper = mount(<FeatureComponent features={featuresList} featureName='TEST' InnerComponent={() => (<div className='feature'></div>)}/>);		

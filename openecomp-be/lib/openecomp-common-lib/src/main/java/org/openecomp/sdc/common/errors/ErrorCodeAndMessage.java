@@ -19,23 +19,17 @@
  */
 package org.openecomp.sdc.common.errors;
 
-import javax.ws.rs.core.Response;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 /**
  * This class represents an error object to be returned in failed REST instead of just returning one of HTTP fail statuses.
  */
-@Getter
-@Setter
-@NoArgsConstructor
 public class ErrorCodeAndMessage {
 
     /**
      * the HTTP status code.
      */
-    private Response.Status status;
+    private HttpStatus status;
     /**
      * Error code no. if available.
      */
@@ -51,9 +45,33 @@ public class ErrorCodeAndMessage {
      * @param status    the status
      * @param errorCode the error code
      */
-    public ErrorCodeAndMessage(Response.Status status, ErrorCode errorCode) {
+    public ErrorCodeAndMessage(HttpStatus status, ErrorCode errorCode) {
         this.status = status;
         this.message = errorCode.message();
         this.errorCode = errorCode.id();
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

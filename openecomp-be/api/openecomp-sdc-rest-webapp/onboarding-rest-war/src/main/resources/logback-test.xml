@@ -2,10 +2,8 @@
 
     <property name="logDir" value="logs" />
     <property name="componentName" value="SDC" />
-
     <property name="defaultPattern"
               value="%logger|%date{ISO8601,UTC}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{VirtualServerName}|%X{ServiceName}|%X{InstanceUUID}|%.-5level|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ServerFQDN}|%X{RemoteHost}|%X{ClassName}|%X{Timer}| %msg%n" />
-
     <property name="logDirectory" value="${logDir}/${componentName}" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -14,7 +12,10 @@
         </encoder>
     </appender>
 
-    <root level="ERROR">
+    <logger name="org.openecomp" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
 

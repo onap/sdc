@@ -15,34 +15,12 @@
  */
 package org.openecomp.sdcrests.item.rest.services;
 
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import org.keycloak.representations.AccessToken;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
-import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
-import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.util.Multitenancy;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
@@ -54,6 +32,7 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdc.versioning.types.NotificationEventTypes;
+import org.openecomp.sdcrests.errors.ErrorCodeAndMessage;
 import org.openecomp.sdcrests.item.rest.Items;
 import org.openecomp.sdcrests.item.rest.mapping.MapItemToDto;
 import org.openecomp.sdcrests.item.rest.models.SyncEvent;
@@ -63,12 +42,25 @@ import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("items")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Validated
 public class ItemsImpl implements Items {
 
@@ -84,10 +76,12 @@ public class ItemsImpl implements Items {
     }
 
     @Override
-    public Response actOn(final ItemActionRequestDto request, final String itemId, final String user) {
+    public ResponseEntity actOn(final ItemActionRequestDto request, final String itemId, final String user) {
         final var item = getManagersProvider().getItemManager().get(itemId);
         if (item == null) {
-            return Response.status(NOT_FOUND).entity(new Exception("Item does not exist.")).build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)  // 404 Not Found status
+                    .body(new Exception("Item does not exist."));
         }
         final var action = request.getAction();
         switch (action) {
@@ -100,8 +94,10 @@ public class ItemsImpl implements Items {
                     if (artifactStorageManager.isEnabled() && !artifactStorageManager.exists(itemId)) {
                         LOGGER.error("Unable to restore partially deleted item '{}'", itemId);
                         final var errorCode =
-                            new ErrorCodeBuilder().withId(INTERNAL_SERVER_ERROR.name()).withMessage("Unable to restore partially deleted VSP, re-try VSP deletion").build();
-                        return Response.status(INTERNAL_SERVER_ERROR).entity(new ErrorCodeAndMessage(INTERNAL_SERVER_ERROR, errorCode)).build();
+                                new ErrorCode.ErrorCodeBuilder().withId(HttpStatus.INTERNAL_SERVER_ERROR.name()).withMessage("Unable to restore partially deleted VSP, re-try VSP deletion").build();
+                        return ResponseEntity
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR) // 500 Internal Server Error status
+                                .body(new ErrorCodeAndMessage(HttpStatus.INTERNAL_SERVER_ERROR, errorCode));
                     }
                 }
                 getManagersProvider().getItemManager().restore(item);
@@ -114,39 +110,39 @@ public class ItemsImpl implements Items {
         } catch (Exception e) {
             LOGGER.error("Failed to send catalog notification on item {}", itemId, e);
         }
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter, String permissionFilter,
+    public ResponseEntity list(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter, String permissionFilter,
                          String onboardingMethodFilter, String user, HttpServletRequest hreq) {
         Predicate<Item> itemPredicate = createItemPredicate(itemStatusFilter, versionStatusFilter, itemTypeFilter, onboardingMethodFilter,
-            permissionFilter, user);
+                permissionFilter, user);
         GenericCollectionWrapper<ItemDto> results = new GenericCollectionWrapper<>();
         MapItemToDto mapper = new MapItemToDto();
         Multitenancy keyaccess= new Multitenancy();
         if (keyaccess.multiTenancyCheck()) {
             AccessToken.Access realmAccess = keyaccess.getAccessToken(hreq).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
-        realmroles.stream().forEach(role ->  getManagersProvider().getItemManager().list(itemPredicate).stream()
-                .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
-                .filter(item -> item.getTenant().contains(role))
-                .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
-            return Response.ok(results).build();
+            realmroles.stream().forEach(role ->  getManagersProvider().getItemManager().list(itemPredicate).stream()
+                    .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
+                    .filter(item -> item.getTenant().contains(role))
+                    .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class))));
+            return ResponseEntity.ok(results);
         }
         else{
             getManagersProvider().getItemManager().list(itemPredicate).stream()
                     .sorted((o1, o2) -> o2.getModificationTime().compareTo(o1.getModificationTime()))
                     .forEach(item -> results.add(mapper.applyMapping(item, ItemDto.class)));
-            return Response.ok(results).build();
+            return ResponseEntity.ok(results);
         }
     }
 
     @Override
-    public Response getItem(String itemId, String user) {
+    public ResponseEntity getItem(String itemId, String user) {
         Item item = getManagersProvider().getItemManager().get(itemId);
         ItemDto itemDto = new MapItemToDto().applyMapping(item, ItemDto.class);
-        return Response.ok(itemDto).build();
+        return ResponseEntity.ok(itemDto);
     }
 
     private Predicate<Item> createItemPredicate(String itemStatusFilter, String versionStatusFilter, String itemTypeFilter,
@@ -194,7 +190,7 @@ public class ItemsImpl implements Items {
 
     private Predicate<Item> createOnboardingMethodPredicate(String filterValue) {
         return item -> !ItemType.vsp.name().equals(item.getType()) || ((String) item.getProperties().get(ONBOARDING_METHOD))
-            .matches(formatFilter(filterValue));
+                .matches(formatFilter(filterValue));
     }
 
     private Predicate<Item> createPermissionsPredicate(String user, String filterValue) {
@@ -280,7 +276,7 @@ public class ItemsImpl implements Items {
         private void execute(Item item, String user) {
             notifyUsers(item.getId(), item.getName(), user, this.notificationType);
             getManagersProvider().getActivityLogManager()
-                .logActivity(new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true, "", ""));
+                    .logActivity(new ActivityLogEntity(item.getId(), getLatestVersion(item.getId()), this.activityType, user, true, "", ""));
         }
 
         private void notifyUsers(String itemId, String itemName, String userName, NotificationEventTypes eventType) {

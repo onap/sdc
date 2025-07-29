@@ -25,6 +25,17 @@ import org.openecomp.sdc.versioning.types.VersionCreationMethod;
 
 @Data
 public class VersionRequestDto {
+    public String getDescription() {
+        return description;
+    }
+
+    public VersionCreationMethod getCreationMethod() {
+        return creationMethod;
+    }
+
+    public void setCreationMethod(VersionCreationMethod creationMethod) {
+        this.creationMethod = creationMethod;
+    }
 
     private String description;
     private VersionCreationMethod creationMethod;

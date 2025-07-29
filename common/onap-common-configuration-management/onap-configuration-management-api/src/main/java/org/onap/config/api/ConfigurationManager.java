@@ -15,9 +15,12 @@
  */
 package org.onap.config.api;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 import java.util.Map;
 
+@Component
 public interface ConfigurationManager extends Configuration {
 
     Configuration CONFIG = ConfigurationLoader.load();

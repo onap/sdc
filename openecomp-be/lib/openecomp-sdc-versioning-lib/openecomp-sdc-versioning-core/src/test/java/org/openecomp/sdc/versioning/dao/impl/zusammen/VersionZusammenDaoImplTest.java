@@ -51,7 +51,7 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 public class VersionZusammenDaoImplTest {
 
-  private static final String USER = "user1";
+  private static final String USER = "onboarding";
   private static final String tenant = "dox";
   @Mock
   private ZusammenAdaptor zusammenAdaptorMock;

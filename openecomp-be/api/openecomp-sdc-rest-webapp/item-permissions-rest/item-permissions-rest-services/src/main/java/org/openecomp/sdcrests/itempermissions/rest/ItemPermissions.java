@@ -19,9 +19,6 @@
  */
 package org.openecomp.sdcrests.itempermissions.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,40 +26,34 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsDto;
 import org.openecomp.sdcrests.itempermissions.types.ItemPermissionsRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 /**
  * Created by ayalaben on 6/18/2017.
  */
-@Path("/v1.0/items/{itemId}/permissions")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/items/{itemId}/permissions")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Item Permissions")})
 @Validated
 public interface ItemPermissions {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     @Operation(description = "List users permissions assigned on item", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = ItemPermissionsDto.class)))))
-    Response list(@PathParam("itemId") String itemId, @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity list(@PathVariable("itemId") String itemId, @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{permission}")
+    @PutMapping("/{permission}")
     @Operation(description = "Update useres permission on item")
-    Response updatePermissions(@Valid ItemPermissionsRequestDto request, @PathParam("itemId") String itemId,
-                               @PathParam("permission") String permission,
-                               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updatePermissions(@Valid @RequestBody ItemPermissionsRequestDto request, @PathVariable("itemId") String itemId,
+                               @PathVariable("permission") String permission,
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

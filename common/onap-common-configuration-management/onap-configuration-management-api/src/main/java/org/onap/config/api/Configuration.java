@@ -15,11 +15,14 @@
  */
 package org.onap.config.api;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public interface Configuration {
 
     ThreadLocal<String> TENANT = new ThreadLocal<>();

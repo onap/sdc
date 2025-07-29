@@ -27,48 +27,37 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdcrests.common.RestConstants;
 import org.openecomp.sdcrests.conflict.types.ConflictDto;
 import org.openecomp.sdcrests.conflict.types.ConflictResolutionDto;
 import org.openecomp.sdcrests.conflict.types.ItemVersionConflictDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/items/{itemId}/versions/{versionId}/conflicts")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/items/{itemId}/versions/{versionId}/conflicts")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Item Version Conflicts")})
 @Validated
 public interface Conflicts {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     @Operation(description = "item version conflicts", summary = "Item version private copy conflicts against its public copy", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ItemVersionConflictDto.class))))
-    Response getConflict(@Parameter(description = "Item Id") @PathParam("itemId") String itemId,
-                         @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                         @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getConflict(@Parameter(description = "Item Id") @PathVariable("itemId") String itemId,
+                               @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                               @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @RequestHeader(RestConstants.USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{conflictId}")
+    @GetMapping("/{conflictId}")
     @Operation(description = "Gets item version conflict", summary = "Gets an item version private copy conflict against its public copy", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = ConflictDto.class))))
-    Response getConflict(@Parameter(description = "Item Id") @PathParam("itemId") String itemId,
-                         @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Version Id") @PathParam("conflictId") String conflictId,
-                         @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getConflict(@Parameter(description = "Item Id") @PathVariable("itemId") String itemId,
+                         @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                         @Parameter(description = "Version Id") @PathVariable("conflictId") String conflictId,
+                         @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @RequestHeader(RestConstants.USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{conflictId}")
+    @PutMapping("/{conflictId}")
     @Operation(description = "Resolves item version conflict", summary = "Resolves an item version private copy conflict against its public copy")
-    Response resolveConflict(ConflictResolutionDto conflictResolution, @Parameter(description = "Item Id") @PathParam("itemId") String itemId,
-                             @Parameter(description = "Version Id") @PathParam("versionId") String versionId,
-                             @Parameter(description = "Version Id") @PathParam("conflictId") String conflictId,
-                             @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @HeaderParam(RestConstants.USER_ID_HEADER_PARAM) String user);
+    ResponseEntity resolveConflict(@RequestBody ConflictResolutionDto conflictResolution, @Parameter(description = "Item Id") @PathVariable("itemId") String itemId,
+                             @Parameter(description = "Version Id") @PathVariable("versionId") String versionId,
+                             @Parameter(description = "Version Id") @PathVariable("conflictId") String conflictId,
+                             @NotNull(message = RestConstants.USER_MISSING_ERROR_MSG) @RequestHeader(RestConstants.USER_ID_HEADER_PARAM) String user);
 }
