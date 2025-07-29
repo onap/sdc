@@ -106,6 +106,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41e66249_adb07843",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-29T07:45:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5041d766_994d7f1e",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8699101_2944f70b",
@@ -141,6 +159,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b23c6b7e_1d08897c",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-29T07:45:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1b9e0c09_3c86b97c",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9843ddf7_9e32a191",
@@ -172,6 +208,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "9843ddf7_9e32a191",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "30f1ec01_ffc3ec1d",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-07-29T07:45:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da13aecd_7a68e47f",
       "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
