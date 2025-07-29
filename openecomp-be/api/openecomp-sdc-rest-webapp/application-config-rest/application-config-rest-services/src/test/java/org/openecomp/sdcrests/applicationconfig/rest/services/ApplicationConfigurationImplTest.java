@@ -29,7 +29,13 @@ import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
 import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -38,6 +44,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -57,18 +64,21 @@ public class ApplicationConfigurationImplTest {
     }
 
     @Test
-    public void validateInsertInToTableCallsManagerFunctionWithValidParameters() {
+    public void validateInsertInToTableCallsManagerFunctionWithValidParameters() throws Exception {
 
         final String testNamespace = "namespace";
         final String testKey = "key";
         final String testValue = "testingValue";
-        final InputStream testInput = new ByteArrayInputStream(testValue.getBytes());
 
-        Response response = applicationConfiguration.insertToTable(testNamespace, testKey, testInput);
+        MultipartFile mockFile = mock(MultipartFile.class);
+        when(mockFile.getBytes()).thenReturn(testValue.getBytes());
 
-        assertEquals(response.getStatus(), HttpStatus.OK.value());
-        verify(applicationConfigManager).insertIntoTable(eq(testNamespace),eq(testKey),eq(testValue));
+        ResponseEntity response = applicationConfiguration.insertToTable(testNamespace, testKey, mockFile);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
+        verify(applicationConfigManager).insertIntoTable(eq(testNamespace), eq(testKey), eq(testValue));
     }
+
 
     @Test
     public void validateGetFromTableReturnsValidObject() {
@@ -79,10 +89,10 @@ public class ApplicationConfigurationImplTest {
 
         when(applicationConfigManager.getFromTable(eq(testNamespace),eq(testKey))).thenReturn(testValue);
 
-        Response response = applicationConfiguration.getFromTable(testNamespace, testKey);
+        ResponseEntity response = applicationConfiguration.getFromTable(testNamespace, testKey);
 
-        assertEquals(response.getEntity().getClass(), ConfigurationDataDto.class);
-        assertEquals(((ConfigurationDataDto)response.getEntity()).getValue(),testValue.getValue());
+        assertEquals(response.getBody().getClass(), ConfigurationDataDto.class);
+        assertEquals(((ConfigurationDataDto)response.getBody()).getValue(),testValue.getValue());
     }
 
 
@@ -103,19 +113,20 @@ public class ApplicationConfigurationImplTest {
         when(applicationConfigManager.getListOfConfigurationByNamespace(eq(testNamespace)))
                 .thenReturn(testApplicationConfigEntities);
 
-        Response response = applicationConfiguration.getListOfConfigurationByNamespaceFromTable(testNamespace);
+       ResponseEntity response = applicationConfiguration.getListOfConfigurationByNamespaceFromTable(testNamespace);
 
-        assertEquals(response.getEntity().getClass(), GenericCollectionWrapper.class);
+        assertEquals(response.getBody().getClass(), GenericCollectionWrapper.class);
         assertEquals(
-                ((GenericCollectionWrapper)response.getEntity()).getResults().size(),
+                ((GenericCollectionWrapper)response.getBody()).getResults().size(),
                 testApplicationConfigEntities.size()
         );
+
         assertEquals(
-                ((ApplicationConfigDto)response.readEntity(GenericCollectionWrapper.class).getResults().get(0)).getValue(),
+                (((GenericCollectionWrapper<ApplicationConfigDto>) response.getBody()).getResults().get(0).getValue()),
                 testApplicationConfigEntities.get(0).getValue()
         );
         assertEquals(
-                ((ApplicationConfigDto)response.readEntity(GenericCollectionWrapper.class).getResults().get(1)).getValue(),
+                (((GenericCollectionWrapper<ApplicationConfigDto>) response.getBody()).getResults().get(1)).getValue(),
                 testApplicationConfigEntities.get(1).getValue()
         );
     }

@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * This class is for Internal use only. Please don't use this class.
  */
-@JsonAutoDetect
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class InternalEmptyObject implements Serializable {
 
 }

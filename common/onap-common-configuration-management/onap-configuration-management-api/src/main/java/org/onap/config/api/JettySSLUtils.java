@@ -31,8 +31,10 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class JettySSLUtils {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(JettySSLUtils.class);

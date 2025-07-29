@@ -24,34 +24,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.springframework.validation.annotation.Validated;
 
-@Path("/v1.0/unique-types")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+@RestController
+@RequestMapping("/v1.0/unique-types")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Unique Types")})
 @Validated
 public interface UniqueTypes {
 
-    @GET
-    @Path("/")
+    @GetMapping("/")
     @Operation(description = "Lists unique value types")
-    Response listUniqueTypes(@NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity<GenericCollectionWrapper<String>> listUniqueTypes(@NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{type}/values/{value}")
+    @GetMapping("/{type}/values/{value}")
     @Operation(description = "Gets unique value")
     @ApiResponse(responseCode = "200", description = "Indication whether the unique value is occupied")
     @ApiResponse(responseCode = "404", description = "Unsupported unique type")
-    Response getUniqueValue(@Parameter(description = "The unique value type, for example: 'VlmName'") @PathParam("type") String type,
-                            @Parameter(description = "The unique value") @PathParam("value") String value,
-                            @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getUniqueValue(@Parameter(description = "The unique value type, for example: 'VlmName'") @PathVariable("type") String type,
+                            @Parameter(description = "The unique value") @PathVariable("value") String value,
+                            @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

@@ -17,33 +17,33 @@ package org.openecomp.sdcrests.togglz.rest.services;
 
 import java.util.Arrays;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.togglz.ToggleableFeature;
 import org.openecomp.sdcrests.togglz.rest.TogglzFeatures;
 import org.openecomp.sdcrests.togglz.rest.mapping.MapToggleableFeatureToDto;
 import org.openecomp.sdcrests.togglz.types.FeatureDto;
 import org.openecomp.sdcrests.togglz.types.FeatureSetDto;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.togglz.core.Feature;
 import org.togglz.core.context.FeatureContext;
 import org.togglz.core.repository.FeatureState;
 import org.togglz.core.util.NamedFeature;
-
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("TogglzFeature")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TogglzFeaturesImpl implements TogglzFeatures {
 
-    @Override
-    public Response getFeatures() {
+   // @Override
+    public ResponseEntity getFeatures() {
         FeatureSetDto featureSetDto = new FeatureSetDto();
         new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
-        return Response.ok(featureSetDto).build();
+        return ResponseEntity.ok(featureSetDto);
     }
 
-    @Override
-    public Response setAllFeatures(boolean active) {
+   // @Override
+    public ResponseEntity setAllFeatures(boolean active) {
         FeatureSetDto featureSetDto = new FeatureSetDto();
         new MapToggleableFeatureToDto().doMapping(Arrays.asList(ToggleableFeature.values()), featureSetDto);
         featureSetDto.getFeatures().forEach(featureDto -> {
@@ -51,21 +51,21 @@ public class TogglzFeaturesImpl implements TogglzFeatures {
             FeatureState featureState = new FeatureState(feature, active);
             FeatureContext.getFeatureManager().setFeatureState(featureState);
         });
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @Override
-    public Response setFeatureState(String featureName, boolean active) {
+   // @Override
+    public ResponseEntity setFeatureState(String featureName, boolean active) {
         Feature feature = new NamedFeature(featureName);
         FeatureState featureState = new FeatureState(feature, active);
         FeatureContext.getFeatureManager().setFeatureState(featureState);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @Override
-    public Response getFeatureState(String featureName) {
+   // @Override
+    public ResponseEntity getFeatureState(String featureName) {
         boolean active = ToggleableFeature.valueOf(featureName).isActive();
         FeatureDto featureDto = new FeatureDto(featureName, active);
-        return Response.ok(featureDto).build();
+        return ResponseEntity.ok(featureDto);
     }
 }

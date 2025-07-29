@@ -16,86 +16,63 @@
 
 package org.openecomp.sdcrests.externaltesting.rest;
 
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.core.externaltesting.api.ClientConfiguration;
 import org.openecomp.core.externaltesting.api.RemoteTestingEndpointDefinition;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
-@Path("/v1.0/externaltesting")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/v1.0/externaltesting")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "External-Testing")})
 @Validated
 
 public interface ExternalTesting {
 
-    @GET
-    @Path("/config")
-    Response getConfig();
+    @GetMapping("/config")
+    ResponseEntity getConfig();
 
-    @PUT
-    @Path("/config")
-    Response setConfig(ClientConfiguration config);
+    @PutMapping("/config")
+    ResponseEntity setConfig(ClientConfiguration config);
 
-    @GET
-    @Path("/testcasetree")
-    Response getTestCasesAsTree();
+    @GetMapping("/testcasetree")
+    ResponseEntity getTestCasesAsTree();
 
-    @GET
-    @Path("/endpoints")
-    Response getEndpoints();
+    @GetMapping("/endpoints")
+    ResponseEntity getEndpoints();
 
-    @PUT
-    @Path("/endpoints")
-    Response setEndpoints(List<RemoteTestingEndpointDefinition> endpoints);
+    @PutMapping("/endpoints")
+    ResponseEntity setEndpoints(@RequestBody List<RemoteTestingEndpointDefinition> endpoints);
 
-    @GET
-    @Path("/endpoints/{endpointId}/scenarios")
-    Response getScenarios(@PathParam("endpointId") String endpointId);
+    @GetMapping("/endpoints/{endpointId}/scenarios")
+    ResponseEntity getScenarios(@PathVariable("endpointId") String endpointId);
 
-    @GET
-    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites")
-    Response getTestsuites(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario);
+    @GetMapping("/endpoints/{endpointId}/scenarios/{scenario}/testsuites")
+    ResponseEntity getTestsuites(@PathVariable("endpointId") String endpointId, @PathVariable("scenario") String scenario);
 
-    @GET
-    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testcases")
-    Response getTestcases(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario);
+    @GetMapping("/endpoints/{endpointId}/scenarios/{scenario}/testcases")
+    ResponseEntity getTestcases(@PathVariable("endpointId") String endpointId, @PathVariable("scenario") String scenario);
 
-    @GET
-    @Path("/endpoints/{endpointId}/scenarios/{scenario}/testsuites/{testsuite}/testcases/{testcase}")
-    Response getTestcase(@PathParam("endpointId") String endpointId, @PathParam("scenario") String scenario,
-            @PathParam("testsuite") String testsuite, @PathParam("testcase") String testcase);
+    @GetMapping("/endpoints/{endpointId}/scenarios/{scenario}/testsuites/{testsuite}/testcases/{testcase}")
+    ResponseEntity getTestcase(@PathVariable("endpointId") String endpointId, @PathVariable("scenario") String scenario,
+                               @PathVariable("testsuite") String testsuite, @PathVariable("testcase") String testcase);
 
-    @POST
-    @Path("/endpoints/{endpointId}/executions/{executionId}")
-    Response getExecution(@PathParam("endpointId") String endpointId, @PathParam("executionId") String executionId);
+    @PostMapping("/endpoints/{endpointId}/executions/{executionId}")
+    ResponseEntity getExecution(@PathVariable("endpointId") String endpointId, @PathVariable("executionId") String executionId);
 
 
-    @POST
-    @Path("/executions")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response execute(@QueryParam("vspId") String vspId, @QueryParam("vspVersionId") String vspVersionId,
-            @QueryParam("requestId") String requestId,
-            @Multipart(value = "files", required = false) List<Attachment> files,
-            @Multipart(value = "testdata", required = false) String testData);
+    @PostMapping(value = "/executions", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity execute(@RequestParam("vspId") String vspId, @RequestParam("vspVersionId") String vspVersionId,
+                           @RequestParam("requestId") String requestId,
+                           @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                           @RequestPart(value = "testdata", required = false) String testData);
 
-    @GET
-    @Path("/executions")
-    Response getValidationResult(@QueryParam("requestId") String requestId,
-            @QueryParam("endPoint") List<String> endPoints);
+    @GetMapping("/executions")
+    ResponseEntity getValidationResult(@RequestParam("requestId") String requestId,
+                                       @RequestParam("endPoint") List<String> endPoints);
 }

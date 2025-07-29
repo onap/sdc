@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +38,7 @@ import org.openecomp.core.externaltesting.api.VtpTestExecutionRequest;
 import org.openecomp.core.externaltesting.api.VtpTestExecutionResponse;
 import org.openecomp.core.externaltesting.errors.ExternalTestingException;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.springframework.http.ResponseEntity;
 
 
 public class ApiTest {
@@ -145,7 +145,7 @@ public class ApiTest {
 
         @Override
         public List<VtpTestExecutionResponse> execute(List<VtpTestExecutionRequest> requests, String vspId,
-                String vspVersionId, String requestId, Map<String, byte[]> fileMap) {
+                                                      String vspVersionId, String requestId, Map<String, byte[]> fileMap) {
 
             throw new ExternalTestingException(EXPECTED, 500, EXPECTED);
         }
@@ -172,11 +172,11 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response getResponse = testingF.getConfig();
-        Assert.assertEquals(500, getResponse.getStatus());
+        ResponseEntity getResponse = testingF.getConfig();
+        Assert.assertEquals(500, getResponse.getStatusCodeValue());
 
-        Response setResponse = testingF.setConfig(new ClientConfiguration());
-        Assert.assertEquals(500, setResponse.getStatus());
+        ResponseEntity setResponse = testingF.setConfig(new ClientConfiguration());
+        Assert.assertEquals(500, setResponse.getStatusCodeValue());
     }
 
     /**
@@ -189,11 +189,11 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response getResponse = testingF.getEndpoints();
-        Assert.assertEquals(500, getResponse.getStatus());
+        ResponseEntity getResponse = testingF.getEndpoints();
+        Assert.assertEquals(500, getResponse.getStatusCodeValue());
 
-        Response setResponse = testingF.setEndpoints(new ArrayList<>());
-        Assert.assertEquals(500, setResponse.getStatus());
+        ResponseEntity setResponse = testingF.setEndpoints(new ArrayList<>());
+        Assert.assertEquals(500, setResponse.getStatusCodeValue());
     }
 
     /**
@@ -206,11 +206,11 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response invokeResponse = testingF.execute("vspId", "vspVersionId", "abc", null, "[]");
-        Assert.assertEquals(500, invokeResponse.getStatus());
+        ResponseEntity invokeResponse = testingF.execute("vspId", "vspVersionId", "abc", null, "[]");
+        Assert.assertEquals(500, invokeResponse.getStatusCodeValue());
 
-        Response getResponse = testingF.getExecution(EP, EXEC);
-        Assert.assertEquals(500, getResponse.getStatus());
+        ResponseEntity getResponse = testingF.getExecution(EP, EXEC);
+        Assert.assertEquals(500, getResponse.getStatusCodeValue());
     }
 
 
@@ -225,8 +225,8 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response response = testingF.getScenarios(EP);
-        Assert.assertEquals(500, response.getStatus());
+        ResponseEntity response = testingF.getScenarios(EP);
+        Assert.assertEquals(500, response.getStatusCodeValue());
     }
 
     /**
@@ -240,8 +240,8 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response response = testingF.getTestcase(EP, SC, TS, TC);
-        Assert.assertEquals(500, response.getStatus());
+        ResponseEntity response = testingF.getTestcase(EP, SC, TS, TC);
+        Assert.assertEquals(500, response.getStatusCodeValue());
     }
 
     /**
@@ -255,8 +255,8 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response response = testingF.getTestcases(EP, SC);
-        Assert.assertEquals(500, response.getStatus());
+        ResponseEntity response = testingF.getTestcases(EP, SC);
+        Assert.assertEquals(500, response.getStatusCodeValue());
     }
 
     /**
@@ -270,8 +270,8 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response response = testingF.getTestsuites(EP, SC);
-        Assert.assertEquals(500, response.getStatus());
+        ResponseEntity response = testingF.getTestsuites(EP, SC);
+        Assert.assertEquals(500, response.getStatusCodeValue());
     }
 
     /**
@@ -285,7 +285,7 @@ public class ApiTest {
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
 
-        Response response = testingF.getTestCasesAsTree();
-        Assert.assertEquals(500, response.getStatus());
+        ResponseEntity response = testingF.getTestCasesAsTree();
+        Assert.assertEquals(500, response.getStatusCodeValue());
     }
 }

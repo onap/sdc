@@ -41,12 +41,11 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
 
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
@@ -120,9 +119,9 @@ public class NicsImplTest {
   @Test
   public void testList() {
 
-    Response rsp = bean.list(vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = bean.list(vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     @SuppressWarnings("unchecked")
     GenericCollectionWrapper<NicDto> results = (GenericCollectionWrapper<NicDto>)e;
@@ -140,9 +139,9 @@ public class NicsImplTest {
     dto.setNetworkId(nicId);
     dto.setNetworkType("External");
 
-    Response rsp = bean.create(dto, vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = bean.create(dto, vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       NicCreationResponseDto creationDto = (NicCreationResponseDto)e;
@@ -155,17 +154,17 @@ public class NicsImplTest {
 
   @Test
   public void testDelete() {
-    Response rsp = bean.delete(vspId, versionId, componentId, nicId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = bean.delete(vspId, versionId, componentId, nicId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 
   @Test
   public void testGet() {
-    Response rsp = bean.get(vspId, versionId, componentId, nicId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = bean.get(vspId, versionId, componentId, nicId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
   }
 
   @Test
@@ -177,17 +176,17 @@ public class NicsImplTest {
     dto.setNetworkId(nicId);
     dto.setNetworkType("External");
 
-    Response rsp = bean.update(dto, vspId, versionId, componentId, nicId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = bean.update(dto, vspId, versionId, componentId, nicId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
   @Test
   public void testGetQuestionaire() {
-    Response rsp = bean.getQuestionnaire(vspId, versionId, componentId, nicId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+    ResponseEntity rsp = bean.getQuestionnaire(vspId, versionId, componentId, nicId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
     try {
-      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getEntity();
+      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getBody();
       Assert.assertEquals("helloworld", dto.getData());
     }
     catch (Exception ex) {
@@ -199,8 +198,8 @@ public class NicsImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    Response rsp = bean.updateQuestionnaire("helloworld", vspId, versionId, componentId, nicId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = bean.updateQuestionnaire("helloworld", vspId, versionId, componentId, nicId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 }

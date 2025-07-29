@@ -43,12 +43,11 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ImageRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
+import org.springframework.http.ResponseEntity;
 
-import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
@@ -128,9 +127,9 @@ public class ImagesImplTest {
   @Test
   public void testList() {
 
-    Response rsp = ii.list(vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = ii.list(vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     @SuppressWarnings("unchecked")
     GenericCollectionWrapper<ImageDto> results = (GenericCollectionWrapper<ImageDto>)e;
@@ -145,9 +144,9 @@ public class ImagesImplTest {
     dto.setDescription("hello");
     dto.setFileName("name");
 
-    Response rsp = ii.create(dto, vspId, versionId, componentId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Object e = rsp.getEntity();
+    ResponseEntity rsp = ii.create(dto, vspId, versionId, componentId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Object e = rsp.getBody();
     Assert.assertNotNull(e);
     try {
       ImageCreationDto creationDto = (ImageCreationDto)e;
@@ -160,33 +159,33 @@ public class ImagesImplTest {
 
   @Test
   public void testDelete() {
-    Response rsp = ii.delete(vspId, versionId, componentId, imageId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ii.delete(vspId, versionId, componentId, imageId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
 
   @Test
   public void testGet() {
-    Response rsp = ii.get(vspId, versionId, componentId, imageId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNotNull(rsp.getEntity());
+    ResponseEntity rsp = ii.get(vspId, versionId, componentId, imageId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNotNull(rsp.getBody());
   }
 
   @Test
   public void testUpdate() {
     ImageRequestDto dto = new ImageRequestDto();
-    Response rsp = ii.update(dto, vspId, versionId, componentId, imageId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ii.update(dto, vspId, versionId, componentId, imageId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 
   @Test
   public void testGetQuestionaire() {
-    Response rsp = ii.getQuestionnaire(vspId, versionId, componentId, imageId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
+    ResponseEntity rsp = ii.getQuestionnaire(vspId, versionId, componentId, imageId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
     try {
-      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getEntity();
+      QuestionnaireResponseDto dto = (QuestionnaireResponseDto)rsp.getBody();
       Assert.assertEquals("helloworld", dto.getData());
     }
     catch (Exception ex) {
@@ -198,8 +197,8 @@ public class ImagesImplTest {
 
   @Test
   public void testUpdateQuestionaire() {
-    Response rsp = ii.updateQuestionnaire("helloworld", vspId, versionId, componentId, imageId, user);
-    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatus());
-    Assert.assertNull(rsp.getEntity());
+    ResponseEntity rsp = ii.updateQuestionnaire("helloworld", vspId, versionId, componentId, imageId, user);
+    Assert.assertEquals("Response should be 200", HttpStatus.SC_OK, rsp.getStatusCodeValue());
+    Assert.assertNull(rsp.getBody());
   }
 }
