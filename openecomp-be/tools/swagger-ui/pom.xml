@@ -4,6 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api-docs</artifactId>
     <groupId>org.openecomp.sdc.onboarding</groupId>
+    <packaging>war</packaging>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>

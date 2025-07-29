@@ -35,7 +35,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 import static org.openecomp.sdc.common.errors.Messages.DELETE_VSP_FROM_STORAGE_ERROR;
-
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -43,7 +42,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +70,7 @@ import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
 import org.openecomp.sdcrests.vsp.rest.exception.VendorSoftwareProductsExceptionSupplier;
+import org.springframework.http.ResponseEntity;
 
 class VendorSoftwareProductsImplTest {
 
@@ -124,17 +123,17 @@ class VendorSoftwareProductsImplTest {
     @Test
     void deleteNotCertifiedVspOk() {
         when(itemManager.list(any())).thenReturn(List.of(item));
-        Response actualResponse = vendorSoftwareProducts.deleteVsp(vspId, user);
-        assertEquals(HttpStatus.SC_OK, actualResponse.getStatus());
-        assertNull(actualResponse.getEntity());
+        ResponseEntity actualResponse = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, actualResponse.getStatusCodeValue());
+        assertNull(actualResponse.getBody());
     }
 
     @Test
     void deleteVspWithS3Ok() {
         when(artifactStorageManager.isEnabled()).thenReturn(true);
-        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
-        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
-        assertNull(rsp.getEntity());
+        ResponseEntity rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        assertNull(rsp.getBody());
     }
 
     @Test
@@ -164,9 +163,9 @@ class VendorSoftwareProductsImplTest {
         item.addVersionStatus(VersionStatus.Certified);
         when(itemManager.get(vspId)).thenReturn(item);
         when(itemManager.list(any())).thenReturn(List.of(item));
-        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
-        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
-        assertNull(rsp.getEntity());
+        ResponseEntity rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        assertNull(rsp.getBody());
     }
 
     @Test
@@ -205,9 +204,9 @@ class VendorSoftwareProductsImplTest {
         vspDetails.setSubCategory("sub");
         when(vendorSoftwareProductManager.getVsp(vspId, version1)).thenReturn(vspDetails);
         when(itemManager.list(any())).thenReturn(List.of(item));
-        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
-        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
-        assertNull(rsp.getEntity());
+        ResponseEntity rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        assertNull(rsp.getBody());
 
         final ArgumentCaptor<ActivityLogEntity> logActivityArgument = ArgumentCaptor.forClass(ActivityLogEntity.class);
         verify(activityLogManager, times(2)).logActivity(logActivityArgument.capture());
@@ -297,9 +296,9 @@ class VendorSoftwareProductsImplTest {
         when(itemManager.get(vspId)).thenReturn(item);
         when(itemManager.list(any())).thenReturn(List.of(item));
         when(catalogVspClient.findNameOfVfUsingVsp(vspId, user)).thenReturn(Optional.empty());
-        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
-        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
-        assertNull(rsp.getEntity());
+        ResponseEntity rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatusCodeValue());
+        assertNull(rsp.getBody());
     }
 
     private String getConfigPath(String classpathFile) throws FileNotFoundException {

@@ -35,12 +35,14 @@ import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("licenseKeyGroups")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Validated
 public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
 
@@ -54,13 +56,13 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
      * @param user      the user
      * @return the response
      */
-    public Response listLicenseKeyGroups(String vlmId, String versionId, String user) {
+    public ResponseEntity listLicenseKeyGroups(String vlmId, String versionId, String user) {
         MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto outputMapper = new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto();
         GenericCollectionWrapper<LicenseKeyGroupEntityDto> result = new GenericCollectionWrapper<>(
             vendorLicenseManager.listLicenseKeyGroups(vlmId, new Version(versionId)).stream()
                 .sorted(Comparator.comparing(LicenseKeyGroupEntity::getName))
                 .map(item -> outputMapper.applyMapping(item, LicenseKeyGroupEntityDto.class)).collect(Collectors.toList()));
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -71,14 +73,14 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
      * @param user    the user
      * @return the response
      */
-    public Response createLicenseKeyGroup(LicenseKeyGroupRequestDto request, String vlmId, String versionId, String user) {
+    public ResponseEntity createLicenseKeyGroup(LicenseKeyGroupRequestDto request, String vlmId, String versionId, String user) {
         LicenseKeyGroupEntity licenseKeyGroupEntity = new MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntity()
             .applyMapping(request, LicenseKeyGroupEntity.class);
         licenseKeyGroupEntity.setVendorLicenseModelId(vlmId);
         licenseKeyGroupEntity.setVersion(new Version(versionId));
         LicenseKeyGroupEntity createdLicenseKeyGroup = vendorLicenseManager.createLicenseKeyGroup(licenseKeyGroupEntity);
         StringWrapperResponse result = createdLicenseKeyGroup != null ? new StringWrapperResponse(createdLicenseKeyGroup.getId()) : null;
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -90,14 +92,14 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
      * @param user              the user
      * @return the response
      */
-    public Response updateLicenseKeyGroup(LicenseKeyGroupRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String user) {
+    public ResponseEntity updateLicenseKeyGroup(LicenseKeyGroupRequestDto request, String vlmId, String versionId, String licenseKeyGroupId, String user) {
         LicenseKeyGroupEntity licenseKeyGroupEntity = new MapLicenseKeyGroupRequestDtoToLicenseKeyGroupEntity()
             .applyMapping(request, LicenseKeyGroupEntity.class);
         licenseKeyGroupEntity.setVendorLicenseModelId(vlmId);
         licenseKeyGroupEntity.setVersion(new Version(versionId));
         licenseKeyGroupEntity.setId(licenseKeyGroupId);
         vendorLicenseManager.updateLicenseKeyGroup(licenseKeyGroupEntity);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -109,7 +111,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
      * @param user              the user
      * @return the license key group
      */
-    public Response getLicenseKeyGroup(String vlmId, String versionId, String licenseKeyGroupId, String user) {
+    public ResponseEntity getLicenseKeyGroup(String vlmId, String versionId, String licenseKeyGroupId, String user) {
         LicenseKeyGroupEntity lkgInput = new LicenseKeyGroupEntity();
         lkgInput.setVendorLicenseModelId(vlmId);
         lkgInput.setVersion(new Version(versionId));
@@ -117,7 +119,7 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
         LicenseKeyGroupEntity licenseKeyGroup = vendorLicenseManager.getLicenseKeyGroup(lkgInput);
         LicenseKeyGroupEntityDto licenseKeyGroupEntityDto = licenseKeyGroup == null ? null
             : new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto().applyMapping(licenseKeyGroup, LicenseKeyGroupEntityDto.class);
-        return Response.ok(licenseKeyGroupEntityDto).build();
+        return ResponseEntity.ok(licenseKeyGroupEntityDto);
     }
 
     /**
@@ -128,12 +130,12 @@ public class LicenseKeyGroupsImpl implements LicenseKeyGroups {
      * @param user              the user
      * @return the response
      */
-    public Response deleteLicenseKeyGroup(String vlmId, String versionId, String licenseKeyGroupId, String user) {
+    public ResponseEntity deleteLicenseKeyGroup(String vlmId, String versionId, String licenseKeyGroupId, String user) {
         LicenseKeyGroupEntity lkgInput = new LicenseKeyGroupEntity();
         lkgInput.setVendorLicenseModelId(vlmId);
         lkgInput.setVersion(new Version(versionId));
         lkgInput.setId(licenseKeyGroupId);
         vendorLicenseManager.deleteLicenseKeyGroup(lkgInput);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 }

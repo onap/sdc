@@ -32,68 +32,54 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.vendorlicense.types.LimitEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LimitRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools/{entitlementPoolId}/limits")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools/{entitlementPoolId}/limits")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - Entitlement Pool Limits")})
 @Validated
 public interface EntitlementPoolLimits {
 
-    @POST
-    @Path("/")
+    @PostMapping
     @Operation(description = "Create vendor entitlement pool limits")
-    Response createLimit(@Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId") String entitlementPoolId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createLimit(@RequestBody @Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                               @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                               @Parameter(description = "Vendor license model Entitlement Pool Id") @PathVariable("entitlementPoolId") String entitlementPoolId,
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/")
+    @GetMapping
     @Operation(description = "List vendor entitlement pool limits", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = LimitRequestDto.class)))))
-    Response listLimits(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                        @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                        @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId") String entitlementPoolId,
-                        @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listLimits(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                              @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                              @Parameter(description = "Vendor license model Entitlement Pool Id") @PathVariable("entitlementPoolId") String entitlementPoolId,
+                              @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{limitId}")
+    @PutMapping("/{limitId}")
     @Operation(description = "Update vendor entitlement pool limit")
-    Response updateLimit(@Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId") String entitlementPoolId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @PathParam("limitId") String limitId,
-                         @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateLimit(@RequestBody @Valid LimitRequestDto request, @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                               @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                               @Parameter(description = "Vendor license model Entitlement Pool Id") @PathVariable("entitlementPoolId") String entitlementPoolId,
+                               @PathVariable("limitId") String limitId,
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{limitId}")
+    @GetMapping("/{limitId}")
     @Operation(description = "Get vendor entitlement pool limit", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = LimitEntityDto.class))))
-    Response getLimit(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                      @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                      @Parameter(description = "Vendor license model Entitlement Pool Id") @PathParam("entitlementPoolId") String entitlementPoolId,
-                      @Parameter(description = "Vendor license model Entitlement Pool Limit Id") @PathParam("limitId") String limitId,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getLimit(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                            @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                            @Parameter(description = "Vendor license model Entitlement Pool Id") @PathVariable("entitlementPoolId") String entitlementPoolId,
+                            @Parameter(description = "Vendor license model Entitlement Pool Limit Id") @PathVariable("limitId") String limitId,
+                            @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{limitId}")
+    @DeleteMapping("/{limitId}")
     @Operation(description = "Delete vendor entitlement pool limit")
-    Response deleteLimit(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                         @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                         @Parameter(description = "Vendor license model Entitlement pool Id") @PathParam("entitlementPoolId") String entitlementPoolId,
-                         @PathParam("limitId") String limitId,
-                         @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteLimit(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                               @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                               @Parameter(description = "Vendor license model Entitlement pool Id") @PathVariable("entitlementPoolId") String entitlementPoolId,
+                               @PathVariable("limitId") String limitId,
+                               @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

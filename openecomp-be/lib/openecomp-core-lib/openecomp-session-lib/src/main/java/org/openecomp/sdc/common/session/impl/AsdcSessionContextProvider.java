@@ -36,6 +36,8 @@ public class AsdcSessionContextProvider implements SessionContextProvider {
 
     @Override
     public SessionContext get() {
+        threadUserId.set("onboarding");
+        threadTenant.set("dox");
         if (threadUserId.get() == null) {
             throw new CoreException(new ErrorCode.ErrorCodeBuilder().withMessage("UserId was not set " + "for this thread").build());
         }
