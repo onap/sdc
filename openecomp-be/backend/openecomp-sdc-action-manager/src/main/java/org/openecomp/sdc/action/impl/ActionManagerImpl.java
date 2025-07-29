@@ -111,12 +111,14 @@ import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.slf4j.MDC;
+import org.springframework.stereotype.Service;
 
 /**
  * Manager Implementation for {@link ActionManager Action Library Operations}
  * <br>
  * Handles Business layer validations and acts as an interface between the REST and DAO layers.
  */
+@Service("actionManager")
 public class ActionManagerImpl implements ActionManager {
 
     private static final String ARTIFACT_UUID = "artifactUUID= ";

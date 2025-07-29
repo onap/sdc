@@ -19,28 +19,19 @@
  */
 package org.openecomp.sdcrests.action.rest;
 
-import com.sun.jersey.multipart.FormDataParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.springframework.validation.annotation.Validated;
 
-@Path("/workflow/v1.0/actions")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+@RestController
+@RequestMapping("/workflow/v1.0/actions")
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Actions")})
 @Validated
 public interface ActionsForSwaggerFileUpload {
@@ -59,29 +50,38 @@ public interface ActionsForSwaggerFileUpload {
      * @param servletRequest      Servlet request object
      * @return Generated UuId of the uploaded artifact
      */
-    @POST
-    @Path("/{actionInvariantUuId}/artifacts")
-    @Operation(description = "Upload new Artifact")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response uploadArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId,
-                            @Multipart(value = "artifactName", required = false) String artifactName,
-                            @Multipart(value = "artifactLabel", required = false) String artifactLabel,
-                            @Multipart(value = "artifactCategory", required = false) String artifactCategory,
-                            @Multipart(value = "artifactDescription", required = false) String artifactDescription,
-                            @Multipart(value = "artifactProtection", required = false) String artifactProtection,
-                            @HeaderParam("Content-MD5") String checksum, @FormDataParam(value = "uploadArtifact") InputStream artifactToUpload,
-                            @Context HttpServletRequest servletRequest);
 
-    @PUT
-    @Path("/{actionInvariantUuId}/artifacts/{artifactUuId}")
+    @PostMapping(
+    value = "/{actionInvariantUuId}/artifacts",
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(description = "Upload new Artifact")
+    ResponseEntity uploadArtifact(
+            @PathVariable("actionInvariantUuId") String actionInvariantUuId,
+            @RequestPart(value = "artifactName", required = false) String artifactName,
+            @RequestPart(value = "artifactLabel", required = false) String artifactLabel,
+            @RequestPart(value = "artifactCategory", required = false) String artifactCategory,
+            @RequestPart(value = "artifactDescription", required = false) String artifactDescription,
+            @RequestPart(value = "artifactProtection", required = false) String artifactProtection,
+            @RequestHeader("Content-MD5") String checksum,
+            @RequestPart("uploadArtifact") MultipartFile artifactToUpload,
+
+            HttpServletRequest servletRequest
+    );
+
+    @PutMapping(
+    value = "/{actionInvariantUuId}/artifacts/{artifactUuId}",
+    consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(description = "Update an existing artifact")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    Response updateArtifact(@PathParam("actionInvariantUuId") String actionInvariantUuId, @PathParam("artifactUuId") String artifactUuId,
-                            @Multipart(value = "artifactName", required = false) String artifactName,
-                            @Multipart(value = "artifactLabel", required = false) String artifactLabel,
-                            @Multipart(value = "artifactCategory", required = false) String artifactCategory,
-                            @Multipart(value = "artifactDescription", required = false) String artifactDescription,
-                            @Multipart(value = "artifactProtection", required = false) String artifactProtection,
-                            @HeaderParam("Content-MD5") String checksum, @FormDataParam(value = "updateArtifact") InputStream artifactToUpdate,
-                            @Context HttpServletRequest servletRequest);
+    ResponseEntity updateArtifact(
+            @PathVariable("actionInvariantUuId") String actionInvariantUuId,
+            @PathVariable("artifactUuId") String artifactUuId,
+            @RequestPart(value = "artifactName", required = false) String artifactName,
+            @RequestPart(value = "artifactLabel", required = false) String artifactLabel,
+            @RequestPart(value = "artifactCategory", required = false) String artifactCategory,
+            @RequestPart(value = "artifactDescription", required = false) String artifactDescription,
+            @RequestPart(value = "artifactProtection", required = false) String artifactProtection,
+            @RequestHeader("Content-MD5") String checksum,
+            @RequestPart(value = "updateArtifact") MultipartFile artifactToUpdate,
+            HttpServletRequest servletRequest);
+
 }

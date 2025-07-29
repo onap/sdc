@@ -16,11 +16,10 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -39,11 +38,18 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapProcessRequestDtoToProcessEnti
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 @Named
 @Service("componentProcesses")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ComponentProcessesImpl implements ComponentProcesses {
 
     private final ProcessManager processManager;
@@ -63,7 +69,7 @@ public class ComponentProcessesImpl implements ComponentProcesses {
     }
 
     @Override
-    public Response list(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String componentId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
         Collection<ProcessEntity> processes = processManager.listProcesses(vspId, version, componentId);
@@ -72,47 +78,47 @@ public class ComponentProcessesImpl implements ComponentProcesses {
         for (ProcessEntity process : processes) {
             results.add(mapper.applyMapping(process, ProcessEntityDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response deleteList(String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity deleteList(String vspId, String versionId, String componentId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
         processManager.deleteProcesses(vspId, version, componentId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response create(ProcessRequestDto request, String vspId, String versionId, String componentId, String user) {
+    public ResponseEntity create(ProcessRequestDto request, String vspId, String versionId, String componentId, String user) {
         ProcessEntity process = new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
         process.setVspId(vspId);
         process.setVersion(new Version(versionId));
         process.setComponentId(componentId);
         validateComponentExistence(vspId, process.getVersion(), componentId, user);
         ProcessEntity createdProcess = processManager.createProcess(process);
-        return Response.ok(createdProcess != null ? new StringWrapperResponse(createdProcess.getId()) : null).build();
+        return ResponseEntity.ok(createdProcess != null ? new StringWrapperResponse(createdProcess.getId()) : null);
     }
 
     @Override
-    public Response get(String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity get(String vspId, String versionId, String componentId, String processId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
         ProcessEntity process = processManager.getProcess(vspId, version, componentId, processId);
         ProcessEntityDto result = new MapProcessEntityToProcessEntityDto().applyMapping(process, ProcessEntityDto.class);
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity delete(String vspId, String versionId, String componentId, String processId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
         processManager.deleteProcess(vspId, version, componentId, processId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response update(ProcessRequestDto request, String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity update(ProcessRequestDto request, String vspId, String versionId, String componentId, String processId, String user) {
         ProcessEntity process = new MapProcessRequestDtoToProcessEntity().applyMapping(request, ProcessEntity.class);
         process.setVspId(vspId);
         process.setVersion(new Version(versionId));
@@ -120,40 +126,75 @@ public class ComponentProcessesImpl implements ComponentProcesses {
         process.setId(processId);
         validateComponentExistence(vspId, process.getVersion(), componentId, user);
         processManager.updateProcess(process);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response getUploadedFile(String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity getUploadedFile(
+            String vspId,
+            String versionId,
+            String componentId,
+            String processId,
+            String user) {
+
         Version vspVersion = new Version(versionId);
         validateComponentExistence(vspId, vspVersion, componentId, user);
+
         File file = processManager.getProcessArtifact(vspId, vspVersion, componentId, processId);
-        Response.ResponseBuilder response = Response.ok(file);
+
         if (file == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
-        response.header("Content-Disposition", "attachment; filename=" + file.getName());
-        return response.build();
+
+        Resource resource = new FileSystemResource(file);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(file.length())
+                .body(resource);
     }
 
     @Override
-    public Response deleteUploadedFile(String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity deleteUploadedFile(String vspId, String versionId, String componentId, String processId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
         processManager.deleteProcessArtifact(vspId, version, componentId, processId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response uploadFile(Attachment attachment, String vspId, String versionId, String componentId, String processId, String user) {
+    public ResponseEntity uploadFile(MultipartFile multipartFile, String vspId, String versionId,
+                                        String componentId, String processId, String user) {
         Version version = new Version(versionId);
         validateComponentExistence(vspId, version, componentId, user);
-        processManager
-            .uploadProcessArtifact(attachment.getObject(InputStream.class), attachment.getContentDisposition().getParameter("filename"), vspId,
-                version, componentId, processId);
-        activityLogManager.logActivity(new ActivityLogEntity(vspId, version, ActivityType.Upload_Artifact, user, true, "", ""));
-        return Response.ok().build();
+
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            processManager.uploadProcessArtifact(
+                    inputStream,
+                    multipartFile.getOriginalFilename(),
+                    vspId,
+                    version,
+                    componentId,
+                    processId
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read uploaded file", e);
+        }
+
+        activityLogManager.logActivity(new ActivityLogEntity(
+                vspId,
+                version,
+                ActivityType.Upload_Artifact,
+                user,
+                true,
+                "",
+                ""
+        ));
+
+        return ResponseEntity.ok().build();
     }
+
 
     private void validateComponentExistence(String vspId, Version version, String componentId, String user) {
         if (componentId == null) {

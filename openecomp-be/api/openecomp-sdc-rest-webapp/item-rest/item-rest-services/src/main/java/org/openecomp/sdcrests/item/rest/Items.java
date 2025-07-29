@@ -15,9 +15,6 @@
  */
 package org.openecomp.sdcrests.item.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -26,53 +23,45 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/items")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
+@RequestMapping("/v1.0/items")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Items")})
 @Validated
 public interface Items {
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "Get list of items according to desired filters", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Item.class)))))
-    Response list(@Parameter(description = "Filter by item status", schema = @Schema(type = "string", allowableValues = {"ACTIVE", "ARCHIVED"}))
-                  @QueryParam("itemStatus") String itemStatusFilter,
-                  @Parameter(description = "Filter by version status", schema = @Schema(type = "string", allowableValues = {"Certified", "Draft"}))
-                  @QueryParam("versionStatus") String versionStatusFilter,
-                  @Parameter(description = "Filter by item type", schema = @Schema(type = "string", allowableValues = {"vsp", "vlm"}))
-                  @QueryParam("itemType") String itemTypeFilter,
-                  @Parameter(description = "Filter by user permission", schema = @Schema(type = "string", allowableValues = {"Owner", "Contributor"}))
-                  @QueryParam("permission") String permissionFilter,
-                  @Parameter(description = "Filter by onboarding method", schema = @Schema(type = "string", allowableValues = {"NetworkPackage", "manual"}))
-                  @QueryParam("onboardingMethod") String onboardingMethodFilter,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user, @Context HttpServletRequest hreq);
+    ResponseEntity list(@Parameter(description = "Filter by item status", schema = @Schema(type = "string", allowableValues = {"ACTIVE", "ARCHIVED"}))
+                  @RequestParam("itemStatus") String itemStatusFilter,
+                        @Parameter(description = "Filter by version status", schema = @Schema(type = "string", allowableValues = {"Certified", "Draft"}))
+                  @RequestParam("versionStatus") String versionStatusFilter,
+                        @Parameter(description = "Filter by item type", schema = @Schema(type = "string", allowableValues = {"vsp", "vlm"}))
+                  @RequestParam("itemType") String itemTypeFilter,
+                        @Parameter(description = "Filter by user permission", schema = @Schema(type = "string", allowableValues = {"Owner", "Contributor"}))
+                  @RequestParam("permission") String permissionFilter,
+                        @Parameter(description = "Filter by onboarding method", schema = @Schema(type = "string", allowableValues = {"NetworkPackage", "manual"}))
+                  @RequestParam("onboardingMethod") String onboardingMethodFilter,
+                        @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user, @Autowired HttpServletRequest hreq);
 
-    @GET
-    @Path("/{itemId}")
+    @GetMapping("/{itemId}")
     @Operation(description = "Get details of a item")
-    Response getItem(@PathParam("itemId") String itemId, @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getItem(@PathVariable("itemId") String itemId, @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{itemId}/actions")
+    @PutMapping("/{itemId}/actions")
     @Operation(description = "Acts on item version")
-    Response actOn(ItemActionRequestDto request, @PathParam("itemId") String itemId,
-                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity actOn(@RequestBody ItemActionRequestDto request, @PathVariable("itemId") String itemId,
+                   @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

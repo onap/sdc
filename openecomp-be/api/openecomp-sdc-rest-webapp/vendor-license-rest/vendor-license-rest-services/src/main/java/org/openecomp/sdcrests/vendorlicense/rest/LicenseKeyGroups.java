@@ -32,65 +32,51 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupRequestDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RequestMapping("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups")
+@RestController
 @Tags({@Tag(name = "SDCE-1 APIs"), @Tag(name = "Vendor License Model - License Key Groups")})
 @Validated
 public interface LicenseKeyGroups {
 
-    @GET
-    @Path("/")
+    @GetMapping({ "", "/" })
     @Operation(description = "List vendor license key groups", responses = @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = LicenseKeyGroupEntityDto.class)))))
-    Response listLicenseKeyGroups(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                  @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                  @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity listLicenseKeyGroups(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                        @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                        @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @POST
-    @Path("/")
+    @PostMapping({ "", "/" })
     @Operation(description = "Create vendor license key group")
-    Response createLicenseKeyGroup(@Valid LicenseKeyGroupRequestDto request,
-                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity createLicenseKeyGroup(@Valid @RequestBody  LicenseKeyGroupRequestDto request,
+                                   @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                   @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                   @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @PUT
-    @Path("/{licenseKeyGroupId}")
+    @PutMapping("/{licenseKeyGroupId}")
     @Operation(description = "Update vendor license key group")
-    Response updateLicenseKeyGroup(@Valid LicenseKeyGroupRequestDto request,
-                                   @Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity updateLicenseKeyGroup(@Valid @RequestBody  LicenseKeyGroupRequestDto request,
+                                   @Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                   @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                   @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                                   @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @GET
-    @Path("/{licenseKeyGroupId}")
+    @GetMapping("/{licenseKeyGroupId}")
     @Operation(description = "Get vendor license key group", responses = @ApiResponse(content = @Content(schema = @Schema(implementation = LicenseKeyGroupEntityDto.class))))
-    Response getLicenseKeyGroup(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity getLicenseKeyGroup(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                                @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 
-    @DELETE
-    @Path("/{licenseKeyGroupId}")
+    @DeleteMapping("/{licenseKeyGroupId}")
     @Operation(description = "Delete vendor license key group")
-    Response deleteLicenseKeyGroup(@Parameter(description = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-                                   @Parameter(description = "Vendor license model version Id") @PathParam("versionId") String versionId,
-                                   @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-                                   @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+    ResponseEntity deleteLicenseKeyGroup(@Parameter(description = "Vendor license model Id") @PathVariable("vlmId") String vlmId,
+                                   @Parameter(description = "Vendor license model version Id") @PathVariable("versionId") String versionId,
+                                   @PathVariable("licenseKeyGroupId") String licenseKeyGroupId,
+                                   @NotNull(message = USER_MISSING_ERROR_MSG) @RequestHeader(USER_ID_HEADER_PARAM) String user);
 }

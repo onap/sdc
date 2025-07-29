@@ -21,7 +21,6 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManager;
 import org.openecomp.sdc.vendorsoftwareproduct.DeploymentFlavorManagerFactory;
@@ -45,11 +44,14 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapDeploymentFlavorRequestDtoToDe
 import org.openecomp.sdcrests.vsp.rest.mapping.MapDeploymentFlavorToDeploymentDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("deploymentFlavors")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class DeploymentFlavorsImpl implements DeploymentFlavors {
 
     private final DeploymentFlavorManager deploymentFlavorManager;
@@ -63,7 +65,7 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
     }
 
     @Override
-    public Response create(DeploymentFlavorRequestDto request, String vspId, String versionId, String user) {
+    public ResponseEntity create(DeploymentFlavorRequestDto request, String vspId, String versionId, String user) {
         DeploymentFlavorEntity deploymentFlavorEntity = new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity()
             .applyMapping(request, DeploymentFlavorEntity.class);
         deploymentFlavorEntity.setVspId(vspId);
@@ -71,52 +73,52 @@ public class DeploymentFlavorsImpl implements DeploymentFlavors {
         DeploymentFlavorEntity createdDeploymentFlavor = deploymentFlavorManager.createDeploymentFlavor(deploymentFlavorEntity);
         MapDeploymentFlavorEntityToDeploymentFlavorCreationDto mapping = new MapDeploymentFlavorEntityToDeploymentFlavorCreationDto();
         DeploymentFlavorCreationDto deploymentFlavorCreatedDto = mapping.applyMapping(createdDeploymentFlavor, DeploymentFlavorCreationDto.class);
-        return Response.ok(createdDeploymentFlavor != null ? deploymentFlavorCreatedDto : null).build();
+        return ResponseEntity.ok(createdDeploymentFlavor != null ? deploymentFlavorCreatedDto : null);
     }
 
     @Override
-    public Response list(String vspId, String versionId, String user) {
+    public ResponseEntity list(String vspId, String versionId, String user) {
         Collection<DeploymentFlavorEntity> deploymentFlavors = deploymentFlavorManager.listDeploymentFlavors(vspId, new Version(versionId));
         MapDeploymentFlavorEntityDeploymentFlavorToListResponse mapper = new MapDeploymentFlavorEntityDeploymentFlavorToListResponse();
         GenericCollectionWrapper<DeploymentFlavorListResponseDto> results = new GenericCollectionWrapper<>();
         for (DeploymentFlavorEntity deploymentFlavor : deploymentFlavors) {
             results.add(mapper.applyMapping(deploymentFlavor, DeploymentFlavorListResponseDto.class));
         }
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 
     @Override
-    public Response get(String vspId, String versionId, String deploymentFlavorId, String user) {
+    public ResponseEntity get(String vspId, String versionId, String deploymentFlavorId, String user) {
         CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager
             .getDeploymentFlavor(vspId, new Version(versionId), deploymentFlavorId);
         CompositionEntityResponseDto<DeploymentFlavorDto> responseDto = new CompositionEntityResponseDto<>();
         new MapCompositionEntityResponseToDto<>(new MapDeploymentFlavorToDeploymentDto(), DeploymentFlavorDto.class).doMapping(response, responseDto);
-        return Response.ok(responseDto).build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @Override
-    public Response getSchema(String vspId, String versionId, String user) {
+    public ResponseEntity getSchema(String vspId, String versionId, String user) {
         CompositionEntityResponse<DeploymentFlavor> response = deploymentFlavorManager.getDeploymentFlavorSchema(vspId, new Version(versionId));
-        return Response.ok(response).build();
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public Response delete(String vspId, String versionId, String deploymentFlavorId, String user) {
+    public ResponseEntity delete(String vspId, String versionId, String deploymentFlavorId, String user) {
         Version version = new Version(versionId);
         deploymentFlavorManager.deleteDeploymentFlavor(vspId, version, deploymentFlavorId);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response update(DeploymentFlavorRequestDto request, String vspId, String versionId, String deploymentFlavorId, String user) {
+    public ResponseEntity update(DeploymentFlavorRequestDto request, String vspId, String versionId, String deploymentFlavorId, String user) {
         DeploymentFlavorEntity deploymentFlavorEntity = new MapDeploymentFlavorRequestDtoToDeploymentFlavorEntity()
             .applyMapping(request, DeploymentFlavorEntity.class);
         deploymentFlavorEntity.setVspId(vspId);
         deploymentFlavorEntity.setVersion(new Version(versionId));
         deploymentFlavorEntity.setId(deploymentFlavorId);
         CompositionEntityValidationData validationData = deploymentFlavorManager.updateDeploymentFlavor(deploymentFlavorEntity);
-        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? Response.status(Response.Status.EXPECTATION_FAILED)
-            .entity(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class)).build()
-            : Response.ok().build();
+        return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors()) ? ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+            .body(new MapCompositionEntityValidationDataToDto().applyMapping(validationData, CompositionEntityValidationDataDto.class))
+            : ResponseEntity.ok().build();
     }
 }

@@ -50,7 +50,7 @@ import org.openecomp.sdc.versioning.types.ItemStatus;
 
 public class ItemZusammenDaoImplTest {
 
-  private static final String USER = "user1";
+  private static final String USER = "onboarding";
   private static final String APP_PROP_1 = "app_prop1";
   private static final String APP_PROP_2 = "app_prop2";
   private static final String tenant = "dox";

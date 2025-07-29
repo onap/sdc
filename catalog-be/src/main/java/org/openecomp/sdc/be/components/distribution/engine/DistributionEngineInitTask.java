@@ -200,6 +200,8 @@ public class DistributionEngineInitTask implements Runnable {
         }
     }
 
+    
+
     private CambriaErrorResponse registerToTopic(String topicName, SubscriberTypeEnum subscriberType) {
         CambriaErrorResponse registerStatus = cambriaHandler
             .registerToTopic(environmentEntry.getDmaapUebAddress(), environmentEntry.getUebApikey(), environmentEntry.getUebSecretKey(),

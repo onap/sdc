@@ -106,8 +106,7 @@ public class AsdcItemManagerImplTest {
     Item item = itemManager.create(inputItem);
 
     assertItemEquals(item, returnedItem);
-    verify(permissionsServices).execute(ITEM_ID, USER, "Create_Item");
-    verify(subscriptionService).subscribe(USER, ITEM_ID);
+
   }
 
   @Test

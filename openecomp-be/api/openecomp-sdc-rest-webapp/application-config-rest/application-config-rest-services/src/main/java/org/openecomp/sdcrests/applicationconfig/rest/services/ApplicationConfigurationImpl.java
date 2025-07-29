@@ -21,13 +21,12 @@
  */
 package org.openecomp.sdcrests.applicationconfig.rest.services;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.applicationconfig.ApplicationConfigManager;
 import org.openecomp.sdcrests.applicationconfig.rest.ApplicationConfiguration;
 import org.openecomp.sdcrests.applicationconfig.rest.mapping.MapApplicationConfigEntityToApplicationConfigDto;
@@ -36,46 +35,57 @@ import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDt
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 /**
  * Created by Talio on 8/8/2016.
  */
 @Named
 @Service("applicationConfiguration")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ApplicationConfigurationImpl implements ApplicationConfiguration {
 
     private final ApplicationConfigManager applicationConfigManager;
 
     @Autowired
-    public ApplicationConfigurationImpl(ApplicationConfigManager applicationConfigManager) {
+    public ApplicationConfigurationImpl(@Qualifier("applicationConfigManager") ApplicationConfigManager applicationConfigManager) {
         this.applicationConfigManager = applicationConfigManager;
     }
 
     @Override
-    public Response insertToTable(String namespace, String key, InputStream fileContainingSchema) {
-        String value = new String(FileUtils.toByteArray(fileContainingSchema));
-        applicationConfigManager.insertIntoTable(namespace, key, value);
-        return Response.ok().build();
+    public ResponseEntity insertToTable(String namespace, String key, MultipartFile fileContainingSchema) {
+        try {
+            
+            String value = new String(fileContainingSchema.getBytes(), StandardCharsets.UTF_8);
+
+            applicationConfigManager.insertIntoTable(namespace, key, value);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to read file content");
+        }
     }
 
     @Override
-    public Response getFromTable(String namespace, String key) {
+    public ResponseEntity getFromTable(String namespace, String key) {
         ConfigurationData value = applicationConfigManager.getFromTable(namespace, key);
         ConfigurationDataDto valueDto = new MapConfigurationDataToConfigurationDataDto().applyMapping(value, ConfigurationDataDto.class);
-        return Response.ok(valueDto).build();
+        return ResponseEntity.ok(valueDto);
     }
 
     @Override
-    public Response getListOfConfigurationByNamespaceFromTable(String namespace) {
+    public ResponseEntity getListOfConfigurationByNamespaceFromTable(String namespace) {
         Collection<ApplicationConfigEntity> applicationConfigEntities = applicationConfigManager.getListOfConfigurationByNamespace(namespace);
         GenericCollectionWrapper<ApplicationConfigDto> applicationConfigWrapper = new GenericCollectionWrapper<>();
         MapApplicationConfigEntityToApplicationConfigDto mapper = new MapApplicationConfigEntityToApplicationConfigDto();
         for (ApplicationConfigEntity applicationConfigEntity : applicationConfigEntities) {
             applicationConfigWrapper.add(mapper.applyMapping(applicationConfigEntity, ApplicationConfigDto.class));
         }
-        return Response.ok(applicationConfigWrapper).build();
+        return ResponseEntity.ok(applicationConfigWrapper);
     }
 }

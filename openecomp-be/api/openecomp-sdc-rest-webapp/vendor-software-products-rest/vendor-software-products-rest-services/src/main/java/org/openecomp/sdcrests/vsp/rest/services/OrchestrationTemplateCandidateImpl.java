@@ -21,9 +21,7 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static javax.ws.rs.core.Response.Status.EXPECTATION_FAILED;
-import static javax.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 import static org.openecomp.sdc.common.errors.Messages.ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT;
 import static org.openecomp.sdc.common.errors.Messages.ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE;
@@ -47,12 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.activation.DataHandler;
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -94,11 +89,15 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFile
 import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 @Named
 @Service("orchestrationTemplateCandidate")
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplateCandidate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
@@ -131,76 +130,124 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     }
 
     @Override
-    public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
+    public ResponseEntity upload(String vspId,
+                                String versionId,
+                                MultipartFile fileToUpload,
+                                String user) {
         LOGGER.debug("STARTED -> OrchestrationTemplateCandidateImpl.upload");
         vspId = ValidationUtils.sanitizeInputString(vspId);
         versionId = ValidationUtils.sanitizeInputString(versionId);
-        final Response response;
+
+        ResponseEntity<?> response;
         VspUploadStatusDto vspUploadStatus = null;
+
         try {
             vspUploadStatus = getVspUploadStatus(vspId, versionId, user);
 
             if (vspUploadStatus.getStatus() != VspUploadStatus.UPLOADING) {
                 throw vspUploadAlreadyInProgress(vspId, versionId).get();
             }
-            final byte[] fileToUploadBytes;
-            final DataHandler dataHandler = fileToUpload.getDataHandler();
-            final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-            ArtifactInfo artifactInfo = null;
+
+            final String filename = ValidationUtils.sanitizeInputString(fileToUpload.getOriginalFilename());
             final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
-            if (artifactStorageManager.isEnabled()) {
-                artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler, artifactStorageManager);
-                fileToUploadBytes = artifactInfo.getBytes();
-            } else {
-                fileToUploadBytes = fileToUpload.getObject(byte[].class);
+            ArtifactInfo artifactInfo = null;
+            byte[] fileToUploadBytes;
+
+            try {
+                if (artifactStorageManager.isEnabled()) {
+                    try (InputStream inputStream = fileToUpload.getInputStream()) {
+                        artifactInfo = handleArtifactStorage(vspId, versionId, filename, inputStream, artifactStorageManager);
+                        fileToUploadBytes = artifactInfo.getBytes();
+                    }
+                } else {
+                    fileToUploadBytes = fileToUpload.getBytes();
+                }
+            } catch (IOException ioEx) {
+                throw new RuntimeException("Error reading uploaded file", ioEx);
             }
 
             vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user);
-            final var onboardingPackageProcessor =
+
+            OnboardingPackageProcessor onboardingPackageProcessor =
                 new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
-            final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
+
+            ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
+
             if (onboardingPackageProcessor.hasErrors()) {
                 orchestrationTemplateCandidateUploadManager
                     .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.status(NOT_ACCEPTABLE).entity(buildUploadResponseWithError(errorMessages)).build();
+
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                        .body(buildUploadResponseWithError(errorMessages));
             }
-            final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+            var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
             if (onboardPackageInfo == null) {
-                final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
+                UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
                     new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
+
                 orchestrationTemplateCandidateUploadManager
                     .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.ok(uploadFileResponseDto).build();
+
+                return ResponseEntity.ok(uploadFileResponseDto);
             }
-            final var version = new Version(versionId);
-            final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+
+            var version = new Version(versionId);
+            var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+
             vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user);
             response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
-            final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
-            final Map<String, List<ErrorMessage>> errors = entity.getErrors();
+
+            UploadFileResponseDto entity = (UploadFileResponseDto) response.getBody();
+            Map<String, List<ErrorMessage>> errors = entity.getErrors();
+
             if (MapUtils.isNotEmpty(errors)) {
                 if (artifactStorageManager.isEnabled()) {
                     artifactStorageManager.delete(artifactInfo);
                 }
                 orchestrationTemplateCandidateUploadManager
                     .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.status(NOT_ACCEPTABLE)
-                    .entity(buildUploadResponseWithError(errors.values().stream().flatMap(List::stream).toArray(ErrorMessage[]::new))).build();
+
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                        .body(buildUploadResponseWithError(errors.values().stream().flatMap(List::stream).toArray(ErrorMessage[]::new)));
             }
+
             if (artifactStorageManager.isEnabled()) {
                 artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
             }
+
             orchestrationTemplateCandidateUploadManager
                 .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.SUCCESS, user);
-        } catch (final Exception ex) {
-            if (vspUploadStatus != null) {
-                orchestrationTemplateCandidateUploadManager
-                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-            }
-            throw ex;
+
+        } catch (Exception ex) {
+            handleExceptionDuringUpload(vspId, versionId, user, vspUploadStatus, ex);
+            throw (ex instanceof RuntimeException) ? (RuntimeException) ex
+                                                   : new RuntimeException("Error occurred during upload", ex);
         }
+
         LOGGER.debug("FINISHED -> OrchestrationTemplateCandidateImpl.upload");
         return response;
+    }
+
+    private void handleExceptionDuringUpload(String vspId, String versionId, String user,
+                                             VspUploadStatusDto vspUploadStatus, Exception ex) {
+        try {
+            if (vspUploadStatus == null) {
+                vspUploadStatus = orchestrationTemplateCandidateUploadManager
+                        .findLatestStatus(vspId, versionId, user)
+                        .orElse(null);
+            }
+
+            if (vspUploadStatus != null && vspUploadStatus.getLockId() != null) {
+                orchestrationTemplateCandidateUploadManager
+                        .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+            } else {
+                LOGGER.warn("Upload status or lockId is null. Skipping putUploadAsFinished.");
+            }
+
+        } catch (Exception cleanupEx) {
+            LOGGER.error("Error while calling putUploadAsFinished in exception handler", cleanupEx);
+        }
     }
 
     private VspUploadStatusDto getVspUploadStatus(final String vspId, final String versionId, final String user) {
@@ -213,9 +260,11 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         return vspUploadStatusOpt.get();
     }
 
-    private ArtifactInfo handleArtifactStorage(final String vspId, final String versionId, final String filename,
-                                               final DataHandler artifactDataHandler,
-                                               final ArtifactStorageManager artifactStorageManager) {
+    private ArtifactInfo handleArtifactStorage(final String vspId,
+                                           final String versionId,
+                                           final String filename,
+                                           final InputStream inputStream,
+                                           final ArtifactStorageManager artifactStorageManager) {
         final PackageSizeReducer packageSizeReducer = storageFactory.createPackageSizeReducer().orElse(null);
         if (packageSizeReducer == null) {
             throw new ArtifactStorageException(PACKAGE_REDUCER_NOT_CONFIGURED.getErrorMessage());
@@ -224,23 +273,27 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         Path tempArtifactPath = null;
         try {
             final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
-
             final Path folder = Path.of(storageConfiguration.getTempPath()).resolve(vspId).resolve(versionId);
-            tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
             Files.createDirectories(folder);
-            LOGGER.debug("STARTED -> Transfer to '{}'", tempArtifactPath.toString());
-            try (final InputStream packageInputStream = artifactDataHandler.getInputStream();
-                final var fileOutputStream = new FileOutputStream(tempArtifactPath.toFile())) {
-                packageInputStream.transferTo(fileOutputStream);
+
+            tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
+            LOGGER.debug("STARTED -> Transfer to '{}'", tempArtifactPath);
+
+            // Write the received InputStream to a temp file
+            try (var outputStream = new FileOutputStream(tempArtifactPath.toFile())) {
+                inputStream.transferTo(outputStream);
             }
-            LOGGER.debug("FINISHED -> Transfer to '{}'", tempArtifactPath.toString());
+
+            LOGGER.debug("FINISHED -> Transfer to '{}'", tempArtifactPath);
         } catch (final Exception e) {
             deleteTempFile(tempArtifactPath);
+            LOGGER.error("Error transferring input stream", e);
             throw new ArtifactStorageException(UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename));
         }
-        final ArtifactInfo artifactInfo;
-        try (final InputStream inputStream = new FileInputStream(tempArtifactPath.toFile())) {
-            artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
+
+        ArtifactInfo artifactInfo;
+        try (final InputStream artifactInputStream = new FileInputStream(tempArtifactPath.toFile())) {
+            artifactInfo = artifactStorageManager.upload(vspId, versionId, artifactInputStream);
         } catch (final Exception e) {
             deleteTempFile(tempArtifactPath);
             LOGGER.error("Failed to upload artifact", e);
@@ -258,7 +311,6 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
 
         deleteTempFile(tempArtifactPath);
-
         return artifactInfo;
     }
 
@@ -272,7 +324,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
     }
 
-    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,
+    private ResponseEntity processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,
                                            final ErrorMessage... errorMessages) {
         final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
         final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
@@ -280,7 +332,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         if (errorMessages.length > 0) {
             uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
         }
-        return Response.ok(uploadFileResponseDto).build();
+        //return Response.ok(uploadFileResponseDto).build();
+        return ResponseEntity.ok().body(uploadFileResponseDto);
     }
 
     private Map<String, List<ErrorMessage>> getErrorMap(ErrorMessage[] errorMessages) {
@@ -298,7 +351,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     }
 
     @Override
-    public Response get(String vspId, String versionId, String user) throws IOException {
+    public ResponseEntity get(String vspId, String versionId, String user) throws IOException {
         Optional<Pair<String, byte[]>> zipFile = candidateManager.get(vspId, new Version(versionId));
         String fileName;
         if (zipFile.isPresent()) {
@@ -309,44 +362,48 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                 ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
                     getErrorWithParameters(NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(), ""));
                 LOGGER.error(errorMessage.getMessage());
-                return Response.status(NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             fileName = "Processed." + zipFile.get().getLeft();
         }
-        Response.ResponseBuilder response = Response.ok(zipFile.get().getRight());
-        response.header("Content-Disposition", "attachment; filename=" + fileName);
-        return response.build();
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=" + fileName)
+                .body(zipFile.get().getRight());
+        //return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response abort(String vspId, String versionId) {
+    public ResponseEntity abort(String vspId, String versionId) {
         candidateManager.abort(vspId, new Version(versionId));
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public Response process(String vspId, String versionId, String user) {
+    public ResponseEntity process(String vspId, String versionId, String user) {
         Version version = new Version(versionId);
         OrchestrationTemplateActionResponse response = candidateManager.process(vspId, version);
         activityLogManager.logActivity(new ActivityLogEntity(vspId, version, ActivityType.Upload_Network_Package, user, true, "", ""));
         OrchestrationTemplateActionResponseDto responseDto = copyOrchestrationTemplateActionResponseToDto(response);
-        return Response.ok(responseDto).build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @Override
-    public Response updateFilesDataStructure(String vspId, String versionId, FileDataStructureDto fileDataStructureDto, String user) {
+    public ResponseEntity updateFilesDataStructure(String vspId, String versionId, FileDataStructureDto fileDataStructureDto, String user) {
         FilesDataStructure fileDataStructure = copyFilesDataStructureDtoToFilesDataStructure(fileDataStructureDto);
         ValidationResponse response = candidateManager.updateFilesDataStructure(vspId, new Version(versionId), fileDataStructure);
         if (!response.isValid()) {
-            return Response.status(EXPECTATION_FAILED)
-                .entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class))
-                .build();
+//            return Response.status(EXPECTATION_FAILED)
+//                .entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class))
+//                .build();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class));
+
         }
-        return Response.ok(fileDataStructureDto).build();
+        return ResponseEntity.ok(fileDataStructureDto);
     }
 
     @Override
-    public Response getFilesDataStructure(String vspId, String versionId, String user) {
+    public ResponseEntity getFilesDataStructure(String vspId, String versionId, String user) {
         Optional<FilesDataStructure> filesDataStructure = candidateManager.getFilesDataStructure(vspId, new Version(versionId));
         if (filesDataStructure.isEmpty()) {
             filesDataStructure = vendorSoftwareProductManager.getOrchestrationTemplateStructure(vspId, new Version(versionId));
@@ -354,7 +411,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         FileDataStructureDto fileDataStructureDto = filesDataStructure
             .map(dataStructure -> new MapFilesDataStructureToDto().applyMapping(dataStructure, FileDataStructureDto.class))
             .orElse(new FileDataStructureDto());
-        return Response.ok(fileDataStructureDto).build();
+        return ResponseEntity.ok().body(fileDataStructureDto);
     }
 
     private OrchestrationTemplateActionResponseDto copyOrchestrationTemplateActionResponseToDto(OrchestrationTemplateActionResponse response) {

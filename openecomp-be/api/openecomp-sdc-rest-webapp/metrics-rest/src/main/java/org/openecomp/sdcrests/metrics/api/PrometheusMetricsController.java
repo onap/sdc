@@ -24,19 +24,21 @@ package org.openecomp.sdcrests.metrics.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Path(PrometheusMetricsController.URL)
+@RestController
+@RequestMapping(PrometheusMetricsController.URL)
 @Tag(name = "SDCE-1 APIs")
 public interface PrometheusMetricsController {
 
     String URL = "/v1.0/actuator/prometheus";
 
-    @GET
+    @GetMapping({ "", "/" })
     @Operation(summary = "Prometheus Micrometer Metrics", description = "Gets the prometheus micrometer application metrics")
     String prometheusMetrics(@Parameter(description = "The Accept header to determine the output content type")
-                             @HeaderParam(value = "Accept") String acceptHeader);
+                             @RequestHeader(value = "Accept") String acceptHeader);
 
 }

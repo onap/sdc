@@ -1,4 +1,4 @@
-/*-
+/*
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
@@ -21,12 +21,12 @@ package org.openecomp.sdcrests.uniquevalue.rest.services;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.core.util.UniqueValueUtil;
+import org.springframework.http.ResponseEntity;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UniqueTypesImplTest {
@@ -40,15 +40,15 @@ public class UniqueTypesImplTest {
     public void shouldListUniqueTypes() {
         UniqueTypesImpl uniqueTypes = new UniqueTypesImpl();
         uniqueTypes.setUniqueValueUtil(uniqueValueUtil);
-        Response response = uniqueTypes.listUniqueTypes(ANY);
-        assertEquals(response.getStatus(), 200);
+        ResponseEntity response = uniqueTypes.listUniqueTypes(ANY);
+        assertEquals(response.getStatusCodeValue(), 200);
     }
 
     @Test
     public void shouldGetNotFoundOnNonExistentType() {
         UniqueTypesImpl uniqueTypes = new UniqueTypesImpl();
         uniqueTypes.setUniqueValueUtil(uniqueValueUtil);
-        Response response = uniqueTypes.getUniqueValue(ANY, ANY, ANY);
-        assertEquals(response.getStatus(), 404);
+        ResponseEntity response = uniqueTypes.getUniqueValue(ANY, ANY, ANY);
+        assertEquals(response.getStatusCodeValue(), 404);
     }
 }

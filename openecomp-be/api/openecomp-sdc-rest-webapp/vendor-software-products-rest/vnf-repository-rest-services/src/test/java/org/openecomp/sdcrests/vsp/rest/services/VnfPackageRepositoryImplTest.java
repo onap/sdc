@@ -33,11 +33,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.ws.rs.core.Response;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Configuration testing.
@@ -61,81 +63,84 @@ public class VnfPackageRepositoryImplTest {
 
     private static VnfPackageRepositoryImpl.Configuration config;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImplTest.class);
+
     @BeforeClass
     public static void initConfiguration() {
         config = new DynamicConfiguration(wireMockRule.port());
     }
 
     @Test
-    public void versionFoundWhenInList() {
+    public void versionFoundWhenInList() throws Exception {
         VnfPackageRepositoryImpl vnfRepository = new VnfPackageRepositoryImpl();
         List<Version> versions = Arrays.asList(new Version("1243"), new Version("3434"), new Version("398"));
         assertTrue("Expected to find the version", vnfRepository.findVersion(versions, "3434").isPresent());
     }
 
     @Test
-    public void versionNotFoundWhenInList() {
+    public void versionNotFoundWhenInList() throws Exception {
         VnfPackageRepositoryImpl vnfRepository = new VnfPackageRepositoryImpl();
         List<Version> versions = Collections.singletonList(new Version("1243"));
         assertFalse("Did not expect to find the version", vnfRepository.findVersion(versions, "3434").isPresent());
     }
 
     @Test
-    public void listVnfsReturnsInternalServerErrorWhenRemoteClientError() {
+    public void listVnfsReturnsInternalServerErrorWhenRemoteClientError() throws Exception {
         stubFor(get(GET_PATH).willReturn(aResponse().withStatus(403).withBody("Forbidden")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.getVnfPackages(VSP, VERSION, USER);
-        assertEquals(500, response.getStatus());
+        LOGGER.debug("Get VNF Packages from Repository: {}", repository);
+        ResponseEntity response = repository.getVnfPackages(VSP, VERSION, USER);
+        assertEquals(500, response.getStatusCodeValue());
         verify(getRequestedFor(urlEqualTo(GET_PATH)));
     }
 
     @Test
-    public void listVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() {
+    public void listVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() throws Exception {
         stubFor(get(GET_PATH).willReturn(aResponse().withStatus(201).withBody("Created")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.getVnfPackages(VSP, VERSION, USER);
-        assertEquals(500, response.getStatus());
+        ResponseEntity response = repository.getVnfPackages(VSP, VERSION, USER);
+        assertEquals(500, response.getStatusCodeValue());
         verify(getRequestedFor(urlEqualTo(GET_PATH)));
     }
 
     @Test
-    public void listVnfsReturnsUnchangedResponse() {
+    public void listVnfsReturnsUnchangedResponse() throws Exception {
         final String vnfList = "this is a response body for list of VNFs";
         stubFor(get(GET_PATH).willReturn(aResponse().withStatus(200).withBody(vnfList)));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.getVnfPackages(VSP, VERSION, USER);
-        assertEquals(200, response.getStatus());
-        assertEquals(vnfList, response.getEntity());
+        ResponseEntity response = repository.getVnfPackages(VSP, VERSION, USER);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(vnfList, response.getBody());
         verify(getRequestedFor(urlEqualTo(GET_PATH)));
     }
 
     @Test
-    public void downloadVnfsReturnsInternalServerErrorWhenRemoteClientError() {
+    public void downloadVnfsReturnsInternalServerErrorWhenRemoteClientError() throws Exception {
         stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(403).withBody("{\"error\": \"Permissions\"}")));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
-        assertEquals(500, response.getStatus());
+        ResponseEntity response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
+        assertEquals(500, response.getStatusCodeValue());
         verify(getRequestedFor(urlEqualTo(DOWNLOAD_PATH)));
     }
 
     @Test
-    public void downloadVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() {
+    public void downloadVnfsReturnsInternalServerErrorWhenRemoteReturnsNotOk() throws Exception {
         stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(201).withBody(new byte[0])));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
-        assertEquals(500, response.getStatus());
+        ResponseEntity response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
+        assertEquals(500, response.getStatusCodeValue());
         verify(getRequestedFor(urlEqualTo(DOWNLOAD_PATH)));
     }
 
     @Test
-    public void downloadVnfsReturnsUnchangedBytes() {
+    public void downloadVnfsReturnsUnchangedBytes() throws Exception {
         final byte[] body = "this is the content of a VNF archive (.csar) file".getBytes(StandardCharsets.ISO_8859_1);
         stubFor(get(DOWNLOAD_PATH).willReturn(aResponse().withStatus(200).withBody(body)));
         VnfPackageRepositoryImpl repository = new VnfPackageRepositoryImpl(config);
-        Response response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
-        assertEquals(200, response.getStatus());
-        assertTrue(Arrays.equals(body, response.readEntity(byte[].class)));
-        assertNotNull(response.getHeaderString("Content-Disposition"));
+        ResponseEntity response = repository.downloadVnfPackage(VSP, VERSION, CSAR, USER);
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(Arrays.equals(body, (byte[]) response.getBody()));
+        assertNotNull( response.getHeaders().getFirst("Content-Disposition"));
         verify(getRequestedFor(urlEqualTo(DOWNLOAD_PATH)));
     }
 

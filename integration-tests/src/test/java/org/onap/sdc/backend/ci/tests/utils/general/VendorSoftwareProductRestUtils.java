@@ -25,23 +25,20 @@ import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
 import org.onap.sdc.backend.ci.tests.datatypes.*;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.CvfcTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.be.model.User;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.onap.sdc.backend.ci.tests.api.ComponentBaseTest;
 import org.onap.sdc.backend.ci.tests.api.Urls;
 import org.onap.sdc.backend.ci.tests.config.Config;
@@ -50,14 +47,18 @@ import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -383,56 +384,60 @@ public class VendorSoftwareProductRestUtils {
 
     public static RestResponse uploadHeatPackage(String filepath, String filename, VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
         Config config = Utils.getConfig();
-        String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
-        return uploadFile(filepath, filename, url, user);
+
+        String url = String.format(
+                Urls.UPLOAD_HEAT_PACKAGE,
+                config.getOnboardingBeHost(),
+                config.getOnboardingBePort(),
+                vendorSoftwareProductObject.getVspId(),
+                vendorSoftwareProductObject.getVersionId()
+        );
+
+        RestResponse response = uploadFile(filepath, filename, url, user);
+
+        return response;
     }
 
-    private static RestResponse uploadFile(String filepath, String filename, String url, User user) throws IOException{
-        CloseableHttpResponse response = null;
+    public static RestResponse uploadFile(String filepath, String filename, String url, User user) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
 
-        MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
-        mpBuilder.addPart("upload", new FileBody(getTestZipFile(filepath, filename)));
+        File file = getTestZipFile(filepath, filename);
+
+        if (!file.exists() || file.length() == 0) {
+            throw new FileNotFoundException("HEAT package not found or empty: " + file.getAbsolutePath());
+        }
 
         Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(user.getUserId());
-        headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "multipart/form-data");
 
-        CloseableHttpClient client = HttpClients.createDefault();
-        try {
-            HttpPost httpPost = new HttpPost(url);
-            RestResponse restResponse = new RestResponse();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-            Iterator<String> iterator = headersMap.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                String value = headersMap.get(key);
-                httpPost.addHeader(key, value);
+        for (Map.Entry<String, String> entry : headersMap.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase(HttpHeaders.CONTENT_TYPE)) {
+                headers.add(entry.getKey(), entry.getValue());
             }
-            httpPost.setEntity(mpBuilder.build());
-            response = client.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            String responseBody = null;
-            if (entity != null) {
-                InputStream instream = entity.getContent();
-                try {
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(instream, writer);
-                    responseBody = writer.toString();
-                } finally {
-                    instream.close();
-                }
-            }
-
-            restResponse.setErrorCode(response.getStatusLine().getStatusCode());
-            restResponse.setResponse(responseBody);
-
-            return restResponse;
-
-        } finally {
-            closeResponse(response);
-            closeHttpClient(client);
-
         }
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("upload", new FileSystemResource(file));
+
+        org.springframework.http.HttpEntity<MultiValueMap<String, Object>> requestEntity =
+                new org.springframework.http.HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        RestResponse restResponse = new RestResponse();
+        restResponse.setErrorCode(response.getStatusCodeValue());
+        restResponse.setResponse(response.getBody());
+
+        return restResponse;
     }
+
 
     private static void closeResponse(CloseableHttpResponse response) {
         try {
