@@ -36,6 +36,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc9af039_694ae000",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/application-config-rest/application-config-rest-services/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-08-20T07:41:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4903204_d81af1e0",
+      "revId": "0ad10e3a96b0197d8d74ec43a07bc1e452540d59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "38a942f6_70be598d",
