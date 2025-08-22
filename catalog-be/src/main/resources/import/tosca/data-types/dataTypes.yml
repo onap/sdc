@@ -3545,11 +3545,13 @@ tosca.datatypes.3gpp.Snssai:
       description: >
         This attribute specifies the Slice/Service type (SST) of the network slice.
     sd:
-      type: integer
+      type: string
       required: false
+      constraints:
+        - pattern: '^[A-Fa-f0-9]{6}$'
       description: >
         This attribute specifies the Slice Differentiator (SD), which is optional information that complements the slice/service type(s) to differentiate amongst multiple Network Slices.
-        Pattern: '^[A-Fa-f0-9]{6}$'
+        Pattern: '^[A-Fa-f0-9]{6}$' Length is 6
  
 tosca.datatypes.3gpp.CoverageArea:
   derived_from: tosca.datatypes.Root
@@ -3737,3 +3739,21 @@ tosca.datatypes.3gpp.XlThpt:
       description: >
         This attribute describes the maximum data rate.
 
+tosca.datatypes.3gpp.MaxNumberOfUEs:
+  derived_from: tosca.datatypes.Root
+  description: |
+    Represents the maximum number of User Equipments (UEs) that may simultaneously access
+    the network slice or network slice subnet instance, either via 3GPP or non-3GPP access.
+    Only one of the two properties should typically be used depending on the access type.
+  properties:
+    3GPPNoOfUEs:
+      type: integer
+      required: false
+      description: >
+        Specifies the maximum number of UEs may simultaneously access the network slice or network slice subnet instance on 3GPP access.
+ 
+    non3GPPNoOfUEs:
+      type: integer
+      required: false
+      description: >
+        Specifies the maximum number of UEs may simultaneously access the network slice or network slice subnet instance on non-3GPP access.
