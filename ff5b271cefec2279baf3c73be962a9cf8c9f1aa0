@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd7983db_d0248b37",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3554,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-08-22T12:19:33Z",
+      "side": 1,
+      "message": "Is the syntax valid here?! ` Length is 6`",
+      "revId": "ff5b271cefec2279baf3c73be962a9cf8c9f1aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
