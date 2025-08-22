@@ -111,9 +111,11 @@ public class DistributionEngine implements IDistributionEngine {
             envNamePerStatus.put(envName, status);
             environmentsEngine.connectUebTopicForDistributionConfTopic(envName, status, envNamePerInitTask, envNamePerPollingTask);
         }
-        logger.debug("init UEB health check");
-        distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
-        logger.trace("Exit init method of DistributionEngine");
+        if(!kafkaHandler.isKafkaActive()) {
+            logger.debug("init UEB health check");
+            distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
+            logger.trace("Exit init method of DistributionEngine");
+        }
     }
 
     @PreDestroy
