@@ -46,7 +46,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <lang3.version>3.12.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
     <janusgraph.version>0.5.0</janusgraph.version>
-    <spring.version>5.3.27</spring.version>
+    <spring.version>5.3.31</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
     <!-- update to 2.36 bring error-->
@@ -89,14 +89,14 @@ Modifications copyright (c) 2018-2019 Nokia
     <keycloak.version>21.1.1</keycloak.version>
 
     <!-- JSON and YAML Parsing -->
-    <jackson.version>2.14.2</jackson.version>
+    <jackson.version>2.13.3</jackson.version>
     <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
     <clearspring.version>2.1.1</clearspring.version>
     <skipYamlJsonValidator>false</skipYamlJsonValidator>
 
     <!-- Yaml for properties -->
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>1.29</snakeyaml.version>
     <functionaljava.version>4.9</functionaljava.version>
     <httpmime.version>4.5.14</httpmime.version>
     <httpclient.version>5.2.1</httpclient.version>
