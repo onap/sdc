@@ -42,11 +42,15 @@ import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Root resource (exposed at "/" path)
  */
-@Path("/")
+@RestController
+@RequestMapping("/")
 public class PortalServlet extends HttpServlet {
 
     public static final String MISSING_HEADERS_MSG = "Missing Headers In Request";
@@ -92,9 +96,8 @@ public class PortalServlet extends HttpServlet {
     /**
      * Entry point from ECOMP portal
      */
-    @GET
-    @Path("/portal")
     @Override
+    @GetMapping("/portal")
     public void doGet(@Context final HttpServletRequest request, @Context final HttpServletResponse response) {
         try {
             addRequestHeadersUsingWebseal(request, response);
