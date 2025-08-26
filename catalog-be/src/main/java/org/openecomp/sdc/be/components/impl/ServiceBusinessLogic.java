@@ -18,6 +18,8 @@
  * ============LICENSE_END=========================================================
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
+ * Modifications copyright (c) 2025 Deutsche Telekom.
+ * ================================================================================
  */
 
 package org.openecomp.sdc.be.components.impl;
@@ -1532,6 +1534,27 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             }
             toscaOperationFacade.commitAndCheck(service.getUniqueId());
             updateCatalog(service, ChangeTypeEnum.DELETE);
+
+            String distributionId = ThreadLocalsHolder.getUuid();
+            String envName = getEnvNameFromConfiguration();
+            INotificationData notificationData = distributionEngine.buildServiceForDeleteNotification(service,
+                    distributionId);
+            log.debug("for kafka notification envName = {} and  notificationData = {}", envName, notificationData);
+            ActionStatus notifyServiceResponse = distributionEngine.notifyServiceForDelete(distributionId,
+                    notificationData, service, envName, user);
+            if (notifyServiceResponse == ActionStatus.OK) {
+                log.debug(
+                        "Kafka notification successfully generated for delete service. Notification response details are - response={}, serviceName={}, serviceId={}",
+                        notifyServiceResponse,
+                        service.getName(),
+                        service.getUniqueId());
+            } else {
+                log.debug(
+                        "Kafka notification failed for delete service. Notification response details are - response={}, serviceName={}, serviceId={}",
+                        notifyServiceResponse,
+                        service.getName(),
+                        service.getUniqueId());
+            }
         } catch (ComponentException exception) {
             log.debug("Failed to delete service, {}, in ServiceServlet", serviceId);
             janusGraphDao.rollback();
