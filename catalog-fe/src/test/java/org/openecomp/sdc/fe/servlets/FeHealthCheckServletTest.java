@@ -25,11 +25,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.fe.impl.HealthCheckService;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,7 +40,7 @@ import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 public class FeHealthCheckServletTest {
 
     private final FeHealthCheckServlet healthCheckServlet = new FeHealthCheckServlet();
-    private final Response response = Response.ok().entity("Ok").build();
+    private final ResponseEntity<String> response = ResponseEntity.ok("Ok");
 
     @Mock
     private HealthCheckService healthCheckService;
@@ -63,7 +63,7 @@ public class FeHealthCheckServletTest {
         when(request.getSession()).thenReturn(session);
 
         // when
-        final Response healthCheck = healthCheckServlet.getFEandBeHealthCheck(request);
+        final ResponseEntity<?> healthCheck = healthCheckServlet.getFEandBeHealthCheck(request);
 
         // then
         assertEquals(response, healthCheck);

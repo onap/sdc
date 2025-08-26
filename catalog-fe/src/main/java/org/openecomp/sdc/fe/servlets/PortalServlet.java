@@ -28,9 +28,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.onap.sdc.security.AuthenticationCookie;
@@ -46,8 +43,7 @@ import org.openecomp.sdc.fe.config.FeEcompErrorManager;
 /**
  * Root resource (exposed at "/" path)
  */
-@Path("/")
-public class PortalServlet extends HttpServlet {
+public class PortalServlet extends HttpServlet{
 
     public static final String MISSING_HEADERS_MSG = "Missing Headers In Request";
     private static final long serialVersionUID = 1L;
@@ -92,17 +88,16 @@ public class PortalServlet extends HttpServlet {
     /**
      * Entry point from ECOMP portal
      */
-    @GET
-    @Path("/portal")
     @Override
-    public void doGet(@Context final HttpServletRequest request, @Context final HttpServletResponse response) {
-        try {
-            addRequestHeadersUsingWebseal(request, response);
-        } catch (Exception e) {
-            FeEcompErrorManager.getInstance().logFePortalServletError("Portal Servlet");
-            log.error("Error during getting portal page", e);
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    try {
+        addRequestHeadersUsingWebseal(request, response);
+    } catch (Exception e) {
+        FeEcompErrorManager.getInstance().logFePortalServletError("Portal Servlet");
+        log.error("Error during getting portal page", e);
     }
+}
 
     /**
      * Building new HTTP request and setting headers for the request The request will dispatch to index.html

@@ -22,7 +22,7 @@ package org.openecomp.sdc.fe.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus; 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -32,11 +32,11 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,12 +73,12 @@ public class ConfigServletTest {
 
         prepareMocks();
 
-        Response response = configServlet.getUIWorkspaceConfiguration(httpServletRequest);
+        ResponseEntity<?> response = configServlet.getUIWorkspaceConfiguration(httpServletRequest);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String expected = gson.toJson(configManager.getWorkspaceConfiguration());
-        assertEquals(expected, response.getEntity().toString());
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals(expected, response.getBody().toString());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     public void validateGetPluginsConfigurationReturnsCorrectConfiguration() {
@@ -87,10 +87,10 @@ public class ConfigServletTest {
         prepareMocks();
         when(pluginStatusBL.getPluginsList()).thenReturn(expectedEntity);
 
-        Response response = configServlet.getPluginsConfiguration(httpServletRequest);
+        ResponseEntity<?> response = configServlet.getPluginsConfiguration(httpServletRequest);
 
-        assertEquals(response.getEntity().toString(),expectedEntity);
-        assertEquals(response.getStatus(), HttpStatus.SC_OK);
+        assertEquals(expectedEntity, response.getBody().toString());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
     @Test
     public void validateGetPluginsConfigurationResponsesWithServerErrorIfExceptionIsThrown() {
@@ -98,9 +98,9 @@ public class ConfigServletTest {
         prepareMocks();
         when(pluginStatusBL.getPluginsList()).thenThrow(new RuntimeException());
 
-        Response response = configServlet.getPluginsConfiguration(httpServletRequest);
+        ResponseEntity<?> response = configServlet.getPluginsConfiguration(httpServletRequest);
 
-        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
@@ -110,9 +110,9 @@ public class ConfigServletTest {
         prepareMocks();
         when(pluginStatusBL.getPluginAvailability(any(String.class))).thenThrow(new RuntimeException());
 
-        Response response = configServlet.getPluginOnlineState(testPluginName, httpServletRequest);
+        ResponseEntity<?>  response = configServlet.getPluginOnlineState(testPluginName, httpServletRequest);
 
-        assertEquals(response.getStatus(), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
 

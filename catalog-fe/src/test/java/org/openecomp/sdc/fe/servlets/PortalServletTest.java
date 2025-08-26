@@ -171,7 +171,7 @@ class PortalServletTest extends JerseyTest {
     }
 
     @Test
-    void testFailureMissingCookieConfiguration() throws IOException {
+    void testFailureMissingCookieConfiguration() throws IOException, ServletException{
 
         //missing configuration mock therefore will fail
         PortalServlet pp = new PortalServlet();

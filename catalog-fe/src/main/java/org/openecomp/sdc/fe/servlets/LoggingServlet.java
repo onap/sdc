@@ -20,9 +20,9 @@
 package org.openecomp.sdc.fe.servlets;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.impl.LogHandler;
+import org.springframework.http.ResponseEntity;
 
 public abstract class LoggingServlet extends BasicServlet {
 
@@ -30,7 +30,7 @@ public abstract class LoggingServlet extends BasicServlet {
     public static final String TRANSACTION_START_TIME = "transactionStartTime";
 
     /**
-     * log incoming requests
+     * Log incoming requests
      *
      * @param httpRequest the http request
      */
@@ -40,12 +40,12 @@ public abstract class LoggingServlet extends BasicServlet {
     }
 
     /**
-     * log response
+     * Log response
      *
-     * @param request  orig request
+     * @param request  original request
      * @param response returned response
      */
-    void logFeResponse(HttpServletRequest request, Response response) {
+    void logFeResponse(HttpServletRequest request, ResponseEntity<?> response) {
         LogHandler.logFeResponse(request);
         outHttpResponse(response);
     }
@@ -62,5 +62,5 @@ public abstract class LoggingServlet extends BasicServlet {
      *
      * @param response http response
      */
-    protected abstract void outHttpResponse(Response response);
+    protected abstract void outHttpResponse(ResponseEntity<?> response);
 }

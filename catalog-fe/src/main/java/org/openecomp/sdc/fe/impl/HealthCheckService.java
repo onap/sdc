@@ -23,21 +23,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
+
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class HealthCheckService {
 
     private static final Logger healthLogger = Logger.getLogger("asdc.fe.healthcheck");
     private final HealthCheckScheduledTask task;
+
     /**
      * This executor will execute the health check task.
      */
     private ScheduledExecutorService healthCheckExecutor = Executors
-        .newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
+        .newSingleThreadScheduledExecutor(r -> new Thread(r, "FE-Health-Check-Thread"));
+
     private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
     private ServletContext context;
 
@@ -57,15 +61,16 @@ public class HealthCheckService {
     /**
      * To be used by the HealthCheckServlet
      *
-     * @return
+     * @return ResponseEntity representing FE health status
      */
-    public Response getFeHealth() {
+    public ResponseEntity<String> getFeHealth() {
         return this.buildResponse(lastHealthStatus);
     }
 
-    private Response buildResponse(HealthStatus healthStatus) {
+    private ResponseEntity<String> buildResponse(HealthStatus healthStatus) {
         healthLogger.trace("FE and BE health check status: {}", healthStatus.getBody());
-        return Response.status(healthStatus.getStatusCode()).entity(healthStatus.getBody()).build();
+        return ResponseEntity.status(HttpStatus.valueOf(healthStatus.getStatusCode()))
+                             .body(healthStatus.getBody());
     }
 
     public HealthStatus getLastHealthStatus() {
@@ -80,7 +85,7 @@ public class HealthCheckService {
         return task;
     }
 
-    //immutable
+    // Immutable inner class for status
     static class HealthStatus {
 
         private String body;

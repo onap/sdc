@@ -24,21 +24,22 @@ import static org.openecomp.sdc.common.api.Constants.HEALTH_CHECK_SERVICE_ATTR;
 import com.jcabi.aspects.Loggable;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.impl.HealthCheckService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
-@Path("/healthCheck")
+@RestController
+@RequestMapping("rest/healthCheck")
 public class FeHealthCheckServlet extends BasicServlet {
 
-    @GET
-    public Response getFEandBeHealthCheck(@Context final HttpServletRequest request) {
+    @GetMapping
+    public ResponseEntity<?> getFEandBeHealthCheck(HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
-        HealthCheckService hcs = ((HealthCheckService) context.getAttribute(HEALTH_CHECK_SERVICE_ATTR));
+        HealthCheckService hcs = (HealthCheckService) context.getAttribute(HEALTH_CHECK_SERVICE_ATTR);
         return hcs.getFeHealth();
     }
 }
