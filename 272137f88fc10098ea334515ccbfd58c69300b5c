@@ -119,6 +119,23 @@
       "parentUuid": "fab17720_50d8ac2a",
       "revId": "272137f88fc10098ea334515ccbfd58c69300b5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de1b6305_7445e8aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8525
+      },
+      "writtenOn": "2025-08-26T06:51:06Z",
+      "side": 1,
+      "message": "stage-docker-release",
+      "revId": "272137f88fc10098ea334515ccbfd58c69300b5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ],
   "submitRequirementResults": [
