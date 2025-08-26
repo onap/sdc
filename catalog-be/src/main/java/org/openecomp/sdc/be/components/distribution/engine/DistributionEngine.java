@@ -67,6 +67,9 @@ public class DistributionEngine implements IDistributionEngine {
     private DistributionEngineClusterHealth distributionEngineClusterHealth;
     @Resource
     private ServiceDistributionValidation serviceDistributionValidation;
+    @Resource
+    private DistributionDeleteNotifcationSender distributionDeleteNotifcationSender;
+
     private Map<String, DistributionEngineInitTask> envNamePerInitTask = new HashMap<>();
     private Map<String, DistributionEnginePollingTask> envNamePerPollingTask = new HashMap<>();
     private Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
@@ -150,6 +153,8 @@ public class DistributionEngine implements IDistributionEngine {
         result = isValidParam(deConfiguration.getDistributionNotifTopicName(), methodName, "distributionNotifTopicName") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopicName(), methodName, "distributionStatusTopicName") && result;
         result = isValidObject(deConfiguration.getDistributionStatusTopic(), methodName, "distributionStatusTopic") && result;
+        result = isValidParam(deConfiguration.getDistributionDeleteTopicName(), methodName,
+                "distributionDeleteTopicName") && result;
         result = isValidObject(deConfiguration.getInitMaxIntervalSec(), methodName, "initMaxIntervalSec") && result;
         result = isValidObject(deConfiguration.getInitRetryIntervalSec(), methodName, "initRetryIntervalSec") && result;
         result = isValidParam(deConfiguration.getDistributionStatusTopic().getConsumerId(), methodName, "consumerId") && result;
@@ -303,5 +308,65 @@ public class DistributionEngine implements IDistributionEngine {
         INotificationData value = serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(service, distributionId, workloadContext);
         value = serviceDistributionArtifactsBuilder.buildServiceForDistribution(value, service);
         return value;
+    }
+
+    /**
+     * This method is used to build the notification payload for delete service
+     * 
+     * @param service        service to be deleted
+     * @param distributionId random UUID generated for the notifiaction
+     * @return notification payload of INotificationData type.
+     */
+    @Override
+    public INotificationData buildServiceForDeleteNotification(Service service, String distributionId) {
+        INotificationData value = serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(service,
+                distributionId, null);
+        logger.debug("Payload for delete kafka notification is -  {}", value);
+        return value;
+    }
+
+    /**
+     * This method is used to notify the service for delete operation.
+     * 
+     * @param distributionId   random UUID generated for the notification
+     * @param notificationData the payload data to be sent in the notification
+     * @param service          the service to be deleted
+     * @param envName          the environment name
+     * @param user             the user performing the delete operation
+     * @return the action status of the notification.
+     */
+    @Override
+    public ActionStatus notifyServiceForDelete(String distributionId, INotificationData notificationData,
+            Service service,
+            String envName, User user) {
+        logger.debug(
+                "Received notify service request for delete. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}",
+                distributionId, service.getUUID(), service.getUniqueId(), envName, service.getLastUpdaterUserId(),
+                user);
+
+        String topicName = buildDeleteNotificationTopicName(envName);
+        logger.debug("topic name for delete - {}", topicName);
+
+        ActionStatus deleteServiceNotifStatus = Optional
+                .ofNullable(environmentsEngine.getEnvironmentById(envName)).map(EnvironmentMessageBusData::new).map(
+                        messageBusData -> distributionDeleteNotifcationSender
+                                .sendNotificationForDeleteService(topicName, distributionId, messageBusData,
+                                        notificationData))
+                .orElse(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE);
+        logger.debug("Finish delete notification service. notification status is {}", deleteServiceNotifStatus);
+        return deleteServiceNotifStatus;
+    }
+
+    /**
+     * This method is used to create topic name for delete operation based on
+     * environment name.
+     * 
+     * @param envName the environment name
+     * @return the delete topic name
+     */
+    private String buildDeleteNotificationTopicName(String envName) {
+        String deleteTopicName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
+                .getDistributionDeleteTopicName();
+        return DistributionEngineInitTask.buildTopicName(deleteTopicName, envName);
     }
 }

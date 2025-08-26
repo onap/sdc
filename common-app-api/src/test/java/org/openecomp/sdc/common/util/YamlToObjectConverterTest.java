@@ -21,20 +21,29 @@ package org.openecomp.sdc.common.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionDeleteTopicConfig;
 import org.openecomp.sdc.common.http.client.api.HttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+
 import org.openecomp.sdc.exception.YamlConversionException;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class YamlToObjectConverterTest {
 
@@ -46,6 +55,21 @@ public class YamlToObjectConverterTest {
             "  key: value";
 
     private YamlToObjectConverter yamlToObjectConverter;
+    private static HashMap<String, Constructor> yamlConstructors;
+
+    /**
+     * This method is to initialize the static block before class loads.
+     * 
+     * @throws Exception if exception occurs while getting the fields from class.
+     */
+    @BeforeClass
+    public static void init() throws Exception {
+        Class.forName("org.openecomp.sdc.common.util.YamlToObjectConverter");
+        Field field = Class.forName("org.openecomp.sdc.common.util.YamlToObjectConverter")
+                .getDeclaredField("yamlConstructors");
+        field.setAccessible(true);
+        yamlConstructors = (HashMap<String, Constructor>) field.get(null);
+    }
 
     @Before
     public void setUp() {
@@ -168,5 +192,37 @@ public class YamlToObjectConverterTest {
         assertEquals(result.getVersion(),"1.1.0");
         assertEquals(result.getUsers().size(),1);
         assertEquals(result.getUsers().get("tom"),"passwd");
+    }
+
+    /**
+     * This method is to test getting the delete-topic configurations from yaml
+     * file.
+     * 
+     * @throws Exception If any exception occurs while getting the configuration
+     *                   from yaml file.
+     */
+    @Test
+    public void testContainsDistributionDeleteTopic() throws Exception {
+        assertTrue(yamlConstructors.containsKey("org.openecomp.sdc.be.config.DistributionEngineConfiguration"));
+
+        Constructor constructor = yamlConstructors.get("org.openecomp.sdc.be.config.DistributionEngineConfiguration");
+        assertNotNull(constructor);
+
+        String yamlStr = "distributionDeleteTopicName: SDC-DELETE-TOPIC\n" +
+                "distributionDeleteTopic:\n" +
+                "  maxWaitingAfterSendingSeconds: 10\n" +
+                "  maxThreadPoolSize: 20\n" +
+                "  minThreadPoolSize: 5\n";
+
+        Yaml yaml = new Yaml(constructor);
+        DistributionEngineConfiguration distributionEngineConfiguration = yaml.load(yamlStr);
+        assertEquals("SDC-DELETE-TOPIC", distributionEngineConfiguration.getDistributionDeleteTopicName());
+
+        DistributionDeleteTopicConfig deleteTopicConfig = distributionEngineConfiguration.getDistributionDeleteTopic();
+
+        assertNotNull(deleteTopicConfig);
+        assertEquals(Integer.valueOf(10), deleteTopicConfig.getMaxWaitingAfterSendingSeconds());
+        assertEquals(Integer.valueOf(20), deleteTopicConfig.getMaxThreadPoolSize());
+        assertEquals(Integer.valueOf(5), deleteTopicConfig.getMinThreadPoolSize());
     }
 }
