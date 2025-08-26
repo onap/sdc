@@ -38,20 +38,22 @@ import org.openecomp.sdc.fe.impl.PluginStatusBL;
 import org.owasp.esapi.ESAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Root resource (exposed at "/" path)
  */
-@Path("/config")
+@RestController
+@RequestMapping("/config")
 public class ConfigServlet extends LoggingServlet {
 
     public static final String UNEXPECTED_FE_RESPONSE_LOGGING_ERROR = "Unexpected FE response logging error :";
     public static final String ERROR_FE_RESPONSE = "FE Response";
     private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
 
-    @GET
-    @Path("/ui/workspace")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/get")
     public Response getUIWorkspaceConfiguration(@Context final HttpServletRequest request) {
         try {
             logFeRequest(request);
@@ -73,9 +75,7 @@ public class ConfigServlet extends LoggingServlet {
         }
     }
 
-    @GET
-    @Path("/ui/plugins")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/ui/plugins")
     public Response getPluginsConfiguration(@Context final HttpServletRequest request) {
         try {
             logFeRequest(request);
@@ -92,9 +92,7 @@ public class ConfigServlet extends LoggingServlet {
         }
     }
 
-    @GET
-    @Path("/ui/plugins/{pluginId}/online")
-    @Produces(MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/ui/plugins/{pluginId}/online")
     public Response getPluginOnlineState(@PathParam("pluginId") String pluginId, @Context final HttpServletRequest request) {
         try {
             logFeRequest(request);
