@@ -52,6 +52,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.distribution.engine.INotificationData;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
@@ -84,6 +85,7 @@ import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.types.ServiceConsumptionData;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.http.HttpStatus;
@@ -715,8 +717,36 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
         Mockito.when(toscaOperationFacade.deleteService(Mockito.anyString(), Mockito.eq(true))).thenReturn(deletedServcies);
         Mockito.when(modelOperation.findModelByName(model)).thenReturn(Optional.of(normativeExtensionModel));
+
+        String mockDistributionId = ThreadLocalsHolder.getUuid();
+        INotificationData mockNotificationData = Mockito.mock(INotificationData.class);
+        Mockito.when(distributionEngine.buildServiceForDeleteNotification(
+                (Service) Mockito.eq(eitherService.left().value()), Mockito.eq(mockDistributionId)))
+                .thenReturn(mockNotificationData);
+
+        Mockito.when(distributionEngine.notifyServiceForDelete(
+                Mockito.eq(mockDistributionId),
+                Mockito.eq(mockNotificationData),
+                (Service) Mockito.eq(eitherService.left().value()),
+                Mockito.anyString(),
+                Mockito.eq(user))).thenReturn(ActionStatus.OK);
+
         bl.deleteServiceAllVersions(serviceId, user);
         Mockito.verify(modelOperation, Mockito.times(1)).deleteModel(normativeExtensionModel, false);
+        Mockito.verify(modelOperation, Mockito.times(1)).deleteModel(normativeExtensionModel, false);
+
+        // Verify Kafka notification payload building for delete service.
+        Mockito.verify(distributionEngine, Mockito.times(1))
+                .buildServiceForDeleteNotification((Service) eitherService.left().value(), mockDistributionId);
+
+        // Verify Kafka notification sending for delete service.
+        Mockito.verify(distributionEngine, Mockito.times(1))
+                .notifyServiceForDelete(
+                        Mockito.eq(mockDistributionId),
+                        Mockito.eq(mockNotificationData),
+                        (Service) Mockito.eq(eitherService.left().value()),
+                        Mockito.anyString(),
+                        Mockito.eq(user));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

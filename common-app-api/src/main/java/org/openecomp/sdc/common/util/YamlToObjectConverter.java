@@ -64,6 +64,7 @@ public class YamlToObjectConverter {
         deDescription.putListPropertyType("distribNotifResourceArtifactTypes", ComponentArtifactTypesConfig.class);
         deDescription.putListPropertyType("createTopic", CreateTopicConfig.class);
         deDescription.putListPropertyType("distributionNotificationTopic", DistributionNotificationTopicConfig.class);
+        deDescription.putListPropertyType("distributionDeleteTopic", DistributionNotificationTopicConfig.class);
         deConstructor.addTypeDescription(deDescription);
         yamlConstructors.put(DistributionEngineConfiguration.class.getName(), deConstructor);
         // FE conf
