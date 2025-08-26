@@ -2,6 +2,7 @@
 
 JAVA_OPTIONS="$JAVA_OPTIONS \
                -Dconfig.home=$JETTY_BASE/config \
+               -Dapp.config.dir=$JETTY_BASE/config \
                -Dlog.home=$JETTY_BASE/logs \
                -Dlogback.configurationFile=$JETTY_BASE/config/catalog-fe/logback.xml \
                -Dconfiguration.yaml=$JETTY_BASE/config/catalog-fe/configuration.yaml \
