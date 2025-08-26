@@ -72,4 +72,14 @@ public interface IDistributionEngine {
     default OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
         return null;
     }
+
+    default ActionStatus notifyServiceForDelete(String distributionId, INotificationData notificationData,
+            Service service,
+            String envName, User user) {
+        return null;
+    }
+
+    default INotificationData buildServiceForDeleteNotification(Service service, String distributionId) {
+        return null;
+    }
 }

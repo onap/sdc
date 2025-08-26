@@ -58,6 +58,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private ExternalServiceConfig msoConfig;
     private Integer opEnvRecoveryIntervalSec;
     private Integer allowedTimeBeforeStaleSec;
+    private String distributionDeleteTopicName;
+    private DistributionDeleteTopicConfig distributionDeleteTopic;
 
     public void setEnvironments(List<String> environments) {
         Set<String> set = new HashSet<>();
@@ -155,5 +157,15 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
         private List<String> info;
         private List<String> lifecycle;
 
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class DistributionDeleteTopicConfig {
+
+        private Integer maxWaitingAfterSendingSeconds;
+        private Integer maxThreadPoolSize;
+        private Integer minThreadPoolSize;
     }
 }

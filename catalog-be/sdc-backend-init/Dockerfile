@@ -23,6 +23,7 @@ RUN apk update && \
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir $ONAP_LOG && chown onap:onap $ONAP_LOG
+RUN chmod -R 777 $ONAP_LOG
 
 # user/group are the same as in integration/docker/onap-python base image
 ENV user=onap group=onap
@@ -53,3 +54,5 @@ RUN chmod 770 /home/onap/startup.sh
 WORKDIR /home/onap/
 
 ENTRYPOINT [ "/home/onap/startup.sh" ]
+
+RUN ls -ld /home/onap/logs && id onap

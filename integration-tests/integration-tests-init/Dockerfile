@@ -34,6 +34,7 @@ RUN apk update && \
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir $ONAP_LOG && chown onap:onap $ONAP_LOG
+RUN sudo chmod -R 777 /tmp/sdc-integration-tests
 
 # user/group are the same as in integration/docker/onap-python base image
 ENV user=onap group=onap
