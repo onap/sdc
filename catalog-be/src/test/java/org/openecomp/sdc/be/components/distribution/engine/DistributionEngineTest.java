@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +50,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -59,6 +63,7 @@ public class DistributionEngineTest {
     public static final String ENV_ID = "envId";
     public static final String USER_ID = "userId";
     public static final String MODIFIER = "modifier";
+    public static final String DELETE_TOPIC = "deleteTopic";
 
     @InjectMocks
     private DistributionEngine testInstance;
@@ -71,6 +76,9 @@ public class DistributionEngineTest {
     private DistributionNotificationSender distributionNotificationSender;
     @Mock
     private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
+
+    @Mock
+    DistributionDeleteNotificationSender distributionDeleteNotificationSender;
 
     private DummyDistributionConfigurationManager distributionEngineConfigurationMock;
 
@@ -347,5 +355,82 @@ public class DistributionEngineTest {
         //testSubject = createTestSubject();
         when(serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(new NotificationDataImpl());
         result = testInstance.buildServiceForDistribution(service, distributionId, workloadContext);
+    }
+
+    @Test
+    void testBuildServiceForDeleteNotification() {
+        Service service = new Service();
+        String distributionId = ThreadLocalsHolder.getUuid();
+        INotificationData expectedNotificationData = new NotificationDataImpl();
+        expectedNotificationData.setDistributionID(distributionId);
+
+        when(serviceDistributionArtifactsBuilder.buildResourceInstanceForDistribution(
+                eq(service), eq(distributionId), isNull()))
+                .thenReturn(expectedNotificationData);
+
+        INotificationData actual = testInstance.buildServiceForDeleteNotification(service, distributionId);
+        verify(serviceDistributionArtifactsBuilder, times(1))
+                .buildResourceInstanceForDistribution(eq(service), eq(distributionId), isNull());
+        assertEquals(expectedNotificationData, actual);
+        assertEquals(expectedNotificationData.getDistributionID(), actual.getDistributionID());
+    }
+
+    @Test
+    void testNotifyServiceForDelete() {
+        String distributionId = ThreadLocalsHolder.getUuid();
+        Service service = mock(Service.class);
+        User user = mock(User.class);
+        INotificationData notificationData = mock(INotificationData.class);
+
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName())
+                .thenReturn(DELETE_TOPIC);
+
+        String expectedTopicName = DistributionEngineInitTask.buildTopicName(DELETE_TOPIC, ENV_ID);
+        when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
+                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
+                eq(notificationData)))
+                .thenReturn(ActionStatus.OK);
+
+        ActionStatus action = testInstance.notifyServiceForDelete(distributionId, notificationData, service, ENV_ID,
+                user);
+        assertEquals(ActionStatus.OK, action);
+        verify(distributionDeleteNotificationSender, times(1)).sendNotificationForDeleteService(
+                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
+                eq(notificationData));
+    }
+
+    @Test
+    void testNotifyServiceForDeleteWhenEnvironmentDoesNotExist() {
+        when(environmentsEngine.getEnvironments()).thenReturn(envs);
+        ActionStatus actionStatus = testInstance.notifyServiceForDelete(DISTRIBUTION_ID, new NotificationDataImpl(),
+                new Service(), "ENV_123", modifier);
+        assertEquals(ActionStatus.DISTRIBUTION_ENVIRONMENT_NOT_AVAILABLE, actionStatus);
+        verifyNoInteractions(distributionNotificationSender);
+    }
+
+    @Test
+    void testNotifyServiceForDeleteWhenKafkaNotificationFailed() {
+        String distributionId = ThreadLocalsHolder.getUuid();
+        Service service = mock(Service.class);
+        User user = mock(User.class);
+        INotificationData notificationData = mock(INotificationData.class);
+
+        when(environmentsEngine.getEnvironmentById(ENV_ID)).thenReturn(envs.get(ENV_ID));
+        when(distributionEngineConfigurationMock.getConfigurationMock().getDistributionDeleteTopicName())
+                .thenReturn(DELETE_TOPIC);
+
+        String expectedTopicName = DistributionEngineInitTask.buildTopicName(DELETE_TOPIC, ENV_ID);
+        when(distributionDeleteNotificationSender.sendNotificationForDeleteService(
+                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
+                eq(notificationData)))
+                .thenReturn(ActionStatus.GENERAL_ERROR);
+
+        ActionStatus action = testInstance.notifyServiceForDelete(distributionId, notificationData, service, ENV_ID,
+                user);
+        assertEquals(ActionStatus.GENERAL_ERROR, action);
+        verify(distributionDeleteNotificationSender, times(1)).sendNotificationForDeleteService(
+                eq(expectedTopicName), eq(distributionId), any(EnvironmentMessageBusData.class),
+                eq(notificationData));
     }
 }

@@ -92,6 +92,7 @@ class DistributionEngineConfigTest {
 
         deConfiguration.setDistributionNotifTopicName("distributionNotifTopicName");
         deConfiguration.setDistributionStatusTopicName("statusTopic");
+        deConfiguration.setDistributionDeleteTopicName("distributionDeleteTopicName");
 
         DistributionStatusTopicConfig distributionStatusTopic = new DistributionStatusTopicConfig();
         distributionStatusTopic.setConsumerGroup("asdc-group");
