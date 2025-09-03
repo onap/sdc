@@ -16,6 +16,142 @@
       "message": "recheck",
       "revId": "97769f3126f90ac0b689648616d12272c83641b3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7fee9dc3_208ea1d0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Please also define a `@SpringBootTest` annotated test to make sure that context loading is correctly working",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e2e4de6_14570666",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "You don\u0027t need to explicitly set the `\u003cversion\u003e` here and in the other places (in fact that only opens room for inconsistencies in the future), since you have already defined a `dependencyManagement` with the spring boot bom.\n\nSince you are also defining the spring boot plugin further down, I would suggest that you define a `\u003cproperties\u003e` section that defines the version and reference that for the plugin and the bom:\n\n```xml\n    \u003cproperties\u003e\n        \u003cspring-boot.version\u003e2.7.18\u003c/spring-boot.version\u003e\n    \u003c/properties\u003e\n```\n\nand then\n\n```xml\n        \u003cdependency\u003e\n            \u003cgroupId\u003eorg.springframework.boot\u003c/groupId\u003e\n            \u003cartifactId\u003espring-boot-dependencies\u003c/artifactId\u003e\n            \u003cversion\u003e${spring-boot.version}\u003c/version\u003e\n            \u003ctype\u003epom\u003c/type\u003e\n            \u003cscope\u003eimport\u003c/scope\u003e\n        \u003c/dependency\u003e\n```\n\nand the same for the plugin",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c56eff98_8c309455",
+        "filename": "catalog-fe/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Please correct the indentation here",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4962795_fa2a7880",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/CatalogFeApplication.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "I would suggest to do the `@ComponentScan` directly here instead of `@Import`ing a configuration that in turn only contains that annotation.\n\nThat makes the annotation block bigger here, but I think its better than to add this extra abstraction that is not really needed since you are not defining any `@Bean`s in it",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aede33dd_7a5e30ad",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/ConfigServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Same comment here",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "df9d3c4a_ebae2544",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/FeHealthCheckServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Same comment here",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b9ae63a_c45eb2dd",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/PortalServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Same comment here",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76e686ac_a07e2c96",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/WebConfig.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-03T10:19:48Z",
+      "side": 1,
+      "message": "Please remove commented out code in this file",
+      "revId": "97769f3126f90ac0b689648616d12272c83641b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
