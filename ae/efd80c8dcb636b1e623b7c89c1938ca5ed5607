@@ -1,0 +1,10 @@
+Code-Review+2: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Code-Review+1: Fiete Ostkamp <fiete.ostkamp@telekom.de>
+Verified+1: ONAP Required GHA <releng+onap.required.gha@linuxfoundation.org>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Verified+1: ONAP Bypass GHA <releng+onap.bypass.gha@linuxfoundation.org>
+Submitted-by: Lukasz Rajewski <lukasz.rajewski@t-mobile.pl>
+Submitted-at: Fri, 05 Sep 2025 12:25:33 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/sdc/+/141805
+Project: sdc
+Branch: refs/heads/master
