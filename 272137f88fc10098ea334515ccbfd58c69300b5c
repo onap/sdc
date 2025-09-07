@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a948bbf_721f9ee0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngine.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 0,
+      "message": "Please add a modifications copyright line here",
+      "revId": "272137f88fc10098ea334515ccbfd58c69300b5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}

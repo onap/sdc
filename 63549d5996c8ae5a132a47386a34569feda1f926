@@ -84,6 +84,108 @@
       "message": "You are not using this field right? If so, then please remove it",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bdd885b_d4cb272c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngine.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea077343_cbb5b1bd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "Please add a modifications copyright line here",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6c141fc_dd4a7b51",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19fed6d2_bf28d4c2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "`testSend...` and `...IsInactive`",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d2ba3164_633c7f62",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "`testSend...`",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4eb33ca5_586c6444",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T16:22:00Z",
+      "side": 1,
+      "message": "`testSend...`",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
