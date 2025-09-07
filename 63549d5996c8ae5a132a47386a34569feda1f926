@@ -16,6 +16,74 @@
       "message": "recheck",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93f5f744_0d5e7241",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T14:58:56Z",
+      "side": 1,
+      "message": "Please add a license header here",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8232e341_bbee03e8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T14:58:56Z",
+      "side": 1,
+      "message": "It shouldn\u0027t be necessary to override the default naming for this `Component` I think. This could already be the default value that you are explicitly assigning here",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4543483_6da3375d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T14:58:56Z",
+      "side": 1,
+      "message": "There is a typo in this class name (`Notifcation`). I would suggest to rename the class",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03875976_a67585ef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-07T14:58:56Z",
+      "side": 1,
+      "message": "You are not using this field right? If so, then please remove it",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
