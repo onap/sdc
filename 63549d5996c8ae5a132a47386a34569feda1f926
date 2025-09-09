@@ -35,6 +35,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "baf12181_b43f50e9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93f5f744_0d5e7241",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8232e341_bbee03e8",
@@ -48,6 +66,24 @@
       "writtenOn": "2025-09-07T14:58:56Z",
       "side": 1,
       "message": "It shouldn\u0027t be necessary to override the default naming for this `Component` I think. This could already be the default value that you are explicitly assigning here",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1179ee67_b6f50122",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8232e341_bbee03e8",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -69,6 +105,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7ab54a55_178b289d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d4543483_6da3375d",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03875976_a67585ef",
@@ -82,6 +136,24 @@
       "writtenOn": "2025-09-07T14:58:56Z",
       "side": 1,
       "message": "You are not using this field right? If so, then please remove it",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "75cb2509_f7920027",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionDeleteNotifcationSender.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03875976_a67585ef",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -103,6 +175,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb585ef4_acacc1b9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngine.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1bdd885b_d4cb272c",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea077343_cbb5b1bd",
@@ -116,6 +206,24 @@
       "writtenOn": "2025-09-07T16:22:00Z",
       "side": 1,
       "message": "Please add a modifications copyright line here",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d69f239c_5796cc01",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea077343_cbb5b1bd",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -137,6 +245,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "222e43eb_fbc7fe77",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6c141fc_dd4a7b51",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "19fed6d2_bf28d4c2",
@@ -150,6 +276,24 @@
       "writtenOn": "2025-09-07T16:22:00Z",
       "side": 1,
       "message": "`testSend...` and `...IsInactive`",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "840e6ecd_c79f9ee2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19fed6d2_bf28d4c2",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -171,6 +315,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "38530ac1_50687897",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2ba3164_633c7f62",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4eb33ca5_586c6444",
@@ -184,6 +346,24 @@
       "writtenOn": "2025-09-07T16:22:00Z",
       "side": 1,
       "message": "`testSend...`",
+      "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8f12219_d65e2601",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/distribution/DistributionDeleteNotifcationSenderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-09T07:23:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4eb33ca5_586c6444",
       "revId": "63549d5996c8ae5a132a47386a34569feda1f926",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
