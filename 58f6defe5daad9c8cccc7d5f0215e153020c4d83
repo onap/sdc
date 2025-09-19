@@ -16,6 +16,24 @@
       "message": "Have you checked if switching to the spring based annotations is really needed? Because `spring-boot-starter-jersey` is present and thus jax-rs should (still) be supported.\n\nI would suggest here to change as little as possible if it is not necessary",
       "revId": "58f6defe5daad9c8cccc7d5f0215e153020c4d83",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6d64987_d046581a",
+        "filename": "catalog-fe/src/main/java/org/openecomp/sdc/fe/servlets/ConfigMgrServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-19T09:51:22Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "d97db1c7_a8a52abd",
+      "revId": "58f6defe5daad9c8cccc7d5f0215e153020c4d83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
