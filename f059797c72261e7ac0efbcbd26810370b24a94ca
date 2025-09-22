@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9b74fe0d_b9751127",
+        "filename": "catalog-fe/src/test/java/org/openecomp/sdc/fe/CatalogFeApplicationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2025-09-22T12:25:02Z",
+      "side": 1,
+      "message": "Your test case is not being executed because you are using Junit 4. Please use Junit 5 here",
+      "revId": "f059797c72261e7ac0efbcbd26810370b24a94ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
