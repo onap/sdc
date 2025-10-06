@@ -142,7 +142,6 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <!-- sonar -->
     <sonar.projectVersion>${project.version}</sonar.projectVersion>
-    <sonar.nodejs.executable>${project.basedir}/node/node</sonar.nodejs.executable>
     <sonar.surefire.reportsPath>${project.build.directory}/surefire-reports
     </sonar.surefire.reportsPath>
     <sonar.javascript.lcov.reportPaths>${project.build.directory}/code-coverage/lcov.info
