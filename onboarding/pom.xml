@@ -54,7 +54,7 @@
         <commons.codec.version>${commons-codec}</commons.codec.version>
         <commons.digester.version>2.1</commons.digester.version>
         <commons.lang3.version>${lang3.version}</commons.lang3.version>
-        <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
+        <datastax.cassandra.version>4.17.0</datastax.cassandra.version>
         <http.client.version>${httpclient.version}</http.client.version>
         <http.core.version>${httpcore.version}</http.core.version>
         <httpasyncclient.version>4.1.2</httpasyncclient.version>
@@ -246,8 +246,8 @@
                 <version>${commons.codec.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
+                <groupId>com.datastax.oss</groupId>
+                <artifactId>java-driver-core</artifactId>
                 <version>${datastax.cassandra.version}</version>
                 <exclusions>
                     <exclusion>
@@ -257,8 +257,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-mapping</artifactId>
+                <groupId>com.datastax.oss</groupId>
+                <artifactId>java-driver-mapper-runtime</artifactId>
                 <version>${datastax.cassandra.version}</version>
             </dependency>
             <dependency>

@@ -154,7 +154,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
     <sonar.coverage.exclusions>pom.xml,src/test</sonar.coverage.exclusions>
     <!--cassandra -->
-    <cassandra.driver.version>3.8.0</cassandra.driver.version>
+    <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <!-- maven central (Nexus) -->
     <nexus.id.release>nexus</nexus.id.release>
     <nexus.id.snapshot>nexus</nexus.id.snapshot>

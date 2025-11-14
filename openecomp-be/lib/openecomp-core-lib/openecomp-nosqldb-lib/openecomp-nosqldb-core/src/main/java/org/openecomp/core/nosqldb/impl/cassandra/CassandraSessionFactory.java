@@ -15,24 +15,18 @@
  */
 package org.openecomp.core.nosqldb.impl.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.QueryOptions;
-import com.datastax.driver.core.RemoteEndpointAwareJdkSSLOptions;
-import com.datastax.driver.core.SSLOptions;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
-import com.datastax.driver.core.policies.DefaultRetryPolicy;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.TokenAwarePolicy;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
+import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Objects;
-import java.util.Optional;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 import org.openecomp.sdc.common.errors.SdcConfigurationException;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
@@ -47,80 +41,55 @@ public class CassandraSessionFactory {
         // static methods, cannot be instantiated
     }
 
-    public static Session getSession() {
+     public static CqlSession getSession() {
         return ReferenceHolder.CASSANDRA;
     }
-
     /**
      * New cassandra session session.
      *
      * @return the session
      */
-    public static Session newCassandraSession() {
+       public static CqlSession newCassandraSession() {
         String[] addresses = CassandraUtils.getAddresses();
         int cassandraPort = CassandraUtils.getCassandraPort();
-        Long reconnectTimeout = CassandraUtils.getReconnectTimeout();
-        Cluster.Builder builder = Cluster.builder();
-        if (null != reconnectTimeout) {
-            builder.withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout)).withRetryPolicy(DefaultRetryPolicy.INSTANCE);
-        }
-        builder.withPort(cassandraPort);
+
+        CqlSessionBuilder builder = CqlSession.builder();
+
         for (String address : addresses) {
-            builder.addContactPoint(address);
+            builder.addContactPoint(new InetSocketAddress(address, cassandraPort));
         }
-        //Check if ssl
-        Boolean isSsl = CassandraUtils.isSsl();
-        if (isSsl) {
-            builder.withSSL(getSslOptions());
-        }
-        //Check if user/pass
-        Boolean isAuthenticate = CassandraUtils.isAuthenticate();
-        if (isAuthenticate) {
-            builder.withCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
-        }
-        setConsistencyLevel(builder, addresses);
-        setLocalDataCenter(builder);
-        Cluster cluster = builder.build();
-        String keyStore = SessionContextProviderFactory.getInstance().createInterface().get().getTenant();
-        LOGGER
-            .info("Cassandra client created hosts: {} port: {} SSL enabled: {} reconnectTimeout", addresses, cassandraPort, isSsl, reconnectTimeout);
-        return cluster.connect(keyStore);
-    }
 
-    private static void setLocalDataCenter(Cluster.Builder builder) {
-        String localDataCenter = CassandraUtils.getLocalDataCenter();
-        if (Objects.nonNull(localDataCenter)) {
-            LOGGER.info("localDatacenter was provided, setting Cassndra client to use datacenter: {} as local.", localDataCenter);
-            LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
-            builder.withLoadBalancingPolicy(tokenAwarePolicy);
-        } else {
-            LOGGER.info("localDatacenter was provided,  the driver will use the datacenter of the first contact "
-                + "point that was reached at initialization");
+        // Local DC (required in v4 driver)
+        String localDc = CassandraUtils.getLocalDataCenter();
+        if (Objects.nonNull(localDc)) {
+            LOGGER.info("Setting Cassandra local datacenter: {}", localDc);
+            builder.withLocalDatacenter(localDc);
         }
-    }
 
-    private static void setConsistencyLevel(Cluster.Builder builder, String[] addresses) {
-        if (addresses != null && addresses.length > 1) {
-            String consistencyLevel = CassandraUtils.getConsistencyLevel();
-            if (Objects.nonNull(consistencyLevel)) {
-                LOGGER.info("consistencyLevel was provided, setting Cassandra client to use consistencyLevel: {}" + " as ", consistencyLevel);
-                builder.withQueryOptions(new QueryOptions().setConsistencyLevel(ConsistencyLevel.valueOf(consistencyLevel)));
-            }
+        // SSL
+        if (CassandraUtils.isSsl()) {
+            builder.withSslContext(getSslContext(
+                CassandraUtils.getTruststore(),
+                CassandraUtils.getTruststorePassword()
+            ));
         }
-    }
 
-    private static SSLOptions getSslOptions() {
-        Optional<String> trustStorePath = Optional.ofNullable(CassandraUtils.getTruststore());
-        if (!trustStorePath.isPresent()) {
-            throw new SdcConfigurationException("Missing configuration for Cassandra trustStorePath");
+        // Authentication
+        if (CassandraUtils.isAuthenticate()) {
+            builder.withAuthCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
         }
-        Optional<String> trustStorePassword = Optional.ofNullable(CassandraUtils.getTruststorePassword());
-        if (!trustStorePassword.isPresent()) {
-            throw new SdcConfigurationException("Missing configuration for Cassandra trustStorePassword");
+
+        // Keyspace (optional, can also be set per query)
+        String keyspace = SessionContextProviderFactory.getInstance().createInterface().get().getTenant();
+        if (keyspace != null) {
+            builder.withKeyspace(keyspace);
         }
-        SSLContext context = getSslContext(trustStorePath.get(), trustStorePassword.get());
-        String[] css = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA"};
-        return RemoteEndpointAwareJdkSSLOptions.builder().withSSLContext(context).withCipherSuites(css).build();
+
+        LOGGER.info("Cassandra client created hosts: {} port: {} SSL enabled: {}",
+                String.join(",", addresses), cassandraPort, CassandraUtils.isSsl());
+
+        registerCustomCodecs(builder);
+        return builder.build();
     }
 
     private static SSLContext getSslContext(String truststorePath, String trustStorePassword) {
@@ -139,10 +108,51 @@ public class CassandraSessionFactory {
 
     private static class ReferenceHolder {
 
-        private static final Session CASSANDRA = newCassandraSession();
+        private static final CqlSession CASSANDRA = newCassandraSession();
 
         private ReferenceHolder() {
             // prevent instantiation
         }
     }
+
+    private static void registerCustomCodecs(CqlSessionBuilder builder) {
+    try {
+        com.typesafe.config.Config config =
+            com.typesafe.config.ConfigFactory.load();
+
+        if (!config.hasPath("datastax-java-driver.basic.custom-codecs")) {
+            return;
+        }
+
+        var codecConfigs =
+            config.getConfigList("datastax-java-driver.basic.custom-codecs");
+
+        for (com.typesafe.config.Config codecConfig : codecConfigs) {
+            String className = codecConfig.getString("class");
+            LOGGER.info("Registering custom Cassandra codec: {}", className);
+
+            try {
+                Class<?> clazz = Class.forName(className);
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+
+                if (instance instanceof com.datastax.oss.driver.api.core.type.codec.TypeCodec) {
+
+                    com.datastax.oss.driver.api.core.type.codec.TypeCodec<?> codec =
+                        (com.datastax.oss.driver.api.core.type.codec.TypeCodec<?>) instance;
+
+                    builder.addTypeCodecs(codec);
+
+                } else {
+                    LOGGER.error("Class {} is not a TypeCodec", className);
+                }
+
+            } catch (Exception e) {
+                LOGGER.error("Failed to load codec class {}", className, e);
+            }
+        }
+
+    } catch (Exception e) {
+        LOGGER.error("Failed to load codec registry", e);
+    }
+}
 }
