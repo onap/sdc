@@ -15,7 +15,7 @@
  */
 package org.openecomp.sdc.action.types;
 
-import java.util.Date;
+import java.time.Instant; // Changed from java.util.Date → Instant because driver 4.x uses Java time API
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class Action implements Comparable {
     private String displayName;
     private List<String> vendorList;
     private List<String> categoryList;
-    private Date timestamp;
+    private Instant timestamp; // Changed from Date → Instant because driver 4.x maps timestamp to Instant
     private String user;
     private List<Map<String, String>> supportedModels;
     private List<Map<String, String>> supportedComponents;
@@ -132,11 +132,11 @@ public class Action implements Comparable {
         this.categoryList = categoryList;
     }
 
-    public Date getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
