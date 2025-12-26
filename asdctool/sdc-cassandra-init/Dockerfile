@@ -1,36 +1,40 @@
+# Base image
 FROM eclipse-temurin:11-jre-jammy
 
 # Create a new group and user
-RUN addgroup sdc && \
-    adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
+RUN addgroup --system sdc && \
+    adduser --system --ingroup sdc --shell /bin/sh sdc
 
 USER sdc
+WORKDIR /home/sdc
 
 # Create Cassandra configuration directory and file
 RUN mkdir -p ~/.cassandra/ && \
     echo '[cql]' > ~/.cassandra/cqlshrc && \
-    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc
+    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc && \
+    chmod 600 ~/.cassandra/cqlshrc
 
+# Switch to root to install necessary packages
 USER root
-
-# Update package list and install necessary packages
 RUN apt-get update --allow-releaseinfo-change && \
-    apt-get purge python* -y && \
-    apt-get install -y python3-pip && \
+    apt-get install -y --no-install-recommends \
+        python3-pip \
+        libffi-dev \
+        libxml2-dev \
+        curl \
+        wget \
+        perl \
+        ntp \
+        apt-transport-https && \
     python3 -m pip install --upgrade pip && \
     pip3 install --no-cache-dir cqlsh==6.1.0 && \
-    mkdir -p ~/.cassandra/ && \
-    echo '[cql]' > ~/.cassandra/cqlshrc && \
-    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc && \
-    apt-get install -y \
-    libffi-dev \
-    libxml2-dev && \
-    apt-get clean
+    apt-get purge -y python3-dev python3-apt && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /root/.cache/pip
 
-# Remove bash only if absolutely necessary
-RUN apt-get remove bash -y --allow-remove-essential || true
-
+# Switch back to system user for runtime
 USER sdc
+WORKDIR /home/sdc
 
 # Copy sdctool tar and startup
 COPY --chown=sdc:sdc sdctool.tar /home/sdc/sdctool.tar
@@ -51,5 +55,9 @@ RUN tar -xvf /home/sdc/sdctool.tar -C /home/sdc && \
     cp -r /home/sdc/scripts/janusgraph.properties /home/sdc/sdctool/config && \
     cp -r /home/sdc/scripts/configuration.yaml /home/sdc/sdctool/config
 
-# Define entrypoint
-ENTRYPOINT [ "sh", "-c", "/home/sdc/startup.sh" ]
+# Ensure all scripts are executable and owned by sdc
+RUN find /home/sdc -type f -name "*.sh" -exec chmod 750 {} \; && \
+    chown -R sdc:sdc /home/sdc
+
+
+ENTRYPOINT ["/bin/sh", "/home/sdc/startup.sh"]
