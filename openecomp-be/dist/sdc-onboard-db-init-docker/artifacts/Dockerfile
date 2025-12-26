@@ -18,6 +18,10 @@ RUN mkdir -p /root/.cassandra/ && \
     echo 'version=3.4.4' >> /root/.cassandra/cqlshrc
 
 USER sdc
+RUN mkdir -p ~/.cassandra/ && \
+    echo '[cql]' > ~/.cassandra/cqlshrc && \
+    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc && \
+    chmod 600 ~/.cassandra/cqlshrc
 
 COPY --chown=sdc:sdc init_keyspaces.cql /home/sdc/
 COPY --chown=sdc:sdc init_schemas.cql /home/sdc/
