@@ -27,6 +27,7 @@ import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_PROPERTY;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.primitives.Ints;
 import com.google.gson.JsonElement;
@@ -149,6 +150,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.introspector.Property;
@@ -159,6 +161,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {
@@ -278,16 +281,24 @@ public class ToscaExportHandler {
     }
 
     private ToscaRepresentation createToscaRepresentation(ToscaTemplate toscaTemplate) {
-        CustomRepresenter representer = new CustomRepresenter();
+
         DumperOptions options = new DumperOptions();
         options.setAllowReadOnlyProperties(false);
         options.setPrettyFlow(true);
-        options.setDefaultFlowStyle(FlowStyle.FLOW);
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
         options.setCanonical(false);
+
+        CustomRepresenter representer = new CustomRepresenter(options);
+        
+      
         representer.addClassTag(toscaTemplate.getClass(), Tag.MAP);
         representer.setPropertyUtils(new UnsortedPropertyUtils());
 
-        Yaml yaml = new Yaml(representer, options);
+           
+    LoaderOptions loaderOptions = new LoaderOptions();
+    loaderOptions.setAllowDuplicateKeys(false);
+
+           Yaml yaml = new Yaml(new Constructor(loaderOptions), representer, options, loaderOptions);
         String yamlAsString = yaml.dumpAsMap(toscaTemplate);
         String sb = getConfiguration().getHeatEnvArtifactHeader()
                 + yamlAsString
@@ -1893,7 +1904,8 @@ public class ToscaExportHandler {
 
     private static class CustomRepresenter extends Representer {
 
-        CustomRepresenter() {
+        CustomRepresenter(DumperOptions options) {
+             super(options);
             this.representers.put(ToscaPropertyAssignment.class, new RepresentToscaPropertyAssignment());
             this.representers.put(ToscaAttribute.class, new RepresentToscaAttribute());
             // null representer is exceptional and it is stored as an instance

@@ -61,18 +61,26 @@ public class YamlValidator implements Validator {
         }
 
         try (var yamlContent = rowContent.get()) {
-            Constructor constructor = new StrictMapAppenderConstructor(Map.class);
-            constructor.setAllowDuplicateKeys(false);
-            constructor.setPropertyUtils(new MyPropertyUtils());
-            TypeDescription yamlFileDescription = new TypeDescription(Map.class);
-            constructor.addTypeDescription(yamlFileDescription);
-            LoaderOptions options = new LoaderOptions();
-            options.setAllowDuplicateKeys(false);
-            //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
-            Object yamlObj = new Yaml(constructor, new Representer(), new DumperOptions(), options).load(yamlContent);
+     LoaderOptions options = new LoaderOptions();
+    options.setAllowDuplicateKeys(false);
 
+    // Constructor now requires LoaderOptions
+    Constructor constructor = new StrictMapAppenderConstructor(Map.class, options);
+    constructor.setPropertyUtils(new MyPropertyUtils());
+    TypeDescription yamlFileDescription = new TypeDescription(Map.class);
+    constructor.addTypeDescription(yamlFileDescription);
+    constructor.setAllowDuplicateKeys(false);
+
+    // Representer also requires DumperOptions and LoaderOptions
+    DumperOptions dumperOptions = new DumperOptions();
+    Representer representer = new Representer(dumperOptions);
+
+    // Updated Yaml constructor
+    Yaml yaml = new Yaml(constructor, representer, dumperOptions, options);
+
+    Object yamlObj = yaml.load(yamlContent);
             if (yamlObj == null) {
-                throw new Exception();
+                throw new Exception("Empty YAML content");
             }
         } catch (Exception exception) {
             globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder

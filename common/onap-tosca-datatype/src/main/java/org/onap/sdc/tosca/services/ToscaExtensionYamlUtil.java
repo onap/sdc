@@ -16,6 +16,7 @@
 package org.onap.sdc.tosca.services;
 
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -62,7 +63,7 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
     protected class ToscaWithHeatExtensionConstructor extends StrictMapAppenderConstructor {
 
         public ToscaWithHeatExtensionConstructor(Class<?> theRoot) {
-            super(theRoot);
+            super(theRoot, new LoaderOptions());
             yamlClassConstructors.put(NodeId.mapping, new MyPersistentObjectConstruct());
         }
 

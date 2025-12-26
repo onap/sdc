@@ -29,6 +29,7 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -71,7 +72,7 @@ public class YamlUtil {
      * @return The YAML Object
      */
     public static Object read(final InputStream yamlFileInputStream) {
-        return new Yaml().load(yamlFileInputStream);
+         return new Yaml(new SafeConstructor(new LoaderOptions())).load(yamlFileInputStream);
     }
 
     /**
@@ -85,13 +86,13 @@ public class YamlUtil {
     public <T> T yamlToObject(String yamlContent, Class<T> typClass) {
         Constructor constructor = getConstructor(typClass);
         constructor.setPropertyUtils(getPropertyUtils());
-        TypeDescription yamlFileDescription = new TypeDescription(typClass);
-        constructor.addTypeDescription(yamlFileDescription);
-        T yamlObj = new Yaml(constructor, new Representer(new DumperOptions()), new DumperOptions(), getLoaderOptions()).load(yamlContent);
+        constructor.addTypeDescription(new TypeDescription(typClass));
 
-        //noinspection ResultOfMethodCallIgnored
-        yamlObj.toString();
-        return yamlObj;
+        DumperOptions dumper = new DumperOptions();
+        LoaderOptions loader = getLoaderOptions();
+        Representer rep = new Representer(dumper);
+
+        return new Yaml(constructor, rep, dumper, loader).load(yamlContent);
     }
 
     public InputStream loadYamlFileIs(String yamlFullFileName) {
@@ -111,16 +112,19 @@ public class YamlUtil {
             Constructor constructor = getConstructor(typClass);
             constructor.setAllowDuplicateKeys(false);
             constructor.setPropertyUtils(getPropertyUtils());
-            TypeDescription yamlFileDescription = new TypeDescription(typClass);
-            constructor.addTypeDescription(yamlFileDescription);
-            //No Yaml Constructor takes only Constructor and LoaderOptions, that is why I had to pass anonymous Representer and DumperOptions objects
-            T yamlObj = new Yaml(constructor, new Representer(new DumperOptions()), new DumperOptions(), getLoaderOptions()).load(yamlContent);
+            constructor.addTypeDescription(new TypeDescription(typClass));
+
+            DumperOptions dumper = new DumperOptions();
+            LoaderOptions loader = getLoaderOptions();
+            Representer rep = new Representer(dumper);
+
+            T yamlObj = new Yaml(constructor, rep, dumper, loader).load(yamlContent);
             if (yamlObj != null) {
                 //noinspection ResultOfMethodCallIgnored
                 yamlObj.toString();
                 return yamlObj;
             } else {
-                throw new RuntimeException();
+                throw new RuntimeException("YAML parsed as null");
             }
         } catch (Exception exception) {
             throw new RuntimeException(exception);
@@ -150,7 +154,7 @@ public class YamlUtil {
      * @return the constructor
      */
     public <T> Constructor getConstructor(Class<T> typClass) {
-        return new StrictMapAppenderConstructor(typClass);
+        return new StrictMapAppenderConstructor(typClass, getLoaderOptions());
     }
 
     /**
@@ -169,7 +173,7 @@ public class YamlUtil {
      * @return the map
      */
     public Map<String, LinkedHashMap<String, Object>> yamlToMap(InputStream yamlContent) {
-        return new Yaml().load(yamlContent);
+        return new Yaml(new SafeConstructor(new LoaderOptions())).load(yamlContent);
     }
 
     /**
@@ -182,11 +186,10 @@ public class YamlUtil {
         DumperOptions options = new DumperOptions();
         options.setPrettyFlow(true);
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Representer representer = new CustomRepresenter();
-        representer.addClassTag(obj.getClass(), Tag.MAP);
-        representer.setPropertyUtils(new MyPropertyUtils());
-        Yaml yaml = new Yaml(representer, options);
-        return yaml.dump(obj);
+        CustomRepresenter rep = new CustomRepresenter(options);
+        rep.addClassTag(obj.getClass(), Tag.MAP);
+        rep.setPropertyUtils(new MyPropertyUtils());
+        return new Yaml(rep, options).dump(obj);
     }
 
     /**
@@ -197,13 +200,17 @@ public class YamlUtil {
      */
     public boolean isYamlFileContentValid(String yamlFullFileName) {
         try {
-            return new Yaml().load(yamlFullFileName) != null;
+            return new Yaml(new SafeConstructor(new LoaderOptions())).load(yamlFullFileName) != null;
         } catch (Exception exception) {
             return false;
         }
     }
 
     private class CustomRepresenter extends Representer {
+
+        public CustomRepresenter(DumperOptions options) {
+            super(options);
+        }
 
         @Override
         protected MappingNode representJavaBean(Set<Property> properties, Object javaBean) {

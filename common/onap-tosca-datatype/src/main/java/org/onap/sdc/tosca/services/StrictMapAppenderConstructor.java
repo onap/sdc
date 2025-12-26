@@ -20,6 +20,8 @@
 package org.onap.sdc.tosca.services;
 
 import java.util.Map;
+
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.parser.ParserException;
@@ -31,8 +33,8 @@ public class StrictMapAppenderConstructor extends Constructor {
      *
      * @param theRoot the the root
      */
-    public StrictMapAppenderConstructor(Class<?> theRoot) {
-        super(theRoot);
+    public StrictMapAppenderConstructor(Class<?> theRoot, LoaderOptions loaderOptions) {
+        super(theRoot, loaderOptions);
     }
 
     @Override

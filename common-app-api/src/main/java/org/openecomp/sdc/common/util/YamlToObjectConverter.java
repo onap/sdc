@@ -46,6 +46,7 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.YamlConversionException;
 import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -57,7 +58,7 @@ public class YamlToObjectConverter {
     private static HashMap<String, Constructor> yamlConstructors = new HashMap<>();
 
     static {
-        Constructor deConstructor = new Constructor(DistributionEngineConfiguration.class);
+        Constructor deConstructor = new Constructor(DistributionEngineConfiguration.class, new LoaderOptions());
         TypeDescription deDescription = new TypeDescription(DistributionEngineConfiguration.class);
         deDescription.putListPropertyType("distributionStatusTopic", DistributionStatusTopicConfig.class);
         deDescription.putListPropertyType("distribNotifServiceArtifactTypes", ComponentArtifactTypesConfig.class);
@@ -68,13 +69,13 @@ public class YamlToObjectConverter {
         deConstructor.addTypeDescription(deDescription);
         yamlConstructors.put(DistributionEngineConfiguration.class.getName(), deConstructor);
         // FE conf
-        Constructor feConfConstructor = new Constructor(org.openecomp.sdc.fe.config.Configuration.class);
+        Constructor feConfConstructor = new Constructor(org.openecomp.sdc.fe.config.Configuration.class, new LoaderOptions());
         TypeDescription feConfDescription = new TypeDescription(org.openecomp.sdc.fe.config.Configuration.class);
         feConfDescription.putListPropertyType("systemMonitoring", FeMonitoringConfig.class);
         feConfConstructor.addTypeDescription(feConfDescription);
         yamlConstructors.put(org.openecomp.sdc.fe.config.Configuration.class.getName(), feConfConstructor);
         // BE conf
-        Constructor beConfConstructor = new Constructor(org.openecomp.sdc.be.config.Configuration.class);
+        Constructor beConfConstructor = new Constructor(org.openecomp.sdc.be.config.Configuration.class, new LoaderOptions());
         TypeDescription beConfDescription = new TypeDescription(org.openecomp.sdc.be.config.Configuration.class);
         beConfConstructor.addTypeDescription(beConfDescription);
         // systemMonitoring
@@ -96,7 +97,7 @@ public class YamlToObjectConverter {
         beConfDescription.putListPropertyType("toscaValidators", ToscaValidatorsConfig.class);
         yamlConstructors.put(org.openecomp.sdc.be.config.Configuration.class.getName(), beConfConstructor);
         // HEAT deployment artifact
-        Constructor depArtHeatConstructor = new Constructor(DeploymentArtifactHeatConfiguration.class);
+        Constructor depArtHeatConstructor = new Constructor(DeploymentArtifactHeatConfiguration.class, new LoaderOptions());
         PropertyUtils propertyUtils = new PropertyUtils();
         // Skip properties which are found in YAML but not found in POJO
         propertyUtils.setSkipMissingProperties(true);
