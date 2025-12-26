@@ -900,7 +900,7 @@ limitations under the License.
                                 </env>
                                 <hostname>sdc-cs-init</hostname>
                                 <wait>
-                                    <time>400000</time>
+                                    <time>600000</time>
                                     <log>SdcSchemaFileImport successfully completed</log>
                                 </wait>
                                 <network>
