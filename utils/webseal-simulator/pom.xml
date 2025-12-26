@@ -277,7 +277,8 @@
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <configuration>
-                            <verbose>${verbose}</verbose>
+                            <verbose>true</verbose>
+                            <logStdout>true</logStdout>
                             <apiVersion>${docker.api.version}</apiVersion>
                             <registry>${docker.registry}</registry>
                             <authConfig>
@@ -295,6 +296,7 @@
                                         <cleanup>try</cleanup>
                                         <dockerFileDir>${basedir}${file.separator}sdc-simulator
                                         </dockerFileDir>
+                                        <filter>true</filter>
                                         <tags>
                                             <tag>latest</tag>
                                             <tag>
