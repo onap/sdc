@@ -137,7 +137,7 @@
             </exclusions>
         </dependency>
 
-        <!-- Proxy servlet -->
+        <!-- Proxy servlet  -->
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
