@@ -50,6 +50,74 @@
       "message": "recheck",
       "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b199296_6881a0b2",
+        "filename": "catalog-be/sdc-backend-init/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-01-02T14:06:57Z",
+      "side": 1,
+      "message": "Please use `--no-cache` here too",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac45360f_6892845e",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 3530,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-01-02T14:06:57Z",
+      "side": 1,
+      "message": "From my point of view, this CR is doing too much. Can you please open a separate CR for the `dataTypes.yml` changes? They are not related to fixing vulnerabilities and I can imagine that making some properties `required` here may even be a breaking change in some regard. As such, it is always better to have this as an isolated change that we can pin point later should this have some unexpected side effects",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a1cf2e3_000636e7",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-01-02T14:06:57Z",
+      "side": 1,
+      "message": "lines 7 to 10 are duplicate",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f66c098_6200473c",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-01-02T14:06:57Z",
+      "side": 1,
+      "message": "Please use `\u003cdependencyManagement\u003e` for this too",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
