@@ -3527,23 +3527,29 @@ tosca.datatypes.3gpp.PlmnId:
   properties:
     mcc:
       type: string
-      required: false
+      required: true
+      constraints:
+        - pattern: '^[0-9]{3}$'
       description: >
-        Mobile Country Code (MCC) of the PLMN identifier. See 3GPP TS 23.003 subclause 2.2 and 12.1.
+        Mobile Country Code(MCC) of the PLMN identifier. Exactly 3 digits.
     mnc:
       type: string
-      required: false
+      required: true
+      constraints:
+        - pattern: '^[0-9]{2,3}$'
       description: >
-        Mobile Network Code (MNC) of the PLMN identifier. See 3GPP TS 23.003 subclause 2.2 and 12.1.
+        Mobile Network Code (MNC) of the PLMN identifier. 2 or 3 digits.
 
 tosca.datatypes.3gpp.Snssai:
   derived_from: tosca.datatypes.Root
   properties:
     sst:
-      type: string
-      required: false
+      type: integer
+      required: true
+      constraints: 
+        - in_range: [0, 255]
       description: >
-        This attribute specifies the Slice/Service type (SST) of the network slice.
+        This attribute specifies the Slice/Service type (SST) of the network slice. Examples: 1 = eMBB, 2 = uRLLC, 3 = mIot.
     sd:
       type: string
       required: false
