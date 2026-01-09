@@ -86,6 +86,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ad4a5843_b72876d4",
+        "filename": "catalog-be/sdc-backend-init/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 8536
+      },
+      "writtenOn": "2026-01-09T11:41:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5b199296_6881a0b2",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ac45360f_6892845e",
@@ -99,6 +117,24 @@
       "writtenOn": "2026-01-02T14:06:57Z",
       "side": 1,
       "message": "From my point of view, this CR is doing too much. Can you please open a separate CR for the `dataTypes.yml` changes? They are not related to fixing vulnerabilities and I can imagine that making some properties `required` here may even be a breaking change in some regard. As such, it is always better to have this as an isolated change that we can pin point later should this have some unexpected side effects",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ac55041_8f161b32",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 3530,
+      "author": {
+        "id": 8536
+      },
+      "writtenOn": "2026-01-09T11:41:24Z",
+      "side": 1,
+      "message": "As required, Moved this datatype changes to separate MR.",
+      "parentUuid": "ac45360f_6892845e",
       "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -120,6 +156,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b13d5a7c_f8db9039",
+        "filename": "openecomp-be/dist/sdc-onboard-backend-docker/artifacts/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 8536
+      },
+      "writtenOn": "2026-01-09T11:41:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9a1cf2e3_000636e7",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f66c098_6200473c",
@@ -133,6 +187,24 @@
       "writtenOn": "2026-01-02T14:06:57Z",
       "side": 1,
       "message": "Please use `\u003cdependencyManagement\u003e` for this too",
+      "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd7cd461_431c22ba",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 8536
+      },
+      "writtenOn": "2026-01-09T11:41:24Z",
+      "side": 1,
+      "message": "Addressed",
+      "parentUuid": "1f66c098_6200473c",
       "revId": "badead9d1b164c9c80a596c9539a082bc24c7403",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
