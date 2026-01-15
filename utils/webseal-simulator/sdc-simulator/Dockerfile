@@ -13,6 +13,8 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
+    \
+    gem install --no-document ffi-yajl -v 2.6.0 && \
     gem install --no-update-sources \
         multi_json:1.15.0 \
         rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
