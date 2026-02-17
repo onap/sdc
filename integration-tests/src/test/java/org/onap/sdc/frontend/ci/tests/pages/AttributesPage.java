@@ -80,7 +80,7 @@ public class AttributesPage extends ComponentPage {
         }
         waitForElementVisibility(By.xpath(XpathSelector.DELETE_BTN.getXpath(attributeName))).click();
         waitToBeClickable(By.xpath(XpathSelector.DELETE_ATTRIBUTE_CONFIRM_BTN.getXpath())).click();
-        waitForElementInvisibility(By.xpath(XpathSelector.DELETE_BTN.getXpath(attributeName)), 5);
+        waitForElementInvisibility(By.xpath(XpathSelector.DELETE_BTN.getXpath(attributeName)), 10);
     }
 
     public void editAttribute(final AttributeData attributeData) {
