@@ -1,22 +1,21 @@
-FROM onap/policy-jdk-alpine:2.4.4
+FROM python:3.11-alpine
 
-USER root
-RUN addgroup sdc
-RUN adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
+RUN addgroup sdc && \
+    adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
+
+RUN apk add --no-cache wget && \
+    pip install --no-cache-dir cqlsh==6.1.0
+
 USER sdc
-RUN mkdir ~/.cassandra/ && \
-    echo  '[cql]' > ~/.cassandra/cqlshrc  && \
-    echo  'version=3.4.4' >> ~/.cassandra/cqlshrc
-USER root
 
-RUN apk update &&  \
-    python3 -m pip install --upgrade pip && \
-    pip3 install cqlsh==6.1.0 && \
-    mkdir ~/.cassandra/ && \
-    echo  '[cql]' > ~/.cassandra/cqlshrc  && \
-    echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
-    set -ex && \
-    apk add --no-cache wget
+RUN mkdir ~/.cassandra/ && \
+    echo '[cql]' > ~/.cassandra/cqlshrc && \
+    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc
+
+USER root
+RUN mkdir -p /root/.cassandra/ && \
+    echo '[cql]' > /root/.cassandra/cqlshrc && \
+    echo 'version=3.4.4' >> /root/.cassandra/cqlshrc
 
 USER sdc
 
