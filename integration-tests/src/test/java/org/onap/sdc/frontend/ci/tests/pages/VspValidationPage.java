@@ -25,12 +25,16 @@ import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 
 import java.io.File;
 import java.util.List;
 
 public class VspValidationPage extends GeneralPageElements {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VspValidationPage.class);
 
     private static final String ATTACHMENT_NAME_TEST_ID = ".//*[@data-test-id='validation-tree-node-name']";
     private static final String VALIDATION_ERROR_COUNT = ".//*[@data-test-id='validation-error-count']";
@@ -168,6 +172,7 @@ public class VspValidationPage extends GeneralPageElements {
     public static void navigateToVspAttachmentsValidationPage() {
         GeneralUIUtils.clickOnElementByTestId(SOFTWARE_PRODUCT_ATTACHMENTS);
         GeneralUIUtils.clickOnElementByTestId(ATTACHMENTS_TAB_VALIDATION);
+        GeneralUIUtils.ultimateWait();
     }
 
     private static boolean elementHasWarningCount(WebElement webElement) {
@@ -175,6 +180,9 @@ public class VspValidationPage extends GeneralPageElements {
             webElement.findElement(By.xpath(VALIDATION_WARNING_COUNT));
             return true;
         } catch (NoSuchElementException ex) {
+            return false;
+        } catch (Exception ex) {
+            LOGGER.warn("Unexpected exception while checking for warning count", ex);
             return false;
         }
     }
@@ -185,14 +193,24 @@ public class VspValidationPage extends GeneralPageElements {
             return true;
         } catch (NoSuchElementException ex) {
             return false;
+        } catch (Exception ex) {
+            LOGGER.warn("Unexpected exception while checking for error count", ex);
+            return false;
         }
     }
 
     private static boolean hasAttachmentFileExtension(WebElement webElement, String extension) {
-        return webElement
-            .findElement(By.xpath(ATTACHMENT_NAME_TEST_ID))
-            .getText()
-            .endsWith(extension);
+        try {
+            return webElement
+                .findElement(By.xpath(ATTACHMENT_NAME_TEST_ID))
+                .getText()
+                .endsWith(extension);
+        } catch (NoSuchElementException ex) {
+            return false;
+        } catch (Exception ex) {
+            LOGGER.warn("Unexpected exception while checking attachment file extension", ex);
+            return false;
+        }
     }
 
     private static List<WebElement> getChildElements(WebElement webElement) throws Exception {
