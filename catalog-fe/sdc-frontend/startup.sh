@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# OpenTelemetry Agent Configuration
+OTEL_AGENT_PATH="$JETTY_BASE/otel/opentelemetry-javaagent.jar"
+OTEL_OPTS=""
+
+if [ -f "$OTEL_AGENT_PATH" ] && [ "${OTEL_ENABLED:-false}" = "true" ]; then
+    OTEL_OPTS="-javaagent:$OTEL_AGENT_PATH"
+    echo "OpenTelemetry agent enabled"
+fi
+
 JAVA_OPTIONS="$JAVA_OPTIONS \
                -Dconfig.home=$JETTY_BASE/config \
                -Dlog.home=$JETTY_BASE/logs \
@@ -11,4 +20,4 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
 
 cd $JETTY_HOME
 
-java $JAVA_OPTIONS -jar "${JETTY_HOME}/start.jar"
+java $OTEL_OPTS $JAVA_OPTIONS -jar "${JETTY_HOME}/start.jar"
