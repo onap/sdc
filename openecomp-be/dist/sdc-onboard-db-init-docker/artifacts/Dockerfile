@@ -9,13 +9,13 @@ RUN mkdir ~/.cassandra/ && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc
 USER root
 
-RUN apk update &&  \
-    python3 -m pip install --upgrade pip && \
-    pip3 install cqlsh==6.1.0 && \
+RUN set -ex && \
+    for i in 1 2 3; do apk update && break || sleep 5; done && \
+    for i in 1 2 3; do python3 -m pip install --upgrade pip && break || sleep 5; done && \
+    for i in 1 2 3; do pip3 install cqlsh==6.1.0 && break || sleep 5; done && \
     mkdir ~/.cassandra/ && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
-    set -ex && \
     apk add --no-cache wget
 
 USER sdc

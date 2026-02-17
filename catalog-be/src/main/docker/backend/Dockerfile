@@ -19,6 +19,11 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
 
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
+# Download OpenTelemetry Java Agent
+RUN mkdir -p $JETTY_FOLDER/otel && \
+    wget -q https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${opentelemetry-javaagent.version}/opentelemetry-javaagent.jar \
+    --tries=3 -O $JETTY_FOLDER/otel/opentelemetry-javaagent.jar
+
 COPY --chown=onap:onap onap-sdc-backend/catalog-be.war       $JETTY_FOLDER/webappwar/
 COPY --chown=onap:onap context.xml       $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap files/rewrite-root-to-swagger-ui.xml $JETTY_FOLDER/etc/rewrite-root-to-swagger-ui.xml
