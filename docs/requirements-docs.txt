@@ -5,3 +5,5 @@ sphinxcontrib-seqdiag # BSD
 sphinxcontrib-spelling
 sphinxcontrib-plantuml
 six
+blockdiag>=3.0.0  # Required for Pillow 10+ compatibility (textsize fix)
+seqdiag>=3.0.0  # Required for Pillow 10+ compatibility
