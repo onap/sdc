@@ -44,28 +44,38 @@ Overview
 Deployment dependency map
 --------------------------
 
-.. blockdiag::
+.. graphviz::
 
-    orientation = portrait
-    class job [color = "#FFA300", style = dotted, shape = "box"]
-    class app [color = "#29ADFF", shape = "roundedbox"]
-    fe [label = "sdc-frontend", class = "app"];
-    be [label = "sdc-backend", class = "app"];
-    onboarding-be [label = "sdc-onboard-backend", class = "app"];
-    cs [label = "sdc-cassandra", class = "app"];
-    be-init [label = "sdc-backend-init", class = "job"];
-    cs-init [label = "sdc-cassandra-init", class = "job"];
-    cs-onboarding-init [label = "sdc-cassandra-onboard-init", class = "job"];
-    sdc-wfd-fe [label = "sdc-workflow-fe", class = "app"];
-    sdc-wfd-be [label = "sdc-workflow-be", class = "app"];
-    sdc-wfd-be-init [label = "sdc-workflow-init", class = "job"];
-    job [class = "job"];
-    app [class = "app"];
+    digraph deployment {
+        rankdir=TB;
+        node [shape=box];
 
-    onboarding-be -> cs-onboarding-init -> cs-init -> cs;
-    be-init -> be -> cs-init -> cs;
-    sdc-wfd-fe -> sdc-wfd-be-init -> sdc-wfd-be -> cs-init -> cs;
-    fe;
+        // Apps (blue)
+        fe [label="sdc-frontend", style=filled, fillcolor="#29ADFF"];
+        be [label="sdc-backend", style=filled, fillcolor="#29ADFF"];
+        onboarding_be [label="sdc-onboard-backend", style=filled, fillcolor="#29ADFF"];
+        cs [label="sdc-cassandra", style=filled, fillcolor="#29ADFF"];
+        sdc_wfd_fe [label="sdc-workflow-fe", style=filled, fillcolor="#29ADFF"];
+        sdc_wfd_be [label="sdc-workflow-be", style=filled, fillcolor="#29ADFF"];
+
+        // Jobs (orange, dotted)
+        be_init [label="sdc-backend-init", style="filled,dotted", fillcolor="#FFA300"];
+        cs_init [label="sdc-cassandra-init", style="filled,dotted", fillcolor="#FFA300"];
+        cs_onboarding_init [label="sdc-cassandra-onboard-init", style="filled,dotted", fillcolor="#FFA300"];
+        sdc_wfd_be_init [label="sdc-workflow-init", style="filled,dotted", fillcolor="#FFA300"];
+
+        // Legend
+        subgraph cluster_legend {
+            label="Legend";
+            job [label="job", style="filled,dotted", fillcolor="#FFA300"];
+            app [label="app", style=filled, fillcolor="#29ADFF"];
+        }
+
+        // Dependencies
+        onboarding_be -> cs_onboarding_init -> cs_init -> cs;
+        be_init -> be -> cs_init;
+        sdc_wfd_fe -> sdc_wfd_be_init -> sdc_wfd_be -> cs_init;
+    }
 
 Connectivity Matrix
 -------------------
@@ -103,48 +113,61 @@ Structure
 
 Below is a diagram of the SDC project docker containers and the connections between them.
 
-.. blockdiag::
+.. graphviz::
 
+    digraph delivery {
+        rankdir=TB;
+        node [shape=box];
 
-    blockdiag delivery {
-        node_width = 140;
-        orientation = portrait;
-        sdc-cassandra[shape = flowchart.database , color = grey]
-        sdc-frontend [color = blue, textcolor="white"]
-        sdc-backend [color = yellow]
-        sdc-onboarding-backend [color = yellow]
-        sdc-backend [color = yellow]
-        sdc-wfd-frontend [color = brown]
-        sdc-wfd-backend [color = brown]
-        sdc-wfd-be-init [color = brown]
-        sdc-cassandra-Config [color = orange]
-        sdc-backend-config [color = orange]
-        sdc-onboarding-init [color = orange]
-        sdc-wfd-be-init -> sdc-wfd-backend;
-        sdc-onboarding-init -> sdc-onboarding-backend;
-        sdc-cassandra-Config -> sdc-cassandra;
-        sdc-backend-config -> sdc-backend;
-        sdc-wss-simulator -> sdc-frontend;
-        sdc-wfd-frontend -> sdc-wfd-backend;
-        sdc-frontend -> sdc-backend, sdc-onboarding-backend;
-        sdc-wfd-backend -> sdc-cassandra;
-        sdc-backend -> sdc-cassandra;
-        sdc-onboarding-backend -> sdc-cassandra;
-        sdc-sanity -> sdc-backend;
-        sdc-ui-sanity -> sdc-frontend;
-        group deploy_group {
-            color = green;
-            label = "Application Layer"
-            sdc-backend; sdc-onboarding-backend; sdc-frontend; sdc-cassandra; sdc-cassandra-Config; sdc-backend-config; sdc-onboarding-init; sdc-wfd-frontend; sdc-wfd-backend; sdc-wfd-be-init;
+        // Application Layer (green cluster)
+        subgraph cluster_app {
+            label="Application Layer";
+            style=filled;
+            fillcolor="#90EE90";
+
+            sdc_cassandra [label="sdc-cassandra", shape=cylinder, style=filled, fillcolor=grey];
+            sdc_frontend [label="sdc-frontend", style=filled, fillcolor=blue, fontcolor=white];
+            sdc_backend [label="sdc-backend", style=filled, fillcolor=yellow];
+            sdc_onboarding_backend [label="sdc-onboarding-backend", style=filled, fillcolor=yellow];
+            sdc_wfd_frontend [label="sdc-wfd-frontend", style=filled, fillcolor=brown];
+            sdc_wfd_backend [label="sdc-wfd-backend", style=filled, fillcolor=brown];
+            sdc_wfd_be_init [label="sdc-wfd-be-init", style=filled, fillcolor=brown];
+            sdc_cassandra_config [label="sdc-cassandra-Config", style=filled, fillcolor=orange];
+            sdc_backend_config [label="sdc-backend-config", style=filled, fillcolor=orange];
+            sdc_onboarding_init [label="sdc-onboarding-init", style=filled, fillcolor=orange];
         }
-        group testing_group {
-            color = purple;
-            label = "Testing Layer";
-            sdc-sanity; sdc-ui-sanity
+
+        // Testing Layer (purple cluster)
+        subgraph cluster_test {
+            label="Testing Layer";
+            style=filled;
+            fillcolor="#DDA0DD";
+
+            sdc_sanity [label="sdc-sanity"];
+            sdc_ui_sanity [label="sdc-ui-sanity"];
         }
-        group util_group {
-            color = purple;
-            label = "Util Layer";
-            sdc-wss-simulator;
+
+        // Util Layer (purple cluster)
+        subgraph cluster_util {
+            label="Util Layer";
+            style=filled;
+            fillcolor="#DDA0DD";
+
+            sdc_wss_simulator [label="sdc-wss-simulator"];
         }
+
+        // Connections
+        sdc_wfd_be_init -> sdc_wfd_backend;
+        sdc_onboarding_init -> sdc_onboarding_backend;
+        sdc_cassandra_config -> sdc_cassandra;
+        sdc_backend_config -> sdc_backend;
+        sdc_wss_simulator -> sdc_frontend;
+        sdc_wfd_frontend -> sdc_wfd_backend;
+        sdc_frontend -> sdc_backend;
+        sdc_frontend -> sdc_onboarding_backend;
+        sdc_wfd_backend -> sdc_cassandra;
+        sdc_backend -> sdc_cassandra;
+        sdc_onboarding_backend -> sdc_cassandra;
+        sdc_sanity -> sdc_backend;
+        sdc_ui_sanity -> sdc_frontend;
     }
