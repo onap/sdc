@@ -10,10 +10,11 @@ if [[ $rc != 0 ]]; then exit $rc; fi
 echo "########### starting cassandra ###########"
 
 /docker-entrypoint.sh cassandra -f &
-sleep 60
+CASS_PID=$!
 sh -x /root/scripts/change_cassandra_pass.sh
 sh -x /var/lib/ready_probe.sh
 
 rc=$?
 if [[ $rc != 0 ]]; then exit $rc; fi
-while true; do sleep 30; done
+echo "Cassandra startup complete"
+wait $CASS_PID

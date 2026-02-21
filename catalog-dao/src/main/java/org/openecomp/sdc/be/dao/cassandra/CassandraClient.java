@@ -32,6 +32,10 @@ import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Mapper.Option;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
 import java.util.List;
 import javax.annotation.PreDestroy;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -44,6 +48,7 @@ import org.springframework.stereotype.Component;
 public class CassandraClient {
 
     private static Logger logger = Logger.getLogger(CassandraClient.class.getName());
+    private static final Tracer tracer = GlobalOpenTelemetry.getTracer("sdc-cassandra-client");
     private Cluster cluster;
     private boolean isConnected;
 
@@ -151,53 +156,80 @@ public class CassandraClient {
     }
 
     public <T> CassandraOperationStatus save(T entity, Class<T> clazz, MappingManager manager) {
-        if (!isConnected) {
-            return CassandraOperationStatus.CLUSTER_NOT_CONNECTED;
-        }
+        Span span = tracer.spanBuilder("CassandraClient.save")
+            .setAttribute("db.system", "cassandra")
+            .startSpan();
         try {
-            Mapper<T> mapper = manager.mapper(clazz);
-            mapper.save(entity, Mapper.Option.saveNullFields(false));
-        } catch (Exception e) {
-            logger.error(EcompLoggerErrorCode.DATA_ERROR, CassandraClient.class.getName(), "Failed to save entity [{}], error :", entity, e);
-            return CassandraOperationStatus.GENERAL_ERROR;
+            if (!isConnected) {
+                return CassandraOperationStatus.CLUSTER_NOT_CONNECTED;
+            }
+            try {
+                Mapper<T> mapper = manager.mapper(clazz);
+                mapper.save(entity, Mapper.Option.saveNullFields(false));
+            } catch (Exception e) {
+                logger.error(EcompLoggerErrorCode.DATA_ERROR, CassandraClient.class.getName(), "Failed to save entity [{}], error :", entity, e);
+                span.setStatus(StatusCode.ERROR, e.getMessage());
+                span.recordException(e);
+                return CassandraOperationStatus.GENERAL_ERROR;
+            }
+            return CassandraOperationStatus.OK;
+        } finally {
+            span.end();
         }
-        return CassandraOperationStatus.OK;
     }
 
     public <T> Either<T, CassandraOperationStatus> getById(String id, Class<T> clazz, MappingManager manager) {
-        if (!isConnected) {
-            return Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
-        }
+        Span span = tracer.spanBuilder("CassandraClient.getById")
+            .setAttribute("db.system", "cassandra")
+            .startSpan();
         try {
-            Mapper<T> mapper = manager.mapper(clazz);            
-            T result = mapper.get(id);
-            if (result == null) {
-                logger.info("Failed to get by Id [{}], trying again with consistency level ALL", id);
-                result = mapper.get(id, Option.consistencyLevel(ConsistencyLevel.ALL));
+            if (!isConnected) {
+                return Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
             }
-            if (result == null) {
-                logger.info("Failed to get by Id [{}] with consistency level ALL", id);
-                return Either.right(CassandraOperationStatus.NOT_FOUND);
+            try {
+                Mapper<T> mapper = manager.mapper(clazz);
+                T result = mapper.get(id);
+                if (result == null) {
+                    logger.info("Failed to get by Id [{}], trying again with consistency level ALL", id);
+                    result = mapper.get(id, Option.consistencyLevel(ConsistencyLevel.ALL));
+                }
+                if (result == null) {
+                    logger.info("Failed to get by Id [{}] with consistency level ALL", id);
+                    return Either.right(CassandraOperationStatus.NOT_FOUND);
+                }
+                return Either.left(result);
+            } catch (Exception e) {
+                logger.debug("Failed to get by Id [{}], error :", id, e);
+                span.setStatus(StatusCode.ERROR, e.getMessage());
+                span.recordException(e);
+                return Either.right(CassandraOperationStatus.GENERAL_ERROR);
             }
-            return Either.left(result);
-        } catch (Exception e) {
-            logger.debug("Failed to get by Id [{}], error :", id, e);
-            return Either.right(CassandraOperationStatus.GENERAL_ERROR);
+        } finally {
+            span.end();
         }
     }
 
     public <T> CassandraOperationStatus delete(String id, Class<T> clazz, MappingManager manager) {
-        if (!isConnected) {
-            return CassandraOperationStatus.CLUSTER_NOT_CONNECTED;
-        }
+        Span span = tracer.spanBuilder("CassandraClient.delete")
+            .setAttribute("db.system", "cassandra")
+            .startSpan();
         try {
-            Mapper<T> mapper = manager.mapper(clazz);
-            mapper.delete(id);
-        } catch (Exception e) {
-            logger.debug("Failed to delete by id [{}], error :", id, e);
-            return CassandraOperationStatus.GENERAL_ERROR;
+            if (!isConnected) {
+                return CassandraOperationStatus.CLUSTER_NOT_CONNECTED;
+            }
+            try {
+                Mapper<T> mapper = manager.mapper(clazz);
+                mapper.delete(id);
+            } catch (Exception e) {
+                logger.debug("Failed to delete by id [{}], error :", id, e);
+                span.setStatus(StatusCode.ERROR, e.getMessage());
+                span.recordException(e);
+                return CassandraOperationStatus.GENERAL_ERROR;
+            }
+            return CassandraOperationStatus.OK;
+        } finally {
+            span.end();
         }
-        return CassandraOperationStatus.OK;
     }
 
     public boolean isConnected() {

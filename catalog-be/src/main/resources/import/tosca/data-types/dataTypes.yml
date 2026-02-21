@@ -2340,8 +2340,8 @@ tosca.datatypes.nfv.VnfProfile:
         - greater_or_equal: 0
     service_availability_level:
       type: integer
-      description: If present, specifies the service availability level for the VNF instance created from this profile. 
-      required: false 
+      description: If present, specifies the service availability level for the VNF instance created from this profile.
+      required: false
       constraints:
         - greater_or_equal: 1
 tosca.datatypes.nfv.UriAuthority:
@@ -2472,12 +2472,12 @@ tosca.datatypes.nfv.VnfChangeCurrentPackageOperationConfiguration:
     # properties:
 tosca.datatypes.nfv.VnfCreateSnapshotOperationConfiguration:
     derived_from: tosca.datatypes.Root
-    description: represents information that affect the invocation of the CreateVnfSnapshot operation 
+    description: represents information that affect the invocation of the CreateVnfSnapshot operation
     # This data type definition is reserved for future use in the present document.
     # properties:
 tosca.datatypes.nfv.VnfRevertToSnapshotOperationConfiguration:
     derived_from: tosca.datatypes.Root
-    description: represents information that affect the invocation of the RevertToVnfSnapshot operation 
+    description: represents information that affect the invocation of the RevertToVnfSnapshot operation
     # This data type definition is reserved for future use in the present document.
     # properties:
 tosca.datatypes.nfv.VnfLcmOperationsConfiguration:
@@ -2559,17 +2559,17 @@ tosca.datatypes.nfv.VnfmInterfaceInfo:
   derived_from: tosca.datatypes.Root
   description: describes information enabling the VNF instance to access the NFV-MANO interfaces produced by the VNFM
   properties:
-    interface_name: 
-      type: string 
-      description: Identifies an interface produced by the VNFM. 
-      required: true 
-      constraints: 
-        - valid_values: [ vnf_lcm, vnf_pm, vnf_fm ] 
-    details: 
-      type: tosca.datatypes.nfv.InterfaceDetails 
-      description: Provide additional data to access the interface endpoint 
-      required: false  
-    credentials: 
+    interface_name:
+      type: string
+      description: Identifies an interface produced by the VNFM.
+      required: true
+      constraints:
+        - valid_values: [ vnf_lcm, vnf_pm, vnf_fm ]
+    details:
+      type: tosca.datatypes.nfv.InterfaceDetails
+      description: Provide additional data to access the interface endpoint
+      required: false
+    credentials:
       type: map
       description: Provides credential enabling access to the interface
       required: false
@@ -2706,7 +2706,7 @@ tosca.datatypes.nfv.VirtualBlockStorageData:
       default: false
 tosca.datatypes.nfv.ChecksumData:
    derived_from: tosca.datatypes.Root
-   description: Describes information about the result of performing a checksum operation over some arbitrary data 
+   description: Describes information about the result of performing a checksum operation over some arbitrary data
    properties:
      algorithm:
        type: string
@@ -2716,7 +2716,7 @@ tosca.datatypes.nfv.ChecksumData:
          - valid_values: [sha-224, sha-256, sha-384, sha-512 ]
      hash:
        type: string
-       description: Contains the result of applying the algorithm indicated by the algorithm property to the data to which this ChecksumData refers 
+       description: Contains the result of applying the algorithm indicated by the algorithm property to the data to which this ChecksumData refers
        required: true
 
 tosca.datatypes.nfv.SwImageData:
@@ -2737,7 +2737,7 @@ tosca.datatypes.nfv.SwImageData:
       required: false
     checksum:
       type: string
-      description:  Checksum of the software image file 
+      description:  Checksum of the software image file
       required: true
     container_format:
       type: string
@@ -2812,18 +2812,18 @@ tosca.datatypes.nfv.NsVlProfile:
     service_availability:
       type: tosca.datatypes.nfv.ServiceAvailability
       description: Network service virtual link service availability levels, as described in ETSI GS NFV-REL 001
-      required: false 
+      required: false
     service_availability_level:
       type: integer
       description: Specifies the service availability level for the VL instance created from this profile
-      required: false 
+      required: false
       constraints:
         - greater_or_equal: 1
 
 tosca.datatypes.nfv.NsProfile:
   derived_from: tosca.datatypes.Root
   description: describes a profile for instantiating NSs of a particular NS DF according to a specific NSD and NS DF.
-  properties: 
+  properties:
     ns_instantiation_level:
       type: string
       description: Identifier of the instantiation level of the NS DF to be used for instantiation. If not present, the default instantiation level as declared in the NSD shall be used.
@@ -2876,7 +2876,7 @@ tosca.datatypes.nfv.BootDataVimSpecificProperties:
   description: describes the VIM specific information used for selecting VIM specific capabilities when setting the boot data.
   properties:
     vim_type:
-      type: string 
+      type: string
       description: Discriminator for the different types of the VIM information.
       required: false
     properties:
@@ -2931,7 +2931,7 @@ tosca.datatypes.nfv.BootData:
       required: false
     content_or_file_data:
       type: tosca.datatypes.nfv.ContentOrFileData
-      description: A string content or a file for configuring a virtual compute resource. 
+      description: A string content or a file for configuring a virtual compute resource.
       required: false
 tosca.datatypes.nfv.ServicePortData:
   derived_from: tosca.datatypes.Root
@@ -2945,7 +2945,7 @@ tosca.datatypes.nfv.ServicePortData:
       type: string
       description: The L4 protocol for this port exposed by the VirtualCp.
       constraints:
-        - valid_values: 
+        - valid_values:
           - TCP
           - UDP
           - SCTP
@@ -2973,23 +2973,23 @@ tosca.datatypes.nfv.AdditionalServiceData:
       required: false
 tosca.datatypes.nfv.NsOperationAdditionalParameters:
   derived_from: tosca.datatypes.Root
-  description: Is an empty base type for deriving data types for describing NS-specific additional parameters to be passed when invoking NS lifecycle management operations 
+  description: Is an empty base type for deriving data types for describing NS-specific additional parameters to be passed when invoking NS lifecycle management operations
   #properties:
 tosca.datatypes.nfv.Mask:
   derived_from: tosca.datatypes.Root
-  properties:  
-    starting_point: 
+  properties:
+    starting_point:
       description: Indicates the offset between the last bit of the source mac address and the first bit of the sequence of bits to be matched.
       type: integer
-      required: true    
-    length: 
+      required: true
+    length:
       description: Indicates the number of bits to be matched.
       type: integer
       required: true
     value:
       description: Provide the sequence of bit values to be matched.
       type: string
-      required: true 
+      required: true
 tosca.datatypes.nfv.NsMonitoringParameter:
   derived_from: tosca.datatypes.Root
   description: Represents information on virtualised resource related performance metrics applicable to the NS.
@@ -3000,18 +3000,18 @@ tosca.datatypes.nfv.NsMonitoringParameter:
       required: true
     performance_metric:
       type: string
-      description: Identifies a performance metric to be monitored, according to ETSI GS NFV-IFA 027. 
+      description: Identifies a performance metric to be monitored, according to ETSI GS NFV-IFA 027.
       required: true
       constraints:
-         - valid_values: [byte_incoming_sap, byte_outgoing_sap, packet_incoming_sap, packet_outgoing_sap, byte_incoming, byte_outgoing, packet_incoming, packet_outgoing ] 
-    collection_period:  
+         - valid_values: [byte_incoming_sap, byte_outgoing_sap, packet_incoming_sap, packet_outgoing_sap, byte_incoming, byte_outgoing, packet_incoming, packet_outgoing ]
+    collection_period:
       type: scalar-unit.time
       description: Describes the periodicity at which to collect the performance information.
       required: false
 
 
 
-      
+
 ##### Partner service domain datatypes ######
 
 onap.datatypes.partner.access_details:
@@ -3267,7 +3267,7 @@ tosca.datatypes.asd.paramMappings:
         Note: The format of the Content strings is specific for each different
         orchestration templating technology used (Helm, Teraform, etc.).
         Currently only a format for use with Helm charts is suggested:
-        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>". 
+        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>".
         Whether the optional parts of the format are present depends on how the
         parameter is declared in the helm chart. An example is:
         "chartName:subChart1.subChart2.subChart3.Parent1.Parent2.Parent3.LBIP".
@@ -3283,7 +3283,7 @@ tosca.datatypes.asd.paramMappings:
         Note: The format of the Content strings is specific for each different
         orchestration templating technology used (Helm, Teraform, etc.).
         Currently only a format for use with Helm charts is suggested:
-        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>". 
+        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>".
         Whether the optional parts of the format are present depends on how the
         parameter is declared in the helm chart. An example is:
         "chartName:subChart1.subChart2.subChart3.Parent1.Parent2.Parent3.extIP".
@@ -3305,7 +3305,7 @@ tosca.datatypes.asd.paramMappings:
         Note 2: The format of the Content strings is specific for each different
         orchestration templating technology used (Helm, Teraform, etc.).
         Currently only a format for use with Helm charts is suggested:
-        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>". 
+        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>".
         Whether the optional parts of the format are present depends on how the
         parameter is declared in the helm chart. An example is:
         chartName:"subChart1.subChart2.subChart3.Parent1.Parent2.Parent3.nadName".
@@ -3340,7 +3340,7 @@ tosca.datatypes.asd.paramMappings:
         Note: The format of the Content strings is specific for each different
         orchestration templating technology used (Helm, Teraform, etc.).
         Currently only a format for use with Helm charts is suggested:
-        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>". 
+        "<helmchartname>:[<subchartname>.]^(0..N)[<parentparamname>.]^(0..N)<paramname>".
         Whether the optional parts of the format are present depends on how the
         parameter is declared in the helm chart. An example is:
         "chartName:subChart1.subChart2.subChart3.Parent1.Parent2.Parent3.NameSpace".
@@ -3546,7 +3546,7 @@ tosca.datatypes.3gpp.Snssai:
     sst:
       type: integer
       required: true
-      constraints: 
+      constraints:
         - in_range: [0, 255]
       description: >
         This attribute specifies the Slice/Service type (SST) of the network slice. Examples: 1 = eMBB, 2 = uRLLC, 3 = mIot.
@@ -3558,7 +3558,7 @@ tosca.datatypes.3gpp.Snssai:
       description: >
         This attribute specifies the Slice Differentiator (SD), which is optional information that complements the slice/service type(s) to differentiate amongst multiple Network Slices.
         Pattern: '^[A-Fa-f0-9]{6}$'
- 
+
 tosca.datatypes.3gpp.CoverageArea:
   derived_from: tosca.datatypes.Root
   properties:
@@ -3689,7 +3689,7 @@ tosca.datatypes.3gpp.Positioning:
       required: false
       description: >
         Specifies the accuracy of the location information. Accuracy depends on the respective positioning solution applied in the RAN domain of the network slice, measurement unit is meter, see GSMA NG.116.
-        
+
 tosca.datatypes.3gpp.Synchronicity:
   derived_from: tosca.datatypes.Root
   properties:
@@ -3711,7 +3711,7 @@ tosca.datatypes.3gpp.Synchronicity:
       required: false
       description: >
         Specifies the accuracy of the synchronicity, see GSMA NG.116
-        
+
 tosca.datatypes.3gpp.TermDensity:
   derived_from: tosca.datatypes.Root
   properties:
@@ -3757,7 +3757,7 @@ tosca.datatypes.3gpp.MaxNumberOfUEs:
       required: false
       description: >
         Specifies the maximum number of UEs may simultaneously access the network slice or network slice subnet instance on 3GPP access.
- 
+
     non3GPPNoOfUEs:
       type: integer
       required: false
