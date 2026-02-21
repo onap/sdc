@@ -865,7 +865,8 @@ limitations under the License.
                                     </ulimit>
                                 </ulimits>
                                 <wait>
-                                    <time>120000</time>
+                                    <!-- Time how long to wait for the container to be ready -->
+                                    <time>240000</time>
                                     <tcp>
                                         <host>sdc-cs</host>
                                         <mode>direct</mode>
