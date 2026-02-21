@@ -58,6 +58,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <servlet-api.version>4.0.4</servlet-api.version>
     <wire-mock.version>2.26.3</wire-mock.version>
     <opentelemetry-javaagent.version>2.25.0</opentelemetry-javaagent.version>
+    <opentelemetry-api.version>1.49.0</opentelemetry-api.version>
     <ecomp.version>3.4.0</ecomp.version>
     <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
     <cadi.version>2.1.21</cadi.version>
@@ -278,6 +279,11 @@ Modifications copyright (c) 2018-2019 Nokia
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-maven-plugin</artifactId>
         <version>${swagger-core-mvn-plugin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api</artifactId>
+        <version>${opentelemetry-api.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
