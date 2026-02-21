@@ -20,31 +20,68 @@
 package org.openecomp.core.dao.impl;
 
 import com.datastax.driver.mapping.Mapper;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import java.util.function.Supplier;
 import org.openecomp.core.dao.BaseDao;
 
 public abstract class CassandraBaseDao<T> implements BaseDao<T> {
+
+    private static final Tracer tracer = GlobalOpenTelemetry.getTracer("sdc-cassandra-dao");
 
     protected abstract Mapper<T> getMapper();
 
     protected abstract Object[] getKeys(T entity);
 
+    private static <R> R traced(String spanName, Supplier<R> operation) {
+        Span span = tracer.spanBuilder(spanName)
+            .setAttribute("db.system", "cassandra")
+            .startSpan();
+        try {
+            return operation.get();
+        } catch (Exception e) {
+            span.setStatus(StatusCode.ERROR, e.getMessage());
+            span.recordException(e);
+            throw e;
+        } finally {
+            span.end();
+        }
+    }
+
+    private static void tracedVoid(String spanName, Runnable operation) {
+        Span span = tracer.spanBuilder(spanName)
+            .setAttribute("db.system", "cassandra")
+            .startSpan();
+        try {
+            operation.run();
+        } catch (Exception e) {
+            span.setStatus(StatusCode.ERROR, e.getMessage());
+            span.recordException(e);
+            throw e;
+        } finally {
+            span.end();
+        }
+    }
+
     @Override
     public void create(T entity) {
-        getMapper().save(entity);
+        tracedVoid("CassandraBaseDao.create", () -> getMapper().save(entity));
     }
 
     @Override
     public void update(T entity) {
-        getMapper().save(entity);
+        tracedVoid("CassandraBaseDao.update", () -> getMapper().save(entity));
     }
 
     @Override
     public T get(T entity) {
-        return getMapper().get(getKeys(entity));
+        return traced("CassandraBaseDao.get", () -> getMapper().get(getKeys(entity)));
     }
 
     @Override
     public void delete(T entity) {
-        getMapper().delete(entity);
+        tracedVoid("CassandraBaseDao.delete", () -> getMapper().delete(entity));
     }
 }
