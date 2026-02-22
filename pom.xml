@@ -525,7 +525,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
-          <version>0.43.0</version>
+          <version>0.48.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
