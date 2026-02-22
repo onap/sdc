@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
@@ -51,6 +52,8 @@ public class DistributionEngineClusterHealth {
     protected static final String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
     //TODO use LoggerMetric instead
     private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
+    @Setter
+    private boolean isKafkaActive = Boolean.parseBoolean(System.getenv().getOrDefault("USE_KAFKA", "true"));
     boolean lastHealthState = false;
     Object lockOject = new Object();
     ScheduledExecutorService healthCheckScheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
@@ -215,16 +218,25 @@ public class DistributionEngineClusterHealth {
             healthLogger.trace("Executing UEB Health Check Task - Start");
             boolean healthStatus = verifyAtLeastOneEnvIsUp();
             if (healthStatus) {
-                boolean queryUebStatus = queryUeb();
-                if (queryUebStatus == lastHealthState) {
+                boolean queryStatus;
+                if (isKafkaActive) {
+                    // When MSB (Kafka) is active, we skip legacy UEB health checks.
+                    // The environment status (set by DistributionEngineInitTask and
+                    // DistributionEnginePollingTask) is sufficient to determine health.
+                    queryStatus = true;
+                    healthLogger.trace("MSB (MSB/Kafka) is active, skipping UEB health check query");
+                } else {
+                    queryStatus = queryUeb();
+                }
+                if (queryStatus == lastHealthState) {
                     return;
                 }
                 synchronized (lockOject) {
-                    if (queryUebStatus != lastHealthState) {
+                    if (queryStatus != lastHealthState) {
                         logger.trace("UEB Health State Changed to {}. Issuing alarm / recovery alarm...", healthStatus);
-                        lastHealthState = queryUebStatus;
+                        lastHealthState = queryStatus;
                         logAlarm(lastHealthState);
-                        if (queryUebStatus) {
+                        if (queryStatus) {
                             healthCheckInfo = HealthCheckInfoResult.OK.getHealthCheckInfo();
                         } else {
                             healthCheckInfo = HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
