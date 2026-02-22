@@ -124,6 +124,34 @@ class DistributionEngineClusterHealthTest extends BeConfDependentTest {
     }
 
     @Test
+    void testHealthCheckScheduledTaskRunWithKafkaActive() throws Exception {
+        DistributionEngineClusterHealth testSubject;
+        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+        envNamePerStatus.put("mock", new AtomicBoolean(true));
+        // When Kafka is active, the health check should skip UEB queries
+        // and report healthy based on the environment status alone
+        testSubject = createTestSubject();
+        testSubject.setKafkaActive(true);
+        testSubject.startHealthCheckTask(envNamePerStatus, false);
+        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
+        // No UEB health check calls configured - should still report healthy
+        Deencapsulation.invoke(healthCheckScheduledTask, "run");
+    }
+
+    @Test
+    void testHealthCheckScheduledTaskRunWithKafkaActiveEnvDown() throws Exception {
+        DistributionEngineClusterHealth testSubject;
+        Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+        envNamePerStatus.put("mock", new AtomicBoolean(false));
+        // When Kafka is active but env is down, health check should not report UP
+        testSubject = createTestSubject();
+        testSubject.setKafkaActive(true);
+        testSubject.startHealthCheckTask(envNamePerStatus, false);
+        HealthCheckScheduledTask healthCheckScheduledTask = testSubject.new HealthCheckScheduledTask(new LinkedList<>());
+        Deencapsulation.invoke(healthCheckScheduledTask, "run");
+    }
+
+    @Test
     void testLogAlarm() throws Exception {
         DistributionEngineClusterHealth testSubject;
         boolean lastHealthState = false;
