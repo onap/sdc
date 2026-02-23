@@ -1169,14 +1169,12 @@ limitations under the License.
                             <alias>sdc-simulator</alias>
                             <run>
                                 <env>
-                                    <!--<FE_URL>${it.env.name}</FE_URL>-->
+                                    <FE_URL>http://sdc-FE:8181</FE_URL>
                                     <JAVA_OPTIONS>-Xmx128m -Xms128m -Xss1m</JAVA_OPTIONS>
-                                    <ENVNAME>${it.env.name}</ENVNAME>
                                 </env>
                                 <hostname>sdc-sim</hostname>
                                 <volumes>
                                     <bind>
-                                        <volume>${it.chef.config}:/app/jetty/chef-solo/environments</volume>
                                         <volume>${it.shared.volume}:/app/jetty/logs</volume>
                                     </bind>
                                 </volumes>

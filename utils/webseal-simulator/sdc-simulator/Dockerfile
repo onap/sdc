@@ -1,36 +1,19 @@
-FROM onap/integration-java11:10.0.0
+FROM eclipse-temurin:11-jre-alpine
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
 
-# Install Chef
-RUN set -ex && \
-    apk update && \
-    apk add --no-cache \
-        wget \
-        build-base \
-        ruby \
-        ruby-dev \
-        libffi-dev \
-        libxml2-dev && \
-    \
-    gem install --no-document ffi-yajl -v 2.6.0 && \
-    gem install --no-update-sources \
-        multi_json:1.15.0 \
-        rspec-its:1.3.0 hitimes:1.3.1 public_suffix:4.0.7 multipart-post:2.2.0 etc:1.3.0 bundler:2.3.26 chef:13.8.5 \
-        faraday:2.8.1 minitar:0.12.1 berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        webrick \
-        json \
-        --no-document && \
-    gem cleanup
+RUN addgroup onap && adduser --no-create-home --disabled-password --ingroup onap onap
+
+# wget for fetching jetty, gettext for envsubst
+RUN apk update && apk add --no-cache wget gettext
 
 ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
 ENV JETTY_GROUP=onap
 
-RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
+RUN mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 
 USER onap
 
@@ -40,8 +23,26 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
 
-COPY --chown=onap:onap chef-solo $JETTY_FOLDER/chef-solo/
-COPY --chown=onap:onap  chef-repo/cookbooks $JETTY_FOLDER/chef-solo/cookbooks/
+# Create required directories
+COPY --chown=onap:onap scripts/create_directories.sh $JETTY_FOLDER/
+RUN chmod +x $JETTY_FOLDER/create_directories.sh && $JETTY_FOLDER/create_directories.sh
+
+# Set up Jetty modules
+COPY --chown=onap:onap scripts/create_jetty_modules.sh $JETTY_FOLDER/
+RUN chmod +x $JETTY_FOLDER/create_jetty_modules.sh && $JETTY_FOLDER/create_jetty_modules.sh
+
+# Copy configuration files
+COPY --chown=onap:onap files/webseal.conf.tpl $JETTY_FOLDER/config/sdc-simulator/webseal.conf.tpl
+COPY --chown=onap:onap files/log4j2.properties $JETTY_FOLDER/config/sdc-simulator/log4j2.properties
+COPY --chown=onap:onap files/http.ini $JETTY_FOLDER/start.d/http.ini
+COPY --chown=onap:onap files/https.ini $JETTY_FOLDER/start.d/https.ini
+COPY --chown=onap:onap files/ssl.ini $JETTY_FOLDER/start.d/ssl.ini
+COPY --chown=onap:onap files/rewrite-root-to-sdc1.xml $JETTY_FOLDER/etc/rewrite-root-to-sdc1.xml
+
+# Copy keystores
+COPY --chown=onap:onap files/org.onap.sdc.trust.jks $JETTY_FOLDER/etc/
+COPY --chown=onap:onap files/org.onap.sdc.p12 $JETTY_FOLDER/etc/
+
 ADD --chown=onap:onap WSSimulator*.war $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
 
