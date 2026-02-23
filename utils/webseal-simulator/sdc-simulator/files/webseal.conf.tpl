@@ -1,9 +1,9 @@
 {
 	webseal {
-		fe="<%= @fe_url %>"
+		fe="${FE_URL}"
 		portalCookieName="EPService"
 		#Space separated list of permitted ancestors
-		permittedAncestors="<%= @permittedAncestors %>"
+		permittedAncestors="${PERMITTED_ANCESTORS}"
 		users = [
 			{
 				userId="cs0008"
@@ -31,6 +31,5 @@
 			}
 		]
 	}
-	
-}
 
+}

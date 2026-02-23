@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# Set defaults for environment variables
+export FE_URL="${FE_URL:-http://localhost:8181}"
+export PERMITTED_ANCESTORS="${PERMITTED_ANCESTORS:-}"
+
+# Generate webseal.conf from template using envsubst
+envsubst '${FE_URL} ${PERMITTED_ANCESTORS}' \
+  < "$JETTY_BASE/config/sdc-simulator/webseal.conf.tpl" \
+  > "$JETTY_BASE/config/sdc-simulator/webseal.conf"
+
 JAVA_OPTIONS=" $JAVA_OPTIONS \
 		-Xdebug -agentlib:jdwp=transport=dt_socket,address=*:5000,server=y,suspend=n -Xmx128m -Xms128m -Xss1m \
   -Dconfig.home=$JETTY_BASE/config/sdc-simulator \
@@ -7,9 +16,6 @@ JAVA_OPTIONS=" $JAVA_OPTIONS \
   -Dlogback.configurationFile=$JETTY_BASE/config/sdc-simulator/logback.xml \
   -Djavax.net.ssl.trustStore=$JETTY_BASE/etc/org.onap.sdc.trust.jks \
   -Djavax.net.ssl.trustStorePassword=z+KEj;t+,KN^iimSiS89e#p0"
-
-cd $JETTY_BASE/chef-solo
-chef-solo -c solo.rb -E ${ENVNAME}
 
 cd $JETTY_HOME
 echo "etc/rewrite-root-to-sdc1.xml" >> $JETTY_HOME/start.d/rewrite.ini
