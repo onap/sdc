@@ -82,6 +82,12 @@ public class HealthCheckScheduledTaskTest {
     }
 
     @Test
+    public void getCatalogFacadeMsUriWhenConfigurationIsNull_shouldReturnNullWithoutNPE() {
+        when(configuration.getCatalogFacadeMs()).thenReturn(null);
+        assertNull(healthCheckScheduledTask.getExternalComponentHcUri(Constants.HC_COMPONENT_CATALOG_FACADE_MS));
+    }
+
+    @Test
     public void getOnboardingUrlWhenConfigurationIsProvided() {
         when(configuration.getOnboarding()).thenReturn(onboardingConfig);
         assertNull(HealthCheckScheduledTask.getOnboardingHcUrl());

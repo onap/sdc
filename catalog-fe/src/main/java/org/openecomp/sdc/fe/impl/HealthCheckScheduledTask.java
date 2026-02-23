@@ -165,14 +165,17 @@ public class HealthCheckScheduledTask implements Runnable {
         return certificateInfoConfigured ? clientCertificate: null;
     }
 
-    private String getExternalComponentHcUri(String baseComponent) {
+    @VisibleForTesting
+    String getExternalComponentHcUri(String baseComponent) {
         String healthCheckUri = null;
         switch (baseComponent) {
             case HC_COMPONENT_ON_BOARDING:
                 healthCheckUri = service.getConfig().getOnboarding().getHealthCheckUriFe();
                 break;
             case HC_COMPONENT_CATALOG_FACADE_MS:
-                healthCheckUri = service.getConfig().getCatalogFacadeMs().getHealthCheckUri();
+                if (service.getConfig().getCatalogFacadeMs() != null) {
+                    healthCheckUri = service.getConfig().getCatalogFacadeMs().getHealthCheckUri();
+                }
                 break;
             default:
                 log.debug("Unsupported base component {}", baseComponent);
