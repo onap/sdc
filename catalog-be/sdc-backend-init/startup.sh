@@ -5,8 +5,11 @@ set -e
 
 log_script() {
     script_name=$1
-    sh "$script_name" 2>&1 | sed "s|^|[$script_name] |" || \
-    echo "$script_name failed. Continuing with other scripts..." >&2
+    echo "Running $script_name..."
+    sh "$script_name" || {
+        echo "$script_name failed." >&2
+        exit 1
+    }
 }
 
 log_script "/home/onap/create_consumer_and_user.sh"
