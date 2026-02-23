@@ -51,7 +51,7 @@ echo "[$start_time] Starting sdcinit..."
 
 # Run sdcinit command with the constructed parameters
 cd /var/tmp/normatives/import/tosca || exit 1
-sdcinit $param $basic_auth_config $tls_cert $tls_key $tls_key_pw $ca_cert > "/home/onap/logs/init.log" 2>&1
+sdcinit $param $basic_auth_config $tls_cert $tls_key $tls_key_pw $ca_cert
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$end_time] Done sdcinit."
@@ -61,5 +61,5 @@ end_ts=$(date -d "$end_time" +%s)
 elapsed=$((end_ts - start_ts))
 echo "Elapsed time: $elapsed seconds"
 
-echo "SDC initialization Done. Logs can be found at ${ONAP_LOG}/init.log"
+echo "SDC initialization Done."
 
