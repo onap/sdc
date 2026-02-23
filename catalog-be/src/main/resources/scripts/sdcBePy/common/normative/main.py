@@ -12,10 +12,10 @@ colors = BColors()
 
 
 def process_element_list(normative_elements_list, sdc_be_proxy, model=None):
-    attempt = 0
     for normative_element in normative_elements_list:
         if normative_element is None:
             continue
+        attempt = 0
         while True:
             attempt += 1
             try:
@@ -29,8 +29,8 @@ def process_element_list(normative_elements_list, sdc_be_proxy, model=None):
 
 
 def process_type_list(normative_type_list, sdc_be_proxy, update_version):
-    attempt = 0
     for normative_type in normative_type_list:
+        attempt = 0
         while True:
             attempt += 1
             try:
