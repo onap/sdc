@@ -90,13 +90,11 @@ echo ${FE_URL}
 docker run --detach --name sdc-sim \
     --env FE_URL="${FE_URL}" \
     --env JAVA_OPTIONS="${JAVA_OPTIONS}" \
-    --env ENVNAME="${DEP_ENV}" \
     --env http_proxy=${http_proxy} \
     --env https_proxy=${https_proxy} \
     --env no_proxy=${no_proxy} \
     --volume /etc/localtime:/etc/localtime:ro \
     --volume ${WORKSPACE}/data/logs/WS/:/var/lib/jetty/logs \
-    --volume ${WORKSPACE}/data/environments:/root/chef-solo/environments \
     --publish 8285:8080 \
     --publish 8286:8443 ${PREFIX}/sdc-simulator:${RELEASE}
 
