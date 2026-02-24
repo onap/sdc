@@ -606,14 +606,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>${aspectjrt.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-
         <!-- CAMBRIA CLIENT for U-EB -->
         <dependency>
             <groupId>com.att.nsa</groupId>
