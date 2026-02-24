@@ -5,6 +5,763 @@
 Release Notes
 =============
 
+Version: 1.15.0
+===============
+
+:Release Date: Unreleased
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.2.0
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  Fix AnnotationParser warnings in sdc-be pod log
+
+**Tasks**
+
+*  SDC schema init improvements
+*  Add opentelemetry based tracing
+*  Disable UEB health check when kafka is used
+*  Allow not setting catalog facade config
+*  Get rid of Chef in sdc-simulator
+*  Update docker plugin version
+*  Remove trailing spaces in dataTypes.yml
+*  Add dependabot config
+*  Add Github2Gerrit CI workflow
+*  Update SDC datatypes for sST, mcc and mnc as per latest 3GPP standard
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.5
+===============
+
+:Release Date: 2025-09-10
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+N/A
+
+**Tasks**
+
+*  Remove chef package from sdc-onboard-db-init image
+*  Publish kafka notification for delete service
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.4
+===============
+
+:Release Date: 2025-09-09
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  Permissions Issue Fix in sdc-fe init-container
+
+**Tasks**
+
+N/A
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.3
+===============
+
+:Release Date: 2025-08-25
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+*  Update datatypes for sd and maxNumberofUEs as per 3GPP
+
+**Bug Fixes**
+
+N/A
+
+**Tasks**
+
+N/A
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.2
+===============
+
+:Release Date: 2025-08-13
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  Fix gerrit pipeline build issues
+
+**Tasks**
+
+*  Reduce sdc-cassandra-init (sdc-cs) image size
+*  Adjust log levels for failures
+*  Improve sdc README documentation
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.1
+===============
+
+:Release Date: 2025-02-21
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+N/A
+
+**Tasks**
+
+*  SDC component upliftment of janusgraph version
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.14.0
+===============
+
+:Release Date: 2025-02-05
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release - Chef removal
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+N/A
+
+**Tasks**
+
+*  Remove chef for sdc_os_chef
+*  Chef removal changes from catalog-fe
+*  Chef removal changes for asdc_tool
+*  Remove chef for integration-tests
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.13.9
+===============
+
+:Release Date: 2025-01-22
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release - Chef removal
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+N/A
+
+**Tasks**
+
+*  Chef removal for catalog-be module
+*  Chef removal changes for openecomp-be
+*  Define schema attribute in catalog-fe angular-cli.json for IDE autocompletion
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.13.8
+===============
+
+:Release Date: 2024-12-06
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+*  Added slice DataTypes and Category
+
+**Bug Fixes**
+
+*  Fix ruby dependency issues for SDC components
+*  Fix catalog-be docker build failure due to ruby dependency conflict
+
+**Tasks**
+
+N/A
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.13.7
+===============
+
+:Release Date: 2024-04-11
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.1.1
+
+-  sdc-distribution-client (DMaap MR - deprecated)
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  Fix: Listing archived catalog resources fails randomly
+*  Listing distributions (/services/{distributionId}/distribution/) fails with ClassCastException
+*  Fix SDC pipeline failure during docker build
+*  Add python compatibility module
+
+**Tasks**
+
+N/A
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.13.6
 ===============
 
