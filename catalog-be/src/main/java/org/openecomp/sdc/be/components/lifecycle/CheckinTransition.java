@@ -74,12 +74,12 @@ public class CheckinTransition extends LifeCycleTransition {
     @Override
     public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
                                                                    ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock,
-                                                                   boolean inTransaction) {
+                                                                   boolean inTransaction, String requestUUID) {
         log.debug("start performing checkin for {} {}", componentType, component.getUniqueId());
         Either<? extends Component, ResponseFormat> result = null;
         try {
             Either<ToscaElement, StorageOperationStatus> checkinResourceResult = lifeCycleOperation
-                .checkinToscaELement(component.getLifecycleState(), component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+                .checkinToscaELement(component.getLifecycleState(), component.getUniqueId(), modifier.getUserId(), owner.getUserId(), requestUUID);
             if (checkinResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
                 StorageOperationStatus response = checkinResourceResult.right().value();
@@ -90,6 +90,12 @@ public class CheckinTransition extends LifeCycleTransition {
                 ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
                 result = Either.right(responseFormat);
             } else {
+                ToscaElement element = checkinResourceResult.left().value();
+
+                // Override UUID if requestUUID is provided
+                if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                    element.setUUID(requestUUID);
+                }
                 updateCalculatedCapabilitiesRequirements(checkinResourceResult.left().value());
                 Component r = ModelConverter.convertFromToscaElement(checkinResourceResult.left().value());
                 updateGroupsAndPolicesVersion(r);

@@ -90,6 +90,9 @@ public class ArtifactsOperations extends BaseOperation {
         } else {
             ArtifactDataDefinition artifactData = status.left().value();
             ArtifactDefinition artifactDefResult = convertArtifactDataToArtifactDefinition(artifactInfo, artifactData);
+            if (artifactInfo.getArtifactUUID() != null && !artifactInfo.getArtifactUUID().isEmpty()) {
+                    artifactDefResult.setArtifactUUID(artifactInfo.getArtifactUUID());
+            }
             log.debug("The returned ArtifactDefintion is {}", artifactDefResult);
             return Either.left(artifactDefResult);
         }
@@ -346,12 +349,21 @@ public class ArtifactsOperations extends BaseOperation {
                     break;
             }
         } else {
-            generateUUIDForNonHeatArtifactType(updateArtifactData, oldChecksum, oldVesrion, currentChecksum);
+                if (updateArtifactData.getArtifactUUID() == null ||
+                        updateArtifactData.getArtifactUUID().isEmpty()) {
+
+                generateUUIDForNonHeatArtifactType(updateArtifactData, oldChecksum, oldVesrion, currentChecksum);
+
+            }
         }
     }
 
     private void generateUUIDForNonHeatArtifactType(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion,
                                                     String currentChecksum) {
+        if (artifactData.getArtifactUUID() != null &&
+                    !artifactData.getArtifactUUID().isEmpty()) {
+        return;
+    }
         if (oldChecksum == null || oldChecksum.isEmpty()) {
             if (currentChecksum != null) {
                 generateUUID(artifactData, oldVesrion);
@@ -422,6 +434,11 @@ public class ArtifactsOperations extends BaseOperation {
         ArtifactDefinition propertyDefResult = new ArtifactDefinition(artifactDefResult);
         if (artifactInfo != null) {
             propertyDefResult.setPayload(artifactInfo.getPayloadData());
+            if (artifactInfo.getArtifactUUID() != null && !artifactInfo.getArtifactUUID().isEmpty()) {
+                propertyDefResult.setArtifactUUID(artifactInfo.getArtifactUUID());
+            } else {
+                propertyDefResult.setArtifactUUID(artifactDefResult.getArtifactUUID());
+            }
         }
         List<HeatParameterDefinition> parameters = new ArrayList<>();
         /*
@@ -555,6 +572,9 @@ public class ArtifactsOperations extends BaseOperation {
         String componentId = component.getUniqueId();
         Either<ArtifactDataDefinition, StorageOperationStatus> res = null;
         ArtifactDefinition artifactToUpdate = new ArtifactDefinition(artifactInfo);
+        if (artifactInfo.getArtifactUUID() != null) {
+            artifactToUpdate.setArtifactUUID(artifactInfo.getArtifactUUID());
+        }
         ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
         Triple<EdgeLabelEnum, Boolean, VertexTypeEnum> triple = getEdgeLabelEnumFromArtifactGroupType(groupType, type);
         EdgeLabelEnum edgeLabelEnum = triple.getLeft();

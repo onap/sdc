@@ -422,7 +422,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                         operationName, auditingAction, user, parent, needUpdateGroup);
                     break;
                 case CREATE:
-                    result = handleCreate(componentId, artifactInfo, operation, auditingAction, user, componentType, parent, origMd5, originData,
+                   result = handleCreate(componentId, artifactInfo, operation, auditingAction, user, componentType, parent, origMd5, originData,
                         interfaceName, operationName);
                     break;
                 case LINK:
@@ -1006,6 +1006,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             }
         } else {
             String encodeBase64Str = GeneralUtility.calculateMD5Base64EncodedByString(originData);
+            log.info("ValidateMd5 - computed MD5: {}", encodeBase64Str);
             if (!encodeBase64Str.equals(origMd5)) {
                 log.debug("The calculated md5 is different then the received one");
                 throw new ByActionStatusComponentException(ActionStatus.ARTIFACT_INVALID_MD5);
@@ -1680,6 +1681,9 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                 throw new StorageException(result.right().value());
             }
             ArtifactDefinition artifactDefinition = result.left().value();
+            if (artifactInfo.getArtifactUUID() != null && !artifactInfo.getArtifactUUID().isEmpty()) {
+                    artifactDefinition.setArtifactUUID(artifactInfo.getArtifactUUID());
+                }
             artifactData.setId(artifactDefinition.getEsId());
             operationResult = Either.left(artifactDefinition);
             if (generateCustomizationUUIDOnInstance(parent.getUniqueId(), parentId, componentTypeEnum) != StorageOperationStatus.OK) {

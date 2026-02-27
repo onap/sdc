@@ -132,13 +132,13 @@ public class CertificationChangeTransition extends LifeCycleTransition {
     @Override
     public <T extends Component> Either<T, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
                                                                        ComponentBusinessLogic componentBl, User modifier, User owner,
-                                                                       boolean shouldLock, boolean inTransaction) {
+                                                                       boolean shouldLock, boolean inTransaction, String requestUUID) {
         log.info("start performing certification change for resource {}", component.getUniqueId());
         Either<T, ResponseFormat> result = null;
         try {
             component = handleValidationsBeforeCertifying(componentType, component, modifier, shouldLock, inTransaction);
             Either<ToscaElement, StorageOperationStatus> certificationChangeResult = lifeCycleOperation
-                    .certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+                    .certifyToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId(), requestUUID);
             if (certificationChangeResult.isRight()) {
                 ResponseFormat responseFormat = formatCertificationError(component, certificationChangeResult.right().value(), componentType);
                 result = Either.right(responseFormat);
@@ -146,6 +146,9 @@ public class CertificationChangeTransition extends LifeCycleTransition {
             }
 
             ToscaElement certificationResult = certificationChangeResult.left().value();
+            if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                certificationResult.setUUID(requestUUID);
+            }
             T componentAfterCertification = ModelConverter.convertFromToscaElement(certificationResult);
             if (result == null || result.isLeft()) {
                 //update edges for allotted resource

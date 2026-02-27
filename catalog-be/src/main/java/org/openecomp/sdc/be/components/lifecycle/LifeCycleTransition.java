@@ -105,7 +105,7 @@ public abstract class LifeCycleTransition {
 
     public abstract <T extends Component> Either<T, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
                                                                                 ComponentBusinessLogic componentBl, User modifier, User owner,
-                                                                                boolean needLock, boolean inTransaction);
+                                                                                boolean needLock, boolean inTransaction, String requestUUID);
 
     public abstract Either<Boolean, ResponseFormat> validateBeforeTransition(Component component, ComponentTypeEnum componentType, User modifier,
                                                                              User owner, LifecycleStateEnum oldState,

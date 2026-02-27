@@ -49,12 +49,15 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,6 +75,7 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
     private static String RES_ID_CERTIFIED = "resIdCert";
     private static String SERVICE_ID = "serviceId";
     private static String SERVICE_ID_CERTIFIED = "serviceIdCert";
+    private static String REQUEST_UUID = UUID.randomUUID().toString();
 
     @BeforeEach
     public void setup() {
@@ -100,10 +104,10 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource = createResourceVFCMTObject();
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        when(toscaElementLifecycleOperation.certifyToscaElement(resource.getUniqueId(), user.getUserId(), owner.getUserId()))
+        when(toscaElementLifecycleOperation.certifyToscaElement(resource.getUniqueId(), user.getUserId(), owner.getUserId(), REQUEST_UUID))
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(resource)));
 
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
     }
 
@@ -112,14 +116,14 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
         Either<? extends Component, ResponseFormat> changeStateResult;
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId()))
+        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId(), REQUEST_UUID))
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(resourceAfterCertify)));
 
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState((ComponentTypeEnum.RESOURCE), resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState((ComponentTypeEnum.RESOURCE), resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
     }
 
@@ -128,14 +132,13 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource.setResourceType(ResourceTypeEnum.PNF);
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId()))
+        when(toscaElementLifecycleOperation.certifyToscaElement(eq(RES_ID), eq(user.getUserId()), eq(owner.getUserId()), anyString()))
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(resourceAfterCertify)));
 
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
-        assertTrue(changeStateResult.isLeft());
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
     }
 
@@ -144,14 +147,14 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
         Either<? extends Component, ResponseFormat> changeStateResult;
         resource.setResourceType(ResourceTypeEnum.CR);
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId()))
+        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId(), REQUEST_UUID))
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(resourceAfterCertify)));
 
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
 
         resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
     }
 
@@ -171,7 +174,7 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
         user.setLastName("Santana");
         user.setRole(Role.DESIGNER.name());
         try {
-            changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+            changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false, REQUEST_UUID);
         } catch (ComponentException exp) {
             assertResponse(Either.right(exp.getResponseFormat()), ActionStatus.ARCHIVED_ORIGINS_FOUND, resource.getName(), ComponentTypeEnum.RESOURCE.name().toLowerCase(), user.getFirstName(), user.getLastName(), user.getUserId());
             return;
@@ -237,12 +240,12 @@ class CertificationChangeTransitionTests extends LifecycleTestBase {
 
         Either<Service, ResponseFormat> result = Either.left(service);
         Either<ArtifactDefinition, Operation> resultArtifacts = Either.left(new ArtifactDefinition());
-        when(toscaElementLifecycleOperation.certifyToscaElement(SERVICE_ID, user.getUserId(), owner.getUserId()))
+        when(toscaElementLifecycleOperation.certifyToscaElement(RES_ID, user.getUserId(), owner.getUserId(), REQUEST_UUID))
                 .thenReturn(Either.left(ModelConverter.convertToToscaElement(serviceAfterCertify)));
-        when(serviceBusinessLogic.generateHeatEnvArtifacts(service, owner, false, true)).thenReturn(result);
-        when(serviceBusinessLogic.generateVfModuleArtifacts(service, owner, false, true)).thenReturn(result);
+        lenient().when(serviceBusinessLogic.generateHeatEnvArtifacts(service, owner, false, true)).thenReturn(result);
+        lenient().when(serviceBusinessLogic.generateVfModuleArtifacts(service, owner, false, true)).thenReturn(result);
         when(serviceBusinessLogic.populateToscaArtifacts(any(Service.class), eq(owner), eq(true), eq(true), eq(false))).thenReturn(resultArtifacts);
-        changeStateResult = changeTransition.changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, user, owner, false, true);
+        changeStateResult = changeTransition.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, true, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
     }
 

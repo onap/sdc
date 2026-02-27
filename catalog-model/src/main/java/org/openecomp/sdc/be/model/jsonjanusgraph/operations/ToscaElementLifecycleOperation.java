@@ -126,7 +126,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @return
      */
     public Either<ToscaElement, StorageOperationStatus> checkinToscaELement(LifecycleStateEnum currState, String toscaElementId, String modifierId,
-                                                                            String ownerId) {
+                                                                            String ownerId, String requestUUID) {
         try {
             return janusGraphDao.getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForCheckin(toscaElementId, modifierId, ownerId))
                 .right().map(status -> handleFailureToPrepareParameters(status, toscaElementId)).left().bind(
@@ -135,7 +135,17 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                         //We retrieve the operation
                         ToscaElementOperation operation = getToscaElementOperation(verticesMap.get(toscaElementId).getLabel());
                         //We retrieve the ToscaElement from the operation
-                        return getToscaElementFromOperation(operation, checkinResult.getUniqueId(), toscaElementId);
+                        Either<ToscaElement, StorageOperationStatus> elementEither =
+                        getToscaElementFromOperation(operation, checkinResult.getUniqueId(), toscaElementId);
+
+                    if (elementEither.isLeft()) {
+                        ToscaElement element = elementEither.left().value();
+                        if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                            element.setUUID(requestUUID);
+                        }
+                    }
+
+                    return elementEither;
                     }));
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during checkin of tosca element {}. {} ", toscaElementId,
@@ -192,7 +202,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @param ownerId
      * @return
      */
-    public Either<ToscaElement, StorageOperationStatus> checkoutToscaElement(String toscaElementId, String modifierId, String ownerId) {
+    public Either<ToscaElement, StorageOperationStatus> checkoutToscaElement(String toscaElementId, String modifierId, String ownerId, String requestUUID) {
         Either<ToscaElement, StorageOperationStatus> result = null;
         Map<String, GraphVertex> vertices = null;
         try {
@@ -213,6 +223,13 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
             }
             if (result == null) {
                 result = cloneToscaElementForCheckout(vertices.get(toscaElementId), vertices.get(modifierId));
+                 if (result.isLeft()) {
+                ToscaElement element = result.left().value();
+                // Override UUID with requestUUID
+                if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                    element.setUUID(requestUUID);
+                }
+            }
                 if (result.isRight()) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to checkout tosca element {}. Status is {} ", toscaElementId,
                         result.right().value());
@@ -231,13 +248,23 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @param toscaElementId
      * @return
      */
-    public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId, String model) {
+    public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId, String model, String requestUUID) {
         try {
             return janusGraphDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata).right().map(errorStatus -> {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
                     return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus);
                 }).left().bind(this::retrieveAndUpdatePreviousVersion).left()
-                .bind(tuple -> updateEdgeToCatalogRootAndReturnPreVersionElement(tuple, model));
+                .bind(tuple -> {
+                Either<ToscaElement, StorageOperationStatus> elementResult = updateEdgeToCatalogRootAndReturnPreVersionElement(tuple, model);
+
+                // Apply requestUUID if provided
+                if (elementResult.isLeft() && requestUUID != null && !requestUUID.trim().isEmpty()) {
+                    ToscaElement element = elementResult.left().value();
+                    element.setUUID(requestUUID);
+                }
+
+                return elementResult;
+            });
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during undo checkout tosca element {}. {}", toscaElementId,
                 e.getMessage());
@@ -304,7 +331,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
         return hasPreviousVersion;
     }
 
-    public Either<ToscaElement, StorageOperationStatus> certifyToscaElement(String toscaElementId, String modifierId, String ownerId) {
+    public Either<ToscaElement, StorageOperationStatus> certifyToscaElement(String toscaElementId, String modifierId, String ownerId, String requestUUID) {
         try {
             return janusGraphDao
                 .getVerticesByUniqueIdAndParseFlag(prepareParametersToGetVerticesForRequestCertification(toscaElementId, modifierId, ownerId)).right()
@@ -313,13 +340,25 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                     GraphVertex toscaElement = verticesRes.get(toscaElementId);
                     GraphVertex modifier = verticesRes.get(modifierId);
                     Integer majorVersion = getMajorVersion((String) toscaElement.getMetadataProperty(GraphPropertyEnum.VERSION));
-                    return handleRelationsBeforeCertifyingAndProcessClone(toscaElement, modifier, majorVersion);
+                    Either<ToscaElement, StorageOperationStatus> handleResult = handleRelationsBeforeCertifyingAndProcessClone(
+                                            toscaElement, modifier, majorVersion
+                    );
+
+                   if (handleResult.isLeft()) {
+                    ToscaElement element = handleResult.left().value();
+                    if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                        element.setUUID(requestUUID);
+                    }
+                    return Either.left(element);
+                } else {
+                    return Either.right(handleResult.right().value());
+                }
                 });
-        } catch (Exception e) {
-            return Either.right(logDebugMessageAndReturnStorageOperationStatus(StorageOperationStatus.GENERAL_ERROR,
-                "Exception occurred during certification tosca element {}.", toscaElementId, e));
-        }
-    }
+                } catch (Exception e) {
+                    return Either.right(logDebugMessageAndReturnStorageOperationStatus(StorageOperationStatus.GENERAL_ERROR,
+                        "Exception occurred during certification tosca element {}.", toscaElementId, e));
+                }
+            }
 
     private Either<ToscaElement, StorageOperationStatus> handleRelationsBeforeCertifyingAndProcessClone(GraphVertex toscaElement,
                                                                                                         GraphVertex modifier, Integer majorVersion) {

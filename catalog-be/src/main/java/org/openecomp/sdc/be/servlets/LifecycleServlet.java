@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -101,7 +102,8 @@ public class LifecycleServlet extends BeGenericServlet {
             "checkout, undoCheckout, checkin, certificationRequest, startCertification, failCertification,  cancelCertification, certify"}), required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition,
         @Parameter(description = "id of component to be changed") @PathParam(value = "componentId") final String componentId,
         @Context final HttpServletRequest request,
-        @Parameter(description = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId)
+        @Parameter(description = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+        @QueryParam("requestUUID") String requestUUID)
         throws IOException {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("Start handle request of {}", url);
@@ -138,7 +140,7 @@ public class LifecycleServlet extends BeGenericServlet {
         ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(componentCollection);
         if (componentType != null) {
             Either<? extends Component, ResponseFormat> actionResponse = lifecycleBusinessLogic
-                .changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
+                .changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true, requestUUID);
             if (actionResponse.isRight()) {
                 log.info("failed to change resource state");
                 loggerSupportability.log(LoggerSupportabilityActions.CHANGELIFECYCLESTATE, StatusCode.ERROR,

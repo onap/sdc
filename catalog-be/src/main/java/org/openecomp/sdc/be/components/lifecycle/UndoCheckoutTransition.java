@@ -102,11 +102,11 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
     @Override
     public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
                                                                    ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock,
-                                                                   boolean inTransaction) {
+                                                                   boolean inTransaction, String requestUUID) {
         Either<? extends Component, ResponseFormat> result = null;
         log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
         try {
-            Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId(), component.getModel());
+            Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId(), component.getModel(), requestUUID);
             if (undoCheckoutResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
                 StorageOperationStatus response = undoCheckoutResourceResult.right().value();
@@ -116,6 +116,9 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
             } else {
                 ToscaElement element = undoCheckoutResourceResult.left().value();
                 if (element == null) {
+                     if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                             element.setUUID(requestUUID);
+                    }
                     catalogOperations.updateCatalog(ChangeTypeEnum.DELETE, component);
                     result = Either.left(null);
                 } else {

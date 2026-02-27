@@ -77,12 +77,12 @@ public class CheckoutTransition extends LifeCycleTransition {
     @Override
     public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component,
                                                                    ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock,
-                                                                   boolean inTransaction) {
+                                                                   boolean inTransaction, String requestUUID) {
         log.debug("start performing {} for resource {}", getName(), component.getUniqueId());
         Either<? extends Component, ResponseFormat> result = null;
         try {
             final Either<ToscaElement, StorageOperationStatus> checkoutResourceResult = lifeCycleOperation
-                .checkoutToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+                .checkoutToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId(), requestUUID);
             if (checkoutResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
                 StorageOperationStatus response = checkoutResourceResult.right().value();
@@ -93,6 +93,12 @@ public class CheckoutTransition extends LifeCycleTransition {
                 ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
                 result = Either.right(responseFormat);
             } else {
+                ToscaElement toscaElement = checkoutResourceResult.left().value();
+
+                // --- REQUEST UUID OVERRIDE ---
+                if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+                    toscaElement.setUUID(requestUUID);
+                }
                 Component clonedComponent = ModelConverter.convertFromToscaElement(checkoutResourceResult.left().value());
                 if (componentType == ComponentTypeEnum.SERVICE) {
                     Service service = (Service) clonedComponent;
