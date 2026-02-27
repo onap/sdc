@@ -133,10 +133,10 @@ public class LifecycleTestBase extends ComponentBusinessLogicMock {
         // createResource
         resourceResponse = createResourceObject();
         Either<ToscaElement, StorageOperationStatus> eitherComponent = Either.left(ModelConverter.convertToToscaElement(resourceResponse));
-        when(toscaElementLifecycleOperation.checkoutToscaElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
+        when(toscaElementLifecycleOperation.checkoutToscaElement(Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
                 .thenAnswer(createAnswer(eitherComponent));
 
-        when(toscaElementLifecycleOperation.checkinToscaELement(Mockito.any(LifecycleStateEnum.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
+        when(toscaElementLifecycleOperation.checkinToscaELement(Mockito.any(LifecycleStateEnum.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class), Mockito.any(String.class)))
                 .thenAnswer(createAnswer(eitherComponent));
 
         Either<User, StorageOperationStatus> getOwnerResult = Either.left(user);

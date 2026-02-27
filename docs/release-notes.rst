@@ -5,7 +5,7 @@
 Release Notes
 =============
 
-Version: 1.15.0
+Version: 1.15.1
 ===============
 
 :Release Date: Unreleased

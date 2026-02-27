@@ -133,6 +133,13 @@ public class LifecycleBusinessLogic {
                                                                                 LifeCycleTransitionEnum transitionEnum,
                                                                                 LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
                                                                                 boolean needLock) {
+        return changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, inTransaction, needLock, null);                                                                                    
+    }
+
+    public <T extends Component> Either<T, ResponseFormat> changeComponentState(ComponentTypeEnum componentType, String componentId, User modifier,
+                                                                                LifeCycleTransitionEnum transitionEnum,
+                                                                                LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
+                                                                                boolean needLock, String requestUUID) {
         LifeCycleTransition lifeCycleTransition = stateTransitions.get(transitionEnum.name());
         if (lifeCycleTransition == null) {
             log.debug("state operation is not valid. operations allowed are: {}", LifeCycleTransitionEnum.valuesAsString());
@@ -189,8 +196,18 @@ public class LifecycleBusinessLogic {
                 return Either.right(checkedInComponentEither.right().value());
             }
             component = checkedInComponentEither.left().value();
-            return changeState(component, lifeCycleTransition, componentType, modifier, changeInfo, inTransaction).left()
-                .bind(c -> updateCatalog(c, oldComponent, ChangeTypeEnum.LIFECYCLE));
+            Either<T, ResponseFormat> result = changeState(
+                    component,
+                    lifeCycleTransition,
+                    componentType,
+                    modifier,
+                    changeInfo,
+                    inTransaction, requestUUID);
+            Either<T, ResponseFormat> finalResult = result.left()
+                    .bind(c -> updateCatalog(c, oldComponent, ChangeTypeEnum.LIFECYCLE));
+
+            return finalResult;
+
         } finally {
             component.setUniqueId(componentId);
             if (!inTransaction && needLock) {
@@ -232,9 +249,27 @@ public class LifecycleBusinessLogic {
         return Either.left(component);
     }
 
+    private <T extends Component> Either<T, ResponseFormat> changeState(
+        T component,
+        LifeCycleTransition lifeCycleTransition,
+        ComponentTypeEnum componentType,
+        User modifier,
+        LifecycleChangeInfoWithAction changeInfo,
+        boolean inTransaction) {
+
+    return changeState(component,
+                       lifeCycleTransition,
+                       componentType,
+                       modifier,
+                       changeInfo,
+                       inTransaction,
+                       null);
+}
+
+
     private <T extends Component> Either<T, ResponseFormat> changeState(T component, LifeCycleTransition lifeCycleTransition,
                                                                         ComponentTypeEnum componentType, User modifier,
-                                                                        LifecycleChangeInfoWithAction changeInfo, boolean inTransaction) {
+                                                                        LifecycleChangeInfoWithAction changeInfo, boolean inTransaction, String requestUUID) {
         ResponseFormat errorResponse;
         LifecycleStateEnum oldState = component.getLifecycleState();
         String resourceCurrVersion = component.getVersion();
@@ -256,13 +291,16 @@ public class LifecycleBusinessLogic {
             return Either.right(errorResponse);
         }
         Either<T, ResponseFormat> operationResult = lifeCycleTransition
-            .changeState(componentType, component, bl, modifier, owner, false, inTransaction);
+            .changeState(componentType, component, bl, modifier, owner, false, inTransaction, requestUUID);
         if (operationResult.isRight()) {
             errorResponse = operationResult.right().value();
             log.info("audit before sending error response");
             componentUtils.auditComponentAdmin(errorResponse, modifier, component, lifeCycleTransition.getAuditingAction(), componentType,
                 ResourceVersionInfo.newBuilder().state(oldState.name()).version(resourceCurrVersion).build());
             return Either.right(errorResponse);
+        }
+        if (requestUUID != null && !requestUUID.trim().isEmpty()) {
+            operationResult.left().value().setUUID(requestUUID);
         }
         Component resourceAfterOperation = operationResult.left().value() == null ? component : operationResult.left().value();
         componentUtils.auditComponent(componentUtils.getResponseFormat(ActionStatus.OK), modifier, resourceAfterOperation,

@@ -42,6 +42,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -100,10 +101,14 @@ public class ArtifactServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "409", description = "Artifact already exist")})
     public Response loadArtifact(@PathParam("resourceId") final String resourceId,
+                                 @QueryParam("artifactUUID") final String customArtifactUUID,
                                  @Parameter(description = "json describe the artifact", required = true) String data,
                                  @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
+        if (customArtifactUUID != null && !customArtifactUUID.isEmpty()) {
+            request.setAttribute("customArtifactUUID", customArtifactUUID);
+        }                           
         return handleUploadRequest(data, request, resourceId, ComponentTypeEnum.RESOURCE);
     }
 
@@ -717,6 +722,10 @@ public class ArtifactServlet extends BeGenericServlet {
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_ARTIFACT, StatusCode.STARTED, "Starting to update artifact {} ",
             artifactId + " for component " + componentId);
         ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class, validateTimeout);
+        String customUUID = (String) request.getAttribute("customArtifactUUID");
+            if (customUUID != null && !customUUID.isEmpty()) {
+                artifactInfo.setArtifactUUID(customUUID);
+            }
         String origMd5 = request.getHeader(Constants.MD5_HEADER);
         String userId = request.getHeader(Constants.USER_ID_HEADER);
         Either<ArtifactDefinition, org.openecomp.sdc.be.model.Operation> result = artifactsBusinessLogic
