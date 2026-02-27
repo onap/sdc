@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -107,13 +108,12 @@ class LifecycleBusinessLogicTest extends LifecycleTestBase {
         when(graphLockOperation.lockComponent(ID_BEFORE_CHECKIN, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(checkinTransition.getComponentOwner(service, ComponentTypeEnum.SERVICE)).thenReturn(Either.left(modifier));
         when(checkinTransition.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, modifier, modifier, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, remarks)).thenReturn(Either.left(true));
-        Mockito.doReturn(Either.left(serviceAfterCheckIn)).when(checkinTransition).changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, modifier, modifier, false, false);
-
+        Mockito.doReturn(Either.left(serviceAfterCheckIn)).when(checkinTransition).changeState(Mockito.any(ComponentTypeEnum.class), Mockito.any(Service.class), Mockito.any(), Mockito.any(User.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.isNull());
         when(certificationChangeTransition.getComponentOwner(serviceAfterCheckIn, ComponentTypeEnum.SERVICE)).thenReturn(Either.left(modifier));
         when(certificationChangeTransition.validateBeforeTransition(serviceAfterCheckIn, ComponentTypeEnum.SERVICE, modifier, modifier, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, remarks)).thenReturn(Either.left(true));
-        Mockito.doReturn(Either.left(serviceAfterCertify)).when(certificationChangeTransition).changeState(ComponentTypeEnum.SERVICE, serviceAfterCheckIn, serviceBusinessLogic, modifier, modifier, false, false);
+        Mockito.doReturn(Either.left(serviceAfterCertify)).when(certificationChangeTransition).changeState(Mockito.any(ComponentTypeEnum.class), Mockito.any(Service.class), Mockito.any(), Mockito.any(User.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.isNull());
         when(catalogOperations.updateCatalog(ChangeTypeEnum.LIFECYCLE, serviceAfterCertify)).thenReturn(ActionStatus.OK);
-        Either<? extends Component, ResponseFormat> serviceAfterCertificationEither = lifecycleBusinessLogic.changeComponentState(ComponentTypeEnum.SERVICE, ID_BEFORE_CHECKIN, modifier, LifeCycleTransitionEnum.CERTIFY, remarks, false, true);
+        Either<? extends Component, ResponseFormat> serviceAfterCertificationEither = lifecycleBusinessLogic.changeComponentState(ComponentTypeEnum.SERVICE, ID_BEFORE_CHECKIN, modifier, LifeCycleTransitionEnum.CERTIFY, remarks,false, true, Mockito.nullable(String.class));
         Component serviceAfterCertification = serviceAfterCertificationEither.left().value();
         assertThat(serviceAfterCertification.getUniqueId()).isEqualTo(ID_AFTER_CERTIFY);
         assertThat(serviceAfterCertification.getLifecycleState()).isEqualTo(LifecycleStateEnum.CERTIFIED);
@@ -123,6 +123,7 @@ class LifecycleBusinessLogicTest extends LifecycleTestBase {
     void certifyCheckedInComponent() {
         String ID_BEFORE_CERTIFY = "id";
         String ID_AFTER_CERTIFY = "id2";
+        String REQUEST_UUID = UUID.randomUUID().toString();
         Service service = createServiceObject();
         fillService(service, ID_BEFORE_CERTIFY);
         service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -138,9 +139,9 @@ class LifecycleBusinessLogicTest extends LifecycleTestBase {
         when(graphLockOperation.lockComponent(ID_BEFORE_CERTIFY, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(certificationChangeTransition.getComponentOwner(service, ComponentTypeEnum.SERVICE)).thenReturn(Either.left(modifier));
         when(certificationChangeTransition.validateBeforeTransition(service, ComponentTypeEnum.SERVICE, modifier, modifier, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN, remarks)).thenReturn(Either.left(true));
-        Mockito.doReturn(Either.left(serviceAfterCertify)).when(certificationChangeTransition).changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, modifier, modifier, false, false);
+        Mockito.doReturn(Either.left(serviceAfterCertify)).when(certificationChangeTransition).changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, modifier, modifier, false, false, REQUEST_UUID);
         when(catalogOperations.updateCatalog(ChangeTypeEnum.LIFECYCLE, serviceAfterCertify)).thenReturn(ActionStatus.OK);
-        Either<? extends Component, ResponseFormat> serviceAfterCertificationEither = lifecycleBusinessLogic.changeComponentState(ComponentTypeEnum.SERVICE, ID_BEFORE_CERTIFY, modifier, LifeCycleTransitionEnum.CERTIFY, remarks, false, true);
+        Either<? extends Component, ResponseFormat> serviceAfterCertificationEither = lifecycleBusinessLogic.changeComponentState(ComponentTypeEnum.SERVICE, ID_BEFORE_CERTIFY, modifier, LifeCycleTransitionEnum.CERTIFY, remarks, false, true, REQUEST_UUID);
         Component serviceAfterCertification = serviceAfterCertificationEither.left().value();
         assertThat(serviceAfterCertification.getUniqueId()).isEqualTo(ID_AFTER_CERTIFY);
         assertThat(serviceAfterCertification.getLifecycleState()).isEqualTo(LifecycleStateEnum.CERTIFIED);

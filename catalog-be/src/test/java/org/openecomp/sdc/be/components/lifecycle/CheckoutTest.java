@@ -55,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.UUID;
+
 class CheckoutTest extends LifecycleTestBase {
 
     private CheckoutTransition checkoutObj = null;
@@ -75,6 +77,7 @@ class CheckoutTest extends LifecycleTestBase {
     private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
     private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
+    private static String REQUEST_UUID = UUID.randomUUID().toString();
 
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
@@ -108,11 +111,13 @@ class CheckoutTest extends LifecycleTestBase {
         assertTrue(ownerResponse.isLeft());
         User owner = ownerResponse.left().value();
         when(toscaOperationFacade.updateToscaElement(any(Component.class))).thenReturn(Either.left(resource));
-        changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
+        changeStateResult = checkoutObj.changeState((ComponentTypeEnum.RESOURCE), resource, bl,
+                    user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
 
         resource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
-        changeStateResult = checkoutObj.changeState(ComponentTypeEnum.RESOURCE, resource, bl, user, owner, false, false);
+        changeStateResult = checkoutObj.changeState((ComponentTypeEnum.RESOURCE), resource, bl,
+                    user, owner, false, false, REQUEST_UUID);
         assertTrue(changeStateResult.isLeft());
 
     }

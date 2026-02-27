@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
@@ -85,6 +87,8 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
     String categoryName = "category";
     String subcategory = "mycategory";
     String outputDirectory = "C:\\Output";
+    String REQUEST_UUID = UUID.randomUUID().toString();
+
     @javax.annotation.Resource
     private NodeTypeOperation nodeTypeOperation;
     @javax.annotation.Resource
@@ -116,10 +120,12 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
     @Test
     public void lifecycleTest() {
+        String REQUEST_UUID = UUID.randomUUID().toString();
         Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkinToscaELement(
             LifecycleStateEnum.findState((String) vfVertex.getMetadataProperty(GraphPropertyEnum.STATE)), vfVertex.getUniqueId(),
             modifierVertex.getUniqueId(),
-            ownerVertex.getUniqueId());
+            ownerVertex.getUniqueId(),
+            REQUEST_UUID);
         StorageOperationStatus status;
 
         assertTrue(res.isLeft());
@@ -130,7 +136,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
         String id = res.left().value().getUniqueId();
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
@@ -154,11 +160,11 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         assertSame(status, StorageOperationStatus.OK);
 
         res = lifecycleOperation.checkinToscaELement(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, id, ownerVertex.getUniqueId(),
-            ownerVertex.getUniqueId());
+            ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
@@ -181,13 +187,13 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
             JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+        res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
         verifyInCatalogData(3, null);
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
@@ -202,11 +208,11 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         assertSame(status, StorageOperationStatus.OK);
 
         res = lifecycleOperation.checkinToscaELement(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, id, ownerVertex.getUniqueId(),
-            ownerVertex.getUniqueId());
+            ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
@@ -218,12 +224,12 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
             JsonPresentationFields.NAME);
         assertSame(status, StorageOperationStatus.OK);
 
-        res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+        res = lifecycleOperation.certifyToscaElement(id, modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
         verifyInCatalogData(3, null);
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
         id = res.left().value().getUniqueId();
 
@@ -248,12 +254,12 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
     public void serviceConformanceLevelTest() {
         Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkinToscaELement(
             LifecycleStateEnum.findState((String) serviceVertex.getMetadataProperty(GraphPropertyEnum.STATE)), serviceVertex.getUniqueId(),
-            modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+            modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
 
         assertTrue(res.isLeft());
         String id = res.left().value().getUniqueId();
 
-        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId());
+        res = lifecycleOperation.checkoutToscaElement(id, ownerVertex.getUniqueId(), modifierVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(res.isLeft());
 
         String conformanceLevel = res.left().value().getMetadataValue(JsonPresentationFields.CONFORMANCE_LEVEL).toString();
@@ -274,7 +280,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         expectedIds.add(vertex4.getUniqueId());
         verifyInCatalogData(4, expectedIds);
 
-        lifecycleOperation.undoCheckout(vertex4.getUniqueId(), null);
+        lifecycleOperation.undoCheckout(vertex4.getUniqueId(), null, REQUEST_UUID);
         expectedIds.remove(vertex4.getUniqueId());
         verifyInCatalogData(3, expectedIds);
 
@@ -283,9 +289,9 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         verifyInCatalogData(4, expectedIds);
 
         lifecycleOperation.checkinToscaELement(LifecycleStateEnum.findState((String) vertex4.getMetadataProperty(GraphPropertyEnum.STATE)),
-            vertex4.getUniqueId(), modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+            vertex4.getUniqueId(), modifierVertex.getUniqueId(), ownerVertex.getUniqueId(),REQUEST_UUID);
         Either<ToscaElement, StorageOperationStatus> certifyToscaElement = lifecycleOperation.certifyToscaElement(vertex4.getUniqueId(),
-            modifierVertex.getUniqueId(), ownerVertex.getUniqueId());
+            modifierVertex.getUniqueId(), ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(certifyToscaElement.isLeft());
         expectedIds.remove(vertex4.getUniqueId());
         String certifiedId = certifyToscaElement.left().value().getUniqueId();
@@ -293,7 +299,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         verifyInCatalogData(4, expectedIds);
 
         Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkoutToscaElement(certifiedId, modifierVertex.getUniqueId(),
-            ownerVertex.getUniqueId());
+            ownerVertex.getUniqueId(), REQUEST_UUID);
         assertTrue(certifyToscaElement.isLeft());
         expectedIds.add(res.left().value().getUniqueId());
         verifyInCatalogData(5, expectedIds);
