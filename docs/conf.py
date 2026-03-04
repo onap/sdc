@@ -19,7 +19,8 @@ html_show_sphinx = False
 extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.graphviz',
-    'sphinxcontrib.plantuml'
+    'sphinxcontrib.mermaid',
+    'sphinxcontrib.plantuml',
 ]
 
 #

@@ -2,3 +2,4 @@ sphinx>=4.2.0  # BSD
 sphinx-rtd-theme>=1.0.0  # MIT
 sphinxcontrib-spelling
 sphinxcontrib-plantuml
+sphinxcontrib-mermaid>=1.0.0
