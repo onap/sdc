@@ -3,10 +3,10 @@
 @ng2-shadow-gray: #f8f8f8;
 @ng2-light-gray: #eaeaea;
 @ng2-medium-gray: #d2d2d2;
-@ng2-med-dark-gray: #999999;
+@ng2-med-dark-gray: #767676; // Darkened from #999999 to meet WCAG AA 4.5:1 contrast
 @ng2-dark-gray: #5a5a5a;
 @ng2-shadow-blue: #e6f6fb;
-@ng2-bold-blue: #009fdb;
+@ng2-bold-blue: #056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
 @ng2-success-green:#4ca90c;
 @ng2-title-font-size:16px;
 @ng2-text-font-size: 14px;
@@ -45,9 +45,9 @@
             font-family: @font-opensans-regular;
 
             &.active {
-                color:#009fdb;
+                color:#056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
                 border-color: #d2d2d2;
-                border-top: solid 4px #009fdb;
+                border-top: solid 4px #056bae;
                 background-color: white;
                 padding-top:9px;
                 font-family: @font-opensans-medium;
@@ -107,7 +107,7 @@
 
         .clear-filter{
             cursor: pointer;
-            color:#009fdb;
+            color:#056bae; // Darkened from #009fdb to meet WCAG AA 4.5:1 contrast
             font-family: @font-opensans-medium-italic;
             text-decoration: underline;
             padding-right:10px;
@@ -218,4 +218,3 @@
         padding-top: 1em;
     }
 }
-
