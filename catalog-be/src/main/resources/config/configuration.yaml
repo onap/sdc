@@ -582,6 +582,18 @@ resourceInformationalArtifacts:
     MURANO_PKG:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+    CERTIFICATE:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    LICENSE:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    CONFIG_TEMPLATE:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    MAPPING_TEMPLATE:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes 
     OTHER:
         acceptedTypes:
         validForResourceTypes:

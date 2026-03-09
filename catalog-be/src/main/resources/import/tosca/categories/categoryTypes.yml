@@ -221,3 +221,27 @@ resources:
       SecurityZone:
           name: "Security Zone"
           icons: ['security_zone']
+  RAN:
+    name: "RAN"
+    subcategories:
+      BBU:
+        name: "BBU"
+        icons: [ 'router' ]
+      eNB:
+        name: "eNB"
+        icons: [ 'vRouter' ]
+      gNB:
+        name: "gNB"
+        icons: [ 'vRouter' ]
+      CUCP:
+        name: "CUCP"
+        icons: [ 'vRouter' ]
+      CUUP:
+        name: "CUUP"
+        icons: [ 'vRouter' ]
+      DU:
+        name: "DU"
+        icons: [ 'vRouter' ]
+      RU:
+        name: "RU"
+        icons: [ 'router' ]

@@ -6158,6 +6158,10 @@ components:
           - BPEL
           - DG_XML
           - MURANO_PKG
+          - CERTIFICATE
+          - LICENSE
+          - CONFIG_TEMPLATE
+          - MAPPING_TEMPLATE
           - VENDOR_LICENSE
           - VF_LICENSE
           - CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT
@@ -6972,6 +6976,10 @@ components:
           - BPEL
           - DG_XML
           - MURANO_PKG
+          - CERTIFICATE
+          - LICENSE
+          - CONFIG_TEMPLATE
+          - MAPPING_TEMPLATE
           - VENDOR_LICENSE
           - VF_LICENSE
           - CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT
@@ -7408,6 +7416,10 @@ components:
           - BPEL
           - DG_XML
           - MURANO_PKG
+          - CERTIFICATE
+          - LICENSE
+          - CONFIG_TEMPLATE
+          - MAPPING_TEMPLATE
           - VENDOR_LICENSE
           - VF_LICENSE
           - CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT
