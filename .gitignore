@@ -193,3 +193,5 @@ vagrant-asdc-all-in-one/
 Vagrantfile
 
 *.xls
+node_modules
+node
