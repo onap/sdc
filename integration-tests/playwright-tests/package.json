@@ -1,0 +1,14 @@
+{
+  "name": "sdc-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright end-to-end tests for SDC",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.0"
+  }
+}
