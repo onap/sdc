@@ -79,6 +79,18 @@
           "name": "MURANO_PKG"
         },
         {
+          "name": "CERTIFICATE"
+        },
+        {
+          "name": "LICENSE"
+        },
+        {
+          "name": "CONFIG_TEMPLATE"
+        },
+        {
+          "name": "MAPPING_TEMPLATE"
+        },
+        {
           "name": "WORKFLOW"
         },
         {

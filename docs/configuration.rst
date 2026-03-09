@@ -293,6 +293,10 @@ BE-configuration.yaml
         - BPEL
         - DG_XML
         - MURANO_PKG
+        - CERTIFICATE
+        - MAPPING_TEMPLATE
+        - LICENSE
+        - CONFIG_TEMPLATE
         - WORKFLOW
         - NETWORK_CALL_FLOW
         - TOSCA_TEMPLATE
@@ -749,6 +753,18 @@ BE-configuration.yaml
             acceptedTypes:
             validForResourceTypes: *allResourceTypes
         MURANO_PKG:
+            acceptedTypes:
+            validForResourceTypes: *allResourceTypes
+        CERTIFICATE:
+            acceptedTypes:
+            validForResourceTypes: *allResourceTypes
+        LICENSE:
+            acceptedTypes:
+            validForResourceTypes: *allResourceTypes
+        CONFIG_TEMPLATE:
+            acceptedTypes:
+            validForResourceTypes: *allResourceTypes
+        MAPPING_TEMPLATE:
             acceptedTypes:
             validForResourceTypes: *allResourceTypes
         OTHER:

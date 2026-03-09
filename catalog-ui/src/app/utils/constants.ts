@@ -129,6 +129,10 @@ export class ArtifactType {
     static HEAT_NET = "HEAT_NET";
     static VF_LICENSE = "VF_LICENSE";
     static PM_DICTIONARY = "PM_DICTIONARY";
+    static CERTIFICATE = "CERTIFICATE";
+    static LICENSE = "LICENSE";
+    static CONFIG_TEMPLATE = "CONFIG_TEMPLATE";
+    static MAPPING_TEMPLATE = "MAPPING_TEMPLATE";    
     static VENDOR_LICENSE = "VENDOR_LICENSE";
     static THIRD_PARTY_RESERVED_TYPES = {
         WORKFLOW: "WORKFLOW",
