@@ -143,41 +143,69 @@ public class CompositionCanvasComponent extends AbstractPageObject {
 
     public ComponentInstance createNodeOnServiceCanvas(final String serviceName, final String serviceVersion, final String resourceName,
                                                        final String resourceVersion) {
-        final Point freePositionInCanvas = getFreePositionInCanvas(20);
-        final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
-        try {
-            final Service service =
-                AtomicOperationUtils.getServiceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
-            final Resource resourceToAdd =
-                AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
-            final ComponentInstance componentInstance = AtomicOperationUtils
-                .addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
-                    String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY()))
-                .left().value();
+        final int maxRetries = 3;
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            final Point freePositionInCanvas = getFreePositionInCanvas(20);
+            final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
+            try {
+                final Service service =
+                    AtomicOperationUtils.getServiceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
+                final Resource resourceToAdd =
+                    AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
+                final ComponentInstance componentInstance = AtomicOperationUtils
+                    .addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
+                        String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY()))
+                    .left().value();
 
-            LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
-            return componentInstance;
-        } catch (final Exception e) {
-            throw new CompositionCanvasRuntimeException("Could not create node through the API", e);
+                LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
+                return componentInstance;
+            } catch (final Exception e) {
+                lastException = e;
+                LOGGER.warn("Attempt {}/{} to create node on service canvas failed: {}", attempt, maxRetries, e.getMessage());
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000L * attempt);
+                    } catch (final InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
         }
+        throw new CompositionCanvasRuntimeException("Could not create node through the API", lastException);
     }
 
     public ComponentInstance createNodeOnResourceCanvas(final String serviceName, final String serviceVersion, final String resourceName,
                                                         final String resourceVersion) {
-        final Point freePositionInCanvas = getFreePositionInCanvas(20);
-        final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
-        try {
-            final Resource service = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
-            final Resource resourceToAdd = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
-            final ComponentInstance componentInstance =
-                AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
-                    String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY())).left().value();
+        final int maxRetries = 3;
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            final Point freePositionInCanvas = getFreePositionInCanvas(20);
+            final Point pointFromCanvasCenter = calculateOffsetFromCenter(freePositionInCanvas);
+            try {
+                final Resource service = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, serviceName, serviceVersion);
+                final Resource resourceToAdd = AtomicOperationUtils.getResourceObjectByNameAndVersion(DESIGNER, resourceName, resourceVersion);
+                final ComponentInstance componentInstance =
+                    AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceToAdd, service, DESIGNER, true,
+                        String.valueOf(pointFromCanvasCenter.getX()), String.valueOf(pointFromCanvasCenter.getY())).left().value();
 
-            LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
-            return componentInstance;
-        } catch (final Exception e) {
-            throw new CompositionCanvasRuntimeException("Could not create node through the API", e);
+                LOGGER.debug("Created instance {} in the Service {}", componentInstance.getName(), serviceName);
+                return componentInstance;
+            } catch (final Exception e) {
+                lastException = e;
+                LOGGER.warn("Attempt {}/{} to create node on resource canvas failed: {}", attempt, maxRetries, e.getMessage());
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000L * attempt);
+                    } catch (final InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
         }
+        throw new CompositionCanvasRuntimeException("Could not create node through the API", lastException);
     }
 
     private Point getFreePositionInCanvas(int maxAttempts) {

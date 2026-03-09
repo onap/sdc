@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -39,9 +40,24 @@ public class NotificationComponent extends AbstractPageObject {
 
     public void waitForNotification(final NotificationType notificationType, final int timeout) {
         final By messageLocator = getMessageLocator(notificationType);
-        final WebElement webElement = waitForElementVisibility(messageLocator, timeout);
-        webElement.click();
+        waitForElementVisibility(messageLocator, timeout);
+        clickNotification(messageLocator);
         waitForElementInvisibility(messageLocator, 5);
+    }
+
+    private void clickNotification(final By messageLocator) {
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                final WebElement element = findElement(messageLocator);
+                element.click();
+                return;
+            } catch (final StaleElementReferenceException e) {
+                LOGGER.warn("StaleElementReferenceException on notification click, attempt {}", attempts + 1);
+                attempts++;
+            }
+        }
+        LOGGER.warn("Failed to click notification after {} attempts", attempts);
     }
 
     private By getMessageLocator(final NotificationType notificationType) {
