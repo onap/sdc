@@ -1483,5 +1483,93 @@ limitations under the License.
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!-- Playwright-based UI integration tests.
+                 Reuses the same Docker stack as the Selenium tests but runs
+                 Playwright (Node.js) instead of TestNG + Selenium.
+
+                 Usage:
+                   mvn verify -P run-integration-tests-playwright -f integration-tests/pom.xml
+            -->
+            <id>run-integration-tests-playwright</id>
+            <properties>
+                <skipYamlJsonValidator>true</skipYamlJsonValidator>
+                <checkstyle.skip>true</checkstyle.skip>
+                <surefire.skip.tests>true</surefire.skip.tests>
+                <skipTest>false</skipTest>
+                <it.playwright.baseUrl>http://localhost:8285</it.playwright.baseUrl>
+                <it.playwright.nodeVersion>v18.20.8</it.playwright.nodeVersion>
+                <it.playwright.npmVersion>10.8.2</it.playwright.npmVersion>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Skip the Java failsafe tests in this profile -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <!-- Install Node, run npm install, install browsers, run tests -->
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.12.0</version>
+                        <configuration>
+                            <installDirectory>${project.basedir}/playwright-tests</installDirectory>
+                            <workingDirectory>${project.basedir}/playwright-tests</workingDirectory>
+                            <npmDownloadRoot>${npm.registry}</npmDownloadRoot>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>pw-install-node-and-npm</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>${it.playwright.nodeVersion}</nodeVersion>
+                                    <npmVersion>${it.playwright.npmVersion}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pw-npm-install</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pw-install-browsers</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>npx</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>playwright install chromium</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pw-run-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>npx</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>playwright test</arguments>
+                                    <environmentVariables>
+                                        <SDC_BASE_URL>${it.playwright.baseUrl}</SDC_BASE_URL>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
