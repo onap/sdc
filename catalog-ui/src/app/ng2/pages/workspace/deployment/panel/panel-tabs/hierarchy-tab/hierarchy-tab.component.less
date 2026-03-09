@@ -8,13 +8,13 @@
   flex-flow: column;
 
   .sdc-hierarchy-tab-title {
-    color: @main_color_a;
+    color: @main_color_b; // Changed from @main_color_a (#009fdb) to meet WCAG AA 4.5:1 contrast
     padding: 0 0 15px 20px;
     border-bottom: 1px solid #d2d2d2;
   }
 
   .sdc-hierarchy-tab-sub-title {
-    color: @main_color_a;
+    color: @main_color_b; // Changed from @main_color_a (#009fdb) to meet WCAG AA 4.5:1 contrast
     padding: 15px 20px 15px 20px;
   }
 
@@ -70,7 +70,7 @@
   sdc-accordion.selected {
     /deep/ .expand-collapse-container {
       .sdc-accordion-header {
-        background-color: @main_color_a;
+        background-color: @main_color_b; // Changed from @main_color_a; white text now 5.38:1 (was 2.93:1)
         color: @main_color_p;
 
         .svg-icon {
@@ -103,7 +103,7 @@
     border-top: 4px solid @main_color_a;
     box-shadow: 0.3px 1px 2px rgba(24, 24, 25, 0.32);
     .module-data {
-      color: @main_color_a;
+      color: @main_color_b; // Changed from @main_color_a (#009fdb) to meet WCAG AA 4.5:1 contrast
       padding: 10px 0 10px 0;
       margin: 0 20px 0 20px;
 
@@ -200,7 +200,7 @@
 
         &.property-name {
           font-weight: 400;
-          color: @main_color_a;
+          color: @main_color_b; // Changed from @main_color_a (#009fdb) to meet WCAG AA 4.5:1 contrast
 
           .hand-pointer {
             cursor: pointer;
