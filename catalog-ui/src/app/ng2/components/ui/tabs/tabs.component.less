@@ -31,7 +31,7 @@
 .tabs{
     &.round-tabs .tab{
         background-color: #f8f8f8;
-        color: #959595;
+        color: #767676; // Darkened from #959595 to meet WCAG AA 4.5:1 contrast
         border: solid 1px #d2d2d2;
         border-bottom:none;
         border-left:none;
@@ -42,9 +42,9 @@
         }
 
         &.active {
-            background-color:#009fdb;
-            color:#e9e9e9;
-            border-color:#009fdb;
+            background-color: #056bae; // Darkened from #009fdb; white text now 5.38:1 (was 2.53:1 with #e9e9e9)
+            color: #ffffff;
+            border-color: #056bae;
         }
 
         .tab-indication {

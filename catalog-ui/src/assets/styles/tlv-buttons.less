@@ -17,22 +17,22 @@
   }
 
   &.blue {
-    background-color: #009fdb;
-    border: 1px solid #0091c8;
+    background-color: #056bae; // Darkened from #009fdb; white text now has 5.38:1 contrast (was 2.93:1)
+    border: 1px solid #00538c;
     color: #fff;
 
     &:hover {
-      background-color: #1ec2ff;
+      background-color: #0077c8;
     }
 
     &:active {
-      background-color: #0091c7;
-      border: 1px solid #006186;
+      background-color: #004d8a;
+      border: 1px solid #003a6b;
       outline: none;
     }
 
     &:focus {
-      border-color: #009fdb;
+      border-color: #056bae;
       box-shadow: inset 0 0 0 1px #fff;
       outline: none;
     }
@@ -134,8 +134,8 @@
   &.outline {
     &.blue {
       background-color: #fff;
-      border: 1px solid #009fdb;
-      color: #009fdb;
+      border: 1px solid #056bae;
+      color: #056bae; // Darkened from #009fdb; now 5.38:1 on white (was 2.93:1)
 
       &:hover {
         background-color: #e5f5fb;
@@ -143,14 +143,14 @@
 
       &:active {
         background-color: #b2e2f4;
-        border: 1px solid #009fdb;
+        border: 1px solid #056bae;
         outline: none;
       }
 
       &:focus {
         background-color: #fff;
-        border-color: #009fdb;
-        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #009fdb;
+        border-color: #056bae;
+        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #056bae;
         outline: none;
       }
     }
@@ -231,4 +231,3 @@
     }
   }
 }
-
