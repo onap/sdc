@@ -1,53 +1,33 @@
-# Base image
+# The build stage is necessary here to avoid including the tar file
+# in a separate image layer
+FROM eclipse-temurin:11-jre-jammy AS builder
+COPY sdctool.tar /tmp/sdctool.tar
+RUN mkdir -p /opt && \
+    tar -xf /tmp/sdctool.tar -C /opt && \
+    rm /tmp/sdctool.tar
+
 FROM eclipse-temurin:11-jre-jammy
-# Create a new group and user
-RUN addgroup --system sdc && \
-    adduser --system --ingroup sdc --shell /bin/sh sdc
-USER sdc
-WORKDIR /home/sdc
-# Create Cassandra configuration directory and file
-RUN mkdir -p ~/.cassandra/ && \
-    echo '[cql]' > ~/.cassandra/cqlshrc && \
-    echo 'version=3.4.4' >> ~/.cassandra/cqlshrc && \
-    chmod 600 ~/.cassandra/cqlshrc
-# Switch to root to install necessary packages
+
 USER root
-RUN apt-get update --allow-releaseinfo-change && \
-    apt-get install -y --no-install-recommends \
-        python3-pip \
-        libffi-dev \
-        libxml2-dev \
-        curl \
-        wget \
-        perl \
-        ntp \
-        apt-transport-https && \
-    python3 -m pip install --upgrade pip && \
+RUN groupadd -r sdc && useradd -r -g sdc -m sdc
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3-pip && \
     pip3 install --no-cache-dir cqlsh==6.1.0 && \
-    apt-get purge -y python3-dev python3-apt && \
-    apt-get clean && \
+    apt-get purge -y --auto-remove python3-pip && \
     rm -rf /var/lib/apt/lists/* /root/.cache/pip
-# Switch back to system user for runtime
+
 USER sdc
 WORKDIR /home/sdc
-# Copy sdctool tar and startup
-COPY --chown=sdc:sdc sdctool.tar /home/sdc/sdctool.tar
-COPY --chown=sdc:sdc scripts /home/sdc/scripts
-COPY --chown=sdc:sdc startup.sh /home/sdc
-# Extract and prepare sdctool
-RUN tar -xvf /home/sdc/sdctool.tar -C /home/sdc && \
-    rm /home/sdc/sdctool.tar && \
-    mkdir -p /home/sdc/tools && \
-    cp -pr /home/sdc/sdctool/tools/* /home/sdc/tools && \
-    chmod +x /home/sdc/sdctool/scripts/* && \
-    chmod +x /home/sdc/tools/build/scripts/* && \
-    chmod +x /home/sdc/tools/scripts/* && \
-    chown -R sdc:sdc /home/sdc/tools/build/scripts/* && \
-    chmod +x /home/sdc/startup.sh && \
-    chmod +x /home/sdc/scripts/* && \
-    cp -r /home/sdc/scripts/janusgraph.properties /home/sdc/sdctool/config && \
-    cp -r /home/sdc/scripts/configuration.yaml /home/sdc/sdctool/config
-# Ensure all scripts are executable and owned by sdc
-RUN find /home/sdc -type f -name "*.sh" -exec chmod 750 {} \; && \
-    chown -R sdc:sdc /home/sdc
+
+COPY --from=builder --chown=sdc:sdc /opt/sdctool ./sdctool
+COPY --chown=sdc:sdc scripts ./scripts
+COPY --chown=sdc:sdc startup.sh ./
+
+RUN mkdir -p tools && \
+    cp -pr sdctool/tools/* tools/ && \
+    cp scripts/janusgraph.properties sdctool/config/ && \
+    cp scripts/configuration.yaml sdctool/config/ && \
+    find /home/sdc -type f -name "*.sh" -exec chmod 750 {} \;
+
 ENTRYPOINT ["/bin/sh", "/home/sdc/startup.sh"]
