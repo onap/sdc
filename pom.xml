@@ -283,13 +283,13 @@ Modifications copyright (c) 2018-2019 Nokia
       <dependency>
         <groupId>net.logstash.logback</groupId>
         <artifactId>logstash-logback-encoder</artifactId>
-        <version>${logstash.encoder.version}</version> 
+        <version>${logstash.encoder.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
-    
+
     <dependency>
       <!-- must be on the classpath -->
       <groupId>org.jacoco</groupId>
@@ -600,6 +600,13 @@ Modifications copyright (c) 2018-2019 Nokia
           <execution>
             <id>parse-version</id>
             <phase>pre-clean</phase>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>parse-version-default</id>
+            <phase>validate</phase>
             <goals>
               <goal>parse-version</goal>
             </goals>
