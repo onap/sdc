@@ -1,6 +1,7 @@
-FROM onap/integration-java11:10.0.0
+FROM eclipse-temurin:11-jre-alpine
 
 USER root
+RUN addgroup -S onap && adduser -S -G onap onap
 ARG JETTY_FOLDER=/app/jetty
 
 ENV JETTY_HOME=$JETTY_FOLDER
@@ -8,7 +9,7 @@ ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
 ENV JETTY_GROUP=onap
 
-RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
+RUN mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 
 USER onap
 
