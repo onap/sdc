@@ -79,7 +79,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <ws.rs.version>2.1.6</ws.rs.version>
     <javax.validation.version>2.0.1.Final</javax.validation.version>
 
-    <jetty.version>9.4.54.v20240208</jetty.version>
+    <jetty.version>9.4.58.v20250814</jetty.version>
     <jetty-distribution.version>${jetty.version}</jetty-distribution.version>
     <cxf.version>3.6.3</cxf.version>
 
