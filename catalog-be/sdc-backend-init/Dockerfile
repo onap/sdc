@@ -1,56 +1,38 @@
-FROM onap/integration-python:9.0.0
+FROM python:3.11-alpine
 
 USER root
 
-# Needed for pycurl
+# Create onap user/group (previously provided by onap/integration-python base image)
+RUN addgroup -S onap && adduser -S -G onap onap
+
+# Needed for pycurl SSL backend selection
 ENV PYCURL_SSL_LIBRARY=openssl
 
-RUN apk update && apk upgrade && apk add --no-cache expat apk-tools
-
-# Install only runtime packages and build dependencies temporarily
-RUN apk update && \
-    apk add --no-cache libcurl jq libpng python3 py3-pip && \
-    apk add --no-cache --virtual .build-deps \
-        libressl-dev \
-        libffi-dev \
-        libxml2-dev \
-        build-base \
-        curl-dev && \
+# Install runtime libcurl, build and install pycurl, then remove build deps
+RUN apk add --no-cache libcurl && \
+    apk add --no-cache --virtual .build-deps build-base curl-dev openssl-dev && \
     pip install --no-cache-dir pycurl==7.44.1 && \
     apk del .build-deps
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir -p $ONAP_LOG && chown onap:onap $ONAP_LOG
 
-# user/group are the same as in integration/docker/onap-python base image
-ENV user=onap group=onap
-
 USER onap
 
-# Copy scripts and install them under sdc user
+# Copy and install Python sdcBePy package
 COPY --chown=onap:onap scripts /home/onap/scripts
+RUN cd /home/onap/scripts && \
+    pip install --no-cache-dir --user .
 
-RUN chmod -R a+rx /home/onap/scripts && \
-   cd /home/onap/scripts && \
-    pip install --user .
-
-# Ensure ALL .local/bin scripts are accessible to any UID
-RUN chmod -R a+rx /home/onap/.local && \
-    chmod -R a+rx /home/onap/.local/bin && \
-    chmod -R a+rx /home/onap
-
-# Add .local/bin to PATH and Python site-packages to PYTHONPATH
 ENV PATH=$PATH:/home/onap/.local/bin
-ENV PYTHONPATH=/home/onap/.local/lib/python3.9/site-packages:$PYTHONPATH
 
-# Copy other required files
+# Copy remaining files
 COPY --chown=onap:onap normatives.tar.gz /home/onap/
-COPY --chown=onap:onap custom-scripts/create_consumer_and_user.sh /home/onap/create_consumer_and_user.sh
-COPY --chown=onap:onap custom-scripts/check_backend.sh /home/onap/check_backend.sh
-COPY --chown=onap:onap custom-scripts/import_normatives.sh /home/onap/import_normatives.sh
+COPY --chown=onap:onap custom-scripts/ /home/onap/
 COPY --chown=onap:onap startup.sh /home/onap/startup.sh
 
-RUN chmod a+rx /home/onap/*.sh
+# Ensure all files are accessible to any UID (OpenShift compatibility)
+RUN chmod -R a+rx /home/onap
 
 WORKDIR /home/onap/
 
