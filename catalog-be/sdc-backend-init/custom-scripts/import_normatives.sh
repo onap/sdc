@@ -1,12 +1,13 @@
 #!/bin/sh
 
+set -e
 
 # Set protocol and port based on DISABLE_HTTP
 if [ "$DISABLE_HTTP" = "true" ]; then
   protocol="https"
   be_port=$BE_HTTPS_PORT
   param="-i $BE_IP -p $be_port --https"
-  
+
   # Set TLS flags if certificates are provided
   if [ -n "$TLS_CERT" ]; then
     tls_cert="--tls_cert $TLS_CERT"
@@ -30,7 +31,7 @@ fi
 if [ "$BASIC_AUTH_ENABLED" = "true" ]; then
   basic_auth_user="${BASIC_AUTH_USER:-}"
   basic_auth_pass="${BASIC_AUTH_PASS:-}"
-  
+
   if [ -n "$basic_auth_user" ] && [ -n "$basic_auth_pass" ]; then
     basic_auth_config="--header $(echo -n "$basic_auth_user:$basic_auth_pass" | base64)"
   else
@@ -46,20 +47,14 @@ cd /var/tmp/ || exit 1
 cp /home/onap/normatives.tar.gz /var/tmp/
 tar -xvf /var/tmp/normatives.tar.gz
 
-start_time=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$start_time] Starting sdcinit..."
+start_ts=$(date +%s)
+echo "[$(date +"%Y-%m-%d %H:%M:%S")] Starting sdcinit..."
 
 # Run sdcinit command with the constructed parameters
 cd /var/tmp/normatives/import/tosca || exit 1
 sdcinit $param $basic_auth_config $tls_cert $tls_key $tls_key_pw $ca_cert
 
-end_time=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$end_time] Done sdcinit."
-
-start_ts=$(date -d "$start_time" +%s)
-end_ts=$(date -d "$end_time" +%s)
-elapsed=$((end_ts - start_ts))
-echo "Elapsed time: $elapsed seconds"
+elapsed=$(( $(date +%s) - start_ts ))
+echo "[$(date +"%Y-%m-%d %H:%M:%S")] sdcinit completed successfully. Elapsed time: ${elapsed} seconds"
 
 echo "SDC initialization Done."
-
