@@ -1,4 +1,4 @@
-FROM cassandra:3.11.15
+FROM cassandra:3.11.19
 
 # Install necessary packages
 RUN apt-get -o Acquire::Check-Valid-Until=false update && \
@@ -6,7 +6,6 @@ RUN apt-get -o Acquire::Check-Valid-Until=false update && \
       apt-transport-https \
       curl \
       wget \
-      perl \
       python3 \
       python3-pip \
       ntp && \
