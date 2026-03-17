@@ -9,7 +9,7 @@ RUN mkdir -p /opt && \
 FROM eclipse-temurin:11-jre-jammy
 
 USER root
-RUN groupadd -r sdc && useradd -r -g sdc -m sdc
+RUN groupadd -g 1000 sdc && useradd -u 1000 -g 1000 -m sdc
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-pip && \
