@@ -2,8 +2,9 @@ FROM python:3.11-alpine
 
 USER root
 
-# Create onap user/group (previously provided by onap/integration-python base image)
-RUN addgroup -S onap && adduser -S -G onap onap
+# Create onap user/group with fixed UID/GID to match K8s securityContext expectations
+RUN addgroup -g 101 -S onap && adduser -u 101 -S -G onap -h /home/onap onap
+ENV HOME=/home/onap
 
 # Needed for pycurl SSL backend selection
 ENV PYCURL_SSL_LIBRARY=openssl

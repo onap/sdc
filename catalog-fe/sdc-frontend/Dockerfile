@@ -4,10 +4,11 @@ USER root
 ARG JETTY_FOLDER=/app/jetty
 
 # Create onap user/group, install dependencies, and create Jetty folder
-RUN addgroup -S onap && \
-    adduser -S -G onap -h /home/onap onap && \
+RUN addgroup -g 101 -S onap && \
+    adduser -u 1000 -S -G onap -h /home/onap onap && \
     apk add --no-cache curl jq && \
     mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
+ENV HOME=/home/onap
 
 ENV JETTY_HOME=$JETTY_FOLDER
 ENV JETTY_BASE=$JETTY_FOLDER
