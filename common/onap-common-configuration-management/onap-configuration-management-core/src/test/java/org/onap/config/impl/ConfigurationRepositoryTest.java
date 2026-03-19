@@ -30,7 +30,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -42,23 +44,24 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.config.Constants;
 import org.onap.config.util.ConfigTestConstant;
-import org.onap.config.util.TestUtil;
 
 public class ConfigurationRepositoryTest {
 
     private static final String[] EMPTY_ARRAY_OF_STRING = new String[0];
     private static final String TEST_NAME_SPACE = "testNameSpace";
-    private static final String TEST_CONFIG_FILE = TestUtil.jsonSchemaLoc + "config.properties";
+
+    private static Path tempDir;
+    private static String testConfigFile;
 
     private ConfigurationRepository repository;
 
     @BeforeClass
     public static void setUp() throws Exception {
+        tempDir = Files.createTempDirectory("config-repo-test");
+        testConfigFile = tempDir.resolve("config.properties").toString();
         Properties props = new Properties();
         props.setProperty(ConfigTestConstant.ARTIFACT_MAXSIZE, "10240");
-        File dir = new File(TestUtil.jsonSchemaLoc);
-        dir.mkdirs();
-        File f = new File(TEST_CONFIG_FILE);
+        File f = new File(testConfigFile);
         try (OutputStream out = new FileOutputStream(f)) {
             props.store(out, "Config Property at Conventional Resource");
         }
@@ -66,7 +69,12 @@ public class ConfigurationRepositoryTest {
 
     @AfterClass
     public static void tearDown() throws IOException {
-        TestUtil.deleteTestDirsStrucuture(Paths.get(TestUtil.jsonSchemaLoc));
+        if (tempDir != null) {
+            Files.walk(tempDir)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
+        }
     }
 
     @Before
@@ -119,7 +127,7 @@ public class ConfigurationRepositoryTest {
 
         // when
         repository.populateOverrideConfiguration(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER
-                + TEST_NAME_SPACE, new File(TEST_CONFIG_FILE));
+                + TEST_NAME_SPACE, new File(testConfigFile));
         final Configuration outputConfig = repository.getConfigurationFor(Constants.DEFAULT_TENANT, TEST_NAME_SPACE);
 
         // then
