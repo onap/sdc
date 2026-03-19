@@ -13,6 +13,13 @@
     </parent>
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc.onboarding</groupId>
+            <artifactId>onboarding-be</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>catalog-be</artifactId>
             <version>${project.version}</version>
