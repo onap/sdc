@@ -1,0 +1,11 @@
+--- a/node_modules/onap-ui-common/lib/style.css
++++ b/node_modules/onap-ui-common/lib/style.css
+@@ -2911,7 +2911,7 @@
+   align-items: flex-end; }
+   .file-upload .file-upload-input {
+     flex-grow: 1; }
+-    .file-upload .file-upload-input /deep/ .sdc-input {
++    .file-upload .file-upload-input .sdc-input {
+       margin-bottom: 0px; }
+   .file-upload .file-upload-button {
+     position: relative;
