@@ -66,6 +66,13 @@ limitations under the License.
 
     <dependencies>
         <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-docker-backend</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -1141,7 +1148,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>60000</time>
+                                    <time>180000</time>
                                     <tcp>
                                         <host>sdc-FE</host>
                                         <mode>direct</mode>
