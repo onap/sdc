@@ -93,6 +93,10 @@ public class ConfigurationUtils {
     private static final Map<Class<?>, Class<?>> ARRAY_CLASS_MAP;
     private static final String CONFIG_REGEX_TPL_OPT_1 = "CONFIG(-\\w*){0,1}(-(%s|%s|%s)){0,1}\\.(%s|%s|%s|%s)$";
     private static final String CONFIG_REGEX_TPL_OPT_2 = "CONFIG(.)*\\.(%s|%s|%s|%s)$";
+    private static final Pattern CONFIG_PATTERN_OPT_1;
+    private static final Pattern CONFIG_PATTERN_OPT_2;
+    private static final Pattern COLLECTION_STRING_PATTERN = Pattern.compile("^\\[(.*)\\]$");
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("^.*\\$\\{(.*)\\}.*");
 
     static {
         Map<Class<?>, Class<?>> arrayTypes = new HashMap<>();
@@ -106,6 +110,11 @@ public class ConfigurationUtils {
         arrayTypes.put(Character.class, Character[].class);
         arrayTypes.put(String.class, String[].class);
         ARRAY_CLASS_MAP = Collections.unmodifiableMap(arrayTypes);
+        CONFIG_PATTERN_OPT_1 = Pattern.compile(String.format(CONFIG_REGEX_TPL_OPT_1, ConfigurationMode.OVERRIDE, ConfigurationMode.MERGE,
+            ConfigurationMode.UNION, ConfigurationType.PROPERTIES.name(), ConfigurationType.XML.name(), ConfigurationType.JSON.name(),
+            ConfigurationType.YAML.name()));
+        CONFIG_PATTERN_OPT_2 = Pattern.compile(String.format(CONFIG_REGEX_TPL_OPT_2, ConfigurationType.PROPERTIES.name(),
+            ConfigurationType.XML.name(), ConfigurationType.JSON.name(), ConfigurationType.YAML.name()));
     }
 
     private ConfigurationUtils() {
@@ -160,11 +169,7 @@ public class ConfigurationUtils {
     public static boolean isConfig(String file) {
         file = file.toUpperCase().substring(file.lastIndexOf('!') + 1);
         file = file.substring(file.lastIndexOf('/') + 1);
-        return file.matches(String.format(CONFIG_REGEX_TPL_OPT_1, ConfigurationMode.OVERRIDE, ConfigurationMode.MERGE, ConfigurationMode.UNION,
-            ConfigurationType.PROPERTIES.name(), ConfigurationType.XML.name(), ConfigurationType.JSON.name(), ConfigurationType.YAML.name())) || file
-            .matches(String
-                .format(CONFIG_REGEX_TPL_OPT_2, ConfigurationType.PROPERTIES.name(), ConfigurationType.XML.name(), ConfigurationType.JSON.name(),
-                    ConfigurationType.YAML.name()));
+        return CONFIG_PATTERN_OPT_1.matcher(file).matches() || CONFIG_PATTERN_OPT_2.matcher(file).matches();
     }
 
     public static boolean isConfig(File file) {
@@ -446,8 +451,7 @@ public class ConfigurationUtils {
     }
 
     public static String getCollectionString(String input) {
-        Pattern pattern = Pattern.compile("^\\[(.*)\\]$");
-        Matcher matcher = pattern.matcher(input);
+        Matcher matcher = COLLECTION_STRING_PATTERN.matcher(input);
         if (matcher.matches()) {
             input = matcher.group(1);
         }
@@ -455,8 +459,7 @@ public class ConfigurationUtils {
     }
 
     public static String processVariablesIfPresent(String tenant, String namespace, String data) {
-        Pattern pattern = Pattern.compile("^.*\\$\\{(.*)\\}.*");
-        Matcher matcher = pattern.matcher(data);
+        Matcher matcher = VARIABLE_PATTERN.matcher(data);
         if (matcher.matches()) {
             final int substringStartIndex = 4;
             String key = matcher.group(1);

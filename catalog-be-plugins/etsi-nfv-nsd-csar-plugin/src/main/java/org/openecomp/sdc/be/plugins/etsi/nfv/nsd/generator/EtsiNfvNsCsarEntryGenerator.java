@@ -23,6 +23,8 @@ import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ETSI_PACKAGE;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import org.openecomp.sdc.be.model.Component;
@@ -45,6 +47,7 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     static final String UNSIGNED_CSAR_EXTENSION = "csar";
     static final String ETSI_VERSION_METADATA = "ETSI Version";
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNfvNsCsarEntryGenerator.class);
+    private static final Pattern ETSI_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)");
     private final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory;
 
     public EtsiNfvNsCsarEntryGenerator(final EtsiNfvNsdCsarGeneratorFactory etsiNfvNsdCsarGeneratorFactory) {
@@ -91,9 +94,14 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
 
     private EtsiVersion getComponentEtsiVersion(Component component) {
         String etsiVersion = component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
-        final String modelName = component.getModel();
-        if (etsiVersion == null && modelName.matches(".*\\d+\\.\\d+\\.\\d+.*" )){
-            etsiVersion = modelName.replaceAll(".*?(\\d+\\.\\d+\\.\\d+).*", "$1");
+        if (etsiVersion == null) {
+            final String modelName = component.getModel();
+            if (modelName != null) {
+                final Matcher matcher = ETSI_VERSION_PATTERN.matcher(modelName);
+                if (matcher.find()) {
+                    etsiVersion = matcher.group(1);
+                }
+            }
         }
         return EtsiVersion.convertOrNull(etsiVersion);
     }
