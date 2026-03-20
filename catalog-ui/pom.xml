@@ -14,7 +14,6 @@
     </parent>
 
     <properties>
-        <sonar.nodejs.executable>${project.basedir}/node/node</sonar.nodejs.executable>
         <sonar.sources>src/app/ng2</sonar.sources>
     </properties>
 
