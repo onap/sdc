@@ -26,6 +26,7 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -64,6 +65,7 @@ public class VersionsImpl implements Versions {
 
     private static final String COMMIT_ITEM_ACTION = "Commit_Item";
     private static final Logger LOGGER = LoggerFactory.getLogger(VersionsImpl.class);
+    private static final Pattern INITIAL_REVISION_PATTERN = Pattern.compile("Initial .*:.*");
     private ManagersProvider managersProvider;
 
     @Override
@@ -176,7 +178,7 @@ public class VersionsImpl implements Versions {
      3- the second revision is in format "Initial <vlm/vsp>: <name of the vlm/vsp>"
      4- only if a revision in this format exists we remove the first revision. */
         int numOfRevisions = revisions.size();
-        if (numOfRevisions > 1 && revisions.get(numOfRevisions - 2).getMessage().matches("Initial .*:.*")) {
+        if (numOfRevisions > 1 && INITIAL_REVISION_PATTERN.matcher(revisions.get(numOfRevisions - 2).getMessage()).matches()) {
             revisions.remove(numOfRevisions - 1);
         }
     }
