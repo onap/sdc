@@ -91,7 +91,7 @@ public class DmaapClientFactory {
         props.setProperty("id", parameters.getConsumerId());
         props.setProperty("timeout", Integer.toString(parameters.getTimeoutMs()));
         props.setProperty("limit", Integer.toString(parameters.getLimit()));
-        props.setProperty("AFT_DME2_REQ_TRACE_ON", Boolean.toString(parameters.isDme2TraceOn()));
+        props.setProperty("AFT_DME2_REQ_TRACE_ON", Boolean.toString(parameters.getDme2TraceOn()));
         props.setProperty("AFT_ENVIRONMENT", parameters.getAftEnvironment());
         props.setProperty("AFT_DME2_EP_CONN_TIMEOUT", Integer.toString(parameters.getAftDme2ConnectionTimeoutMs()));
         props.setProperty("AFT_DME2_ROUNDTRIP_TIMEOUT_MS", Integer.toString(parameters.getAftDme2RoundtripTimeoutMs()));

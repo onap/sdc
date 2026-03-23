@@ -24,6 +24,10 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -37,6 +41,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+@Getter
+@Setter
 @Table(keyspace = "dox", name = "entitlement_pool")
 public class EntitlementPoolEntity implements VersionableEntity {
 
@@ -103,104 +109,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
         return getVendorLicenseModelId();
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public String getVersionUuId() {
-        return versionUuId;
-    }
-
-    @Override
-    public void setVersionUuId(String uuId) {
-        versionUuId = uuId;
-    }
-
-    public String getVendorLicenseModelId() {
-        return vendorLicenseModelId;
-    }
-
-    public void setVendorLicenseModelId(String vendorLicenseModelId) {
-        this.vendorLicenseModelId = vendorLicenseModelId;
-    }
-
-    public Set<String> getReferencingFeatureGroups() {
-        return referencingFeatureGroups;
-    }
-
-    public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
-        this.referencingFeatureGroups = referencingFeatureGroups;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public EntitlementPoolType getType() {
-        return type;
-    }
-
-    public void setType(EntitlementPoolType type) {
-        this.type = type;
-    }
-
-    public Integer getThresholdValue() {
-        return thresholdValue;
-    }
-
-    public void setThresholdValue(Integer thresholdValue) {
-        this.thresholdValue = thresholdValue;
-    }
-
-    public ThresholdUnit getThresholdUnit() {
-        return thresholdUnit;
-    }
-
-    public void setThresholdUnit(ThresholdUnit thresholdUnits) {
-        this.thresholdUnit = thresholdUnits;
-    }
-
-    public String getIncrements() {
-        return increments;
-    }
-
-    public void setIncrements(String increments) {
-        this.increments = increments;
-    }
-
-    public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
-        return operationalScope;
-    }
-
     public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
         if (operationalScope != null) {
             operationalScope.resolveEnum(OperationalScope.class);
@@ -227,30 +135,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
      */
     public String getVersionForArtifact() {
         return version.toString();
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public Collection<LimitEntity> getLimits() {
-        return limits;
-    }
-
-    public void setLimits(Collection<LimitEntity> limits) {
-        this.limits = limits;
     }
 
     public LimitForXml getSPLimits() {
@@ -342,15 +226,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
             }
         }
         return obj;
-    }
-
-    public String getManufacturerReferenceNumber() {
-        return manufacturerReferenceNumber;
-    }
-
-    //Defined and used only for License Artifcat XMLs
-    public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
     }
 
     public String getIsoFormatStartDate() {

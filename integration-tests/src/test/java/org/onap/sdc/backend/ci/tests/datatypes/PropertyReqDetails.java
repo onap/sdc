@@ -20,26 +20,29 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class PropertyReqDetails {
 
 	String name;
-	String type;
-	Boolean required = false;
-	String defaultValue;
-	String description;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) String type;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) Boolean required = false;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) String defaultValue;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) String description;
 	String propertyRangeMin;
 	String propertyRangeMax;
-	Boolean isPassword = false;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) Boolean isPassword = false;
 	SchemaDefinition schema;
 	String uniqueId;
 	String parentUniqueId;
 	String value;
-
-	public PropertyReqDetails() {
-		super();
-	}
 
 	public PropertyReqDetails(String propertyName, String propertyType, Boolean propertyRequired,
 							  String propertyDefaultValue, String propertyDescription, String propertyRangeMin,
@@ -64,22 +67,6 @@ public class PropertyReqDetails {
 		this.defaultValue = propertyDefaultValue;
 		this.description = propertyDescription;
 		this.schema = schema;
-	}
-
-	public SchemaDefinition getSchema() {
-		return schema;
-	}
-
-	public void setSchema(SchemaDefinition schema) {
-		this.schema = schema;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String propertyName) {
-		this.name = propertyName;
 	}
 
 	public String getPropertyType() {
@@ -114,52 +101,12 @@ public class PropertyReqDetails {
 		this.description = propertyDescription;
 	}
 
-	public String getPropertyRangeMin() {
-		return propertyRangeMin;
-	}
-
-	public void setPropertyRangeMin(String propertyRangeMin) {
-		this.propertyRangeMin = propertyRangeMin;
-	}
-
-	public String getPropertyRangeMax() {
-		return propertyRangeMax;
-	}
-
-	public void setPropertyRangeMax(String propertyRangeMax) {
-		this.propertyRangeMax = propertyRangeMax;
-	}
-
 	public Boolean getPropertyPassword() {
 		return isPassword;
 	}
 
 	public void setPropertyPassword(Boolean propertyPassword) {
 		this.isPassword = propertyPassword;
-	}
-
-	public String getUniqueId() {
-		return uniqueId;
-	}
-
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
-
-	public String getParentUniqueId() {
-		return parentUniqueId;
-	}
-
-	public void setParentUniqueId(String parentUniqueId) {
-		this.parentUniqueId = parentUniqueId;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
 	}
 
 	public String propertyToJsonString() {

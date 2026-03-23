@@ -23,6 +23,11 @@ import java.util.Objects;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class LimitEntity implements VersionableEntity {
 
     private static final String ENTITY_TYPE = "Limit";
@@ -53,30 +58,6 @@ public class LimitEntity implements VersionableEntity {
         this.id = id;
     }
 
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public AggregationFunction getAggregationFunction() {
-        return aggregationFunction;
-    }
-
-    public void setAggregationFunction(AggregationFunction aggregationFunction) {
-        this.aggregationFunction = aggregationFunction;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     @Override
     public String getEntityType() {
         return ENTITY_TYPE;
@@ -85,92 +66,6 @@ public class LimitEntity implements VersionableEntity {
     @Override
     public String getFirstClassCitizenId() {
         return getVendorLicenseModelId();
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Version version) {
-        this.version = version;
-    }
-
-    public String getEpLkgId() {
-        return epLkgId;
-    }
-
-    public void setEpLkgId(String epLkgId) {
-        this.epLkgId = epLkgId;
-    }
-
-    public String getVendorLicenseModelId() {
-        return vendorLicenseModelId;
-    }
-
-    public void setVendorLicenseModelId(String vendorLicenseModelId) {
-        this.vendorLicenseModelId = vendorLicenseModelId;
-    }
-
-    public LimitType getType() {
-        return type;
-    }
-
-    public void setType(LimitType type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMetric() {
-        return metric;
-    }
-
-    public void setMetric(String metric) {
-        this.metric = metric;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-    //Defined and used only to find parent(EP/LKG) of Limit. Not to be persisted in DB and License
-
-    // Xmls
-    public String getParent() {
-        return parent;
-    }
-
-    public void setParent(String parent) {
-        this.parent = parent;
     }
 
     @Override

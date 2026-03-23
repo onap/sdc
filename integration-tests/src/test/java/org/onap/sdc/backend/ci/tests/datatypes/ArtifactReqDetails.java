@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +20,15 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class ArtifactReqDetails {
 
 	public ArtifactReqDetails() {
@@ -53,9 +58,9 @@ public class ArtifactReqDetails {
 	private String artifactName;
 	private String artifactType;
 	private String description;
-	private String payloadData;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) private String payloadData;
 	private String artifactLabel;
-	private String apiUrl;
+	@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE) private String apiUrl;
 	private String artifactGroupType;
 	private Integer timeout;
 	private String userIdLastUpdater;
@@ -68,46 +73,6 @@ public class ArtifactReqDetails {
 	private boolean mandatory;
 	private boolean serviceApi;
 
-	public boolean isServiceApi() {
-		return serviceApi;
-	}
-
-	public void setServiceApi(boolean serviceApi) {
-		this.serviceApi = serviceApi;
-	}
-
-	public String getArtifactLabel() {
-		return artifactLabel;
-	}
-
-	public void setArtifactLabel(String artifactLabel) {
-		this.artifactLabel = artifactLabel;
-	}
-
-	public String getArtifactName() {
-		return artifactName;
-	}
-
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
-
-	public String getArtifactType() {
-		return artifactType;
-	}
-
-	public void setArtifactType(String artifactType) {
-		this.artifactType = artifactType;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getPayload() {
 		return payloadData;
 	}
@@ -118,30 +83,6 @@ public class ArtifactReqDetails {
 
 	public void setPayloadData(String payloadData) {
 		this.payloadData = payloadData;
-	}
-
-	public String getArtifactGroupType() {
-		return artifactGroupType;
-	}
-
-	public void setArtifactGroupType(String artifactGroupType) {
-		this.artifactGroupType = artifactGroupType;
-	}
-
-	public Integer getTimeout() {
-		return timeout;
-	}
-
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
-
-	public boolean isMandatory() {
-		return mandatory;
-	}
-
-	public void setMandatory(boolean mandatory) {
-		this.mandatory = mandatory;
 	}
 
 	public String getUrl() {
@@ -182,61 +123,5 @@ public class ArtifactReqDetails {
 	// this.userIdCreator = userIdCreator;
 	// }
 	//
-	public String getArtifactDisplayName() {
-
-		return artifactDisplayName;
-	}
-
-	public void setArtifactDisplayName(String artifactDisplayName) {
-		this.artifactDisplayName = artifactDisplayName;
-	}
-
-	public String getUserIdLastUpdater() {
-		return userIdLastUpdater;
-	}
-
-	public void setUserIdLastUpdater(String userIdLastUpdater) {
-		this.userIdLastUpdater = userIdLastUpdater;
-	}
-
-	public String getCreatorFullName() {
-		return creatorFullName;
-	}
-
-	public void setCreatorFullName(String creatorFullName) {
-		this.creatorFullName = creatorFullName;
-	}
-
-	public String getUpdaterFullName() {
-		return updaterFullName;
-	}
-
-	public void setUpdaterFullName(String updaterFullName) {
-		this.updaterFullName = updaterFullName;
-	}
-
-	public String getArtifactChecksum() {
-		return artifactChecksum;
-	}
-
-	public void setArtifactChecksum(String artifactChecksum) {
-		this.artifactChecksum = artifactChecksum;
-	}
-
-	public String getUniqueId() {
-		return uniqueId;
-	}
-
-	public void setUniqueId(String artifactUniqueId) {
-		this.uniqueId = artifactUniqueId;
-	}
-
-	public List<HeatParameterDefinition> getHeatParameters() {
-		return heatParameters;
-	}
-
-	public void setHeatParameters(List<HeatParameterDefinition> heatParameters) {
-		this.heatParameters = heatParameters;
-	}
 
 }
