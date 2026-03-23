@@ -24,6 +24,10 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -38,6 +42,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
+@Getter
+@Setter
 @Table(keyspace = "dox", name = "license_key_group")
 public class LicenseKeyGroupEntity implements VersionableEntity {
 
@@ -102,68 +108,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         return getVendorLicenseModelId();
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Version getVersion() {
-        return version;
-    }
-
-    public void setVersion(Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public String getVersionUuId() {
-        return versionUuId;
-    }
-
-    @Override
-    public void setVersionUuId(String uuId) {
-        versionUuId = uuId;
-    }
-
-    public String getVendorLicenseModelId() {
-        return vendorLicenseModelId;
-    }
-
-    public void setVendorLicenseModelId(String vendorLicenseModelId) {
-        this.vendorLicenseModelId = vendorLicenseModelId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LicenseKeyType getType() {
-        return type;
-    }
-
-    public void setType(LicenseKeyType type) {
-        this.type = type;
-    }
-
-    public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
-        return operationalScope;
-    }
-
     public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
         if (operationalScope != null) {
             operationalScope.resolveEnum(OperationalScope.class);
@@ -171,51 +115,11 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         this.operationalScope = operationalScope;
     }
 
-    public Set<String> getReferencingFeatureGroups() {
-        return referencingFeatureGroups;
-    }
-
-    public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
-        this.referencingFeatureGroups = referencingFeatureGroups;
-    }
-
-    public Integer getThresholdValue() {
-        return thresholdValue;
-    }
-
-    public void setThresholdValue(Integer thresholdValue) {
-        this.thresholdValue = thresholdValue;
-    }
-
-    public ThresholdUnit getThresholdUnits() {
-        return thresholdUnits;
-    }
-
-    public void setThresholdUnits(ThresholdUnit thresholdUnit) {
-        this.thresholdUnits = thresholdUnit;
-    }
-
-    public String getIncrements() {
-        return increments;
-    }
-
-    public void setIncrements(String increments) {
-        this.increments = increments;
-    }
-
     public ThresholdForXml getThresholdForArtifact() {
         ThresholdForXml threshold = new ThresholdForXml();
         threshold.setUnit(getThresholdUnits() == null ? null : getThresholdUnits().name());
         threshold.setValue(getThresholdValue());
         return threshold;
-    }
-
-    public Collection<LimitEntity> getLimits() {
-        return limits;
-    }
-
-    public void setLimits(Collection<LimitEntity> limits) {
-        this.limits = limits;
     }
 
     public LimitForXml getSPLimits() {
@@ -260,22 +164,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
             return vendorLimitForXml;
         }
         return null;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
     }
 
     @Override
@@ -327,15 +215,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     }
 
     /**
-     * Gets version for artifact.
-     *
-     * @return version in format suitable for artifact
-     */
-    public String getVersionForArtifact() {
-        return version.toString();
-    }
-
-    /**
      * Gets type for artifact.
      *
      * @return the type for artifact
@@ -348,15 +227,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
             typeXml.setValue(null);
         }
         return typeXml;
-    }
-
-    //Defined and used only for License Artifcat XMLs
-    public String getManufacturerReferenceNumber() {
-        return manufacturerReferenceNumber;
-    }
-
-    public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
     }
 
     public String getIsoFormatStartDate() {

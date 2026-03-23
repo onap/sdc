@@ -942,7 +942,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>30000</time>
+                                    <time>60000</time>
                                     <log>Onboarding init was successful</log>
                                 </wait>
                                 <network>

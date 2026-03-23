@@ -25,6 +25,11 @@ import org.openecomp.sdc.action.ActionConstants;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Action implements Comparable {
 
     private String actionUuId;
@@ -67,119 +72,6 @@ public class Action implements Comparable {
         this.supportedModels = action.getSupportedModels();
         this.artifacts = action.getArtifacts();
     }
-
-    public String getActionUuId() {
-        return actionUuId;
-    }
-
-    public void setActionUuId(String actionUuId) {
-        this.actionUuId = actionUuId;
-    }
-
-    public String getActionInvariantUuId() {
-        return actionInvariantUuId;
-    }
-
-    public void setActionInvariantUuId(String actionInvariantUuId) {
-        this.actionInvariantUuId = actionInvariantUuId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public ActionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ActionStatus status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public List<String> getVendorList() {
-        return vendorList;
-    }
-
-    public void setVendorList(List<String> vendorList) {
-        this.vendorList = vendorList;
-    }
-
-    public List<String> getCategoryList() {
-        return categoryList;
-    }
-
-    public void setCategoryList(List<String> categoryList) {
-        this.categoryList = categoryList;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public List<Map<String, String>> getSupportedModels() {
-        return supportedModels;
-    }
-
-    public void setSupportedModels(List<Map<String, String>> supportedModels) {
-        this.supportedModels = supportedModels;
-    }
-
-    public List<Map<String, String>> getSupportedComponents() {
-        return supportedComponents;
-    }
-
-    public void setSupportedComponents(List<Map<String, String>> supportedComponents) {
-        this.supportedComponents = supportedComponents;
-    }
-
-    public List<ActionArtifact> getArtifacts() {
-        return artifacts;
-    }
-
-    public void setArtifacts(List<ActionArtifact> artifacts) {
-        this.artifacts = artifacts;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
     /**
      * To entity action entity.
      *
