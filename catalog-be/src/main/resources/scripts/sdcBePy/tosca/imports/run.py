@@ -21,13 +21,24 @@ def main(sdc_be_proxy, update_version):
     if sdc_be_proxy.disable_locking("true") != 200:
         raise RuntimeError("Failed to disable locking")
     try:
+        logger.log("Starting phase: element candidates")
         process_element_list(normativeElementsList.get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
+        logger.log("Finished phase: element candidates")
+
+        logger.log("Starting phase: type candidates")
         process_type_list(normativeTypesList.get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
+        logger.log("Finished phase: type candidates")
+
+        logger.log("Starting phase: elements with metadata")
         process_element_list(normativeElementsList.get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
+        logger.log("Finished phase: elements with metadata")
+
         # Add model based normatives
+        logger.log("Starting phase: model deploy")
         model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy),
                                                   NodeTypeClient(sdc_be_proxy))
         model_import_manager.deploy_models()
+        logger.log("Finished phase: model deploy")
     except Exception as ex:
         logger.log("An error has occurred while uploading elements and types: ", str(ex))
         raise ex

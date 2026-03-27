@@ -18,7 +18,7 @@ from sdcBePy.tosca.models.normativeToUpdateList import TypesToUpdate, get_heat_a
 
 def main(sdc_be_proxy):
     update_version = True
-    update_onap_version = False 
+    update_onap_version = False
     update_nfv_version = True
 
     # use to run script form this dir (not like the command)
@@ -26,6 +26,7 @@ def main(sdc_be_proxy):
     base_file_location = os.getcwd() + "/"
     logger.debug("working directory =" + base_file_location)
 
+    logger.log("Starting phase: model deploy")
     model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy),
                                               NodeTypeClient(sdc_be_proxy))
     try:
@@ -33,21 +34,32 @@ def main(sdc_be_proxy):
     except Exception as ex:
         logger.log("An error has occurred while uploading the models: ", str(ex))
         raise ex
+    logger.log("Finished phase: model deploy")
 
+    logger.log("Starting phase: element candidates")
     process_element_list(get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
+    logger.log("Finished phase: element candidates")
 
     all_types = get_all_types()
 
+    logger.log("Starting phase: heat and normative types")
     heat_and_normative_list = get_heat_and_normative_to_update_list(all_types, base_file_location)
     process_type_list(heat_and_normative_list, sdc_be_proxy, update_version)
+    logger.log("Finished phase: heat and normative types")
 
+    logger.log("Starting phase: onap/sol types")
     onap_sol_list = get_onap_sol_to_update_list(all_types, base_file_location)
     process_type_list(onap_sol_list, sdc_be_proxy, update_onap_version)
+    logger.log("Finished phase: onap/sol types")
 
+    logger.log("Starting phase: nfv types")
     nfv_list = get_nfv_to_update_list(all_types, base_file_location)
     process_type_list(nfv_list, sdc_be_proxy, update_nfv_version)
-    
+    logger.log("Finished phase: nfv types")
+
+    logger.log("Starting phase: elements with metadata")
     process_element_list(get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
+    logger.log("Finished phase: elements with metadata")
 
     logger.log("Updating end ->", "All normatives updated successfully!")
     print_and_exit(0, None)

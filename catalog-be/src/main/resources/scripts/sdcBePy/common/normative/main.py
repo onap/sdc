@@ -1,8 +1,7 @@
-import time
 from datetime import datetime
 
 from sdcBePy.common.bColors import BColors
-from sdcBePy.common.logger import print_and_exit
+from sdcBePy.common.logger import print_and_exit, log
 from sdcBePy.common.normative.toscaElements import process_and_create_normative_element
 from sdcBePy.common.normative.toscaTypes import process_and_create_normative_types
 from sdcBePy.common.errors import ResourceCreationError
@@ -12,7 +11,9 @@ colors = BColors()
 
 
 def process_element_list(normative_elements_list, sdc_be_proxy, model=None):
-    for normative_element in normative_elements_list:
+    total = len(normative_elements_list)
+    log("Processing {} normative elements".format(total))
+    for idx, normative_element in enumerate(normative_elements_list):
         if normative_element is None:
             continue
         attempt = 0
@@ -26,10 +27,13 @@ def process_element_list(normative_elements_list, sdc_be_proxy, model=None):
                 _check_and_retry(attempt, e.error_code, e.message)
             except Exception as e:
                 _check_and_retry(attempt, 1, str(e))
+    log("Finished processing {} normative elements".format(total))
 
 
 def process_type_list(normative_type_list, sdc_be_proxy, update_version):
-    for normative_type in normative_type_list:
+    total = len(normative_type_list)
+    log("Processing {} normative type groups".format(total))
+    for idx, normative_type in enumerate(normative_type_list):
         attempt = 0
         while True:
             attempt += 1
@@ -43,6 +47,7 @@ def process_type_list(normative_type_list, sdc_be_proxy, update_version):
                 normative_type.normative_types_list = _reduce(normative_type.normative_types_list, e.resource_name)
             except Exception as e:
                 _check_and_retry(attempt, 1, str(e))
+    log("Finished processing {} normative type groups".format(total))
 
 
 def _check_and_retry(attempt, code, message):
