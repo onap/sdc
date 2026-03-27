@@ -44,15 +44,20 @@ class ModelImportManager:
 
     def deploy_models(self):
         existing_models = self.__model_client.get_model_list()
-        for model_folder_name in self.__get_model_init_list():
+        init_list = self.__get_model_init_list()
+        logger.log('Deploying models: {} to init, {} existing'.format(len(init_list), len(existing_models) if existing_models else 0))
+        for model_folder_name in init_list:
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_INIT)
             if not existing_models or not any(m for m in existing_models if model_payload_dict['name'] == m['name']):
                 self.__create_models(model_folder_name, model_payload_dict)
 
-        for model_folder_name in self.__get_model_upgrade_list():
+        upgrade_list = self.__get_model_upgrade_list()
+        logger.log('Upgrading models: {} to upgrade'.format(len(upgrade_list)))
+        for model_folder_name in upgrade_list:
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_UPGRADE)
             if existing_models and any(m for m in existing_models if model_payload_dict['name'] == m['name']):
                 self.__update_models(model_folder_name, model_payload_dict)
+        logger.log('Finished deploying all models')
 
     def __create_models(self, model_folder_name, model_payload_dict):
         logger.log('Creating model {}, based on folder {}'.format(model_payload_dict['name'], model_folder_name))
@@ -61,6 +66,7 @@ class ModelImportManager:
         self.__init_model_non_node_types(model_folder_name, model_payload_dict)
         self.__init_model_node_types(model_folder_name, model_payload_dict['name'])
         self.__init_model_non_node_types(model_folder_name, model_payload_dict, True)
+        logger.log('Finished creating model {}'.format(model_payload_dict['name']))
 
     def __update_models(self, model_folder_name, model_payload_dict):
         logger.log('Updating model {}, based on folder {}'.format(model_payload_dict['name'], model_folder_name))
@@ -69,6 +75,7 @@ class ModelImportManager:
         self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict)
         self.__upgrade_model_node_types(model_folder_name, model_payload_dict['name'])
         self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict, True)
+        logger.log('Finished updating model {}'.format(model_payload_dict['name']))
 
     def __get_model_init_list(self):
         return self.__get_model_list(self.__model_init_path)
