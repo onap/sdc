@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "bc36439edcfb8d36f5c61517d18a81762ac7366d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47a73402_907bfad6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-06T18:38:07Z",
+      "side": 1,
+      "message": "Can we have some testcases here that verify this behaviour? I think this should be pretty straightforward to write since these are changes in `public` methods",
+      "revId": "bc36439edcfb8d36f5c61517d18a81762ac7366d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
