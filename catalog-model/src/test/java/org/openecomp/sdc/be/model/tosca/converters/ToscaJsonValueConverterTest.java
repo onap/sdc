@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Map;
 
 import org.junit.Test;
@@ -53,5 +55,27 @@ public class ToscaJsonValueConverterTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.convertToToscaValue(value, innerType, dataTypes);
+	}
+
+	@Test
+	public void shouldPreserveNumericLookingString() {
+		ToscaJsonValueConverter converter = createTestSubject();
+		String value = "000134";
+		Object result = converter.convertToToscaValue(value, null, null);
+		assertEquals("000134", result);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void shouldPreserveLeadingZerosInNestedJson() {
+		ToscaJsonValueConverter converter = createTestSubject();
+		String value = "{\"snssai\": {\"sd\": \"000134\"}}";
+
+		Object result = converter.convertToToscaValue(value, null, null);
+
+		Map<String, Object> map = (Map<String, Object>) result;
+		Map<String, Object> snssai = (Map<String, Object>) map.get("snssai");
+
+		assertEquals("000134", snssai.get("sd"));
 	}
 }
