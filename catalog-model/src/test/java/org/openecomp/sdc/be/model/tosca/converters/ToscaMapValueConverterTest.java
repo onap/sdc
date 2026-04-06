@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
+
 
 public class ToscaMapValueConverterTest {
 
@@ -37,5 +43,34 @@ public class ToscaMapValueConverterTest {
 		result = ToscaMapValueConverter.getInstance();
 	}
 
+	@Test
+	@SuppressWarnings("unchecked")
+	public void shouldPreserveStringValuesWithLeadingZerosInMap() {
+		ToscaMapValueConverter converter = createTestSubject();
+
+		String value = "{\"id\": \"000123\", \"code\": \"01\"}";
+
+		Object result = converter.convertToToscaValue(value, "string", new HashMap<>());
+
+		Map<String, String> map = (Map<String, String>) result;
+
+		assertEquals("000123", map.get("id"));
+		assertEquals("01", map.get("code"));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void shouldConvertSimpleJsonMap() {
+		ToscaMapValueConverter converter = createTestSubject();
+
+		String value = "{\"key1\": 1, \"key2\": 2}";
+
+		Object result = converter.convertToToscaValue(value, "integer", new HashMap<>());
+
+		Map<String, Integer> map = (Map<String, Integer>) result;
+
+		assertEquals(Integer.valueOf(1), map.get("key1"));
+		assertEquals(Integer.valueOf(2), map.get("key2"));
+	}
 
 }

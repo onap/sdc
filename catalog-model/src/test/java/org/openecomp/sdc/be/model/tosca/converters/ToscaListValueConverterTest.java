@@ -179,4 +179,33 @@ public class ToscaListValueConverterTest {
         assertEquals(mappedResult.get(1).get(TEST_1), Double.valueOf(2.0));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldPreserveStringValuesWithLeadingZerosInList() {
+        ToscaListValueConverter converter = createTestSubject();
+
+        String value = "[\"000134\", \"01\"]";
+
+        Object result = converter.convertToToscaValue(value, STRING, new HashMap<>());
+
+        ArrayList<String> list = (ArrayList<String>) result;
+
+        assertEquals("000134", list.get(0));
+        assertEquals("01", list.get(1));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldPreserveStringValuesInsideComplexObjectsInList() {
+        ToscaListValueConverter converter = createTestSubject();
+
+        String value = "[{\"sd\": \"000134\"}]";
+
+        Object result = converter.convertToToscaValue(value, STRING, new HashMap<>());
+
+        ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) result;
+
+        assertEquals("000134", list.get(0).get("sd"));
+    }
+
 }

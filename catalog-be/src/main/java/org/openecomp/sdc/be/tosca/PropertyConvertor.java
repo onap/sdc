@@ -252,6 +252,7 @@ public class PropertyConvertor {
                 return null;
             }
         }
+
         if (property.isToscaFunction() && property.getToscaFunction().getType() == ToscaFunctionType.YAML) {
             return new Yaml().load(property.getValue());
         }
