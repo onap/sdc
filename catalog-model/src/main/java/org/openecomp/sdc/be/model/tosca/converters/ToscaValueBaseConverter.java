@@ -132,19 +132,25 @@ public class ToscaValueBaseConverter {
     }
 
     public Object json2JavaPrimitive(final JsonPrimitive jsonPrimitive) {
+
+        // ALWAYS preserve strings EXACTLY
+        if (jsonPrimitive.isString()) {
+            return jsonPrimitive.getAsString();
+        }
+
+        // existing behavior for boolean
         if (jsonPrimitive.isBoolean()) {
             return jsonPrimitive.getAsBoolean();
         }
-        if (jsonPrimitive.isString() && !NumberUtils.isCreatable(jsonPrimitive.getAsString())) {
-            return jsonPrimitive.getAsString();
-        }
-        if (jsonPrimitive.isNumber() ||
-            (jsonPrimitive.isString() && NumberUtils.isCreatable(jsonPrimitive.getAsString()))) {
+
+        // existing behavior for numbers
+        if (jsonPrimitive.isNumber()) {
             if (jsonPrimitive.getAsString().contains(".")) {
                 return jsonPrimitive.getAsDouble();
             }
             return jsonPrimitive.getAsInt();
         }
+
         throw new IllegalStateException(String.format("JSON primitive not supported: %s", jsonPrimitive));
     }
 
