@@ -24,10 +24,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.JsonReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,8 +92,14 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
                 Object convertedValue;
                 if (isScalarF) {
                     if (isJsonElementAJsonPrimitive(e)) {
-                        log.debug("try to convert scalar value {}", e.getAsString());
-                        convertedValue = innerConverterFinal.convertToToscaValue(e.getAsString(), innerType, dataTypes);
+                        var primitive = e.getAsJsonPrimitive();
+
+                        if (primitive.isString()) {
+                            convertedValue = primitive.getAsString();
+                        } else {                         
+                            log.debug("try to convert scalar value {}", e.getAsString());
+                            convertedValue = innerConverterFinal.convertToToscaValue(e.getAsString(), innerType, dataTypes);
+                        }
                     } else {
                         convertedValue = handleComplexJsonValue(e);
                     }
@@ -120,8 +122,14 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
                         Object convValue;
                         if (propertyType != null) {
                             if (elementValue.isJsonPrimitive()) {
-                                ToscaValueConverter valueConverter = propertyType.getValueConverter();
-                                convValue = valueConverter.convertToToscaValue(elementValue.getAsString(), type, dataTypes);
+                                var primitive = elementValue.getAsJsonPrimitive();
+
+                                if (primitive.isString()) {
+                                    convValue = primitive.getAsString(); // preserve leading zeros
+                                }else{
+                                    ToscaValueConverter valueConverter = propertyType.getValueConverter();
+                                    convValue = valueConverter.convertToToscaValue(elementValue.getAsString(), type, dataTypes);
+                                }                                
                             } else {
                                 if (JsonUtils.isEmptyJson(elementValue)) {
                                     convValue = null;
