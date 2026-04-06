@@ -24,10 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.JsonReader;
-import java.io.StringReader;
+import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +137,15 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                                                final boolean isToscaFunction) {
         Object convertedValue;
         if (isScalarF && isJsonElementAJsonPrimitive(entryValue)) {
-            return innerConverter.convertToToscaValue(entryValue.getAsString(), innerType, dataTypes);
+            JsonPrimitive primitive = entryValue.getAsJsonPrimitive();
+
+            // Preserve string exactly
+            if (primitive.isString()) {
+                return primitive.getAsString();
+            }
+
+            // existing behavior for numbers/booleans
+            return innerConverter.convertToToscaValue(primitive.getAsString(), innerType, dataTypes);
         } else {
             if (entryValue.isJsonPrimitive()) {
                 return handleComplexJsonValue(entryValue);
@@ -166,7 +171,15 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                                              JsonElement entryValue, boolean preserveEmptyValue, final boolean isToscaFunction) {
         Object convertedValue;
         if (entryValue.isJsonPrimitive()) {
-            return json2JavaPrimitive(entryValue.getAsJsonPrimitive());
+            JsonPrimitive primitive = entryValue.getAsJsonPrimitive();
+
+            // PRESERVE STRINGS EXACTLY
+            if (primitive.isString()) {
+                return primitive.getAsString();
+            }
+
+            // existing behavior for numbers/booleans
+            return json2JavaPrimitive(primitive);
         }
         JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
         if (!isToscaFunction) {
@@ -178,7 +191,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
         for (Entry<String, JsonElement> entry : entrySetIn) {
             String propName = entry.getKey();
             JsonElement elementValue = entry.getValue();
-            Object convValue;
+            Object convValue = null;
             if (!isScalarF) {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
                 Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
@@ -195,8 +208,15 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
                     if (propertyType != null) {
                         if (isJsonElementAJsonPrimitive(elementValue)) {
-                            ToscaValueConverter valueConverter = propertyType.getValueConverter();
-                            convValue = valueConverter.convertToToscaValue(elementValue.getAsString(), type, dataTypes);
+                            JsonPrimitive primitive = elementValue.getAsJsonPrimitive();
+
+                            // preserve strings
+                            if (primitive.isString()) {
+                                convValue = primitive.getAsString();
+                            } else {
+                                ToscaValueConverter valueConverter = propertyType.getValueConverter();
+                                convValue = valueConverter.convertToToscaValue(primitive.getAsString(), type, dataTypes);
+                            }
                         } else {
                             if (ToscaPropertyType.MAP.equals(propertyType) || ToscaPropertyType.LIST.equals(propertyType)) {
                                 ToscaValueConverter valueConverter = propertyType.getValueConverter();
@@ -213,8 +233,15 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                 }
             } else {
                 if (isJsonElementAJsonPrimitive(elementValue)) {
-                    convValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
-                } else {
+                    JsonPrimitive primitive = elementValue.getAsJsonPrimitive();
+
+                    // PRESERVE STRINGS
+                    if (primitive.isString()) {
+                        convValue = primitive.getAsString();
+                    } else {
+                        convValue = json2JavaPrimitive(primitive);
+                    }
+                } else{
                     convValue = handleComplexJsonValue(elementValue);
                 }
             }
