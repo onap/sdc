@@ -53,6 +53,7 @@ linkcheck_ignore = [
     'https://docs.onap.org/projects/onap-integration/en/latest/docs_usecases_release.html#docs-usecases-release',
     'https://docs.onap.org/projects/onap-integration/en/latest/docs_usecases.html#docs-usecases',
     'https://docs.onap.org/projects/onap-integration/en/latest/usecases/release_non_functional_requirements.html#release-non-functional-requirements',
+    'https://docbox.etsi.org/',
 ]
 
 
