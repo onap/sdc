@@ -5,10 +5,232 @@
 Release Notes
 =============
 
+Version: 1.16.2
+===============
+
+:Release Date: 2026-04-07
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.2.0
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  Fix for TOSCA Template incorrect handling of Numeric Strings
+*  Fix contrast issues in sdc-ui
+*  Fix sonarqube security issues
+
+**Tasks**
+
+*  Improve logging for normatives import
+*  Reduce line count by using lombok for large java classes
+*  Replace node-sass with sass in openecomp-ui
+*  Adjust user id in sdc fe image
+*  Modernise sdc-frontend docker image
+*  Use python 3.11-alpine image in catalog-be backend-init
+*  Update cassandra image
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.16.1
+===============
+
+:Release Date: 2026-03-13
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.2.0
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+N/A
+
+**Bug Fixes**
+
+*  PSA issue fixes and CVE issue fixes
+
+**Tasks**
+
+*  Use temurin base in catalog-be docker image
+*  Reduce cassandra-init image
+*  Modernize onboard-db-init-docker image
+*  Add playwright test
+*  Added new categories for models
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+Version: 1.16.0
+===============
+
+:Release Date: 2026-03-04
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client (Kafka)
+
+   :Version: 2.2.0
+
+-  sdc-tosca
+
+   :Version: 1.9.0
+
+Release Purpose
+----------------
+SDC maintenance release
+
+**Epics**
+
+N/A
+
+**Stories**
+
+*  Align SDC Model UUID with GitLab Commit SHA
+
+**Bug Fixes**
+
+*  Fix for build failure in sdc-simulator
+
+**Tasks**
+
+*  Docs: Add sphinxcontrib-mermaid for diagram migration
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://lf-onap.atlassian.net/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16230621/Service+Design+Creation+Project>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.15.0
 ===============
 
-:Release Date: Unreleased
+:Release Date: 2026-02-25
 
 SDC SDKs Versions
 -----------------
