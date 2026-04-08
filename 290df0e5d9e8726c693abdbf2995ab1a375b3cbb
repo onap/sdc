@@ -18,6 +18,23 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2fe15a92_feecadf0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "General comment: Please remove all instances of `System.out.println` that were added.\nIf you think that some of the debug log lines should stay because they are generally useful, then please change those instances to use the applications logger instead.\n`System.out.println` should not be used at all",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "101f53c6_7f34408c",
@@ -48,6 +65,91 @@
       "writtenOn": "2026-04-08T07:26:23Z",
       "side": 1,
       "message": "We need a license header here",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f2d03736_d4447ef1",
+        "filename": "asdctool/src/main/resources/config/janusgraph.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "This change does not make much sense to me. How is this ip guaranteed to be available?",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4be5286a_f4da6511",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CassandraHealthCheck.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "leftover",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7dd9a854_d7c1fa4d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "Please use `log.debug` here and also in the lines below",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a5bb5eb_a97f57ba",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "Please remove all these",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2effc67_69c55ea4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/generic/GenericTypeBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:48:15Z",
+      "side": 1,
+      "message": "Same here",
       "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
