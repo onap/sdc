@@ -19,45 +19,44 @@
  */
 package org.openecomp.sdc.health.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.exceptions.DriverException;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.DriverException;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import org.openecomp.sdc.health.HealthCheckDao;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class HealthCheckDaoImpl implements HealthCheckDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final CheckHealthAccessor accessor = noSqlDb.getMappingManager().createAccessor(CheckHealthAccessor.class);
+    private final CqlSession session;
     private static final Logger logger = LoggerFactory.getLogger(HealthCheckDaoImpl.class);
 
-    @Override
-    public boolean checkHealth() throws Exception {
-        try {
-            ResultSet resultSet = accessor.checkHealth();
-            return resultSet.getColumnDefinitions().contains("key");
-        } catch (DriverException ex) {
-            logger.error("Health check failure" + ex.getMessage(), ex);
-            throw ex;
-        } catch (Exception ex) {
-            logger.error("Health check failure" + ex.getMessage(), ex);
-            throw new Exception("Internal Error.");
-        }
+    public HealthCheckDaoImpl(CqlSession session) {
+        this.session = session;
     }
+
+    @Override
+public boolean checkHealth() throws Exception {
+    try {
+        SimpleStatement stmt = SimpleStatement.builder("SELECT * FROM application_config LIMIT 1").build();
+        ResultSet resultSet = session.execute(stmt);
+
+        Row firstRow = resultSet.one();
+        return firstRow != null && firstRow.getColumnDefinitions().contains("key");
+
+    } catch (DriverException ex) {
+        logger.error("Health check failure: " + ex.getMessage(), ex);
+        throw ex;
+    } catch (Exception ex) {
+        logger.error("Health check failure: " + ex.getMessage(), ex);
+        throw new Exception("Internal Error.");
+    }
+}
 
     @Override
     public String getVersion() {
-        return noSqlDb.getVersion();
-    }
-
-    @Accessor
-    interface CheckHealthAccessor {
-
-        @Query("SELECT * FROM application_config LIMIT 1")
-        ResultSet checkHealth();
+        return "Cassandra Driver 4.17";
     }
 }

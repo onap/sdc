@@ -15,12 +15,20 @@
  */
 package org.openecomp.sdc.itempermissions.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.UserPermissionsDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class UserPermissionsDaoFactoryImpl extends UserPermissionsDaoFactory {
 
-    private static UserPermissionsDao INSTANCE = new UserPermissionsDaoImpl();
+    private static UserPermissionsDao INSTANCE;
+
+     static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new UserPermissionsDaoImpl(session);
+    }
 
     @Override
     public UserPermissionsDao createInterface() {

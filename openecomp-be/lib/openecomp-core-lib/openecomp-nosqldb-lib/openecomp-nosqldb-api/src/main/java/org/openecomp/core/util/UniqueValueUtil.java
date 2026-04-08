@@ -124,6 +124,6 @@ public class UniqueValueUtil {
     }
 
     private boolean isUniqueValueOccupied(String type, String formattedValue) {
-        return uniqueValueDao.get(new UniqueValueEntity(type, formattedValue)) != null;
-    }
+        return uniqueValueDao.get(type, formattedValue).isPresent();
+}
 }

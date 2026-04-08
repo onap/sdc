@@ -22,9 +22,10 @@ package org.openecomp.core.tools.exportinfo;
 import static org.openecomp.core.tools.exportinfo.ExportDataCommand.NULL_REPRESENTATION;
 import static org.openecomp.core.tools.importinfo.ImportSingleTable.dataTypesMap;
 
-import com.datastax.driver.core.DataType.Name;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.type.DataType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -55,101 +56,118 @@ public class ExportSerializer {
     private static final String ELEMENT_TABLE_NAME = "element";
     private static final String ELEMENT_INFO_COLUMN_NAME = "info";
 
-    public void serializeResult(final ResultSet resultSet, final Set<String> filteredItems, final String filteredColumn, Set<String> vlms) {
-        try {
-            TableData tableData = new TableData();
-            tableData.getDefinitions()
-                .addAll(resultSet.getColumnDefinitions().asList().stream().map(ColumnDefinition::new).collect(Collectors.toList()));
-            String table = tableData.getDefinitions().iterator().next().getTable();
-            boolean isElementTable = table.equals(ELEMENT_TABLE_NAME);
-            Iterator<Row> iterator = resultSet.iterator();
-            iterator.forEachRemaining(row -> {
-                if (!filteredItems.contains(row.getString(filteredColumn))) {
-                    return;
-                }
-                List<String> rowData = new ArrayList<>();
-                for (int i = 0; i < tableData.getDefinitions().size(); i++) {
-                    ColumnDefinition columnDefinition = tableData.getDefinitions().get(i);
-                    Name name = dataTypesMap.get(columnDefinition.getType());
-                    boolean checkForVLM = isElementTable && columnDefinition.getName().equals(ELEMENT_INFO_COLUMN_NAME);
-                    Object data = convertByType(vlms, row, i, name, checkForVLM);
-                    rowData.add(data.toString());
-                }
-                tableData.getRows().add(rowData);
-            });
-            ObjectMapper objectMapper = new ObjectMapper();
-            String fileName = ImportProperties.ROOT_DIRECTORY + File.separator + table + "_" + System.currentTimeMillis() + ".json";
-            objectMapper.writeValue(Paths.get(fileName).toFile(), tableData);
-            Utils.printMessage(logger, "File exported is :" + fileName);
-        } catch (IOException e) {
-            Utils.logError(logger, e);
-            System.exit(1);
-        }
-    }
+    public void serializeResult(Iterable<Row> rows, Set<String> filteredItems, String filteredColumn, Set<String> vlms) {
+    try {
+        TableData tableData = new TableData();
 
-    private Object convertByType(Set<String> vlms, Row row, int i, Name name, boolean checkForVLM) {
-        Object data;
-        switch (name) {
-            case VARCHAR:
-            case TEXT:
-            case ASCII:
-                String string = row.getString(i);
-                if (string == null) {
-                    string = NULL_REPRESENTATION;
-                }
-                if (checkForVLM && vlms != null) {
-                    String vlm = extractVlm(string);
-                    if (vlm != null) {
-                        vlms.add(vlm);
-                    }
-                }
-                data = Base64.getEncoder().encodeToString(string.getBytes());
-                break;
-            case BLOB:
-                ByteBuffer bytes = row.getBytes(i);
-                if (bytes == null) {
-                    bytes = ByteBuffer.wrap("".getBytes());
-                }
-                data = Base64.getEncoder().encodeToString(bytes.array());
-                break;
-            case TIMESTAMP:
-                Date rowDate = row.getTimestamp(i);
-                if (rowDate != null) {
-                    data = rowDate.getTime();
-                } else {
-                    data = "";
-                }
-                break;
-            case BOOLEAN:
-                data = row.getBool(i);
-                break;
-            case COUNTER:
-                data = row.getLong(i);
-                break;
-            case INT:
-                data = row.getInt(i);
-                break;
-            case FLOAT:
-                data = row.getFloat(i);
-                break;
-            case SET:
-                Set<Object> set = (Set<Object>) row.getObject(i);
-                Object joined = set.stream().map(Object::toString).collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
-                data = Base64.getEncoder().encodeToString(joined.toString().getBytes());
-                break;
-            case MAP:
-                Map<Object, Object> map = (Map<Object, Object>) row.getObject(i);
-                Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
-                Object mapAsString = entrySet.parallelStream()
-                    .map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
-                    .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
-                data = Base64.getEncoder().encodeToString(mapAsString.toString().getBytes());
-                break;
-            default:
-                throw new UnsupportedOperationException("Name is not supported :" + name);
+        // Get column definitions from first row
+        Iterator<Row> iterator = rows.iterator();
+        if (!iterator.hasNext()) {
+            Utils.printMessage(logger, "No rows returned.");
+            return;
         }
-        return data;
+
+            Row firstRow = iterator.next();
+            firstRow.getColumnDefinitions().forEach(c -> 
+                tableData.getDefinitions().add(new ColumnDefinition(
+                    c.getName().asInternal(),        // column name
+                    c.getType().asCql(true, true),  // type as string
+                    c.getKeyspace().asInternal(),    // keyspace
+                    c.getTable().asInternal()        // table
+        ))
+);
+
+
+        boolean isElementTable = tableData.getDefinitions().get(0).getTable().equals(ELEMENT_TABLE_NAME);
+
+        // Process first row
+        processRow(firstRow, tableData, filteredItems, filteredColumn, vlms, isElementTable);
+
+        // Process remaining rows
+        iterator.forEachRemaining(row -> processRow(row, tableData, filteredItems, filteredColumn, vlms, isElementTable));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String table = tableData.getDefinitions().get(0).getTable();
+        String fileName = ImportProperties.ROOT_DIRECTORY + File.separator + table + "_" + System.currentTimeMillis() + ".json";
+        objectMapper.writeValue(Paths.get(fileName).toFile(), tableData);
+        Utils.printMessage(logger, "File exported is :" + fileName);
+
+    } catch (IOException e) {
+        Utils.logError(logger, e);
+        System.exit(1);
     }
+}
+
+private void processRow(Row row, TableData tableData, Set<String> filteredItems, String filteredColumn, Set<String> vlms, boolean isElementTable) {
+    if (!filteredItems.contains(row.getString(filteredColumn))) return;
+
+    List<String> rowData = new ArrayList<>();
+    for (int i = 0; i < tableData.getDefinitions().size(); i++) {
+        ColumnDefinition columnDefinition = tableData.getDefinitions().get(i);
+        com.datastax.oss.driver.api.core.type.DataType type = row.getColumnDefinitions().get(i).getType();
+        boolean checkForVLM = isElementTable && columnDefinition.getName().equals(ELEMENT_INFO_COLUMN_NAME);
+        Object data = convertByType(vlms, row, i, type, checkForVLM);
+        rowData.add(data.toString());
+    }
+    tableData.getRows().add(rowData);
+}
+
+
+    private Object convertByType(Set<String> vlms, Row row, int i, com.datastax.oss.driver.api.core.type.DataType dataType, boolean checkForVLM) {
+    Object data;
+    String typeName = dataType.asCql(true, true); // get CQL representation, e.g., 'text', 'int', 'set<text>'
+
+    switch (typeName.toLowerCase()) {
+        case "text":
+        case "varchar":
+        case "ascii":
+            String string = row.getString(i);
+            if (string == null) string = NULL_REPRESENTATION;
+            if (checkForVLM && vlms != null) {
+                String vlm = extractVlm(string);
+                if (vlm != null) vlms.add(vlm);
+            }
+            data = Base64.getEncoder().encodeToString(string.getBytes());
+            break;
+        case "blob":
+            ByteBuffer bytes = row.getByteBuffer(i);
+            if (bytes == null) bytes = ByteBuffer.wrap("".getBytes());
+            data = Base64.getEncoder().encodeToString(bytes.array());
+            break;
+        case "timestamp":
+            data = row.getInstant(i) != null ? Date.from(row.getInstant(i)).getTime() : "";
+            break;
+        case "boolean":
+            data = row.getBoolean(i);
+            break;
+        case "counter":
+            data = row.getLong(i);
+            break;
+        case "int":
+            data = row.getInt(i);
+            break;
+        case "float":
+            data = row.getFloat(i);
+            break;
+        default:
+            // handle collection types like set<text>, map<text,text>
+            if (typeName.startsWith("set<")) {
+                Set<?> set = row.getSet(i, Object.class);
+                String joined = set.stream().map(Object::toString).collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
+                data = Base64.getEncoder().encodeToString(joined.getBytes());
+            } else if (typeName.startsWith("map<")) {
+                Map<?, ?> map = row.getMap(i, Object.class, Object.class);
+                String mapAsString = map.entrySet().stream()
+                        .map(entry -> entry.getKey().toString() + ExportDataCommand.MAP_DELIMITER + entry.getValue().toString())
+                        .collect(Collectors.joining(ExportDataCommand.JOIN_DELIMITER));
+                data = Base64.getEncoder().encodeToString(mapAsString.getBytes());
+            } else {
+                throw new UnsupportedOperationException("DataType is not supported: " + typeName);
+            }
+    }
+    return data;
+}
+
 
     protected String extractVlm(String inJson) {
         if (StringUtils.isEmpty(inJson.trim())) {

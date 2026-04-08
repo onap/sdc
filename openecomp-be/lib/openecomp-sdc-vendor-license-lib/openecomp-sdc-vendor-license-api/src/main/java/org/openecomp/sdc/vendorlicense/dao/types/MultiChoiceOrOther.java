@@ -15,15 +15,16 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.Transient;
-import com.datastax.driver.mapping.annotations.UDT;
+
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@UDT(keyspace = "dox", name = "multi_choice_or_other")
+// @Entity
 public class MultiChoiceOrOther<E extends Enum<E>> {
 
     public static final String OTHER_ENUM_VALUE = "Other";
@@ -67,24 +68,19 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
         this.other = other;
     }
 
-    public Set<String> getResults() {
-        return results;
-    }
+   public Set<String> getResults() { 
+    return results != null ? results : resolveResult(); 
+}
 
     /**
      * Sets results.
      *
      * @param results the results
      */
-    public void setResults(Set<String> results) {
-        if (choices != null) {
-            if (results == null) {
-                this.results = resolveResult();
-            }
-        } else {
-            this.results = results;
-        }
-    }
+   @JsonProperty("results") 
+   public void setResults(Set<String> results) { 
+    this.results = results; 
+}
 
     private Set<String> resolveResult() {
         if (choices != null) {

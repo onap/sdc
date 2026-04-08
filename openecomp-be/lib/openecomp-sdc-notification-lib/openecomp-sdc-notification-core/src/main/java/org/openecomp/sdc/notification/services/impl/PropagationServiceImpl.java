@@ -21,7 +21,6 @@ package org.openecomp.sdc.notification.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.datastax.driver.core.utils.UUIDs;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +32,8 @@ import org.openecomp.sdc.notification.dao.NotificationsDao;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 import org.openecomp.sdc.notification.dtos.Event;
 import org.openecomp.sdc.notification.services.PropagationService;
+
+import com.datastax.oss.driver.api.core.uuid.Uuids;
 
 public class PropagationServiceImpl implements PropagationService {
 
@@ -51,7 +52,7 @@ public class PropagationServiceImpl implements PropagationService {
             return;
         }
         List<NotificationEntity> notificationEntities = subscribers.stream().map(subscriber -> {
-            UUID eventId = UUIDs.timeBased();
+            UUID eventId = Uuids.timeBased();
             return createNotificationEntity(event.getEventType(), subscriber, event.getOriginatorId(), event.getAttributes(), eventId);
         }).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(notificationEntities)) {

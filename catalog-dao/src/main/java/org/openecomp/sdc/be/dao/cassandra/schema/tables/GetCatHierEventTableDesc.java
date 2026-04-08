@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +36,14 @@ public class GetCatHierEventTableDesc implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataTypes.TIMEUUID));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -69,12 +70,12 @@ public class GetCatHierEventTableDesc implements ITableDescription {
     @AllArgsConstructor
     enum DEEFieldsDescription {
         // @formatter:off
-        ACTION("action", DataType.varchar(), true),
-		STATUS("status", DataType.varchar(), false),
-		DESCRIPTION("description", DataType.varchar(), false),
-		DETAILS("details", DataType.varchar(), false),
-		REQUEST_ID("request_id", DataType.varchar(), false),
-		MODIFIER("modifier", DataType.varchar(), false);
+        ACTION("action", DataTypes.TEXT, true),
+		STATUS("status", DataTypes.TEXT, false),
+		DESCRIPTION("description", DataTypes.TEXT, false),
+		DETAILS("details", DataTypes.TEXT, false),
+		REQUEST_ID("request_id", DataTypes.TEXT, false),
+		MODIFIER("modifier", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

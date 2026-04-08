@@ -367,7 +367,7 @@ public class ActionsImplTest {
         action.setVersion("1.1");
         action.setUser("user");
         action.setStatus(ActionStatus.Available);
-        action.setTimestamp(new Date());
+        action.setTimestamp(new Date().toInstant());
 
         action.setData("{actionUuId : actionUuId, actionInvariantUuId : actionInvariantUuId," +
                 " name : actionToupdate,version: 2.1 ," +

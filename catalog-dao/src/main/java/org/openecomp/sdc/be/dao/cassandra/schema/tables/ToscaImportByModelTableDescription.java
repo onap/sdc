@@ -19,7 +19,8 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,8 @@ public class ToscaImportByModelTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         return List.of(
-            new ImmutablePair<>(MODEL_ID, DataType.varchar()),
-            new ImmutablePair<>(FULL_PATH, DataType.varchar())
+            new ImmutablePair<>(MODEL_ID, DataTypes.TEXT),
+            new ImmutablePair<>(FULL_PATH, DataTypes.TEXT)
         );
     }
 
@@ -68,8 +69,8 @@ public class ToscaImportByModelTableDescription implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum SdcSchemaFilesFieldsDescription {
-        MODEL_ID("model_id", DataType.varchar(), true),
-        CONTENT("content", DataType.varchar(), false);
+        MODEL_ID("model_id", DataTypes.TEXT, true),
+        CONTENT("content", DataTypes.TEXT, false);
 
         private final String name;
         private final DataType type;

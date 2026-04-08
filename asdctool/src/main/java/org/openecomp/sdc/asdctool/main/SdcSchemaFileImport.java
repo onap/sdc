@@ -29,6 +29,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -121,7 +122,7 @@ public class SdcSchemaFileImport {
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
         byte[] fileBytes = baos.toByteArray();
-        Date date = new Date();
+        Instant date = Instant.now();
         String md5Hex = DigestUtils.md5Hex(fileBytes);
         SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME, fileBytes, md5Hex);
         CassandraOperationStatus saveSchemaFile = schemaFilesCassandraDao.saveSchemaFile(schemeFileData);

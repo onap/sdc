@@ -18,7 +18,7 @@ package org.openecomp.sdcrests.item.rest.mapping;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
+import java.time.Instant;
 import org.junit.Test;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
@@ -43,7 +43,7 @@ public class MapActivityLogEntityToDtoTest {
         final String user = "278dbb70-469d-4a5f-bea2-bc62fa9d4671";
         source.setUser(user);
 
-        final Date timestamp = new Date();
+        final Instant timestamp = Instant.now();
         source.setTimestamp(timestamp);
 
         final String comment = "1cf631a9-016b-4914-9ced-ded9d5ba9469";

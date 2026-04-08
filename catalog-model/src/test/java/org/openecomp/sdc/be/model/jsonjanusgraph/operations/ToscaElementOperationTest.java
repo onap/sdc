@@ -404,9 +404,6 @@ public class ToscaElementOperationTest extends ModelTestBase {
                 .add(GraphTestUtils.createResourceVertex(janusGraphDao, certifiedVerticesProps, ResourceTypeEnum.CP));
             allVertices.add(GraphTestUtils.createServiceVertex(janusGraphDao, certifiedVerticesProps));
         }
-        //allVertices.stream().forEach( v -> System.out.println("type: "+v.getMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE)));
-        //String result = GraphTestUtils.exportGraphMl(janusGraphDao.getGraph().left().value(), "");
-        //System.out.println("graph is: " + result);
     }
 
     private long calculateCount(HashMap<GraphPropertyEnum, Object> hasProps,

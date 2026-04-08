@@ -19,11 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import lombok.Getter;
@@ -31,31 +29,38 @@ import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 @Getter
 @Setter
 @ToString
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.ECOMP_OPERATIONAL_ENV_EVENT_TYPE)
 public class EcompOperationalEnvironmentEvent extends AuditingGenericEvent {
 
     @PartitionKey
-    @Column(name = "operational_environment_id")
+    @CqlName("operational_environment_id")
     protected String operationalEnvironmentId;
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column
+    protected Instant timestamp1;
+    @CqlName("action")
     protected String action;
-    @Column(name = "operational_environment_action")
+    @CqlName("operational_environment_action")
     protected String operationalEnvironmentAction;
-    @Column(name = "operational_environment_name")
+    @CqlName("operational_environment_name")
     protected String operationalEnvironmentName;
-    @Column(name = "operational_environment_type")
+    @CqlName("operational_environment_type")
     protected String operationalEnvironmentType;
-    @Column(name = "tenant_context")
+    @CqlName("tenant_context")
     protected String tenantContext;
 
     //Required to be public as it is used by Cassandra driver on get operation
     public EcompOperationalEnvironmentEvent() {
-        timestamp1 = new Date();
+        timestamp1 = Instant.now();
     }
 
     public EcompOperationalEnvironmentEvent(String action, String operationalEnvironmentId, String operationalEnvironmentName,
@@ -79,6 +84,6 @@ public class EcompOperationalEnvironmentEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_TENANT_CONTEXT.getDisplayName(), getTenantContext());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 }

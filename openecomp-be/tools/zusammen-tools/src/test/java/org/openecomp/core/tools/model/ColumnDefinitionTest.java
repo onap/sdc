@@ -18,18 +18,17 @@
  * ============LICENSE_END=========================================================
  */
 package org.openecomp.core.tools.model;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import org.junit.jupiter.api.Test;
-
 public class ColumnDefinitionTest {
 
     private static final String KEYSPACE = "keyspace";
     private static final String TABLE = "table";
     private static final String NAME = "name";
-    private static final DataType BLOB = DataType.blob();
+    private static final DataType BLOB = DataTypes.BLOB;
 
     @Test
     public void hasValidGettersAndSettersTest() {
@@ -38,6 +37,6 @@ public class ColumnDefinitionTest {
         assertEquals(columnDefinition.getKeyspace(), KEYSPACE);
         assertEquals(columnDefinition.getName(), NAME);
         assertEquals(columnDefinition.getTable(), TABLE);
-        assertEquals(columnDefinition.getType(), BLOB.getName().toString());
+        assertEquals(columnDefinition.getDataType(), BLOB);
     }
 }

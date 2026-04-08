@@ -487,7 +487,6 @@ public class ArchiveOperationTest extends ModelTestBase {
         compositions.put(JsonConstantKeysEnum.COMPOSITION.getValue(), composition);
         //Add Full Json to vertex
         compositionService.setJson(compositions);
-        //System.out.println(JsonParserUtils.toJson(compositions));
         janusGraphDao.updateVertex(compositionService);
     }
 

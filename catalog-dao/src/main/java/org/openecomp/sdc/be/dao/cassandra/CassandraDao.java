@@ -19,19 +19,19 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.mapping.MappingManager;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
+
 import fj.data.Either;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public abstract class CassandraDao {
 
     private static Logger logger = Logger.getLogger(CassandraDao.class.getName());
-    protected Session session;
-    protected MappingManager manager;
+    protected CqlSession session;
     protected CassandraClient client;
 
     public CassandraDao(CassandraClient cassandraClient) {
@@ -45,9 +45,13 @@ public abstract class CassandraDao {
      * @return returns true if the table was empty
      */
     protected Either<Boolean, CassandraOperationStatus> isTableEmpty(String tableName) {
-        Statement select = QueryBuilder.select().countAll().from(tableName).limit(10);
+
+        Select select = QueryBuilder
+                .selectFrom(tableName)
+                .countAll()
+                .limit(10);
         try {
-            ResultSet res = session.execute(select);
+            ResultSet res = session.execute(select.build());
             return Either.left(res.one().getLong("count") == 0);
         } catch (Exception e) {
             logger.debug("Failed check if table is empty", e);

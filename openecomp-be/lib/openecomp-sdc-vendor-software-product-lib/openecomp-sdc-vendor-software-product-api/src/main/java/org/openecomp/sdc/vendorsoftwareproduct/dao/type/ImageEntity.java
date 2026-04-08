@@ -19,11 +19,7 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,30 +29,36 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Image;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_component_image")
+@Entity
+@CqlName("vsp_component_image")
 public class ImageEntity implements CompositionEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product Component Image";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "component_id")
+    @CqlName("component_id")
     private String componentId;
     @ClusteringColumn(value = 1)
-    @Column(name = "image_id")
+    @CqlName("image_id")
     private String id;
-    @Column(name = "composition_data")
+    @CqlName("composition_data")
     private String compositionData;
-    @Column(name = "questionnaire_data")
+    @CqlName("questionnaire_data")
     private String questionnaireData;
 
     /**
@@ -100,4 +102,6 @@ public class ImageEntity implements CompositionEntity {
     public void setImageCompositionData(Image image) {
         this.compositionData = image == null ? null : JsonUtil.object2Json(image);
     }
+
+    
 }

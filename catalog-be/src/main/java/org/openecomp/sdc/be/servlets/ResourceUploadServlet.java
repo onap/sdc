@@ -95,64 +95,152 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         this.modelBusinessLogic = modelBusinessLogic;
     }
 
-    @POST
-    @Path("/{resourceAuthority}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create Resource from yaml", method = "POST", summary = "Returns created resource", responses = {
+@POST
+@Path("/{resourceAuthority}")
+@Consumes(MediaType.MULTIPART_FORM_DATA)
+@Produces(MediaType.APPLICATION_JSON)
+@Operation(
+    description = "Create Resource from yaml",
+    method = "POST",
+    summary = "Returns created resource",
+    responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Resource created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-        @ApiResponse(responseCode = "409", description = "Resource already exist")})
-    public Response uploadMultipart(
-        @Parameter(description = "validValues: normative-resource / user-resource", schema = @Schema(allowableValues = {NORMATIVE_TYPE_RESOURCE,
-            USER_TYPE_RESOURCE, USER_TYPE_RESOURCE_UI_IMPORT})) @PathParam(value = "resourceAuthority") final String resourceAuthority,
-        @Parameter(description = "FileInputStream") @FormDataParam("resourceZip") File file,
-        @Parameter(description = "ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
-        @Parameter(description = "resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString,
-        @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-        // updateResource Query Parameter if false checks if already exist
-        @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) {
-        try {
-            Wrapper<Response> responseWrapper = new Wrapper<>();
-            Wrapper<User> userWrapper = new Wrapper<>();
-            Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
-            Wrapper<String> yamlStringWrapper = new Wrapper<>();
-            String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
-            // When we get an errorResponse it will be filled into the responseWrapper
-            validateAuthorityType(responseWrapper, resourceAuthority);
-            ResourceAuthorityTypeEnum resourceAuthorityEnum = ResourceAuthorityTypeEnum.findByUrlPath(resourceAuthority);
-            commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, resourceInfoJsonString);
-            final String modelNameToBeAssociated = uploadResourceInfoWrapper.getInnerElement().getModel();
-            if (modelNameToBeAssociated != null) {
-                log.debug("Model Name to be validated {}", modelNameToBeAssociated);
-                validateModel(modelNameToBeAssociated);
-            }
-            fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString,
-                resourceAuthorityEnum, file);
-            // PayLoad Validations
-            if (resourceAuthorityEnum != ResourceAuthorityTypeEnum.CSAR_TYPE_BE) {
-                commonPayloadValidations(responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(),
-                    uploadResourceInfoWrapper.getInnerElement());
-                specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(),
-                    request, resourceInfoJsonString, resourceAuthorityEnum);
-            }
-            if (responseWrapper.isEmpty()) {
-                handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(),
-                    yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, createNewVersion, null);
-            }
-            return responseWrapper.getInnerElement();
-        } catch (final BusinessException e) {
-            throw e;
-        } catch (final Exception e) {
-            var errorMsg = String.format("Unexpected error while uploading Resource '%s'", resourceInfoJsonString);
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
-            log.error(errorMsg, e);
-            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-        }
+        @ApiResponse(responseCode = "409", description = "Resource already exist")
     }
+)
+public Response uploadMultipart(
+    @Parameter(description = "validValues: normative-resource / user-resource",
+               schema = @Schema(allowableValues = {NORMATIVE_TYPE_RESOURCE, USER_TYPE_RESOURCE, USER_TYPE_RESOURCE_UI_IMPORT}))
+    @PathParam(value = "resourceAuthority") final String resourceAuthority,
+
+    @Parameter(description = "FileInputStream") @FormDataParam("resourceZip") File file,
+    @Parameter(description = "ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
+    @Parameter(description = "resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString,
+
+    @Context final HttpServletRequest request,
+    @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+
+    // updateResource Query Parameter if false checks if already exist
+    @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion
+) {
+    System.out.println("[uploadMultipart] ENTER");
+    System.out.println("[uploadMultipart] HTTP " + (request != null ? request.getMethod() : "null") +
+                       " " + (request != null ? request.getRequestURI() : "null"));
+    System.out.println("[uploadMultipart] resourceAuthority=" + resourceAuthority);
+    System.out.println("[uploadMultipart] userId=" + userId);
+    System.out.println("[uploadMultipart] createNewVersion=" + createNewVersion);
+    System.out.println("[uploadMultipart] resourceInfoJsonString present=" + (resourceInfoJsonString != null));
+    System.out.println("[uploadMultipart] file present=" + (file != null) + 
+                       (contentDispositionHeader != null ? (", filename=" + contentDispositionHeader.getFileName()) : ""));
+
+    try {
+        Wrapper<Response> responseWrapper = new Wrapper<>();
+        Wrapper<User> userWrapper = new Wrapper<>();
+        Wrapper<UploadResourceInfo> uploadResourceInfoWrapper = new Wrapper<>();
+        Wrapper<String> yamlStringWrapper = new Wrapper<>();
+
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug("Start handle request of {}", url);
+        System.out.println("[uploadMultipart] Start handle request of " + url);
+
+        // When we get an errorResponse it will be filled into the responseWrapper
+        System.out.println("[uploadMultipart] Validating resource authority type...");
+        validateAuthorityType(responseWrapper, resourceAuthority);
+        if (!responseWrapper.isEmpty()) {
+            System.out.println("[uploadMultipart] validateAuthorityType produced an error response.");
+            return responseWrapper.getInnerElement();
+        }
+
+        ResourceAuthorityTypeEnum resourceAuthorityEnum = ResourceAuthorityTypeEnum.findByUrlPath(resourceAuthority);
+        System.out.println("[uploadMultipart] Resolved resourceAuthorityEnum=" + resourceAuthorityEnum);
+
+        System.out.println("[uploadMultipart] Running commonGeneralValidations...");
+        commonGeneralValidations(
+            responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, resourceInfoJsonString
+        );
+        if (!responseWrapper.isEmpty()) {
+            System.out.println("[uploadMultipart] commonGeneralValidations produced an error response.");
+            return responseWrapper.getInnerElement();
+        }
+
+        final String modelNameToBeAssociated = uploadResourceInfoWrapper.getInnerElement() != null
+            ? uploadResourceInfoWrapper.getInnerElement().getModel() : null;
+
+        if (modelNameToBeAssociated != null) {
+            log.debug("Model Name to be validated {}", modelNameToBeAssociated);
+            System.out.println("[uploadMultipart] Validating model: " + modelNameToBeAssociated);
+            validateModel(modelNameToBeAssociated);
+            System.out.println("[uploadMultipart] Model validation OK.");
+        } else {
+            System.out.println("[uploadMultipart] No model provided to validate.");
+        }
+
+        System.out.println("[uploadMultipart] Filling payload...");
+        fillPayload(
+            responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper,
+            userWrapper.getInnerElement(), resourceInfoJsonString, resourceAuthorityEnum, file
+        );
+        if (!responseWrapper.isEmpty()) {
+            System.out.println("[uploadMultipart] fillPayload produced an error response.");
+            return responseWrapper.getInnerElement();
+        }
+        System.out.println("[uploadMultipart] Payload filled. yaml present=" + (yamlStringWrapper.getInnerElement() != null));
+
+        // PayLoad Validations
+        if (resourceAuthorityEnum != ResourceAuthorityTypeEnum.CSAR_TYPE_BE) {
+            System.out.println("[uploadMultipart] Running commonPayloadValidations...");
+            commonPayloadValidations(
+                responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement()
+            );
+            if (!responseWrapper.isEmpty()) {
+                System.out.println("[uploadMultipart] commonPayloadValidations produced an error response.");
+                return responseWrapper.getInnerElement();
+            }
+
+            System.out.println("[uploadMultipart] Running specificResourceAuthorityValidations...");
+            specificResourceAuthorityValidations(
+                responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper,
+                userWrapper.getInnerElement(), request, resourceInfoJsonString, resourceAuthorityEnum
+            );
+            if (!responseWrapper.isEmpty()) {
+                System.out.println("[uploadMultipart] specificResourceAuthorityValidations produced an error response.");
+                return responseWrapper.getInnerElement();
+            }
+        } else {
+            System.out.println("[uploadMultipart] Skipping payload validations for CSAR_TYPE_BE.");
+        }
+
+        if (responseWrapper.isEmpty()) {
+            System.out.println("[uploadMultipart] Invoking handleImport... createNewVersion=" + createNewVersion +
+                               ", authority=" + resourceAuthorityEnum);
+            handleImport(
+                responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(),
+                yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, createNewVersion, null
+            );
+        } else {
+            System.out.println("[uploadMultipart] Response wrapper already contains an error; skipping handleImport.");
+        }
+
+        System.out.println("[uploadMultipart] EXIT (normal).");
+        return responseWrapper.getInnerElement();
+
+    } catch (final BusinessException e) {
+        System.out.println("[uploadMultipart] BusinessException: " + e.getMessage());
+        throw e;
+    } catch (final Exception e) {
+        var errorMsg = String.format("Unexpected error while uploading Resource '%s'", resourceInfoJsonString);
+        BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+        log.error(errorMsg, e);
+        System.out.println("[uploadMultipart] ERROR: " + errorMsg);
+        System.out.println("[uploadMultipart] Exception type=" + e.getClass().getName());
+        e.printStackTrace(System.out); // print full stack to stdout for quick debugging
+        System.out.println("[uploadMultipart] EXIT (error).");
+        return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+    }
+}
 
     @POST
     @Path("/resource/import")

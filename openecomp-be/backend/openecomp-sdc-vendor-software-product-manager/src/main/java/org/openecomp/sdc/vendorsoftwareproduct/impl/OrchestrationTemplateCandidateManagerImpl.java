@@ -56,20 +56,42 @@ public class OrchestrationTemplateCandidateManagerImpl implements OrchestrationT
         this.candidateService = candidateService;
     }
 
+
     @Override
     public UploadFileResponse upload(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo) {
+        System.out.println("[CandidateManager.upload] Enter method");
+        System.out.println("[CandidateManager.upload] Inputs -> vspDetails=" + vspDetails
+                + ", onboardPackageInfo=" + onboardPackageInfo);
+
         final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
-        final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler = OrchestrationUploadFactory
-            .createOrchestrationTemplateFileHandler(onboardPackageInfo.getPackageType());
-        final UploadFileResponse uploadFileResponse = orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
+        System.out.println("[CandidateManager.upload] Extracted OnboardPackage=" + onboardPackage);
+
+        final OrchestrationTemplateFileHandler orchestrationTemplateFileHandler =
+                OrchestrationUploadFactory.createOrchestrationTemplateFileHandler(onboardPackageInfo.getPackageType());
+        System.out.println("[CandidateManager.upload] Created OrchestrationTemplateFileHandler="
+                + orchestrationTemplateFileHandler
+                + ", packageType=" + onboardPackageInfo.getPackageType());
+
+        System.out.println("[CandidateManager.upload] Calling handler.upload(...)");
+        final UploadFileResponse uploadFileResponse =
+                orchestrationTemplateFileHandler.upload(vspDetails, onboardPackageInfo, candidateService);
+        System.out.println("[CandidateManager.upload] Received UploadFileResponse=" + uploadFileResponse);
+
         uploadFileResponse.setNetworkPackageName(onboardPackage.getFilename());
+        System.out.println("[CandidateManager.upload] Set networkPackageName=" + onboardPackage.getFilename());
+
+        System.out.println("[CandidateManager.upload] Returning UploadFileResponse");
+        System.out.println("[CandidateManager.upload] Exit method");
         return uploadFileResponse;
     }
 
+
     @Override
     public OrchestrationTemplateActionResponse process(String vspId, Version version) {
+        Optional<OrchestrationTemplateCandidateData> candidateOpt = candidateService.getOrchestrationTemplateCandidate(vspId, version);
         OrchestrationTemplateCandidateData candidate = candidateService.getOrchestrationTemplateCandidate(vspId, version)
             .orElseThrow(() -> new CoreException(new OrchestrationTemplateNotFoundErrorBuilder(vspId).build()));
+        VspDetails vspDetails = getVspDetails(vspId, version);
         return OrchestrationProcessFactory.getInstance(candidate.getFileSuffix())
             .map(processor -> processor.process(getVspDetails(vspId, version), candidate)).orElse(new OrchestrationTemplateActionResponse());
     }

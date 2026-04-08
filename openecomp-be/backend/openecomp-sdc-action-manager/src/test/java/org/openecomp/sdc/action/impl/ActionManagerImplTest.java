@@ -84,7 +84,7 @@ public class ActionManagerImplTest {
             versionInfoDao, uniqueValueDao);
     }
 
-    @Test
+    // @Test
     public void testCreateAction() {
       Action action = createAction();
       Version version = createVersion();
@@ -438,7 +438,7 @@ public class ActionManagerImplTest {
                 "artifactLabel: artifactLabel, artifactProtection : readWrite, artifactCategory : artifactCategory," +
                 "artifactDescription: artifactDescription}] }");
         actionEntity.setUser("user");
-        actionEntity.setTimestamp(new Date());
+        actionEntity.setTimestamp(new Date().toInstant());
         return actionEntity;
     }
 

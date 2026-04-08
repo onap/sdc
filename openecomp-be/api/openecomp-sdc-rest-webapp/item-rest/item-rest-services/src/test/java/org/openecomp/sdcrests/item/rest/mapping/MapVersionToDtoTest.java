@@ -19,8 +19,8 @@ package org.openecomp.sdcrests.item.rest.mapping;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import org.junit.Test;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -50,10 +50,10 @@ public class MapVersionToDtoTest {
         final String baseId = "d8efa2d7-8def-4646-8b9d-363ae102cde0";
         source.setBaseId(baseId);
 
-        final Date creationTime = new Date();
+        final Instant creationTime = Instant.now();
         source.setCreationTime(creationTime);
 
-        final Date modificationTime = new Date();
+        final Instant modificationTime = Instant.now();
         source.setModificationTime(modificationTime);
 
         final VersionStatus status = VersionStatus.Deleted;

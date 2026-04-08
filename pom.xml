@@ -45,7 +45,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <!-- 3rd parties versions -->
     <lang3.version>3.12.0</lang3.version>
     <guava.version>32.1.1-jre</guava.version>
-    <janusgraph.version>0.5.0</janusgraph.version>
+    <janusgraph.version>0.6.4</janusgraph.version>
     <spring.version>5.3.27</spring.version>
     <mvn.assembly.version>3.6.0</mvn.assembly.version>
 
@@ -68,7 +68,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <onap.logging.version>1.6.1</onap.logging.version>
     <apache-commons-text.version>1.10.0</apache-commons-text.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
-    <io.vavr.version>0.9.0</io.vavr.version>
+    <io.vavr.version>0.10.3</io.vavr.version>
     <groovy.version>4.0.13</groovy.version>
     <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
     <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
@@ -77,7 +77,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
     <commons.collections.version>4.3</commons.collections.version>
     <ws.rs.version>2.1.6</ws.rs.version>
-    <javax.validation.version>2.0.1.Final</javax.validation.version>
+    <javax.validation.version>1.1.0.Final</javax.validation.version>
 
     <jetty.version>9.4.58.v20250814</jetty.version>
     <jetty-distribution.version>${jetty.version}</jetty-distribution.version>
@@ -156,7 +156,7 @@ Modifications copyright (c) 2018-2019 Nokia
     <sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
     <sonar.coverage.exclusions>pom.xml,src/test</sonar.coverage.exclusions>
     <!--cassandra -->
-    <cassandra.driver.version>3.8.0</cassandra.driver.version>
+    <cassandra.driver.version>4.17.0</cassandra.driver.version>
     <!-- maven central (Nexus) -->
     <nexus.id.release>nexus</nexus.id.release>
     <nexus.id.snapshot>nexus</nexus.id.snapshot>

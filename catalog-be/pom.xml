@@ -41,6 +41,14 @@
             <version>${jsoup.version}</version>
         </dependency>
 
+        <!-- Explicitly added for Jersey Bean Validation support-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.4.3.Final</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--JSON and YAML Parsing-->
         <dependency>
             <groupId>com.networknt</groupId>
@@ -116,9 +124,9 @@
         <!-- Swagger Dependencies End -->
 
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
+            <version>5.4.3.Final</version>
         </dependency>
 
         <dependency>
@@ -551,6 +559,26 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -580,7 +608,27 @@
                     <groupId>io.netty</groupId>
                     <artifactId>netty-all</artifactId>
                 </exclusion>
-            </exclusions>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-core</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+		    </exclusion>
+            <exclusion>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+            </exclusion>
+        </exclusions>
         </dependency>
 
         <dependency>
@@ -604,6 +652,12 @@
             <artifactId>jcabi-aspects</artifactId>
             <version>${jcabi.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- CAMBRIA CLIENT for U-EB -->
@@ -626,26 +680,104 @@
             <version>${org.json.version}</version>
         </dependency>
 
-        <!-- CASSANDRA -->
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>${cassandra.driver.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.jnr</groupId>
-                    <artifactId>jnr-posix</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-mapping</artifactId>
-            <version>${cassandra.driver.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- CASSANDRA END -->
+      <!-- CASSANDRA -->
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
+      <version>${cassandra.driver.version}</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.jnr</groupId>
+          <artifactId>jnr-posix</artifactId>
+        </exclusion>
+          <exclusion>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+         </exclusion>
+        <exclusion>
+          <groupId>com.sun.activation</groupId>
+          <artifactId>jakarta.activation</artifactId>
+        </exclusion>
+      <exclusion>
+        <groupId>jakarta.el</groupId>
+        <artifactId>jakarta.el-api</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-query-builder</artifactId>
+      <version>${cassandra.driver.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-processor</artifactId>
+      <version>${cassandra.driver.version}</version>
+        <exclusions>
+    <exclusion>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+    </exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+  </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-runtime</artifactId>
+      <version>${cassandra.driver.version}</version>
+      <scope>compile</scope>
+      <exclusions>
+    <exclusion>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+    </exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+  </exclusions>
+    </dependency>
+
+    <!-- CASSANDRA END -->
 
         <!-- Inserted for ECOMP Portal Integration -->
         <dependency>

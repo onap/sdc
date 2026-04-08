@@ -19,14 +19,15 @@
  */
 package org.openecomp.sdc.versioning.dao.types;
 
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.UDT;
+
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@UDT(name = "user_candidate_version", keyspace = "dox")
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -34,6 +35,5 @@ import lombok.Setter;
 public class UserCandidateVersion {
 
     private String user;
-    @Frozen
     private Version version;
 }

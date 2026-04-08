@@ -19,8 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.mapping.annotations.Transient;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,13 +99,13 @@ public class AuditingGenericEvent {
     public void fillFields() {
     }
 
-    protected Date parseDateFromString(final String timestamp) {
-        try {
-            return simpleDateFormat.parse(timestamp);
-        } catch (Exception e) {
-            return new Date();
-        }
+    protected Instant parseDateFromString(final String timestamp) {
+    try {
+        return simpleDateFormat.parse(timestamp).toInstant();
+    } catch (Exception e) {
+        return Instant.now();
     }
+}
 
     public String getTimestamp() {
         return timestamp;

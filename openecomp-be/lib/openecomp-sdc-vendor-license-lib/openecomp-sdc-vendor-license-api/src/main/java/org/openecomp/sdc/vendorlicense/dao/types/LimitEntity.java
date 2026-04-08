@@ -21,6 +21,7 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 
 import java.util.Objects;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import lombok.Getter;
@@ -94,4 +95,5 @@ public class LimitEntity implements VersionableEntity {
             + id + '\'' + ", name='" + name + '\'' + ", description='" + description + '\'' + ", type=" + type + ", metric=" + metric + ", value='"
             + value + '\'' + ", unit='" + unit + '\'' + ", aggregationFunction=" + aggregationFunction + ", time=" + time + '}';
     }
+
 }

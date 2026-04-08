@@ -19,26 +19,29 @@
  */
 package org.openecomp.sdc.action.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.action.types.OpenEcompComponent;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(keyspace = "dox", name = "EcompComponent")
+@Entity
+@CqlName("EcompComponent")
 public class OpenEcompComponentEntity {
 
     @PartitionKey
-    @Column(name = "id")
+    @CqlName("id")
     private String id;
-    @Column(name = "name")
+    @CqlName("name")
     private String name;
 
     /**

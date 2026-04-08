@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 @Getter
@@ -79,4 +80,5 @@ public class VspDetails implements VersionableEntity {
         return String.format("Vsp id = '%s', Version = '%s', Name = '%s', Category = '%s', Description = '%s', Vendor = '%s', Model = '%s'",
             this.id, this.version, this.name, this.category, this.description, this.vendorName, this.modelIdList);
     }
+
 }

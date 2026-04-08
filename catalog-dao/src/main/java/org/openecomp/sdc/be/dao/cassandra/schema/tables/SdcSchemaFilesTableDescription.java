@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,15 +40,15 @@ public class SdcSchemaFilesTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(SDC_RELEASE_NUM, DataType.varchar()));
-        keys.add(new ImmutablePair<>(CONFORMANCE_LEVEL, DataType.varchar()));
+        keys.add(new ImmutablePair<>(SDC_RELEASE_NUM, DataTypes.TEXT));
+        keys.add(new ImmutablePair<>(CONFORMANCE_LEVEL, DataTypes.TEXT));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -73,7 +74,7 @@ public class SdcSchemaFilesTableDescription implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum SdcSchemaFilesFieldsDescription {
-        FILE_NAME("fileName", DataType.varchar(), false), PAYLOAD("payload", DataType.blob(), false), CHECKSUM("checksum", DataType.varchar(), false);
+        FILE_NAME("fileName", DataTypes.TEXT, false), PAYLOAD("payload", DataTypes.BLOB, false), CHECKSUM("checksum", DataTypes.TEXT, false);
         private final String name;
         private final DataType type;
         private final boolean indexed;

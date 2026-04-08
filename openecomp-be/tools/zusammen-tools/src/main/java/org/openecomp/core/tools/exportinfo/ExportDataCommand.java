@@ -22,9 +22,8 @@ package org.openecomp.core.tools.exportinfo;
 import static java.nio.file.Files.createDirectories;
 import static org.openecomp.core.tools.commands.CommandName.EXPORT;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.ResultSetFuture;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.AsyncResultSet;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -38,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -73,26 +73,24 @@ public final class ExportDataCommand extends Command {
         options.addOption(Option.builder(ITEM_ID_OPTION).hasArg().argName("item id").desc("id of item to export, mandatory").build());
     }
 
-    private static void executeQuery(final Session session, final String query, final Set<String> filteredItems, final String filteredColumn,
-                                     final Set<String> vlms, final CountDownLatch donequerying, Executor executor) {
-        ResultSetFuture resultSetFuture = session.executeAsync(query);
-        Futures.addCallback(resultSetFuture, new FutureCallback<ResultSet>() {
-            @Override
-            public void onSuccess(ResultSet resultSet) {
+       private static void executeQuery(final CqlSession session, final String query, final Set<String> filteredItems,
+                                     final String filteredColumn, final Set<String> vlms, final CountDownLatch doneQuerying,
+                                     ExecutorService executor) {
+        CompletableFuture<AsyncResultSet> future = session.executeAsync(query).toCompletableFuture();
+
+        future.whenCompleteAsync((resultSet, throwable) -> {
+            if (throwable != null) {
+                Utils.logError(LOGGER, "Query failed: " + query, throwable);
+                System.exit(-1);
+            } else {
                 try {
                     Utils.printMessage(LOGGER, "Start to serialize " + query);
-                    new ExportSerializer().serializeResult(resultSet, filteredItems, filteredColumn, vlms);
-                    donequerying.countDown();
+                    new ExportSerializer().serializeResult(resultSet.currentPage(), filteredItems, filteredColumn, vlms);
+                    doneQuerying.countDown();
                 } catch (Exception e) {
-                    Utils.logError(LOGGER, "Serialization failed :" + query, e);
+                    Utils.logError(LOGGER, "Serialization failed: " + query, e);
                     System.exit(-1);
                 }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Utils.logError(LOGGER, "Query failed :" + query, t);
-                System.exit(-1);
             }
         }, executor);
     }
@@ -121,28 +119,35 @@ public final class ExportDataCommand extends Command {
             LOGGER.error("Argument i is mandatory");
             return false;
         }
+
         ExecutorService executor = null;
         try {
             CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
             Path rootDir = Paths.get(ImportProperties.ROOT_DIRECTORY);
             initDir(rootDir);
-            try (Session session = CassandraSessionFactory.getSession()) {
+
+            try (CqlSession session = CassandraSessionFactory.getSession()) {
                 final Set<String> filteredItems = Sets.newHashSet(cmd.getOptionValue(ITEM_ID_OPTION));
                 Set<String> fis = filteredItems.stream().map(fi -> fi.replaceAll("\\r", "")).collect(Collectors.toSet());
+
                 Map<String, List<String>> queries;
                 Yaml yaml = new Yaml();
                 try (InputStream is = ExportDataCommand.class.getResourceAsStream("/queries.yaml")) {
                     queries = (Map<String, List<String>>) yaml.load(is);
                 }
+
                 List<String> queriesList = queries.get("queries");
                 List<String> itemsColumns = queries.get("item_columns");
                 Set<String> vlms = new HashSet<>();
+
                 CountDownLatch doneQueries = new CountDownLatch(queriesList.size());
                 executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+
                 for (int i = 0; i < queriesList.size(); i++) {
                     executeQuery(session, queriesList.get(i), fis, itemsColumns.get(i), vlms, doneQueries, executor);
                 }
                 doneQueries.await();
+
                 if (!vlms.isEmpty()) {
                     CountDownLatch doneVmls = new CountDownLatch(queriesList.size());
                     for (int i = 0; i < queriesList.size(); i++) {
@@ -151,6 +156,7 @@ public final class ExportDataCommand extends Command {
                     doneVmls.await();
                 }
             }
+
             zipPath(rootDir);
             FileUtils.forceDelete(rootDir.toFile());
         } catch (Exception ex) {

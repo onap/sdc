@@ -19,10 +19,13 @@
  */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
+import java.time.Instant;
 import java.util.Date;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 /**
  * CREATE TABLE zusammen_dox.version (
@@ -50,27 +53,27 @@ import java.util.Date;
  * AND read_repair_chance = 0.0
  * AND speculative_retry = '99.0PERCENTILE';
  */
-@Table(keyspace = "zusammen_dox", name = "version")
+@Entity
 public class VersionEntity {
 
-    @Column(name = "space")
+    @CqlName("space")
     @PartitionKey(0)
     private String space;
-    @Column(name = "item_id")
+    @CqlName("item_id")
     @PartitionKey(1)
     private String itemId;
-    @Column(name = "version_id")
+    @CqlName("version_id")
     @PartitionKey(2)
     private String versionId;
-    @Column(name = "base_version_id")
+    @CqlName("base_version_id")
     private String baseVersionId;
-    @Column(name = "creation_time")
-    private Date creationTime;
-    @Column(name = "info")
+    @CqlName("creation_time")
+    private Instant creationTime;
+    @CqlName("info")
     private String info;
-    @Column(name = "modification_time")
-    private Date modificationTime;
-    @Column(name = "relations")
+    @CqlName("modification_time")
+    private Instant modificationTime;
+    @CqlName("relations")
     private String relations;
 
     public String getSpace() {
@@ -105,11 +108,11 @@ public class VersionEntity {
         this.baseVersionId = baseVersionId;
     }
 
-    public Date getCreationTime() {
+    public Instant getCreationTime() {
         return creationTime;
     }
 
-    public void setCreationTime(Date creationTime) {
+    public void setCreationTime(Instant creationTime) {
         this.creationTime = creationTime;
     }
 
@@ -121,11 +124,11 @@ public class VersionEntity {
         this.info = info;
     }
 
-    public Date getModificationTime() {
+    public Instant getModificationTime() {
         return modificationTime;
     }
 
-    public void setModificationTime(Date modificationTime) {
+    public void setModificationTime(Instant modificationTime) {
         this.modificationTime = modificationTime;
     }
 

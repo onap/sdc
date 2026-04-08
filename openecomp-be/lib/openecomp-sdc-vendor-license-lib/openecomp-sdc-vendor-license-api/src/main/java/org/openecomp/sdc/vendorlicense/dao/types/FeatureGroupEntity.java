@@ -19,41 +19,41 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Table(name = "feature_group", keyspace = "dox")
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+@Entity
 public class FeatureGroupEntity implements VersionableEntity {
 
     private static final String ENTITY_TYPE = "Feature Group";
     @PartitionKey
-    @Column(name = "vlm_id")
+    @CqlName("vlm_id")
     private String vendorLicenseModelId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "fg_id")
+    @CqlName("fg_id")
     private String id;
     private String name;
     private String description;
-    @Column(name = "part_num")
+    @CqlName("part_num")
     private String partNumber;
-    @Column(name = "manufacturer_ref_num")
+    @CqlName("manufacturer_ref_num")
     private String manufacturerReferenceNumber;
-    @Column(name = "lkg_ids")
+    @CqlName("lkg_ids")
     private Set<String> licenseKeyGroupIds = new HashSet<>();
-    @Column(name = "ep_ids")
+    @CqlName("ep_ids")
     private Set<String> entitlementPoolIds = new HashSet<>();
-    @Column(name = "ref_la_ids")
+    @CqlName("ref_la_ids")
     private Set<String> referencingLicenseAgreements = new HashSet<>();
 
     /**
@@ -201,4 +201,6 @@ public class FeatureGroupEntity implements VersionableEntity {
             + ", manufacturerReferenceNumber='" + manufacturerReferenceNumber + '\'' + ", licenseKeyGroupIds=" + licenseKeyGroupIds
             + ", entitlementPoolIds=" + entitlementPoolIds + ", referencingLicenseAgreements=" + referencingLicenseAgreements + '}';
     }
+
+   
 }

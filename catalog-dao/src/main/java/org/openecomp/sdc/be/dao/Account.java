@@ -19,15 +19,15 @@
  */
 package org.openecomp.sdc.be.dao;
 
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(keyspace = "dstest", name = "accounts")
+@Entity(defaultKeyspace = "dstest")
 @Getter
 @Setter
 @EqualsAndHashCode

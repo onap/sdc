@@ -15,11 +15,7 @@
  */
 package org.openecomp.sdc.action.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
@@ -29,39 +25,58 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
+
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "Action")
+@Entity
+@CqlName("Action")
 public class ActionEntity {
 
-    @Column(name = "actionUuId")
+    @CqlName("actionUuId")
     private String actionUuId;
-    @PartitionKey(value = 0)
-    @Column(name = "actionInvariantUuId")
+
+    @PartitionKey(0)
+    @CqlName("actionInvariantUuId")
     private String actionInvariantUuId;
-    @PartitionKey(value = 1)
-    @Frozen
-    @Column(name = "version")
+
+    @PartitionKey(1)
+    @CqlName("version")
     private Version version;
-    @Column(name = "status")
+
+    @CqlName("status")
     private String status;
-    @Column(name = "name")
+
+    @CqlName("name")
     private String name;
-    @Column(name = "vendor_list")
+
+    @CqlName("vendor_list")
     private Set<String> vendorList;
-    @Column(name = "category_list")
+
+    @CqlName("category_list")
     private Set<String> categoryList;
-    @Column(name = "timestamp")
-    private Date timestamp;
-    @Column(name = "user")
+
+    @CqlName("timestamp")
+    private Instant timestamp;
+
+    @CqlName("user")
     private String user;
-    @Column(name = "supportedModels")
+
+    @CqlName("supportedModels")
     private Set<String> supportedModels;
-    @Column(name = "supportedComponents")
+
+    @CqlName("supportedComponents")
     private Set<String> supportedComponents;
-    @Column(name = "data")
+
+    @CqlName("data")
     private String data;
+
 
     public ActionEntity(String actionInvariantUuId, Version version) {
         this.actionInvariantUuId = actionInvariantUuId;

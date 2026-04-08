@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,14 +39,14 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(OPERATIONAL_ENVIRONMENT_ID, DataType.varchar()));
+        keys.add(new ImmutablePair<>(OPERATIONAL_ENVIRONMENT_ID, DataTypes.TEXT));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -71,11 +72,11 @@ public class EcompOperationalEnvironmentEventTableDesc implements ITableDescript
     @AllArgsConstructor
     enum EcompOpEnvFieldsDescription {
         // @formatter:off
-        ACTION("action", DataType.varchar(), false),
-        OPERATIONAL_ENVIRONMENT_NAME("operational_environment_name", DataType.varchar(), false),
-        OPERATIONAL_ENVIRONMENT_TYPE("operational_environment_type", DataType.varchar(), false),
-        OPERATIONAL_ENVIRONMENT_ACTION("operational_environment_action", DataType.varchar(), false),
-        TENANT_CONTEXT("tenant_context", DataType.varchar(), false);
+        ACTION("action", DataTypes.TEXT, false),
+        OPERATIONAL_ENVIRONMENT_NAME("operational_environment_name", DataTypes.TEXT, false),
+        OPERATIONAL_ENVIRONMENT_TYPE("operational_environment_type", DataTypes.TEXT, false),
+        OPERATIONAL_ENVIRONMENT_ACTION("operational_environment_action", DataTypes.TEXT, false),
+        TENANT_CONTEXT("tenant_context", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

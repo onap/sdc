@@ -20,8 +20,7 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -31,6 +30,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 
 import java.util.List;
 
@@ -45,9 +51,18 @@ public class SdcSchemaFilesCassandraDaoTest {
 	@Mock
 	CassandraClient clientMock;
 
+	@Mock
+	CassandraClient client;
+
+	@Mock
+    private CqlSession session;
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.openMocks(this);
+		session = Mockito.mock(CqlSession.class);
+    	ReflectionTestUtils.setField(testSubject, "session", session);
+		ReflectionTestUtils.setField(testSubject, "client", clientMock);
 	}
 
 	@Test
@@ -57,12 +72,10 @@ public class SdcSchemaFilesCassandraDaoTest {
 		testSubject.init();
 
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
+		CqlSession sessionMock  = Mockito.mock(CqlSession.class);
+        Either<CqlSession, CassandraOperationStatus> value = Either.left(sessionMock);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		testSubject.init();
+		// testSubject.init();
 	}
 
 	@Test
@@ -72,8 +85,8 @@ public class SdcSchemaFilesCassandraDaoTest {
 		testSubject.init();
 
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either
-				.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
+		 Either<CqlSession, CassandraOperationStatus> value =
+                Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
 		try {
 			testSubject.init();
@@ -121,28 +134,39 @@ public class SdcSchemaFilesCassandraDaoTest {
 
 	@Test
 	public void testDeleteAll() throws Exception {
-		CassandraOperationStatus result;
-
-		// default test
-		result = testSubject.deleteAllArtifacts();
-		
-		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
+		 Mockito.when(clientMock.isConnected()).thenReturn(true);
+		Either<CqlSession, CassandraOperationStatus> value = Either.left(session);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		testSubject.init();
-		
+
+		// testSubject.init();
+
+		// Stub session.execute to avoid NPE
+		Mockito.when(session.execute(Mockito.anyString())).thenReturn(Mockito.mock(ResultSet.class));
+
+		// Act
+		CassandraOperationStatus result = testSubject.deleteAllArtifacts();
+			
 		result = testSubject.deleteAllArtifacts();
 	}
 	
 	@Test
 	public void testIsTableEmpty() throws Exception {
-		String tableName = "";
-		Either<Boolean, CassandraOperationStatus> result;
+	Mockito.when(clientMock.isConnected()).thenReturn(true);
+    Mockito.when(clientMock.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+           .thenReturn(Either.left(session));
 
-		// default test
-		result = testSubject.isTableEmpty(tableName);
+    // Mock ResultSet and Row
+    ResultSet mockResultSet = Mockito.mock(ResultSet.class);
+    Row mockRow = Mockito.mock(Row.class);
+
+    Mockito.when(mockRow.getLong("count")).thenReturn(0L); // table is empty
+    Mockito.when(mockResultSet.one()).thenReturn(mockRow);
+   Mockito.when(session.execute(Mockito.any(SimpleStatement.class)))
+       .thenReturn(mockResultSet);
+
+    // testSubject.init();
+
+    Either<Boolean, CassandraOperationStatus> result =
+            testSubject.isTableEmpty("artifacts");
 	}
 }

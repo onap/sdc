@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.Date;
 
 public class EcompOperationalEnvironmentEventTest {
@@ -139,7 +140,7 @@ public class EcompOperationalEnvironmentEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		EcompOperationalEnvironmentEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -149,7 +150,7 @@ public class EcompOperationalEnvironmentEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		EcompOperationalEnvironmentEvent testSubject;
-		Date timestamp = null;
+		Instant timestamp = null;
 
 		// default test
 		testSubject = createTestSubject();

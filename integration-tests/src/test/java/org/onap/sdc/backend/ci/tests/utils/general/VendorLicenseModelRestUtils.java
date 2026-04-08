@@ -81,40 +81,96 @@ public class VendorLicenseModelRestUtils {
         return (restResponse.getErrorCode()==200);
     }
 
-    public static VendorLicenseModel createVendorLicense(User user) throws Exception {
 
-        VendorLicenseModel vendorLicenseModel;
-//		ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor license");
-        String vendorLicenseName = "ciLicense" + OnboardingUtils.getShortUUID();
-        RestResponse vendorLicenseResponse = createVendorLicenseModels_1(vendorLicenseName, user);
-        assertEquals("did not succeed to create vendor license model", 200, vendorLicenseResponse.getErrorCode().intValue());
-        String vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "itemId");
-        String versionId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "version:id");
+public static VendorLicenseModel createVendorLicense(User user) throws Exception {
 
-        RestResponse vendorKeyGroupsResponse = createVendorKeyGroups_2(vendorId, versionId, user);
-        assertEquals("did not succeed to create vendor key groups", 200, vendorKeyGroupsResponse.getErrorCode().intValue());
-        String keyGroupId = ResponseParser.getValueFromJsonResponse(vendorKeyGroupsResponse.getResponse(), "value");
+    System.out.println("[createVendorLicense] Enter method");
+    System.out.println("[createVendorLicense] Input -> userId=" + (user != null ? user.getUserId() : "null"));
 
-        RestResponse vendorEntitlementPool = createVendorEntitlementPool_3(vendorId, versionId, user);
-        assertEquals("did not succeed to create vendor entitlement pool", 200, vendorEntitlementPool.getErrorCode().intValue());
-        String entitlementPoolId = ResponseParser.getValueFromJsonResponse(vendorEntitlementPool.getResponse(), "value");
+    VendorLicenseModel vendorLicenseModel;
 
-        RestResponse vendorLicenseFeatureGroups = createVendorLicenseFeatureGroups_4(vendorId, versionId, keyGroupId, entitlementPoolId, user);
-        assertEquals("did not succeed to create vendor license feature groups", 200, vendorLicenseFeatureGroups.getErrorCode().intValue());
-        String featureGroupId = ResponseParser.getValueFromJsonResponse(vendorLicenseFeatureGroups.getResponse(), "value");
+    // ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor license");
+    String vendorLicenseName = "ciLicense" + OnboardingUtils.getShortUUID();
+    System.out.println("[createVendorLicense] Generated vendorLicenseName=" + vendorLicenseName);
 
-        RestResponse vendorLicenseAgreement = createVendorLicenseAgreement_5(vendorId, versionId, featureGroupId, user);
-        assertEquals("did not succeed to create vendor license agreement", 200, vendorLicenseAgreement.getErrorCode().intValue());
-        String vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(), "value");
+    System.out.println("[createVendorLicense] Calling createVendorLicenseModels_1(...)");
+    RestResponse vendorLicenseResponse = createVendorLicenseModels_1(vendorLicenseName, user);
+    System.out.println("[createVendorLicense] vendorLicenseResponse.code=" + vendorLicenseResponse.getErrorCode()
+            + " bodyLen=" + (vendorLicenseResponse.getResponse() == null ? 0 : vendorLicenseResponse.getResponse().length()));
 
-        vendorLicenseModel = new VendorLicenseModel(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
-        vendorLicenseModel.setVersion(versionId); // Once object created and submitted, his initial version is 1.0
+    assertEquals("did not succeed to create vendor license model", 200, vendorLicenseResponse.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor license model created");
 
-        RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
-        assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
+    String vendorId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "itemId");
+    System.out.println("[createVendorLicense] Parsed vendorId=" + vendorId);
+    String versionId = ResponseParser.getValueFromJsonResponse(vendorLicenseResponse.getResponse(), "version:id");
+    System.out.println("[createVendorLicense] Parsed versionId=" + versionId);
 
-        return vendorLicenseModel;
-    }
+    System.out.println("[createVendorLicense] Calling createVendorKeyGroups_2(...)");
+    RestResponse vendorKeyGroupsResponse = createVendorKeyGroups_2(vendorId, versionId, user);
+    System.out.println("[createVendorLicense] vendorKeyGroupsResponse.code=" + vendorKeyGroupsResponse.getErrorCode()
+            + " bodyLen=" + (vendorKeyGroupsResponse.getResponse() == null ? 0 : vendorKeyGroupsResponse.getResponse().length()));
+
+    assertEquals("did not succeed to create vendor key groups", 200, vendorKeyGroupsResponse.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor key groups created");
+
+    String keyGroupId = ResponseParser.getValueFromJsonResponse(vendorKeyGroupsResponse.getResponse(), "value");
+    System.out.println("[createVendorLicense] Parsed keyGroupId=" + keyGroupId);
+
+    System.out.println("[createVendorLicense] Calling createVendorEntitlementPool_3(...)");
+    RestResponse vendorEntitlementPool = createVendorEntitlementPool_3(vendorId, versionId, user);
+    System.out.println("[createVendorLicense] vendorEntitlementPool.code=" + vendorEntitlementPool.getErrorCode()
+            + " bodyLen=" + (vendorEntitlementPool.getResponse() == null ? 0 : vendorEntitlementPool.getResponse().length()));
+
+    assertEquals("did not succeed to create vendor entitlement pool", 200, vendorEntitlementPool.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor entitlement pool created");
+
+    String entitlementPoolId = ResponseParser.getValueFromJsonResponse(vendorEntitlementPool.getResponse(), "value");
+    System.out.println("[createVendorLicense] Parsed entitlementPoolId=" + entitlementPoolId);
+
+    System.out.println("[createVendorLicense] Calling createVendorLicenseFeatureGroups_4(...)");
+    RestResponse vendorLicenseFeatureGroups = createVendorLicenseFeatureGroups_4(
+            vendorId, versionId, keyGroupId, entitlementPoolId, user);
+    System.out.println("[createVendorLicense] vendorLicenseFeatureGroups.code=" + vendorLicenseFeatureGroups.getErrorCode()
+            + " bodyLen=" + (vendorLicenseFeatureGroups.getResponse() == null ? 0 : vendorLicenseFeatureGroups.getResponse().length()));
+
+    assertEquals("did not succeed to create vendor license feature groups", 200, vendorLicenseFeatureGroups.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor license feature groups created");
+
+    String featureGroupId = ResponseParser.getValueFromJsonResponse(vendorLicenseFeatureGroups.getResponse(), "value");
+    System.out.println("[createVendorLicense] Parsed featureGroupId=" + featureGroupId);
+
+    System.out.println("[createVendorLicense] Calling createVendorLicenseAgreement_5(...)");
+    RestResponse vendorLicenseAgreement = createVendorLicenseAgreement_5(
+            vendorId, versionId, featureGroupId, user);
+    System.out.println("[createVendorLicense] vendorLicenseAgreement.code=" + vendorLicenseAgreement.getErrorCode()
+            + " bodyLen=" + (vendorLicenseAgreement.getResponse() == null ? 0 : vendorLicenseAgreement.getResponse().length()));
+
+    assertEquals("did not succeed to create vendor license agreement", 200, vendorLicenseAgreement.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor license agreement created");
+
+    String vendorLicenseAgreementId = ResponseParser.getValueFromJsonResponse(vendorLicenseAgreement.getResponse(), "value");
+    System.out.println("[createVendorLicense] Parsed vendorLicenseAgreementId=" + vendorLicenseAgreementId);
+
+    vendorLicenseModel = new VendorLicenseModel(vendorId, vendorLicenseName, vendorLicenseAgreementId, featureGroupId);
+    System.out.println("[createVendorLicense] Built VendorLicenseModel: " + vendorLicenseModel);
+
+    vendorLicenseModel.setVersion(versionId); // Once object created and submitted, his initial version is 1.0
+    System.out.println("[createVendorLicense] Set VendorLicenseModel.version=" + versionId);
+
+    System.out.println("[createVendorLicense] Calling submitVendorLicense(...)");
+    RestResponse submitVendorLicense = submitVendorLicense(vendorLicenseModel, user);
+    System.out.println("[createVendorLicense] submitVendorLicense.code=" + submitVendorLicense.getErrorCode()
+            + " bodyLen=" + (submitVendorLicense.getResponse() == null ? 0 : submitVendorLicense.getResponse().length()));
+
+    assertEquals("did not succeed to submit vendor license", 200, submitVendorLicense.getErrorCode().intValue());
+    System.out.println("[createVendorLicense] Assert OK: vendor license submitted");
+
+    System.out.println("[createVendorLicense] Returning VendorLicenseModel: " + vendorLicenseModel);
+    System.out.println("[createVendorLicense] Exit method");
+    return vendorLicenseModel;
+}
+
 
     private static RestResponse actionOnComponent(String vspid, String body, String onboardComponent, User user, String componentVersion) throws Exception {
         Config config = Utils.getConfig();

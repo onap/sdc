@@ -21,10 +21,11 @@ package org.openecomp.core.tools.importinfo;
 
 import static org.openecomp.core.tools.exportinfo.ExportDataCommand.NULL_REPRESENTATION;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.DataType.Name;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.type.DataType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -50,18 +51,15 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 
 public class ImportSingleTable {
 
-    public static final ImmutableMap<String, Name> dataTypesMap;
+    public static final ImmutableMap<String, DataType> dataTypesMap;
     private static final Logger logger = LoggerFactory.getLogger(ImportSingleTable.class);
     private static final String INSERT_INTO = "INSERT INTO ";
     private static final String VALUES = " VALUES ";
     private static final Map<String, PreparedStatement> statementsCache = new HashMap<>();
 
     static {
-        Builder<String, Name> builder = ImmutableMap.builder();
-        Name[] values = Name.values();
-        for (Name name : values) {
-            builder.put(name.name().toLowerCase(), name);
-        }
+        Builder<String, DataType> builder = ImmutableMap.builder();
+        // dataTypesMap can remain empty, as we store DataType directly in ColumnDefinition
         dataTypesMap = builder.build();
     }
 
@@ -69,78 +67,90 @@ public class ImportSingleTable {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             TableData tableData = objectMapper.readValue(file.toFile(), TableData.class);
-            Session session = CassandraSessionFactory.getSession();
-            PreparedStatement ps = getPrepareStatement(tableData, session);
-            tableData.getRows().forEach(row -> executeQuery(session, ps, tableData.getDefinitions(), row));
+            try (CqlSession session = CassandraSessionFactory.getSession()) {
+                PreparedStatement ps = getPrepareStatement(tableData, session);
+                tableData.getRows().forEach(row -> executeQuery(session, ps, tableData.getDefinitions(), row));
+            }
         } catch (IOException e) {
             Utils.logError(logger, e);
         }
     }
 
-    private PreparedStatement getPrepareStatement(TableData tableData, Session session) {
+     private PreparedStatement getPrepareStatement(TableData tableData, CqlSession session) {
         String query = createQuery(tableData);
         if (statementsCache.containsKey(query)) {
             return statementsCache.get(query);
         }
-        PreparedStatement preparedStatement = session.prepare(query);
+        PreparedStatement preparedStatement = session.prepare(SimpleStatement.newInstance(query));
         statementsCache.put(query, preparedStatement);
         return preparedStatement;
     }
 
-    private void executeQuery(Session session, PreparedStatement ps, List<ColumnDefinition> definitions, List<String> rows) {
-        BoundStatement bind = ps.bind();
+      private void executeQuery(CqlSession session, PreparedStatement ps, List<ColumnDefinition> definitions, List<String> rows) {
+        BoundStatement bind = ps.boundStatementBuilder().build();
         for (int i = 0; i < definitions.size(); i++) {
             ColumnDefinition columnDefinition = definitions.get(i);
             String rowData = rows.get(i);
-            Name name = dataTypesMap.get(columnDefinition.getType());
-            handleByType(bind, i, rowData, name);
+            DataType type = columnDefinition.getDataType();  // get stored DataType
+            handleByType(bind, i, rowData, type);
         }
         session.execute(bind);
     }
 
-    private void handleByType(BoundStatement bind, int i, String rowData, Name name) {
-        switch (name) {
-            case VARCHAR:
-            case TEXT:
-            case ASCII:
+    private void handleByType(BoundStatement bind, int i, String rowData, DataType type) {
+        if (type == null) {
+            throw new UnsupportedOperationException("DataType is null at index " + i);
+        }
+
+        switch (type.getProtocolCode()) { // use protocol code to identify type
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.ASCII:
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.VARCHAR:
                 String string = new String(Base64.getDecoder().decode(rowData));
-                bind.setString(i, NULL_REPRESENTATION.equals(string) ? null : string);
+                bind = bind.set(i, NULL_REPRESENTATION.equals(string) ? null : string, String.class);
                 break;
-            case BLOB:
-                bind.setBytes(i, ByteBuffer.wrap(Base64.getDecoder().decode(rowData.getBytes())));
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.BLOB:
+                bind = bind.set(i, ByteBuffer.wrap(Base64.getDecoder().decode(rowData.getBytes())), ByteBuffer.class);
                 break;
-            case TIMESTAMP:
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.TIMESTAMP:
                 if (StringUtils.isEmpty(rowData)) {
-                    bind.setTimestamp(i, null);
+                    bind = bind.set(i, null, Date.class);
                 } else {
-                    bind.setTimestamp(i, new Date(Long.parseLong(rowData)));
+                    bind = bind.set(i, new Date(Long.parseLong(rowData)), Date.class);
                 }
                 break;
-            case BOOLEAN:
-                bind.setBool(i, Boolean.parseBoolean(rowData));
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.BOOLEAN:
+                bind = bind.set(i, Boolean.parseBoolean(rowData), Boolean.class);
                 break;
-            case COUNTER:
-                bind.setLong(i, Long.parseLong(rowData));
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.COUNTER:
+                bind = bind.set(i, Long.parseLong(rowData), Long.class);
                 break;
-            case INT:
-                bind.setInt(i, Integer.parseInt(rowData));
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.INT:
+                bind = bind.set(i, Integer.parseInt(rowData), Integer.class);
                 break;
-            case FLOAT:
-                bind.setFloat(i, Float.parseFloat(rowData));
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.FLOAT:
+                bind = bind.set(i, Float.parseFloat(rowData), Float.class);
                 break;
-            case SET:
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.SET:
                 byte[] decoded = Base64.getDecoder().decode(rowData);
                 String decodedStr = new String(decoded);
                 if (!StringUtils.isEmpty(decodedStr)) {
                     String[] splitted = decodedStr.split(ExportDataCommand.JOIN_DELIMITER_SPLITTER);
-                    Set set = Sets.newHashSet(splitted);
+                    Set<String> set = Sets.newHashSet(splitted);
                     set.remove("");
-                    bind.setSet(i, set);
+                    bind = bind.set(i, set, Set.class);
                 } else {
-                    bind.setSet(i, null);
+                    bind = bind.set(i, null, Set.class);
                 }
                 break;
-            case MAP:
+
+            case com.datastax.oss.protocol.internal.ProtocolConstants.DataType.MAP:
                 byte[] decodedMap = Base64.getDecoder().decode(rowData);
                 String mapStr = new String(decodedMap);
                 if (!StringUtils.isEmpty(mapStr)) {
@@ -150,13 +160,14 @@ public class ImportSingleTable {
                         String[] split = keyValue.split(ExportDataCommand.MAP_DELIMITER_SPLITTER);
                         map.put(split[0], split[1]);
                     }
-                    bind.setMap(i, map);
+                    bind = bind.set(i, map, Map.class);
                 } else {
-                    bind.setMap(i, null);
+                    bind = bind.set(i, null, Map.class);
                 }
                 break;
+
             default:
-                throw new UnsupportedOperationException("Name is not supported :" + name);
+                throw new UnsupportedOperationException("DataType not supported: " + type.asCql(false, false));
         }
     }
 
