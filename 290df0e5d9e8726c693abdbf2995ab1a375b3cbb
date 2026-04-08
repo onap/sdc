@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0104c300_32ce1cee",
+        "filename": ".gitlab-ci.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-08T07:22:41Z",
+      "side": 1,
+      "message": "Please remove the file from this CR",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    }
+  ]
+}
