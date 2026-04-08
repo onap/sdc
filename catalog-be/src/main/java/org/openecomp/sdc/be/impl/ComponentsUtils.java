@@ -201,6 +201,7 @@ public class ComponentsUtils {
 
     public <T> Either<T, ResponseFormat> convertJsonToObjectUsingObjectMapper(String data, User user, Class<T> clazz, AuditingActionEnum actionEnum,
                                                                               ComponentTypeEnum typeEnum) {
+
         T component;
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
@@ -213,6 +214,8 @@ public class ComponentsUtils {
             mapper.registerModule(module);
             mapper.setSerializationInclusion(Include.NON_NULL);
             component = mapper.readValue(data, clazz);
+            System.out.println("[DEBUG] convertJsonToObjectUsingObjectMapper -> Object: " + component);
+            System.out.println("[DEBUG] JSON converted to object: " + component);
             if (component == null) {
                 BeEcompErrorManager.getInstance().logBeInvalidJsonInput(CONVERT_JSON_TO_OBJECT);
                 log.debug("object is null after converting from json");

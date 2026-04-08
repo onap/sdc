@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +34,14 @@ public class CategoryEventTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataTypes.TIMEUUID));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -48,7 +49,7 @@ public class CategoryEventTableDescription implements ITableDescription {
     public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
         for (CEFieldsDescription field : CEFieldsDescription.values()) {
-            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
+            columns.put(field.getName(), new ImmutablePair<>(field.getType(), field.isIndexed()));
         }
         return columns;
     }
@@ -65,21 +66,21 @@ public class CategoryEventTableDescription implements ITableDescription {
 
     enum CEFieldsDescription {
         // @formatter:off
-        ACTION("action", DataType.varchar(), true),
-        STATUS("status", DataType.varchar(), false),
-        DESC("description", DataType.varchar(), false),
-        CATEGORY_NAME("category_Name", DataType.varchar(), false),
-        SUB_CATEGORY_NAME("sub_Category_Name", DataType.varchar(), false),
-        GROUPING_NAME("grouping_name", DataType.varchar(), false),
-        MODIFIER("modifier", DataType.varchar(), false),
-        REQUEST_ID("request_id", DataType.varchar(), false),
-        RESOURCE_TYPE("resource_type", DataType.varchar(), false),
-        SERVICE_INSTANCE_ID("service_instance_id", DataType.varchar(), false);
+        ACTION("action", DataTypes.TEXT, true),
+        STATUS("status", DataTypes.TEXT, false),
+        DESC("description", DataTypes.TEXT, false),
+        CATEGORY_NAME("category_Name", DataTypes.TEXT, false),
+        SUB_CATEGORY_NAME("sub_Category_Name", DataTypes.TEXT, false),
+        GROUPING_NAME("grouping_name", DataTypes.TEXT, false),
+        MODIFIER("modifier", DataTypes.TEXT, false),
+        REQUEST_ID("request_id", DataTypes.TEXT, false),
+        RESOURCE_TYPE("resource_type", DataTypes.TEXT, false),
+        SERVICE_INSTANCE_ID("service_instance_id", DataTypes.TEXT, false);
         // @formatter:on
 
-        private String name;
-        private DataType type;
-        private boolean indexed;
+        private final String name;
+        private final DataType type;
+        private final boolean indexed;
 
         CEFieldsDescription(String name, DataType type, boolean indexed) {
             this.name = name;

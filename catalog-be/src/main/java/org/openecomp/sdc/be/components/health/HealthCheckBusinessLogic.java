@@ -177,18 +177,22 @@ public class HealthCheckBusinessLogic {
         HealthCheckInfo healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, DOWN, null, null);
         try {
             isJanusGraphUp = janusGraphGenericDao.isGraphOpen();
+
         } catch (Exception e) {
             description = "JanusGraph error: " + e.getMessage();
+
             healthCheckInfo.setDescription(description);
             log.error(description);
             return healthCheckInfo;
         }
         if (isJanusGraphUp) {
             description = "OK";
+
             healthCheckInfo.setDescription(description);
             healthCheckInfo.setHealthCheckStatus(HealthCheckInfo.HealthCheckStatus.UP);
         } else {
             description = "JanusGraph graph is down";
+
             healthCheckInfo.setDescription(description);
         }
         return healthCheckInfo;
@@ -202,6 +206,7 @@ public class HealthCheckBusinessLogic {
             isCassandraUp = cassandraHealthCheck.getCassandraStatus();
         } catch (Exception e) {
             description = "Cassandra error: " + e.getMessage();
+
             log.error(description, e);
         }
         if (isCassandraUp) {
@@ -216,6 +221,7 @@ public class HealthCheckBusinessLogic {
     }
 
     private HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
+
         HealthCheckStatus healthCheckStatus;
         String description;
         String version = null;
@@ -223,11 +229,14 @@ public class HealthCheckBusinessLogic {
         final int timeout = 3000;
         if (healthCheckUrl != null) {
             try {
+
                 HttpResponse<String> httpResponse = HttpRequest.get(healthCheckUrl, new HttpClientConfig(new Timeouts(timeout, timeout)));
                 int statusCode = httpResponse.getStatusCode();
+
                 String aggDescription = "";
                 if ((statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) && !componentName.equals(HC_COMPONENT_ECOMP_PORTAL)) {
                     String response = httpResponse.getResponse();
+
                     log.trace("{} Health Check response: {}", componentName, response);
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, Object> healthCheckMap = mapper.readValue(response, new TypeReference<Map<String, Object>>() {

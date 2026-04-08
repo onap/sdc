@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,25 +39,26 @@ public class DistribDeployEventTableDesc extends DistribBaseEventTableDesc {
         for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
             columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
         }
-        //replace the base indexed flag value with the correct one for a given table:
-        columns.put(DistFieldsDescription.STATUS.getName(), new ImmutablePair<>(DistFieldsDescription.STATUS.getType(), true));
-        columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(), new ImmutablePair<>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
+        // replace the base indexed flag value with the correct one for a given table:
+        columns.put(DistFieldsDescription.STATUS.getName(),
+                new ImmutablePair<>(DistFieldsDescription.STATUS.getType(), true));
+        columns.put(DistFieldsDescription.SERVICE_INST_ID.getName(),
+                new ImmutablePair<>(DistFieldsDescription.SERVICE_INST_ID.getType(), true));
     }
 
     @Getter
     @AllArgsConstructor
     enum DSEFieldsDescription {
         // @formatter:off
-        MODIFIER("modifier", DataType.varchar(), false),
-        CURR_VERSION("curr_version", DataType.varchar(), false),
-        DID("did", DataType.varchar(), true),
-        RESOURCE_NAME("resource_name", DataType.varchar(), false),
-        RESOURCE_TYPE("resource_type", DataType.varchar(), false);
+        MODIFIER("modifier", DataTypes.TEXT, false),
+        CURR_VERSION("curr_version", DataTypes.TEXT, false),
+        DID("did", DataTypes.TEXT, true),
+        RESOURCE_NAME("resource_name", DataTypes.TEXT, false),
+        RESOURCE_TYPE("resource_type", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;
         private final DataType type;
         private final boolean indexed;
-
     }
 }

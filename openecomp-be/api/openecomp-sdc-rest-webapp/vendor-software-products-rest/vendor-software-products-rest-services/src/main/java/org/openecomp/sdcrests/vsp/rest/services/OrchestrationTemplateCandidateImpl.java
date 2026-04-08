@@ -130,78 +130,178 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
 
-    @Override
-    public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
-        LOGGER.debug("STARTED -> OrchestrationTemplateCandidateImpl.upload");
-        vspId = ValidationUtils.sanitizeInputString(vspId);
-        versionId = ValidationUtils.sanitizeInputString(versionId);
-        final Response response;
-        VspUploadStatusDto vspUploadStatus = null;
-        try {
-            vspUploadStatus = getVspUploadStatus(vspId, versionId, user);
 
-            if (vspUploadStatus.getStatus() != VspUploadStatus.UPLOADING) {
-                throw vspUploadAlreadyInProgress(vspId, versionId).get();
-            }
-            final byte[] fileToUploadBytes;
-            final DataHandler dataHandler = fileToUpload.getDataHandler();
-            final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-            ArtifactInfo artifactInfo = null;
-            final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
-            if (artifactStorageManager.isEnabled()) {
-                artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler, artifactStorageManager);
-                fileToUploadBytes = artifactInfo.getBytes();
-            } else {
-                fileToUploadBytes = fileToUpload.getObject(byte[].class);
-            }
+@Override
+public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
+    System.out.println("[upload] STARTED -> OrchestrationTemplateCandidateImpl.upload");
+    System.out.println("[upload] Raw inputs -> vspId=" + vspId + ", versionId=" + versionId
+            + ", fileToUpload=" + (fileToUpload != null ? "present" : "null")
+            + ", user=" + user);
 
-            vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user);
-            final var onboardingPackageProcessor =
-                new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
-            final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
-            if (onboardingPackageProcessor.hasErrors()) {
-                orchestrationTemplateCandidateUploadManager
-                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.status(NOT_ACCEPTABLE).entity(buildUploadResponseWithError(errorMessages)).build();
-            }
-            final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
-            if (onboardPackageInfo == null) {
-                final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
-                    new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
-                orchestrationTemplateCandidateUploadManager
-                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.ok(uploadFileResponseDto).build();
-            }
-            final var version = new Version(versionId);
-            final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
-            vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user);
-            response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
-            final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
-            final Map<String, List<ErrorMessage>> errors = entity.getErrors();
-            if (MapUtils.isNotEmpty(errors)) {
-                if (artifactStorageManager.isEnabled()) {
-                    artifactStorageManager.delete(artifactInfo);
-                }
-                orchestrationTemplateCandidateUploadManager
-                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-                return Response.status(NOT_ACCEPTABLE)
-                    .entity(buildUploadResponseWithError(errors.values().stream().flatMap(List::stream).toArray(ErrorMessage[]::new))).build();
-            }
-            if (artifactStorageManager.isEnabled()) {
-                artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
-            }
-            orchestrationTemplateCandidateUploadManager
-                .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.SUCCESS, user);
-        } catch (final Exception ex) {
-            if (vspUploadStatus != null) {
-                orchestrationTemplateCandidateUploadManager
-                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
-            }
-            throw ex;
+    LOGGER.debug("STARTED -> OrchestrationTemplateCandidateImpl.upload");
+    System.out.println("[upload] Logger debug STARTED");
+
+    vspId = ValidationUtils.sanitizeInputString(vspId);
+    System.out.println("[upload] Sanitized vspId=" + vspId);
+
+    versionId = ValidationUtils.sanitizeInputString(versionId);
+    System.out.println("[upload] Sanitized versionId=" + versionId);
+
+    final Response response;
+    System.out.println("[upload] Declared Response variable");
+
+    VspUploadStatusDto vspUploadStatus = null;
+    System.out.println("[upload] vspUploadStatus initialized = null");
+
+    try {
+        System.out.println("[upload] Calling getVspUploadStatus(...)");
+        vspUploadStatus = getVspUploadStatus(vspId, versionId, user);
+        System.out.println("[upload] vspUploadStatus = " + (vspUploadStatus != null ? vspUploadStatus.toString() : "null"));
+
+        System.out.println("[upload] Checking upload status == UPLOADING?");
+        if (vspUploadStatus.getStatus() != VspUploadStatus.UPLOADING) {
+            System.out.println("[upload] Status is NOT UPLOADING -> throwing already-in-progress exception");
+            throw vspUploadAlreadyInProgress(vspId, versionId).get();
         }
-        LOGGER.debug("FINISHED -> OrchestrationTemplateCandidateImpl.upload");
-        return response;
+        System.out.println("[upload] Status is UPLOADING -> continue");
+
+        final byte[] fileToUploadBytes;
+        System.out.println("[upload] Declared fileToUploadBytes");
+
+        final DataHandler dataHandler = fileToUpload.getDataHandler();
+        System.out.println("[upload] Obtained DataHandler=" + dataHandler);
+
+        final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
+        System.out.println("[upload] Sanitized filename=" + filename);
+
+        ArtifactInfo artifactInfo = null;
+        System.out.println("[upload] artifactInfo initialized = null");
+
+        final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
+        System.out.println("[upload] Created ArtifactStorageManager, enabled=" + artifactStorageManager.isEnabled());
+
+        if (artifactStorageManager.isEnabled()) {
+            System.out.println("[upload] Storage enabled -> handleArtifactStorage(...)");
+            artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler, artifactStorageManager);
+            System.out.println("[upload] artifactInfo=" + artifactInfo);
+            fileToUploadBytes = artifactInfo.getBytes();
+            System.out.println("[upload] fileToUploadBytes length=" + (fileToUploadBytes != null ? fileToUploadBytes.length : -1));
+        } else {
+            System.out.println("[upload] Storage disabled -> reading bytes from Attachment");
+            fileToUploadBytes = fileToUpload.getObject(byte[].class);
+            System.out.println("[upload] fileToUploadBytes length=" + (fileToUploadBytes != null ? fileToUploadBytes.length : -1));
+        }
+
+        System.out.println("[upload] Mark upload in VALIDATION state");
+        vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user);
+        System.out.println("[upload] vspUploadStatus (after validation) = " + vspUploadStatus);
+
+        System.out.println("[upload] Construct OnboardingPackageProcessor(...)");
+        final var onboardingPackageProcessor =
+                new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
+        System.out.println("[upload] onboardingPackageProcessor created");
+
+        final ErrorMessage[] errorMessages =
+                onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
+        System.out.println("[upload] Collected errorMessages size=" + errorMessages.length);
+
+        System.out.println("[upload] Check processor.hasErrors()");
+        if (onboardingPackageProcessor.hasErrors()) {
+            System.out.println("[upload] Errors found -> mark upload FINISHED with ERROR");
+            orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+            System.out.println("[upload] Returning NOT_ACCEPTABLE with error response");
+            return Response.status(NOT_ACCEPTABLE)
+                    .entity(buildUploadResponseWithError(errorMessages)).build();
+        }
+        System.out.println("[upload] No errors -> continue");
+
+        System.out.println("[upload] Get onboardPackageInfo");
+        final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+        System.out.println("[upload] onboardPackageInfo is " + (onboardPackageInfo != null ? "present" : "null"));
+
+        if (onboardPackageInfo == null) {
+            System.out.println("[upload] Package info is null -> build error UploadFileResponseDto");
+            final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
+                    new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
+            System.out.println("[upload] Mark upload FINISHED with ERROR");
+            orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+            System.out.println("[upload] Returning OK with error DTO");
+            return Response.ok(uploadFileResponseDto).build();
+        }
+
+        System.out.println("[upload] Continue with processing: build Version & load VSP details");
+        final var version = new Version(versionId);
+        System.out.println("[upload] Version created -> " + version);
+
+        final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+        System.out.println("[upload] Loaded vspDetails -> " + vspDetails);
+
+        System.out.println("[upload] Mark upload in PROCESSING state");
+        vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user);
+        System.out.println("[upload] vspUploadStatus (after processing) = " + vspUploadStatus);
+
+        System.out.println("[upload] processOnboardPackage(...)");
+        response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
+        System.out.println("[upload] processOnboardPackage -> response ="
+                + response);
+        System.out.println("[upload] processOnboardPackage -> response status="
+                + (response != null ? response.getStatus() : -1));
+
+        final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
+        System.out.println("[upload] Cast response entity -> UploadFileResponseDto = " + entity);
+
+        final Map<String, List<ErrorMessage>> errors = entity.getErrors();
+        System.out.println("[upload] entity.getErrors() size=" + (errors != null ? errors.size() : 0));
+
+        if (MapUtils.isNotEmpty(errors)) {
+            System.out.println("[upload] Errors present in response DTO");
+            if (artifactStorageManager.isEnabled()) {
+                System.out.println("[upload] Storage enabled -> delete artifact " + artifactInfo);
+                artifactStorageManager.delete(artifactInfo);
+                System.out.println("[upload] Artifact deleted");
+            }
+            System.out.println("[upload] Mark upload FINISHED with ERROR");
+            orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+            System.out.println("[upload] Returning NOT_ACCEPTABLE with flattened errors");
+            return Response.status(NOT_ACCEPTABLE)
+                    .entity(buildUploadResponseWithError(
+                            errors.values().stream().flatMap(List::stream).toArray(ErrorMessage[]::new)))
+                    .build();
+        }
+
+        System.out.println("[upload] No errors in DTO");
+        if (artifactStorageManager.isEnabled()) {
+            System.out.println("[upload] Storage enabled -> put reduced artifact");
+            artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
+            System.out.println("[upload] Reduced artifact stored");
+        }
+
+        System.out.println("[upload] Mark upload FINISHED with SUCCESS");
+        orchestrationTemplateCandidateUploadManager
+                .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.SUCCESS, user);
+        System.out.println("[upload] Upload finished successfully");
+
+    } catch (final Exception ex) {
+        System.out.println("[upload] Exception caught: " + ex);
+        if (vspUploadStatus != null) {
+            System.out.println("[upload] Mark upload FINISHED with ERROR (from catch)");
+            orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
+        }
+        System.out.println("[upload] Rethrowing exception");
+        throw ex;
     }
+
+    LOGGER.debug("FINISHED -> OrchestrationTemplateCandidateImpl.upload");
+    System.out.println("[upload] Logger debug FINISHED");
+    System.out.println("[upload] FINISHED -> OrchestrationTemplateCandidateImpl.upload");
+    System.out.println("[upload] Returning response status=" + (response != null ? response.getStatus() : -1));
+    return response;
+}
+
 
     private VspUploadStatusDto getVspUploadStatus(final String vspId, final String versionId, final String user) {
         final Optional<VspUploadStatusDto> vspUploadStatusOpt =
@@ -272,16 +372,43 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
     }
 
-    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,
-                                           final ErrorMessage... errorMessages) {
+
+    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo,
+                                        final VspDetails vspDetails,
+                                        final ErrorMessage... errorMessages) {
+        System.out.println("[processOnboardPackage] Enter method");
+        System.out.println("[processOnboardPackage] Inputs -> onboardPackageInfo=" + onboardPackageInfo
+                + ", vspDetails=" + vspDetails
+                + ", errorMessages.length=" + (errorMessages == null ? 0 : errorMessages.length));
+
+        System.out.println("[processOnboardPackage] Calling candidateManager.upload(...)");
         final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
-        final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
-            .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
-        if (errorMessages.length > 0) {
+        System.out.println("[processOnboardPackage] Received UploadFileResponse=" + uploadFileResponse);
+
+        System.out.println("[processOnboardPackage] Mapping UploadFileResponse -> UploadFileResponseDto");
+        final UploadFileResponseDto uploadFileResponseDto =
+                new MapUploadFileResponseToUploadFileResponseDto()
+                        .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+        System.out.println("[processOnboardPackage] Mapped UploadFileResponseDto=" + uploadFileResponseDto);
+
+        System.out.println("[processOnboardPackage] Checking errorMessages.length > 0");
+        if (errorMessages != null && errorMessages.length > 0) {
+            System.out.println("[processOnboardPackage] Errors present -> setErrors on DTO");
             uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
+            System.out.println("[processOnboardPackage] DTO errors set: "
+                    + (uploadFileResponseDto.getErrors() != null ? uploadFileResponseDto.getErrors().size() : 0));
+        } else {
+            System.out.println("[processOnboardPackage] No errors to set on DTO");
         }
-        return Response.ok(uploadFileResponseDto).build();
+
+        System.out.println("[processOnboardPackage] Building Response.ok(dto).build()");
+        final Response response = Response.ok(uploadFileResponseDto).build();
+        System.out.println("[processOnboardPackage] Built Response with status=" + response.getStatus());
+
+        System.out.println("[processOnboardPackage] Exit method");
+        return response;
     }
+
 
     private Map<String, List<ErrorMessage>> getErrorMap(ErrorMessage[] errorMessages) {
         final Map<String, List<ErrorMessage>> errorMap = new HashMap<>();

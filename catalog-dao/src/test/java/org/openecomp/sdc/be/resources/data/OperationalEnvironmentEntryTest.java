@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data;
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class OperationalEnvironmentEntryTest {
 	@Test
 	public void testGetLastModified() throws Exception {
 		OperationalEnvironmentEntry testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -45,7 +46,7 @@ public class OperationalEnvironmentEntryTest {
 	@Test
 	public void testSetLastModified() throws Exception {
 		OperationalEnvironmentEntry testSubject;
-		Date lastModified = null;
+		Instant lastModified = null;
 
 		// default test
 		testSubject = createTestSubject();

@@ -22,8 +22,10 @@ import static org.openecomp.sdc.itempermissions.notifications.NotificationConsta
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_ITEM;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +45,8 @@ import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.notification.services.SubscriptionService;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.types.Item;
+
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
  * Created by ayalaben on 6/18/2017.
@@ -66,8 +70,11 @@ public class PermissionsManagerImpl implements PermissionsManager {
 
     @Override
     public Collection<ItemPermissionsEntity> listItemPermissions(String itemId) {
-        return permissionsServices.listItemPermissions(itemId);
-    }
+    PagingIterable<ItemPermissionsEntity> pagingIterable = permissionsServices.listItemPermissions(itemId);
+    List<ItemPermissionsEntity> result = new ArrayList<>();
+    pagingIterable.forEach(result::add); // convert PagingIterable to List
+    return result;
+}
 
     @Override
     public Set<String> listUserPermittedItems(String userId, String permission) {

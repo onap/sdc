@@ -27,6 +27,22 @@ import org.junit.Test;
 public class EntitlementPoolEntityTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(EntitlementPoolEntity.class, hasValidGettersAndSettersExcluding("SPLimits", "entityType", "firstClassCitizenId", "entityPartNumber", "isoFormatExpiryDate", "isoFormatStartDate", "operationalScopeForArtifact", "thresholdForArtifact", "vendorLimits", "versionForArtifact"));
+        assertThat(
+    EntitlementPoolEntity.class,
+    hasValidGettersAndSettersExcluding(
+        "SPLimits",
+        "entityType",
+        "firstClassCitizenId",
+        "entityPartNumber",
+        "isoFormatExpiryDate",
+        "isoFormatStartDate",
+        "operationalScope",  
+        "operationalScopeForArtifact",
+        "thresholdForArtifact",
+        "vendorLimits",
+        "versionForArtifact"
+    )
+);
+
     }
 }

@@ -49,9 +49,16 @@ tar -xvf /var/tmp/normatives.tar.gz
 start_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$start_time] Starting sdcinit..."
 
+echo "[DEBUG] param=$param"
+echo "[DEBUG] basic_auth_config=$basic_auth_config"
+echo "[DEBUG] tls_cert=$tls_cert"
+echo "[DEBUG] tls_key=$tls_key"
+echo "[DEBUG] tls_key_pw=$tls_key_pw"
+echo "[DEBUG] ca_cert=$ca_cert"
+
 # Run sdcinit command with the constructed parameters
 cd /var/tmp/normatives/import/tosca || exit 1
-sdcinit $param $basic_auth_config $tls_cert $tls_key $tls_key_pw $ca_cert > "/home/onap/logs/init.log" 2>&1
+sdcinit $param $basic_auth_config $tls_cert $tls_key $tls_key_pw $ca_cert 2>&1 | tee -a $LOG_FILE
 
 end_time=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$end_time] Done sdcinit."
@@ -62,4 +69,3 @@ elapsed=$((end_ts - start_ts))
 echo "Elapsed time: $elapsed seconds"
 
 echo "SDC initialization Done. Logs can be found at ${ONAP_LOG}/init.log"
-

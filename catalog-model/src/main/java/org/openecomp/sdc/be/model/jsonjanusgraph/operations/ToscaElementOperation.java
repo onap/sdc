@@ -1322,6 +1322,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
         List<T> result = new ArrayList<>();
         if (listOfComponents.isLeft()) {
             List<GraphVertex> highestAndAllCertified = listOfComponents.left().value();
+           if (highestAndAllCertified == null) {
+} else {
+    highestAndAllCertified.forEach(v -> {
+});
+}
             if (highestAndAllCertified != null && !highestAndAllCertified.isEmpty()) {
                 for (GraphVertex vertexComponent : highestAndAllCertified) {
                     Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, componentType,

@@ -19,12 +19,10 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.*;
+import com.datastax.oss.driver.api.core.uuid.Uuids;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -36,31 +34,36 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 @Getter
 @Setter
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_GET_UEB_CLUSTER_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.DISTRIBUTION_GET_UEB_CLUSTER_EVENT_TYPE)
 public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
 
     @PartitionKey
-    protected UUID timebaseduuid;
+    private UUID timebaseduuid;
+
     @ClusteringColumn
     @Setter(AccessLevel.NONE)
-    protected Date timestamp1;
-    @Column(name = "request_id")
-    protected String requestId;
-    @Column(name = "service_instance_id")
-    protected String serviceInstanceId;
-    @Column
-    protected String action;
-    @Column
-    protected String status;
-    @Column(name = "description")
-    protected String desc;
-    @Column(name = "consumer_id")
+    private Instant timestamp1;
+
+    @CqlName("request_id")
+    private String requestId;
+
+    @CqlName("service_instance_id")
+    private String serviceInstanceId;
+
+    private String action;
+    private String status;
+
+    @CqlName("description")
+    private String desc;
+
+    @CqlName("consumer_id")
     private String consumerId;
 
-    //Required to be public as it is used by Cassandra driver on get operation
+    // Required by the driver
     public AuditingGetUebClusterEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        this.timestamp1 = Instant.now();
+        this.timebaseduuid = Uuids.timeBased();
     }
 
     public AuditingGetUebClusterEvent(String action, CommonAuditData commonAuditData, String consumerId) {
@@ -77,7 +80,7 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp) {
+    public void setTimestamp1(Instant timestamp) {
         this.timestamp1 = timestamp;
     }
 
@@ -89,15 +92,21 @@ public class AuditingGetUebClusterEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_STATUS.getDisplayName(), getStatus());
         fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormatPattern);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), sdf.format(Date.from(timestamp1)));
     }
 
     @Override
     public String toString() {
-        return "AuditingGetUebClusterEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", requestId=" + requestId
-            + ", serviceInstanceId=" + serviceInstanceId + ", action=" + action + ", status=" + status + ", desc=" + desc + ", consumerId="
-            + consumerId + "]";
+        return "AuditingGetUebClusterEvent [timebaseduuid=" + timebaseduuid +
+                ", timestamp1=" + timestamp1 +
+                ", requestId=" + requestId +
+                ", serviceInstanceId=" + serviceInstanceId +
+                ", action=" + action +
+                ", status=" + status +
+                ", desc=" + desc +
+                ", consumerId=" + consumerId + "]";
     }
 }

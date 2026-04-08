@@ -142,7 +142,12 @@ class ResourceImportManagerTest {
     public void beforeTest() {
         importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler, janusGraphDao);
         importManager.setAuditingManager(auditingManager);
-        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any())).thenAnswer(invocation -> {
+            String toscaName = invocation.getArgument(0);
+            Resource parent = new Resource();
+            parent.setName(toscaName);
+            return Either.left(parent);
+        });
         when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(anyString(), any())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);

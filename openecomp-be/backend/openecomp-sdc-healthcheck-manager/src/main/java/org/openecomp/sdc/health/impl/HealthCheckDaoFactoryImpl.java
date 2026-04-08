@@ -19,15 +19,25 @@
  */
 package org.openecomp.sdc.health.impl;
 
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.sdc.health.HealthCheckDao;
 import org.openecomp.sdc.health.HealthCheckDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
+
 public class HealthCheckDaoFactoryImpl extends HealthCheckDaoFactory {
 
-    private static final HealthCheckDao INSTANCE = new HealthCheckDaoImpl();
+    private static HealthCheckDao INSTANCE;
 
-    @Override
-    public HealthCheckDao createInterface() {
+     @Override
+    public synchronized HealthCheckDao createInterface() {
+
+        if (INSTANCE == null) {
+            CqlSession session = CassandraSessionFactory.getSession();
+            INSTANCE = new HealthCheckDaoImpl(session);
+        }
+
         return INSTANCE;
     }
 }

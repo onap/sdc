@@ -15,11 +15,11 @@
  */
 package org.openecomp.core.model.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -32,21 +32,21 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_enriched_service_artifact")
+@Entity
+@CqlName("vsp_enriched_service_artifact")
 public class EnrichedServiceArtifactEntity implements ServiceElementEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product Service artifact";
 
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     public String id;
     @PartitionKey(value = 1)
-    @Frozen
     public Version version;
     @ClusteringColumn
-    @Column(name = "name")
+    @CqlName("name")
     public String name;
-    @Column(name = "content_data")
+    @CqlName("content_data")
     public ByteBuffer contentData;
 
     /**

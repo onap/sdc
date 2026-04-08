@@ -31,6 +31,7 @@ import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCan
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.uploadAlreadyFinished;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.vspUploadAlreadyInProgress;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
  * Manages the package upload process status.
@@ -97,17 +99,17 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         final VspUploadStatusRecord vspUploadStatusRecord;
         startUploadLock.lock();
         try {
-            final List<VspUploadStatusRecord> uploadInProgressList = vspUploadStatusRecordDao.findAllInProgress(vspId, vspVersionId);
-            if (!uploadInProgressList.isEmpty()) {
+            final PagingIterable<VspUploadStatusRecord> uploadInProgressList = vspUploadStatusRecordDao.findAllInProgress(vspId, vspVersionId);
+            if (uploadInProgressList.iterator().hasNext()) {
                 throw vspUploadAlreadyInProgress(vspId, vspVersionId).get();
             }
 
             vspUploadStatusRecord = new VspUploadStatusRecord();
-            vspUploadStatusRecord.setStatus(VspUploadStatus.UPLOADING);
+            vspUploadStatusRecord.setStatusEnum(VspUploadStatus.UPLOADING);
             vspUploadStatusRecord.setVspId(vspId);
             vspUploadStatusRecord.setVspVersionId(vspVersionId);
             vspUploadStatusRecord.setLockId(UUID.randomUUID());
-            vspUploadStatusRecord.setCreated(new Date());
+            vspUploadStatusRecord.setCreated(Instant.now());
 
             vspUploadStatusRecordDao.create(vspUploadStatusRecord);
             LOGGER.debug("Upload lock '{}' created for VSP id '{}', version '{}'", vspUploadStatusRecord.getLockId(), vspId, vspVersionId);
@@ -145,7 +147,7 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
             }
 
             final VspUploadStatusRecord vspUploadStatusRecord = vspUploadStatusRecordOptional.get();
-            final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatus();
+            final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatusEnum();
             if (currentStatus == status) {
                 throw alreadyInStatusBeingUpdated(vspId, vspVersionId, status).get();
             }
@@ -156,9 +158,9 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
     }
 
     private VspUploadStatusDto updateStatus(final VspUploadStatusRecord vspUploadStatusRecord, final VspUploadStatus status) {
-        final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatus();
-        vspUploadStatusRecord.setStatus(status);
-        vspUploadStatusRecord.setUpdated(new Date());
+        final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatusEnum();
+        vspUploadStatusRecord.setStatusEnum(status);
+        vspUploadStatusRecord.setUpdated(Instant.now());
 
         final String vspId = vspUploadStatusRecord.getVspId();
         final String vspVersionId = vspUploadStatusRecord.getVspVersionId();
@@ -191,8 +193,8 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         }
         LOGGER.debug("Finishing the upload for VSP id '{}', version '{}', lock '{}', triggered by user '{}'",
             vspUploadStatusRecord.getVspId(), vspUploadStatusRecord.getVspVersionId(), vspUploadStatusRecord.getLockId(), user);
-        vspUploadStatusRecord.setStatus(completionStatus);
-        vspUploadStatusRecord.setUpdated(new Date());
+        vspUploadStatusRecord.setStatusEnum(completionStatus);
+        vspUploadStatusRecord.setUpdated(Instant.now());
         vspUploadStatusRecord.setIsComplete(true);
 
         try {

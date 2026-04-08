@@ -22,6 +22,7 @@ package org.openecomp.sdc.action.types;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.Date;
 import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 
@@ -35,7 +36,7 @@ public class ActionArtifact {
     private String artifactCategory;
     private String artifactDescription;
     private String artifactProtection;
-    private Date timestamp;
+    private Instant timestamp;
     private byte[] artifact;
 
     public String getArtifactUuId() {
@@ -94,11 +95,11 @@ public class ActionArtifact {
         this.artifactProtection = artifactProtection;
     }
 
-    public Date getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 

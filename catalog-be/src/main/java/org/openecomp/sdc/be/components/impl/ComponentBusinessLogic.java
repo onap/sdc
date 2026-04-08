@@ -707,16 +707,28 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(final T component, final String toscaType) {
         final Resource genericTypeResource = fetchDerivedFromGenericType(component, toscaType);
+        System.out.println("[DEBUG] Fetched derived generic type: " + 
+                       (genericTypeResource != null ? genericTypeResource.getName() : "null") +
+                       " for component: " + component.getName());
         component.setDerivedFromGenericInfo(genericTypeResource);
+        System.out.println("[DEBUG] Set derivedFromGenericInfo on component: " + component.getName());
         return genericTypeResource;
     }
 
     public <T extends Component> Resource fetchDerivedFromGenericType(final T component, final String toscaType) {
+       
         final Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component, toscaType);
+        
         if (genericTypeEither.isRight()) {
+            System.out.println("[DEBUG] Failed to fetch latest generic type for component: " + component.getName() +
+                           ", type: " + component.assetType() +
+                           ", toscaType: " + toscaType +
+                           ", response: " + genericTypeEither.right().value());
             log.debug("Failed to fetch latest generic type for component {} of type {}", component.getName(), component.assetType());
             throw new ByActionStatusComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
         }
+        System.out.println("[DEBUG] Successfully fetched generic type for component: " + component.getName() +
+                       ", generic type name: " + genericTypeEither.left().value().getName());
         return genericTypeEither.left().value();
     }
 

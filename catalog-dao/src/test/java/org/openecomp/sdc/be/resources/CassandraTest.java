@@ -20,51 +20,69 @@
 
 package org.openecomp.sdc.be.resources;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
+import java.net.InetSocketAddress;
+
 import org.openecomp.sdc.be.dao.Account;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+
 public class CassandraTest {
 	private static Logger log = Logger.getLogger(CassandraTest.class.getName());
-	private Cluster cluster;
+	private CqlSession session;
 
 	// #\@Test
 	public void testCrud() {
 		String node = "mtanjv9sdcg44";
-
-		cluster = Cluster.builder().addContactPoint(node).build();
+		session = CqlSession.builder()
+                .addContactPoint(new InetSocketAddress(node, 9042))
+                .withLocalDatacenter("datacenter1") // required in v4
+                .build();
 
 		// Query
 		String query = "CREATE KEYSPACE IF NOT EXISTS dstest WITH replication "
 				+ "= {'class':'SimpleStrategy', 'replication_factor':1};";
 
-		String queryTable = "CREATE TABLE IF NOT EXISTS accounts(email varchar  PRIMARY KEY, name varchar);";
+		
 
-		Session session = cluster.connect();
+		
 		// Executing the query
 		session.execute(query);
 		// //using the KeySpace
 		session.execute("USE dstest");
+		String queryTable = "CREATE TABLE IF NOT EXISTS accounts(email varchar  PRIMARY KEY, name varchar);";
 		session.execute(queryTable);
 
-		Mapper<Account> mapper = new MappingManager(session).mapper(Account.class);
+	
 		Account account = new Account("John Doe", "jd@example.com");
-		mapper.save(account);
-
-		Account whose = mapper.get("jd@example.com");
-		log.debug("Account name: {}", whose.getName());
+		session.execute("INSERT INTO accounts (email, name) VALUES (?, ?)",
+                account.getEmail(), account.getName());
+		ResultSet rs = session.execute("SELECT email, name FROM accounts WHERE email = ?", account.getEmail());
+        Row row = rs.one();
+        if (row != null) {
+            log.debug("Account name: {}", row.getString("name"));
+        }
 
 		account.setName("Samanta Smit");
-		mapper.save(account);
-		whose = mapper.get("jd@example.com");
-		log.debug("Account name: {}", whose.getName());
+		session.execute("UPDATE accounts SET name = ? WHERE email = ?", account.getName(), account.getEmail());
+		
+		rs = session.execute("SELECT email, name FROM accounts WHERE email = ?", account.getEmail());
+        row = rs.one();
+        if (row != null) {
+            log.debug("Updated account name: {}", row.getString("name"));
+        }
 
-		mapper.delete(account);
-		whose = mapper.get("jd@example.com");
 
-		cluster.close();
+		session.execute("DELETE FROM accounts WHERE email = ?", account.getEmail());
+
+		rs = session.execute("SELECT email, name FROM accounts WHERE email = ?", account.getEmail());
+        row = rs.one();
+        if (row == null) {
+            log.debug("Account successfully deleted");
+        }
+
+        session.close();
 	}
 }

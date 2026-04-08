@@ -19,13 +19,12 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
+
 import fj.data.Either;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
@@ -49,11 +48,11 @@ public class OperationalEnvironmentDao extends CassandraDao {
     public void init() {
         String keyspace = AuditingTypesConstants.REPO_KEYSPACE;
         if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
+            Either<CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
             if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                operationalEnvironmentsAccessor = manager.createAccessor(OperationalEnvironmentsAccessor.class);
+                session = result.left().value();
+                OperationalEnvironmentDaoMapper operationalEnvironmentDaoMapper = new OperationalEnvironmentDaoMapperBuilder(session).build();
+                operationalEnvironmentsAccessor = operationalEnvironmentDaoMapper.operationalEnvironmentsAccessor(keyspace);
                 logger.debug("** OperationalEnvironmentDao created");
             } else {
                 logger.error(EcompLoggerErrorCode.DATA_ERROR, "OperationalEnvironmentDao", "OperationalEnvironmentDao",
@@ -70,15 +69,15 @@ public class OperationalEnvironmentDao extends CassandraDao {
     }
 
     public CassandraOperationStatus save(OperationalEnvironmentEntry operationalEnvironmentEntry) {
-        return client.save(operationalEnvironmentEntry, OperationalEnvironmentEntry.class, manager);
+        return client.save(operationalEnvironmentEntry, OperationalEnvironmentEntry.class);
     }
 
     public Either<OperationalEnvironmentEntry, CassandraOperationStatus> get(String envId) {
-        return client.getById(envId, OperationalEnvironmentEntry.class, manager);
+        return client.getById(envId, OperationalEnvironmentEntry.class);
     }
 
     public CassandraOperationStatus delete(String envId) {
-        return client.delete(envId, OperationalEnvironmentEntry.class, manager);
+        return client.delete(envId, OperationalEnvironmentEntry.class);
     }
 
     public CassandraOperationStatus deleteAll() {
@@ -100,7 +99,7 @@ public class OperationalEnvironmentDao extends CassandraDao {
 
     //accessors
     public Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> getByEnvironmentsStatus(EnvironmentStatusEnum status) {
-        Result<OperationalEnvironmentEntry> operationalEnvironments = operationalEnvironmentsAccessor.getByEnvironmentsStatus(status.getName());
+        PagingIterable <OperationalEnvironmentEntry> operationalEnvironments = operationalEnvironmentsAccessor.getByEnvironmentsStatus(status.getName());
         if (operationalEnvironments == null) {
             return Either.right(CassandraOperationStatus.NOT_FOUND);
         }

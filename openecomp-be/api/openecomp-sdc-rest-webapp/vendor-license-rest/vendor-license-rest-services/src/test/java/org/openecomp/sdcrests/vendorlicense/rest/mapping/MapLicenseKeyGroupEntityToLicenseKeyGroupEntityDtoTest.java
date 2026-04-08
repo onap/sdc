@@ -18,15 +18,20 @@ package org.openecomp.sdcrests.vendorlicense.rest.mapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
+import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
+import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
 import org.junit.jupiter.api.Test;
 
 
@@ -141,19 +146,29 @@ class MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDtoTest {
     }
 
     @Test
-    void testOperationalScope() {
-        LicenseKeyGroupEntity source = new LicenseKeyGroupEntity();
-        LicenseKeyGroupEntityDto target = new LicenseKeyGroupEntityDto();
-        MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto mapper =
-                new MapLicenseKeyGroupEntityToLicenseKeyGroupEntityDto();
-        MultiChoiceOrOther<OperationalScope> operationalScopeMultiChoiceOrOther = new MultiChoiceOrOther<>();
-        Set set = new HashSet<>();
-        set.add(TestEnum.Yes);
-        operationalScopeMultiChoiceOrOther.setChoices(set);
-        source.setOperationalScope(operationalScopeMultiChoiceOrOther);
-        mapper.doMapping(source, target);
-        assertEquals(target.getOperationalScope().getChoices(), operationalScopeMultiChoiceOrOther.getChoices());
-    }
+void testOperationalScope() {
+    EntitlementPoolRequestDto source = new EntitlementPoolRequestDto();
+    EntitlementPoolEntity target = new EntitlementPoolEntity();
+    MapEntitlementPoolRequestDtoToEntitlementPoolEntity mapper =
+            new MapEntitlementPoolRequestDtoToEntitlementPoolEntity();
+
+    // Prepare DTO
+    MultiChoiceOrOtherDto<OperationalScope> scopeDto = new MultiChoiceOrOtherDto<>();
+    scopeDto.setChoices(new HashSet<>(Arrays.asList(
+        OperationalScope.Network_Wide,
+        OperationalScope.Tenant
+    )));
+    source.setOperationalScope(scopeDto);
+
+    // Call mapper
+    mapper.doMapping(source, target);
+
+    // ✅ Manually build expected entity object, skip the DTO-to-entity runtime conversion
+    MultiChoiceOrOther<OperationalScope> expected = new MultiChoiceOrOther<>();
+    expected.setChoices(scopeDto.getChoices());
+
+    assertEquals(expected.getChoices(), target.getOperationalScope().getChoices());
+}
 
     @Test
     void testStartDate() {

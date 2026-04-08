@@ -36,6 +36,7 @@ import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -118,8 +119,8 @@ public class RecoveryThreadManagerTest extends BeConfDependentTest {
 
         OperationalEnvironmentEntry mockInProgressNonStaleEntry = Mockito.mock(OperationalEnvironmentEntry.class);
         OperationalEnvironmentEntry mockInProgressStaleEntry = Mockito.mock(OperationalEnvironmentEntry.class);
-        doReturn(new Date(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 /2)).when(mockInProgressNonStaleEntry).getLastModified();
-        doReturn(new Date(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 * 2)).when(mockInProgressStaleEntry).getLastModified();
+        doReturn(Instant.ofEpochMilli(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 /2)).when(mockInProgressNonStaleEntry).getLastModified();
+        doReturn(Instant.ofEpochMilli(System.currentTimeMillis() - recoveryThreadManager.allowedTimeBeforeStaleSec * 1000 * 2)).when(mockInProgressStaleEntry).getLastModified();
         Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> inProgressList = Either.left(Arrays.asList(mockInProgressNonStaleEntry, mockInProgressStaleEntry));
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.IN_PROGRESS)).thenReturn(inProgressList);
         fixEnvironmentTask.run();

@@ -19,6 +19,9 @@
  */
 package org.openecomp.sdc.be.auditing.impl;
 
+import java.sql.Date;
+import java.time.Instant;
+
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.AuthEvent;
@@ -35,7 +38,7 @@ public class AuditAuthRequestEventFactory extends AuditBaseEventFactory {
     }
 
     public AuditAuthRequestEventFactory(CommonAuditData commonFields, String authUser, String authUrl, String realm, String authStatus,
-                                        String timestamp) {
+                                        Instant timestamp) {
         this(commonFields, authUser, authUrl, realm, authStatus);
         this.event.setTimestamp1(timestamp);
     }

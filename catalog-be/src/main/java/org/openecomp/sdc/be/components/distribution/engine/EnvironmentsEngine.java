@@ -32,6 +32,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
+
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -399,7 +401,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     }
 
     private void saveOpEnvEntry(Wrapper<Boolean> errorWrapper, OperationalEnvironmentEntry entry) {
-        entry.setLastModified(new Date(System.currentTimeMillis()));
+        entry.setLastModified(Instant.now());
         CassandraOperationStatus saveStaus = operationalEnvironmentDao.save(entry);
         if (saveStaus != CassandraOperationStatus.OK) {
             errorWrapper.setInnerElement(false);

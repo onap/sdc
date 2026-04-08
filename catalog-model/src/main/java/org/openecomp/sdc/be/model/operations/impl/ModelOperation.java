@@ -53,7 +53,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -107,12 +107,17 @@ public class ModelOperation {
     }
 
     public Model createModel(final Model model, final boolean inTransaction) {
+        System.out.println("[MODEL][CREATE] Entered createModel() with model: " + model);
         Model result = null;
         final var modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()), model.getModelType());
+        System.out.println("[MODEL][CREATE] Created modelData: " + modelData);
         try {
             final Either<ModelData, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(modelData, ModelData.class);
+            System.out.println("[MODEL][CREATE] Result from janusGraphGenericDao.createNode: " + createNode);
             if (createNode.isRight()) {
                 final var janusGraphOperationStatus = createNode.right().value();
+                System.out.println("[MODEL][CREATE][ERROR] Problem while creating model, reason: " + janusGraphOperationStatus);
+
                 log.error(EcompLoggerErrorCode.DATA_ERROR, ModelOperation.class.getName(), "Problem while creating model, reason {}",
                     janusGraphOperationStatus);
                 if (janusGraphOperationStatus == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
@@ -121,8 +126,13 @@ public class ModelOperation {
                 throw new OperationException(ActionStatus.GENERAL_ERROR,
                     String.format("Failed to create model %s on JanusGraph with %s error", model, janusGraphOperationStatus));
             }
+            System.out.println("[MODEL][CREATE] Node created successfully: " + createNode.left().value());
+
             addDerivedFromRelation(model);
+            System.out.println("[MODEL][CREATE] Added derivedFrom relation");
             result = new Model(createNode.left().value().getName(), model.getDerivedFrom(), model.getModelType());
+            System.out.println("[MODEL][CREATE] Returning result: " + result);
+
             return result;
         } finally {
             if (!inTransaction) {
@@ -242,28 +252,30 @@ public class ModelOperation {
         return findModelsByCriteria(propertyCriteria);
     }
 
-    private List<Model> findModelsByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
-        final List<GraphVertex> modelVerticesByCriteria = findModelVerticesByCriteria(propertyCriteria);
-        if (modelVerticesByCriteria.isEmpty()) {
-            return Collections.emptyList();
-        }
+   private List<Model> findModelsByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
+    final List<GraphVertex> modelVerticesByCriteria = findModelVerticesByCriteria(propertyCriteria);
 
-        return modelVerticesByCriteria.stream().map(this::convertToModel).collect(Collectors.toList());
+    if (modelVerticesByCriteria.isEmpty()) {
+        return Collections.emptyList();
     }
+
+    return modelVerticesByCriteria.stream().map(this::convertToModel).collect(Collectors.toList());
+}
+
 
     private List<GraphVertex> findModelVerticesByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
-        final Either<List<GraphVertex>, JanusGraphOperationStatus> result = janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, propertyCriteria);
-        if (result.isRight()) {
-            final var janusGraphOperationStatus = result.right().value();
-            if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
-                return Collections.emptyList();
-            }
-            final var operationException = ModelOperationExceptionSupplier.failedToRetrieveModels(janusGraphOperationStatus).get();
-            log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(), operationException.getMessage());
-            throw operationException;
+    final Either<List<GraphVertex>, JanusGraphOperationStatus> result =
+        janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, propertyCriteria);
+
+    if (result.isRight()) {
+        final var status = result.right().value();
+        if (status == JanusGraphOperationStatus.NOT_FOUND) {
+            return Collections.emptyList();
         }
-        return result.left().value();
+        throw ModelOperationExceptionSupplier.failedToRetrieveModels(status).get();
     }
+    return result.left().value();
+}
 
     private Model convertToModel(final GraphVertex modelGraphVertex) {
         final String modelName = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME);

@@ -19,26 +19,24 @@
  */
 package org.openecomp.sdc.versioning.dao.impl;
 
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.*;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
+
+import java.util.*;
 
 public class VersionInfoDeletedDaoImpl extends CassandraBaseDao<VersionInfoDeletedEntity> implements VersionInfoDeletedDao {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static Mapper<VersionInfoDeletedEntity> mapper = noSqlDb.getMappingManager().mapper(VersionInfoDeletedEntity.class);
-    private static VersionInfoAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
+    private final CqlSession session;
 
-    @Override
-    protected Mapper<VersionInfoDeletedEntity> getMapper() {
-        return mapper;
+    public VersionInfoDeletedDaoImpl(CqlSession session) {
+        super(session);
+        this.session = session;
     }
 
     @Override
@@ -48,13 +46,101 @@ public class VersionInfoDeletedDaoImpl extends CassandraBaseDao<VersionInfoDelet
 
     @Override
     public Collection<VersionInfoDeletedEntity> list(VersionInfoDeletedEntity entity) {
-        return accessor.getAll(entity.getEntityType()).all();
+        return getAll(entity.getEntityType());
     }
 
-    @Accessor
-    interface VersionInfoAccessor {
 
-        @Query("select * from version_info_deleted where entity_type=?")
-        Result<VersionInfoDeletedEntity> getAll(String entityType);
+    public List<VersionInfoDeletedEntity> getAll(String entityType) {
+        String query = "SELECT * FROM version_info_deleted WHERE entity_type = ?";
+        PreparedStatement ps = session.prepare(query);
+        ResultSet rs = session.execute(ps.bind(entityType));
+
+        List<VersionInfoDeletedEntity> results = new ArrayList<>();
+        for (Row row : rs) {
+            results.add(mapRow(row));
+        }
+        return results;
+    }
+
+    public Optional<VersionInfoDeletedEntity> get(String entityType, String entityId) {
+        String query = "SELECT * FROM version_info_deleted WHERE entity_type = ? AND entity_id = ?";
+        PreparedStatement ps = session.prepare(query);
+        Row row = session.execute(ps.bind(entityType, entityId)).one();
+        return Optional.ofNullable(mapRow(row));
+    }
+
+    public void create(VersionInfoDeletedEntity entity) {
+        String query = "INSERT INTO version_info_deleted " +
+                "(entity_type, entity_id, active_version, status, candidate, viewable_versions, latest_final_version) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = session.prepare(query);
+        session.execute(ps.bind(
+                entity.getEntityType(),
+                entity.getEntityId(),
+                entity.getActiveVersion(),
+                entity.getStatus(),
+                entity.getCandidate(),
+                entity.getViewableVersions(),
+                entity.getLatestFinalVersion()
+        ));
+    }
+
+    public void update(VersionInfoDeletedEntity entity) {
+        // INSERT in Cassandra = UPSERT
+        create(entity);
+    }
+
+    public void delete(String entityType, String entityId) {
+        String query = "DELETE FROM version_info_deleted WHERE entity_type = ? AND entity_id = ?";
+        PreparedStatement ps = session.prepare(query);
+        session.execute(ps.bind(entityType, entityId));
+    }
+
+    @Override
+    protected String getTableName() {
+        return "version_info_deleted";
+    }
+
+    @Override
+    protected String[] getColumns(VersionInfoDeletedEntity entity) {
+        return new String[]{
+                "entity_type",
+                "entity_id",
+                "active_version",
+                "status",
+                "candidate",
+                "viewable_versions",
+                "latest_final_version"
+        };
+    }
+
+    @Override
+    protected Object[] getValues(VersionInfoDeletedEntity entity) {
+        return new Object[]{
+                entity.getEntityType(),
+                entity.getEntityId(),
+                entity.getActiveVersion(),
+                entity.getStatus(),
+                entity.getCandidate(),
+                entity.getViewableVersions(),
+                entity.getLatestFinalVersion()
+        };
+    }
+
+    /* ---------- Row → Entity ---------- */
+    private VersionInfoDeletedEntity mapRow(Row row) {
+        if (row == null) {
+            return null;
+        }
+        VersionInfoDeletedEntity entity = new VersionInfoDeletedEntity();
+        entity.setEntityType(row.getString("entity_type"));
+        entity.setEntityId(row.getString("entity_id"));
+        entity.setActiveVersion(row.get("active_version", Version.class));
+        entity.setStatus(row.get("status", VersionStatus.class));
+        entity.setCandidate(row.get("candidate", UserCandidateVersion.class));
+        entity.setViewableVersions(row.getSet("viewable_versions", Version.class));
+        entity.setLatestFinalVersion(row.get("latest_final_version", Version.class));
+        return entity;
     }
 }
+

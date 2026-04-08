@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class FeatureToggleEventTableDesc implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(FEATURE_NAME, DataType.varchar()));
+        keys.add(new ImmutablePair<>(FEATURE_NAME, DataTypes.TEXT));
         return keys;
     }
 
@@ -69,9 +70,9 @@ public class FeatureToggleEventTableDesc implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum FeatureToggleEventFieldsDescription {
-        ENABLED("enabled", DataType.varchar(), false),
-        STRATEGY_ID("strategy_id", DataType.varchar(), false),
-        PARAMETERS("parameters", DataType.varchar(), false);
+        ENABLED("enabled", DataTypes.TEXT, false),
+        STRATEGY_ID("strategy_id", DataTypes.TEXT, false),
+        PARAMETERS("parameters", DataTypes.TEXT, false);
 
         private final String name;
         private final DataType type;

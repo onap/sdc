@@ -65,23 +65,24 @@ public class OperationalEvnironmentImportHandler {
         return beans.stream().map(OperationalEvnironmentImportHandler::map).collect(Collectors.toList());
     }
 
-    private static OperationalEnvironmentEntry map(OperationalEnvironment perationalEnvironment) {
+    private static OperationalEnvironmentEntry map(OperationalEnvironment operationalEnvironment) {
         OperationalEnvironmentEntry entry = new OperationalEnvironmentEntry();
-        entry.setEnvironmentId(perationalEnvironment.getEnvironmentId());
-        entry.addDmaapUebAddress(perationalEnvironment.getDmaapUebAddress());
-        entry.setEcompWorkloadContext(perationalEnvironment.getEcompWorkloadContext());
-        entry.setIsProduction(perationalEnvironment.getIsProduction());
+        entry.setEnvironmentId(operationalEnvironment.getEnvironmentId());
+        entry.addDmaapUebAddress(operationalEnvironment.getDmaapUebAddress());
+        entry.setEcompWorkloadContext(operationalEnvironment.getEcompWorkloadContext());
+        entry.setIsProduction(operationalEnvironment.getIsProduction());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            entry.setLastModified(formatter.parse(perationalEnvironment.getLastModified()));
+            entry.setLastModified(formatter.parse(operationalEnvironment.getLastModified()).toInstant());
+
         } catch (ParseException e) {
             LOGGER.error("Faild to pase Date, expected format is [yyyy-MM-dd HH:mm:ss].", e);
             throw new RuntimeException(e);
         }
-        entry.setStatus(perationalEnvironment.getStatus());
-        entry.setTenant(perationalEnvironment.getTenant());
-        entry.setUebApikey(perationalEnvironment.getUebApikey());
-        entry.setUebSecretKey(perationalEnvironment.getUebSecretKey());
+        entry.setStatus(operationalEnvironment.getStatus());
+        entry.setTenant(operationalEnvironment.getTenant());
+        entry.setUebApikey(operationalEnvironment.getUebApikey());
+        entry.setUebSecretKey(operationalEnvironment.getUebSecretKey());
         return entry;
     }
 

@@ -15,28 +15,51 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import com.datastax.driver.mapping.annotations.QueryParameters;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.core.tools.store.zusammen.datatypes.VersionElementsEntity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VersionElementsCassandraLoader {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static VersionElementsAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionElementsAccessor.class);
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
-    public Result<VersionElementsEntity> listVersionElementsByPK(String space, String itemId, String versionId) {
-        return accessor.getByPK(space, itemId, versionId);
+    public List<VersionElementsEntity> listVersionElementsByPK(String space, String itemId, String versionId) {
+    String cql = "SELECT space, item_id, version_id, revision_id, element_ids " +
+                 "FROM zusammen_dox.version_elements WHERE space=? AND item_id=? AND version_id=?";
+
+    BoundStatement stmt = session.prepare(cql).bind(space, itemId, versionId);
+    ResultSet rs = session.execute(stmt);
+
+    List<VersionElementsEntity> list = new ArrayList<>();
+    for (Row row : rs) {
+        VersionElementsEntity entity = new VersionElementsEntity();
+        entity.setSpace(row.getString("space"));
+        entity.setItemId(row.getString("item_id"));
+        entity.setVersionId(row.getString("version_id"));
+        entity.setRevisionId(row.getString("revision_id"));
+
+        Set<String> elements = row.getSet("element_ids", String.class);
+        Map<String, String> elementMap = new HashMap<>();
+        if (elements != null) {
+            for (String e : elements) {
+                elementMap.put(e, e); // adjust mapping if needed
+            }
+        }
+        entity.setElementIds(elementMap);
+
+        list.add(entity);
     }
+    return list;
+}
 
-    @Accessor
-    interface VersionElementsAccessor {
-
-        @Query("SELECT space, item_id, version_id, revision_id, element_ids FROM zusammen_dox.version_elements WHERE space=? and item_id=? and version_id=?")
-        @QueryParameters(fetchSize = 400)
-        Result<VersionElementsEntity> getByPK(String space, String itemId, String versionId);
-    }
 }

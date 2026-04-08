@@ -20,16 +20,39 @@ import java.util.Optional;
 import java.util.Set;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
+
 /**
  * Created by ayalaben on 6/18/2017.
  */
+@Dao
 public interface ItemPermissionsDao {
 
-    Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+    // Fetch all permissions for an item
+    @Select(customWhereClause = "item_id = :itemId")
+    PagingIterable<ItemPermissionsEntity> getItemPermissions(String itemId);
 
-    void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
+    // Fetch a single user’s permission on an item
+    @Select
+    Optional<ItemPermissionsEntity> getUserItemPermissionEntity(String itemId,
+                                                                String userId);
 
-    Optional<String> getUserItemPermission(String itemId, String userId);
+    // Insert or update a permission
+    @Insert
+    void addPermission(ItemPermissionsEntity entity);
 
+    // Delete a specific permission
+    @Delete(entityClass = ItemPermissionsEntity.class)
+    void deletePermission(ItemPermissionsEntity entity);
+
+    // Delete all permissions for an item
+    @Query("DELETE FROM item_permissions WHERE item_id = :itemId")
     void deleteItemPermissions(String itemId);
+    
 }

@@ -20,82 +20,68 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import com.datastax.driver.core.Configuration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class ConfigMgrServletTest {
 
-	private ConfigMgrServlet createTestSubject() {
-		return new ConfigMgrServlet();
-	}
+    private ConfigMgrServlet createTestSubject() {
+        return new ConfigMgrServlet();
+    }
 
-	
-	@Test
-	public void testGetConfig() throws Exception {
-		ConfigMgrServlet testSubject;
-		HttpServletRequest request = null;
-		String type = "";
-		String result;
+    @Test
+    public void testGetConfig() throws Exception {
+        ConfigMgrServlet testSubject;
+        HttpServletRequest request = null;
+        String type;
 
-		// test 1
-		testSubject = createTestSubject();
-		type = null;
+        // test 1
+        testSubject = createTestSubject();
+        type = null;
 
+        // test 2
+        testSubject = createTestSubject();
+        type = "";
 
-		// test 2
-		testSubject = createTestSubject();
-		type = "";
+        // test 3
+        testSubject = createTestSubject();
+        type = "configuration";
+    }
 
-		// test 3
-		testSubject = createTestSubject();
-		type = "configuration";
-	}
+    @Test
+    public void testSetConfig1() throws Exception {
+        ConfigMgrServlet testSubject;
+        HttpServletRequest request = null;
+        String config = null; // replaced Configuration with String/dummy
 
-	
-	@Test
-	public void testSetConfig1() throws Exception {
-		ConfigMgrServlet testSubject;
-		HttpServletRequest request = null;
-		Configuration configuration = null;
-		String result;
+        testSubject = createTestSubject();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-	}
+    @Test
+    public void testSetConfig2() throws Exception {
+        ConfigMgrServlet testSubject;
+        HttpServletRequest request = null;
+        String config = null;
 
-	
-	@Test
-	public void testSetConfig2() throws Exception {
-		ConfigMgrServlet testSubject;
-		HttpServletRequest request = null;
-		Configuration configuration = null;
+        testSubject = createTestSubject();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-	}
+    @Test
+    public void testSetConfig3() throws Exception {
+        ConfigMgrServlet testSubject;
+        HttpServletRequest request = null;
+        String config = null;
 
-	
-	@Test
-	public void testSetConfig3() throws Exception {
-		ConfigMgrServlet testSubject;
-		HttpServletRequest request = null;
-		Configuration configuration = null;
-		String result;
+        testSubject = createTestSubject();
+    }
 
-		// default test
-		testSubject = createTestSubject();
-	}
+    @Test
+    public void testSetConfig4() throws Exception {
+        ConfigMgrServlet testSubject;
+        HttpServletRequest request = null;
+        String config = null;
 
-	
-	@Test
-	public void testSetConfig4() throws Exception {
-		ConfigMgrServlet testSubject;
-		HttpServletRequest request = null;
-		Configuration configuration = null;
-
-		// default test
-		testSubject = createTestSubject();
-	}
+        testSubject = createTestSubject();
+    }
 }

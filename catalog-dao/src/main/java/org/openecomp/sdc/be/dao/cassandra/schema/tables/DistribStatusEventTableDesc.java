@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,11 +45,11 @@ public class DistribStatusEventTableDesc extends DistribBaseEventTableDesc {
     @AllArgsConstructor
     private enum DSEFieldsDescription {
         // @formatter:off
-        DID("did", DataType.varchar(), true),
-        CONSUMER_ID("consumer_id", DataType.varchar(), false),
-        RESOURCE_URL("resoure_URL", DataType.varchar(), false),
-        TOPIC_NAME("topic_name", DataType.varchar(), false),
-        STATUS_TIME("status_time", DataType.varchar(), false);
+        DID("did", DataTypes.TEXT, true),
+        CONSUMER_ID("consumer_id", DataTypes.TEXT, false),
+        RESOURCE_URL("resoure_URL", DataTypes.TEXT, false),
+        TOPIC_NAME("topic_name", DataTypes.TEXT, false),
+        STATUS_TIME("status_time", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

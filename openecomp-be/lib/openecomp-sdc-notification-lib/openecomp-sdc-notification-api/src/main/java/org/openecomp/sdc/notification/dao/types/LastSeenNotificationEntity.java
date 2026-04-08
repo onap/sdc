@@ -15,10 +15,12 @@
  */
 package org.openecomp.sdc.notification.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import java.util.UUID;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,13 +28,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "last_notification")
+@Entity
+@CqlName("last_notification")
 public class LastSeenNotificationEntity {
 
     public static final String ENTITY_TYPE = "Event Notification";
     @PartitionKey
-    @Column(name = "owner_id")
+    @CqlName("owner_id")
     private String ownerId;
-    @Column(name = "event_id")
+    @CqlName("event_id")
     private UUID lastEventId;
 }

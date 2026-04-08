@@ -36,9 +36,12 @@ public class AsdcItemManagerImpl extends ItemManagerImpl implements AsdcItemMana
 
     @Override
     public Item create(Item item) {
+        
         Item createdItem = super.create(item);
+        
         String userId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
         String itemId = createdItem.getId();
+     
         permissionsServices.execute(itemId, userId, CREATE_ITEM);
         subscriptionService.subscribe(userId, itemId);
         return createdItem;

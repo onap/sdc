@@ -1081,7 +1081,6 @@ public class ActionsImpl implements Actions {
         String checksum = null;
         if (input != null) {
             checksum = DigestUtils.md5Hex(input).toUpperCase();
-            System.out.println("checksum : " + checksum);
         }
         return checksum;
     }

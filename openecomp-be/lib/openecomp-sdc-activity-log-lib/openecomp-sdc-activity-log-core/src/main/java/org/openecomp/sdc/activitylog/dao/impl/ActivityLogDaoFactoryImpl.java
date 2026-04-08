@@ -15,12 +15,21 @@
  */
 package org.openecomp.sdc.activitylog.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
 import org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class ActivityLogDaoFactoryImpl extends ActivityLogDaoFactory {
 
-    private static final ActivityLogDao INSTANCE = new ActivityLogDaoCassandraImpl();
+    private static final ActivityLogDao INSTANCE;
+
+    static {
+        // get a CqlSession from your NoSqlDb abstraction
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new ActivityLogDaoCassandraImpl(session);
+    }
 
     @Override
     public ActivityLogDao createInterface() {

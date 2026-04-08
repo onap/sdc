@@ -128,7 +128,7 @@ public class RecoveryThreadManager extends AbstractScheduleTaskRunner {
                 long currentTimeMillis = System.currentTimeMillis();
                 if (!isEmpty(inProgressEnvList)) {
                     List<OperationalEnvironmentEntry> staleInProgressEnvList = inProgressEnvList.stream()
-                        .filter(record -> (record.getLastModified().getTime() + (allowedTimeBeforeStaleSec * 1000)) < currentTimeMillis)
+                        .filter(record -> (record.getLastModified().toEpochMilli() + (allowedTimeBeforeStaleSec * 1000)) < currentTimeMillis)
                         .collect(Collectors.toList());
                     staleInProgressEnvList.parallelStream().forEach(env -> environmentsEngine.buildOpEnv(new Wrapper<>(), env));
                 }

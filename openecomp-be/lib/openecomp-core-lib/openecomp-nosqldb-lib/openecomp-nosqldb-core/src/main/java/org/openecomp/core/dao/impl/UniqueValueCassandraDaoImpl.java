@@ -19,41 +19,96 @@
  */
 package org.openecomp.core.dao.impl;
 
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.openecomp.core.dao.UniqueValueDao;
+import org.openecomp.core.dao.UniqueValueMapper;
+import org.openecomp.core.dao.UniqueValueMapperBuilder;
 import org.openecomp.core.dao.types.UniqueValueEntity;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+
 
 public class UniqueValueCassandraDaoImpl extends CassandraBaseDao<UniqueValueEntity> implements UniqueValueDao {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static Mapper<UniqueValueEntity> mapper = noSqlDb.getMappingManager().mapper(UniqueValueEntity.class);
-    private static UniqueValueAccessor accessor = noSqlDb.getMappingManager().createAccessor(UniqueValueAccessor.class);
+    private final UniqueValueDao dao;
+
+    public UniqueValueCassandraDaoImpl() {
+        super(NoSqlDbFactory.getInstance().createInterface().getSession());
+        UniqueValueMapper mapper = new UniqueValueMapperBuilder(session).build();
+        this.dao = mapper.uniqueValueDao();
+    }
+
 
     @Override
-    protected Mapper<UniqueValueEntity> getMapper() {
-        return mapper;
+    public void create(UniqueValueEntity entity) {
+        dao.create(entity);
     }
+
+    // @Override
+    // public void update(UniqueValueEntity entity) {
+    //     dao.update(entity);
+    // }
+
+    @Override
+    public UniqueValueEntity get(UniqueValueEntity entity) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void delete(UniqueValueEntity entity) {
+        dao.delete(entity);
+    }
+
+    public Collection<UniqueValueEntity> list(UniqueValueEntity entity) {
+        return dao.listAll();
+    }
+
 
     @Override
     protected Object[] getKeys(UniqueValueEntity entity) {
-        return new Object[]{entity.getType(), entity.getValue()};
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getKeys'");
     }
+
 
     @Override
-    public Collection<UniqueValueEntity> list(UniqueValueEntity entity) {
-        return accessor.listAll().all();
+    protected String getTableName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTableName'");
     }
 
-    @Accessor
-    interface UniqueValueAccessor {
 
-        @Query("select * from unique_value")
-        Result<UniqueValueEntity> listAll();
+    @Override
+    protected String[] getColumns(UniqueValueEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getColumns'");
+    }
+
+
+    @Override
+    protected Object[] getValues(UniqueValueEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getValues'");
+    }
+
+
+    @Override
+    public Optional<UniqueValueEntity> get(String key, String value) {
+       return dao.get(key, value);
+    }
+
+
+    // @Override
+    // public PagingIterable<UniqueValueEntity> list(String key) {
+    //    return dao.list(key);
+    // }
+
+
+    @Override
+    public List<UniqueValueEntity> listAll() {
+        return dao.listAll();
     }
 }
