@@ -25,6 +25,7 @@ import lombok.Setter;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 
 @Getter
 @Setter
@@ -70,4 +71,6 @@ public class VspQuestionnaireEntity implements CompositionEntity {
     public void setCompositionData(String compositionData) {
         //none
     }
+
+    
 }

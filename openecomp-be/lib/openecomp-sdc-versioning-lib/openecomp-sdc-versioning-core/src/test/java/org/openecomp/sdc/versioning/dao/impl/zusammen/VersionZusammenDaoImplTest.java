@@ -30,6 +30,8 @@ import com.amdocs.zusammen.datatypes.item.ItemVersionData;
 import com.amdocs.zusammen.datatypes.item.ItemVersionStatus;
 import com.amdocs.zusammen.datatypes.item.SynchronizationStatus;
 import com.amdocs.zusammen.datatypes.itemversion.ItemVersionRevisions;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -379,8 +381,8 @@ public class VersionZusammenDaoImplTest {
     ItemVersionData data = new ItemVersionData();
     data.setInfo(info);
     version.setData(data);
-    version.setCreationTime(new Date());
-    version.setModificationTime(new Date());
+    version.setCreationTime(Date.from(Instant.now()));
+    version.setModificationTime(Date.from(Instant.now()));
     return version;
   }
 
@@ -399,8 +401,8 @@ public class VersionZusammenDaoImplTest {
         .assertEquals(version.getMajor(), Integer.parseInt(label.substring(0, label.indexOf('.'))));
     Assert.assertEquals(version.getMinor(),
         Integer.parseInt(label.substring(label.indexOf('.') + 1, label.length())));
-    Assert.assertEquals(version.getCreationTime(), zusammenVersion.getCreationTime());
-    Assert.assertEquals(version.getModificationTime(), zusammenVersion.getModificationTime());
+    Assert.assertEquals(version.getCreationTime(), zusammenVersion.getCreationTime().toInstant());
+    Assert.assertEquals(version.getModificationTime(), zusammenVersion.getModificationTime().toInstant());
 
     if (zusammenVersionStatus != null) {
       Assert.assertEquals(version.getState().isDirty(), zusammenVersionStatus.isDirty());

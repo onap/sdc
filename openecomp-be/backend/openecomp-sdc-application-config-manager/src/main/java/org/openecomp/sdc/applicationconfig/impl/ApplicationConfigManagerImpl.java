@@ -25,6 +25,8 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 /**
  * Created by Talio on 8/8/2016.
  */
@@ -32,7 +34,11 @@ public class ApplicationConfigManagerImpl implements ApplicationConfigManager {
 
     private static final String SCHEMA_GENERATOR_INITIALIZATION_ERROR = "SCHEMA_GENERATOR_INITIALIZATION_ERROR";
     private static final String SCHEMA_GENERATOR_INITIALIZATION_ERROR_MSG = "Error occurred while loading questionnaire schema templates";
-    private ApplicationConfig applicationConfig = new ApplicationConfigImpl();
+      private final ApplicationConfig applicationConfig;
+
+    public ApplicationConfigManagerImpl(CqlSession session) {
+        this.applicationConfig = new ApplicationConfigImpl(session);
+    }
 
     @Override
     public void insertIntoTable(String namespace, String key, String value) {

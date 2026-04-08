@@ -20,19 +20,53 @@
 
 package org.openecomp.sdcrests.item.types;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.code.beanmatchers.BeanMatchers;
+import com.google.code.beanmatchers.ValueGenerator;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VersionDtoTest {
+import java.time.Instant;
+
+public class VersionDtoTest {
+
+    @BeforeAll
+    public static void registerInstantGenerator() {
+        BeanMatchers.registerValueGenerator(
+            new ValueGenerator<Instant>() {
+                @Override
+                public Instant generate() {
+                    return Instant.now();
+                }
+            },
+            Instant.class
+        );
+    }
+
     @Test
     void testBean() {
         assertThat(VersionDto.class,  allOf(
                 hasValidBeanConstructor(),
                 hasValidGettersAndSetters()
         ));
+    }
+
+    @Test
+    void shouldSerializeInstantFieldsAsIsoStrings() throws Exception {
+        VersionDto dto = new VersionDto();
+        dto.setCreationTime(Instant.parse("2026-03-25T10:01:14.817Z"));
+        dto.setModificationTime(Instant.parse("2026-03-25T10:01:14.874Z"));
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        assertTrue(json.contains("\"creationTime\":\"2026-03-25T10:01:14.817Z\""));
+        assertTrue(json.contains("\"modificationTime\":\"2026-03-25T10:01:14.874Z\""));
     }
 }

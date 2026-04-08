@@ -105,6 +105,7 @@ import static org.openecomp.sdc.action.types.ActionLogResponseCode.UPDATE_ON_UNL
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.EnumMap;
@@ -184,8 +185,8 @@ public class ActionUtil {
      *
      * @return Current Timestamp in UTC format
      */
-    public static Date getCurrentTimeStampUtc() {
-        return Date.from(java.time.ZonedDateTime.now(ZoneOffset.UTC).toInstant());
+    public static Instant getCurrentTimeStampUtc() {
+        return Instant.now();
     }
 
     /**
@@ -194,10 +195,10 @@ public class ActionUtil {
      * @param timeStamp UTC timestamp to be converted to the UTC Date format
      * @return UTC formatted Date string from timestamp
      */
-    public static String getUtcDateStringFromTimestamp(Date timeStamp) {
+    public static String getUtcDateStringFromTimestamp(Instant timeStamp) {
         DateFormat df = new SimpleDateFormat(UTC_DATE_FORMAT);
         df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return df.format(timeStamp);
+        return df.format(Date.from(timeStamp));
     }
 
     /**

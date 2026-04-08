@@ -56,21 +56,23 @@ public class PolicyExportParserImpl implements PolicyExportParser {
     private Map<String, DataTypeDefinition> dataTypes;
     private PropertyConvertor propertyConvertor;
 
-    @Autowired
-    public PolicyExportParserImpl(ApplicationDataTypeCache applicationDataTypeCache, PropertyConvertor propertyConvertor) {
-        this.applicationDataTypeCache = applicationDataTypeCache;
-        this.propertyConvertor = propertyConvertor;
-        this.dataTypes = getDataTypes();
-    }
+   @Autowired
+public PolicyExportParserImpl(ApplicationDataTypeCache applicationDataTypeCache,
+                              PropertyConvertor propertyConvertor) {
+    this.applicationDataTypeCache = applicationDataTypeCache;
+    this.propertyConvertor = propertyConvertor;
+    this.dataTypes = getDataTypes();
+}
 
     private Map<String, DataTypeDefinition> getDataTypes() {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(null);
-        if (dataTypesEither.isRight()) {
-            log.error("Failed to retrieve all data types {}", dataTypesEither.right().value());
-            throw new SdcResourceNotFoundException();
-        }
-        return dataTypesEither.left().value();
+    Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither =
+        applicationDataTypeCache.getAll(null);
+
+    if (dataTypesEither.isRight()) {
+        throw new SdcResourceNotFoundException();
     }
+    return dataTypesEither.left().value();
+}
 
     @EventListener
     public void onDataTypesCacheChangedEvent(ApplicationDataTypeCache.DataTypesCacheChangedEvent dataTypesCacheChangedEvent) {

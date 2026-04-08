@@ -34,6 +34,23 @@
     </properties>
 
     <dependencies>
+    <dependency>
+  <groupId>com.datastax.cassandra</groupId>
+  <artifactId>cassandra-driver-core</artifactId>
+  <version>3.11.4</version>
+</dependency>
+
+<dependency>
+  <groupId>com.datastax.cassandra</groupId>
+  <artifactId>cassandra-driver-mapping</artifactId>
+  <version>3.11.4</version>
+</dependency>
+<dependency>
+    <groupId>io.dropwizard.metrics</groupId>
+    <artifactId>metrics-core</artifactId>
+    <version>3.2.6</version>
+</dependency>
+
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
@@ -43,6 +60,86 @@
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-collaboration-cassandra-plugin</artifactId>
             <version>${zusammen-collaboration-store.version}</version>
+            <!-- <exclusions>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-mapping</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.datastax.cassandra</groupId>
+                    <artifactId>cassandra-driver-extras</artifactId>
+                </exclusion>
+            </exclusions> -->
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-core</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <exclusions>
+        <exclusion>
+          <groupId>com.github.jnr</groupId>
+          <artifactId>jnr-posix</artifactId>
+        </exclusion>
+          <exclusion>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+         </exclusion>
+        <exclusion>
+          <groupId>com.sun.activation</groupId>
+          <artifactId>jakarta.activation</artifactId>
+        </exclusion>
+      <exclusion>
+        <groupId>jakarta.el</groupId>
+        <artifactId>jakarta.el-api</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+      </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-mapper-runtime</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+ 
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-query-builder</artifactId>
+            <version>${cassandra.driver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -68,6 +165,20 @@
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
             <version>${zusammen-state-store.version}</version>
+            <!-- <exclusions>
+        <exclusion>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-mapping</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-extras</artifactId>
+        </exclusion>
+    </exclusions> -->
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>

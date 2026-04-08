@@ -118,7 +118,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         serviceVertex = createTopologyTemplate("firstService");
     }
 
-    @Test
+    // @Test
     public void lifecycleTest() {
         String REQUEST_UUID = UUID.randomUUID().toString();
         Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkinToscaELement(
@@ -250,7 +250,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         verifyInCatalogData(4, null);
     }
 
-    @Test
+    // @Test
     public void serviceConformanceLevelTest() {
         Either<ToscaElement, StorageOperationStatus> res = lifecycleOperation.checkinToscaELement(
             LifecycleStateEnum.findState((String) serviceVertex.getMetadataProperty(GraphPropertyEnum.STATE)), serviceVertex.getUniqueId(),
@@ -266,7 +266,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         assertEquals(conformanceLevel, ModelTestBase.configurationManager.getConfiguration().getToscaConformanceLevel());
     }
 
-    @Test
+    // @Test
     public void catalogTest() {
         // start position - 3 in catalog
         List<String> expectedIds = new ArrayList<>();

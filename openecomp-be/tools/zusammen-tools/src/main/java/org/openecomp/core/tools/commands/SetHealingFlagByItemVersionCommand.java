@@ -17,7 +17,7 @@ package org.openecomp.core.tools.commands;
 
 import static org.openecomp.core.tools.commands.CommandName.SET_HEAL_BY_ITEM_VERSION;
 
-import com.datastax.driver.core.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
@@ -27,6 +27,9 @@ import org.openecomp.core.tools.store.VersionCassandraLoader;
 import org.openecomp.core.tools.store.zusammen.datatypes.HealingEntity;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 
 public class SetHealingFlagByItemVersionCommand extends Command {
 
@@ -44,27 +47,38 @@ public class SetHealingFlagByItemVersionCommand extends Command {
         options.addOption(Option.builder(PROJECT_OPTION).hasArg().argName("old_project_version").desc("old project version, mandatory").build());
     }
 
-    @Override
-    public boolean execute(String[] args) {
-        CommandLine cmd = parseArgs(args);
-        if (!(cmd.hasOption(ITEM_ID_OPTION) && cmd.hasOption(VERSION_ID_OPTION) && cmd.hasOption(PROJECT_OPTION))) {
-            LOGGER.error("Arguments i, v and o are mandatory");
-            return false;
-        }
-        String itemId = cmd.getOptionValue(ITEM_ID_OPTION);
-        String versionId = cmd.getOptionValue(VERSION_ID_OPTION);
-        String projectVersion = cmd.getOptionValue(PROJECT_OPTION);
-        VersionCassandraLoader versionCassandraLoader = new VersionCassandraLoader();
-        ResultSet listItemVersion = versionCassandraLoader.listItemVersion();
-        List<HealingEntity> healingEntities = listItemVersion.all().stream()
-            .filter(entry -> (entry.getString(ITEM_ID).equals(itemId) && entry.getString(VERSION_ID).equals(versionId)))
-            .map(entry -> new HealingEntity(entry.getString("space"), entry.getString(ITEM_ID), entry.getString(VERSION_ID), true, projectVersion))
-            .collect(Collectors.toList());
-        HealingHandler healingHandler = new HealingHandler();
-        healingHandler.populateHealingTable(healingEntities);
-        return true;
+   @Override
+public boolean execute(String[] args) {
+    CommandLine cmd = parseArgs(args);
+    if (!(cmd.hasOption(ITEM_ID_OPTION) && cmd.hasOption(VERSION_ID_OPTION) && cmd.hasOption(PROJECT_OPTION))) {
+        LOGGER.error("Arguments i, v and o are mandatory");
+        return false;
     }
 
+    String itemId = cmd.getOptionValue(ITEM_ID_OPTION);
+    String versionId = cmd.getOptionValue(VERSION_ID_OPTION);
+    String projectVersion = cmd.getOptionValue(PROJECT_OPTION);
+
+    VersionCassandraLoader versionCassandraLoader = new VersionCassandraLoader();
+    List<Row> listItemVersion = versionCassandraLoader.listItemVersion();
+
+    List<HealingEntity> healingEntities = new ArrayList<>();
+    listItemVersion.forEach(row -> {
+        if (row.getString(ITEM_ID).equals(itemId) && row.getString(VERSION_ID).equals(versionId)) {
+            healingEntities.add(new HealingEntity(
+                row.getString("space"),
+                row.getString(ITEM_ID),
+                row.getString(VERSION_ID),
+                true,
+                projectVersion
+            ));
+        }
+    });
+
+    HealingHandler healingHandler = new HealingHandler();
+    healingHandler.populateHealingTable(healingEntities);
+    return true;
+}
     @Override
     public CommandName getCommandName() {
         return SET_HEAL_BY_ITEM_VERSION;

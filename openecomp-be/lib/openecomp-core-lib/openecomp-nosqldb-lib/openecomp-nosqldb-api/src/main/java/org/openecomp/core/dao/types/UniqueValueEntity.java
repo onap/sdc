@@ -19,8 +19,10 @@
  */
 package org.openecomp.core.dao.types;
 
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,11 +32,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "unique_value")
+@Entity
+@CqlName("unique_value") 
 public class UniqueValueEntity {
 
-    @PartitionKey
+    @PartitionKey(0)
+    @CqlName("type")  
     private String type;
-    @PartitionKey(value = 1)
+
+    @PartitionKey(1)
+    @CqlName("value") 
     private String value;
+
 }

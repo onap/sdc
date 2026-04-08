@@ -15,47 +15,79 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import com.datastax.driver.mapping.annotations.QueryParameters;
-import java.nio.ByteBuffer;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.core.tools.store.zusammen.datatypes.ElementEntity;
 
 public class ElementCassandraLoader {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static ElementAccessor accessor = noSqlDb.getMappingManager().createAccessor(ElementAccessor.class);
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
     public void createEntity(ElementEntity elementEntity) {
-        accessor.insertElement(elementEntity.getSpace(), elementEntity.getItemId(), elementEntity.getVersionId(), elementEntity.getElementId(),
-            elementEntity.getData(), elementEntity.getInfo(), elementEntity.getNamespace(), elementEntity.getParentId(), elementEntity.getRelations(),
-            elementEntity.getSearchableData(), elementEntity.getSubElementIds());
+        String query = "INSERT INTO zusammen_dox.element (space,item_id,version_id,element_id,data,info,namespace,parent_id,relations,searchable_data,sub_element_ids) "
+                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = session.prepare(query);
+
+        BoundStatement bound = ps.bind(
+            elementEntity.getSpace(),
+            elementEntity.getItemId(),
+            elementEntity.getVersionId(),
+            elementEntity.getElementId(),
+            elementEntity.getData(),
+            elementEntity.getInfo(),
+            elementEntity.getNamespace(),
+            elementEntity.getParentId(),
+            elementEntity.getRelations(),
+            elementEntity.getSearchableData(),
+            elementEntity.getSubElementIds() != null ? elementEntity.getSubElementIds() : new HashSet<>()
+        );
+
+        session.execute(bound);
     }
 
-    public Result<ElementEntity> list() {
-        return accessor.getAll();
+    public List<ElementEntity> list() {
+        List<ElementEntity> result = new ArrayList<>();
+        ResultSet rs = session.execute("SELECT * FROM zusammen_dox.element");
+
+        for (Row row : rs) {
+            ElementEntity entity = mapRowToEntity(row);
+            result.add(entity);
+        }
+        return result;
     }
 
-    public Result<ElementEntity> getByPK(String space, String itemId, String versionId, String elementId, String revisionId) {
-        return accessor.getByPK(space, itemId, versionId, elementId, revisionId);
+    public ElementEntity getByPK(String space, String itemId, String versionId, String elementId, String revisionId) {
+        String query = "SELECT * FROM zusammen_dox.element WHERE space = ? AND item_id = ? AND version_id = ? AND element_id = ? AND revision_id = ?";
+        PreparedStatement ps = session.prepare(query);
+        BoundStatement bound = ps.bind(space, itemId, versionId, elementId, revisionId);
+
+        Row row = session.execute(bound).one();
+        return row != null ? mapRowToEntity(row) : null;
     }
 
-    @Accessor
-    interface ElementAccessor {
-
-        @Query("insert into  zusammen_dox.element (space,item_id,version_id,element_id,data,info, namespace,parent_id,relations,searchable_data,sub_element_ids) values (?,?,?,?,?,?,?,?,?,?,?)")
-        void insertElement(String space, String itemId, String versionId, String elementId, ByteBuffer data, String info, String namespaceStr,
-                           String parentId, String relations, ByteBuffer searchable, Set<String> subElementsIds);
-
-        @Query("select * from zusammen_dox.element ")
-        @QueryParameters(fetchSize = 100)
-        Result<ElementEntity> getAll();
-
-        @Query("select * from zusammen_dox.element where space = ? and item_id = ? and version_id = ? and element_id = ? and revision_id = ?")
-        Result<ElementEntity> getByPK(String space, String itemId, String versionId, String elementId, String revisionId);
+    private ElementEntity mapRowToEntity(Row row) {
+        ElementEntity entity = new ElementEntity();
+        entity.setSpace(row.getString("space"));
+        entity.setItemId(row.getString("item_id"));
+        entity.setVersionId(row.getString("version_id"));
+        entity.setElementId(row.getString("element_id"));
+        entity.setData(row.getByteBuffer("data"));
+        entity.setInfo(row.getString("info"));
+        entity.setNamespace(row.getString("namespace"));
+        entity.setParentId(row.getString("parent_id"));
+        entity.setRelations(row.getString("relations"));
+        entity.setSearchableData(row.getByteBuffer("searchable_data"));
+        Set<String> subElementIds = row.getSet("sub_element_ids", String.class);
+        entity.setSubElementIds(subElementIds != null ? subElementIds : new HashSet<>());
+        entity.setVisualization(row.getByteBuffer("visualization"));
+        return entity;
     }
 }

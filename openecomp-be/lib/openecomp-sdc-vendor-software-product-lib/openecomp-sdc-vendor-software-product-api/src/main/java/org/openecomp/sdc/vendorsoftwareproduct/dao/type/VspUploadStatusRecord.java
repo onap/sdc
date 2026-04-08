@@ -21,12 +21,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import java.util.Date;
+
+import java.time.Instant;
 import java.util.UUID;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -35,35 +39,36 @@ import lombok.Setter;
 
 @Data
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_upload_status")
+@Entity
+@CqlName("vsp_upload_status")
 public class VspUploadStatusRecord {
 
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
 
     @PartitionKey(value = 1)
-    @Column(name = "vsp_version_id")
+    @CqlName("vsp_version_id")
     private String vspVersionId;
 
     @ClusteringColumn
-    @Column(name = "lock_id")
+    @CqlName("lock_id")
     private UUID lockId;
 
-    @Column(name = "is_complete")
+    @CqlName("is_complete")
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private boolean isComplete;
 
-    @Column(name = "status")
-    private VspUploadStatus status;
+    @CqlName("status")
+    private String status;
 
     @ClusteringColumn(value = 1)
-    @Column(name = "created")
-    private Date created;
+    @CqlName("created")
+    private Instant created;
 
-    @Column(name = "updated")
-    private Date updated;
+    @CqlName("updated")
+    private Instant updated;
 
     public boolean getIsComplete() {
         return isComplete;
@@ -71,5 +76,15 @@ public class VspUploadStatusRecord {
 
     public void setIsComplete(boolean complete) {
         isComplete = complete;
+    }
+
+    @Transient
+    public VspUploadStatus getStatusEnum() {
+        return status == null ? null : VspUploadStatus.valueOf(status);
+    }
+
+    @Transient
+    public void setStatusEnum(VspUploadStatus s) {
+        status = (s == null ? null : s.name());
     }
 }

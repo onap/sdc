@@ -19,11 +19,7 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,27 +29,33 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_deployment_flavor")
+@Entity
+@CqlName("vsp_deployment_flavor")
 public class DeploymentFlavorEntity implements CompositionEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product Deployment Flavor";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "deployment_flavor_id")
+    @CqlName("deployment_flavor_id")
     private String id;
-    @Column(name = "composition_data")
+    @CqlName("composition_data")
     private String compositionData;
-    @Column(name = "questionnaire_data")
+    @CqlName("questionnaire_data")
     private String questionnaireData;
 
     /**
@@ -96,4 +98,6 @@ public class DeploymentFlavorEntity implements CompositionEntity {
     public void setDeploymentFlavorCompositionData(DeploymentFlavor deploymentFlavor) {
         this.compositionData = deploymentFlavor == null ? null : JsonUtil.object2Json(deploymentFlavor);
     }
+
+    
 }

@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,16 +47,16 @@ public class DistribNotifEventTableDesc extends DistribBaseEventTableDesc {
     @AllArgsConstructor
     enum DNEFieldsDescription {
         // @formatter:off
-        TOPIC_NAME("topic_name", DataType.varchar(), false),
-		MODIFIER("modifier", DataType.varchar(), false),
-		CURR_STATE("curr_state", DataType.varchar(), false),
-		CURR_VERSION("curr_version", DataType.varchar(), false),
-		DID("did", DataType.varchar(), true),
-		RESOURCE_NAME("resource_name", DataType.varchar(), false),
-		RESOURCE_TYPE("resource_type", DataType.varchar(), false),
-		ENV_ID("env_id", DataType.varchar(), false),
-		VNF_WORKLOAD_CONTEXT("vnf_workload_context", DataType.varchar(), false),
-		TENANT("tenant", DataType.varchar(), false);
+        TOPIC_NAME("topic_name", DataTypes.TEXT, false),
+		MODIFIER("modifier", DataTypes.TEXT, false),
+		CURR_STATE("curr_state", DataTypes.TEXT, false),
+		CURR_VERSION("curr_version", DataTypes.TEXT, false),
+		DID("did", DataTypes.TEXT, true),
+		RESOURCE_NAME("resource_name", DataTypes.TEXT, false),
+		RESOURCE_TYPE("resource_type", DataTypes.TEXT, false),
+		ENV_ID("env_id", DataTypes.TEXT, false),
+		VNF_WORKLOAD_CONTEXT("vnf_workload_context", DataTypes.TEXT, false),
+		TENANT("tenant", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

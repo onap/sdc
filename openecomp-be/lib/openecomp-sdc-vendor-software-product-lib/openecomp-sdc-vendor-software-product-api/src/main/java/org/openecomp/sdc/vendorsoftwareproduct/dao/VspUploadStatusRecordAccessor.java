@@ -21,24 +21,27 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
+
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
 
 /**
  * Cassandra accessor for the {@link VspUploadStatusRecord}
  */
-@Accessor
+@Dao
 public interface VspUploadStatusRecordAccessor {
 
-    @Query("SELECT * FROM vsp_upload_status WHERE vsp_id = ? AND vsp_version_id = ?")
-    Result<VspUploadStatusRecord> findAllByVspIdAndVspVersionId(final String vspId, final String vspVersionId);
+    @Select(customWhereClause = "vsp_id = :vspId AND vsp_version_id = :vspVersionId")
+    List<VspUploadStatusRecord> findAllByVspIdAndVspVersionId(String vspId, String vspVersionId);
 
-    @Query("SELECT * FROM vsp_upload_status WHERE vsp_id = ? AND vsp_version_id = ? AND is_complete = FALSE")
-    Result<VspUploadStatusRecord> findAllIncomplete(final String vspId, final String vspVersionId);
+    @Select(customWhereClause = "vsp_id = :vspId AND vsp_version_id = :vspVersionId AND is_complete = false")
+    List<VspUploadStatusRecord> findAllIncomplete(String vspId, String vspVersionId);
 
-    @Query("SELECT * FROM vsp_upload_status WHERE vsp_id = ? AND vsp_version_id = ? AND lock_id = ?")
-    Result<VspUploadStatusRecord> findByVspIdAndVersionIdAndLockId(final String vspId, final String vspVersionId, final UUID lockId);
+    @Select(customWhereClause = "vsp_id = :vspId AND vsp_version_id = :vspVersionId AND lock_id = :lockId")
+    Optional<VspUploadStatusRecord> findByVspIdAndVersionIdAndLockId(String vspId, String vspVersionId, UUID lockId);
 }

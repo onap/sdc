@@ -53,6 +53,7 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
     @Override
     public void validateAndCorrectField(User user, Service service, AuditingActionEnum actionEnum) {
         log.debug("validate Service category");
+
         if (isEmpty(service.getCategories())) {
             ResponseFormat errorResponse = componentsUtils
                 .getResponseFormat(ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.SERVICE.getValue());
@@ -65,6 +66,7 @@ public class ServiceCategoryValidator implements ServiceFieldValidator {
             componentsUtils.auditComponentAdmin(responseFormat, user, service, actionEnum, ComponentTypeEnum.SERVICE);
             throw new ByResponseFormatComponentException(responseFormat);
         }
+
     }
 
     private Either<Boolean, ResponseFormat> validateServiceCategory(List<CategoryDefinition> list) {

@@ -19,15 +19,14 @@
  */
 package org.openecomp.sdc.versioning.dao.impl;
 
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
@@ -39,6 +38,12 @@ import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
+
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 
 class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
 
@@ -61,26 +66,34 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
         return sb.toString();
     }
 
-    @Override
+     @Override
     public void initVersion(VersionableEntityMetadata metadata, String entityId, Version baseVersion, Version newVersion) {
         ResultSet rows = loadVersionRows(metadata, entityId, baseVersion);
-        List<String> columnNames = rows.getColumnDefinitions().asList().stream().map(ColumnDefinitions.Definition::getName)
-            .collect(Collectors.toList());
-        String insertCql = String.format("insert into %s (%s) values (%s)", metadata.getName(), CommonMethods.listToSeparatedString(columnNames, ','),
-            commaSeparatedQuestionMarks(columnNames.size()));
+        List<String> columnNames = StreamSupport.stream(rows.getColumnDefinitions().spliterator(), false)
+        .map(def -> def.getName().asInternal())
+        .collect(Collectors.toList());
+
+        String insertCql = String.format(
+                "INSERT INTO %s (%s) VALUES (%s)",
+                metadata.getName(),
+                CommonMethods.listToSeparatedString(columnNames, ','),
+                commaSeparatedQuestionMarks(columnNames.size())
+        );
+
         Logger.debug("insertCql", insertCql);
+
         for (Row row : rows) {
             List<Object> columnValues = new ArrayList<>();
             Map<String, Object> columnNameToValue = new HashMap<>();
             for (String columnName : columnNames) {
+                Object value;
                 if (metadata.getVersionIdentifierName().equals(columnName)) {
-                    columnValues.add(newVersion);
-                    columnNameToValue.put(columnName, newVersion.toString());
+                    value = newVersion;
                 } else {
-                    Object value = row.getObject(columnName);
-                    columnValues.add(value);
-                    columnNameToValue.put(columnName, value);
+                    value = row.getObject(columnName);
                 }
+                columnValues.add(value);
+                columnNameToValue.put(columnName, value);
             }
             initRowUniqueValues(metadata.getUniqueValuesMetadata(), columnNameToValue);
             noSqlDb.execute(insertCql, columnValues.toArray());
@@ -130,8 +143,9 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
             return;
         }
         ResultSet rows = loadVersionRows(metadata, entityId, version);
-        List<String> columnNames = rows.getColumnDefinitions().asList().stream().map(ColumnDefinitions.Definition::getName)
-            .collect(Collectors.toList());
+        List<String> columnNames = StreamSupport.stream(rows.getColumnDefinitions().spliterator(), false)
+        .map(def -> def.getName().asInternal())
+        .collect(Collectors.toList());
         for (Row row : rows) {
             Map<String, Object> columnNameToValue = columnNames.stream().filter(name -> row.getObject(name) != null).collect(Collectors
                 .toMap(Function.identity(),

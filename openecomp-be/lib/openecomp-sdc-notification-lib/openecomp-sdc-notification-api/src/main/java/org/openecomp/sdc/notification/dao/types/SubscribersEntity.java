@@ -15,10 +15,13 @@
  */
 package org.openecomp.sdc.notification.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.Set;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,12 +29,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "notification_subscribers")
+@Entity
+@CqlName("notification_subscribers")
 public class SubscribersEntity {
 
     @PartitionKey
-    @Column(name = "entity_id")
+    @CqlName("entity_id")
     private String entityId;
-    @Column(name = "subscribers")
+    @CqlName("subscribers")
     private Set<String> subscribers;
 }

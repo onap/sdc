@@ -307,7 +307,6 @@ public class ToscaConverterImplTest {
         requirements.addAll(concreteRequirementList);
         nodeTemplate.setRequirements(requirements);
       }
-      System.out.println();
       //toscaExtensionYamlUtil.yamlToObject(nodeTemplate, NodeTemplate.class);
     }
   }

@@ -19,30 +19,30 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 
 public class ItemHandler {
 
+    private static final CqlSession session = CassandraSessionFactory.getSession();
+    private static final String SELECT_ITEMS = "SELECT item_id FROM zusammen_dox.item";
+
     public List<String> getItemList() {
-        ResultSet resultSet = NoSqlDbFactory.getInstance().createInterface().getMappingManager().createAccessor(ItemAccessor.class).list();
+        ResultSet resultSet = session.execute(SimpleStatement.newInstance(SELECT_ITEMS));
         List<Row> rows = resultSet.all();
-        if (rows != null) {
-            return rows.stream().map(row -> row.getString("item_id")).collect(Collectors.toList());
+        if (rows != null && !rows.isEmpty()) {
+            return rows.stream()
+                       .map(row -> row.getString("item_id"))
+                       .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
-
-    @Accessor
-    interface ItemAccessor {
-
-        @Query("SELECT item_id FROM zusammen_dox.item")
-        ResultSet list();
-    }
 }
+

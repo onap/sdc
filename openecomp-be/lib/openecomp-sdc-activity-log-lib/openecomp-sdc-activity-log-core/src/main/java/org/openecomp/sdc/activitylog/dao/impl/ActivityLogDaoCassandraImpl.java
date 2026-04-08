@@ -15,35 +15,31 @@
  */
 package org.openecomp.sdc.activitylog.dao.impl;
 
-import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+
 import java.util.Collection;
+
+
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+
 import org.openecomp.sdc.activitylog.dao.ActivityLogDao;
+import org.openecomp.sdc.activitylog.dao.ActivityLogDaoInternal;
+import org.openecomp.sdc.activitylog.dao.ActivityLogMapper;
+import org.openecomp.sdc.activitylog.dao.ActivityLogMapperBuilder;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
-import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+
 
 public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEntity> implements ActivityLogDao {
 
-    private static final Mapper<ActivityLogEntity> mapper;
-    private static final ActivityLogAccessor accessor;
+   private final ActivityLogDaoInternal dao;
 
-    static {
-        MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
-        mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry().register(new EnumNameCodec<>(ActivityType.class));
-        mapper = mappingManager.mapper(ActivityLogEntity.class);
-        accessor = mappingManager.createAccessor(ActivityLogAccessor.class);
+    public ActivityLogDaoCassandraImpl(CqlSession session) {
+        super(session);
+        ActivityLogMapper mapper = new ActivityLogMapperBuilder(session).build();
+        this.dao = mapper.activityLogDao(session.getKeyspace().get().asInternal());
+
     }
 
-    @Override
-    protected Mapper<ActivityLogEntity> getMapper() {
-        return mapper;
-    }
 
     @Override
     protected Object[] getKeys(ActivityLogEntity entity) {
@@ -52,13 +48,44 @@ public class ActivityLogDaoCassandraImpl extends CassandraBaseDao<ActivityLogEnt
 
     @Override
     public Collection<ActivityLogEntity> list(ActivityLogEntity entity) {
-        return accessor.listByItemVersion(entity.getItemId(), entity.getVersionId()).all();
+        return dao.listByItemVersion(entity.getItemId(), entity.getVersionId());
+    }
+    
+
+    @Override
+    protected String getTableName() {
+        return "activity_log";
     }
 
-    @Accessor
-    interface ActivityLogAccessor {
 
-        @Query("select * from activity_log where item_id=? and version_id=?")
-        Result<ActivityLogEntity> listByItemVersion(String itemId, String versionId);
+    @Override
+    protected String[] getColumns(ActivityLogEntity entity) {
+        return new String[] {
+        "item_id",
+        "version_id",
+        "activity_id",
+        "type",
+        "user",
+        "timestamp",
+        "success",
+        "message",
+        "comment"
+    };
+    }
+
+
+    @Override
+    protected Object[] getValues(ActivityLogEntity entity) {
+        return new Object[] {
+        entity.getItemId(),
+        entity.getVersionId(),
+        entity.getId(),
+        entity.getType() == null ? null : entity.getType().name(),
+        entity.getUser(),
+        entity.getTimestamp(),
+        entity.isSuccess(),
+        entity.getMessage(),
+        entity.getComment()
+    };
     }
 }

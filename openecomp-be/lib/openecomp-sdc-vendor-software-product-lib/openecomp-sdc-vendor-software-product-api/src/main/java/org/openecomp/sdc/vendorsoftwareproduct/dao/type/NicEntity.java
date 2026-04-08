@@ -19,11 +19,7 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,30 +29,36 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEnti
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_component_nic")
+@Entity
+@CqlName("vsp_component_nic")
 public class NicEntity implements CompositionEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product NIC";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "component_id")
+    @CqlName("component_id")
     private String componentId;
     @ClusteringColumn(value = 1)
-    @Column(name = "nic_id")
+    @CqlName("nic_id")
     private String id;
-    @Column(name = "composition_data")
+    @CqlName("composition_data")
     private String compositionData;
-    @Column(name = "questionnaire_data")
+    @CqlName("questionnaire_data")
     private String questionnaireData;
 
     /**
@@ -101,4 +103,6 @@ public class NicEntity implements CompositionEntity {
     public void setNicCompositionData(Nic nic) {
         this.compositionData = nic == null ? null : JsonUtil.object2Json(nic);
     }
+
+    
 }

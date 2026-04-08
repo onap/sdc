@@ -19,59 +19,51 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
+
+import java.util.*;
 
 public class PermissionHandler {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static PermissionAccessor accessor = noSqlDb.getMappingManager().createAccessor(PermissionAccessor.class);
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
     public Optional<String> getItemUserPermission(String itemId, String user) {
-        ResultSet resultSet = accessor.getItemUserPermission(itemId, user);
-        Row row = resultSet.one();
-        if (Objects.nonNull(row)) {
+        String cql = "SELECT permission FROM dox.item_permissions WHERE item_id=? AND user_id=?";
+        BoundStatement stmt = session.prepare(cql).bind(itemId, user);
+        Row row = session.execute(stmt).one();
+        if (row != null) {
             return Optional.of(row.getString("permission"));
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     public void setItemUserPermission(String itemId, String user, String permission) {
-        accessor.setItemUserPermission(itemId, user, permission);
+        String cql = "INSERT INTO dox.item_permissions (item_id,user_id,permission) VALUES (?,?,?)";
+        BoundStatement stmt = session.prepare(cql).bind(itemId, user, permission);
+        session.execute(stmt);
     }
 
     public void addItem(Set<String> items, String userId, String permission) {
-        accessor.addItem(items, userId, permission);
+        String cql = "UPDATE dox.user_permission_items SET item_list = item_list + ? WHERE user_id = ? AND permission = ?";
+        BoundStatement stmt = session.prepare(cql).bind(items, userId, permission);
+        session.execute(stmt);
     }
 
     public List<ItemPermissionsEntity> getAll() {
-        return accessor.getAll().all();
-    }
-
-    @Accessor
-    interface PermissionAccessor {
-
-        @Query("INSERT into dox.item_permissions (item_id,user_id,permission)  VALUES (?,?,?)")
-        void setItemUserPermission(String permission, String itemId, String userId);
-
-        @Query("SELECT permission FROM dox.item_permissions WHERE item_id=? AND user_id=?")
-        ResultSet getItemUserPermission(String itemId, String userId);
-
-        @Query("SELECT * from dox.item_permissions")
-        Result<ItemPermissionsEntity> getAll();
-
-        @Query("update dox.user_permission_items set item_list=item_list+? WHERE user_id = ? AND permission = ?")
-        void addItem(Set<String> items, String userId, String permission);
+        String cql = "SELECT * FROM dox.item_permissions";
+        List<ItemPermissionsEntity> list = new ArrayList<>();
+        session.execute(cql).forEach(row -> {
+            ItemPermissionsEntity entity = new ItemPermissionsEntity();
+            entity.setItemId(row.getString("item_id"));
+            entity.setUserId(row.getString("user_id"));
+            entity.setPermission(row.getString("permission"));
+            list.add(entity);
+        });
+        return list;
     }
 }
+

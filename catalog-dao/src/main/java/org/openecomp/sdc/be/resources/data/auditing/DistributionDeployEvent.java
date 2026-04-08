@@ -19,12 +19,14 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -38,37 +40,38 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 @Getter
 @Setter
 @ToString
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.DISTRIBUTION_DEPLOY_EVENT_TYPE)
 public class DistributionDeployEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column(name = "request_id")
+    protected Instant timestamp1;
+    @CqlName("request_id")
     protected String requestId;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     protected String serviceInstanceId;
-    @Column
+    @CqlName("action")
     protected String action;
-    @Column
+   @CqlName("status")
     protected String status;
-    @Column(name = "description")
+    @CqlName("description")
     protected String desc;
-    @Column(name = "resource_name")
+    @CqlName("resource_name")
     private String resourceName;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     private String resourceType;
-    @Column(name = "curr_version")
+    @CqlName("curr_version")
     private String currVersion;
-    @Column
+    @CqlName("modifier")
     private String modifier;
-    @Column
+    @CqlName("did")
     private String did;
 
     public DistributionDeployEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public DistributionDeployEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo, String did, String modifier,
@@ -90,7 +93,7 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp1) {
+    public void setTimestamp1(Instant timestamp1) {
         this.timestamp1 = timestamp1;
     }
 
@@ -108,6 +111,6 @@ public class DistributionDeployEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_TYPE.getDisplayName(), getResourceType());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 }

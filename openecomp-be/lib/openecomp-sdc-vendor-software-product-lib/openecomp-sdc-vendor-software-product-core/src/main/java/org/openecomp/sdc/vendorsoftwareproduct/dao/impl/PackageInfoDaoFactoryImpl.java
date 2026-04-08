@@ -19,12 +19,20 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class PackageInfoDaoFactoryImpl extends PackageInfoDaoFactory {
 
-    private static final PackageInfoDao INSTANCE = new PackageInfoDaoImpl();
+    private static final PackageInfoDao INSTANCE;
+
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new PackageInfoDaoImpl(session);
+    }
 
     @Override
     public PackageInfoDao createInterface() {

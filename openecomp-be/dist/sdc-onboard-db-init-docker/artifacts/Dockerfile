@@ -18,12 +18,10 @@ RUN mkdir -p /root/.cassandra/ && \
     echo 'version=3.4.4' >> /root/.cassandra/cqlshrc
 
 USER sdc
-
 COPY --chown=sdc:sdc init_keyspaces.cql /home/sdc/
 COPY --chown=sdc:sdc init_schemas.cql /home/sdc/
 COPY --chown=sdc:sdc upgrade-scripts /home/sdc/upgrade-scripts
 COPY --chown=sdc:sdc startup.sh /home/sdc/
-
 RUN chmod 770 /home/sdc/startup.sh
 
 ENTRYPOINT [ "/home/sdc/startup.sh" ]

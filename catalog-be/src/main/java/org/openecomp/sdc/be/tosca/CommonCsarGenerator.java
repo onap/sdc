@@ -77,7 +77,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;

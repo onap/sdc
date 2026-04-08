@@ -15,9 +15,11 @@
  */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,20 +32,21 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "healing")
+@Entity
+@CqlName("healing")
 public class HealingEntity {
 
-    @Column(name = "space")
+    @CqlName("space")
     @PartitionKey(0)
     private String space;
-    @Column(name = "item_id")
+    @CqlName("item_id")
     @PartitionKey(1)
     private String itemId;
-    @Column(name = "version_id")
+    @CqlName("version_id")
     @PartitionKey(2)
     private String versionId;
-    @Column(name = "healing_needed")
+    @CqlName("healing_needed")
     private boolean healingFlag;
-    @Column(name = "old_version")
+    @CqlName("old_version")
     private String oldVersion;
 }

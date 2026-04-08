@@ -19,87 +19,136 @@
  */
 package org.openecomp.core.utilities.applicationconfig.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
-import java.util.Objects;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDao;
 import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 
-public class ApplicationConfigDaoCassandraImpl extends CassandraBaseDao<ApplicationConfigEntity> implements ApplicationConfigDao {
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<ApplicationConfigEntity> mapper = noSqlDb.getMappingManager().mapper(ApplicationConfigEntity.class);
-    private static final ApplicationConfigAccessor accessor = noSqlDb.getMappingManager().createAccessor(ApplicationConfigAccessor.class);
+public class ApplicationConfigDaoCassandraImpl
+        extends CassandraBaseDao<ApplicationConfigEntity>
+        implements ApplicationConfigDao {
 
-    @Override
-    protected Mapper<ApplicationConfigEntity> getMapper() {
-        return mapper;
+    private final CqlSession session;
+
+    private final PreparedStatement insertOrUpdateStmt;
+    private final PreparedStatement selectStmt;
+    private final PreparedStatement listStmt;
+    private final PreparedStatement valueAndTimestampStmt;
+
+    public ApplicationConfigDaoCassandraImpl(CqlSession session) {
+        super(session);
+        this.session = session;
+
+        this.insertOrUpdateStmt = session.prepare(
+                "INSERT INTO application_config (namespace, key, value) VALUES (?, ?, ?)");
+        this.selectStmt = session.prepare(
+                "SELECT namespace, key, value FROM application_config WHERE namespace = ? AND key = ?");
+        this.listStmt = session.prepare(
+                "SELECT namespace, key, value FROM application_config WHERE namespace = ?");
+        this.valueAndTimestampStmt = session.prepare(
+                "SELECT value, writetime(value) as ts FROM application_config WHERE namespace = ? AND key = ?");
     }
 
     @Override
     protected Object[] getKeys(ApplicationConfigEntity entity) {
-        return new Object[]{entity.getNamespace(), entity.getKey(), entity.getValue()};
+        return new Object[]{entity.getNamespace(), entity.getKey()};
     }
 
     @Override
     public void create(ApplicationConfigEntity entity) {
-        accessor.updateApplicationConfigData(entity.getNamespace(), entity.getKey(), entity.getValue());
+        BoundStatement bound = insertOrUpdateStmt.bind(
+                entity.getNamespace(),
+                entity.getKey(),
+                entity.getValue()
+        );
+        session.execute(bound);
     }
 
     @Override
     public void update(ApplicationConfigEntity entity) {
-        accessor.updateApplicationConfigData(entity.getNamespace(), entity.getKey(), entity.getValue());
+        create(entity); // same as insert in Cassandra
     }
 
     @Override
     public ApplicationConfigEntity get(ApplicationConfigEntity entity) {
-        return accessor.get(entity.getNamespace(), entity.getKey());
+        BoundStatement bound = selectStmt.bind(entity.getNamespace(), entity.getKey());
+        Row row = session.execute(bound).one();
+        if (row == null) {
+            return null;
+        }
+        return new ApplicationConfigEntity(
+                row.getString("namespace"),
+                row.getString("key"),
+                row.getString("value"));
     }
 
     @Override
     public Collection<ApplicationConfigEntity> list(ApplicationConfigEntity entity) {
-        return accessor.list(entity.getNamespace()).all();
+        BoundStatement bound = listStmt.bind(entity.getNamespace());
+        ResultSet rs = session.execute(bound);
+        return StreamSupport.stream(rs.spliterator(), false)
+                .map(row -> new ApplicationConfigEntity(
+                        row.getString("namespace"),
+                        row.getString("key"),
+                        row.getString("value")))
+                .collect(Collectors.toList());
     }
 
     @Override
     public long getValueTimestamp(String namespace, String key) {
-        ResultSet resultSet = accessor.getValueAndTimestampOfConfigurationValue(namespace, key);
-        return resultSet.one().getLong("writetime(value)");
+        BoundStatement bound = valueAndTimestampStmt.bind(namespace, key);
+        Row row = session.execute(bound).one();
+        return (row != null) ? row.getLong("ts") : -1;
     }
 
     @Override
     public ConfigurationData getConfigurationData(String namespace, String key) {
-        //String value = accessor.getValue(namespace, key).one().getString("value");
-        ResultSet resultSet = accessor.getValueAndTimestampOfConfigurationValue(namespace, key);
-        Row one = resultSet.one();
-        if (Objects.nonNull(one)) {
-            return new ConfigurationData(one.getString("value"), one.getLong("writetime(value)"));
+        BoundStatement bound = valueAndTimestampStmt.bind(namespace, key);
+        Row row = session.execute(bound).one();
+        if (Objects.nonNull(row)) {
+            return new ConfigurationData(
+                    row.getString("value"),
+                    row.getLong("ts"));
         }
         return null;
     }
 
-    @Accessor
-    interface ApplicationConfigAccessor {
+    // ===== CassandraBaseDao abstract methods =====
 
-        @Query("select namespace, key, value from application_config where namespace=?")
-        Result<ApplicationConfigEntity> list(String namespace);
+    @Override
+    protected String getTableName() {
+        return "application_config";
+    }
 
-        @Query("insert into application_config (namespace, key, value) values (?,?,?)")
-        ResultSet updateApplicationConfigData(String namespace, String key, String value);
+    @Override
+    protected String[] getColumns(ApplicationConfigEntity entity) {
+        return new String[]{"namespace", "key", "value"};
+    }
 
-        @Query("select namespace, key, value from application_config where namespace=? and key=?")
-        ApplicationConfigEntity get(String namespace, String key);
+    @Override
+    protected Object[] getValues(ApplicationConfigEntity entity) {
+        return new Object[]{entity.getNamespace(), entity.getKey(), entity.getValue()};
+    }
 
-        @Query("select value, writetime(value) from application_config where namespace=? and key=?")
-        ResultSet getValueAndTimestampOfConfigurationValue(String namespace, String key);
+
+    public Collection<ApplicationConfigEntity> list(String namespace) {
+        BoundStatement bound = listStmt.bind(namespace);
+        ResultSet rs = session.execute(bound);
+        return StreamSupport.stream(rs.spliterator(), false)
+                .map(row -> new ApplicationConfigEntity(
+                        row.getString("namespace"),
+                        row.getString("key"),
+                        row.getString("value")))
+                .collect(Collectors.toList());
     }
 }

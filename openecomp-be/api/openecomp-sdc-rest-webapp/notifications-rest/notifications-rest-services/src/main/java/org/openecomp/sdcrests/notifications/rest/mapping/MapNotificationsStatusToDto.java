@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdcrests.notifications.rest.mapping;
 
-import com.datastax.driver.core.utils.UUIDs;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,8 @@ import org.openecomp.sdc.notification.dtos.NotificationsStatus;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.notifications.types.NotificationEntityDto;
 import org.openecomp.sdcrests.notifications.types.NotificationsStatusDto;
+
+import com.datastax.oss.driver.api.core.uuid.Uuids;
 
 public class MapNotificationsStatusToDto extends MappingBase<NotificationsStatus, NotificationsStatusDto> {
 
@@ -49,6 +51,6 @@ public class MapNotificationsStatusToDto extends MappingBase<NotificationsStatus
     }
 
     private String extractDate(NotificationEntity notification) {
-        return formatter.format(UUIDs.unixTimestamp(notification.getEventId()));
+        return formatter.format(Uuids.unixTimestamp(notification.getEventId()));
     }
 }

@@ -117,6 +117,23 @@ public class SOL004MetaDirectoryValidator implements Validator {
         this.contentHandler = (OnboardingPackageContentHandler) csarContent;
         this.folderList = contentHandler.getFolderList();
         parseToscaMetadata();
+
+        if (toscaMetadata != null && toscaMetadata.getMetaEntries() != null) {
+            toscaMetadata.getMetaEntries().forEach((key, value) -> System.out.println(" " + key + " = " + value));
+
+            // Guard against missing manifest path
+            String manifestPath = toscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName());
+            if (manifestPath == null || manifestPath.isBlank()) {
+                reportError(ErrorLevel.ERROR, "Manifest path is missing in TOSCA.meta");
+            }
+        } else {
+        }
+
+        parseToscaMetadata();
+        if (toscaMetadata != null && toscaMetadata.getMetaEntries() != null) 
+        {
+        toscaMetadata.getMetaEntries().forEach((key, value) -> System.out.println(" " + key + " = " + value)); 
+        } 
         verifyMetadataFile();
         if (packageHasCertificate()) {
             verifySignedFiles();
@@ -288,8 +305,20 @@ public class SOL004MetaDirectoryValidator implements Validator {
     }
 
     protected String getManifestFilePath() {
-        return toscaMetadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName());
+    if (toscaMetadata == null) {
+        return null;
     }
+    Map<String,String> entries = toscaMetadata.getMetaEntries();
+    if (entries == null) {
+        return null;
+    }
+
+    String lookupKey = ETSI_ENTRY_MANIFEST.getName();
+    String path = entries.get(lookupKey);
+    return path;
+}
+
+
 
     protected void verifyMetadataEntryVersions(final String key, final String version) {
         if (!(isValidTOSCAVersion(key, version) || isValidCSARVersion(key, version) || CREATED_BY_ENTRY.getName().equals(key))) {
@@ -528,7 +557,8 @@ public class SOL004MetaDirectoryValidator implements Validator {
     }
 
     private String getEtsiEntryManifestPath() {
-        return getManifestFilePath();
+        String path = getManifestFilePath();
+        return path;
     }
 
     /**

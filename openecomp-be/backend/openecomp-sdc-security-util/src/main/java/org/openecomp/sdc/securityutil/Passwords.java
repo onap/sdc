@@ -147,7 +147,6 @@ public class Passwords {
             md.update(password);
             byteData = md.digest();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("invalid algorithm name");
         }
         return byteData;
     }

@@ -150,9 +150,15 @@ public class ServiceServlet extends AbstractValidationsServlet {
         }
         Multitenancy keyaccess = new Multitenancy();
         Service service = convertResponse.left().value();
-        if (keyaccess.multiTenancyCheck()) {
+        System.out.println("[DEBUG] Deserialized Service object: " + service);
+        System.out.println("[DEBUG] Service.getModel() = " + service.getModel());
+        System.out.println("[DEBUG] Service.getDerivedFromGenericType() = " + service.getDerivedFromGenericType());
+        System.out.println("[DEBUG] Service.getDerivedFromGenericVersion() = " + service.getDerivedFromGenericVersion());
+
+            if (keyaccess.multiTenancyCheck()) {
             AccessToken.Access realmAccess = keyaccess.getAccessToken(request).getRealmAccess();
             Set<String> realmroles = realmAccess.getRoles();
+          
             boolean match = realmroles.contains(service.getTenant());
             if (match) {
                 Either<Service, ResponseFormat> actionResponse = serviceBusinessLogic.createService(service, modifier);

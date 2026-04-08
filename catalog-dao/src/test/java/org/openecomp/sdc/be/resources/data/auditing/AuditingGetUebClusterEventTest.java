@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData.Builder;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -93,7 +94,7 @@ public class AuditingGetUebClusterEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -103,7 +104,7 @@ public class AuditingGetUebClusterEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		AuditingGetUebClusterEvent testSubject;
-		Date timestamp1 = null;
+		Instant timestamp1 = null;
 
 		// default test
 		testSubject = createTestSubject();

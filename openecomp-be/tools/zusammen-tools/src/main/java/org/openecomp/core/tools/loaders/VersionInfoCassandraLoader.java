@@ -19,27 +19,43 @@
  */
 package org.openecomp.core.tools.loaders;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
 
 public class VersionInfoCassandraLoader {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static VersionInfoAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
-    public static Collection<VersionInfoEntity> list() {
-        return accessor.getAll().all();
-    }
+    public static List<VersionInfoEntity> list() {
+        List<VersionInfoEntity> result = new ArrayList<>();
+        ResultSet rs = session.execute("SELECT * FROM version_info");
+        for (Row row : rs) {
+            VersionInfoEntity entity = new VersionInfoEntity();
+            entity.setEntityType(row.getString("entity_type"));
+            entity.setEntityId(row.getString("entity_id"));
 
-    @Accessor
-    interface VersionInfoAccessor {
+            // Map remaining fields, assuming Version, VersionStatus, and UserCandidateVersion are serializable
+            entity.setActiveVersion(row.get("active_version", Version.class));
+            entity.setStatus(row.get("status", VersionStatus.class));
+            entity.setCandidate(row.get("candidate", UserCandidateVersion.class));
 
-        @Query("select * from version_info ")
-        Result<VersionInfoEntity> getAll();
+            Set<Version> viewableVersions = row.getSet("viewable_versions", Version.class);
+            entity.setViewableVersions(viewableVersions != null ? viewableVersions : new HashSet<>());
+
+            entity.setLatestFinalVersion(row.get("latest_final_version", Version.class));
+
+            result.add(entity);
+        }
+        return result;
     }
 }

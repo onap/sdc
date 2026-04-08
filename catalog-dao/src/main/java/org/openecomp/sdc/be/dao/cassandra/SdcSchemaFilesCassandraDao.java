@@ -19,13 +19,12 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
+
 import fj.data.Either;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -45,38 +44,40 @@ public class SdcSchemaFilesCassandraDao extends CassandraDao {
 
     @PostConstruct
     public void init() {
-        String keyspace = AuditingTypesConstants.ARTIFACT_KEYSPACE;
-        if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
-            if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                sdcSchemaFilesAccessor = manager.createAccessor(SdcSchemaFilesAccessor.class);
-                logger.info("** SdcSchemaFilesCassandraDao created");
-            } else {
-                logger.info("** SdcSchemaFilesCassandraDao failed");
-                throw new RuntimeException("Artifact keyspace [" + keyspace + "] failed to connect with error : " + result.right().value());
-            }
+    String keyspace = AuditingTypesConstants.ARTIFACT_KEYSPACE;
+    if (client.isConnected()) {
+        Either<CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
+
+        if (result.isLeft()) {
+            session = result.left().value();
+            SdcSchemaFilesCassandraDaoMapper schemaFilesMapper = new SdcSchemaFilesCassandraDaoMapperBuilder(session).build();
+            sdcSchemaFilesAccessor = schemaFilesMapper.sdcSchemaFilesAccessor(keyspace);
+            logger.info("** SdcSchemaFilesCassandraDao created");
         } else {
-            logger.info("** Cassandra client isn't connected");
-            logger.info("** SdcSchemaFilesCassandraDao created, but not connected");
+            logger.info("** SdcSchemaFilesCassandraDao failed");
+            throw new RuntimeException("Artifact keyspace [" + keyspace + "] failed to connect with error : " + result.right().value());
         }
+    } else {
+        logger.info("** Cassandra client isn't connected");
+        logger.info("** SdcSchemaFilesCassandraDao created, but not connected");
     }
+}
+
 
     public CassandraOperationStatus saveSchemaFile(SdcSchemaFilesData schemaFileData) {
-        return client.save(schemaFileData, SdcSchemaFilesData.class, manager);
+        return client.save(schemaFileData, SdcSchemaFilesData.class);
     }
 
     public Either<SdcSchemaFilesData, CassandraOperationStatus> getSchemaFile(String schemaFileId) {
-        return client.getById(schemaFileId, SdcSchemaFilesData.class, manager);
+        return client.getById(schemaFileId, SdcSchemaFilesData.class);
     }
 
     public CassandraOperationStatus deleteSchemaFile(String schemaFileId) {
-        return client.delete(schemaFileId, SdcSchemaFilesData.class, manager);
+        return client.delete(schemaFileId, SdcSchemaFilesData.class);
     }
 
     public Either<List<SdcSchemaFilesData>, CassandraOperationStatus> getSpecificSchemaFiles(String sdcreleasenum, String conformancelevel) {
-        Result<SdcSchemaFilesData> specificSdcSchemaFiles = null;
+        PagingIterable<SdcSchemaFilesData> specificSdcSchemaFiles = null;
         try {
             specificSdcSchemaFiles = sdcSchemaFilesAccessor.getSpecificSdcSchemaFiles(sdcreleasenum, conformancelevel);
         } catch (Exception e) {

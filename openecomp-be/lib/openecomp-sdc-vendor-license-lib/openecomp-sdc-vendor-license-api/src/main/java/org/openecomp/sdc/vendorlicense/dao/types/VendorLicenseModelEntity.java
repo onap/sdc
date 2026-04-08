@@ -19,35 +19,37 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Computed;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.Computed;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 @Getter
 @Setter
-@Table(keyspace = "dox", name = "vendor_license_model")
+@Entity
+@CqlName("vendor_license_model")
 public class VendorLicenseModelEntity implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "Vendor License Model";
     @PartitionKey
-    @Column(name = "vlm_id")
+    @CqlName("vlm_id")
     private String id;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
-    @Column(name = "vendor_name")
+    @CqlName("vendor_name")
     private String vendorName;
     private String description;
     private String oldVersion;
     private String tenant;
-    @Column(name = "icon")
+    @CqlName("icon")
     private String iconRef;
     @Computed("writetime(vendor_name)")
     private Long writetimeMicroSeconds;
@@ -143,4 +145,6 @@ public class VendorLicenseModelEntity implements VersionableEntity {
         return Objects.equals(id, that.id) && Objects.equals(version, that.version) && Objects.equals(vendorName, that.vendorName) && Objects
                 .equals(description, that.description) && Objects.equals(iconRef, that.iconRef) && Objects.equals(tenant, that.tenant);
     }
+
+    
 }

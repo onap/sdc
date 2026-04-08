@@ -19,14 +19,6 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,32 +32,38 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.OperationalScopeForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Getter
-@Setter
-@Table(keyspace = "dox", name = "license_key_group")
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Entity
+@CqlName("license_key_group")
 public class LicenseKeyGroupEntity implements VersionableEntity {
 
     private static final String ENTITY_TYPE = "License Key Group";
     @PartitionKey
-    @Column(name = "vlm_id")
+    @CqlName("vlm_id")
     private String vendorLicenseModelId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "lkg_id")
+    @CqlName("lkg_id")
     private String id;
     private String name;
     private String description;
     private LicenseKeyType type;
-    @Column(name = "operational_scope")
-    @Frozen
-    private MultiChoiceOrOther<OperationalScope> operationalScope;
-    @Column(name = "ref_fg_ids")
+    @CqlName("operational_scope")
+    private String operationalScope;
+    @CqlName("ref_fg_ids")
     private Set<String> referencingFeatureGroups = new HashSet<>();
-    @Column(name = "version_uuid")
+    @CqlName("version_uuid")
     private String versionUuId;
     private Integer thresholdValue;
     private ThresholdUnit thresholdUnits;
@@ -75,6 +73,9 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     private String expiryDate;
     //Defined and used only for License Artifcat XMLs
     private String manufacturerReferenceNumber;
+
+    @Transient
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Every entity class must have a default constructor according to
@@ -98,22 +99,101 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         this.id = id;
     }
 
-    @Override
+
     public String getEntityType() {
         return ENTITY_TYPE;
     }
 
-    @Override
+
     public String getFirstClassCitizenId() {
         return getVendorLicenseModelId();
     }
 
-    public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
-        if (operationalScope != null) {
-            operationalScope.resolveEnum(OperationalScope.class);
-        }
-        this.operationalScope = operationalScope;
+    public String getId() {
+        return id;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Version getVersion() {
+        return version;
+    }
+
+    public void setVersion(Version version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getVersionUuId() {
+        return versionUuId;
+    }
+
+    @Override
+    public void setVersionUuId(String uuId) {
+        versionUuId = uuId;
+    }
+
+    public String getVendorLicenseModelId() {
+        return vendorLicenseModelId;
+    }
+
+    public void setVendorLicenseModelId(String vendorLicenseModelId) {
+        this.vendorLicenseModelId = vendorLicenseModelId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LicenseKeyType getType() {
+        return type;
+    }
+
+    public void setType(LicenseKeyType type) {
+        this.type = type;
+    }
+
+    @Transient
+    public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
+    if (operationalScope == null) {
+        return null;
+    }
+    try {
+        return MAPPER.readValue(
+            operationalScope,
+            new TypeReference<MultiChoiceOrOther<OperationalScope>>() {}
+        );
+    } catch (Exception e) {
+        throw new RuntimeException("Failed to parse operationalScope JSON", e);
+    }
+}
+    @Transient
+    public void setOperationalScope(MultiChoiceOrOther<OperationalScope> scope) {
+    if (scope != null) {
+        scope.resolveEnum(OperationalScope.class);
+        try {
+            this.operationalScope = MAPPER.writeValueAsString(scope);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize operationalScope", e);
+        }
+    } else {
+        this.operationalScope = null;
+    }
+}
 
     public ThresholdForXml getThresholdForArtifact() {
         ThresholdForXml threshold = new ThresholdForXml();
@@ -206,10 +286,9 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
      */
     public OperationalScopeForXml getOperationalScopeForArtifact() {
         OperationalScopeForXml obj = new OperationalScopeForXml();
-        if (operationalScope != null) {
-            if (operationalScope.getResults().size() > 0) {
-                obj.setValue(operationalScope.getResults());
-            }
+        MultiChoiceOrOther<OperationalScope> scope = getOperationalScope();
+        if (scope != null && !scope.getResults().isEmpty()) {
+            obj.setValue(scope.getResults());
         }
         return obj;
     }
@@ -244,4 +323,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         }
         return isoFormatExpDate;
     }
+
+    
 }

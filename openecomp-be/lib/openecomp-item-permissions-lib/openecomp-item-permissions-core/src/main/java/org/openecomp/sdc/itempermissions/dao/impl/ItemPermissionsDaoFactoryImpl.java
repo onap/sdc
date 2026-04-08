@@ -19,15 +19,23 @@
  */
 package org.openecomp.sdc.itempermissions.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
+
+import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * Created by ayalaben on 6/18/2017.
  */
 public class ItemPermissionsDaoFactoryImpl extends ItemPermissionsDaoFactory {
 
-    private static ItemPermissionsDao INSTANCE = new ItemPermissionsDaoImpl();
+    private static ItemPermissionsDao INSTANCE; 
+
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new ItemPermissionsDaoImpl(session);
+    }
 
     @Override
     public ItemPermissionsDao createInterface() {

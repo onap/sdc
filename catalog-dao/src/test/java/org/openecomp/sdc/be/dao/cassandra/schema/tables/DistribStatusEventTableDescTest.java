@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;

@@ -69,13 +69,34 @@
       <version>${togglz.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok-mapstruct-binding</artifactId>
+      <version>0.2.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+             <path>
+              <groupId>com.datastax.oss</groupId>
+              <artifactId>java-driver-mapper-processor</artifactId>
+              <version>${cassandra.driver.version}</version>
+            </path>
+            </annotationProcessorPaths>
+          </configuration>
       </plugin>
     </plugins>
   </build>
