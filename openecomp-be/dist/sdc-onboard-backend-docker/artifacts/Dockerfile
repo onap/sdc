@@ -1,4 +1,5 @@
-FROM onap/integration-java11:10.0.0
+FROM eclipse-temurin:11-jre-alpine
+
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
@@ -6,6 +7,7 @@ ARG JETTY_FOLDER=/app/jetty
 # Install necessary packages and dependencies
 RUN set -ex && \
     apk update && \
+    apk upgrade --no-cache && \
     apk add --no-cache --virtual .build-deps \
         build-base libffi-dev libxml2-dev libressl-dev wget
 
@@ -14,7 +16,9 @@ ENV JETTY_BASE=$JETTY_FOLDER
 ENV JETTY_USER=onap
 ENV JETTY_GROUP=onap
 
-RUN mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
+
+RUN addgroup -S $JETTY_GROUP && adduser -S $JETTY_USER -G $JETTY_GROUP && \
+    mkdir -p $JETTY_FOLDER && chown $JETTY_USER:$JETTY_GROUP $JETTY_FOLDER
 
 USER onap
 
@@ -25,14 +29,13 @@ RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/
     rm -rf $JETTY_FOLDER/jetty.tar.gz
 
 RUN sed -i 's/"jetty"/"onap"/g' $JETTY_FOLDER/etc/jetty-setuid.xml
-
 # Download OpenTelemetry Java Agent
 RUN mkdir -p $JETTY_FOLDER/otel && \
     wget -q https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${opentelemetry-javaagent.version}/opentelemetry-javaagent.jar \
     --tries=3 -O $JETTY_FOLDER/otel/opentelemetry-javaagent.jar
 
-ADD --chown=onap:onap onboarding-be-*.war    $JETTY_FOLDER/webapps/
-ADD --chown=onap:onap api-docs.war           $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap onboarding-be-*.war $JETTY_FOLDER/webapps/
+ADD --chown=onap:onap api-docs.war $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
 COPY --chown=onap:onap scripts/cleanup_jettydir.sh $JETTY_FOLDER/
 COPY --chown=onap:onap scripts/create_jetty_modules.sh $JETTY_FOLDER/
@@ -48,7 +51,6 @@ COPY --chown=onap:onap files/org.onap.sdc.p12 $JETTY_FOLDER/etc/
 COPY --chown=onap:onap files/org.onap.sdc.trust.jks $JETTY_FOLDER/etc/
 COPY --chown=onap:onap files/base_template.yaml $JETTY_BASE/resources/
 COPY --chown=onap:onap files/base_template.env $JETTY_BASE/resources/
-
 
 USER root
 RUN apk del .build-deps
