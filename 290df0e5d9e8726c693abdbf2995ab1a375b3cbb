@@ -37,6 +37,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a1223fa5_2dfd973c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-14T06:06:40Z",
+      "side": 1,
+      "message": "Please also update the commit message of this CR to:\n```\nDatastax Cassandra Driver 4.x Upgrade\n\n- cassandra driver (3.8.0 -\u003e 4.17.0)\n- janusgraph (0.5.0 -\u003e 0.6.4)\n- vavr (0.9.0 -\u003e 0.10.3)\n\nIssue-ID:SDC-4819\n```",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "101f53c6_7f34408c",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/dao/MigrationTasksDao.java",
         "patchSetId": 2
@@ -150,6 +167,40 @@
       "writtenOn": "2026-04-08T07:48:15Z",
       "side": 1,
       "message": "Same here",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "166ba9f1_d9f94d27",
+        "filename": "validation-dep.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-14T06:06:40Z",
+      "side": 1,
+      "message": "Please remove this file",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "120a190c_98074b01",
+        "filename": "version",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-14T06:06:40Z",
+      "side": 1,
+      "message": "I don\u0027t think this file serves any purpose, does it? I would suggest to remove it if it has been pushed accidentally",
       "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
