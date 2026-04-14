@@ -173,6 +173,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "06d84488_220615b9",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/VersionElementsCassandraLoader.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-14T06:16:10Z",
+      "side": 1,
+      "message": "We could move this mapping logic (lines 45 to 58) into a dedicated `mapRowToEntity` method. That would make this a bit more readable",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fac89b32_ffe36f39",
+        "filename": "openecomp-be/tools/zusammen-tools/src/test/java/org/openecomp/core/tools/store/zusammen/datatypes/VersionEntityTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-04-14T06:16:10Z",
+      "side": 1,
+      "message": "I would suggest to remove this test class if it does not contain any tests anymore",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "166ba9f1_d9f94d27",
         "filename": "validation-dep.txt",
         "patchSetId": 2
