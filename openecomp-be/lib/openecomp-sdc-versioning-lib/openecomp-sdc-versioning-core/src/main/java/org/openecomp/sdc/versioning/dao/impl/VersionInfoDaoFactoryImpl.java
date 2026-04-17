@@ -19,10 +19,16 @@ import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class VersionInfoDaoFactoryImpl extends VersionInfoDaoFactory {
 
-    private static VersionInfoDao INSTANCE = new VersionInfoDaoImpl(NoSqlDbFactory.getInstance().createInterface());
+    private static VersionInfoDao INSTANCE;
 
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new VersionInfoDaoImpl(session);
+    }
     @Override
     public VersionInfoDao createInterface() {
         return INSTANCE;

@@ -19,9 +19,10 @@
  */
 package org.openecomp.core.utilities.applicationconfig.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,12 +32,16 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "application_config")
+@Entity
+@CqlName("application_config")
 public class ApplicationConfigEntity {
 
-    @PartitionKey
+    @PartitionKey(0)
     private String namespace;
-    @ClusteringColumn
+
+    @ClusteringColumn(0)
     private String key;
+
     private String value;
+
 }

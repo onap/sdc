@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +36,14 @@ public class ExternalApiEventTableDesc implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataTypes.TIMEUUID));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -69,23 +70,23 @@ public class ExternalApiEventTableDesc implements ITableDescription {
     @AllArgsConstructor
     enum EGAEFieldsDescription {
         // @formatter:off
-        ACTION("action", DataType.varchar(), true),
-		STATUS("status", DataType.varchar(), false),
-		DESCRIPTION( "description", DataType.varchar(), false),
-		CONSUMER_ID("consumer_id", DataType.varchar(), false),
-		RESOURCE_URL("resource_URL", DataType.varchar(), false),
-		RESOURCE_NAME("resource_name", DataType.varchar(), false),
-		RESOURCE_TYPE("resource_type", DataType.varchar(), false),
-		SERVICE_INST_ID( "service_instance_id", DataType.varchar(), true),
-		INVARIANT_UUID("invariant_uuid", DataType.varchar(), true),
-		MODIFIER("modifier", DataType.varchar(), false),
-		PREV_VERSION( "prev_version", DataType.varchar(), false),
-		CURR_VERSION("curr_version", DataType.varchar(), false),
-		PREV_STATE("prev_state", DataType.varchar(), false),
-		CURR_STATE( "curr_state", DataType.varchar(), false),
-		PREV_ARTIFACT_UUID( "prev_artifact_uuid", DataType.varchar(), false),
-		CURR_ARTIFACT_UUID( "curr_artifact_uuid", DataType.varchar(), false),
-		ARTIFACT_DATA( "artifact_data", DataType.varchar(), false);
+        ACTION("action", DataTypes.TEXT, true),
+		STATUS("status", DataTypes.TEXT, false),
+		DESCRIPTION( "description", DataTypes.TEXT, false),
+		CONSUMER_ID("consumer_id", DataTypes.TEXT, false),
+		RESOURCE_URL("resource_URL", DataTypes.TEXT, false),
+		RESOURCE_NAME("resource_name", DataTypes.TEXT, false),
+		RESOURCE_TYPE("resource_type", DataTypes.TEXT, false),
+		SERVICE_INST_ID( "service_instance_id", DataTypes.TEXT, true),
+		INVARIANT_UUID("invariant_uuid", DataTypes.TEXT, true),
+		MODIFIER("modifier", DataTypes.TEXT, false),
+		PREV_VERSION( "prev_version", DataTypes.TEXT, false),
+		CURR_VERSION("curr_version", DataTypes.TEXT, false),
+		PREV_STATE("prev_state", DataTypes.TEXT, false),
+		CURR_STATE( "curr_state", DataTypes.TEXT, false),
+		PREV_ARTIFACT_UUID( "prev_artifact_uuid", DataTypes.TEXT, false),
+		CURR_ARTIFACT_UUID( "curr_artifact_uuid", DataTypes.TEXT, false),
+		ARTIFACT_DATA( "artifact_data", DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

@@ -21,20 +21,24 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
-import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+import com.datastax.oss.driver.api.core.CqlSession;
+
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordAccessor;
+import java.util.stream.StreamSupport;
+
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordDaoInternal;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordMapper;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordMapperBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatus;
 import org.springframework.stereotype.Component;
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
  * Data access object for the package upload process status.
@@ -42,56 +46,59 @@ import org.springframework.stereotype.Component;
 @Component("vsp-upload-status-record-dao-impl")
 public class VspUploadStatusRecordDaoIml implements VspUploadStatusRecordDao {
 
-    private final Mapper<VspUploadStatusRecord> mapper;
-    private final VspUploadStatusRecordAccessor accessor;
+    private final VspUploadStatusRecordDaoInternal dao;
 
-    public VspUploadStatusRecordDaoIml() {
-        final MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
-        mapper = mappingManager.mapper(VspUploadStatusRecord.class);
-        accessor = mappingManager.createAccessor(VspUploadStatusRecordAccessor.class);
-        mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry().register(new EnumNameCodec<>(VspUploadStatus.class));
+     public VspUploadStatusRecordDaoIml() {
+        CqlSession session = CassandraSessionFactory.getSession();
+        VspUploadStatusRecordMapper mapper =
+                new VspUploadStatusRecordMapperBuilder(session).build();
+        this.dao = mapper.vspUploadStatusRecordDaoInternal();
     }
 
-    //for tests purpose
-    VspUploadStatusRecordDaoIml(final VspUploadStatusRecordAccessor accessor) {
-        this.accessor = accessor;
-        mapper = null;
+    // For testing
+    VspUploadStatusRecordDaoIml(VspUploadStatusRecordDaoInternal dao) {
+    this.dao = dao;
     }
 
     @Override
     public void create(final VspUploadStatusRecord vspUploadStatusRecord) {
-        mapper.save(vspUploadStatusRecord);
+        dao.save(vspUploadStatusRecord);
     }
 
     @Override
     public void update(final VspUploadStatusRecord vspUploadStatusRecord) {
-        mapper.save(vspUploadStatusRecord);
+        dao.save(vspUploadStatusRecord);
     }
 
     @Override
-    public List<VspUploadStatusRecord> findAllByVspIdAndVersionId(final String vspId, final String vspVersionId) {
-        final Result<VspUploadStatusRecord> allByVspIdAndVspVersionId = accessor.findAllByVspIdAndVspVersionId(vspId, vspVersionId);
-        return allByVspIdAndVspVersionId.all();
+    public PagingIterable<VspUploadStatusRecord> findAllByVspIdAndVersionId(final String vspId, final String vspVersionId) {
+         return dao.findAllByVspIdAndVersionId(vspId, vspVersionId);
     }
 
     @Override
     public Optional<VspUploadStatusRecord> findByVspIdAndVersionIdAndLockId(final String vspId, final String vspVersionId, final UUID lockId) {
-        final Result<VspUploadStatusRecord> vspUploadStatusRecordResult = accessor.findByVspIdAndVersionIdAndLockId(vspId, vspVersionId, lockId);
-        final VspUploadStatusRecord vspUploadStatusRecord = vspUploadStatusRecordResult.one();
-        return Optional.ofNullable(vspUploadStatusRecord);
+        return Optional.ofNullable(dao.findByVspIdAndVersionIdAndLockId(vspId, vspVersionId, lockId));
     }
 
     @Override
-    public List<VspUploadStatusRecord> findAllInProgress(final String vspId, final String vspVersionId) {
-        final Result<VspUploadStatusRecord> incompleteUploadList = accessor.findAllIncomplete(vspId, vspVersionId);
-        return incompleteUploadList.all();
+    public PagingIterable<VspUploadStatusRecord> findAllInProgress(final String vspId, final String vspVersionId) {
+       return dao.findAllIncomplete(vspId, vspVersionId);
     }
 
     @Override
     public Optional<VspUploadStatusRecord> findLatest(final String vspId, final String vspVersionId) {
-        final List<VspUploadStatusRecord> vspUploadStatusRecordList = accessor.findAllByVspIdAndVspVersionId(vspId, vspVersionId).all();
-        vspUploadStatusRecordList.sort(Comparator.comparing(VspUploadStatusRecord::getCreated).reversed());
-        return vspUploadStatusRecordList.isEmpty() ? Optional.empty() : Optional.ofNullable(vspUploadStatusRecordList.get(0));
+        PagingIterable<VspUploadStatusRecord> iterable = dao.findAllByVspIdAndVersionId(vspId, vspVersionId);
+        List<VspUploadStatusRecord> list = new ArrayList<>();
+        iterable.forEach(list::add);
+
+        list.sort(Comparator.comparing(VspUploadStatusRecord::getCreated,
+            Comparator.nullsLast(Comparator.naturalOrder())).reversed());
+
+        list.forEach(r -> System.out.println("[DEBUG] Record: status=" + r.getStatusEnum()
+            + ", created=" + r.getCreated() + ", updated=" + r.getUpdated()));
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
+
+
 
 }

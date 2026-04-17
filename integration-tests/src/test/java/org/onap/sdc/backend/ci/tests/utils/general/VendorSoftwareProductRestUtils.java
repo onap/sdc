@@ -64,17 +64,47 @@ import static org.testng.AssertJUnit.assertTrue;
 
 public class VendorSoftwareProductRestUtils {
 
-    public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel, Map<CvfcTypeEnum, String> cvfcArtifacts)
-            throws Exception {
 
-        VendorSoftwareProductObject vendorSoftwareProductObject = createVSP(resourceReqDetails, heatFileName, filepath, user,
-            vendorLicenseModel);
-        if(cvfcArtifacts != null && ! cvfcArtifacts.isEmpty()){
-            addCvfcArtifacts(cvfcArtifacts, user, vendorSoftwareProductObject);
-        }
-        prepareVspForUse(user, vendorSoftwareProductObject, true);
-        return vendorSoftwareProductObject;
+public static VendorSoftwareProductObject createVendorSoftwareProduct(
+        ResourceReqDetails resourceReqDetails,
+        String heatFileName,
+        String filepath,
+        User user,
+        VendorLicenseModel vendorLicenseModel,
+        Map<CvfcTypeEnum, String> cvfcArtifacts) throws Exception {
+
+    System.out.println("[createVendorSoftwareProduct] Enter method");
+    System.out.println("[createVendorSoftwareProduct] Inputs -> "
+            + "resourceReqDetails=" + resourceReqDetails
+            + ", heatFileName=" + heatFileName
+            + ", filepath=" + filepath
+            + ", userId=" + (user != null ? user.getUserId() : "null")
+            + ", vendorLicenseModel=" + vendorLicenseModel
+            + ", cvfcArtifacts.size=" + (cvfcArtifacts == null ? 0 : cvfcArtifacts.size()));
+
+    System.out.println("[createVendorSoftwareProduct] Calling createVSP(...)");
+    VendorSoftwareProductObject vendorSoftwareProductObject =
+            createVSP(resourceReqDetails, heatFileName, filepath, user, vendorLicenseModel);
+    System.out.println("[createVendorSoftwareProduct] Created VSP: "
+            + (vendorSoftwareProductObject != null ? vendorSoftwareProductObject.toString() : "null"));
+
+    if (cvfcArtifacts != null && !cvfcArtifacts.isEmpty()) {
+        System.out.println("[createVendorSoftwareProduct] cvfcArtifacts present -> adding CVFC artifacts");
+        addCvfcArtifacts(cvfcArtifacts, user, vendorSoftwareProductObject);
+        System.out.println("[createVendorSoftwareProduct] CVFC artifacts added");
+    } else {
+        System.out.println("[createVendorSoftwareProduct] cvfcArtifacts null/empty -> skipping CVFC artifact addition");
     }
+
+    System.out.println("[createVendorSoftwareProduct] Preparing VSP for use (submit & finalize)");
+    prepareVspForUse(user, vendorSoftwareProductObject, true);
+    System.out.println("[createVendorSoftwareProduct] VSP prepared for use");
+
+    System.out.println("[createVendorSoftwareProduct] Returning VendorSoftwareProductObject");
+    System.out.println("[createVendorSoftwareProduct] Exit method");
+    return vendorSoftwareProductObject;
+}
+
 
     public static VendorSoftwareProductObject createVendorSoftwareProduct(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel)
             throws Exception {
@@ -115,32 +145,86 @@ public class VendorSoftwareProductRestUtils {
     }
 
 
-    public static VendorSoftwareProductObject createVSP(ResourceReqDetails resourceReqDetails, String heatFileName, String filepath, User user, VendorLicenseModel vendorLicenseModel) throws Exception {
-        String vspName = handleFilename(heatFileName);
 
-        if(ComponentBaseTest.getExtendTest() != null){
-            ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor software product");
-        }
+public static VendorSoftwareProductObject createVSP(
+        ResourceReqDetails resourceReqDetails,
+        String heatFileName,
+        String filepath,
+        User user,
+        VendorLicenseModel vendorLicenseModel) throws Exception {
 
-        Pair<RestResponse, VendorSoftwareProductObject> createNewVspPair = createNewVendorSoftwareProduct(resourceReqDetails, vspName,
-            vendorLicenseModel, user);
-        assertEquals("did not succeed to create new VSP", 200,createNewVspPair.left.getErrorCode().intValue());
+    System.out.println("[createVSP] Enter method");
+    System.out.println("[createVSP] Inputs -> resourceReqDetails=" + resourceReqDetails
+            + ", heatFileName=" + heatFileName
+            + ", filepath=" + filepath
+            + ", userId=" + (user != null ? user.getUserId() : "null")
+            + ", vendorLicenseModel=" + vendorLicenseModel);
 
-        RestResponse uploadHeatPackage = uploadHeatPackage(filepath, heatFileName,  createNewVspPair.right, user);
-        assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
+    String vspName = handleFilename(heatFileName);
+    System.out.println("[createVSP] Derived vspName=" + vspName);
 
-        RestResponse validateUpload = validateUpload(createNewVspPair.right, user);
-        assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
-
-        Path expectPath =  FileSystems.getDefault().getPath(filepath + File.separator + heatFileName.substring(0, heatFileName.indexOf('.')) + "_expect");
-
-        if(Files.exists(expectPath)) {
-            String content = Files.readString(expectPath);
-            assertTrue(validateUpload.getResponse().contains(content.trim().replaceAll("[\n\r]", "")));
-        }
-
-        return createNewVspPair.right;
+    if (ComponentBaseTest.getExtendTest() != null) {
+        ComponentBaseTest.getExtendTest().log(Status.INFO, "Starting to create the vendor software product");
+        System.out.println("[createVSP] Logged to ExtentTest: starting VSP creation");
+    } else {
+        System.out.println("[createVSP] ExtentTest not available (null) - skipping report log");
     }
+
+    System.out.println("[createVSP] Calling createNewVendorSoftwareProduct(...)");
+    Pair<RestResponse, VendorSoftwareProductObject> createNewVspPair =
+            createNewVendorSoftwareProduct(resourceReqDetails, vspName, vendorLicenseModel, user);
+
+    System.out.println("[createVSP] createNewVendorSoftwareProduct -> RestResponse.code="
+            + (createNewVspPair.left != null ? createNewVspPair.left.getErrorCode() : null)
+            + ", responseLen=" + (createNewVspPair.left != null && createNewVspPair.left.getResponse() != null
+                                  ? createNewVspPair.left.getResponse().length() : 0));
+    System.out.println("[createVSP] createNewVendorSoftwareProduct -> VSP object="
+            + (createNewVspPair.right != null ? createNewVspPair.right.toString() : "null"));
+
+    assertEquals("did not succeed to create new VSP", 200, createNewVspPair.left.getErrorCode().intValue());
+    System.out.println("[createVSP] Assert OK: new VSP created");
+
+    System.out.println("[createVSP] Uploading HEAT package: file=" + heatFileName + ", path=" + filepath);
+    RestResponse uploadHeatPackage = uploadHeatPackage(filepath, heatFileName, createNewVspPair.right, user);
+    System.out.println("[createVSP] uploadHeatPackage -> code=" + uploadHeatPackage.getErrorCode()
+            + ", responseLen=" + (uploadHeatPackage.getResponse() == null ? 0 : uploadHeatPackage.getResponse().length()));
+
+    assertEquals("did not succeed to upload HEAT package", 200, uploadHeatPackage.getErrorCode().intValue());
+    System.out.println("[createVSP] Assert OK: HEAT package uploaded");
+
+    System.out.println("[createVSP] Validating upload...");
+    RestResponse validateUpload = validateUpload(createNewVspPair.right, user);
+    System.out.println("[createVSP] validateUpload -> code=" + validateUpload.getErrorCode()
+            + ", responseLen=" + (validateUpload.getResponse() == null ? 0 : validateUpload.getResponse().length()));
+
+    assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(),
+            200, validateUpload.getErrorCode().intValue());
+    System.out.println("[createVSP] Assert OK: upload validated");
+
+    Path expectPath = FileSystems.getDefault().getPath(
+            filepath + File.separator + heatFileName.substring(0, heatFileName.indexOf('.')) + "_expect");
+    System.out.println("[createVSP] Computed expectPath=" + expectPath.toAbsolutePath());
+
+    if (Files.exists(expectPath)) {
+        System.out.println("[createVSP] Expectation file exists -> performing content check");
+        String content = Files.readString(expectPath);
+        System.out.println("[createVSP] Expectation content length=" + (content == null ? 0 : content.length()));
+
+        String normalizedExpected = content == null ? "" : content.trim().replaceAll("[\n\r]", "");
+        boolean contains = validateUpload.getResponse() != null && validateUpload.getResponse().contains(normalizedExpected);
+        System.out.println("[createVSP] Response contains expected content? " + contains);
+
+        assertTrue(contains);
+        System.out.println("[createVSP] Assert OK: validation response contains expected content");
+    } else {
+        System.out.println("[createVSP] Expectation file NOT found -> skipping content check");
+    }
+
+    System.out.println("[createVSP] Returning VSP object");
+    System.out.println("[createVSP] Exit method");
+    return createNewVspPair.right;
+}
+
 
     public static void updateVspWithVfcArtifacts(String filepath, String updatedSnmpPoll, String updatedSnmpTrap, String componentInstanceId, User user, VendorSoftwareProductObject vendorSoftwareProductObject) throws Exception{
         RestResponse checkout = creationMethodVendorSoftwareProduct(vendorSoftwareProductObject, user);
@@ -381,58 +465,146 @@ public class VendorSoftwareProductRestUtils {
         return response;
     }
 
-    public static RestResponse uploadHeatPackage(String filepath, String filename, VendorSoftwareProductObject vendorSoftwareProductObject, User user) throws Exception {
-        Config config = Utils.getConfig();
-        String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, config.getOnboardingBeHost(), config.getOnboardingBePort(), vendorSoftwareProductObject.getVspId(), vendorSoftwareProductObject.getComponentId());
-        return uploadFile(filepath, filename, url, user);
-    }
 
-    private static RestResponse uploadFile(String filepath, String filename, String url, User user) throws IOException{
-        CloseableHttpResponse response = null;
+public static RestResponse uploadHeatPackage(String filepath, String filename,
+                                            VendorSoftwareProductObject vendorSoftwareProductObject,
+                                            User user) throws Exception {
+    System.out.println("[uploadHeatPackage] Enter method");
+    System.out.println("[uploadHeatPackage] Input -> filepath: " + filepath);
+    System.out.println("[uploadHeatPackage] Input -> filename: " + filename);
+    System.out.println("[uploadHeatPackage] Input -> vspId: " + vendorSoftwareProductObject.getVspId());
+    System.out.println("[uploadHeatPackage] Input -> componentId: " + vendorSoftwareProductObject.getComponentId());
+    System.out.println("[uploadHeatPackage] Input -> userId: " + user.getUserId());
 
-        MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
-        mpBuilder.addPart("upload", new FileBody(getTestZipFile(filepath, filename)));
+    Config config = Utils.getConfig();
+    System.out.println("[uploadHeatPackage] Config fetched: " + config);
 
-        Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(user.getUserId());
-        headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "multipart/form-data");
+    String host = config.getOnboardingBeHost();
+    System.out.println("[uploadHeatPackage] Onboarding BE host: " + host);
 
-        CloseableHttpClient client = HttpClients.createDefault();
-        try {
-            HttpPost httpPost = new HttpPost(url);
-            RestResponse restResponse = new RestResponse();
+    String port = config.getOnboardingBePort();
+    System.out.println("[uploadHeatPackage] Onboarding BE port: " + port);
 
-            Iterator<String> iterator = headersMap.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                String value = headersMap.get(key);
-                httpPost.addHeader(key, value);
-            }
-            httpPost.setEntity(mpBuilder.build());
-            response = client.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            String responseBody = null;
-            if (entity != null) {
-                InputStream instream = entity.getContent();
-                try {
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(instream, writer);
-                    responseBody = writer.toString();
-                } finally {
-                    instream.close();
-                }
-            }
+    String vspId = vendorSoftwareProductObject.getVspId();
+    System.out.println("[uploadHeatPackage] Using vspId: " + vspId);
 
-            restResponse.setErrorCode(response.getStatusLine().getStatusCode());
-            restResponse.setResponse(responseBody);
+    String compId = vendorSoftwareProductObject.getComponentId();
+    System.out.println("[uploadHeatPackage] Using componentId: " + compId);
 
-            return restResponse;
+    String url = String.format(Urls.UPLOAD_HEAT_PACKAGE, host, port, vspId, compId);
+    System.out.println("[uploadHeatPackage] Computed URL: " + url);
 
-        } finally {
-            closeResponse(response);
-            closeHttpClient(client);
+    System.out.println("[uploadHeatPackage] Calling uploadFile(...)");
+    RestResponse resp = uploadFile(filepath, filename, url, user);
+    System.out.println("[uploadHeatPackage] Received RestResponse -> code: " + resp.getErrorCode() + ", body length: " +
+            (resp.getResponse() == null ? 0 : resp.getResponse().length()));
 
+    System.out.println("[uploadHeatPackage] Exit method");
+    return resp;
+}
+
+private static RestResponse uploadFile(String filepath, String filename, String url, User user) throws IOException {
+    System.out.println("[uploadFile] Enter method");
+    System.out.println("[uploadFile] Input -> filepath: " + filepath);
+    System.out.println("[uploadFile] Input -> filename: " + filename);
+    System.out.println("[uploadFile] Input -> url: " + url);
+    System.out.println("[uploadFile] Input -> userId: " + user.getUserId());
+
+    CloseableHttpResponse response = null;
+    System.out.println("[uploadFile] Initialized response: null");
+
+    MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
+    System.out.println("[uploadFile] Created MultipartEntityBuilder");
+
+    File zipFile = getTestZipFile(filepath, filename);
+    System.out.println("[uploadFile] Resolved zip file: " + zipFile.getAbsolutePath() + " (exists=" + zipFile.exists() + ")");
+
+    mpBuilder.addPart("upload", new FileBody(zipFile));
+    System.out.println("[uploadFile] Added file part 'upload' to multipart builder");
+
+    Map<String, String> headersMap = OnboardingUtils.prepareHeadersMap(user.getUserId());
+    System.out.println("[uploadFile] Prepared headers map: " + headersMap);
+
+    headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "multipart/form-data");
+    System.out.println("[uploadFile] Set Content-Type: multipart/form-data");
+
+    CloseableHttpClient client = HttpClients.createDefault();
+    System.out.println("[uploadFile] Created HttpClient: " + client);
+
+    try {
+        HttpPost httpPost = new HttpPost(url);
+        System.out.println("[uploadFile] Created HttpPost with URL: " + url);
+
+        RestResponse restResponse = new RestResponse();
+        System.out.println("[uploadFile] Instantiated RestResponse");
+
+        Iterator<String> iterator = headersMap.keySet().iterator();
+        System.out.println("[uploadFile] Iterating headers to set on request");
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            String value = headersMap.get(key);
+            httpPost.addHeader(key, value);
+            System.out.println("[uploadFile] Added header -> " + key + ": " + value);
         }
+
+        httpPost.setEntity(mpBuilder.build());
+        System.out.println("[uploadFile] Set multipart entity on HttpPost");
+
+        System.out.println("[uploadFile] Executing HTTP POST...");
+        response = client.execute(httpPost);
+        System.out.println("[uploadFile] Received response: " + response);
+
+        HttpEntity entity = response.getEntity();
+        System.out.println("[uploadFile] Extracted response entity: " + entity);
+
+        String responseBody = null;
+        System.out.println("[uploadFile] Initialize responseBody: null");
+
+        if (entity != null) {
+            System.out.println("[uploadFile] Entity is not null; reading content stream");
+            InputStream instream = entity.getContent();
+            System.out.println("[uploadFile] Obtained InputStream from entity: " + instream);
+            try {
+                StringWriter writer = new StringWriter();
+                System.out.println("[uploadFile] Created StringWriter");
+                IOUtils.copy(instream, writer);
+                System.out.println("[uploadFile] Copied response stream to writer");
+                responseBody = writer.toString();
+                System.out.println("[uploadFile] Converted writer to responseBody (length=" +
+                        (responseBody == null ? 0 : responseBody.length()) + ")");
+            } finally {
+                instream.close();
+                System.out.println("[uploadFile] Closed entity input stream");
+            }
+        } else {
+            System.out.println("[uploadFile] Entity is null; no response body");
+        }
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        System.out.println("[uploadFile] Response status code: " + statusCode);
+
+        restResponse.setErrorCode(statusCode);
+        System.out.println("[uploadFile] Set RestResponse.errorCode: " + statusCode);
+
+        restResponse.setResponse(responseBody);
+        System.out.println("[uploadFile] Set RestResponse.response (length=" +
+                (responseBody == null ? 0 : responseBody.length()) + ")");
+
+        System.out.println("[uploadFile] Returning RestResponse");
+        return restResponse;
+
+    } finally {
+        System.out.println("[uploadFile] Enter finally block");
+        closeResponse(response);
+        System.out.println("[uploadFile] Closed CloseableHttpResponse");
+
+        closeHttpClient(client);
+        System.out.println("[uploadFile] Closed CloseableHttpClient");
+
+        System.out.println("[uploadFile] Exit method");
     }
+}
+
 
     private static void closeResponse(CloseableHttpResponse response) {
         try {

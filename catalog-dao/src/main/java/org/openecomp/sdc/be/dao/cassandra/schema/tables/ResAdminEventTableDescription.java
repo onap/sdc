@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +34,14 @@ public class ResAdminEventTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataTypes.TIMEUUID));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -65,27 +66,27 @@ public class ResAdminEventTableDescription implements ITableDescription {
 
     enum AEFieldsDescription {
         // @formatter:off
-        REQUEST_ID("request_id", DataType.varchar(), false),
-		SERVICE_INST_ID("service_instance_id", DataType.varchar(), true),
-		INVARIANT_UUID("invariant_UUID", DataType.varchar(), true),
-		ACTION("action", DataType.varchar(), true),
-		STATUS("status", DataType.varchar(), false),
-		DESCRIPTION("description",DataType.varchar(), false),
-		RESOURCE_TYPE("resource_type", DataType.varchar(), false),
-		PREV_VERSION( "prev_version", DataType.varchar(), true),
-		PREV_STATE("prev_state", DataType.varchar(), true),
-		CURR_STATE("curr_state", DataType.varchar(), false),
-		RESOURCE_NAME("resource_name", DataType.varchar(), false),
-		CURR_VERSION("curr_version", DataType.varchar(), true),
-		MODIFIER("modifier", DataType.varchar(), false),
-		PREV_ARTIFACT_UUID("prev_artifact_UUID", DataType.varchar(), false),
-		CURR__ARTIFACT_UUID("curr_artifact_UUID", DataType.varchar(), false),
-		ARTIFACT_DATA("artifact_data", DataType.varchar(), false),
-		DID("did", DataType.varchar(), true),
-		DPREV_STATUS("dprev_status", DataType.varchar(), false),
-		DCURR_STATUS("dcurr_status", DataType.varchar(), false),
-		TOSCA_NODE_TYPE("tosca_node_type", DataType.varchar(), false),
-		COMMENT("comment", DataType.varchar(), false);
+        REQUEST_ID("request_id", DataTypes.TEXT, false),
+		SERVICE_INST_ID("service_instance_id", DataTypes.TEXT, true),
+		INVARIANT_UUID("invariant_UUID", DataTypes.TEXT, true),
+		ACTION("action", DataTypes.TEXT, true),
+		STATUS("status", DataTypes.TEXT, false),
+		DESCRIPTION("description",DataTypes.TEXT, false),
+		RESOURCE_TYPE("resource_type", DataTypes.TEXT, false),
+		PREV_VERSION( "prev_version", DataTypes.TEXT, true),
+		PREV_STATE("prev_state", DataTypes.TEXT, true),
+		CURR_STATE("curr_state", DataTypes.TEXT, false),
+		RESOURCE_NAME("resource_name", DataTypes.TEXT, false),
+		CURR_VERSION("curr_version", DataTypes.TEXT, true),
+		MODIFIER("modifier", DataTypes.TEXT, false),
+		PREV_ARTIFACT_UUID("prev_artifact_UUID", DataTypes.TEXT, false),
+		CURR__ARTIFACT_UUID("curr_artifact_UUID", DataTypes.TEXT, false),
+		ARTIFACT_DATA("artifact_data", DataTypes.TEXT, false),
+		DID("did", DataTypes.TEXT, true),
+		DPREV_STATUS("dprev_status", DataTypes.TEXT, false),
+		DCURR_STATUS("dcurr_status", DataTypes.TEXT, false),
+		TOSCA_NODE_TYPE("tosca_node_type", DataTypes.TEXT, false),
+		COMMENT("comment", DataTypes.TEXT, false);
         // @formatter:on
 
         private String name;

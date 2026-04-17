@@ -58,8 +58,8 @@ public class ItemVersionToVersionConvertor extends ElementConvertor {
         if (itemVersion.getBaseId() != null) {
             version.setBaseId(itemVersion.getBaseId().getValue());
         }
-        version.setCreationTime(itemVersion.getCreationTime());
-        version.setModificationTime(itemVersion.getModificationTime());
+        version.setCreationTime(itemVersion.getCreationTime().toInstant());
+        version.setModificationTime(itemVersion.getModificationTime().toInstant());
         return version;
     }
 }

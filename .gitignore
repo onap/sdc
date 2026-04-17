@@ -196,3 +196,6 @@ Vagrantfile
 node_modules
 node
 *.tar
+
+# build artifact (too large for Gerrit)
+asdctool/sdc-cassandra-init/sdctool.tar

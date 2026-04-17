@@ -19,12 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -36,57 +33,65 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 /**
  * This class Represents the Audit for External API
  */
 @Getter
 @Setter
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)
 public class ExternalApiEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn()
-    protected Date timestamp1;
-    @Column
+    protected Instant timestamp1;
+    @CqlName("action")
     protected String action;
-    @Column
+    @CqlName("status")
     protected String status;
-    @Column(name = "description")
+    @CqlName("description")
     protected String desc;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     protected String serviceInstanceId;
-    @Column(name = "invariant_uuid")
+    @CqlName("invariant_uuid")
     protected String invariantUuid;
-    @Column(name = "prev_version")
+    @CqlName("prev_version")
     protected String prevVersion;
-    @Column(name = "prev_state")
+    @CqlName("prev_state")
     protected String prevState;
-    @Column(name = "curr_state")
+    @CqlName("curr_state")
     protected String currState;
-    @Column(name = "consumer_id")
+    @CqlName("consumer_id")
     private String consumerId;
-    @Column(name = "resource_url")
+    @CqlName("resource_url")
     private String resourceURL;
-    @Column(name = "resource_name")
+    @CqlName("resource_name")
     private String resourceName;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     private String resourceType;
-    @Column(name = "modifier")
+    @CqlName("modifier")
     private String modifier;
-    @Column(name = "curr_version")
+    @CqlName("curr_version")
     private String currVersion;
-    @Column(name = "prev_artifact_uuid")
+    @CqlName("prev_artifact_uuid")
     private String prevArtifactUuid;
-    @Column(name = "curr_artifact_uuid")
+    @CqlName("curr_artifact_uuid")
     private String currArtifactUuid;
-    @Column(name = "artifact_data")
+    @CqlName("artifact_data")
     private String artifactData;
 
     //Required to be public as it is used by Cassandra driver on get operation
     public ExternalApiEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public ExternalApiEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo, DistributionData distributionData,
@@ -122,7 +127,7 @@ public class ExternalApiEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_CONSUMER_ID.getDisplayName(), getConsumerId());
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_RESOURCE_URL.getDisplayName(), getResourceURL());
         fields.put(AuditingFieldsKey.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());

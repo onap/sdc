@@ -19,18 +19,35 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
+
+import org.openecomp.sdc.be.resources.data.DAOArtifactData;
+
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 
 /**
  * Created by chaya on 7/5/2017.
  */
-@Accessor
-public interface ArtifactAccessor {
 
-    // *****  get the number of artifacts with a specific id
-    @Query("SELECT COUNT(*) FROM sdcartifact.resources WHERE ID = :uniqueId")
-    ResultSet getNumOfArtifactsById(@Param("uniqueId") String uniqueId);
+@Dao
+public interface ArtifactDao {
+
+       // Save or update
+    @Insert
+    void save(DAOArtifactData artifact);
+
+    // Get by primary key
+    @Select
+    DAOArtifactData findById(String id);
+
+    // Delete by entity
+    @Delete(entityClass = DAOArtifactData.class)
+    void delete(DAOArtifactData artifact);
+
+    @Query("SELECT COUNT(*) FROM sdcartifact.resources WHERE id = :uniqueId")
+    ResultSet getNumOfArtifactsById(String uniqueId);
 }

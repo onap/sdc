@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdc.validation.impl.validators;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +47,26 @@ public class ManifestValidator implements Validator {
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
+        System.out.println("[===>] ManifestValidator.validate called");
+        System.out.println("[DEBUG] Available files:");
+        globalContext.getFileContextMap().forEach((name, ctx) -> {
+            int size = 0;
+            try {
+                size = ctx.getContent().available();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("  " + name + ", size=" + size);
+        });
+
         Optional<InputStream> content = globalContext.getFileContent(SdcCommon.MANIFEST_NAME);
+        System.out.println("[===>] ManifestValidator.validate manifest content present=" + content.isPresent());
         ManifestContent manifestContent;
         try {
             if (content.isPresent()) {
+                System.out.println("Available bytes before reading: " + content.get().available());
                 manifestContent = JsonUtil.json2Object(content.get(), ManifestContent.class);
+                System.out.println("[===>] ManifestValidator.validate manifest parsed");
             } else {
                 throw new Exception("The manifest file '" + SdcCommon.MANIFEST_NAME + "' has no content");
             }
@@ -61,6 +77,7 @@ public class ManifestValidator implements Validator {
             return;
         }
         List<String> manifestFiles = getManifestFileList(manifestContent, globalContext);
+        System.out.println("[===>] ManifestValidator.validate manifestFiles=" + manifestFiles);
         manifestFiles.stream().filter(name -> !globalContext.getFileContextMap().containsKey(name)).forEach(name -> globalContext
             .addMessage(name, ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_MNF_4, Messages.MISSING_FILE_IN_ZIP.getErrorMessage())));

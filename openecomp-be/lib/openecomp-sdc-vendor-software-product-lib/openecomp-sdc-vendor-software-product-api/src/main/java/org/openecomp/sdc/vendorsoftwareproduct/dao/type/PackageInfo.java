@@ -19,9 +19,7 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.nio.ByteBuffer;
 import java.util.Set;
 import lombok.Data;
@@ -29,40 +27,45 @@ import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 @Data
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "package_details")
+@Entity
+@CqlName("package_details")
 public class PackageInfo {
 
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
     private String version;
-    @Column(name = "version_id")
+    @CqlName("version_id")
     private String versionId;
-    @Column(name = "display_name")
+    @CqlName("display_name")
     private String displayName;
-    @Column(name = "vsp_name")
+    @CqlName("vsp_name")
     private String vspName;
-    @Column(name = "vsp_description")
+    @CqlName("vsp_description")
     private String vspDescription;
-    @Column(name = "vendor_name")
+    @CqlName("vendor_name")
     private String vendorName;
     private String category;
-    @Column(name = "sub_category")
+    @CqlName("sub_category")
     private String subCategory;
-    @Column(name = "vendor_release")
+    @CqlName("vendor_release")
     private String vendorRelease;
-    @Column(name = "package_checksum")
+    @CqlName("package_checksum")
     private String packageChecksum;
-    @Column(name = "package_type")
+    @CqlName("package_type")
     private String packageType;
-    @Column(name = "translate_content")
+    @CqlName("translate_content")
     private ByteBuffer translatedFile;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     private String resourceType = ResourceTypeEnum.VF.name();
-    @Column(name = "models")
+    @CqlName("models")
     private Set<String> models;
 
     public PackageInfo(final String packageId, final Version version) {

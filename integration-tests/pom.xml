@@ -62,6 +62,8 @@ limitations under the License.
         <!-- parser-->
         <sdc-tosca-parser.version>1.9.0</sdc-tosca-parser.version>
         <docker.showLogs>false</docker.showLogs>
+        <!-- When true, do not stop/remove docker containers after ITs (keeps environment up for debugging). -->
+        <docker.stop.skip>false</docker.stop.skip>
     </properties>
 
     <dependencies>
@@ -218,6 +220,22 @@ limitations under the License.
                     <groupId>org.slf4j</groupId>
                     <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
+                <exclusion>
+		  <groupId>jakarta.validation</groupId>
+		  <artifactId>jakarta.validation-api</artifactId>
+		</exclusion>
+		<exclusion>
+		  <groupId>jakarta.el</groupId>
+		  <artifactId>jakarta.el-api</artifactId>
+		</exclusion>
+        <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -447,6 +465,67 @@ limitations under the License.
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-query-builder</artifactId>
+            <version>${cassandra.driver.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-mapper-processor</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+         <dependency>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-mapper-runtime</artifactId>
+            <version>${cassandra.driver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>
@@ -627,11 +706,11 @@ limitations under the License.
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                integration-tests-init
+                                ${project.parent.basedir}/catalog-be/sdc-backend-init
                             </outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}</directory>
+                                    <directory>${project.parent.basedir}/catalog-be/target</directory>
                                     <includes>
                                         <include>normatives.tar.gz</include>
                                     </includes>
@@ -647,7 +726,7 @@ limitations under the License.
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                integration-tests-init/
+                                ${project.parent.basedir}/catalog-be/sdc-backend-init
                             </outputDirectory>
                             <resources>
                                 <resource>
@@ -656,7 +735,7 @@ limitations under the License.
                                     </directory>
                                     <includes>
                                         <include>scripts/sdcBePy/**</include>
-                                        <inculde>scripts/setup.py</inculde>
+                                        <include>scripts/setup.py</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -1341,6 +1420,9 @@ limitations under the License.
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                        <configuration>
+                            <skip>${docker.stop.skip}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

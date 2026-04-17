@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +44,9 @@ public class DistribDownloadEventTableDesc extends DistribBaseEventTableDesc {
     @Getter
     @AllArgsConstructor
     enum DSEFieldsDescription {
-        CONSUMER_ID("consumer_Id", DataType.varchar(), false), RESOURCE_URL("resource_URL", DataType.varchar(), false);
+        CONSUMER_ID("consumer_Id", DataTypes.TEXT, false),
+        RESOURCE_URL("resource_URL", DataTypes.TEXT, false);
+
         private final String name;
         private final DataType type;
         private final boolean indexed;

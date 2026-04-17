@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 public class OrchestrationTemplateEntity implements VersionableEntity {
@@ -136,4 +137,6 @@ public class OrchestrationTemplateEntity implements VersionableEntity {
     public void setFilesDataStructure(String filesDataStructure) {
         this.filesDataStructure = filesDataStructure;
     }
+
+    
 }

@@ -170,18 +170,24 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     @Override
     public ValidationResponse validate(VspDetails vspDetails) throws IOException {
+        System.out.println("[===>] validate called for vspId=" + vspDetails.getId() + ", version=" + vspDetails.getVersion());
         List<ErrorCode> vspErrors = new ArrayList<>(validateVspFields(vspDetails));
         ValidationResponse validationResponse = new ValidationResponse();
         if (Objects.nonNull(vspDetails.getOnboardingMethod()) && OnboardingMethod.Manual.name().equals(vspDetails.getOnboardingMethod())) {
+            System.out.println("[===>] validate onboardingMethod=Manual");
             validateManualOnboardingMethod(vspDetails, validationResponse, vspErrors);
         } else {
+            System.out.println("[===>] validate onboardingMethod=Orchestration");
             validateOrchestrationTemplateCandidate(validationResponse, vspErrors, vspDetails.getId(), vspDetails.getVersion());
             if (!validationResponse.isValid()) {
+                System.out.println("[===>] validate orchestrationTemplateCandidate invalid");
                 return validationResponse;
             }
             validateLicense(vspDetails, vspErrors);
             OrchestrationTemplateEntity orchestrationTemplate = orchestrationTemplateDao.get(vspDetails.getId(), vspDetails.getVersion());
+            System.out.println("[===>] validate orchestrationTemplate fetched=" + (orchestrationTemplate != null));
             ToscaServiceModel serviceModel = serviceModelDao.getServiceModel(vspDetails.getId(), vspDetails.getVersion());
+            System.out.println("[===>] validate serviceModel fetched=" + (serviceModel != null));
             if (isOrchestrationTemplateMissing(orchestrationTemplate) || isServiceModelMissing(serviceModel)) {
                 vspErrors.add(VendorSoftwareProductInvalidErrorBuilder
                     .vendorSoftwareProductMissingServiceModelErrorBuilder(vspDetails.getId(), vspDetails.getVersion()));
@@ -617,6 +623,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     private Map<String, List<ErrorMessage>> validateOrchestrationTemplate(OrchestrationTemplateEntity orchestrationTemplate) throws IOException {
+        System.out.println("\n================ validateOrchestrationTemplate ================="); 
+        System.out.println("[DEBUG] Method entered"); 
+        System.out.println("[DEBUG] orchestrationTemplate is null = " + (orchestrationTemplate == null));
         if (isOrchestrationTemplateMissing(orchestrationTemplate)) {
             return Collections.emptyMap();
         }
@@ -637,9 +646,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     private void addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+        if (zipFileManifest == null) {
+            return;
+        }
         ManifestContent manifestContent = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        if (manifestContent == null || manifestContent.getData() == null) {
+            return;
+        }
         for (FileData fileData : manifestContent.getData()) {
-            if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
+            if (fileData != null && fileData.getFile() != null && (fileData.getFile()).contains("dummy_ignore.yaml")) {
                 String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");

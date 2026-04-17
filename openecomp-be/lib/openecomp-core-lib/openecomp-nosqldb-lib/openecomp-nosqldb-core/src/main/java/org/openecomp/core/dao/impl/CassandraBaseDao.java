@@ -19,32 +19,48 @@
  */
 package org.openecomp.core.dao.impl;
 
-import com.datastax.driver.mapping.Mapper;
 import org.openecomp.core.dao.BaseDao;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 
 public abstract class CassandraBaseDao<T> implements BaseDao<T> {
 
-    protected abstract Mapper<T> getMapper();
+    protected final CqlSession session;
+
+    public CassandraBaseDao(CqlSession session) {
+        this.session = session;
+    }
 
     protected abstract Object[] getKeys(T entity);
+    protected abstract String getTableName();
+    protected abstract String[] getColumns(T entity);
+    protected abstract Object[] getValues(T entity);
 
-    @Override
+
     public void create(T entity) {
-        getMapper().save(entity);
+        String[] columns = getColumns(entity);
+        Object[] values = getValues(entity);
+        String placeholders = String.join(",", java.util.Collections.nCopies(values.length, "?"));
+        String query = "INSERT INTO " + getTableName() + " (" + String.join(",", columns) + ") VALUES (" + placeholders + ")";
+        session.execute(SimpleStatement.builder(query).addPositionalValues(values).build());
     }
 
-    @Override
+ 
     public void update(T entity) {
-        getMapper().save(entity);
+        // Implement based on primary key columns
+        create(entity); // simple upsert in Cassandra
     }
 
-    @Override
+
     public T get(T entity) {
-        return getMapper().get(getKeys(entity));
+        // Implement select based on primary key
+        throw new UnsupportedOperationException("Get by primary key should be implemented in subclass");
     }
 
-    @Override
+
     public void delete(T entity) {
-        getMapper().delete(entity);
+        // Implement delete based on primary key
+        throw new UnsupportedOperationException("Delete by primary key should be implemented in subclass");
     }
 }

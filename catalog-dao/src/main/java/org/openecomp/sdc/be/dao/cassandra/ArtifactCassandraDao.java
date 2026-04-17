@@ -19,12 +19,10 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import fj.data.Either;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -35,7 +33,8 @@ import org.springframework.stereotype.Component;
 public class ArtifactCassandraDao extends CassandraDao {
 
     private static Logger logger = Logger.getLogger(ArtifactCassandraDao.class.getName());
-    private ArtifactAccessor artifactAccessor;
+    private CqlSession session;
+    private ArtifactDao artifactDao; 
 
     @Autowired
     public ArtifactCassandraDao(CassandraClient cassandraClient) {
@@ -46,11 +45,11 @@ public class ArtifactCassandraDao extends CassandraDao {
     public void init() {
         String keyspace = AuditingTypesConstants.ARTIFACT_KEYSPACE;
         if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
+            Either<CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
             if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                artifactAccessor = manager.createAccessor(ArtifactAccessor.class);
+                session = result.left().value();
+                ArtifactDaoMapper artifactMapper = new ArtifactDaoMapperBuilder(session).build();
+                artifactDao = artifactMapper.artifactDao(keyspace);
                 logger.info("** ArtifactCassandraDao created");
             } else {
                 logger.info("** ArtifactCassandraDao failed");
@@ -63,16 +62,42 @@ public class ArtifactCassandraDao extends CassandraDao {
     }
 
     public CassandraOperationStatus saveArtifact(DAOArtifactData artifact) {
-        return client.save(artifact, DAOArtifactData.class, manager);
+    try {
+        artifactDao.save(artifact);
+        return CassandraOperationStatus.OK;
+    } catch (Exception e) {
+        logger.error("Failed to save artifact", e);
+        return CassandraOperationStatus.GENERAL_ERROR;
     }
+}
 
-    public Either<DAOArtifactData, CassandraOperationStatus> getArtifact(String artifactId) {
-        return client.getById(artifactId, DAOArtifactData.class, manager);
+   public Either<DAOArtifactData, CassandraOperationStatus> getArtifact(String artifactId) {
+    try {
+        DAOArtifactData artifact = artifactDao.findById(artifactId);
+        if (artifact == null) {
+            return Either.right(CassandraOperationStatus.NOT_FOUND);
+        }
+        return Either.left(artifact);
+    } catch (Exception e) {
+        logger.error("Failed to get artifact by id {}", artifactId, e);
+        return Either.right(CassandraOperationStatus.GENERAL_ERROR);
     }
+}
 
-    public CassandraOperationStatus deleteArtifact(String artifactId) {
-        return client.delete(artifactId, DAOArtifactData.class, manager);
+    
+public CassandraOperationStatus deleteArtifact(String artifactId) {
+    try {
+        DAOArtifactData artifact = artifactDao.findById(artifactId);
+        if (artifact == null) {
+            return CassandraOperationStatus.NOT_FOUND;
+        }
+        artifactDao.delete(artifact);
+        return CassandraOperationStatus.OK;
+    } catch (Exception e) {
+        logger.error("Failed to delete artifact by id {}", artifactId, e);
+        return CassandraOperationStatus.GENERAL_ERROR;
     }
+}
 
     /**
      * ---------for use in JUnit only--------------- the method deletes all the tables in the audit keyspace
@@ -103,7 +128,7 @@ public class ArtifactCassandraDao extends CassandraDao {
     }
 
     public Either<Long, CassandraOperationStatus> getCountOfArtifactById(String uniqeId) {
-        ResultSet artifactCount = artifactAccessor.getNumOfArtifactsById(uniqeId);
+        ResultSet artifactCount = artifactDao.getNumOfArtifactsById(uniqeId);
         if (artifactCount == null) {
             return Either.right(CassandraOperationStatus.NOT_FOUND);
         }

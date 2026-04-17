@@ -19,15 +19,23 @@
  */
 package org.openecomp.sdc.action.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.action.dao.ActionArtifactDao;
 import org.openecomp.sdc.action.dao.ActionArtifactDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class ActionArtifactDaoFactoryImpl extends ActionArtifactDaoFactory {
 
-    private static ActionArtifactDao instance = new ActionArtifactDaoImpl();
+    private static ActionArtifactDao INSTANCE;
+
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new ActionArtifactDaoImpl(session);
+    }
 
     @Override
     public ActionArtifactDao createInterface() {
-        return instance;
+        return INSTANCE;
     }
 }

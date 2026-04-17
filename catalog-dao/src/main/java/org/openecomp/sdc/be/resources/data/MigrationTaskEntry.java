@@ -19,35 +19,40 @@
  */
 package org.openecomp.sdc.be.resources.data;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.Date;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Table(keyspace = "sdcrepository", name = "migrationTasks")
+@Entity(defaultKeyspace = "sdcrepository")
+@CqlName("migrationTasks")
 public class MigrationTaskEntry {
 
     @PartitionKey(0)
-    @Column(name = "major_version")
+    @CqlName("major_version")
     private Long majorVersion;
     @ClusteringColumn
-    @Column(name = "minor_version")
+    @CqlName("minor_version")
     private Long minorVersion;
-    @Column(name = "timestamp")
+    @CqlName("timestamp")
     private Date timestamp;
-    @Column(name = "task_name")
+    @CqlName("task_name")
     private String taskName;
-    @Column(name = "execution_time")
+    @CqlName("execution_time")
     private double executionTime;
-    @Column(name = "task_status")
+    @CqlName("task_status")
     private String taskStatus;
-    @Column(name = "msg")
+    @CqlName("msg")
     private String message;
-    @Column(name = "description")
+    @CqlName("description")
     private String description;
 }

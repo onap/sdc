@@ -19,12 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -33,34 +30,42 @@ import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 @Getter
 @Setter
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.CATEGORY_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.CATEGORY_EVENT_TYPE)
 public class CategoryEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column
+    protected Instant timestamp1;
+    @CqlName("action")
     String action;
-    @Column
+    @CqlName("status")
     String status;
-    @Column(name = "description")
+    @CqlName("description")
     String desc;
-    @Column(name = "category_name")
+    @CqlName("category_name")
     String categoryName;
-    @Column(name = "sub_category_name")
+    @CqlName("sub_category_name")
     String subCategoryName;
-    @Column(name = "grouping_name")
+    @CqlName("grouping_name")
     String groupingName;
-    @Column
+    @CqlName("modifier")
     String modifier;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     String serviceInstanceId;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     String resourceType;
-    @Column(name = "request_id")
+    @CqlName("request_id")
     String requestId;
 
     public CategoryEvent(String action, CommonAuditData commonAuditData, String modifier, String categoryName, String subCategoryName,
@@ -80,15 +85,15 @@ public class CategoryEvent extends AuditingGenericEvent {
 
     //Required to be public as it is used by Cassandra driver on get operation
     public CategoryEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public void setTimestamp1(String timestamp) {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp) {
+    public void setTimestamp1(Instant timestamp) {
         this.timestamp1 = timestamp;
     }
 
@@ -106,6 +111,6 @@ public class CategoryEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 }

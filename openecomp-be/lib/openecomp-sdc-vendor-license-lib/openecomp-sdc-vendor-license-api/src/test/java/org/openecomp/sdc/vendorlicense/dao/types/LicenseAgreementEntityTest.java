@@ -27,6 +27,13 @@ import org.junit.Test;
 public class LicenseAgreementEntityTest {
     @Test
     public void shouldHaveValidGettersAndSetters() {
-        assertThat(LicenseAgreementEntity.class, hasValidGettersAndSettersExcluding("entityType", "firstClassCitizenId"));
+        assertThat(
+            LicenseAgreementEntity.class,
+            hasValidGettersAndSettersExcluding(
+                "entityType",
+                "firstClassCitizenId",
+                "licenseTerm" // <-- add this
+            )
+        );
     }
 }

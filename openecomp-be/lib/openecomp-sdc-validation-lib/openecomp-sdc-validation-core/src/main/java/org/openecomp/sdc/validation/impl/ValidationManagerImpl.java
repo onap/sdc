@@ -43,8 +43,10 @@ public class ValidationManagerImpl implements ValidationManager {
 
     @Override
     public Map<String, List<ErrorMessage>> validate() {
+        System.out.println("[===>] ValidationManager.validate called, validators=" + validators.size());
         for (Validator validator : validators) {
             if (Objects.nonNull(validator)) {
+                System.out.println("[===>] ValidationManager.validate running validator=" + validator.getClass().getSimpleName());
                 validator.validate(globalContext);
             }
         }

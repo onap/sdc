@@ -19,40 +19,43 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_component_dependency_model")
+@Entity
+@CqlName("vsp_component_dependency_modelComponentEntityComponentEntity")
 public class ComponentDependencyModelEntity implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "Vendor Software Product Component Dependency Model";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
+
     private Version version;
     @ClusteringColumn
-    @Column(name = "dependency_id")
+    @CqlName("dependency_id")
     private String id;
-    @Column(name = "sourcecomponent_id")
+    @CqlName("sourcecomponent_id")
     private String sourceComponentId;
-    @Column(name = "targetcomponent_id")
+    @CqlName("targetcomponent_id")
     private String targetComponentId;
-    @Column(name = "relation")
+    @CqlName("relation")
     private String relation;
 
     /**
@@ -77,4 +80,6 @@ public class ComponentDependencyModelEntity implements VersionableEntity {
     public String getFirstClassCitizenId() {
         return getVspId();
     }
+
+    
 }

@@ -19,6 +19,7 @@
 package org.openecomp.sdc.versioning;
 
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 public class VersionableEntityImplStub implements VersionableEntity {
@@ -50,4 +51,6 @@ public class VersionableEntityImplStub implements VersionableEntity {
     public void setVersion(Version version) {
 
     }
+
+    
 }

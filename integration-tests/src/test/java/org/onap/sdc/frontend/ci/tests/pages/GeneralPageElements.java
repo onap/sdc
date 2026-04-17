@@ -144,17 +144,32 @@ public class GeneralPageElements {
     public static void clickCertifyButton(String componentName) throws Exception {
         try {
             SetupCDTest.getExtendTest().log(Status.INFO, "Clicking on certify button");
-            GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
-            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE_MESSAGE.getValue())
-                    .sendKeys("resource " + componentName + " certified successfully");
-            clickOKButton();
-            GeneralUIUtils.ultimateWait();
-            GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 10000);
-            HomePage.navigateToHomePage();
-            GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(), GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
-            GeneralUIUtils.ultimateWait();
+            final WebElement certifyButton = GeneralUIUtils.clickOnAreaJS(DataTestIdEnum.LifeCyleChangeButtons.CERTIFY.getValue());
+            if (certifyButton != null) {
+                final WebElement approveMessage =
+                    GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.DistributionChangeButtons.APPROVE_MESSAGE.getValue(), 10);
+
+                if (approveMessage != null) {
+                    approveMessage.sendKeys("resource " + componentName + " certified successfully");
+                    clickOKButton();
+                    GeneralUIUtils.ultimateWait();
+                    GeneralUIUtils.waitForElementInVisibilityBy(By.className("notification-container"), 60000);
+                    HomePage.navigateToHomePage();
+                    GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.MainMenuButtons.SEARCH_BOX.getValue(),
+                        GeneralUIUtils.getTimeOut() / WAIT_FOR_ELEMENT_TIME_OUT_DIVIDER);
+                    GeneralUIUtils.ultimateWait();
+                    return;
+                }
+            }
+
+            SetupCDTest.getExtendTest().log(Status.INFO,
+                "Falling back to workspace top-bar certify flow (legacy certify button/popup not found).");
+            final ComponentPage componentPage = new ComponentPage(GeneralUIUtils.getDriver());
+            componentPage.isLoaded();
+            componentPage.certifyComponent();
+            componentPage.goToHomePage().isLoaded();
         } catch (Exception e) {
-            throw new Exception("Certification of " + componentName + " failed");
+            throw new Exception("Certification of " + componentName + " failed", e);
         }
     }
 

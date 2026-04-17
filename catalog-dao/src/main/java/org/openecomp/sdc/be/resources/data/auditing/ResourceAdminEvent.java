@@ -19,12 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -36,62 +33,70 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 @Getter
 @Setter
 @ToString
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE)
 public class ResourceAdminEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column
+    protected Instant timestamp1;
+    @CqlName("action")
     protected String action;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     protected String resourceType;
-    @Column(name = "prev_version")
+    @CqlName("prev_version")
     protected String prevVersion;
-    @Column(name = "prev_state")
+    @CqlName("prev_state")
     protected String prevState;
-    @Column(name = "curr_state")
+    @CqlName("curr_state")
     protected String currState;
-    @Column(name = "request_id")
+    @CqlName("request_id")
     protected String requestId;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     protected String serviceInstanceId;
-    @Column
+    @CqlName("status")
     protected String status;
-    @Column(name = "description")
+    @CqlName("description")
     protected String desc;
-    @Column
+    @CqlName("modifier")
     protected String modifier;
-    @Column(name = "prev_artifact_UUID")
+    @CqlName("prev_artifact_UUID")
     protected String prevArtifactUUID;
-    @Column(name = "curr_artifact_UUID")
+    @CqlName("curr_artifact_UUID")
     protected String currArtifactUUID;
-    @Column(name = "artifact_data")
+    @CqlName("artifact_data")
     protected String artifactData;
-    @Column
+    @CqlName("did")
     protected String did;
-    @Column(name = "dprev_status")
+    @CqlName("dprev_status")
     protected String dprevStatus;
-    @Column(name = "dcurr_status")
+    @CqlName("dcurr_status")
     protected String dcurrStatus;
-    @Column(name = "tosca_node_type")
+    @CqlName("tosca_node_type")
     protected String toscaNodeType;
-    @Column
+    @CqlName("comment")
     protected String comment;
-    @Column(name = "invariant_UUID")
+    @CqlName("invariant_UUID")
     protected String invariantUUID;
-    @Column(name = "resource_name")
+    @CqlName("resource_name")
     private String resourceName;
-    @Column(name = "curr_version")
+    @CqlName("curr_version")
     private String currVersion;
 
     public ResourceAdminEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public ResourceAdminEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevParams,
@@ -125,7 +130,7 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp1) {
+    public void setTimestamp1(Instant timestamp1) {
         this.timestamp1 = timestamp1;
     }
 
@@ -154,6 +159,6 @@ public class ResourceAdminEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_INVARIANT_UUID.getDisplayName(), getInvariantUUID());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), timestamp1.getTime());
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), timestamp1.toEpochMilli());
     }
 }

@@ -166,21 +166,21 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     }
 
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll(final String model) {
-        try {
-            readWriteLock.readLock().lock();
-            if (MapUtils.isEmpty(dataTypesByModelCacheMap) || !dataTypesByModelCacheMap.containsKey(model)) {
-                final var dataTypesFound = getAllDataTypesFromGraph();
-                if (dataTypesFound.isRight()) {
-                    return Either.right(dataTypesFound.right().value());
-                }
-                dataTypesByModelCacheMap = dataTypesFound.left().value();
+    try {
+        readWriteLock.readLock().lock();
+        if (MapUtils.isEmpty(dataTypesByModelCacheMap) || !dataTypesByModelCacheMap.containsKey(model)) {
+            final var dataTypesFound = getAllDataTypesFromGraph();
+            if (dataTypesFound.isRight()) {
+                return Either.right(dataTypesFound.right().value());
             }
-            return Either.left(getDataTypeDefinitionMapByModel(model));
-        } finally {
-            readWriteLock.readLock().unlock();
+            dataTypesByModelCacheMap = dataTypesFound.left().value();
         }
-    }
 
+        return Either.left(getDataTypeDefinitionMapByModel(model));
+    } finally {
+        readWriteLock.readLock().unlock();
+    }
+}
     @Override
     public Either<DataTypeDefinition, JanusGraphOperationStatus> get(final String model, final String uniqueId) {
         try {

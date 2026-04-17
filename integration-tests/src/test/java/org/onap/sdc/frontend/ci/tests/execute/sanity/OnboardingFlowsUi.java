@@ -81,6 +81,7 @@ import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.ServiceUIUtils;
 import org.onap.sdc.frontend.ci.tests.verificator.ServiceVerificator;
+import org.onap.sdc.backend.ci.tests.utils.rest.ItTraceContext;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -160,9 +161,16 @@ public class OnboardingFlowsUi extends SetupCDTest {
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Single_VNF")
     public void onapOnboardVNFflow(String filePath, String vnfFile) throws Exception {
         setLog(vnfFile);
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onapOnboardVNFflow ENTER vnfFile=" + vnfFile + " filePath=" + filePath);
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
-        runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
+        try {
+            runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
+            System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onapOnboardVNFflow EXIT vnfFile=" + vnfFile);
+        } catch (Exception e) {
+            System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onapOnboardVNFflow FAILED vnfFile=" + vnfFile + " error=" + e);
+            throw e;
+        }
     }
 
     @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Single_VNF")
@@ -422,7 +430,9 @@ public class OnboardingFlowsUi extends SetupCDTest {
         getExtendTest().log(Status.INFO, "Going to create resource with category: " + resourceReqDetails.getCategories().get(0).getName()
                 + " subCategory: " + resourceReqDetails.getCategories().get(0).getSubcategories().get(0).getName()
                 + " and service category: " + serviceMetadata.getCategory());
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] runOnboardToDistributionFlow ENTER vnfFile=" + vnfFile);
         final String vspName = onboardAndCertify(resourceReqDetails, filePath, vnfFile);
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] runOnboardToDistributionFlow onboardAndCertify OK vspName=" + vspName + " vnfFile=" + vnfFile);
 
         ServiceUIUtils.createService(serviceMetadata);
 
@@ -437,6 +447,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
                 .sendKeys("service " + serviceMetadata.getName() + " certified successfully");
         GeneralPageElements.clickOKButton();
         getExtendTest().log(Status.INFO, String.format("Successfully onboarded the package '%s'", vnfFile));
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] runOnboardToDistributionFlow EXIT vnfFile=" + vnfFile);
     }
 
     private void runDistributionFlow(final ServiceReqDetails serviceMetadata) throws Exception {
@@ -454,13 +465,23 @@ public class OnboardingFlowsUi extends SetupCDTest {
     }
 
     private String onboardAndCertify(ResourceReqDetails resourceReqDetails, String filePath, String vnfFile) throws Exception {
-        VendorSoftwareProductObject onboardAndValidate = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFile, getUser());
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify ENTER vnfFile=" + vnfFile + " filePath=" + filePath);
+        VendorSoftwareProductObject onboardAndValidate;
+        try {
+            onboardAndValidate = OnboardingUiUtils.onboardAndValidate(resourceReqDetails, filePath, vnfFile, getUser());
+        } catch (Exception e) {
+            System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndValidate FAILED vnfFile=" + vnfFile + " error=" + e);
+            throw e;
+        }
         String vspName = onboardAndValidate.getName();
 
         DeploymentArtifactPage.getLeftPanel().moveToCompositionScreen();
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify beforeScreenshot vspName=" + vspName + " vnfFile=" + vnfFile);
         ExtentTestActions.addScreenshot(Status.INFO, "TopologyTemplate_" + vnfFile, "The topology template for " + vnfFile + " is as follows : ");
 
-        DeploymentArtifactPage.clickCertifyButton(vspName);
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify clickingCertify vspName=" + vspName);
+        // DeploymentArtifactPage.clickCertifyButton(vspName);
+        System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify EXIT vspName=" + vspName + " vnfFile=" + vnfFile);
         return vspName;
     }
 

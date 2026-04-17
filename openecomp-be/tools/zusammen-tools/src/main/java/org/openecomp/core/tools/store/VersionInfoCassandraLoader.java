@@ -19,38 +19,88 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import com.datastax.driver.mapping.annotations.QueryParameters;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.data.UdtValue;
+import java.util.ArrayList;
 import java.util.Collection;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
-import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
+import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
+
 
 public class VersionInfoCassandraLoader {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static Mapper<VersionInfoEntity> mapper = noSqlDb.getMappingManager().mapper(VersionInfoEntity.class);
-    private static VersionInfoAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
-    private static VersionInfoDao versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
+    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
+    private static final CqlSession session = noSqlDb.getSession();
+    private static final VersionInfoDao versionInfoDao = VersionInfoDaoFactory.getInstance().createInterface();
 
     public void insertVersionInfo(VersionInfoEntity versionInfoEntity) {
         versionInfoDao.create(versionInfoEntity);
     }
 
     public Collection<VersionInfoEntity> list() {
-        return accessor.getAll().all();
-    }
+        String cql = "SELECT entity_type, entity_id, active_version, status, candidate, viewable_versions, latest_final_version FROM dox.version_info";
+        ResultSet rs = session.execute(cql);
+        Collection<VersionInfoEntity> result = new ArrayList<>();
 
-    @Accessor
-    interface VersionInfoAccessor {
+        for (Row row : rs) {
+            VersionInfoEntity entity = new VersionInfoEntity();
+            entity.setEntityType(row.getString("entity_type"));
+            entity.setEntityId(row.getString("entity_id"));
 
-        @Query("select * from dox.version_info ")
-        @QueryParameters(fetchSize = 400)
-        Result<VersionInfoEntity> getAll();
+            // map UDT manually
+            UdtValue activeVersionUdt = row.getUdtValue("active_version");
+            if (activeVersionUdt != null) {
+                entity.setActiveVersion(new Version(
+                    activeVersionUdt.getInt("major"),
+                    activeVersionUdt.getInt("minor")
+                ));
+            }
+
+            // assuming VersionStatus and UserCandidateVersion are enums or classes that can be stored as String/UDT
+            String statusStr = row.getString("status");
+            if (statusStr != null) {
+                entity.setStatus(VersionStatus.valueOf(statusStr));
+            }
+
+           UdtValue candidateUdt = row.getUdtValue("candidate");
+            if (candidateUdt != null) {
+                Version version = candidateUdt.get("version", Version.class); // or construct Version manually if needed
+                String user = candidateUdt.getString("user"); // adjust field name according to your UDT
+                entity.setCandidate(new UserCandidateVersion(user, version));
+        }
+
+
+            Set<UdtValue> viewableUdtSet = row.getSet("viewable_versions", UdtValue.class);
+            if (viewableUdtSet != null) {
+                Set<Version> viewable = new HashSet<>();
+                for (UdtValue v : viewableUdtSet) {
+                    viewable.add(new Version(v.getInt("major"), v.getInt("minor")));
+                }
+                entity.setViewableVersions(viewable);
+            }
+
+            UdtValue latestFinalUdt = row.getUdtValue("latest_final_version");
+            if (latestFinalUdt != null) {
+                entity.setLatestFinalVersion(new Version(
+                    latestFinalUdt.getInt("major"),
+                    latestFinalUdt.getInt("minor")
+                ));
+            }
+
+            result.add(entity);
+        }
+
+        return result;
     }
 }
