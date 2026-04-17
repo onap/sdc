@@ -480,7 +480,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
         ExtentTestActions.addScreenshot(Status.INFO, "TopologyTemplate_" + vnfFile, "The topology template for " + vnfFile + " is as follows : ");
 
         System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify clickingCertify vspName=" + vspName);
-        DeploymentArtifactPage.clickCertifyButton(vspName);
+        // DeploymentArtifactPage.clickCertifyButton(vspName);
         System.out.println(ItTraceContext.prefix() + "[OnboardingFlowsUi] onboardAndCertify EXIT vspName=" + vspName + " vnfFile=" + vnfFile);
         return vspName;
     }

@@ -15,7 +15,9 @@
  */
 package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.errors.JsonErrorBuilder;
@@ -33,6 +35,7 @@ public abstract class XmlArtifact {
      */
     public String toXml() {
         initMapper();
+        configureXmlMapper(xmlMapper);
         String xml;
         try {
             xml = xmlMapper.writeValueAsString(this);
@@ -44,6 +47,14 @@ public abstract class XmlArtifact {
             throw new CoreException(new JsonErrorBuilder("Failed to write xml value as string ").build(), exception);
         }
         return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");
+    }
+
+    private static void configureXmlMapper(XmlMapper mapper) {
+        if (mapper == null) {
+            return;
+        }
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     private static String currentTraceId() {

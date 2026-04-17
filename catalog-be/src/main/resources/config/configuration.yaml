@@ -645,6 +645,7 @@ onboarding:
     port: 8080
     downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
+    timeoutMs: 15000
 
 dcae:
     protocol: http

@@ -62,6 +62,8 @@ limitations under the License.
         <!-- parser-->
         <sdc-tosca-parser.version>1.9.0</sdc-tosca-parser.version>
         <docker.showLogs>false</docker.showLogs>
+        <!-- When true, do not stop/remove docker containers after ITs (keeps environment up for debugging). -->
+        <docker.stop.skip>false</docker.stop.skip>
     </properties>
 
     <dependencies>
@@ -1418,6 +1420,9 @@ limitations under the License.
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                        <configuration>
+                            <skip>${docker.stop.skip}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

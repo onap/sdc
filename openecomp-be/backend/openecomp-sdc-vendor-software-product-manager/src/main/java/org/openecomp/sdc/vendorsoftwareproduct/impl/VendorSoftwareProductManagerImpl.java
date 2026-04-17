@@ -646,9 +646,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     private void addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+        if (zipFileManifest == null) {
+            return;
+        }
         ManifestContent manifestContent = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        if (manifestContent == null || manifestContent.getData() == null) {
+            return;
+        }
         for (FileData fileData : manifestContent.getData()) {
-            if ((fileData.getFile()).contains("dummy_ignore.yaml")) {
+            if (fileData != null && fileData.getFile() != null && (fileData.getFile()).contains("dummy_ignore.yaml")) {
                 String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");

@@ -144,6 +144,38 @@ public class EntitlementPoolEntity implements VersionableEntity {
         versionUuId = uuId;
     }
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(final String startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setStartDate(final Object startDate) {
+        this.startDate = startDate == null ? null : String.valueOf(startDate);
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(final String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public void setExpiryDate(final Object expiryDate) {
+        this.expiryDate = expiryDate == null ? null : String.valueOf(expiryDate);
+    }
+
+    public Collection<LimitEntity> getLimits() {
+        return limits;
+    }
+
+    public void setLimits(final Collection<LimitEntity> limits) {
+        this.limits = limits;
+    }
+
     public String getVendorLicenseModelId() {
         return vendorLicenseModelId;
     }
@@ -366,34 +398,19 @@ public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
      * @return the operational scope for artifact
      */
     public OperationalScopeForXml getOperationalScopeForArtifact() {
-    OperationalScopeForXml obj = new OperationalScopeForXml();
-    MultiChoiceOrOther<OperationalScope> scope = getOperationalScope();
+        OperationalScopeForXml obj = new OperationalScopeForXml();
+        MultiChoiceOrOther<OperationalScope> scope = getOperationalScope();
 
-    System.out.println("DEBUG: operationalScope JSON string = " + operationalScope);
-
-    if (scope != null) {
-        // Rebuild choices if needed
-        scope.resolveEnum(OperationalScope.class);
-
-        System.out.println("DEBUG: Parsed MultiChoiceOrOther<OperationalScope> = " + scope);
-        System.out.println("DEBUG: choices=" + scope.getChoices()
-            + ", other=" + scope.getOther()
-            + ", results=" + scope.getResults());
-
-        if (scope.getResults() != null && !scope.getResults().isEmpty()) {
-            System.out.println("DEBUG: Results present: " + scope.getResults());
-            obj.setValue(scope.getResults());
-        } else {
-            System.out.println("DEBUG: No operational scope results found.");
-            obj.setValue(Collections.emptySet()); // safe default
+        if (scope == null) {
+            obj.setValue(Collections.emptySet());
+            return obj;
         }
-    } else {
-        System.out.println("DEBUG: scope is null");
-        obj.setValue(Collections.emptySet()); // safe default
-    }
 
-    return obj;
-}
+        scope.resolveEnum(OperationalScope.class);
+        Set<String> results = scope.getResults();
+        obj.setValue(results == null ? Collections.emptySet() : results);
+        return obj;
+    }
 
 
     public String getManufacturerReferenceNumber() {

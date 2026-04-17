@@ -183,33 +183,98 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         this.thresholdUnits = thresholdUnits;
     }
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(final String startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setStartDate(final Object startDate) {
+        this.startDate = startDate == null ? null : String.valueOf(startDate);
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(final String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public void setExpiryDate(final Object expiryDate) {
+        this.expiryDate = expiryDate == null ? null : String.valueOf(expiryDate);
+    }
+
+    public String getIncrements() {
+        return increments;
+    }
+
+    public void setIncrements(final String increments) {
+        this.increments = increments;
+    }
+
+    public void setIncrements(final Object increments) {
+        this.increments = increments == null ? null : String.valueOf(increments);
+    }
+
+    public Set<String> getReferencingFeatureGroups() {
+        return referencingFeatureGroups;
+    }
+
+    public void setReferencingFeatureGroups(final Set<String> referencingFeatureGroups) {
+        this.referencingFeatureGroups = referencingFeatureGroups;
+    }
+
+    public Collection<LimitEntity> getLimits() {
+        return limits;
+    }
+
+    public void setLimits(final Collection<LimitEntity> limits) {
+        this.limits = limits;
+    }
+
+    public String getManufacturerReferenceNumber() {
+        return manufacturerReferenceNumber;
+    }
+
+    public void setManufacturerReferenceNumber(final String manufacturerReferenceNumber) {
+        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
+    }
+
+    public void setManufacturerReferenceNumber(final Object manufacturerReferenceNumber) {
+        this.manufacturerReferenceNumber = manufacturerReferenceNumber == null ? null : String.valueOf(manufacturerReferenceNumber);
+    }
+
     @Transient
     public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
-    if (operationalScope == null) {
-        return null;
+        if (operationalScope == null) {
+            return null;
+        }
+        try {
+            return MAPPER.readValue(
+                operationalScope,
+                new TypeReference<MultiChoiceOrOther<OperationalScope>>() {}
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse operationalScope JSON", e);
+        }
     }
-    try {
-        return MAPPER.readValue(
-            operationalScope,
-            new TypeReference<MultiChoiceOrOther<OperationalScope>>() {}
-        );
-    } catch (Exception e) {
-        throw new RuntimeException("Failed to parse operationalScope JSON", e);
-    }
-}
+
     @Transient
     public void setOperationalScope(MultiChoiceOrOther<OperationalScope> scope) {
-    if (scope != null) {
-        scope.resolveEnum(OperationalScope.class);
-        try {
-            this.operationalScope = MAPPER.writeValueAsString(scope);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize operationalScope", e);
+        if (scope != null) {
+            scope.resolveEnum(OperationalScope.class);
+            try {
+                this.operationalScope = MAPPER.writeValueAsString(scope);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to serialize operationalScope", e);
+            }
+        } else {
+            this.operationalScope = null;
         }
-    } else {
-        this.operationalScope = null;
     }
-}
 
     public ThresholdForXml getThresholdForArtifact() {
         ThresholdForXml threshold = new ThresholdForXml();
