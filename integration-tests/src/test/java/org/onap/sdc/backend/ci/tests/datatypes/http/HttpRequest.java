@@ -39,6 +39,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.onap.sdc.backend.ci.tests.utils.rest.ItTraceContext;
 import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +177,10 @@ public class HttpRequest {
             for (Entry<String, String> entry : headers.entrySet()) {
                 httpPost.addHeader(entry.getKey(), entry.getValue());
             }
+            final String traceId = ItTraceContext.get();
+            if (traceId != null && !traceId.isBlank()) {
+                httpPost.addHeader(ItTraceContext.TRACE_HEADER, traceId);
+            }
 
             httpPost.setEntity(requestEntity);
             response = client.execute(httpPost);
@@ -309,6 +314,10 @@ public class HttpRequest {
             }
 
         }
+        final String traceId = ItTraceContext.get();
+        if (traceId != null && !traceId.isBlank()) {
+            con.setRequestProperty(ItTraceContext.TRACE_HEADER, traceId);
+        }
     }
 
     private void addHttpRequestHEaders(Map<String, String> headers, HttpURLConnection con) {
@@ -320,6 +329,10 @@ public class HttpRequest {
                 con.setRequestProperty(key, value);
             }
 
+        }
+        final String traceId = ItTraceContext.get();
+        if (traceId != null && !traceId.isBlank()) {
+            con.setRequestProperty(ItTraceContext.TRACE_HEADER, traceId);
         }
     }
 

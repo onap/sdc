@@ -37,8 +37,22 @@ public abstract class XmlArtifact {
         try {
             xml = xmlMapper.writeValueAsString(this);
         } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
+            final String traceId = currentTraceId();
+            System.err.println("[IT_TRACE][XmlArtifact] Failed to serialize XmlArtifact. traceId=" + traceId
+                + " type=" + getClass().getName() + " error=" + exception);
+            exception.printStackTrace(System.err);
             throw new CoreException(new JsonErrorBuilder("Failed to write xml value as string ").build(), exception);
         }
         return xml.replaceAll(VendorLicenseConstants.VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE, "");
+    }
+
+    private static String currentTraceId() {
+        try {
+            final Class<?> mdcClass = Class.forName("org.slf4j.MDC");
+            final var getMethod = mdcClass.getMethod("get", String.class);
+            return (String) getMethod.invoke(null, "itTraceId");
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }

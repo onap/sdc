@@ -33,6 +33,7 @@ import org.onap.sdc.backend.ci.tests.api.Urls;
 import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
+import org.onap.sdc.backend.ci.tests.utils.rest.ItTraceContext;
 
 import java.util.*;
 
@@ -182,6 +183,10 @@ public class OnboardingUtils {
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), userId);
+		final String traceId = ItTraceContext.get();
+		if (traceId != null && !traceId.isBlank()) {
+			headersMap.put(ItTraceContext.TRACE_HEADER, traceId);
+		}
 		return headersMap;
 	}
 
@@ -273,4 +278,3 @@ public class OnboardingUtils {
 		return filteredArObject;
 	}
 }
-

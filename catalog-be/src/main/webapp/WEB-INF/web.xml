@@ -108,6 +108,16 @@
     </servlet-mapping>
 
     <filter>
+        <filter-name>itTraceLoggingFilter</filter-name>
+        <filter-class>org.openecomp.sdc.be.filters.ItTraceLoggingFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>itTraceLoggingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>contentSecurityPolicyHeaderFilter</filter-name>
         <filter-class>org.openecomp.sdc.be.filters.ContentSecurityPolicyHeaderFilter</filter-class>
         <async-supported>true</async-supported>

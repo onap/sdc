@@ -167,6 +167,22 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
         this.type = type;
     }
 
+    public Integer getThresholdValue() {
+        return thresholdValue;
+    }
+
+    public void setThresholdValue(final Integer thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
+    public ThresholdUnit getThresholdUnits() {
+        return thresholdUnits;
+    }
+
+    public void setThresholdUnits(final ThresholdUnit thresholdUnits) {
+        this.thresholdUnits = thresholdUnits;
+    }
+
     @Transient
     public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
     if (operationalScope == null) {

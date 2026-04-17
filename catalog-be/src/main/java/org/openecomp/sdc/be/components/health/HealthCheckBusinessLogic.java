@@ -226,7 +226,7 @@ public class HealthCheckBusinessLogic {
         String description;
         String version = null;
         List<HealthCheckInfo> componentsInfo = new ArrayList<>();
-        final int timeout = 3000;
+        final int timeout = getHostedComponentTimeoutMs(componentName);
         if (healthCheckUrl != null) {
             try {
 
@@ -270,6 +270,25 @@ public class HealthCheckBusinessLogic {
             componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
         }
         return new HealthCheckInfo(componentName, healthCheckStatus, version, description, componentsInfo);
+    }
+
+    private int getHostedComponentTimeoutMs(String componentName) {
+        final int defaultTimeoutMs = 3000;
+        if (!HC_COMPONENT_ON_BOARDING.equals(componentName)) {
+            return defaultTimeoutMs;
+        }
+        // Onboarding BE healthcheck may initialize Cassandra/Zusammen on first call and can take longer than 3s,
+        // especially after Cassandra/JanusGraph migrations.
+        final int onboardingDefaultTimeoutMs = 15000;
+        try {
+            Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
+            if (config != null && config.getOnboarding() != null && config.getOnboarding().getTimeoutMs() != null) {
+                return config.getOnboarding().getTimeoutMs();
+            }
+        } catch (Exception e) {
+            log.debug("Failed to read onboarding timeout from configuration, using default", e);
+        }
+        return onboardingDefaultTimeoutMs;
     }
 
     private void addToHealthCheckInfoObject(String description, List<HealthCheckInfo> componentsInfo) {
