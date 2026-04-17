@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,14 +36,14 @@ public class AuthEventTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataType.timeuuid()));
+        keys.add(new ImmutablePair<>(TIMEBASED_UUID_FIELD, DataTypes.TIMEUUID));
         return keys;
     }
 
     @Override
     public List<ImmutablePair<String, DataType>> clusteringKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataType.timestamp()));
+        keys.add(new ImmutablePair<>(TIMESTAMP_FIELD, DataTypes.TIMESTAMP));
         return keys;
     }
 
@@ -50,7 +51,7 @@ public class AuthEventTableDescription implements ITableDescription {
     public Map<String, ImmutablePair<DataType, Boolean>> getColumnDescription() {
         Map<String, ImmutablePair<DataType, Boolean>> columns = new HashMap<>();
         for (AEFieldsDescription field : AEFieldsDescription.values()) {
-            columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
+            columns.put(field.getName(), new ImmutablePair<>(field.getType(), field.isIndexed()));
         }
         return columns;
     }
@@ -68,9 +69,15 @@ public class AuthEventTableDescription implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum AEFieldsDescription {
-        URL("url", DataType.varchar(), false), REQUEST_ID("request_id", DataType.varchar(), true), USER("user", DataType.varchar(),
-            false), AUTH_STATUS("auth_status", DataType.varchar(), false), REALM("realm", DataType.varchar(), false), ACTION("action",
-            DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESC("description", DataType.varchar(), false);
+        URL("url", DataTypes.TEXT, false),
+        REQUEST_ID("request_id", DataTypes.TEXT, true),
+        USER("user", DataTypes.TEXT, false),
+        AUTH_STATUS("auth_status", DataTypes.TEXT, false),
+        REALM("realm", DataTypes.TEXT, false),
+        ACTION("action", DataTypes.TEXT, true),
+        STATUS("status", DataTypes.TEXT, false),
+        DESC("description", DataTypes.TEXT, false);
+
         private final String name;
         private final DataType type;
         private final boolean indexed;

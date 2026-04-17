@@ -208,7 +208,6 @@ public class UserAdminOperationTest extends ModelTestBase {
             return null;
         }
 
-        @Override
         public long longId() {
             return 0;
         }

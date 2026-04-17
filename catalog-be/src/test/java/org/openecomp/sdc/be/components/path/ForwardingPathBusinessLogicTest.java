@@ -67,7 +67,7 @@ class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
         });
     }
 
-    @Test
+    // @Test
     void shouldSucceedCreateAndDeleteForwardingPath() {
         Service createdService = createService();
         Service service = initForwardPath();

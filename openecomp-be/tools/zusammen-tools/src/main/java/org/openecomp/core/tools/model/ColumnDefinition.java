@@ -19,8 +19,8 @@
  */
 package org.openecomp.core.tools.model;
 
-import com.datastax.driver.core.ColumnDefinitions.Definition;
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
+import com.datastax.oss.driver.api.core.type.DataType;
 import java.util.Arrays;
 
 public class ColumnDefinition {
@@ -29,55 +29,52 @@ public class ColumnDefinition {
     private String table;
     private String name;
     private String type;
+    private DataType dataType; // store actual DataType
 
     public ColumnDefinition() {
+    }
+
+    public ColumnDefinition(String keyspace, String table, String name, String type) {
+        this.keyspace = keyspace;
+        this.table = table;
+        this.name = name;
+        this.type = type;
     }
 
     public ColumnDefinition(String keyspace, String table, String name, DataType type) {
         this.keyspace = keyspace;
         this.table = table;
         this.name = name;
-        this.type = type.getName().toString();
+        this.type = type.asCql(false, false);
+        this.dataType = type; // store DataType
     }
 
-    public ColumnDefinition(Definition definition) {
-        this(definition.getKeyspace(), definition.getTable(), definition.getName(), definition.getType());
+   public ColumnDefinition(ColumnMetadata columnMetadata, String tableName) {
+        this.keyspace = columnMetadata.getKeyspace().asInternal();
+        this.table = tableName; // pass the table name explicitly
+        this.name = columnMetadata.getName().asInternal();
+        this.type = columnMetadata.getType().asCql(false, false); // CQL type as string
     }
 
-    /**
-     * The name of the keyspace this column is part of.
-     *
-     * @return the name of the keyspace this column is part of.
-     */
     public String getKeyspace() {
         return keyspace;
     }
 
-    /**
-     * Returns the name of the table this column is part of.
-     *
-     * @return the name of the table this column is part of.
-     */
     public String getTable() {
         return table;
     }
 
-    /**
-     * Returns the name of the column.
-     *
-     * @return the name of the column.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Returns the type of the column.
-     *
-     * @return the type of the column.
-     */
     public String getType() {
         return type;
+    }
+
+    // New getter for DataType
+    public DataType getDataType() {
+        return dataType;
     }
 
     @Override
@@ -91,6 +88,9 @@ public class ColumnDefinition {
             return false;
         }
         ColumnDefinition other = (ColumnDefinition) o;
-        return keyspace.equals(other.keyspace) && table.equals(other.table) && name.equals(other.name) && type.equals(other.type);
+        return keyspace.equals(other.keyspace)
+            && table.equals(other.table)
+            && name.equals(other.name)
+            && type.equals(other.type);
     }
 }

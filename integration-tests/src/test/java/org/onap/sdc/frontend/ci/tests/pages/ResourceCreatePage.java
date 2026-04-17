@@ -71,6 +71,25 @@ public class ResourceCreatePage extends ComponentPage {
         fillVendorModelNumber(resourceCreateData.getVendorModelNumber());
     }
 
+    /**
+     * Fills only missing fields (empty or unselected) from the provided data.
+     * Useful for flows that land on the create page with some fields pre-populated (e.g. via VSP import).
+     */
+    public void fillMissingRequiredFields(final ResourceCreateData resourceCreateData) {
+        if (resourceCreateData == null) {
+            return;
+        }
+
+        setInputFieldIfEmpty(By.xpath(XpathSelector.NAME_INPUT.getXpath()), resourceCreateData.getName());
+        setSelectFieldIfUnselected(By.xpath(XpathSelector.MODEL_SELECT.getXpath()), resourceCreateData.getModel());
+        setSelectFieldIfUnselected(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()), resourceCreateData.getCategory());
+        setInputFieldIfEmpty(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()), resourceCreateData.getDescription());
+        setInputFieldIfEmpty(By.xpath(XpathSelector.CONTACT_ID_INPUT.getXpath()), resourceCreateData.getContactId());
+        setInputFieldIfEmpty(By.xpath(XpathSelector.VENDOR_NAME_INPUT.getXpath()), resourceCreateData.getVendorName());
+        setInputFieldIfEmpty(By.xpath(XpathSelector.VENDOR_RELEASE_INPUT.getXpath()), resourceCreateData.getVendorRelease());
+        setInputFieldIfEmpty(By.xpath(XpathSelector.VENDOR_MODEL_NUMBER_INPUT.getXpath()), resourceCreateData.getVendorModelNumber());
+    }
+
     private void fillName(final String name) {
         setInputField(By.xpath(XpathSelector.NAME_INPUT.getXpath()), name);
     }
@@ -131,11 +150,61 @@ public class ResourceCreatePage extends ComponentPage {
         new Select(findElement(locator)).selectByVisibleText(value);
     }
 
+    private void setSelectFieldIfUnselected(final By locator, final String value) {
+        final Select select = new Select(findElement(locator));
+        final String currentValue = select.getFirstSelectedOption() == null ? null : select.getFirstSelectedOption().getText();
+        final boolean isUnselected = currentValue == null || currentValue.trim().isEmpty() || currentValue.toLowerCase().contains("select");
+        if (!isUnselected) {
+            return;
+        }
+        if (value != null) {
+            try {
+                select.selectByVisibleText(value);
+                return;
+            } catch (final Exception ignored) {
+                // Fall back to first non-placeholder option
+            }
+        }
+        selectFirstNonPlaceholderOption(select);
+    }
+
+    private void selectFirstNonPlaceholderOption(final Select select) {
+        for (final WebElement option : select.getOptions()) {
+            final String optionText = option.getText() == null ? "" : option.getText().trim();
+            final String optionValue = option.getAttribute("value");
+            if (optionText.isEmpty()) {
+                continue;
+            }
+            if (optionText.toLowerCase().contains("select")) {
+                continue;
+            }
+            if (optionValue != null && optionValue.trim().isEmpty()) {
+                continue;
+            }
+            option.click();
+            return;
+        }
+    }
+
     private void setInputField(final By locator, final String value) {
         if (value == null) {
             return;
         }
-        findElement(locator).sendKeys(value);
+        final WebElement input = findElement(locator);
+        input.clear();
+        input.sendKeys(value);
+    }
+
+    private void setInputFieldIfEmpty(final By locator, final String value) {
+        if (value == null) {
+            return;
+        }
+        final WebElement input = findElement(locator);
+        final String currentValue = input.getAttribute("value");
+        if (currentValue == null || currentValue.trim().isEmpty()) {
+            input.clear();
+            input.sendKeys(value);
+        }
     }
 
     /**

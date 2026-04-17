@@ -23,11 +23,12 @@ package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatus;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
 
 class VspUploadStatusRecordMapperTest {
@@ -39,21 +40,21 @@ class VspUploadStatusRecordMapperTest {
         final var vspUploadStatus = new VspUploadStatusRecord();
         vspUploadStatus.setVspId("vspId");
         vspUploadStatus.setVspVersionId("vspVersionId");
-        vspUploadStatus.setStatus(VspUploadStatus.UPLOADING);
+        vspUploadStatus.setStatus(VspUploadStatus.UPLOADING.name());
         vspUploadStatus.setLockId(UUID.randomUUID());
         vspUploadStatus.setIsComplete(true);
-        vspUploadStatus.setCreated(new Date());
-        vspUploadStatus.setUpdated(new Date());
+        vspUploadStatus.setCreated(Instant.now());
+        vspUploadStatus.setUpdated(Instant.now());
         final var vspUploadStatusDto = new VspUploadStatusDto();
         //when
         vspUploadStatusRecordMapper.doMapping(vspUploadStatus, vspUploadStatusDto);
         //then
         assertEquals(vspUploadStatus.getVspId(), vspUploadStatusDto.getVspId());
         assertEquals(vspUploadStatus.getVspVersionId(), vspUploadStatusDto.getVspVersionId());
-        assertEquals(vspUploadStatus.getStatus(), vspUploadStatusDto.getStatus());
+        assertEquals(vspUploadStatus.getStatus(), vspUploadStatusDto.getStatus().toString());
         assertEquals(vspUploadStatus.getLockId(), vspUploadStatusDto.getLockId());
         assertEquals(vspUploadStatus.getIsComplete(), vspUploadStatusDto.isComplete());
-        assertEquals(vspUploadStatus.getCreated(), vspUploadStatusDto.getCreated());
-        assertEquals(vspUploadStatus.getUpdated(), vspUploadStatusDto.getUpdated());
+        assertEquals(vspUploadStatus.getCreated().truncatedTo(ChronoUnit.MILLIS), vspUploadStatusDto.getCreated().toInstant().truncatedTo(ChronoUnit.MILLIS));
+        assertEquals(vspUploadStatus.getUpdated().truncatedTo(ChronoUnit.MILLIS), vspUploadStatusDto.getUpdated().toInstant().truncatedTo(ChronoUnit.MILLIS));
     }
 }

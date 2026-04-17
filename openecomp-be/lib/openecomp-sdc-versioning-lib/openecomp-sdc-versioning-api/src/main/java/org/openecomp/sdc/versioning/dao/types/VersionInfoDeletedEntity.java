@@ -19,41 +19,39 @@
  */
 package org.openecomp.sdc.versioning.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.FrozenValue;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(keyspace = "dox", name = "version_info_deleted")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@CqlName("version_info_deleted")
 public class VersionInfoDeletedEntity {
 
     @PartitionKey
-    @Column(name = "entity_type")
+    @CqlName("entity_type")
     private String entityType;
     @ClusteringColumn
-    @Column(name = "entity_id")
+    @CqlName("entity_id")
     private String entityId;
-    @Column(name = "active_version")
-    @Frozen
+    @CqlName("active_version")
     private Version activeVersion;
     private VersionStatus status;
-    @Frozen
     private UserCandidateVersion candidate;
-    @Column(name = "viewable_versions")
-    @FrozenValue
+    @CqlName("viewable_versions")
     private Set<Version> viewableVersions = new HashSet<>();
-    @Column(name = "latest_final_version")
-    @Frozen
+    @CqlName("latest_final_version")
     private Version latestFinalVersion;
 
     public VersionInfoDeletedEntity(String entityType, String entityId) {

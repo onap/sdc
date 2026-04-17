@@ -15,11 +15,13 @@
  */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.Map;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 /**
  * CREATE TABLE zusammen_dox.version_elements (
@@ -37,22 +39,22 @@ import java.util.Map;
  * PRIMARY KEY ((space, item_id, version_id), revision_id))
  * WITH CLUSTERING ORDER BY (revision_id ASC)
  */
-@Table(keyspace = "zusammen_dox", name = "version_elements")
+@Entity
 public class VersionElementsEntity {
 
-    @Column(name = "space")
+    @CqlName("space")
     @PartitionKey(0)
     private String space;
-    @Column(name = "item_id")
+    @CqlName("item_id")
     @PartitionKey(1)
     private String itemId;
-    @Column(name = "version_id")
+    @CqlName("version_id")
     @PartitionKey(2)
     private String versionId;
-    @Column(name = "revision_id")
+    @CqlName("revision_id")
     @ClusteringColumn
     private String revisionId;
-    @Column(name = "element_ids")
+    @CqlName("element_ids")
     private Map<String, String> elementIds;
 
     public String getSpace() {

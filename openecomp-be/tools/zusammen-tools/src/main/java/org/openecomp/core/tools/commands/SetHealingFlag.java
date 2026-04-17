@@ -21,17 +21,17 @@ package org.openecomp.core.tools.commands;
 
 import static org.openecomp.core.tools.commands.CommandName.RESET_OLD_VERSION;
 
-import com.datastax.driver.core.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.openecomp.core.tools.store.HealingHandler;
 import org.openecomp.core.tools.store.VersionCassandraLoader;
 import org.openecomp.core.tools.store.zusammen.datatypes.HealingEntity;
 
-/**
- * Created by ayalaben on 10/15/2017
- */
 public class SetHealingFlag extends Command {
 
     private static final String VERSION_OPTION = "v";
@@ -44,11 +44,21 @@ public class SetHealingFlag extends Command {
     public boolean execute(String[] args) {
         CommandLine cmd = parseArgs(args);
         String oldVersion = cmd.hasOption(VERSION_OPTION) ? cmd.getOptionValue(VERSION_OPTION) : null;
+
         VersionCassandraLoader versionCassandraLoader = new VersionCassandraLoader();
-        ResultSet listItemVersion = versionCassandraLoader.listItemVersion();
+        List<Row> listItemVersion = versionCassandraLoader.listItemVersion();
+
+
         ArrayList<HealingEntity> healingEntities = new ArrayList<>();
-        listItemVersion.iterator().forEachRemaining(
-            entry -> healingEntities.add(new HealingEntity(entry.getString(0), entry.getString(1), entry.getString(2), true, oldVersion)));
+
+        for (Row row : listItemVersion) {
+        String space = row.getString("space");
+        String itemId = row.getString("item_id");
+        String versionId = row.getString("version_id");
+
+        healingEntities.add(new HealingEntity(space, itemId, versionId, true, oldVersion));
+}
+
         HealingHandler healingHandler = new HealingHandler();
         healingHandler.populateHealingTable(healingEntities);
         return true;

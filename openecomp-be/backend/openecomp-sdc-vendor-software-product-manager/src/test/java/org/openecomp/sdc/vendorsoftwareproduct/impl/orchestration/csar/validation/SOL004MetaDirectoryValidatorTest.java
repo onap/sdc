@@ -153,7 +153,7 @@ class SOL004MetaDirectoryValidatorTest {
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytesOrFail(SAMPLE_DEFINITION_FILE_PATH));
 
         final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
-        assertExpectedErrors("TOSCA Meta file with no entries", validationResult.getErrors(), 1);
+        assertExpectedErrors("TOSCA Meta file with no entries", validationResult.getErrors(), 2);
     }
 
     @Test

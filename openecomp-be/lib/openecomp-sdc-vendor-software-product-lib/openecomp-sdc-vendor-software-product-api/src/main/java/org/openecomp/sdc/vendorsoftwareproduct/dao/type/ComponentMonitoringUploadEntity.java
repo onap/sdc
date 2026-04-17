@@ -19,36 +19,37 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import java.nio.ByteBuffer;
 import org.openecomp.core.enrichment.types.MonitoringUploadType;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Table(keyspace = "dox", name = "vsp_component_artifact")
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+@Entity
+@CqlName("vsp_component_artifact")
 public class ComponentMonitoringUploadEntity implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "Vendor Software Product Component Artifact";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "component_id")
+    @CqlName("component_id")
     private String componentId;
     @ClusteringColumn(value = 1)
-    @Column(name = "artifact_type")
+    @CqlName("artifact_type")
     private MonitoringUploadType type;
     @ClusteringColumn(value = 2)
-    @Column(name = "artifact_id")
+    @CqlName("artifact_id")
     private String id;
-    @Column(name = "name")
+    @CqlName("name")
     private String artifactName;
     private ByteBuffer artifact;
 
@@ -147,4 +148,6 @@ public class ComponentMonitoringUploadEntity implements VersionableEntity {
         return "ComponentMonitoringUploadEntity{" + "vspId='" + vspId + '\'' + ", version=" + version + ", componentId='" + componentId + '\''
             + ", type=" + type + ", id='" + id + '\'' + ", artifactName='" + artifactName + '\'' + '}';
     }
+
+   
 }

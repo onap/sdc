@@ -19,14 +19,23 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class VspMergeDaoFactoryImpl extends VspMergeDaoFactory {
 
-    private static final VspMergeDao INSTANCE = new VspMergeDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
+    private static final VspMergeDao INSTANCE;
 
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        ZusammenAdaptor adaptor = ZusammenAdaptorFactory.getInstance().createInterface();
+        INSTANCE = new VspMergeDaoImpl(session, adaptor);
+    }
     @Override
     public VspMergeDao createInterface() {
         return INSTANCE;

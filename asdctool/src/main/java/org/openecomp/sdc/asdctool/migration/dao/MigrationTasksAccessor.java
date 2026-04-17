@@ -19,20 +19,26 @@
  */
 package org.openecomp.sdc.asdctool.migration.dao;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
+import org.openecomp.sdc.be.resources.data.MigrationTaskEntry;
 
-@Accessor
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+
+@Dao
 public interface MigrationTasksAccessor {
 
     @Query("SELECT minor_version FROM sdcrepository.migrationTasks WHERE major_version = :majorVersion order by minor_version desc limit 1")
-    ResultSet getLatestMinorVersion(@Param("majorVersion") Long majorVersion);
+    ResultSet getLatestMinorVersion(@CqlName("majorVersion") Long majorVersion);
 
     @Query("SELECT major_version FROM sdcrepository.migrationTasks")
     ResultSet getLatestMajorVersion();
 
     @Query("DELETE FROM sdcrepository.migrationTasks WHERE major_version = :majorVersion")
-    void deleteTasksForMajorVersion(@Param("majorVersion") Long majorVersion);
+    void deleteTasksForMajorVersion(@CqlName("majorVersion") Long majorVersion);
+
+     @Query("INSERT INTO sdcrepository.migrationTasks (major_version, minor_version, task_name, executed_at) " +
+           "VALUES (:majorVersion, :minorVersion, :taskName, :executedAt)")
+    void saveMigrationTask(@CqlName("task") MigrationTaskEntry task);
 }

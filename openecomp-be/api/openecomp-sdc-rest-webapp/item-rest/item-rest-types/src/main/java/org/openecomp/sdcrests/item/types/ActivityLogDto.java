@@ -19,7 +19,9 @@
  */
 package org.openecomp.sdcrests.item.types;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import java.time.Instant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -29,7 +31,8 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 public class ActivityLogDto {
 
     private String id;
-    private Date timestamp;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Instant timestamp;
     private String type;
     private String comment;
     private String user;

@@ -1,0 +1,1446 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;33mWARNING[m] 
+[[1;33mWARNING[m] Some problems were encountered while building the effective model for org.openecomp.sdc.be:catalog-dao:jar:1.14.4-SNAPSHOT
+[[1;33mWARNING[m] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: com.datastax.oss:java-driver-core:jar -> version ${cassandra.driver.version} vs ${java.driver.core.version} @ line 502, column 17
+[[1;33mWARNING[m] 
+[[1;33mWARNING[m] Some problems were encountered while building the effective model for org.openecomp.sdc:sdc-integration-tests:jar:1.14.4-SNAPSHOT
+[[1;33mWARNING[m] 'build.plugins.plugin.(groupId:artifactId)' must be unique but found duplicate declaration of plugin org.apache.maven.plugins:maven-resources-plugin @ line 558, column 21
+[[1;33mWARNING[m] 'build.plugins.plugin.(groupId:artifactId)' must be unique but found duplicate declaration of plugin org.apache.maven.plugins:maven-antrun-plugin @ line 761, column 21
+[[1;33mWARNING[m] 
+[[1;33mWARNING[m] It is highly recommended to fix these problems because they threaten the stability of your build.
+[[1;33mWARNING[m] 
+[[1;33mWARNING[m] For this reason, future Maven versions might no longer support building such malformed projects.
+[[1;33mWARNING[m] 
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1mReactor Build Order:[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] sdc                                                                [pom]
+[[1;34mINFO[m] sdc-onboarding                                                     [pom]
+[[1;34mINFO[m] onap-common-lib                                                    [pom]
+[[1;34mINFO[m] onap-common-configuration-management                               [pom]
+[[1;34mINFO[m] onap-configuration-management-api                                  [jar]
+[[1;34mINFO[m] openecomp-sdc                                                      [pom]
+[[1;34mINFO[m] openecomp-sdc-lib                                                  [pom]
+[[1;34mINFO[m] openecomp-sdc-logging-lib                                          [pom]
+[[1;34mINFO[m] openecomp-sdc-logging-api                                          [jar]
+[[1;34mINFO[m] onap-configuration-management-core                                 [jar]
+[[1;34mINFO[m] onap-tosca-datatype                                                [jar]
+[[1;34mINFO[m] onap-generic-artifact-browser                                      [pom]
+[[1;34mINFO[m] onap-generic-artifact-browser-service                              [jar]
+[[1;34mINFO[m] onap-generic-artifact-browser-component-tests                      [jar]
+[[1;34mINFO[m] openecomp-sdc-logging-core                                         [jar]
+[[1;34mINFO[m] common-app-logging                                                 [jar]
+[[1;34mINFO[m] common-app-api                                                     [jar]
+[[1;34mINFO[m] openecomp-core-lib                                                 [pom]
+[[1;34mINFO[m] openecomp-utilities-lib                                            [jar]
+[[1;34mINFO[m] openecomp-sdc-datatypes-lib                                        [jar]
+[[1;34mINFO[m] openecomp-common-lib                                               [jar]
+[[1;34mINFO[m] openecomp-facade-lib                                               [pom]
+[[1;34mINFO[m] openecomp-facade-api                                               [jar]
+[[1;34mINFO[m] openecomp-facade-core                                              [jar]
+[[1;34mINFO[m] openecomp-session-lib                                              [jar]
+[[1;34mINFO[m] openecomp-sdc-api                                                  [pom]
+[[1;34mINFO[m] openecomp-sdc-rest-webapp                                          [pom]
+[[1;34mINFO[m] openecomp-sdc-common-rest                                          [jar]
+[[1;34mINFO[m] openecomp-nosqldb-lib                                              [pom]
+[[1;34mINFO[m] openecomp-nosqldb-api                                              [jar]
+[[1;34mINFO[m] openecomp-nosqldb-core                                             [jar]
+[[1;34mINFO[m] openecomp-item-permissions-lib                                     [pom]
+[[1;34mINFO[m] openecomp-item-permissions-api                                     [jar]
+[[1;34mINFO[m] openecomp-sdc-notification-lib                                     [pom]
+[[1;34mINFO[m] openecomp-sdc-notification-api                                     [jar]
+[[1;34mINFO[m] openecomp-item-permissions-core                                    [jar]
+[[1;34mINFO[m] openecomp-sdc-versioning-lib                                       [pom]
+[[1;34mINFO[m] openecomp-sdc-versioning-api                                       [jar]
+[[1;34mINFO[m] openecomp-zusammen-lib                                             [pom]
+[[1;34mINFO[m] openecomp-zusammen-api                                             [jar]
+[[1;34mINFO[m] openecomp-zusammen-core                                            [jar]
+[[1;34mINFO[m] openecomp-sdc-versioning-core                                      [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-lib                                   [pom]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-api                                   [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-core                                  [jar]
+[[1;34mINFO[m] openecomp-sdc-validation-lib                                       [pom]
+[[1;34mINFO[m] openecomp-sdc-validation-api                                       [jar]
+[[1;34mINFO[m] openecomp-heat-lib                                                 [jar]
+[[1;34mINFO[m] openecomp-sdc-validation-sdk                                       [jar]
+[[1;34mINFO[m] openecomp-sdc-validation-core                                      [jar]
+[[1;34mINFO[m] common-be-tests-utils                                              [jar]
+[[1;34mINFO[m] common-be                                                          [jar]
+[[1;34mINFO[m] openecomp-tosca-lib                                                [jar]
+[[1;34mINFO[m] openecomp-sdc-translator-lib                                       [pom]
+[[1;34mINFO[m] openecomp-sdc-translator-api                                       [jar]
+[[1;34mINFO[m] openecomp-sdc-validation-impl                                      [jar]
+[[1;34mINFO[m] openecomp-sdc-translator-core                                      [jar]
+[[1;34mINFO[m] openecomp-sdc-enrichment-lib                                       [pom]
+[[1;34mINFO[m] openecomp-sdc-enrichment-api                                       [jar]
+[[1;34mINFO[m] openecomp-config-lib                                               [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-lib                          [pom]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-api                          [jar]
+[[1;34mINFO[m] openecomp-sdc-model-lib                                            [pom]
+[[1;34mINFO[m] openecomp-sdc-model-api                                            [jar]
+[[1;34mINFO[m] openecomp-tosca-converter-lib                                      [pom]
+[[1;34mINFO[m] openecomp-tosca-converter-api                                      [jar]
+[[1;34mINFO[m] openecomp-sdc-model-impl                                           [jar]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-lib                                  [pom]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-api                                  [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-core                         [jar]
+[[1;34mINFO[m] openecomp-sdc-enrichment-impl                                      [jar]
+[[1;34mINFO[m] openecomp-sdc-enrichment-core                                      [jar]
+[[1;34mINFO[m] backend                                                            [pom]
+[[1;34mINFO[m] openecomp-sdc-validation-manager                                   [jar]
+[[1;34mINFO[m] openecomp-healing-lib                                              [pom]
+[[1;34mINFO[m] openecomp-sdc-healing-api                                          [jar]
+[[1;34mINFO[m] openecomp-sdc-healing-core                                         [jar]
+[[1;34mINFO[m] openecomp-item-permissions-impl                                    [jar]
+[[1;34mINFO[m] openecomp-tosca-converter-core                                     [jar]
+[[1;34mINFO[m] openecomp-sdc-healing-impl                                         [jar]
+[[1;34mINFO[m] openecomp-sdc-activity-log-lib                                     [pom]
+[[1;34mINFO[m] openecomp-sdc-activity-log-api                                     [jar]
+[[1;34mINFO[m] openecomp-sdc-activity-log-core                                    [jar]
+[[1;34mINFO[m] openecomp-sdc-activity-log-manager                                 [jar]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-core                                 [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-manager                      [jar]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-manager                               [jar]
+[[1;34mINFO[m] openecomp-conflict-lib                                             [pom]
+[[1;34mINFO[m] openecomp-conflict-api                                             [jar]
+[[1;34mINFO[m] openecomp-conflict-core                                            [jar]
+[[1;34mINFO[m] openecomp-sdc-conflict-manager                                     [jar]
+[[1;34mINFO[m] item-rest                                                          [pom]
+[[1;34mINFO[m] item-rest-types                                                    [jar]
+[[1;34mINFO[m] vendor-license-rest                                                [pom]
+[[1;34mINFO[m] vendor-license-rest-types                                          [jar]
+[[1;34mINFO[m] openecomp-sdc-item-permissions-manager                             [jar]
+[[1;34mINFO[m] item-rest-services                                                 [jar]
+[[1;34mINFO[m] unique-type-rest                                                   [pom]
+[[1;34mINFO[m] unique-type-rest-types                                             [jar]
+[[1;34mINFO[m] vendor-license-rest-services                                       [jar]
+[[1;34mINFO[m] openecomp-sdc-notification-core                                    [jar]
+[[1;34mINFO[m] vendor-software-products-rest                                      [pom]
+[[1;34mINFO[m] vendor-software-products-rest-types                                [jar]
+[[1;34mINFO[m] vendor-software-products-rest-services                             [jar]
+[[1;34mINFO[m] vnf-repository-rest-services                                       [jar]
+[[1;34mINFO[m] validation-rest                                                    [pom]
+[[1;34mINFO[m] validation-rest-types                                              [jar]
+[[1;34mINFO[m] validation-rest-services                                           [jar]
+[[1;34mINFO[m] openecomp-sdc-healthcheck-manager                                  [jar]
+[[1;34mINFO[m] healthcheck-rest                                                   [pom]
+[[1;34mINFO[m] healthcheck-rest-types                                             [jar]
+[[1;34mINFO[m] healthcheck-rest-services                                          [jar]
+[[1;34mINFO[m] conflict-rest                                                      [pom]
+[[1;34mINFO[m] conflict-rest-types                                                [jar]
+[[1;34mINFO[m] conflict-rest-services                                             [jar]
+[[1;34mINFO[m] item-permissions-rest                                              [pom]
+[[1;34mINFO[m] item-permissions-rest-types                                        [jar]
+[[1;34mINFO[m] item-permissions-rest-services                                     [jar]
+[[1;34mINFO[m] openecomp-sdc-application-config-manager                           [jar]
+[[1;34mINFO[m] notifications-rest                                                 [pom]
+[[1;34mINFO[m] notifications-rest-types                                           [jar]
+[[1;34mINFO[m] notifications-rest-services                                        [jar]
+[[1;34mINFO[m] application-config-rest                                            [pom]
+[[1;34mINFO[m] application-config-rest-types                                      [jar]
+[[1;34mINFO[m] application-config-rest-services                                   [jar]
+[[1;34mINFO[m] togglz-rest                                                        [pom]
+[[1;34mINFO[m] togglz-rest-types                                                  [jar]
+[[1;34mINFO[m] togglz-rest-services                                               [jar]
+[[1;34mINFO[m] openecomp-sdc-action-lib                                           [pom]
+[[1;34mINFO[m] openecomp-sdc-action-api                                           [jar]
+[[1;34mINFO[m] action-library-rest                                                [pom]
+[[1;34mINFO[m] action-library-rest-types                                          [jar]
+[[1;34mINFO[m] openecomp-sdc-action-core                                          [jar]
+[[1;34mINFO[m] openecomp-sdc-action-manager                                       [jar]
+[[1;34mINFO[m] action-library-rest-services                                       [jar]
+[[1;34mINFO[m] unique-type-rest-services                                          [jar]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-lib                                  [pom]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-api                                  [jar]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-impl                                 [jar]
+[[1;34mINFO[m] external-testing-rest                                              [pom]
+[[1;34mINFO[m] externaltesting-rest-services                                      [jar]
+[[1;34mINFO[m] metrics-rest                                                       [jar]
+[[1;34mINFO[m] openecomp-sdc-security-util                                        [jar]
+[[1;34mINFO[m] onboarding-rest-war                                                [war]
+[[1;34mINFO[m] openecomp-sdc-notification-worker                                  [jar]
+[[1;34mINFO[m] openecomp-sdc-notification-websocket                               [jar]
+[[1;34mINFO[m] notification-war                                                   [war]
+[[1;34mINFO[m] openecomp-sdc-logging-spring                                       [jar]
+[[1;34mINFO[m] catalog-dao                                                        [jar]
+[[1;34mINFO[m] catalog-model                                                      [jar]
+[[1;34mINFO[m] catalog-be                                                         [war]
+[[1;34mINFO[m] api-docs                                                           [jar]
+[[1;34mINFO[m] openecomp-zusammen-tools                                           [jar]
+[[1;34mINFO[m] openecomp-sdc-docker-dist                                          [pom]
+[[1;34mINFO[m] openecomp-sdc-docker-backend                                       [pom]
+[[1;34mINFO[m] openecomp-sdc-docker-db-init                                       [pom]
+[[1;34mINFO[m] onboarding-ui-war                                                  [war]
+[[1;34mINFO[m] catalog-be-plugins                                                 [pom]
+[[1;34mINFO[m] etsi-nfv-nsd-csar-plugin                                           [jar]
+[[1;34mINFO[m] backend-all-plugins                                                [pom]
+[[1;34mINFO[m] asdctool                                                           [jar]
+[[1;34mINFO[m] catalog-ui                                                         [pom]
+[[1;34mINFO[m] catalog-fe                                                         [war]
+[[1;34mINFO[m] sdc-os-chef                                                        [pom]
+[[1;34mINFO[m] webseal-simulator                                                  [war]
+[[1;34mINFO[m] sdc-integration-tests                                              [jar]
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36morg.openecomp.sdc:sdc-main[0;1m >---------------------[m
+[[1;34mINFO[m] [1mBuilding sdc 1.14.4-SNAPSHOT                                     [1/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36msdc-main[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc:sdc-onboarding[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding sdc-onboarding 1.14.4-SNAPSHOT                          [2/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36msdc-onboarding[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.onap.sdc.common:onap-common-lib[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding onap-common-lib 1.14.4-SNAPSHOT                         [3/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-common-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36morg.onap.sdc.common:onap-common-configuration-management[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding onap-common-configuration-management 1.14.4-SNAPSHOT    [4/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-common-configuration-management[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.onap.sdc.common:onap-configuration-management-api[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding onap-configuration-management-api 1.14.4-SNAPSHOT       [5/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-configuration-management-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc:openecomp-sdc[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc 1.14.4-SNAPSHOT                           [6/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:openecomp-sdc-lib[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-lib 1.14.4-SNAPSHOT                       [7/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-logging-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-logging-lib 1.14.4-SNAPSHOT               [8/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-logging-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-logging-api[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-logging-api 1.14.4-SNAPSHOT               [9/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-logging-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.onap.sdc.common:onap-configuration-management-core[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding onap-configuration-management-core 1.14.4-SNAPSHOT     [10/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-configuration-management-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.onap.sdc.common:onap-tosca-datatype[0;1m >---------------[m
+[[1;34mINFO[m] [1mBuilding onap-tosca-datatype 1.14.4-SNAPSHOT                    [11/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-tosca-datatype[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.onap.sdc.common:onap-generic-artifact-browser[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding onap-generic-artifact-browser 1.14.4-SNAPSHOT          [12/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-generic-artifact-browser[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.onap.sdc.common:onap-generic-artifact-browser-service[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding onap-generic-artifact-browser-service 1.14.4-SNAPSHOT  [13/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-generic-artifact-browser-service[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--< [0;36morg.onap.sdc.common:onap-generic-artifact-browser-component-tests[0;1m >--[m
+[[1;34mINFO[m] [1mBuilding onap-generic-artifact-browser-component-tests 1.14.4-SNAPSHOT [14/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monap-generic-artifact-browser-component-tests[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-logging-core[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-logging-core 1.14.4-SNAPSHOT             [15/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-logging-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:common-app-logging[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding common-app-logging 1.14.4-SNAPSHOT                     [16/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcommon-app-logging[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc:common-app-api[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding common-app-api 1.14.4-SNAPSHOT                         [17/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcommon-app-api[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:common-app-api:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- com.jcabi:jcabi-aspects:jar:0.21.1:provided
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:1.1.0.Final:provided
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc.core:openecomp-core-lib[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-core-lib 1.14.4-SNAPSHOT                     [18/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-core-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.core:openecomp-utilities-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-utilities-lib 1.14.4-SNAPSHOT                [19/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-utilities-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-datatypes-lib[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-datatypes-lib 1.14.4-SNAPSHOT            [20/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-datatypes-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-common-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-common-lib 1.14.4-SNAPSHOT                   [21/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-common-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-facade-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-facade-lib 1.14.4-SNAPSHOT                   [22/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-facade-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-facade-api[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-facade-api 1.14.4-SNAPSHOT                   [23/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-facade-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-facade-core[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-facade-core 1.14.4-SNAPSHOT                  [24/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-facade-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-session-lib[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-session-lib 1.14.4-SNAPSHOT                  [25/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-session-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:openecomp-sdc-api[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-api 1.14.4-SNAPSHOT                      [26/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-rest-webapp[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-rest-webapp 1.14.4-SNAPSHOT              [27/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-rest-webapp[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-common-rest[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-common-rest 1.14.4-SNAPSHOT              [28/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-common-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-nosqldb-lib[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-nosqldb-lib 1.14.4-SNAPSHOT                  [29/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-nosqldb-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-nosqldb-api[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-nosqldb-api 1.14.4-SNAPSHOT                  [30/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-nosqldb-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.core:openecomp-nosqldb-core[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-nosqldb-core 1.14.4-SNAPSHOT                 [31/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-nosqldb-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-item-permissions-lib[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-item-permissions-lib 1.14.4-SNAPSHOT         [32/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-item-permissions-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-item-permissions-api[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-item-permissions-api 1.14.4-SNAPSHOT         [33/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-item-permissions-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-notification-lib[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-notification-lib 1.14.4-SNAPSHOT         [34/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-notification-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-notification-api[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-notification-api 1.14.4-SNAPSHOT         [35/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-notification-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-item-permissions-core[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-item-permissions-core 1.14.4-SNAPSHOT        [36/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-item-permissions-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-versioning-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-versioning-lib 1.14.4-SNAPSHOT           [37/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-versioning-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-versioning-api[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-versioning-api 1.14.4-SNAPSHOT           [38/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-versioning-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.core:openecomp-zusammen-lib[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-zusammen-lib 1.14.4-SNAPSHOT                 [39/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-zusammen-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.core:openecomp-zusammen-api[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-zusammen-api 1.14.4-SNAPSHOT                 [40/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-zusammen-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.core:openecomp-zusammen-core[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-zusammen-core 1.14.4-SNAPSHOT                [41/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-zusammen-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-versioning-core[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-versioning-core 1.14.4-SNAPSHOT          [42/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-versioning-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-license-lib[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-license-lib 1.14.4-SNAPSHOT       [43/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-license-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-license-api[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-license-api 1.14.4-SNAPSHOT       [44/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-license-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-license-core[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-license-core 1.14.4-SNAPSHOT      [45/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-license-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-lib 1.14.4-SNAPSHOT           [46/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-api[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-api 1.14.4-SNAPSHOT           [47/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc.core:openecomp-heat-lib[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-heat-lib 1.14.4-SNAPSHOT                     [48/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-heat-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-sdk[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-sdk 1.14.4-SNAPSHOT           [49/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-sdk[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-core[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-core 1.14.4-SNAPSHOT          [50/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc.be:common-be-tests-utils[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding common-be-tests-utils 1.14.4-SNAPSHOT                  [51/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcommon-be-tests-utils[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36morg.openecomp.sdc.be:common-be[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding common-be 1.14.4-SNAPSHOT                              [52/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcommon-be[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc.core:openecomp-tosca-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-tosca-lib 1.14.4-SNAPSHOT                    [53/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-tosca-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-translator-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-translator-lib 1.14.4-SNAPSHOT           [54/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-translator-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-translator-api[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-translator-api 1.14.4-SNAPSHOT           [55/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-translator-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-impl[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-impl 1.14.4-SNAPSHOT          [56/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-impl[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-translator-core[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-translator-core 1.14.4-SNAPSHOT          [57/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-translator-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-enrichment-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-enrichment-lib 1.14.4-SNAPSHOT           [58/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-enrichment-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-enrichment-api[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-enrichment-api 1.14.4-SNAPSHOT           [59/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-enrichment-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.core:openecomp-config-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-config-lib 1.14.4-SNAPSHOT                   [60/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-config-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-software-product-lib[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-software-product-lib 1.14.4-SNAPSHOT [61/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-software-product-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-software-product-api[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-software-product-api 1.14.4-SNAPSHOT [62/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-software-product-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-sdc-model-lib[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-model-lib 1.14.4-SNAPSHOT                [63/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-model-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-sdc-model-api[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-model-api 1.14.4-SNAPSHOT                [64/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-model-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-tosca-converter-lib[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-tosca-converter-lib 1.14.4-SNAPSHOT          [65/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-tosca-converter-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-tosca-converter-api[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-tosca-converter-api 1.14.4-SNAPSHOT          [66/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-tosca-converter-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-sdc-model-impl[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-model-impl 1.14.4-SNAPSHOT               [67/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-model-impl[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-tosca-generator-lib[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-tosca-generator-lib 1.14.4-SNAPSHOT      [68/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-tosca-generator-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-tosca-generator-api[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-tosca-generator-api 1.14.4-SNAPSHOT      [69/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-tosca-generator-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-software-product-core[0;1m >----[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-software-product-core 1.14.4-SNAPSHOT [70/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-software-product-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-enrichment-impl[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-enrichment-impl 1.14.4-SNAPSHOT          [71/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-enrichment-impl[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-enrichment-core[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-enrichment-core 1.14.4-SNAPSHOT          [72/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-enrichment-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36morg.openecomp.sdc:backend[0;1m >----------------------[m
+[[1;34mINFO[m] [1mBuilding backend 1.14.4-SNAPSHOT                                [73/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mbackend[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-sdc-validation-manager[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-validation-manager 1.14.4-SNAPSHOT       [74/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-validation-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:openecomp-healing-lib[0;1m >---------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-healing-lib 1.14.4-SNAPSHOT                  [75/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-healing-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-healing-api[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-healing-api 1.14.4-SNAPSHOT              [76/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-healing-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-healing-core[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-healing-core 1.14.4-SNAPSHOT             [77/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-healing-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-item-permissions-impl[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-item-permissions-impl 1.14.4-SNAPSHOT        [78/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-item-permissions-impl[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-tosca-converter-core[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-tosca-converter-core 1.14.4-SNAPSHOT         [79/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-tosca-converter-core[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-healing-impl[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-healing-impl 1.14.4-SNAPSHOT             [80/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-healing-impl[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:openecomp-sdc-healing-impl:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:runtime
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:2.0.1.Final:runtime
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-activity-log-lib[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-activity-log-lib 1.14.4-SNAPSHOT         [81/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-activity-log-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-activity-log-api[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-activity-log-api 1.14.4-SNAPSHOT         [82/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-activity-log-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-sdc-activity-log-core[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-activity-log-core 1.14.4-SNAPSHOT        [83/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-activity-log-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-activity-log-manager[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-activity-log-manager 1.14.4-SNAPSHOT     [84/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-activity-log-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-tosca-generator-core[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-tosca-generator-core 1.14.4-SNAPSHOT     [85/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-tosca-generator-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-software-product-manager[0;1m >---[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-software-product-manager 1.14.4-SNAPSHOT [86/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-software-product-manager[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc:openecomp-sdc-vendor-license-manager[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-vendor-license-manager 1.14.4-SNAPSHOT   [87/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-vendor-license-manager[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:openecomp-sdc-vendor-license-manager:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:openecomp-conflict-lib[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-conflict-lib 1.14.4-SNAPSHOT                 [88/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-conflict-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:openecomp-conflict-api[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-conflict-api 1.14.4-SNAPSHOT                 [89/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-conflict-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-conflict-core[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-conflict-core 1.14.4-SNAPSHOT                [90/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-conflict-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:openecomp-sdc-conflict-manager[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-conflict-manager 1.14.4-SNAPSHOT         [91/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-conflict-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------------< [0;36morg.openecomp.sdc:item-rest[0;1m >---------------------[m
+[[1;34mINFO[m] [1mBuilding item-rest 1.14.4-SNAPSHOT                              [92/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36morg.openecomp.sdc:item-rest-types[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding item-rest-types 1.14.4-SNAPSHOT                        [93/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc.onboarding:vendor-license-rest[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding vendor-license-rest 1.14.4-SNAPSHOT                    [94/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-license-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc.onboarding:vendor-license-rest-types[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding vendor-license-rest-types 1.14.4-SNAPSHOT              [95/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-license-rest-types[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:vendor-license-rest-types:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-license-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]          \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------< [0;36morg.openecomp.sdc:openecomp-sdc-item-permissions-manager[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-item-permissions-manager 1.14.4-SNAPSHOT [96/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-item-permissions-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:item-rest-services[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding item-rest-services 1.14.4-SNAPSHOT                     [97/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36morg.openecomp.sdc:unique-type-rest[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding unique-type-rest 1.14.4-SNAPSHOT                       [98/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36munique-type-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:unique-type-rest-types[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding unique-type-rest-types 1.14.4-SNAPSHOT                 [99/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36munique-type-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc.onboarding:vendor-license-rest-services[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding vendor-license-rest-services 1.14.4-SNAPSHOT          [100/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-license-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:vendor-license-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:openecomp-sdc-notification-core[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-notification-core 1.14.4-SNAPSHOT       [101/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-notification-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc.onboarding:vendor-software-products-rest[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding vendor-software-products-rest 1.14.4-SNAPSHOT         [102/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-software-products-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--< [0;36morg.openecomp.sdc.onboarding:vendor-software-products-rest-types[0;1m >--[m
+[[1;34mINFO[m] [1mBuilding vendor-software-products-rest-types 1.14.4-SNAPSHOT   [103/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-software-products-rest-types[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:vendor-software-products-rest-types:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--< [0;36morg.openecomp.sdc.onboarding:vendor-software-products-rest-services[0;1m >--[m
+[[1;34mINFO[m] [1mBuilding vendor-software-products-rest-services 1.14.4-SNAPSHOT [104/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvendor-software-products-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:vendor-software-products-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.onboarding:vendor-software-products-rest-types:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]          \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc.onboarding:vnf-repository-rest-services[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding vnf-repository-rest-services 1.14.4-SNAPSHOT          [105/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvnf-repository-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:vnf-repository-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.onboarding:vendor-software-products-rest-services:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc.onboarding:vendor-software-products-rest-types:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]          \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]             \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc.onboarding:validation-rest[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding validation-rest 1.14.4-SNAPSHOT                       [106/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvalidation-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc.onboarding:validation-rest-types[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding validation-rest-types 1.14.4-SNAPSHOT                 [107/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvalidation-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc.onboarding:validation-rest-services[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding validation-rest-services 1.14.4-SNAPSHOT              [108/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mvalidation-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:validation-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-healthcheck-manager[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-healthcheck-manager 1.14.4-SNAPSHOT     [109/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-healthcheck-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36morg.openecomp.sdc:healthcheck-rest[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding healthcheck-rest 1.14.4-SNAPSHOT                      [110/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mhealthcheck-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:healthcheck-rest-types[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding healthcheck-rest-types 1.14.4-SNAPSHOT                [111/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mhealthcheck-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:healthcheck-rest-services[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding healthcheck-rest-services 1.14.4-SNAPSHOT             [112/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mhealthcheck-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc:conflict-rest[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding conflict-rest 1.14.4-SNAPSHOT                         [113/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mconflict-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------< [0;36morg.openecomp.sdc:conflict-rest-types[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding conflict-rest-types 1.14.4-SNAPSHOT                   [114/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mconflict-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:conflict-rest-services[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding conflict-rest-services 1.14.4-SNAPSHOT                [115/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mconflict-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:conflict-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.onboarding:vendor-license-rest-services:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]          \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:item-permissions-rest[0;1m >---------------[m
+[[1;34mINFO[m] [1mBuilding item-permissions-rest 1.14.4-SNAPSHOT                 [116/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-permissions-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:item-permissions-rest-types[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding item-permissions-rest-types 1.14.4-SNAPSHOT           [117/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-permissions-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:item-permissions-rest-services[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding item-permissions-rest-services 1.14.4-SNAPSHOT        [118/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mitem-permissions-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc:openecomp-sdc-application-config-manager[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-application-config-manager 1.14.4-SNAPSHOT [119/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-application-config-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:notifications-rest[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding notifications-rest 1.14.4-SNAPSHOT                    [120/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mnotifications-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:notifications-rest-types[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding notifications-rest-types 1.14.4-SNAPSHOT              [121/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mnotifications-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:notifications-rest-services[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding notifications-rest-services 1.14.4-SNAPSHOT           [122/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mnotifications-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:application-config-rest[0;1m >--------------[m
+[[1;34mINFO[m] [1mBuilding application-config-rest 1.14.4-SNAPSHOT               [123/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mapplication-config-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc:application-config-rest-types[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding application-config-rest-types 1.14.4-SNAPSHOT         [124/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mapplication-config-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc:application-config-rest-services[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding application-config-rest-services 1.14.4-SNAPSHOT      [125/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mapplication-config-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36morg.openecomp.sdc:togglz-rest[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding togglz-rest 1.14.4-SNAPSHOT                           [126/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mtogglz-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:togglz-rest-types[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding togglz-rest-types 1.14.4-SNAPSHOT                     [127/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mtogglz-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------< [0;36morg.openecomp.sdc:togglz-rest-services[0;1m >---------------[m
+[[1;34mINFO[m] [1mBuilding togglz-rest-services 1.14.4-SNAPSHOT                  [128/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mtogglz-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-sdc-action-lib[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-action-lib 1.14.4-SNAPSHOT              [129/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-action-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:openecomp-sdc-action-api[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-action-api 1.14.4-SNAPSHOT              [130/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-action-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------< [0;36morg.openecomp.sdc.onboarding:action-library-rest[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding action-library-rest 1.14.4-SNAPSHOT                   [131/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36maction-library-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc.onboarding:action-library-rest-types[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding action-library-rest-types 1.14.4-SNAPSHOT             [132/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36maction-library-rest-types[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-action-core[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-action-core 1.14.4-SNAPSHOT             [133/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-action-core[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-action-manager[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-action-manager 1.14.4-SNAPSHOT          [134/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-action-manager[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc.onboarding:action-library-rest-services[0;1m >------[m
+[[1;34mINFO[m] [1mBuilding action-library-rest-services 1.14.4-SNAPSHOT          [135/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36maction-library-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:unique-type-rest-services[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding unique-type-rest-services 1.14.4-SNAPSHOT             [136/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36munique-type-rest-services[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-externaltesting-lib[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-externaltesting-lib 1.14.4-SNAPSHOT     [137/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-externaltesting-lib[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-externaltesting-api[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-externaltesting-api 1.14.4-SNAPSHOT     [138/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-externaltesting-api[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-externaltesting-impl[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-externaltesting-impl 1.14.4-SNAPSHOT    [139/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-externaltesting-impl[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:openecomp-sdc-externaltesting-impl:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------< [0;36morg.openecomp.sdc.onboarding:externaltesting-rest[0;1m >----------[m
+[[1;34mINFO[m] [1mBuilding external-testing-rest 1.14.4-SNAPSHOT                 [140/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mexternaltesting-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----< [0;36morg.openecomp.sdc.onboarding:externaltesting-rest-services[0;1m >-----[m
+[[1;34mINFO[m] [1mBuilding externaltesting-rest-services 1.14.4-SNAPSHOT         [141/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mexternaltesting-rest-services[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:externaltesting-rest-services:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36morg.openecomp.sdc:metrics-rest[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding metrics-rest 1.14.4-SNAPSHOT                          [142/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mmetrics-rest[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-security-util[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-security-util 1.14.4-SNAPSHOT           [143/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-security-util[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc.onboarding:onboarding-be[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding onboarding-rest-war 1.14.4-SNAPSHOT                   [144/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monboarding-be[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:onboarding-be:war:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------< [0;36morg.openecomp.sdc:openecomp-sdc-notification-worker[0;1m >---------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-notification-worker 1.14.4-SNAPSHOT     [145/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-notification-worker[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc:openecomp-sdc-notification-websocket[0;1m >-------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-notification-websocket 1.14.4-SNAPSHOT  [146/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-notification-websocket[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc.onboarding:notifications-fe[0;1m >------------[m
+[[1;34mINFO[m] [1mBuilding notification-war 1.14.4-SNAPSHOT                      [147/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mnotifications-fe[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:notifications-fe:war:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-logging-spring[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-logging-spring 1.14.4-SNAPSHOT          [148/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-logging-spring[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc.be:catalog-dao[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding catalog-dao 1.14.4-SNAPSHOT                           [149/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcatalog-dao[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36morg.openecomp.sdc.be:catalog-model[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding catalog-model 1.14.4-SNAPSHOT                         [150/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcatalog-model[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------------< [0;36morg.openecomp.sdc:catalog-be[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding catalog-be 1.14.4-SNAPSHOT                            [151/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:3.2.0:tree[m [1m(default-cli)[m @ [36mcatalog-be[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:catalog-be:war:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------< [0;36morg.openecomp.sdc.onboarding:api-docs[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding api-docs 1.14.4-SNAPSHOT                              [152/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mapi-docs[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.onboarding:api-docs:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:catalog-be:jar:classes:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------< [0;36morg.openecomp.sdc.core.tools:openecomp-zusammen-tools[0;1m >--------[m
+[[1;34mINFO[m] [1mBuilding openecomp-zusammen-tools 1.14.4-SNAPSHOT              [153/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-zusammen-tools[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc.core.tools:openecomp-zusammen-tools:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:openecomp-sdc-vendor-software-product-manager:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:openecomp-tosca-converter-core:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------< [0;36morg.openecomp.sdc:openecomp-sdc-docker-dist[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-docker-dist 1.14.4-SNAPSHOT             [154/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-docker-dist[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-docker-backend[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-docker-backend 1.14.4-SNAPSHOT          [155/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-docker-backend[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------< [0;36morg.openecomp.sdc:openecomp-sdc-docker-db-init[0;1m >-----------[m
+[[1;34mINFO[m] [1mBuilding openecomp-sdc-docker-db-init 1.14.4-SNAPSHOT          [156/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mopenecomp-sdc-docker-db-init[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------< [0;36morg.openecomp.sdc:onboarding-fe[0;1m >-------------------[m
+[[1;34mINFO[m] [1mBuilding onboarding-ui-war 1.14.4-SNAPSHOT                     [157/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36monboarding-fe[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:catalog-be-plugins[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding catalog-be-plugins 1.14.4-SNAPSHOT                    [158/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcatalog-be-plugins[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------< [0;36morg.openecomp.sdc:etsi-nfv-nsd-csar-plugin[0;1m >-------------[m
+[[1;34mINFO[m] [1mBuilding etsi-nfv-nsd-csar-plugin 1.14.4-SNAPSHOT              [159/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36metsi-nfv-nsd-csar-plugin[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:etsi-nfv-nsd-csar-plugin:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:catalog-be:jar:classes:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------< [0;36morg.openecomp.sdc:backend-all-plugins[0;1m >----------------[m
+[[1;34mINFO[m] [1mBuilding backend-all-plugins 1.14.4-SNAPSHOT                   [160/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mbackend-all-plugins[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:backend-all-plugins:pom:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc:etsi-nfv-nsd-csar-plugin:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- org.openecomp.sdc:catalog-be:jar:classes:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]       \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]          \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36morg.openecomp.sdc:asdctool[0;1m >---------------------[m
+[[1;34mINFO[m] [1mBuilding asdctool 1.14.4-SNAPSHOT                              [161/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36masdctool[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:asdctool:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:compile
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------------< [0;36morg.openecomp.sdc:catalog-ui[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding catalog-ui 1.14.4-SNAPSHOT                            [162/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcatalog-ui[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------------< [0;36morg.openecomp.sdc:catalog-fe[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding catalog-fe 1.14.4-SNAPSHOT                            [163/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mcatalog-fe[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:catalog-fe:war:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- javax.validation:validation-api:jar:2.0.1.Final:compile
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-------------------< [0;36morg.openecomp.sdc:sdc-os-chef[0;1m >--------------------[m
+[[1;34mINFO[m] [1mBuilding sdc-os-chef 1.14.4-SNAPSHOT                           [164/166][m
+[[1;34mINFO[m] [1m--------------------------------[ pom ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36msdc-os-chef[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m----------------< [0;36morg.openecomp.sdc:webseal-simulator[0;1m >-----------------[m
+[[1;34mINFO[m] [1mBuilding webseal-simulator 1.14.4-SNAPSHOT                     [165/166][m
+[[1;34mINFO[m] [1m--------------------------------[ war ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36mwebseal-simulator[0;1m ---[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--------------< [0;36morg.openecomp.sdc:sdc-integration-tests[0;1m >---------------[m
+[[1;34mINFO[m] [1mBuilding sdc-integration-tests 1.14.4-SNAPSHOT                 [166/166][m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;33mWARNING[m] The POM for org.seleniumhq.selenium:selenium-devtools-v119:jar:4.16.0 is missing, no dependency information available
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-dependency-plugin:2.8:tree[m [1m(default-cli)[m @ [36msdc-integration-tests[0;1m ---[m
+[[1;34mINFO[m] org.openecomp.sdc:sdc-integration-tests:jar:1.14.4-SNAPSHOT
+[[1;34mINFO[m] \- org.openecomp.sdc.be:catalog-model:jar:1.14.4-SNAPSHOT:test
+[[1;34mINFO[m]    \- javax.validation:validation-api:jar:2.0.1.Final:test
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1mReactor Summary for sdc 1.14.4-SNAPSHOT:[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] sdc ................................................ [1;32mSUCCESS[m [  0.374 s]
+[[1;34mINFO[m] sdc-onboarding ..................................... [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] onap-common-lib .................................... [1;32mSUCCESS[m [  0.016 s]
+[[1;34mINFO[m] onap-common-configuration-management ............... [1;32mSUCCESS[m [  0.015 s]
+[[1;34mINFO[m] onap-configuration-management-api .................. [1;32mSUCCESS[m [  0.022 s]
+[[1;34mINFO[m] openecomp-sdc ...................................... [1;32mSUCCESS[m [  0.052 s]
+[[1;34mINFO[m] openecomp-sdc-lib .................................. [1;32mSUCCESS[m [  0.015 s]
+[[1;34mINFO[m] openecomp-sdc-logging-lib .......................... [1;32mSUCCESS[m [  0.014 s]
+[[1;34mINFO[m] openecomp-sdc-logging-api .......................... [1;32mSUCCESS[m [  0.022 s]
+[[1;34mINFO[m] onap-configuration-management-core ................. [1;32mSUCCESS[m [  0.057 s]
+[[1;34mINFO[m] onap-tosca-datatype ................................ [1;32mSUCCESS[m [  0.020 s]
+[[1;34mINFO[m] onap-generic-artifact-browser ...................... [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] onap-generic-artifact-browser-service .............. [1;32mSUCCESS[m [  0.017 s]
+[[1;34mINFO[m] onap-generic-artifact-browser-component-tests ...... [1;32mSUCCESS[m [  0.051 s]
+[[1;34mINFO[m] openecomp-sdc-logging-core ......................... [1;32mSUCCESS[m [  0.016 s]
+[[1;34mINFO[m] common-app-logging ................................. [1;32mSUCCESS[m [  0.029 s]
+[[1;34mINFO[m] common-app-api ..................................... [1;32mSUCCESS[m [  0.147 s]
+[[1;34mINFO[m] openecomp-core-lib ................................. [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] openecomp-utilities-lib ............................ [1;32mSUCCESS[m [  0.037 s]
+[[1;34mINFO[m] openecomp-sdc-datatypes-lib ........................ [1;32mSUCCESS[m [  0.014 s]
+[[1;34mINFO[m] openecomp-common-lib ............................... [1;32mSUCCESS[m [  0.034 s]
+[[1;34mINFO[m] openecomp-facade-lib ............................... [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-facade-api ............................... [1;32mSUCCESS[m [  0.031 s]
+[[1;34mINFO[m] openecomp-facade-core .............................. [1;32mSUCCESS[m [  0.030 s]
+[[1;34mINFO[m] openecomp-session-lib .............................. [1;32mSUCCESS[m [  0.031 s]
+[[1;34mINFO[m] openecomp-sdc-api .................................. [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] openecomp-sdc-rest-webapp .......................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] openecomp-sdc-common-rest .......................... [1;32mSUCCESS[m [  0.035 s]
+[[1;34mINFO[m] openecomp-nosqldb-lib .............................. [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-nosqldb-api .............................. [1;32mSUCCESS[m [  0.035 s]
+[[1;34mINFO[m] openecomp-nosqldb-core ............................. [1;32mSUCCESS[m [  0.031 s]
+[[1;34mINFO[m] openecomp-item-permissions-lib ..................... [1;32mSUCCESS[m [  0.012 s]
+[[1;34mINFO[m] openecomp-item-permissions-api ..................... [1;32mSUCCESS[m [  0.037 s]
+[[1;34mINFO[m] openecomp-sdc-notification-lib ..................... [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-sdc-notification-api ..................... [1;32mSUCCESS[m [  0.038 s]
+[[1;34mINFO[m] openecomp-item-permissions-core .................... [1;32mSUCCESS[m [  0.043 s]
+[[1;34mINFO[m] openecomp-sdc-versioning-lib ....................... [1;32mSUCCESS[m [  0.013 s]
+[[1;34mINFO[m] openecomp-sdc-versioning-api ....................... [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] openecomp-zusammen-lib ............................. [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-zusammen-api ............................. [1;32mSUCCESS[m [  0.041 s]
+[[1;34mINFO[m] openecomp-zusammen-core ............................ [1;32mSUCCESS[m [  0.066 s]
+[[1;34mINFO[m] openecomp-sdc-versioning-core ...................... [1;32mSUCCESS[m [  0.050 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-lib ................... [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-api ................... [1;32mSUCCESS[m [  0.043 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-core .................. [1;32mSUCCESS[m [  0.039 s]
+[[1;34mINFO[m] openecomp-sdc-validation-lib ....................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-sdc-validation-api ....................... [1;32mSUCCESS[m [  0.025 s]
+[[1;34mINFO[m] openecomp-heat-lib ................................. [1;32mSUCCESS[m [  0.028 s]
+[[1;34mINFO[m] openecomp-sdc-validation-sdk ....................... [1;32mSUCCESS[m [  0.029 s]
+[[1;34mINFO[m] openecomp-sdc-validation-core ...................... [1;32mSUCCESS[m [  0.030 s]
+[[1;34mINFO[m] common-be-tests-utils .............................. [1;32mSUCCESS[m [  0.077 s]
+[[1;34mINFO[m] common-be .......................................... [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] openecomp-tosca-lib ................................ [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] openecomp-sdc-translator-lib ....................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] openecomp-sdc-translator-api ....................... [1;32mSUCCESS[m [  0.047 s]
+[[1;34mINFO[m] openecomp-sdc-validation-impl ...................... [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] openecomp-sdc-translator-core ...................... [1;32mSUCCESS[m [  0.055 s]
+[[1;34mINFO[m] openecomp-sdc-enrichment-lib ....................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] openecomp-sdc-enrichment-api ....................... [1;32mSUCCESS[m [  0.030 s]
+[[1;34mINFO[m] openecomp-config-lib ............................... [1;32mSUCCESS[m [  0.028 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-lib .......... [1;32mSUCCESS[m [  0.012 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-api .......... [1;32mSUCCESS[m [  0.069 s]
+[[1;34mINFO[m] openecomp-sdc-model-lib ............................ [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-sdc-model-api ............................ [1;32mSUCCESS[m [  0.059 s]
+[[1;34mINFO[m] openecomp-tosca-converter-lib ...................... [1;32mSUCCESS[m [  0.083 s]
+[[1;34mINFO[m] openecomp-tosca-converter-api ...................... [1;32mSUCCESS[m [  0.046 s]
+[[1;34mINFO[m] openecomp-sdc-model-impl ........................... [1;32mSUCCESS[m [  0.063 s]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-lib .................. [1;32mSUCCESS[m [  0.025 s]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-api .................. [1;32mSUCCESS[m [  0.083 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-core ......... [1;32mSUCCESS[m [  0.126 s]
+[[1;34mINFO[m] openecomp-sdc-enrichment-impl ...................... [1;32mSUCCESS[m [  0.109 s]
+[[1;34mINFO[m] openecomp-sdc-enrichment-core ...................... [1;32mSUCCESS[m [  0.106 s]
+[[1;34mINFO[m] backend ............................................ [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] openecomp-sdc-validation-manager ................... [1;32mSUCCESS[m [  0.084 s]
+[[1;34mINFO[m] openecomp-healing-lib .............................. [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-sdc-healing-api .......................... [1;32mSUCCESS[m [  0.033 s]
+[[1;34mINFO[m] openecomp-sdc-healing-core ......................... [1;32mSUCCESS[m [  0.034 s]
+[[1;34mINFO[m] openecomp-item-permissions-impl .................... [1;32mSUCCESS[m [  0.027 s]
+[[1;34mINFO[m] openecomp-tosca-converter-core ..................... [1;32mSUCCESS[m [  0.050 s]
+[[1;34mINFO[m] openecomp-sdc-healing-impl ......................... [1;32mSUCCESS[m [  0.071 s]
+[[1;34mINFO[m] openecomp-sdc-activity-log-lib ..................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-sdc-activity-log-api ..................... [1;32mSUCCESS[m [  0.031 s]
+[[1;34mINFO[m] openecomp-sdc-activity-log-core .................... [1;32mSUCCESS[m [  0.030 s]
+[[1;34mINFO[m] openecomp-sdc-activity-log-manager ................. [1;32mSUCCESS[m [  0.049 s]
+[[1;34mINFO[m] openecomp-sdc-tosca-generator-core ................. [1;32mSUCCESS[m [  0.067 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-software-product-manager ...... [1;32mSUCCESS[m [  0.088 s]
+[[1;34mINFO[m] openecomp-sdc-vendor-license-manager ............... [1;32mSUCCESS[m [  0.086 s]
+[[1;34mINFO[m] openecomp-conflict-lib ............................. [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-conflict-api ............................. [1;32mSUCCESS[m [  0.031 s]
+[[1;34mINFO[m] openecomp-conflict-core ............................ [1;32mSUCCESS[m [  0.065 s]
+[[1;34mINFO[m] openecomp-sdc-conflict-manager ..................... [1;32mSUCCESS[m [  0.069 s]
+[[1;34mINFO[m] item-rest .......................................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] item-rest-types .................................... [1;32mSUCCESS[m [  0.073 s]
+[[1;34mINFO[m] vendor-license-rest ................................ [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] vendor-license-rest-types .......................... [1;32mSUCCESS[m [  0.104 s]
+[[1;34mINFO[m] openecomp-sdc-item-permissions-manager ............. [1;32mSUCCESS[m [  0.033 s]
+[[1;34mINFO[m] item-rest-services ................................. [1;32mSUCCESS[m [  0.078 s]
+[[1;34mINFO[m] unique-type-rest ................................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] unique-type-rest-types ............................. [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] vendor-license-rest-services ....................... [1;32mSUCCESS[m [  0.095 s]
+[[1;34mINFO[m] openecomp-sdc-notification-core .................... [1;32mSUCCESS[m [  0.029 s]
+[[1;34mINFO[m] vendor-software-products-rest ...................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] vendor-software-products-rest-types ................ [1;32mSUCCESS[m [  0.088 s]
+[[1;34mINFO[m] vendor-software-products-rest-services ............. [1;32mSUCCESS[m [  0.127 s]
+[[1;34mINFO[m] vnf-repository-rest-services ....................... [1;32mSUCCESS[m [  0.143 s]
+[[1;34mINFO[m] validation-rest .................................... [1;32mSUCCESS[m [  0.016 s]
+[[1;34mINFO[m] validation-rest-types .............................. [1;32mSUCCESS[m [  0.109 s]
+[[1;34mINFO[m] validation-rest-services ........................... [1;32mSUCCESS[m [  0.094 s]
+[[1;34mINFO[m] openecomp-sdc-healthcheck-manager .................. [1;32mSUCCESS[m [  0.030 s]
+[[1;34mINFO[m] healthcheck-rest ................................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] healthcheck-rest-types ............................. [1;32mSUCCESS[m [  0.007 s]
+[[1;34mINFO[m] healthcheck-rest-services .......................... [1;32mSUCCESS[m [  0.034 s]
+[[1;34mINFO[m] conflict-rest ...................................... [1;32mSUCCESS[m [  0.064 s]
+[[1;34mINFO[m] conflict-rest-types ................................ [1;32mSUCCESS[m [  0.066 s]
+[[1;34mINFO[m] conflict-rest-services ............................. [1;32mSUCCESS[m [  0.114 s]
+[[1;34mINFO[m] item-permissions-rest .............................. [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] item-permissions-rest-types ........................ [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] item-permissions-rest-services ..................... [1;32mSUCCESS[m [  0.033 s]
+[[1;34mINFO[m] openecomp-sdc-application-config-manager ........... [1;32mSUCCESS[m [  0.025 s]
+[[1;34mINFO[m] notifications-rest ................................. [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] notifications-rest-types ........................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] notifications-rest-services ........................ [1;32mSUCCESS[m [  0.032 s]
+[[1;34mINFO[m] application-config-rest ............................ [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] application-config-rest-types ...................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] application-config-rest-services ................... [1;32mSUCCESS[m [  0.065 s]
+[[1;34mINFO[m] togglz-rest ........................................ [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] togglz-rest-types .................................. [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] togglz-rest-services ............................... [1;32mSUCCESS[m [  0.064 s]
+[[1;34mINFO[m] openecomp-sdc-action-lib ........................... [1;32mSUCCESS[m [  0.022 s]
+[[1;34mINFO[m] openecomp-sdc-action-api ........................... [1;32mSUCCESS[m [  0.052 s]
+[[1;34mINFO[m] action-library-rest ................................ [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] action-library-rest-types .......................... [1;32mSUCCESS[m [  0.045 s]
+[[1;34mINFO[m] openecomp-sdc-action-core .......................... [1;32mSUCCESS[m [  0.047 s]
+[[1;34mINFO[m] openecomp-sdc-action-manager ....................... [1;32mSUCCESS[m [  0.053 s]
+[[1;34mINFO[m] action-library-rest-services ....................... [1;32mSUCCESS[m [  0.047 s]
+[[1;34mINFO[m] unique-type-rest-services .......................... [1;32mSUCCESS[m [  0.027 s]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-lib .................. [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-api .................. [1;32mSUCCESS[m [  0.024 s]
+[[1;34mINFO[m] openecomp-sdc-externaltesting-impl ................. [1;32mSUCCESS[m [  0.084 s]
+[[1;34mINFO[m] external-testing-rest .............................. [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] externaltesting-rest-services ...................... [1;32mSUCCESS[m [  0.088 s]
+[[1;34mINFO[m] metrics-rest ....................................... [1;32mSUCCESS[m [  0.012 s]
+[[1;34mINFO[m] openecomp-sdc-security-util ........................ [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] onboarding-rest-war ................................ [1;32mSUCCESS[m [  0.150 s]
+[[1;34mINFO[m] openecomp-sdc-notification-worker .................. [1;32mSUCCESS[m [  0.024 s]
+[[1;34mINFO[m] openecomp-sdc-notification-websocket ............... [1;32mSUCCESS[m [  0.049 s]
+[[1;34mINFO[m] notification-war ................................... [1;32mSUCCESS[m [  0.027 s]
+[[1;34mINFO[m] openecomp-sdc-logging-spring ....................... [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] catalog-dao ........................................ [1;32mSUCCESS[m [  0.165 s]
+[[1;34mINFO[m] catalog-model ...................................... [1;32mSUCCESS[m [  0.077 s]
+[[1;34mINFO[m] catalog-be ......................................... [1;32mSUCCESS[m [  0.438 s]
+[[1;34mINFO[m] api-docs ........................................... [1;32mSUCCESS[m [  0.115 s]
+[[1;34mINFO[m] openecomp-zusammen-tools ........................... [1;32mSUCCESS[m [  0.125 s]
+[[1;34mINFO[m] openecomp-sdc-docker-dist .......................... [1;32mSUCCESS[m [  0.010 s]
+[[1;34mINFO[m] openecomp-sdc-docker-backend ....................... [1;32mSUCCESS[m [  0.011 s]
+[[1;34mINFO[m] openecomp-sdc-docker-db-init ....................... [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] onboarding-ui-war .................................. [1;32mSUCCESS[m [  0.009 s]
+[[1;34mINFO[m] catalog-be-plugins ................................. [1;32mSUCCESS[m [  0.008 s]
+[[1;34mINFO[m] etsi-nfv-nsd-csar-plugin ........................... [1;32mSUCCESS[m [  0.098 s]
+[[1;34mINFO[m] backend-all-plugins ................................ [1;32mSUCCESS[m [  0.099 s]
+[[1;34mINFO[m] asdctool ........................................... [1;32mSUCCESS[m [  0.144 s]
+[[1;34mINFO[m] catalog-ui ......................................... [1;32mSUCCESS[m [  0.007 s]
+[[1;34mINFO[m] catalog-fe ......................................... [1;32mSUCCESS[m [  0.045 s]
+[[1;34mINFO[m] sdc-os-chef ........................................ [1;32mSUCCESS[m [  0.007 s]
+[[1;34mINFO[m] webseal-simulator .................................. [1;32mSUCCESS[m [  0.021 s]
+[[1;34mINFO[m] sdc-integration-tests .............................. [1;32mSUCCESS[m [  1.222 s]
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  9.890 s
+[[1;34mINFO[m] Finished at: 2025-12-01T15:01:30+01:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m

@@ -19,27 +19,29 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.nio.ByteBuffer;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Table(keyspace = "dox", name = "vsp_orchestration_template_candidate")
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+@Entity
+@CqlName("vsp_orchestration_template_candidate")
 public class OrchestrationTemplateCandidateDataEntity implements VersionableEntity {
 
     private static final String ENTITY_TYPE = "Vendor Software Product Upload Orchestration_candidate data";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String id;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
-    @Column(name = "content_data")
+    @CqlName("content_data")
     private ByteBuffer contentData;
-    @Column(name = "files_data_structure")
+    @CqlName("files_data_structure")
     private String filesDataStructure;
 
     /**
@@ -120,4 +122,6 @@ public class OrchestrationTemplateCandidateDataEntity implements VersionableEnti
     public void setFilesDataStructure(String filesDataStructure) {
         this.filesDataStructure = filesDataStructure;
     }
+
+    
 }

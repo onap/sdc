@@ -75,8 +75,10 @@ public class ItemValidation {
                 return;
             }
             printMessage(logger, String.format("%s Validation started at %s %S", NEW_LINE, sdf.format(new Date()), NEW_LINE));
-            List<VersionEntity> versionEntityList = new VersionCassandraLoader().list().all().stream()
-                .filter(entry -> entry.getItemId().equals(itemId)).collect(Collectors.toList());
+            List<VersionEntity> versionEntityList = new VersionCassandraLoader().list().stream()
+                    .filter(entry -> entry.getItemId().equals(itemId))
+                    .collect(Collectors.toList());
+
             versionEntityList.sort((VersionEntity e1, VersionEntity e2) -> {
                 if (e1.getSpace().equals(PUBLIC_SPACE)) {
                     return -1;
@@ -88,7 +90,8 @@ public class ItemValidation {
             });
             versionEntityList.forEach((VersionEntity versionEntity) -> {
                 List<VersionElementsEntity> versionElementsEntityList = new VersionElementsCassandraLoader()
-                    .listVersionElementsByPK(versionEntity.getSpace(), versionEntity.getItemId(), versionEntity.getVersionId()).all();
+                .listVersionElementsByPK(versionEntity.getSpace(), versionEntity.getItemId(), versionEntity.getVersionId());
+
                 versionElementsEntityList.forEach(this::accept);
             });
         } catch (Exception ex) {
@@ -106,7 +109,7 @@ public class ItemValidation {
     }
 
     private void validateElement(String space, String itemId, String versionId, String elementId, String revisionId) {
-        ElementEntity elementEntity = new ElementCassandraLoader().getByPK(space, itemId, versionId, elementId, revisionId).one();
+        ElementEntity elementEntity = new ElementCassandraLoader().getByPK(space, itemId, versionId, elementId, revisionId);
         if (elementEntity == null) {
             validationMessage.add(String.format("Element is defined in VERSION_ELEMENTS.element_ids is not found in ELEMENT. "
                 + "Space:%s, ItemID:%s ,VersionID:%s, ElementID:%s, element revisionID:%s", space, itemId, versionId, elementId, revisionId));

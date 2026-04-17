@@ -22,7 +22,8 @@ package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MAJOR_VERSION;
 import static org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescription.SdcRepoFieldsDescription.MINOR_VERSION;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,14 +70,14 @@ public class MigrationTasksTableDescription implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum SdcRepoFieldsDescription {
-        MAJOR_VERSION("major_version", DataType.bigint(), true),
-        MINOR_VERSION("minor_version", DataType.bigint(), false),
-        TIMESTAMP("timestamp", DataType.timestamp(), false),
-        NAME("task_name", DataType.varchar(), false),
-        STATUS("task_status", DataType.varchar(), false),
-        MESSAGE("msg", DataType.varchar(), false),
-        DESCRIPTION("description", DataType.varchar(), false),
-        EXECUTION_TIME("execution_time", DataType.cdouble(), false);
+        MAJOR_VERSION("major_version", DataTypes.BIGINT, true),
+        MINOR_VERSION("minor_version", DataTypes.BIGINT, false),
+        TIMESTAMP("timestamp", DataTypes.TIMESTAMP, false),
+        NAME("task_name",DataTypes.TEXT, false),
+        STATUS("task_status",DataTypes.TEXT, false),
+        MESSAGE("msg",DataTypes.TEXT, false),
+        DESCRIPTION("description",DataTypes.TEXT, false),
+        EXECUTION_TIME("execution_time", DataTypes.DOUBLE, false);
 
         private final String fieldName;
         private final DataType fieldType;

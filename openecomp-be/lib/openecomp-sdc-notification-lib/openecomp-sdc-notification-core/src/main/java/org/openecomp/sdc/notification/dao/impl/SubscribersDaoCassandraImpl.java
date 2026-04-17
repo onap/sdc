@@ -21,26 +21,28 @@ package org.openecomp.sdc.notification.dao.impl;
 
 import static java.util.Objects.isNull;
 
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 import org.openecomp.sdc.notification.dao.types.SubscribersEntity;
 
 public class SubscribersDaoCassandraImpl extends CassandraBaseDao<SubscribersEntity> implements SubscribersDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<SubscribersEntity> mapper = noSqlDb.getMappingManager().mapper(SubscribersEntity.class);
-    private static final SubscribersAccessor accessor = noSqlDb.getMappingManager().createAccessor(SubscribersAccessor.class);
+    private final CqlSession session;
+
+    public SubscribersDaoCassandraImpl(CqlSession session) {
+        super(session);
+        this.session = session;
+    }
 
     @Override
     protected Object[] getKeys(SubscribersEntity entity) {
@@ -48,50 +50,57 @@ public class SubscribersDaoCassandraImpl extends CassandraBaseDao<SubscribersEnt
     }
 
     @Override
-    protected Mapper<SubscribersEntity> getMapper() {
-        return mapper;
+    public void subscribe(String ownerId, String entityId) {
+        Objects.requireNonNull(ownerId, "ownerId must not be null");
+        Objects.requireNonNull(entityId, "entityId must not be null");
+
+        String query = "UPDATE notification_subscribers SET subscribers = subscribers + ? WHERE entity_id = ?";
+        session.execute(SimpleStatement.newInstance(query, Set.of(ownerId), entityId));
     }
 
     @Override
-    public void subscribe(String ownerId, String entityId) {
-        Objects.requireNonNull(ownerId);
-        Objects.requireNonNull(entityId);
-        accessor.subscribe(Sets.newHashSet(ownerId), entityId);
+    public void unsubscribe(String ownerId, String entityId) {
+        Objects.requireNonNull(ownerId, "ownerId must not be null");
+        Objects.requireNonNull(entityId, "entityId must not be null");
+
+        String query = "UPDATE notification_subscribers SET subscribers = subscribers - ? WHERE entity_id = ?";
+        session.execute(SimpleStatement.newInstance(query, Set.of(ownerId), entityId));
+    }
+
+    @Override
+    public Set<String> getSubscribers(String entityId) {
+        Objects.requireNonNull(entityId, "entityId must not be null");
+
+        String query = "SELECT subscribers FROM notification_subscribers WHERE entity_id = ?";
+        ResultSet rs = session.execute(SimpleStatement.newInstance(query, entityId));
+        Row row = rs.one();
+
+        if (isNull(row)) {
+            return Collections.emptySet();
+        }
+
+        Set<String> subscribers = row.getSet("subscribers", String.class);
+        return subscribers != null ? subscribers : Collections.emptySet();
     }
 
     @Override
     @Deprecated
     public Collection<SubscribersEntity> list(SubscribersEntity entity) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("list is not supported");
     }
 
     @Override
-    public void unsubscribe(String ownerId, String entityId) {
-        Objects.requireNonNull(ownerId);
-        Objects.requireNonNull(entityId);
-        accessor.unsubscribe(Sets.newHashSet(ownerId), entityId);
+    protected String getTableName() {
+        return "notification_subscribers";
     }
 
     @Override
-    public Set<String> getSubscribers(String entityId) {
-        Objects.requireNonNull(entityId);
-        SubscribersEntity subscribersEntity = accessor.getSubscribers(entityId).one();
-        if (isNull(subscribersEntity)) {
-            return Collections.emptySet();
-        }
-        return subscribersEntity.getSubscribers();
+    protected String[] getColumns(SubscribersEntity entity) {
+        return new String[]{"entity_id", "subscribers"};
     }
 
-    @Accessor
-    interface SubscribersAccessor {
-
-        @Query("select * from notification_subscribers where entity_id=?")
-        Result<SubscribersEntity> getSubscribers(String entityId);
-
-        @Query("update notification_subscribers set subscribers=subscribers+? WHERE entity_id=?")
-        void subscribe(Set<String> ownerId, String entityId);
-
-        @Query("update notification_subscribers set subscribers=subscribers-? WHERE entity_id=?")
-        void unsubscribe(Set<String> ownerId, String entityId);
+    @Override
+    protected Object[] getValues(SubscribersEntity entity) {
+        return new Object[]{entity.getEntityId(), entity.getSubscribers()};
     }
 }

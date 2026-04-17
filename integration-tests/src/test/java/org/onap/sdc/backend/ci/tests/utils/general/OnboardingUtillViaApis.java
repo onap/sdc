@@ -50,16 +50,46 @@ import static org.testng.AssertJUnit.assertTrue;
 
 public class OnboardingUtillViaApis {
 
-	public static VendorSoftwareProductObject createVspViaApis(ResourceReqDetails resourceReqDetails, String filepath, String vnfFile, User user) throws Exception {
 
-		VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
-		return VendorSoftwareProductRestUtils.createVendorSoftwareProduct(resourceReqDetails, vnfFile, filepath, user,
-            vendorLicenseModel);
-	}
+public static VendorSoftwareProductObject createVspViaApis(
+        ResourceReqDetails resourceReqDetails,
+        String filepath,
+        String vnfFile,
+        User user) throws Exception {
+
+    System.out.println("[createVspViaApis] Enter method");
+    System.out.println("[createVspViaApis] Inputs -> "
+            + "resourceReqDetails=" + resourceReqDetails
+            + ", filepath=" + filepath
+            + ", vnfFile=" + vnfFile
+            + ", userId=" + (user != null ? user.getUserId() : "null"));
+
+    System.out.println("[createVspViaApis] Calling VendorLicenseModelRestUtils.createVendorLicense(user)...");
+    VendorLicenseModel vendorLicenseModel = VendorLicenseModelRestUtils.createVendorLicense(user);
+    System.out.println("[createVspViaApis] Created VendorLicenseModel: "
+            + (vendorLicenseModel != null ? vendorLicenseModel.toString() : "null"));
+
+    System.out.println("[createVspViaApis] Calling VendorSoftwareProductRestUtils.createVendorSoftwareProduct(...)");
+    VendorSoftwareProductObject vsp = VendorSoftwareProductRestUtils.createVendorSoftwareProduct(
+            resourceReqDetails, vnfFile, filepath, user, vendorLicenseModel);
+
+    System.out.println("[createVspViaApis] Created VendorSoftwareProductObject: "
+            + (vsp != null ? vsp.toString() : "null"));
+    System.out.println("[createVspViaApis] Exit method");
+
+    return vsp;
+}
+
 	
 	public static Resource createResourceFromVSP(ResourceReqDetails resourceDetails) throws Exception {
+		System.out.println("[createResourceFromVSP] Entered");
+    	System.out.println("[createResourceFromVSP] Resource name = " + resourceDetails.getName());
+    	System.out.println("[createResourceFromVSP] Resource type = " + resourceDetails.getResourceType());
+
 		Resource resource = AtomicOperationUtils.createResourceByResourceDetails(resourceDetails, UserRoleEnum.DESIGNER, true).left().value();
+		System.out.println("[createResourceFromVSP] Resource created successfully");
 		return resource;
+
 
 	}
 	

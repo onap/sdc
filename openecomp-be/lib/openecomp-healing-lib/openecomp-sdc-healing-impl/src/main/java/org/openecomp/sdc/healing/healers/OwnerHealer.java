@@ -29,6 +29,7 @@ import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.healing.interfaces.Healer;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDaoFactory;
+import org.openecomp.sdc.itempermissions.dao.impl.ItemPermissionsDaoImpl;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
@@ -41,28 +42,52 @@ import org.openecomp.sdc.versioning.types.Item;
 /**
  * Created by ayalaben on 8/28/2017
  */
+
+
 public class OwnerHealer implements Healer {
 
     private static final String HEALING_USER_SUFFIX = "_healer";
-    private static final ItemPermissionsDao permissionsDao = ItemPermissionsDaoFactory.getInstance().createInterface();
+
+    private static final ItemPermissionsDaoImpl permissionsDao =
+            new ItemPermissionsDaoImpl(ItemPermissionsDaoFactory.getInstance().createInterface());
     private static final ItemDao itemDao = ItemDaoFactory.getInstance().createInterface();
     private static final SubscribersDao subscribersDao = SubscribersDaoFactory.getInstance().createInterface();
 
     @Override
     public boolean isHealingNeeded(String itemId, Version version) {
-        return permissionsDao.listItemPermissions(itemId).stream().noneMatch(this::isOwnerPermission) || isOwnerMissingOnItem(itemId);
+        Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId).all();
+        return itemPermissions.stream().noneMatch(this::isOwnerPermission)
+                || isOwnerMissingOnItem(itemId);
     }
 
     public void heal(String itemId, Version version) {
-        Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId);
+        Collection<ItemPermissionsEntity> itemPermissions = permissionsDao.listItemPermissions(itemId).all();
+
+        // Case 1: No Owner permission exists
         if (itemPermissions.stream().noneMatch(this::isOwnerPermission)) {
-            String currentUserId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId()
-                .replace(HEALING_USER_SUFFIX, "");
-            permissionsDao.updateItemPermissions(itemId, PermissionTypes.Owner.name(), Collections.singleton(currentUserId), new HashSet<>());
+            String currentUserId = SessionContextProviderFactory.getInstance()
+                    .createInterface()
+                    .get()
+                    .getUser()
+                    .getUserId()
+                    .replace(HEALING_USER_SUFFIX, "");
+
+            permissionsDao.updateItemPermissions(
+                    itemId,
+                    PermissionTypes.Owner.name(),
+                    Collections.singleton(currentUserId),
+                    new HashSet<>()
+            );
+
             updateItemOwner(itemId, currentUserId);
             subscribersDao.subscribe(currentUserId, itemId);
+
+        // Case 2: Owner permission exists but the item's owner is missing
         } else if (isOwnerMissingOnItem(itemId)) {
-            Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.stream().filter(this::isOwnerPermission).findFirst();
+            Optional<ItemPermissionsEntity> ownerOpt = itemPermissions.stream()
+                    .filter(this::isOwnerPermission)
+                    .findFirst();
+
             if (ownerOpt.isPresent()) {
                 updateItemOwner(itemId, ownerOpt.get().getUserId());
             } else {
@@ -74,8 +99,8 @@ public class OwnerHealer implements Healer {
     private void updateItemOwner(String itemId, String userId) {
         Item item = new Item();
         item.setId(itemId);
-        Item retrievedItem = itemDao.get(item);
-        if (Objects.nonNull(retrievedItem)) {
+        Item retrievedItem = itemDao.get(item); // pass Item object, not String
+        if (retrievedItem != null) {
             retrievedItem.setOwner(userId);
             itemDao.update(retrievedItem);
         }
@@ -84,11 +109,11 @@ public class OwnerHealer implements Healer {
     private boolean isOwnerMissingOnItem(String itemId) {
         Item item = new Item();
         item.setId(itemId);
-        Item retrievedItem = itemDao.get(item);
-        return Objects.nonNull(retrievedItem) && Objects.isNull(retrievedItem.getOwner());
+        Item retrievedItem = itemDao.get(item); // pass Item object
+        return retrievedItem != null && retrievedItem.getOwner() == null;
     }
 
     private boolean isOwnerPermission(ItemPermissionsEntity permissionsEntity) {
-        return permissionsEntity.getPermission().equals(PermissionTypes.Owner.name());
+        return PermissionTypes.Owner.name().equals(permissionsEntity.getPermission());
     }
 }

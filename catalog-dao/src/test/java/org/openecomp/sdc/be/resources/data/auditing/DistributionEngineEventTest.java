@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.be.resources.data.auditing.model.DistributionTopicData;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -185,7 +186,7 @@ public class DistributionEngineEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		DistributionEngineEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -196,7 +197,7 @@ public class DistributionEngineEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		DistributionEngineEvent testSubject;
-		Date timestamp1 = null;
+		Instant timestamp1 = null;
 
 		// default test
 		testSubject = createTestSubject();

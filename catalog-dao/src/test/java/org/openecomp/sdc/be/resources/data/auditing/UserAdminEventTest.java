@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data.auditing;
 import org.junit.Test;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -250,7 +251,7 @@ public class UserAdminEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		UserAdminEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -261,7 +262,7 @@ public class UserAdminEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		UserAdminEvent testSubject;
-		Date timestamp = null;
+		Instant timestamp = null;
 
 		// default test
 		testSubject = createTestSubject();

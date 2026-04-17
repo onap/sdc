@@ -42,6 +42,8 @@ public class ServiceValidator extends ComponentValidator {
     @Override
     public void validate(User user, org.openecomp.sdc.be.model.Component component, AuditingActionEnum actionEnum) {
         super.validate(user, component, actionEnum);
-        serviceFieldValidators.forEach(validator -> validator.validateAndCorrectField(user, (Service) component, actionEnum));
+        serviceFieldValidators.forEach(validator ->{
+            validator.validateAndCorrectField(user, (Service) component, actionEnum);
+        });
     }
 }

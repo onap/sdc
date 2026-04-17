@@ -19,12 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -34,33 +31,41 @@ import lombok.ToString;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 @Getter
 @Setter
 @ToString
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.USER_ACCESS_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.USER_ACCESS_EVENT_TYPE)
 public class UserAccessEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column(name = "REQUEST_ID")
+    protected Instant timestamp1;
+    @CqlName("REQUEST_ID")
     protected String requestId;
-    @Column(name = "USER")
+    @CqlName("USER")
     private String userUid;
-    @Column
+    @CqlName("status")
     private String status;
-    @Column(name = "DESCRIPTION")
+    @CqlName("DESCRIPTION")
     private String desc;
-    @Column
+    @CqlName("action")
     private String action;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     private String serviceInstanceId;
 
     //Required to be public as it is used by Cassandra driver on get operation
     public UserAccessEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public UserAccessEvent(String action, CommonAuditData commonAuditData, String user) {
@@ -77,7 +82,7 @@ public class UserAccessEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp) {
+    public void setTimestamp1(Instant timestamp) {
         this.timestamp1 = timestamp;
     }
 
@@ -91,6 +96,6 @@ public class UserAccessEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_USER_UID.getDisplayName(), getUserUid());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 }

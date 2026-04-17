@@ -21,6 +21,8 @@
 
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
+import java.util.Date;
+
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
@@ -31,10 +33,10 @@ public class VspUploadStatusRecordMapper extends MappingBase<VspUploadStatusReco
     public void doMapping(final VspUploadStatusRecord source, final VspUploadStatusDto target) {
         target.setVspId(source.getVspId());
         target.setVspVersionId(source.getVspVersionId());
-        target.setStatus(source.getStatus());
+        target.setStatus(source.getStatusEnum());
         target.setLockId(source.getLockId());
         target.setComplete(source.getIsComplete());
-        target.setCreated(source.getCreated());
-        target.setUpdated(source.getUpdated());
+        target.setCreated(source.getCreated() != null ? Date.from(source.getCreated()) : null);
+        target.setUpdated(source.getUpdated() != null ? Date.from(source.getUpdated()) : null);
     }
 }

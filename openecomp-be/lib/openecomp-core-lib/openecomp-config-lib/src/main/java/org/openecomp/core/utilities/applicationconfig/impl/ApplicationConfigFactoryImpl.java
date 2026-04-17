@@ -19,13 +19,22 @@
  */
 package org.openecomp.core.utilities.applicationconfig.impl;
 
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.core.utilities.applicationconfig.ApplicationConfig;
 import org.openecomp.core.utilities.applicationconfig.ApplicationConfigFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class ApplicationConfigFactoryImpl extends ApplicationConfigFactory {
 
-    private static final ApplicationConfig INSTANCE = new ApplicationConfigImpl();
+    private static final ApplicationConfig INSTANCE;
 
+
+    static {
+        // Build the session (adjust contact points, keyspace, etc. as needed)
+        CqlSession session = CassandraSessionFactory.getSession();
+        INSTANCE = new ApplicationConfigImpl(session);
+    }
     @Override
     public ApplicationConfig createInterface() {
         return INSTANCE;

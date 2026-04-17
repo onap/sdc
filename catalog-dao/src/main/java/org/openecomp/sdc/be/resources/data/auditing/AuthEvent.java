@@ -19,15 +19,18 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.PropertyStrategy;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
@@ -35,31 +38,36 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
 @Getter
 @Setter
-@Table(keyspace = "sdcaudit", name = AuditingTypesConstants.AUTH_EVENT_TYPE)
+@Entity
+@CqlName("auth_event_type")   // corresponds to AuditingTypesConstants.AUTH_EVENT_TYPE
+@PropertyStrategy(mutable = true)  // tells mapper we’re using getters/setters
 public class AuthEvent extends AuditingGenericEvent {
 
     @PartitionKey
-    protected UUID timebaseduuid;
+    private UUID timebaseduuid;
+
     @ClusteringColumn
-    protected Date timestamp1;
-    @Column
-    protected String action;
-    @Column
-    protected String status;
-    @Column(name = "description")
-    protected String desc;
-    @Column(name = "request_id")
-    protected String requestId;
-    @Column
+    private Instant timestamp1;
+
+    private String action;
+    private String status;
+
+    @CqlName("description")
+    private String desc;
+
+    @CqlName("request_id")
+    private String requestId;
+
     private String url;
-    @Column
     private String user;
-    @Column(name = "auth_status")
+
+    @CqlName("auth_status")
     private String authStatus;
-    @Column
+
     private String realm;
 
-    public AuthEvent(String action, CommonAuditData commonAuditData, String user, String authUrl, String realm, String authStatus) {
+    public AuthEvent(String action, CommonAuditData commonAuditData, String user,
+                     String authUrl, String realm, String authStatus) {
         this();
         this.action = action;
         this.requestId = commonAuditData.getRequestId();
@@ -71,17 +79,12 @@ public class AuthEvent extends AuditingGenericEvent {
         this.user = user;
     }
 
-    //Required to be public as it is used by Cassandra driver on get operation
     public AuthEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        this.timestamp1 = Instant.now();
+        this.timebaseduuid = com.datastax.oss.driver.api.core.uuid.Uuids.timeBased();
     }
 
-    public void setTimestamp1(String timestamp) {
-        this.timestamp1 = parseDateFromString(timestamp);
-    }
-
-    public void setTimestamp1(Date timestamp) {
+    public void setTimestamp1(Instant timestamp) {
         this.timestamp1 = timestamp;
     }
 
@@ -97,6 +100,6 @@ public class AuthEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_DESC.getDisplayName(), getDesc());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 }

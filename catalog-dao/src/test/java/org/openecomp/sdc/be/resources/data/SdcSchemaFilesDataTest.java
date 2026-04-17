@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources.data;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.Date;
 
 
@@ -34,7 +35,7 @@ public class SdcSchemaFilesDataTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new SdcSchemaFilesData("mock", new Date(), "mock", "mock", new byte[0], "mock");
+		new SdcSchemaFilesData("mock", Instant.now(), "mock", "mock", new byte[0], "mock");
 	}
 	
 	@Test
@@ -154,7 +155,7 @@ public class SdcSchemaFilesDataTest {
 	@Test
 	public void testGetTimestamp() throws Exception {
 		SdcSchemaFilesData testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -165,7 +166,7 @@ public class SdcSchemaFilesDataTest {
 	@Test
 	public void testSetTimestamp() throws Exception {
 		SdcSchemaFilesData testSubject;
-		Date timestamp = null;
+		Instant timestamp = null;
 
 		// default test
 		testSubject = createTestSubject();

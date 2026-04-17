@@ -19,14 +19,15 @@
  */
 package org.openecomp.core.nosqldb.impl.cassandra;
 
-import com.datastax.driver.core.Session;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
+
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+
+import com.datastax.oss.driver.api.core.CqlSession;
 
 public class CassandraNoSqlDbFactoryImpl extends NoSqlDbFactory {
 
     @Override
-    public NoSqlDb createInterface() {
+    public CassandraNoSqlDbImpl createInterface() {
         return new CassandraNoSqlDbImpl(ReferenceHolder.CASSANDRA);
     }
 
@@ -34,8 +35,10 @@ public class CassandraNoSqlDbFactoryImpl extends NoSqlDbFactory {
         ReferenceHolder.CASSANDRA.close();
     }
 
+    
+
     private static class ReferenceHolder {
 
-        private static final Session CASSANDRA = CassandraSessionFactory.getSession();
+        private static final CqlSession CASSANDRA = CassandraSessionFactory.getSession();
     }
 }

@@ -19,29 +19,37 @@
  */
 package org.openecomp.sdc.itempermissions.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 /**
  * Created by ayalaben on 6/18/2017.
  */
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "item_permissions")
+@CqlName("item_permissions")
+@Entity
 public class ItemPermissionsEntity {
 
     @PartitionKey
-    @Column(name = "item_id")
+    @CqlName("item_id")
     private String itemId;
+
     @ClusteringColumn
-    @Column(name = "user_id")
+    @CqlName("user_id")
     private String userId;
-    @Column(name = "permission")
+
+    @CqlName("permission")
     private String permission;
+
+    public ItemPermissionsEntity(String itemId, String userId, String permission) {
+        this.itemId = itemId;
+        this.userId = userId;
+        this.permission = permission;
+    }
 }

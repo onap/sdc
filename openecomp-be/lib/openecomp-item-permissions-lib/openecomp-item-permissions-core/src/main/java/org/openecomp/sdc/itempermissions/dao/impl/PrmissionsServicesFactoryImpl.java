@@ -26,9 +26,12 @@ import org.openecomp.sdc.itempermissions.dao.UserPermissionsDaoFactory;
  */
 public class PrmissionsServicesFactoryImpl extends PermissionsServicesFactory {
 
-    private static final PermissionsServices INSTANCE = new PermissionsServicesImpl(PermissionsRulesFactory.getInstance().createInterface(),
-        ItemPermissionsDaoFactory.getInstance().createInterface(), UserPermissionsDaoFactory.getInstance().createInterface());
-
+   private static final PermissionsServices INSTANCE =
+    new PermissionsServicesImpl(
+        PermissionsRulesFactory.getInstance().createInterface(),
+        new ItemPermissionsDaoImpl(ItemPermissionsDaoFactory.getInstance().createInterface()),
+        UserPermissionsDaoFactory.getInstance().createInterface()
+    );
     @Override
     public PermissionsServices createInterface() {
         return INSTANCE;

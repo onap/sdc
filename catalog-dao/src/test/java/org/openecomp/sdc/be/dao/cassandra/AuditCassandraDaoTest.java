@@ -20,11 +20,16 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
+import com.datastax.oss.driver.api.core.cql.ExecutionInfo;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+
 import fj.data.Either;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,7 +38,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.resources.data.auditing.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,20 +55,59 @@ public class AuditCassandraDaoTest {
 	AuditCassandraDao testSubject;
 
 	@Mock
-	AuditAccessor auditAccessor;
+	AuditDao auditDao;
 
 	@Mock
 	CassandraClient client;
 
+	
+	@Mock
+    private CqlSession session;
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.openMocks(this);
+		ReflectionTestUtils.setField(testSubject, "auditDao", auditDao);
+	}
+
+	private static <T> PagingIterable<T> asPagingIterable(final List<T> list) {
+		return new PagingIterable<T>() {
+			@Override
+			public ColumnDefinitions getColumnDefinitions() {
+				return null;
+			}
+
+			@Override
+			public List<ExecutionInfo> getExecutionInfos() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public boolean isFullyFetched() {
+				return true;
+			}
+
+			@Override
+			public int getAvailableWithoutFetching() {
+				return list.size();
+			}
+
+			@Override
+			public boolean wasApplied() {
+				return true;
+			}
+
+			@Override
+			public Iterator<T> iterator() {
+				return list.iterator();
+			}
+		};
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testInit() throws Exception {
 		Mockito.when(client.isConnected()).thenReturn(true);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either
+		Either <CqlSession, CassandraOperationStatus> value = Either
 				.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
 		Mockito.when(client.connect(Mockito.anyString())).thenReturn(value);
 		testSubject.init();
@@ -73,14 +124,14 @@ public class AuditCassandraDaoTest {
 		String did = "";
 		Either<List<DistributionStatusEvent>, ActionStatus> result;
 
-		Result<DistributionStatusEvent> value = Mockito.mock(Result.class);
-		LinkedList<DistributionStatusEvent> value2 = new LinkedList<>();
-		value2.add(new DistributionStatusEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getListOfDistributionStatuses(Mockito.anyString())).thenReturn(value);
+		List<DistributionStatusEvent> events = new ArrayList<>();
 
-		// default test
+		events.add(new DistributionStatusEvent());
+		Mockito.when(auditDao.getListOfDistributionStatuses(Mockito.anyString()))
+           .thenReturn(asPagingIterable(events));
 		result = testSubject.getListOfDistributionStatuses(did);
+		
+		
 	}
 
 	@Test
@@ -88,7 +139,7 @@ public class AuditCassandraDaoTest {
 		String did = "";
 		Either<List<DistributionStatusEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getListOfDistributionStatuses(Mockito.anyString()))
+		Mockito.when(auditDao.getListOfDistributionStatuses(Mockito.anyString()))
 				.thenThrow(RuntimeException.class);
 
 		// default test
@@ -111,15 +162,18 @@ public class AuditCassandraDaoTest {
 		String status = "";
 		Either<List<DistributionDeployEvent>, ActionStatus> result;
 
-		Result<DistributionDeployEvent> value = Mockito.mock(Result.class);
-		LinkedList<DistributionDeployEvent> value2 = new LinkedList<>();
-		value2.add(new DistributionDeployEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getDistributionDeployByStatus(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString())).thenReturn(value);
+		List<DistributionDeployEvent> mockedList = new LinkedList<>();
+		mockedList.add(new DistributionDeployEvent());
 
-		// default test
-		result = testSubject.getDistributionDeployByStatus(did, action, status);
+			Mockito.when(auditDao.getDistributionDeployByStatus(
+	            Mockito.anyString(),
+	            Mockito.anyString(),
+	            Mockito.anyString()))
+	        .thenReturn(asPagingIterable(mockedList));
+			// default test
+			result = testSubject.getDistributionDeployByStatus(did, action, status);
+
+		
 	}
 
 	@Test
@@ -129,15 +183,15 @@ public class AuditCassandraDaoTest {
 		String status = "";
 		Either<List<DistributionDeployEvent>, ActionStatus> result;
 
-		Result<DistributionDeployEvent> value = Mockito.mock(Result.class);
-		LinkedList<DistributionDeployEvent> value2 = new LinkedList<>();
-		value2.add(new DistributionDeployEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getDistributionDeployByStatus(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString())).thenReturn(null);
+		Mockito.when(auditDao.getDistributionDeployByStatus(
+            Mockito.anyString(),
+            Mockito.anyString(),
+            Mockito.anyString()))
+        .thenReturn(null);
 
 		// default test
 		result = testSubject.getDistributionDeployByStatus(did, action, status);
+
 	}
 
 	@Test
@@ -147,7 +201,7 @@ public class AuditCassandraDaoTest {
 		String status = "";
 		Either<List<DistributionDeployEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getDistributionDeployByStatus(Mockito.anyString(), Mockito.anyString(),
+		Mockito.when(auditDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.anyString(),
 				Mockito.anyString())).thenThrow(RuntimeException.class);
 
 		// default test
@@ -170,14 +224,14 @@ public class AuditCassandraDaoTest {
 		String action = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getDistributionRequest(Mockito.anyString(), Mockito.anyString())).thenReturn(value);
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+	    	value2.add(new ResourceAdminEvent());
+			Mockito.when(auditDao.getDistributionRequest(Mockito.anyString(), Mockito.anyString()))
+	           .thenReturn(asPagingIterable(value2));
+			
+			// default test
+			result = testSubject.getDistributionRequest(did, action);
 
-		// default test
-		result = testSubject.getDistributionRequest(did, action);
 	}
 
 	@Test
@@ -186,7 +240,7 @@ public class AuditCassandraDaoTest {
 		String action = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getDistributionRequest(Mockito.anyString(), Mockito.anyString()))
+		Mockito.when(auditDao.getDistributionRequest(Mockito.anyString(), Mockito.anyString()))
 				.thenThrow(RuntimeException.class);
 
 		// default test
@@ -199,15 +253,13 @@ public class AuditCassandraDaoTest {
 		String action = "";
 		Either<List<DistributionNotificationEvent>, ActionStatus> result;
 
-		Result<DistributionNotificationEvent> value = Mockito.mock(Result.class);
-		List<DistributionNotificationEvent> value2 = new LinkedList<>();
-		value2.add(new DistributionNotificationEvent());
-		Mockito.when(value.all()).thenReturn(value2);
+			List<DistributionNotificationEvent> value2 = new LinkedList<>();
+	    	value2.add(new DistributionNotificationEvent());
 
-		Mockito.when(auditAccessor.getDistributionNotify(Mockito.anyString(), Mockito.anyString())).thenReturn(value);
-
-		// default test
-		result = testSubject.getDistributionNotify(did, action);
+			Mockito.when(auditDao.getDistributionNotify(Mockito.anyString(), Mockito.anyString()))
+	           .thenReturn(asPagingIterable(value2));
+			// default test
+			result = testSubject.getDistributionNotify(did, action);
 	}
 
 	@Test
@@ -216,7 +268,7 @@ public class AuditCassandraDaoTest {
 		String action = "";
 		Either<List<DistributionNotificationEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getDistributionNotify(Mockito.anyString(), Mockito.anyString()))
+		Mockito.when(auditDao.getDistributionNotify(Mockito.anyString(), Mockito.anyString()))
 				.thenThrow(RuntimeException.class);
 
 		// default test
@@ -238,11 +290,10 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getByServiceInstanceId(Mockito.anyString())).thenReturn(value);
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+	    	value2.add(new ResourceAdminEvent());		
+			Mockito.when(auditDao.getByServiceInstanceId(Mockito.anyString())).thenReturn(asPagingIterable(value2));
+
 		// default test
 		result = testSubject.getByServiceInstanceId(serviceInstanceId);
 	}
@@ -252,7 +303,7 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getByServiceInstanceId(Mockito.anyString())).thenThrow(RuntimeException.class);
+		Mockito.when(auditDao.getByServiceInstanceId(Mockito.anyString())).thenThrow(RuntimeException.class);
 		// default test
 		result = testSubject.getByServiceInstanceId(serviceInstanceId);
 	}
@@ -271,11 +322,9 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenReturn(value);
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+			value2.add(new ResourceAdminEvent());
+			Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenReturn(asPagingIterable(value2));
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -286,17 +335,17 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenReturn(value);
+		
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+			value2.add(new ResourceAdminEvent());
+			
+			Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenReturn(asPagingIterable(value2));
 
-		Result<DistributionDeployEvent> value3 = Mockito.mock(Result.class);
-		List<DistributionDeployEvent> value4 = new LinkedList<>();
-		value4.add(new DistributionDeployEvent());
-		Mockito.when(value3.all()).thenReturn(value4);
-		Mockito.when(auditAccessor.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(value3);
+	
+			List<DistributionDeployEvent> value4 = new LinkedList<>();
+			value4.add(new DistributionDeployEvent());
+		
+			Mockito.when(auditDao.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(asPagingIterable(value4));
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -307,24 +356,24 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenReturn(value);
+		
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+			value2.add(new ResourceAdminEvent());
+		
+			Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenReturn(asPagingIterable(value2));
 
-		Result<DistributionDeployEvent> value3 = Mockito.mock(Result.class);
-		List<DistributionDeployEvent> value4 = new LinkedList<>();
-		value4.add(new DistributionDeployEvent());
-		Mockito.when(value3.all()).thenReturn(value4);
-		Mockito.when(auditAccessor.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(value3);
+
+			List<DistributionDeployEvent> value4 = new LinkedList<>();
+			value4.add(new DistributionDeployEvent());
+
+			Mockito.when(auditDao.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(asPagingIterable(value4));
 
 		
-		Result<DistributionNotificationEvent> value5 = Mockito.mock(Result.class);
-		List<DistributionNotificationEvent> value6 = new LinkedList<>();
-		value6.add(new DistributionNotificationEvent());
-		Mockito.when(value5.all()).thenReturn(value6);
-		Mockito.when(auditAccessor.getServiceDistributionNotify(Mockito.anyString())).thenReturn(value5);
+	
+			List<DistributionNotificationEvent> value6 = new LinkedList<>();
+			value6.add(new DistributionNotificationEvent());
+
+			Mockito.when(auditDao.getServiceDistributionNotify(Mockito.anyString())).thenReturn(asPagingIterable(value6));
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -335,19 +384,18 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenReturn(value);
+		
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+			value2.add(new ResourceAdminEvent());
+			Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenReturn(asPagingIterable(value2));
 
-		Result<DistributionDeployEvent> value3 = Mockito.mock(Result.class);
-		List<DistributionDeployEvent> value4 = new LinkedList<>();
-		value4.add(new DistributionDeployEvent());
-		Mockito.when(value3.all()).thenReturn(value4);
-		Mockito.when(auditAccessor.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(value3);
+		
+			List<DistributionDeployEvent> value4 = new LinkedList<>();
+			value4.add(new DistributionDeployEvent());
 
-		Mockito.when(auditAccessor.getServiceDistributionNotify(Mockito.anyString())).thenThrow(RuntimeException.class);
+			Mockito.when(auditDao.getServiceDistributionDeploy(Mockito.anyString())).thenReturn(asPagingIterable(value4));
+
+		Mockito.when(auditDao.getServiceDistributionNotify(Mockito.anyString())).thenThrow(RuntimeException.class);
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -358,13 +406,13 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
-		List<ResourceAdminEvent> value2 = new LinkedList<>();
-		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenReturn(value);
 
-		Mockito.when(auditAccessor.getServiceDistributionDeploy(Mockito.anyString())).thenThrow(RuntimeException.class);
+			List<ResourceAdminEvent> value2 = new LinkedList<>();
+			value2.add(new ResourceAdminEvent());
+
+			Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenReturn(asPagingIterable(value2));
+
+		Mockito.when(auditDao.getServiceDistributionDeploy(Mockito.anyString())).thenThrow(RuntimeException.class);
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -375,7 +423,7 @@ public class AuditCassandraDaoTest {
 		String serviceInstanceId = "";
 		Either<List<? extends AuditingGenericEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getServiceDistributionStatus(Mockito.anyString())).thenThrow(RuntimeException.class);
+		Mockito.when(auditDao.getServiceDistributionStatus(Mockito.anyString())).thenThrow(RuntimeException.class);
 
 		// default test
 		result = testSubject.getServiceDistributionStatusesList(serviceInstanceId);
@@ -406,11 +454,11 @@ public class AuditCassandraDaoTest {
 		String prevVersion = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 		
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
+
 		List<ResourceAdminEvent> value2 = new LinkedList<>();
 		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(value);
+
+			Mockito.when(auditDao.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(asPagingIterable(value2));
 		
 		// default test
 		result = testSubject.getAuditByServiceIdAndPrevVersion(serviceInstanceId, prevVersion);
@@ -422,7 +470,7 @@ public class AuditCassandraDaoTest {
 		String prevVersion = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 		
-		Mockito.when(auditAccessor.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
+		Mockito.when(auditDao.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
 		
 		// default test
 		result = testSubject.getAuditByServiceIdAndPrevVersion(serviceInstanceId, prevVersion);
@@ -444,11 +492,11 @@ public class AuditCassandraDaoTest {
 		String currVersion = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Result<ResourceAdminEvent> value = Mockito.mock(Result.class);
+		
 		List<ResourceAdminEvent> value2 = new LinkedList<>();
 		value2.add(new ResourceAdminEvent());
-		Mockito.when(value.all()).thenReturn(value2);
-		Mockito.when(auditAccessor.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(value);
+
+			Mockito.when(auditDao.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(asPagingIterable(value2));
 		
 		// default test
 		result = testSubject.getAuditByServiceIdAndCurrVersion(serviceInstanceId, currVersion);
@@ -460,7 +508,7 @@ public class AuditCassandraDaoTest {
 		String currVersion = "";
 		Either<List<ResourceAdminEvent>, ActionStatus> result;
 
-		Mockito.when(auditAccessor.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
+		Mockito.when(auditDao.getAuditByServiceIdAndCurrVersion(Mockito.anyString(), Mockito.anyString())).thenThrow(RuntimeException.class);
 		
 		// default test
 		result = testSubject.getAuditByServiceIdAndCurrVersion(serviceInstanceId, currVersion);
@@ -468,11 +516,24 @@ public class AuditCassandraDaoTest {
 	
 	@Test
 	public void testIsTableEmpty() throws Exception {
-		String tableName = "";
-		Either<Boolean, CassandraOperationStatus> result;
+		Mockito.when(client.isConnected()).thenReturn(true);
+    Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+           .thenReturn(Either.left(session));
 
-		// default test
-		result = testSubject.isTableEmpty(tableName);
+    // Mock ResultSet and Row
+    ResultSet mockResultSet = Mockito.mock(ResultSet.class);
+    Row mockRow = Mockito.mock(Row.class);
+
+    Mockito.when(mockRow.getLong("count")).thenReturn(0L); // table is empty
+    Mockito.when(mockResultSet.one()).thenReturn(mockRow);
+   Mockito.when(session.execute(Mockito.any(SimpleStatement.class)))
+       .thenReturn(mockResultSet);
+
+    // testSubject.init();
+
+    Either<Boolean, CassandraOperationStatus> result =
+            testSubject.isTableEmpty("artifacts");
+
 	}
 
 	@Test

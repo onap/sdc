@@ -19,12 +19,20 @@
  */
 package org.openecomp.sdc.versioning.dao.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class VersionInfoDeletedDaoFactoryImpl extends VersionInfoDeletedDaoFactory {
 
-    private static VersionInfoDeletedDao INSTANCE = new VersionInfoDeletedDaoImpl();
+    private static VersionInfoDeletedDao INSTANCE;
+
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE =  new VersionInfoDeletedDaoImpl(session);
+    }
 
     @Override
     public VersionInfoDeletedDao createInterface() {

@@ -19,12 +19,9 @@
  */
 package org.openecomp.sdc.be.resources.data.auditing;
 
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -37,50 +34,57 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 @Getter
 @Setter
-@Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE)
+@Entity(defaultKeyspace = AuditingTypesConstants.AUDIT_KEYSPACE)
+@CqlName(AuditingTypesConstants.DISTRIBUTION_NOTIFICATION_EVENT_TYPE)
 public class DistributionNotificationEvent extends AuditingGenericEvent {
 
     @PartitionKey
     protected UUID timebaseduuid;
     @ClusteringColumn
     @Setter(AccessLevel.NONE)
-    protected Date timestamp1;
-    @Column(name = "request_id")
+    protected Instant timestamp1;
+    @CqlName("request_id")
     protected String requestId;
-    @Column(name = "service_instance_id")
+    @CqlName("service_instance_id")
     protected String serviceInstanceId;
-    @Column
+    @CqlName("action")
     protected String action;
-    @Column
+    @CqlName("status")
     protected String status;
-    @Column(name = "description")
+    @CqlName("description")
     protected String desc;
-    @Column(name = "resource_name")
+    @CqlName("resource_name")
     private String resourceName;
-    @Column(name = "resource_type")
+    @CqlName("resource_type")
     private String resourceType;
-    @Column(name = "curr_version")
+    @CqlName("curr_version")
     private String currVersion;
-    @Column
+    @CqlName("modifier")
     private String modifier;
-    @Column(name = "curr_state")
+    @CqlName("curr_state")
     private String currState;
-    @Column(name = "topic_name")
+    @CqlName("topic_name")
     private String topicName;
-    @Column
+    @CqlName("did")
     private String did;
-    @Column(name = "env_id")
+    @CqlName("env_id")
     private String envId;
-    @Column(name = "vnf_workload_context")
+    @CqlName("vnf_workload_context")
     private String vnfWorkloadContext;
-    @Column(name = "tenant")
+    @CqlName("tenant")
     private String tenant;
 
     public DistributionNotificationEvent() {
-        timestamp1 = new Date();
-        timebaseduuid = UUIDs.timeBased();
+        timestamp1 = Instant.now();
+        timebaseduuid = Uuids.timeBased();
     }
 
     public DistributionNotificationEvent(String action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
@@ -108,7 +112,7 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
         this.timestamp1 = parseDateFromString(timestamp);
     }
 
-    public void setTimestamp1(Date timestamp) {
+    public void setTimestamp1(Instant timestamp) {
         this.timestamp1 = timestamp;
     }
 
@@ -131,7 +135,7 @@ public class DistributionNotificationEvent extends AuditingGenericEvent {
         fields.put(AuditingFieldsKey.AUDIT_DISTRIBUTION_TOPIC_NAME.getDisplayName(), getTopicName());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(timestamp1));
+        fields.put(AuditingFieldsKey.AUDIT_TIMESTAMP.getDisplayName(), simpleDateFormat.format(Date.from(timestamp1)));
     }
 
     @Override

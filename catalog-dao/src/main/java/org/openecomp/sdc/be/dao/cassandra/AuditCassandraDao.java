@@ -19,14 +19,14 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
+
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.schema.Table;
@@ -45,7 +45,8 @@ import org.springframework.stereotype.Component;
 public class AuditCassandraDao extends CassandraDao {
 
     private static Logger logger = Logger.getLogger(AuditCassandraDao.class.getName());
-    private AuditAccessor auditAccessor;
+    private CqlSession session;
+    private AuditDao auditDao;
 
     @Autowired
     public AuditCassandraDao(CassandraClient cassandraClient) {
@@ -53,28 +54,45 @@ public class AuditCassandraDao extends CassandraDao {
     }
 
     @PostConstruct
-    public void init() {
-        String keyspace = AuditingTypesConstants.AUDIT_KEYSPACE;
-        if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
-            if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                auditAccessor = manager.createAccessor(AuditAccessor.class);
+public void init() {
+    String keyspace = AuditingTypesConstants.AUDIT_KEYSPACE;
+    System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.init starting. clientConnected=" + client.isConnected() + " keyspace=" + keyspace);
+    if (client.isConnected()) {
+
+        Either<CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
+        if (result.isLeft()) {
+
+            session = result.left().value();
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.init connected. sessionKeyspace=" + session.getKeyspace().map(k -> k.asInternal()).orElse("<none>"));
+
+            try {
+                AuditDaoMapper auditDaoMapper =
+                        new AuditDaoMapperBuilder(session).build();
+                auditDao = auditDaoMapper.auditDao(keyspace);
                 logger.info("** AuditCassandraDao created");
-            } else {
-                logger.info("** AuditCassandraDao failed");
-                throw new RuntimeException("Audit keyspace [" + keyspace + "] failed to connect with error : " + result.right().value());
+                System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.init mapper created. auditDaoNull=" + (auditDao == null));
+            } catch (Exception e) {
+                System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.init mapper creation failed: " + e);
+                e.printStackTrace(System.out);
+                throw e;
             }
+
         } else {
-            logger.info("** Cassandra client isn't connected");
-            logger.info("** AuditCassandraDao created, but not connected");
+            throw new RuntimeException(
+                    "Audit keyspace [" + keyspace + "] failed to connect with error : "
+                    + result.right().value());
         }
+    } else {
+        logger.info("** Cassandra client isn't connected");
+        logger.info("** AuditCassandraDao created, but not connected");
+        System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.init Cassandra client isn't connected");
     }
+}
+
 
     @SuppressWarnings("unchecked")
     public <T extends AuditingGenericEvent> CassandraOperationStatus saveRecord(T entity) {
-        return client.save(entity, (Class<T>) entity.getClass(), manager);
+        return client.save(entity, (Class<T>) entity.getClass());
     }
 
     /**
@@ -84,12 +102,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<DistributionStatusEvent>, ActionStatus> getListOfDistributionStatuses(String did) {
         List<DistributionStatusEvent> remainingElements = new ArrayList<>();
         try {
-            Result<DistributionStatusEvent> events = auditAccessor.getListOfDistributionStatuses(did);
+            PagingIterable<DistributionStatusEvent> events = auditDao.getListOfDistributionStatuses(did);
             if (events == null) {
                 logger.debug("not found distribution statuses for did {}", did);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -97,7 +115,7 @@ public class AuditCassandraDao extends CassandraDao {
             return Either.left(remainingElements);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Get DistributionStatuses List");
-            logger.debug("failed to get distribution statuses for ", e);
+            logger.error("Failed to get distribution statuses for did {}", did, e);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -105,12 +123,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<DistributionDeployEvent>, ActionStatus> getDistributionDeployByStatus(String did, String action, String status) {
         List<DistributionDeployEvent> remainingElements = new ArrayList<>();
         try {
-            Result<DistributionDeployEvent> events = auditAccessor.getDistributionDeployByStatus(did, action, status);
+            PagingIterable<DistributionDeployEvent> events = auditDao.getDistributionDeployByStatus(did, action, status);
             if (events == null) {
                 logger.debug("not found distribution statuses for did {}", did);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -118,7 +136,7 @@ public class AuditCassandraDao extends CassandraDao {
             return Either.left(remainingElements);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution Deploy By Status");
-            logger.debug("failed to get distribution deploy by status for ", e);
+            logger.error("Failed to get distribution deploy by status did {} action {} status {}", did, action, status, e);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -126,12 +144,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<ResourceAdminEvent>, ActionStatus> getDistributionRequest(String did, String action) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getDistributionRequest(did, action);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getDistributionRequest(did, action);
             if (events == null) {
                 logger.debug("not found distribution requests for did {}", did);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -139,7 +157,7 @@ public class AuditCassandraDao extends CassandraDao {
             return Either.left(remainingElements);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution request");
-            logger.debug("failed to get distribution request for ", e);
+            logger.error("Failed to get distribution request did {} action {}", did, action, e);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -147,12 +165,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<DistributionNotificationEvent>, ActionStatus> getDistributionNotify(String did, String action) {
         List<DistributionNotificationEvent> remainingElements = new ArrayList<>();
         try {
-            Result<DistributionNotificationEvent> events = auditAccessor.getDistributionNotify(did, action);
+            PagingIterable<DistributionNotificationEvent> events = auditDao.getDistributionNotify(did, action);
             if (events == null) {
                 logger.debug("not found distribution notify for did {}", did);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -160,7 +178,7 @@ public class AuditCassandraDao extends CassandraDao {
             return Either.left(remainingElements);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution notify");
-            logger.debug("failed to get distribution notify for ", e);
+            logger.error("Failed to get distribution notify did {} action {}", did, action, e);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -168,12 +186,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<ResourceAdminEvent>, ActionStatus> getByServiceInstanceId(String serviceInstanceId) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getByServiceInstanceId(serviceInstanceId);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getByServiceInstanceId(serviceInstanceId);
             if (events == null) {
                 logger.debug("not found audit records for serviceInstanceId {}", serviceInstanceId);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -181,7 +199,7 @@ public class AuditCassandraDao extends CassandraDao {
             return Either.left(remainingElements);
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("get Distribution notify");
-            logger.debug("failed to get distribution notify for ", e);
+            logger.error("Failed to get audit records by serviceInstanceId {}", serviceInstanceId, e);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -192,60 +210,81 @@ public class AuditCassandraDao extends CassandraDao {
      */
     public Either<List<? extends AuditingGenericEvent>, ActionStatus> getServiceDistributionStatusesList(String serviceInstanceId) {
         List<AuditingGenericEvent> resList = new ArrayList<>();
+        System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList serviceInstanceId=" + serviceInstanceId
+            + " auditDaoNull=" + (auditDao == null));
         try {
-            Result<ResourceAdminEvent> resourceAdminEvents = auditAccessor.getServiceDistributionStatus(serviceInstanceId);
+            final int beforeSize = resList.size();
+            PagingIterable<ResourceAdminEvent> resourceAdminEvents = auditDao.getServiceDistributionStatus(serviceInstanceId);
             if (resourceAdminEvents != null) {
-                resourceAdminEvents.all().forEach(event -> {
+                resourceAdminEvents.forEach(event -> {
                     event.fillFields();
                     resList.add(event);
                     logger.debug(event.toString());
                 });
             }
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DRequest size="
+                + (resList.size() - beforeSize));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-            logger.debug("failed to get  distribution statuses for action {}", AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName(), e);
+            logger.error("Failed to get service distribution statuses for action {} serviceInstanceId {}",
+                AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName(), serviceInstanceId, e);
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DRequest failed: " + e);
+            e.printStackTrace(System.out);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
         try {
-            Result<DistributionDeployEvent> distDeployEvents = auditAccessor.getServiceDistributionDeploy(serviceInstanceId);
+            final int beforeSize = resList.size();
+            PagingIterable<DistributionDeployEvent> distDeployEvents = auditDao.getServiceDistributionDeploy(serviceInstanceId);
             if (distDeployEvents != null) {
-                distDeployEvents.all().forEach(event -> {
+                distDeployEvents.forEach(event -> {
                     event.fillFields();
                     resList.add(event);
                     logger.debug(event.toString());
                 });
             }
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DResult size="
+                + (resList.size() - beforeSize));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-            logger.debug("failed to get distribution statuses for action {}", AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), e);
+            logger.error("Failed to get service distribution statuses for action {} serviceInstanceId {}",
+                AuditingActionEnum.DISTRIBUTION_DEPLOY.getName(), serviceInstanceId, e);
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DResult failed: " + e);
+            e.printStackTrace(System.out);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
         try {
-            Result<DistributionNotificationEvent> distNotifEvent = auditAccessor.getServiceDistributionNotify(serviceInstanceId);
+            final int beforeSize = resList.size();
+            PagingIterable<DistributionNotificationEvent> distNotifEvent = auditDao.getServiceDistributionNotify(serviceInstanceId);
             if (distNotifEvent != null) {
-                distNotifEvent.all().forEach(event -> {
+                distNotifEvent.forEach(event -> {
                     event.fillFields();
                     resList.add(event);
                     logger.debug(event.toString());
                 });
             }
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DNotify size="
+                + (resList.size() - beforeSize));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Get Service DistributionStatuses List");
-            logger.debug("failed to get distribution statuses for action {}", AuditingActionEnum.DISTRIBUTION_NOTIFY.getName(), e);
+            logger.error("Failed to get service distribution statuses for action {} serviceInstanceId {}",
+                AuditingActionEnum.DISTRIBUTION_NOTIFY.getName(), serviceInstanceId, e);
+            System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList DNotify failed: " + e);
+            e.printStackTrace(System.out);
             return Either.right(ActionStatus.GENERAL_ERROR);
         }
+        System.out.println("SDC_DEBUG_DISTRIBUTION AuditCassandraDao.getServiceDistributionStatusesList done. totalEvents=" + resList.size());
         return Either.left(resList);
     }
 
     public Either<List<ResourceAdminEvent>, ActionStatus> getAuditByServiceIdAndPrevVersion(String serviceInstanceId, String prevVersion) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getAuditByServiceIdAndPrevVersion(serviceInstanceId, prevVersion);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getAuditByServiceIdAndPrevVersion(serviceInstanceId, prevVersion);
             if (events == null) {
                 logger.debug("not found audit records for serviceInstanceId {} andprevVersion {}", serviceInstanceId, prevVersion);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -261,12 +300,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<ResourceAdminEvent>, ActionStatus> getAuditByServiceIdAndCurrVersion(String serviceInstanceId, String currVersion) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getAuditByServiceIdAndCurrVersion(serviceInstanceId, currVersion);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getAuditByServiceIdAndCurrVersion(serviceInstanceId, currVersion);
             if (events == null) {
                 logger.debug("not found audit records for serviceInstanceId {} andprevVersion {}", serviceInstanceId, currVersion);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -282,12 +321,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<ResourceAdminEvent>, ActionStatus> getArchiveAuditByServiceInstanceId(String serviceInstanceId) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getArchiveAuditByServiceInstanceId(serviceInstanceId);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getArchiveAuditByServiceInstanceId(serviceInstanceId);
             if (events == null) {
                 logger.debug("not found audit records for serviceInstanceId {}", serviceInstanceId);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());
@@ -303,12 +342,12 @@ public class AuditCassandraDao extends CassandraDao {
     public Either<List<ResourceAdminEvent>, ActionStatus> getRestoreAuditByServiceInstanceId(String serviceInstanceId) {
         List<ResourceAdminEvent> remainingElements = new ArrayList<>();
         try {
-            Result<ResourceAdminEvent> events = auditAccessor.getRestoreAuditByServiceInstanceId(serviceInstanceId);
+            PagingIterable<ResourceAdminEvent> events = auditDao.getRestoreAuditByServiceInstanceId(serviceInstanceId);
             if (events == null) {
                 logger.debug("not found audit records for serviceInstanceId {}", serviceInstanceId);
                 return Either.left(remainingElements);
             }
-            events.all().forEach(event -> {
+            events.forEach(event -> {
                 event.fillFields();
                 remainingElements.add(event);
                 logger.debug(event.toString());

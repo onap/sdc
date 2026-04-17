@@ -21,6 +21,9 @@
 package org.openecomp.sdc.be.dao.janusgraph;
 
 import fj.data.Either;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +31,6 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
@@ -218,16 +220,21 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
     }
 
     @Test
-    void testSetEdgeProperties() throws Exception {
+    void testSetEdgeProperties() throws Exception{
+        org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph graph =
+                org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph.open();
+        Vertex from = graph.addVertex();
+        Vertex to = graph.addVertex();
+        Edge edge = from.addEdge("testLabel", to);
 
-        Element element = Mockito.mock(Element.class);
         Map<EdgePropertyEnum, Object> properties = new HashMap<>();
-
-        // test 1
-
         properties.put(EdgePropertyEnum.STATE, "mock");
-        testSubject.setEdgeProperties(element, properties);
+
+        testSubject.setEdgeProperties(edge, properties);
+
+        assertEquals("mock", edge.property(EdgePropertyEnum.STATE.getProperty()).value());
     }
+
 
     @Test
     void testGetByCriteria() throws Exception {

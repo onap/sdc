@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.auditing.impl;
 
 
+import java.sql.Date;
+
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.be.resources.data.auditing.model.CommonAuditData;
@@ -31,7 +33,7 @@ public class AuditAuthRequestEventFactoryTest {
 	private AuditAuthRequestEventFactory createTestSubject() {
 		Builder newBuilder = CommonAuditData.newBuilder();
 		CommonAuditData build = newBuilder.build();
-		return new AuditAuthRequestEventFactory(build, "mock", "mock", "mock", "mock", "");
+		return new AuditAuthRequestEventFactory(build, "mock", "mock", "mock", "mock");
 	}
 
 	@Test

@@ -345,6 +345,7 @@ onboarding:
     host: localhost
     port: 8080
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
+    timeoutMs: 15000
 
 ecompPortal:
     protocol: https

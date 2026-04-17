@@ -43,6 +43,7 @@ import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.backend.ci.tests.utils.general.FileHandling;
 import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.CatalogRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.rest.ItTraceContext;
 import org.onap.sdc.backend.ci.tests.utils.rest.ProductRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResourceRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
@@ -137,6 +138,8 @@ public abstract class ComponentBaseTest {
             default:
                 break;
         }
+        System.out.println(ItTraceContext.prefix() + "testFinished status=" + status);
+        ItTraceContext.clear();
         ExtentTestManager.endTest();
     }
 
@@ -146,8 +149,12 @@ public abstract class ComponentBaseTest {
     }
 
     public void setLog(String fromDataProvider) {
+        final String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        final String traceId = ItTraceContext.initIfAbsent(methodName + "_" + fromDataProvider);
+        System.out.println("[IT-TRACE] traceId=" + traceId + " test=" + methodName + " data=" + fromDataProvider);
+
         ExtentTestManager
-            .startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+            .startTest(methodName + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         ExtentTestManager.assignCategory(this.getClass());
     }
 

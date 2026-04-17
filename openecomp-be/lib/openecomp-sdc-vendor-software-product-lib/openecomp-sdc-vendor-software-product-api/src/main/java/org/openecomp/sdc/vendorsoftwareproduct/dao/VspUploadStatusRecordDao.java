@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
  * Data Access Object for the package upload process status record.
@@ -52,7 +53,7 @@ public interface VspUploadStatusRecordDao {
      * @param vspVersionId the Vendor Software Product version id
      * @return a list with all the status record found that matches the criteria
      */
-    List<VspUploadStatusRecord> findAllByVspIdAndVersionId(final String vspId, final String vspVersionId);
+    PagingIterable<VspUploadStatusRecord> findAllByVspIdAndVersionId(final String vspId, final String vspVersionId);
 
     /**
      * Finds all upload status record by Vendor Software Product id and its version id.
@@ -70,7 +71,7 @@ public interface VspUploadStatusRecordDao {
      * @param vspVersionId the Vendor Software Product version id
      * @return a list with all the status record found that matches the criteria
      */
-    List<VspUploadStatusRecord> findAllInProgress(final String vspId, final String vspVersionId);
+    PagingIterable<VspUploadStatusRecord> findAllInProgress(final String vspId, final String vspVersionId);
 
     /**
      * Finds the latest upload status record for the Vendor Software Product id and its version id.

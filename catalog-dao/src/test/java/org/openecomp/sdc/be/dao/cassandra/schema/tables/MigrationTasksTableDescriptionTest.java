@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
 
 
 public class MigrationTasksTableDescriptionTest {

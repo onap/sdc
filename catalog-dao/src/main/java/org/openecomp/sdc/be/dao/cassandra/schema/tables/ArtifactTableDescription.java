@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ArtifactTableDescription implements ITableDescription {
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(ID_FIELD, DataType.varchar()));
+        keys.add(new ImmutablePair<>(ID_FIELD, DataTypes.TEXT));
         return keys;
     }
 
@@ -66,9 +67,10 @@ public class ArtifactTableDescription implements ITableDescription {
     @Getter
     @AllArgsConstructor
     enum ArtifactFieldsDescription {
-        DATA("data", DataType.blob(), false);
+        DATA("data", DataTypes.BLOB, false);
         private final String name;
         private final DataType type;
         private final boolean indexed;
     }
 }
+

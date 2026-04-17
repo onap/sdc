@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.notification.workers;
 
-import com.datastax.driver.core.utils.UUIDs;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.notification.types.NotificationEntityDto;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
+
+import com.datastax.oss.driver.api.core.uuid.Uuids;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -117,7 +119,7 @@ public class NotificationWorkerTest {
             entity.setRead(Boolean.parseBoolean(p[1]));
             entity.setEventId(UUID.fromString(p[2]));
             entity.setEventType(p[4]);
-            entity.setDateTime(formatter.format(UUIDs.unixTimestamp(entity.getEventId())));
+            entity.setDateTime(formatter.format(Uuids.unixTimestamp(entity.getEventId())));
             entity.setEventAttributes(JsonUtil.json2Object(p[5], Map.class));
             return entity;
         };

@@ -19,42 +19,35 @@
  */
 package org.openecomp.sdc.notification.dao.impl;
 
-import static org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory.getSession;
+import static java.util.Objects.isNull;
 
-import com.datastax.driver.core.BatchStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Statement;
-import com.datastax.driver.core.utils.UUIDs;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BatchStatementBuilder;
+import com.datastax.oss.driver.api.core.cql.BatchType;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.NotificationsDao;
 import org.openecomp.sdc.notification.dao.types.NotificationEntity;
 import org.openecomp.sdc.notification.dtos.NotificationsStatus;
-//import org.openecomp.sdc.notification.dao.types.LastSeenNotificationEntity;
 
-//import java.util.Optional;
 public class NotificationsDaoCassandraImpl extends CassandraBaseDao<NotificationEntity> implements NotificationsDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<NotificationEntity> mapper = noSqlDb.getMappingManager().mapper(NotificationEntity.class);
-    private static final NotificationsAccessor accessor = noSqlDb.getMappingManager().createAccessor(NotificationsAccessor.class);
+    private final CqlSession session;
 
-    @Override
-    protected Mapper<NotificationEntity> getMapper() {
-        return mapper;
+    public NotificationsDaoCassandraImpl(CqlSession session) {
+        super(session);
+        this.session = session;
     }
 
     @Override
@@ -64,12 +57,24 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
 
     @Override
     public List<NotificationEntity> list(NotificationEntity entity) {
-        return accessor.list(entity.getOwnerId()).all();
+        String query = "SELECT * FROM notifications WHERE owner_id = ?";
+        ResultSet rs = session.execute(SimpleStatement.newInstance(query, entity.getOwnerId()));
+        List<NotificationEntity> list = new ArrayList<>();
+        for (Row row : rs) {
+            list.add(mapRow(row));
+        }
+        return list;
     }
 
     @Override
     public List<NotificationEntity> getNotificationsByOwnerId(String ownerId, int limit) {
-        return accessor.getNotifications(ownerId, limit).all();
+        String query = "SELECT * FROM notifications WHERE owner_id = ? LIMIT ?";
+        ResultSet rs = session.execute(SimpleStatement.newInstance(query, ownerId, limit));
+        List<NotificationEntity> list = new ArrayList<>();
+        for (Row row : rs) {
+            list.add(mapRow(row));
+        }
+        return list;
     }
 
     @Override
@@ -79,131 +84,112 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
 
     @Override
     public List<NotificationEntity> getNewNotificationsByOwnerId(String ownerId, UUID eventId, int limit) {
-        if (Objects.isNull(eventId)) {
-            return getNotificationsByOwnerId(ownerId, limit);
+        String query = (eventId == null)
+                ? "SELECT * FROM notifications WHERE owner_id = ? LIMIT ?"
+                : "SELECT * FROM notifications WHERE owner_id = ? AND event_id > ? LIMIT ?";
+
+        ResultSet rs = (eventId == null)
+                ? session.execute(SimpleStatement.newInstance(query, ownerId, limit))
+                : session.execute(SimpleStatement.newInstance(query, ownerId, eventId, limit));
+
+        List<NotificationEntity> list = new ArrayList<>();
+        for (Row row : rs) {
+            list.add(mapRow(row));
         }
-        return accessor.getNewNotifications(ownerId, eventId, limit).all();
+        return list;
     }
 
     @Override
     public void markNotificationAsRead(String ownerId, Collection<UUID> eventIds) {
-        eventIds.forEach(eventId -> accessor.markAsRead(ownerId, eventId));
+        String query = "UPDATE notifications SET read = true WHERE owner_id = ? AND event_id = ?";
+        for (UUID eventId : eventIds) {
+            session.execute(SimpleStatement.newInstance(query, ownerId, eventId));
+        }
     }
 
     @Override
     public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastScannedEventId, int numOfRecordsToReturn) {
         NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-        List<NotificationEntity> entities = accessor.getNotifications(ownerId, numOfRecordsToReturn).all();
+        List<NotificationEntity> entities = getNotificationsByOwnerId(ownerId, numOfRecordsToReturn);
         if (CollectionUtils.isNotEmpty(entities)) {
-            long lastSeen = UUIDs.unixTimestamp(lastScannedEventId);
+            long lastSeen = Uuids.unixTimestamp(lastScannedEventId);
             populateNewNotifications(notificationsStatus, entities, lastSeen);
             UUID firstScannedEventId = entities.get(0).getEventId();
             notificationsStatus.setLastScanned(firstScannedEventId);
-            notificationsStatus
-                .setNumOfNotSeenNotifications(accessor.getNewNotificationsCount(ownerId, lastScannedEventId, firstScannedEventId).one().getLong(0));
+
+            // count unseen
+            String countQuery = "SELECT count(*) FROM notifications WHERE owner_id = ? AND event_id > ? AND event_id <= ?";
+            ResultSet rs = session.execute(SimpleStatement.newInstance(countQuery, ownerId, lastScannedEventId, firstScannedEventId));
+            Row row = rs.one();
+            if (!isNull(row)) {
+                notificationsStatus.setNumOfNotSeenNotifications(row.getLong(0));
+            }
         }
         return notificationsStatus;
+    }
+
+    @Override
+    public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastSeenNotification, int numOfRecordsToReturn, UUID prevLastScannedEventId) {
+        NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
+        String query = "SELECT * FROM notifications WHERE owner_id = ? AND event_id < ? LIMIT ?";
+        ResultSet rs = session.execute(SimpleStatement.newInstance(query, ownerId, prevLastScannedEventId, numOfRecordsToReturn));
+
+        List<NotificationEntity> entities = new ArrayList<>();
+        for (Row row : rs) {
+            entities.add(mapRow(row));
+        }
+
+        if (CollectionUtils.isNotEmpty(entities)) {
+            long lastSeen = Uuids.unixTimestamp(lastSeenNotification);
+            populateNewNotifications(notificationsStatus, entities, lastSeen);
+        }
+        return notificationsStatus;
+    }
+
+    @Override
+    public void createBatch(List<NotificationEntity> notificationEntities) {
+        BatchStatementBuilder batchBuilder = new BatchStatementBuilder(BatchType.LOGGED);
+        String query = "INSERT INTO notifications (owner_id, event_id, read, event_type, event_attributes, originator_id) VALUES (?, ?, ?, ?, ?, ?)";
+        for (NotificationEntity entity : notificationEntities) {
+            batchBuilder.addStatement(SimpleStatement.newInstance(query,
+                    entity.getOwnerId(),
+                    entity.getEventId(),
+                    entity.isRead(),
+                    entity.getEventType(),
+                    entity.getEventAttributes(),
+                    entity.getOriginatorId()
+            ));
+        }
+        session.execute(batchBuilder.build());
     }
 
     private void populateNewNotifications(NotificationsStatusImpl notificationsStatus, List<NotificationEntity> entities, long lastSeen) {
         for (NotificationEntity entity : entities) {
             UUID eventId = entity.getEventId();
             notificationsStatus.addNotification(entity);
-            if (UUIDs.unixTimestamp(eventId) > lastSeen) {
+            if (Uuids.unixTimestamp(eventId) > lastSeen) {
                 notificationsStatus.addNewNotificationUUID(eventId);
             }
         }
     }
 
-    @Override
-    public NotificationsStatus getNotificationsStatus(String ownerId, UUID lastSeenNotification, int numOfRecordsToReturn,
-                                                      UUID prevLastScannedEventId) {
-        NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-        List<NotificationEntity> entities = accessor.getPrevNotifications(ownerId, prevLastScannedEventId, numOfRecordsToReturn).all();
-        if (CollectionUtils.isNotEmpty(entities)) {
-            long lastSeen = UUIDs.unixTimestamp(lastSeenNotification);
-            populateNewNotifications(notificationsStatus, entities, lastSeen);
+    private NotificationEntity mapRow(Row row) {
+        if (row == null) {
+            return null;
         }
-        return notificationsStatus;
-    }
-
-    /*
-        @Override
-        public NotificationsStatus getNotificationsStatus(String ownerId,
-                                                          LastSeenNotificationEntity lastSeenNotification,
-                                                          int numOfRecordsToReturn) {
-
-            List<NotificationEntity> notificationEntities =
-                fetchNewNotifications(lastSeenNotification, numOfRecordsToReturn);
-            NotificationsStatusImpl notificationsStatus = new NotificationsStatusImpl();
-            if (CollectionUtils.isEmpty(notificationEntities)) {
-                return notificationsStatus;
-            }
-
-            notificationEntities.forEach(notification -> {
-                if (isNewNotification(lastSeenNotification, notification)) {
-                    notificationsStatus.addNewNotificationUUID(notification.getEventId());
-                }
-                notificationsStatus.addNotification(notification);
-            });
-
-            Optional<NotificationEntity> latestNotification = notificationEntities.stream().findFirst();
-            latestNotification.ifPresent(e -> notificationsStatus.setLastScanned(e.getEventId()));
-            return notificationsStatus;
-        }
-
-        private List<NotificationEntity> fetchNewNotifications(
-            LastSeenNotificationEntity lastSeenNotification, int numOfRecordsToReturn) {
-            String ownerId = lastSeenNotification.getOwnerId();
-            UUID lastEventId = lastSeenNotification.getLastEventId();
-            List<NotificationEntity> newNotificationsByOwnerId =
-                getNewNotificationsByOwnerId(ownerId, lastEventId);
-            newNotificationsByOwnerId = fetchMoreIfNeeded(ownerId, newNotificationsByOwnerId,
-                numOfRecordsToReturn, lastEventId);
-            return newNotificationsByOwnerId;
-        }
-
-        private boolean isNewNotification(LastSeenNotificationEntity lastSeenNotification,
-                                          NotificationEntity notification) {
-            return Objects.isNull(lastSeenNotification.getLastEventId()) ||
-                UUIDs.unixTimestamp(notification.getEventId()) >
-                    UUIDs.unixTimestamp(lastSeenNotification.getLastEventId());
-        }
-    */
-    @Override
-    public void createBatch(List<NotificationEntity> notificationEntities) {
-        BatchStatement batch = new BatchStatement();
-        List<Statement> statements = notificationEntities.stream().map(mapper::saveQuery).collect(Collectors.toList());
-        batch.addAll(statements);
-        getSession().execute(batch);
-    }
-
-    @Accessor
-    interface NotificationsAccessor {
-
-        @Query("select * from notifications where owner_id=?")
-        Result<NotificationEntity> list(String ownerId);
-
-        @Query("select * from notifications where owner_id=? limit ?")
-        Result<NotificationEntity> getNotifications(String ownerId, int limit);
-
-        @Query("select * from notifications where owner_id=? and event_id > ? limit ?")
-        Result<NotificationEntity> getNewNotifications(String ownerId, UUID lastScannedEventId, int limit);
-
-        @Query("select * from notifications where owner_id=? and event_id < ? limit ?")
-        Result<NotificationEntity> getPrevNotifications(String ownerId, UUID prevLastScannedEventId, int limit);
-
-        @Query("select count(*) from notifications where owner_id=? and event_id > ? and event_id <= ?")
-        ResultSet getNewNotificationsCount(String ownerId, UUID lastScannedEventId, UUID firstScannedEventId);
-
-        @Query("update notifications set read=true where owner_id=? and event_id=?")
-        ResultSet markAsRead(String ownerId, UUID eventId);
+        return new NotificationEntity(
+                row.getString("owner_id"),
+                row.getBoolean("read"),
+                row.getUuid("event_id"),
+                row.getString("event_type"),
+                row.getString("event_attributes"),
+                row.getString("originator_id")
+        );
     }
 
     private class NotificationsStatusImpl implements NotificationsStatus {
-
-        private List<NotificationEntity> notifications = new ArrayList<>();
-        private List<UUID> newEntries = new ArrayList<>();
+        private final List<NotificationEntity> notifications = new ArrayList<>();
+        private final List<UUID> newEntries = new ArrayList<>();
         private UUID lastScanned;
         private UUID endOfPage;
         private long numOfNotSeenNotifications = 0;
@@ -250,28 +236,28 @@ public class NotificationsDaoCassandraImpl extends CassandraBaseDao<Notification
             this.numOfNotSeenNotifications = numOfNotSeenNotifications;
         }
     }
-/*
-    private List<NotificationEntity> fetchMoreIfNeeded(String ownerId,
-                                                       List<NotificationEntity> notificationEntities,
-                                                       int numOfRecordsToReturn, UUID lastEventId) {
 
-        if (numOfRecordsToReturn <= notificationEntities.size() || Objects.isNull(lastEventId)) {
-            return notificationEntities;
-        }
-
-        int multiplier = 2;
-        while (numOfRecordsToReturn > notificationEntities.size()) {
-
-            int bring = notificationEntities.size() +
-                (numOfRecordsToReturn - notificationEntities.size()) * multiplier;
-            notificationEntities = getNotificationsByOwnerId(ownerId, bring);
-
-            if (notificationEntities.size() < bring) {
-                return notificationEntities;
-            }
-            multiplier++;
-        }
-        return notificationEntities;
+    @Override
+    protected String getTableName() {
+        return "notifications";
     }
-*/
+
+    @Override
+    protected String[] getColumns(NotificationEntity entity) {
+        return new String[]{
+                "owner_id", "read", "event_id", "event_type", "event_attributes", "originator_id"
+        };
+    }
+
+    @Override
+    protected Object[] getValues(NotificationEntity entity) {
+        return new Object[]{
+                entity.getOwnerId(),
+                entity.isRead(),
+                entity.getEventId(),
+                entity.getEventType(),
+                entity.getEventAttributes(),
+                entity.getOriginatorId()
+        };
+    }
 }

@@ -19,28 +19,32 @@
  */
 package org.openecomp.sdc.action.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.nio.ByteBuffer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.sdc.action.types.ActionArtifact;
 
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "action_artifact")
+@Entity
+@CqlName("action_artifact")
 public class ActionArtifactEntity {
 
     @PartitionKey
-    @Column(name = "artifactuuid")
+    @CqlName("artifactuuid")
     private String artifactUuId;
-    @PartitionKey(value = 1)
-    @Column(name = "effective_version")
+    @ClusteringColumn
+    @CqlName("effective_version")
     private int effectiveVersion;
-    @Column(name = "artifact")
+    @CqlName("artifact")
     private ByteBuffer artifact;
 
     public ActionArtifactEntity(String artifactUuId, int effectiveVersion) {

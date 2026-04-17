@@ -336,6 +336,11 @@ public class Configuration extends BasicConfiguration {
         private String getLatestVspUri;
         @ToString.Exclude
         private String healthCheckUri;
+        /**
+         * Timeout (ms) for calling onboarding BE from catalog BE (e.g. healthcheck).
+         * Defaults are applied by callers when null.
+         */
+        private Integer timeoutMs;
     }
 
     @Getter

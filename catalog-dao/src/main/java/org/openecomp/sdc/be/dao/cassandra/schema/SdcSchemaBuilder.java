@@ -21,19 +21,24 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import com.datastax.driver.core.AbstractTableMetadata;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.IndexMetadata;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.schemabuilder.Alter;
-import com.datastax.driver.core.schemabuilder.Create;
-import com.datastax.driver.core.schemabuilder.SchemaBuilder;
-import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
+import com.datastax.oss.driver.api.core.session.Session;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.type.DataType;              
+import com.datastax.oss.driver.api.core.metadata.schema.IndexMetadata;    
+import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;    
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
+import com.datastax.oss.driver.api.querybuilder.schema.AlterTableAddColumn;
+import com.datastax.oss.driver.api.querybuilder.schema.AlterTableStart;
+import com.datastax.oss.driver.api.querybuilder.schema.CreateTable;
+import com.datastax.oss.driver.api.querybuilder.schema.CreateTableStart;
 import com.datastax.oss.driver.shaded.guava.common.base.Function;
+import com.datastax.oss.driver.api.core.metadata.Metadata;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -85,17 +90,34 @@ public class SdcSchemaBuilder {
      * @return a map of maps of lists holding parsed info
      */
     private static Map<String, Map<String, List<String>>> parseKeyspaceMetadata(List<KeyspaceMetadata> keyspacesMetadata) {
-        return keyspacesMetadata.stream().collect(Collectors.toMap(KeyspaceMetadata::getName,
-            keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(Collectors.toMap(AbstractTableMetadata::getName,
-                tableMetadata -> tableMetadata.getIndexes().stream().map(IndexMetadata::getName).collect(Collectors.toList())))));
-    }
+    return keyspacesMetadata.stream()
+        .collect(Collectors.toMap(
+            ks -> ks.getName().asInternal(),  // convert Keyspace name to String
+            ks -> ks.getTables().entrySet().stream() // Stream<Map.Entry<CqlIdentifier, TableMetadata>>
+                .collect(Collectors.toMap(
+                    entry -> entry.getKey().asInternal(), // table name as String
+                    entry -> entry.getValue().getIndexes().values().stream()
+                        .map(index -> index.getName().asInternal())
+                        .collect(Collectors.toList())
+                ))
+        ));
+}
+
 
     private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(List<KeyspaceMetadata> keyspacesMetadata) {
-        return keyspacesMetadata.stream().collect(Collectors.toMap(KeyspaceMetadata::getName,
-            keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(Collectors.toMap(AbstractTableMetadata::getName,
-                tableMetadata -> tableMetadata.getColumns().stream().map(columnMetadata -> columnMetadata.getName().toLowerCase())
-                    .collect(Collectors.toList())))));
-    }
+    return keyspacesMetadata.stream()
+        .collect(Collectors.toMap(
+            ks -> ks.getName().asInternal(), // Keyspace name as String
+            ks -> ks.getTables().entrySet().stream() // Table entries
+                .collect(Collectors.toMap(
+                    entry -> entry.getKey().asInternal(), // Table name as String
+                    entry -> entry.getValue().getColumns().entrySet().stream()
+                        .map(colEntry -> colEntry.getKey().asInternal().toLowerCase()) // Column names as String
+                        .collect(Collectors.toList())
+                ))
+        ));
+}
+
 
     /**
      * the method builds an index name according to a defined logic
@@ -118,58 +140,134 @@ public class SdcSchemaBuilder {
      * @param session:               the session object used for the execution of the query.
      * @param existingTablesMetadata the current tables columns that exist in the cassandra under this keyspace
      */
-    private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadata, Session session,
-                                     Map<String, List<String>> existingTablesMetadata) {
-        for (ITableDescription tableDescription : iTableDescriptions) {
-            String tableName = tableDescription.getTableName().toLowerCase();
-            Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
-            log.info("creating tables:{}.", tableName);
-            if (keyspaceMetadata == null || !keyspaceMetadata.containsKey(tableName)) {
-                Create create = SchemaBuilder.createTable(tableDescription.getKeyspace(), tableDescription.getTableName());
-                for (ImmutablePair<String, DataType> key : tableDescription.primaryKeys()) {
-                    create.addPartitionKey(key.getLeft(), key.getRight());
+   private static void createTables(List<ITableDescription> iTableDescriptions,
+                                 Map<String, List<String>> keyspaceMetadata,
+                                 CqlSession session,
+                                 Map<String, List<String>> existingTablesMetadata) {
+    for (ITableDescription tableDescription : iTableDescriptions) {
+        String tableName = tableDescription.getTableName().toLowerCase();
+        Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
+        log.info("creating tables:{}.", tableName);
+
+        if (keyspaceMetadata == null || !keyspaceMetadata.containsKey(tableName)) {
+
+            // Build column -> cql-type map preserving insertion order
+            Map<String, String> columnsToType = new LinkedHashMap<>();
+
+            // 1) Partition keys
+            List<String> pkNames = new ArrayList<>();
+            if (tableDescription.primaryKeys() != null) {
+                for (ImmutablePair<String, DataType> pk : tableDescription.primaryKeys()) {
+                    String name = pk.getLeft();
+                    String typeCql = pk.getRight().asCql(false, false);
+                    columnsToType.put(name, typeCql);
+                    pkNames.add(name);
                 }
-                if (tableDescription.clusteringKeys() != null) {
-                    for (ImmutablePair<String, DataType> key : tableDescription.clusteringKeys()) {
-                        create.addClusteringColumn(key.getLeft(), key.getRight());
-                    }
-                }
-                final Function<Entry<String, ?>, Boolean> notPrimaryKeyFilter = (Entry<String, ?> entry) -> {
-                    if (entry == null) {
-                        return true;
-                    }
-                    return tableDescription.primaryKeys().stream().noneMatch(primaryKeyPair -> primaryKeyPair.getLeft().equals(entry.getKey()));
-                };
-                columnDescription.entrySet().stream()
-                    .filter(notPrimaryKeyFilter::apply)
-                    .forEach(entry -> create.addColumn(entry.getKey(), entry.getValue().getLeft()));
-                log.trace("exacuting :{}", create);
-                session.execute(create);
-                log.info("table:{} created successfully.", tableName);
-            } else {
-                log.info("table:{} already exists, skipping.", tableName);
-                alterTable(session, existingTablesMetadata, tableDescription, tableName, columnDescription);
             }
-            log.info("keyspacemetadata:{}", keyspaceMetadata);
-            List<String> indexNames = (keyspaceMetadata != null && keyspaceMetadata.get(tableName) != null ? keyspaceMetadata.get(tableName)
-                : new ArrayList<>());
-            log.info("table:{} creating indexes.", tableName);
-            for (Map.Entry<String, ImmutablePair<DataType, Boolean>> description : columnDescription.entrySet()) {
-                String indexName = createIndexName(tableName, description.getKey()).toLowerCase();
-                if (description.getValue().getRight()) {
-                    if (!indexNames.contains(indexName)) {
-                        SchemaStatement creatIndex = SchemaBuilder.createIndex(indexName).onTable(tableDescription.getKeyspace(), tableName)
-                            .andColumn(description.getKey());
-                        log.info("executing :{}", creatIndex);
-                        session.execute(creatIndex);
-                        log.info("index:{} created successfully.", indexName);
-                    } else {
-                        log.info("index:{} already exists, skipping.", indexName);
+
+            // 2) Clustering keys
+            List<String> ckNames = new ArrayList<>();
+            if (tableDescription.clusteringKeys() != null) {
+                for (ImmutablePair<String, DataType> ck : tableDescription.clusteringKeys()) {
+                    String name = ck.getLeft();
+                    String typeCql = ck.getRight().asCql(false, false);
+                    // avoid overwriting if already present
+                    columnsToType.putIfAbsent(name, typeCql);
+                    ckNames.add(name);
+                }
+            }
+
+            // 3) Other columns from columnDescription (don't overwrite PK/CK types)
+            if (columnDescription != null) {
+                for (Map.Entry<String, ImmutablePair<DataType, Boolean>> entry : columnDescription.entrySet()) {
+                    String name = entry.getKey();
+                    String typeCql = entry.getValue().getLeft().asCql(false, false);
+                    columnsToType.putIfAbsent(name, typeCql);
+                }
+            }
+
+            // Build CREATE TABLE CQL
+            StringBuilder cql = new StringBuilder();
+            cql.append("CREATE TABLE IF NOT EXISTS ")
+               .append(tableDescription.getKeyspace()).append(".").append(tableDescription.getTableName())
+               .append(" (");
+
+            // column definitions
+            boolean first = true;
+            for (Map.Entry<String, String> col : columnsToType.entrySet()) {
+                if (!first) {
+                    cql.append(", ");
+                }
+                first = false;
+                cql.append(col.getKey()).append(" ").append(col.getValue());
+            }
+
+            // primary key clause
+            // partition part
+            String partitionPart;
+            if (pkNames.isEmpty()) {
+                // fallback - although old code expected at least one PK
+                partitionPart = "id";
+                if (!columnsToType.containsKey(partitionPart)) {
+                    // if id not present, pick first column as pk (defensive)
+                    if (!columnsToType.isEmpty()) {
+                        partitionPart = columnsToType.keySet().iterator().next();
                     }
+                }
+            } else if (pkNames.size() == 1) {
+                partitionPart = pkNames.get(0);
+            } else {
+                partitionPart = "(" + String.join(", ", pkNames) + ")";
+            }
+
+            String pkClause;
+            if (ckNames.isEmpty()) {
+                pkClause = partitionPart;
+            } else {
+                pkClause = partitionPart + ", " + String.join(", ", ckNames);
+            }
+
+            cql.append(", PRIMARY KEY (").append(pkClause).append(")");
+
+            cql.append(");");
+
+            // execute create table
+            log.trace("executing : {}", cql.toString());
+            session.execute(com.datastax.oss.driver.api.core.cql.SimpleStatement.newInstance(cql.toString()));
+            log.info("table:{} created successfully.", tableName);
+
+        } else {
+            log.info("table:{} already exists, skipping.", tableName);
+            alterTable(session, existingTablesMetadata, tableDescription, tableName, columnDescription);
+        }
+
+        log.info("keyspacemetadata:{}", keyspaceMetadata);
+
+        // indexes
+        List<String> indexNames = (keyspaceMetadata != null && keyspaceMetadata.get(tableName) != null
+                ? keyspaceMetadata.get(tableName) : new ArrayList<>());
+
+        log.info("table:{} creating indexes.", tableName);
+        for (Map.Entry<String, ImmutablePair<DataType, Boolean>> description : columnDescription.entrySet()) {
+            String indexName = createIndexName(tableName, description.getKey()).toLowerCase();
+            if (description.getValue().getRight()) {
+                if (!indexNames.contains(indexName)) {
+                    var createIndex = SchemaBuilder.createIndex(indexName)
+                            .ifNotExists()
+                            .onTable(CqlIdentifier.fromCql(tableDescription.getKeyspace()), CqlIdentifier.fromCql(tableDescription.getTableName()))
+                            .andColumn(CqlIdentifier.fromCql(description.getKey()));
+                    log.info("executing :{}", createIndex);
+                    session.execute(createIndex.build());
+                    log.info("index:{} created successfully.", indexName);
+                } else {
+                    log.info("index:{} already exists, skipping.", indexName);
                 }
             }
         }
     }
+}
+
+
 
     /**
      * check if there are new columns that were added to definition but don't exist in DB
@@ -180,23 +278,37 @@ public class SdcSchemaBuilder {
      * @param tableName
      * @param columnDescription
      */
-    private static void alterTable(Session session, Map<String, List<String>> existingTablesMetadata, ITableDescription tableDescription,
-                                   String tableName, Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
-        List<String> definedTableColumns = existingTablesMetadata.get(tableName);
-        //add column to casandra if was added to table definition
-        for (Map.Entry<String, ImmutablePair<DataType, Boolean>> column : columnDescription.entrySet()) {
-            String columnName = column.getKey();
-            if (!definedTableColumns.contains(columnName.toLowerCase())) {
-                log.info("Adding new column {} to the table {}", columnName, tableName);
-                Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(), tableDescription.getTableName());
-                SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
-                log.trace("executing :{}", addColumn);
-                session.execute(addColumn);
-            }
+private static void alterTable(CqlSession session,
+                               Map<String, List<String>> existingTablesMetadata,
+                               ITableDescription tableDescription,
+                               String tableName,
+                               Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
+
+    List<String> definedTableColumns = existingTablesMetadata.get(tableName);
+
+    for (Map.Entry<String, ImmutablePair<DataType, Boolean>> column : columnDescription.entrySet()) {
+        String columnName = column.getKey();
+
+        if (!definedTableColumns.contains(columnName.toLowerCase())) {
+            log.info("Adding new column {} to the table {}", columnName, tableName);
+
+            SimpleStatement addColumnStmt = SchemaBuilder
+                    .alterTable(tableDescription.getKeyspace(), tableDescription.getTableName())
+                    .addColumn(columnName, column.getValue().getLeft())
+                    .build();
+
+            log.trace("executing :{}", addColumnStmt.getQuery());
+            session.execute(addColumnStmt);
+
+            log.info("Column {} added successfully to table {}", columnName, tableName);
         }
     }
+}
 
-    private static boolean createKeyspaceIfNotExists(String keyspace, Session session,
+
+
+
+    private static boolean createKeyspaceIfNotExists(String keyspace, CqlSession session,
                                                      List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList) {
         Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream()
             .filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();
@@ -207,7 +319,7 @@ public class SdcSchemaBuilder {
         return false;
     }
 
-    private static boolean createKeyspaceWhenConfigExists(String keyspace, Session session,
+    private static boolean createKeyspaceWhenConfigExists(String keyspace, CqlSession session,
                                                           Configuration.CassandrConfig.KeyspaceConfig keyspaceConfig) {
         String createKeyspaceQuery = createKeyspaceQuereyString(keyspace, keyspaceConfig);
         if (createKeyspaceQuery != null) {
@@ -300,60 +412,88 @@ public class SdcSchemaBuilder {
      * @return true if the create operation was successful
      */
     public boolean createSchema() {
-        try (Cluster cluster = sdcSchemaUtils.createCluster(); Session session = cluster.connect()) {
-            log.info("creating Schema for Cassandra.");
-            List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
-            if (keyspacesMetadateFromCassandra == null) {
-                log.debug("filed to retrieve a list of keyspaces from cassandra");
-                return false;
-            }
-            log.debug("retrieved Cassandra metadata.");
-            Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
-            Map<String, Map<String, List<String>>> metadataTablesStructure = getMetadataTablesStructure(keyspacesMetadateFromCassandra);
-            Map<String, List<ITableDescription>> schemeData = getSchemeData();
-            //TODO remove after 1707_OS migration
-            handle1707OSMigration(cassndraMetadata, schemeData);
-            log.info("creating Keyspaces.");
-            for (Map.Entry<String, List<ITableDescription>> keyspace : schemeData.entrySet()) {
-                if (!createKeyspace(keyspace.getKey(), cassndraMetadata, session)) {
-                    return false;
-                }
-                Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace.getKey());
-                createTables(keyspace.getValue(), keyspaceMetadate, session, metadataTablesStructure.get(keyspace.getKey()));
-            }
-            return true;
-        } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "creating Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
+    try (CqlSession session = sdcSchemaUtils.createSession()) {
+        log.info("Creating Schema for Cassandra.");
+
+        // In driver 4.x, metadata is a Map<CqlIdentifier, KeyspaceMetadata>
+        Map<CqlIdentifier, KeyspaceMetadata> keyspacesMetadataFromCassandra = session.getMetadata().getKeyspaces();
+
+        if (keyspacesMetadataFromCassandra == null || keyspacesMetadataFromCassandra.isEmpty()) {
+            log.debug("Failed to retrieve a list of keyspaces from Cassandra");
             return false;
         }
-    }
+        log.debug("Retrieved Cassandra metadata.");
 
-    public boolean deleteSchema() {
-        boolean res = false;
-        try (Cluster cluster = sdcSchemaUtils.createCluster(); Session session = cluster.connect()) {
-            log.info("delete Data from Cassandra.");
-            List<KeyspaceMetadata> keyspacesMetadateFromCassandra = cluster.getMetadata().getKeyspaces();
-            if (keyspacesMetadateFromCassandra == null) {
-                log.debug("filed to retrieve a list of keyspaces from cassandra");
+        // Convert Map<CqlIdentifier, KeyspaceMetadata> to your expected structure
+        Map<String, Map<String, List<String>>> cassandraMetadata =
+                parseKeyspaceMetadata(new ArrayList<>(keyspacesMetadataFromCassandra.values()));
+
+        Map<String, Map<String, List<String>>> metadataTablesStructure =
+                getMetadataTablesStructure(new ArrayList<>(keyspacesMetadataFromCassandra.values()));
+
+        Map<String, List<ITableDescription>> schemeData = getSchemeData();
+
+        // TODO remove after 1707_OS migration
+        handle1707OSMigration(cassandraMetadata, schemeData);
+
+        log.info("Creating Keyspaces.");
+        for (Map.Entry<String, List<ITableDescription>> keyspace : schemeData.entrySet()) {
+            if (!createKeyspace(keyspace.getKey(), cassandraMetadata, session)) {
                 return false;
             }
-            log.debug("retrieved Cassandra metadata.");
-            Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
-            log.info("Cassandra Metadata: {}", cassndraMetadata);
-            cassndraMetadata.forEach((k, v) -> {
-                if (AuditingTypesConstants.janusGraph_KEYSPACE.equals(k)) {
-                    // session.execute("")
-                } else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(k)) {
-                } else if (AuditingTypesConstants.AUDIT_KEYSPACE.equals(k)) {
-                }
-            });
-            System.out.println(cassndraMetadata);
-            res = true;
-        } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "deleting Schema for Cassandra", "Cassandra", e.getLocalizedMessage());
+            Map<String, List<String>> keyspaceMetadata = cassandraMetadata.get(keyspace.getKey());
+            createTables(
+                keyspace.getValue(),
+                keyspaceMetadata,
+                session,
+                metadataTablesStructure.get(keyspace.getKey())
+            );
         }
-        return res;
+        return true;
+    } catch (Exception e) {
+        log.error(EcompLoggerErrorCode.SCHEMA_ERROR,
+                  "Creating Schema for Cassandra",
+                  "Cassandra",
+                  e.getLocalizedMessage(), e);
+        return false;
     }
+}
+
+
+   public boolean deleteSchema() {
+    boolean res = false;
+
+    try (CqlSession session = sdcSchemaUtils.createSession()) {
+        log.info("delete Data from Cassandra.");
+
+        Metadata metadata = session.getMetadata();
+
+        // Iterate over keyspaces
+        for (Map.Entry<CqlIdentifier, KeyspaceMetadata> entry : metadata.getKeyspaces().entrySet()) {
+            String keyspaceName = entry.getKey().asInternal();
+            KeyspaceMetadata keyspaceMetadata = entry.getValue();
+
+            log.debug("Found keyspace: {}", keyspaceName);
+
+            if (AuditingTypesConstants.janusGraph_KEYSPACE.equals(keyspaceName)) {
+                log.info("Deleting JanusGraph keyspace: {}", keyspaceName);
+                session.execute(SimpleStatement.builder("DROP KEYSPACE IF EXISTS " + keyspaceName).build());
+            } else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(keyspaceName)) {
+                log.info("Deleting Artifact keyspace: {}", keyspaceName);
+                session.execute(SimpleStatement.builder("DROP KEYSPACE IF EXISTS " + keyspaceName).build());
+            } else if (AuditingTypesConstants.AUDIT_KEYSPACE.equals(keyspaceName)) {
+                log.info("Deleting Audit keyspace: {}", keyspaceName);
+                session.execute(SimpleStatement.builder("DROP KEYSPACE IF EXISTS " + keyspaceName).build());
+            }
+        }
+
+        res = true;
+    } catch (Exception e) {
+        log.error(EcompLoggerErrorCode.SCHEMA_ERROR, "deleting Schema for Cassandra", "Cassandra", e.getLocalizedMessage(), e);
+    }
+
+    return res;
+}
 
     /**
      * the method create the keyspace in case it does not already exists the method uses configurtion to select the needed replication strategy
@@ -363,15 +503,19 @@ public class SdcSchemaBuilder {
      * @param session:          the session object used for the execution of the query.
      * @return true in case the operation was successful
      */
-    private boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
-        List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = cassandraConfigSupplier.get().getKeySpaces();
-        log.info("creating keyspace:{}.", keyspace);
-        if (!cassndraMetadata.keySet().contains(keyspace)) {
-            return createKeyspaceIfNotExists(keyspace, session, keyspaceConfigList);
-        }
-        log.info("keyspace:{} already exists, skipping.", keyspace);
-        return true;
+    private boolean createKeyspace(String keyspace,
+                               Map<String, Map<String, List<String>>> cassndraMetadata,
+                               CqlSession session) { 
+    List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList =
+            cassandraConfigSupplier.get().getKeySpaces();
+
+    log.info("creating keyspace:{}.", keyspace);
+    if (!cassndraMetadata.containsKey(keyspace)) {
+        return createKeyspaceIfNotExists(keyspace, session, keyspaceConfigList); 
     }
+    log.info("keyspace:{} already exists, skipping.", keyspace);
+    return true;
+}
 
     @AllArgsConstructor
     public enum ReplicationStrategy {

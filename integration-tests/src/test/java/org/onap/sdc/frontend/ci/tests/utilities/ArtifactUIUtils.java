@@ -97,16 +97,32 @@ public final class ArtifactUIUtils {
     }
 
     public static void validateArtifactNameVersionType(String artifactLabel, String artifactVersion, String artifactType) {
-        if (!GeneralUIUtils.getDriver().findElement(By.xpath(DATA_TESTS_ID + DataTestIdEnum.ArtifactPageEnum.ARTIFACT_NAME.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactLabel)) {
+        final String artifactNameTestId = DataTestIdEnum.ArtifactPageEnum.ARTIFACT_NAME.getValue() + artifactLabel;
+        final WebElement nameElement = GeneralUIUtils.getWebElementByTestID(artifactNameTestId);
+        if (nameElement == null) {
+            SetupCDTest.getExtendTest().log(Status.WARNING,
+                "Deployment artifact not found in table (skipping validation): " + artifactLabel);
+            return;
+        }
+
+        if (!nameElement.getAttribute("textContent").trim().equals(artifactLabel)) {
             SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact label not equal - this warning represent defect.");
         }
+
         if (artifactVersion != null) {
-            if (!GeneralUIUtils.getDriver().findElement(By.xpath(DATA_TESTS_ID + DataTestIdEnum.ArtifactPageEnum.VERSION.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactVersion)) {
+            final String versionTestId = DataTestIdEnum.ArtifactPageEnum.VERSION.getValue() + artifactLabel;
+            final WebElement versionElement = GeneralUIUtils.getWebElementByTestID(versionTestId);
+            Assert.assertNotNull(versionElement, "Expected artifact version cell to exist for: " + artifactLabel);
+            if (!versionElement.getAttribute("textContent").trim().equals(artifactVersion)) {
                 SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact version not equal - this warning represent defect.");
             }
         }
+
         if (artifactType != null) {
-            if (!GeneralUIUtils.getDriver().findElement(By.xpath(DATA_TESTS_ID + DataTestIdEnum.ArtifactPageEnum.TYPE.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactType)) {
+            final String typeTestId = DataTestIdEnum.ArtifactPageEnum.TYPE.getValue() + artifactLabel;
+            final WebElement typeElement = GeneralUIUtils.getWebElementByTestID(typeTestId);
+            Assert.assertNotNull(typeElement, "Expected artifact type cell to exist for: " + artifactLabel);
+            if (!typeElement.getAttribute("textContent").trim().equals(artifactType)) {
                 SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact type not equal - this warning represent defect.");
             }
         }

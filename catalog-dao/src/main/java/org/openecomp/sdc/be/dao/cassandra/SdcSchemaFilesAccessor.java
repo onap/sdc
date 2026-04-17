@@ -19,16 +19,24 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
+
 import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 
-@Accessor
+@Dao
 public interface SdcSchemaFilesAccessor {
 
-    @Query("SELECT * FROM sdcartifact.sdcschemafiles WHERE SDCRELEASENUM = :sdcreleasenum AND CONFORMANCELEVEL = :conformancelevel ORDER BY timestamp DESC")
-    Result<SdcSchemaFilesData> getSpecificSdcSchemaFiles(@Param("sdcreleasenum") String sdcreleasenum,
-                                                         @Param("conformancelevel") String conformancelevel);
+    @Select(customWhereClause = "SDCRELEASENUM = :sdcreleasenum AND CONFORMANCELEVEL = :conformancelevel")
+    PagingIterable<SdcSchemaFilesData> getSpecificSdcSchemaFiles(@CqlName("sdcreleasenum") String sdcreleasenum,
+                                                         @CqlName("conformancelevel") String conformancelevel);
+
+    @Insert
+    void saveSdcSchemaFilesData(SdcSchemaFilesData data);  
+
+    // @Select(customWhereClause = "id = :id")
+    // SdcSchemaFilesData getById(@CqlName("id") String id);
 }
