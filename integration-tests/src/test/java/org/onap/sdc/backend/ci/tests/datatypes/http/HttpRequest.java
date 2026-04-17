@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +40,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.onap.sdc.backend.ci.tests.utils.rest.ItTraceContext;
 import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +178,10 @@ public class HttpRequest {
             for (Entry<String, String> entry : headers.entrySet()) {
                 httpPost.addHeader(entry.getKey(), entry.getValue());
             }
+            final String traceId = ItTraceContext.get();
+            if (traceId != null && !traceId.isBlank()) {
+                httpPost.addHeader(ItTraceContext.TRACE_HEADER, traceId);
+            }
 
             httpPost.setEntity(requestEntity);
             response = client.execute(httpPost);
@@ -309,6 +315,10 @@ public class HttpRequest {
             }
 
         }
+        final String traceId = ItTraceContext.get();
+        if (traceId != null && !traceId.isBlank()) {
+            con.setRequestProperty(ItTraceContext.TRACE_HEADER, traceId);
+        }
     }
 
     private void addHttpRequestHEaders(Map<String, String> headers, HttpURLConnection con) {
@@ -320,6 +330,10 @@ public class HttpRequest {
                 con.setRequestProperty(key, value);
             }
 
+        }
+        final String traceId = ItTraceContext.get();
+        if (traceId != null && !traceId.isBlank()) {
+            con.setRequestProperty(ItTraceContext.TRACE_HEADER, traceId);
         }
     }
 
@@ -337,21 +351,26 @@ public class HttpRequest {
     }
 
     private StringBuffer generateHttpResponse(HttpURLConnection con, Boolean isMultiPart) throws IOException {
-        StringBuffer response = new StringBuffer();
-        StringWriter writer = new StringWriter();
-            if (isMultiPart) {
-                IOUtils.copy((con.getInputStream()), writer, Charset.forName("UTF-8"));
-                response = writer.getBuffer();
-            } else {
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-					String inputLine;
-					while ((inputLine = in.readLine()) != null) {
-						response.append(inputLine);
-					}
-				}
+        try (InputStream stream = getResponseStream(con)) {
+            if (stream == null) {
+                return new StringBuffer();
             }
 
-        return response;
+            if (isMultiPart) {
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+                return writer.getBuffer();
+            }
+
+            StringBuffer response = new StringBuffer();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+            }
+            return response;
+        }
     }
 
     private void setHttpsResponseToObject(RestResponse restResponse, HttpsURLConnection con, int responseCode, StringBuffer response) throws IOException {
@@ -368,21 +387,39 @@ public class HttpRequest {
     }
 
     private StringBuffer generateHttpsResponse(HttpsURLConnection con, Boolean isMultiPart) throws IOException {
-        StringBuffer response = new StringBuffer();
-        StringWriter writer = new StringWriter();
-		if (isMultiPart) {
-			IOUtils.copy((con.getInputStream()), writer, Charset.forName("UTF-8"));
-			response = writer.getBuffer();
-		} else {
+        try (InputStream stream = getResponseStream(con)) {
+            if (stream == null) {
+                return new StringBuffer();
+            }
 
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-				String inputLine;
-				while ((inputLine = in.readLine()) != null) {
-					response.append(inputLine);
-				}
-			}
-		}
-        return response;
+            if (isMultiPart) {
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
+                return writer.getBuffer();
+            }
+
+            StringBuffer response = new StringBuffer();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+            }
+            return response;
+        }
+    }
+
+    private InputStream getResponseStream(HttpURLConnection con) throws IOException {
+        try {
+            return con.getInputStream();
+        } catch (IOException e) {
+            // HttpURLConnection throws for non-2xx responses; payload is on error stream.
+            InputStream errorStream = con.getErrorStream();
+            if (errorStream != null) {
+                return errorStream;
+            }
+            throw e;
+        }
     }
 
 }

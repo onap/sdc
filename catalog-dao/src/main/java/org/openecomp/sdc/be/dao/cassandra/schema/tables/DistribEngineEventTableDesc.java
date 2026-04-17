@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,12 +47,12 @@ public class DistribEngineEventTableDesc extends DistribBaseEventTableDesc {
     @AllArgsConstructor
     enum DEEFieldsDescription {
         // @formatter:off
-        CONSUMER_ID("consumer_id", DataType.varchar(), false),
-		ROLE("role", DataType.varchar(), false),
-		D_ENV("d_env", DataType.varchar(), false),
-		API_KEY("api_key", DataType.varchar(), false),
-		DSTATUS_TOPIC("dstatus_topic", DataType.varchar(), false),
-		DNOTIF_TOPIC("dnotif_topic", DataType.varchar(), false);
+        CONSUMER_ID("consumer_id", DataTypes.TEXT, false),
+		ROLE("role", DataTypes.TEXT, false),
+		D_ENV("d_env", DataTypes.TEXT, false),
+		API_KEY("api_key", DataTypes.TEXT, false),
+		DSTATUS_TOPIC("dstatus_topic", DataTypes.TEXT, false),
+		DNOTIF_TOPIC("dnotif_topic",DataTypes.TEXT, false);
         // @formatter:on
 
         private final String name;

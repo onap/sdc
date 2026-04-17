@@ -21,6 +21,7 @@ package org.openecomp.sdc.action.dao.impl;
 
 import org.openecomp.sdc.action.dao.ActionDao;
 import org.openecomp.sdc.action.dao.ActionDaoFactory;
+import org.openecomp.sdc.action.dao.ActionDaoImpl;
 
 public class ActionDaoFactoryImpl extends ActionDaoFactory {
 

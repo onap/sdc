@@ -19,25 +19,24 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
+
 import java.util.HashSet;
 import java.util.Set;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 
 public class NotificationHandler {
+
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
     public void registerNotificationForUserOnEntity(String user, String entityId) {
         Set<String> userSet = new HashSet<>();
         userSet.add(user);
-        NoSqlDbFactory.getInstance().createInterface().getMappingManager().createAccessor(NotificationAccessor.class)
-            .updateNotificationSubscription(userSet, entityId);
-    }
 
-    @Accessor
-    interface NotificationAccessor {
+        String cql = "UPDATE dox.notification_subscribers SET subscribers = subscribers + ? WHERE entity_id = ?";
+        SimpleStatement statement = SimpleStatement.newInstance(cql, userSet, entityId);
 
-        @Query("UPDATE dox.notification_subscribers SET subscribers = subscribers + ? where " + "entity_id = ?")
-        void updateNotificationSubscription(Set<String> users, String entityId);
+        session.execute(statement);
     }
 }

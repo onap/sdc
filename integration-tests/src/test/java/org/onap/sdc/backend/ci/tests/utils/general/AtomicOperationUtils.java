@@ -182,7 +182,13 @@ public final class AtomicOperationUtils {
         try {
             User defaultUser = ElementFactory.getDefaultUser(userRole);
             RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
-
+            System.out.println("[createResourceByResourceDetails] HTTP status="
+                + resourceResp.getErrorCode());
+            if (validateState && resourceResp.getErrorCode() != ResourceRestUtils.STATUS_CODE_CREATED) {
+                    System.out.println("[createResourceByResourceDetails][ERROR] Create resource failed");
+                    System.out.println("[createResourceByResourceDetails][ERROR] Response="
+                                         + resourceResp.getResponse());
+}
             if (validateState) {
                 assertEquals("Create resource failed with error: " + resourceResp.getResponse(),
                     ResourceRestUtils.STATUS_CODE_CREATED, (int) resourceResp.getErrorCode());

@@ -52,7 +52,7 @@ public class ActionTest {
         action.setActionUuId("actionuuid");
         action.setActionInvariantUuId("actioninvariantuuid");
         action.setName("NAME");
-        action.setTimestamp(new Date());
+        action.setTimestamp(new Date().toInstant());
         action.setUser("User");
         action.setStatus(ActionStatus.Available);
         action.setVersion("11.10");

@@ -27,17 +27,17 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERN
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
 
-import com.datastax.driver.core.exceptions.NoHostAvailableException;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
 import org.openecomp.core.dao.impl.CassandraBaseDao;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.action.dao.ActionArtifactDao;
+import org.openecomp.sdc.action.dao.ActionArtifactDaoInternal;
+import org.openecomp.sdc.action.dao.ActionArtifactMapper;
+import org.openecomp.sdc.action.dao.ActionArtifactMapperBuilder;
 import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.logging.CategoryLogLevel;
@@ -47,17 +47,23 @@ import org.openecomp.sdc.action.util.ActionUtil;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import com.datastax.oss.driver.api.core.AllNodesFailedException;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+
 public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity> implements ActionArtifactDao {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static Mapper<ActionArtifactEntity> mapper = noSqlDb.getMappingManager().mapper(ActionArtifactEntity.class);
-    private static ActionArtifactAccessor accessor = noSqlDb.getMappingManager().createAccessor(ActionArtifactAccessor.class);
+    private final ActionArtifactDaoInternal dao;
+
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    @Override
-    protected Mapper<ActionArtifactEntity> getMapper() {
-        return mapper;
+    public ActionArtifactDaoImpl(CqlSession session) {
+        super(session);
+        ActionArtifactMapper mapper = new ActionArtifactMapperBuilder(session).build();
+        this.dao = mapper.actionArtifactDao();
     }
+
+
 
     @Override
     protected Object[] getKeys(ActionArtifactEntity entity) {
@@ -77,7 +83,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
             this.create(data.toEntity());
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-        } catch (NoHostAvailableException noHostAvailableException) {
+        } catch (AllNodesFailedException noHostAvailableException) {
             logGenericException(noHostAvailableException);
             throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
         }
@@ -90,17 +96,18 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
         ActionArtifact actionArtifact = null;
         try {
             ActionUtil.actionLogPreProcessor(ActionSubOperation.GET_ARTIFACT_BY_ARTIFACTUUID, TARGET_ENTITY_DB);
-            Result<ActionArtifactEntity> result = null;
-            result = accessor.getArtifactByUuId(effectiveVersion, artifactUuId);
+
+            Optional<ActionArtifactEntity> optionalEntity = dao.getArtifactByUuId(effectiveVersion, artifactUuId);
+
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-            List<ActionArtifactEntity> artifactEntities = result.all();
-            if (artifactEntities != null && !artifactEntities.isEmpty()) {
-                ActionArtifactEntity artifactEntity = artifactEntities.get(0);
-                actionArtifact = artifactEntity.toDto();
+
+            if (optionalEntity.isPresent()) {
+                actionArtifact = optionalEntity.get().toDto();
             }
-        } catch (NoHostAvailableException noHostAvailableException) {
-            logGenericException(noHostAvailableException);
+
+        } catch (AllNodesFailedException ex) {
+            logGenericException(ex);
             throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
         }
         log.debug(" exit downloadArtifact with artifactUUID= " + artifactUuId);
@@ -115,7 +122,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
             this.update(data.toEntity());
             ActionUtil.actionLogPostProcessor(COMPLETE, null, "", false);
             log.metrics("");
-        } catch (NoHostAvailableException noHostAvailableException) {
+        } catch (AllNodesFailedException noHostAvailableException) {
             logGenericException(noHostAvailableException);
             throw new ActionException(ACTION_INTERNAL_SERVER_ERR_CODE, ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG);
         }
@@ -129,10 +136,21 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
         log.error(exception.getMessage());
     }
 
-    @Accessor
-    interface ActionArtifactAccessor {
+    @Override
+    protected String getTableName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTableName'");
+    }
 
-        @Query("SELECT * FROM action_artifact WHERE effective_version <= ? and artifactuuid = ? limit 1")
-        Result<ActionArtifactEntity> getArtifactByUuId(int effectiveVersion, String artifactUuId);
+    @Override
+    protected String[] getColumns(ActionArtifactEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getColumns'");
+    }
+
+    @Override
+    protected Object[] getValues(ActionArtifactEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getValues'");
     }
 }

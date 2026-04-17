@@ -19,26 +19,25 @@
  */
 package org.openecomp.sdc.versioning.dao.types;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(keyspace = "dox", name = "version_history")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@CqlName("version_history")
 public class VersionHistoryEntity {
 
     @PartitionKey
-    @Column(name = "entity_id")
-    @Frozen
+    @CqlName("entity_id")
     private VersionableEntityId entityId;
-    @Column(name = "active_version")
-    @Frozen
+    @CqlName("active_version")
     private Version version;
     private String user;
     private String description;

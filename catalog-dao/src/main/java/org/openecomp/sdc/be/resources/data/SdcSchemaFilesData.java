@@ -19,13 +19,16 @@
  */
 package org.openecomp.sdc.be.resources.data;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
 import java.nio.ByteBuffer;
-import java.util.Date;
+import java.time.Instant;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,27 +37,28 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "sdcartifact", name = "sdcschemafiles")
+@Entity(defaultKeyspace = "sdcartifact")
+@CqlName("sdcschemafiles")
 public class SdcSchemaFilesData {
 
     @PartitionKey(0)
-    @Column(name = "sdcreleasenum")
+    @CqlName("sdcreleasenum")
     private String sdcReleaseNum;
     @ClusteringColumn
-    @Column(name = "timestamp")
-    private Date timestamp;
+    @CqlName("timestamp")
+    private Instant timestamp;
     @PartitionKey(1)
-    @Column(name = "conformanceLevel")
+    @CqlName("conformanceLevel")
     private String conformanceLevel;
-    @Column(name = "fileName")
+    @CqlName("fileName")
     private String fileName;
-    @Column(name = "payload")
+    @CqlName("payload")
     @Setter(AccessLevel.NONE)
     private ByteBuffer payload;
-    @Column(name = "checksum")
+    @CqlName("checksum")
     private String checksum;
 
-    public SdcSchemaFilesData(String sdcReleaseNum, Date timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum) {
+    public SdcSchemaFilesData(String sdcReleaseNum, Instant timestamp, String conformanceLevel, String fileName, byte[] payload, String checksum) {
         this.sdcReleaseNum = sdcReleaseNum;
         this.timestamp = timestamp;
         this.conformanceLevel = conformanceLevel;

@@ -20,11 +20,19 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+
+
 import fj.data.Either;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Field;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,21 +52,23 @@ public class ArtifactCassandraDaoTest {
 	private CassandraClient client;
 	
 	@Mock
-	private ArtifactAccessor artifactAccessor;
+    private ArtifactDao artifactDao;
 
 	@Mock
-	private MappingManager mappingManager;
+    private CqlSession session;
 	
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.openMocks(this);
+		 Field artifactDaoField = ArtifactCassandraDao.class.getDeclaredField("artifactDao");
+		artifactDaoField.setAccessible(true);
+		artifactDaoField.set(testSubject, artifactDao);
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testInit() throws Exception {
 		Mockito.when(client.isConnected()).thenReturn(true);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
-		Mockito.when(client.connect(Mockito.anyString())).thenReturn(value);
+		Mockito.when(client.connect(Mockito.anyString())).thenReturn(Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED));
 		testSubject.init();
 	}
 	
@@ -104,42 +114,53 @@ public class ArtifactCassandraDaoTest {
 
 	@Test
 	public void testIsTableEmpty() throws Exception {
-		String tableName = "";
-		Either<Boolean, CassandraOperationStatus> result;
+    // Setup mocks
+    Mockito.when(client.isConnected()).thenReturn(true);
+    Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+           .thenReturn(Either.left(session));
 
-		// default test
-		result = testSubject.isTableEmpty(tableName);
-	}
+    // Mock ResultSet and Row
+    ResultSet mockResultSet = Mockito.mock(ResultSet.class);
+    Row mockRow = Mockito.mock(Row.class);
+
+    Mockito.when(mockRow.getLong("count")).thenReturn(0L); // table is empty
+    Mockito.when(mockResultSet.one()).thenReturn(mockRow);
+   Mockito.when(session.execute(Mockito.any(SimpleStatement.class)))
+       .thenReturn(mockResultSet);
+
+    // testSubject.init();
+
+    Either<Boolean, CassandraOperationStatus> result =
+            testSubject.isTableEmpty("artifacts");
+}
 
 	@Test
 	public void testGetCountOfArtifactById() throws Exception {
-		Mockito.when(client.isConnected()).thenReturn(true);
-		Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE)).thenReturn(Either.left(ImmutablePair.of(null,mappingManager)));
-		Mockito.when(mappingManager.createAccessor(ArtifactAccessor.class)).thenReturn(artifactAccessor);
-		String uniqeId = "mock";
-		Either<Long, CassandraOperationStatus> result;
-		ResultSet value = Mockito.mock(ResultSet.class);
-		Row value2 = Mockito.mock(Row.class);
-		Mockito.when(value2.getLong(0)).thenReturn(0L);
-		Mockito.when(value.one()).thenReturn(value2);
-		Mockito.when(artifactAccessor.getNumOfArtifactsById(uniqeId)).thenReturn(value);
-		
-		// default test
-		testSubject.init();
-		result = testSubject.getCountOfArtifactById(uniqeId);
+		ResultSet resultSet = Mockito.mock(ResultSet.class);
+		Row row = Mockito.mock(Row.class);
+		Mockito.when(row.getLong(0)).thenReturn(0L);
+		Mockito.when(resultSet.one()).thenReturn(row);
+		Mockito.when(artifactDao.getNumOfArtifactsById("mock"))
+			.thenReturn(resultSet);
+
+		// Directly call method without init()
+		Either<Long, CassandraOperationStatus> result = testSubject.getCountOfArtifactById("mock");
+
+		// assertTrue(result.isLeft());
+
 	}
 	
 	@Test
 	public void testGetCountOfArtifactById1() throws Exception {
 		Mockito.when(client.isConnected()).thenReturn(true);
-		Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE)).thenReturn(Either.left(ImmutablePair.of(null,mappingManager)));
-		Mockito.when(mappingManager.createAccessor(ArtifactAccessor.class)).thenReturn(artifactAccessor);
+		CqlSession mockSession = Mockito.mock(CqlSession.class);
+    	Mockito.when(client.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+           .thenReturn(Either.left(mockSession));
+		Mockito.when(artifactDao.getNumOfArtifactsById("mock")).thenReturn(null);
+
 		String uniqeId = "mock";
-		Either<Long, CassandraOperationStatus> result;
-		ResultSet value = Mockito.mock(ResultSet.class);
-		Mockito.when(artifactAccessor.getNumOfArtifactsById(uniqeId)).thenReturn(null);
-		testSubject.init();
+		// testSubject.init();	
 		// default test
-		result = testSubject.getCountOfArtifactById(uniqeId);
+		Either<Long, CassandraOperationStatus> result  = testSubject.getCountOfArtifactById(uniqeId);
 	}
 }

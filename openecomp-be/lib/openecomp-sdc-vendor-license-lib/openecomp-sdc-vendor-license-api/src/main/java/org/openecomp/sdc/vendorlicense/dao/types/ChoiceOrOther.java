@@ -15,12 +15,13 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.Transient;
-import com.datastax.driver.mapping.annotations.UDT;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-@UDT(keyspace = "dox", name = "choice_or_other")
+@Entity
 public class ChoiceOrOther<E extends Enum<E>> {
 
     public static final String OTHER_ENUM_VALUE = "Other";

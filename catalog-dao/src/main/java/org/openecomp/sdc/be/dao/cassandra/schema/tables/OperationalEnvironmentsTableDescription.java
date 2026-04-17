@@ -19,7 +19,8 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
-import com.datastax.driver.core.DataType;
+import com.datastax.oss.driver.api.core.type.DataType;
+import com.datastax.oss.driver.api.core.type.DataTypes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class OperationalEnvironmentsTableDescription implements ITableDescriptio
     @Override
     public List<ImmutablePair<String, DataType>> primaryKeys() {
         List<ImmutablePair<String, DataType>> keys = new ArrayList<>();
-        keys.add(new ImmutablePair<>(ENVIRONMENT_ID, DataType.varchar()));
+        keys.add(new ImmutablePair<>(ENVIRONMENT_ID, DataTypes.TEXT));
         return keys;
     }
 
@@ -72,14 +73,14 @@ public class OperationalEnvironmentsTableDescription implements ITableDescriptio
     enum SdcOperationalEnvironmentFieldsDescription {
         //there is also PK field "environmentID"
         // @formatter:off
-        TENANT("tenant", DataType.varchar(), false),
-        IS_PRODUCTION("is_production", DataType.cboolean(), false),
-        ECOMP_WORKLOAD_CONTEXT("ecomp_workload_context", DataType.varchar(), false),
-        DMAAP_UEB_ADDRESS("dmaap_ueb_address", DataType.set(DataType.varchar()), false),
-        UEB_API_KEY("ueb_api_key",DataType.varchar(), false),
-        UEB_SECRET_KEY("ueb_secret_key",DataType.varchar(), false),
-        STATUS("status",DataType.varchar() ,true),
-        LAST_MODIFIED("last_modified",DataType.timestamp() ,false);
+        TENANT("tenant", DataTypes.TEXT, false),
+        IS_PRODUCTION("is_production", DataTypes.BOOLEAN, false),
+        ECOMP_WORKLOAD_CONTEXT("ecomp_workload_context", DataTypes.TEXT, false),
+        DMAAP_UEB_ADDRESS("dmaap_ueb_address", DataTypes.setOf(DataTypes.TEXT), false),
+        UEB_API_KEY("ueb_api_key",DataTypes.TEXT, false),
+        UEB_SECRET_KEY("ueb_secret_key",DataTypes.TEXT, false),
+        STATUS("status",DataTypes.TEXT ,true),
+        LAST_MODIFIED("last_modified",DataTypes.TIMESTAMP ,false);
         // @formatter:on
 
         private final String fieldName;

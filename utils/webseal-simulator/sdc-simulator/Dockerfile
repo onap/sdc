@@ -16,7 +16,6 @@ ENV JETTY_GROUP=onap
 RUN mkdir -p $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 
 USER onap
-
 #Download jetty
 RUN wget -q https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty-distribution.version}/jetty-distribution-${jetty-distribution.version}.tar.gz --tries=3 -O $JETTY_FOLDER/jetty.tar.gz && \
         tar xz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
@@ -45,7 +44,6 @@ COPY --chown=onap:onap files/org.onap.sdc.p12 $JETTY_FOLDER/etc/
 
 ADD --chown=onap:onap WSSimulator*.war $JETTY_FOLDER/webapps/
 COPY --chown=onap:onap startup.sh $JETTY_FOLDER/
-
 RUN chmod 770 $JETTY_FOLDER/startup.sh
 
 ENTRYPOINT [ "sh", "-c", "${JETTY_HOME}/startup.sh"]

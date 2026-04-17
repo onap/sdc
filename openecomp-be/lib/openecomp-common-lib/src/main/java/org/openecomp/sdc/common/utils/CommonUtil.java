@@ -56,15 +56,20 @@ public class CommonUtil {
      * @throws IOException when the zip could not be read
      */
     public static FileContentHandler validateAndUploadFileContent(final OnboardingTypesEnum type, final byte[] uploadedFileData) throws IOException {
+         System.out.println("[DEBUG] Entered validateAndUploadFileContent, type=" + type);
         final Pair<FileContentHandler, List<String>> pair;
         try {
             pair = getFileContentMapFromOrchestrationCandidateZip(uploadedFileData);
         } catch (final ZipException e) {
+            System.out.println("[DEBUG] ZipException while reading uploaded file: " + e.getMessage());
             throw new IOException(e);
         }
+        System.out.println("[DEBUG] ZIP read complete, files=" + pair.getLeft().getFileList() + ", folders=" + pair.getRight());
         if (isFileOriginFromZip(type.toString())) {
+            System.out.println("[DEBUG] File is from ZIP, validating folders...");
             validateNoFolders(pair.getRight());
         }
+        System.out.println("[DEBUG] Returning FileContentHandler with files=" + pair.getLeft().getFileList());
         return pair.getLeft();
     }
 
@@ -77,16 +82,21 @@ public class CommonUtil {
      * @throws ZipException when there was a problem during the zip reading
      */
     public static Pair<FileContentHandler, List<String>> getFileContentMapFromOrchestrationCandidateZip(byte[] uploadFileData) throws ZipException {
+        System.out.println("[DEBUG] Entered getFileContentMapFromOrchestrationCandidateZip");
         final Map<String, byte[]> zipFileMap = ZipUtils.readZip(uploadFileData, true);
+        System.out.println("[DEBUG] readZip returned files=" + zipFileMap.keySet());
         final List<String> folderList = new ArrayList<>();
         final FileContentHandler mapFileContent = new FileContentHandler();
         zipFileMap.forEach((key, value) -> {
             if (value == null) {
                 folderList.add(key);
+                System.out.println("[DEBUG] Found directory in ZIP: " + key);
             } else {
                 mapFileContent.addFile(key, value);
+                System.out.println("[DEBUG] Added file to FileContentHandler: " + key + ", size=" + value.length);
             }
         });
+        System.out.println("[DEBUG] getFileContentMapFromOrchestrationCandidateZip returning files=" + mapFileContent.getFileList() + ", folders=" + folderList);
         return new ImmutablePair<>(mapFileContent, folderList);
     }
 

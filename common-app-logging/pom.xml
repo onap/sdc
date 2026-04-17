@@ -86,6 +86,10 @@
           <artifactId>commons-collections</artifactId>
           <groupId>commons-collections</groupId>
         </exclusion>
+        <exclusion>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 

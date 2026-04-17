@@ -19,7 +19,9 @@
  */
 package org.openecomp.sdcrests.item.types;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import java.time.Instant;
 import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,8 +39,10 @@ public class VersionDto {
     private String baseId;
     private VersionStatus status;
     private VersionState state;
-    private Date creationTime;
-    private Date modificationTime;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Instant creationTime;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Instant modificationTime;
     private Map<String, Object> additionalInfo;
 
     public void setId(final String id) {

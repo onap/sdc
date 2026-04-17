@@ -90,10 +90,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Explicitly added for Jersey Bean Validation support-->
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate.validator.version}</version>
+            <version>5.4.3.Final</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -174,6 +175,12 @@
             <artifactId>jcabi-aspects</artifactId>
             <version>${jcabi.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -295,6 +302,10 @@
                     <artifactId>commons-collections</artifactId>
                     <groupId>commons-collections</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -323,16 +334,31 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-mapping</artifactId>
+            <groupId>com.datastax.oss</groupId>
+            <artifactId>java-driver-mapper-runtime</artifactId>
             <version>${cassandra.driver.version}</version>
-            <scope>compile</scope>
-            <exclusions>
+             <exclusions>
                 <exclusion>
-                    <groupId>com.github.jnr</groupId>
-                    <artifactId>jnr-posix</artifactId>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
                 </exclusion>
-            </exclusions>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                 </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+        </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

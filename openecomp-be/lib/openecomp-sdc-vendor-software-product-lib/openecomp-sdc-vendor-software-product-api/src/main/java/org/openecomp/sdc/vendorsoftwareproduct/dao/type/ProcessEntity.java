@@ -19,36 +19,37 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import java.nio.ByteBuffer;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Table(keyspace = "dox", name = "vsp_process")
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+@Entity
+@CqlName("vsp_process")
 public class ProcessEntity implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "Vendor Software Product Process";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "component_id")
+    @CqlName("component_id")
     private String componentId;
     @ClusteringColumn(value = 1)
-    @Column(name = "process_id")
+    @CqlName("process_id")
     private String id;
     private String name;
     private String description;
-    @Column(name = "type")
+    @CqlName("type")
     private ProcessType type;
-    @Column(name = "artifact_name")
+    @CqlName("artifact_name")
     private String artifactName;
     private ByteBuffer artifact;
 
@@ -216,4 +217,6 @@ public class ProcessEntity implements VersionableEntity {
         return "ProcessEntity{" + "vspId='" + vspId + '\'' + ", version=" + version + ", componentId='" + componentId + '\'' + ", id='" + id + '\''
             + ", name='" + name + '\'' + ", description='" + description + '\'' + ", type=" + type + ", artifactName='" + artifactName + '\'' + '}';
     }
+
+   
 }

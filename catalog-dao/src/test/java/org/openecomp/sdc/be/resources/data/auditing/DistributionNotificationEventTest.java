@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.OperationalEnvAuditDat
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -186,7 +187,7 @@ public class DistributionNotificationEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		DistributionNotificationEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -197,7 +198,7 @@ public class DistributionNotificationEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		DistributionNotificationEvent testSubject;
-		Date timestamp1 = null;
+		Instant timestamp1 = null;
 
 		// default test
 		testSubject = createTestSubject();

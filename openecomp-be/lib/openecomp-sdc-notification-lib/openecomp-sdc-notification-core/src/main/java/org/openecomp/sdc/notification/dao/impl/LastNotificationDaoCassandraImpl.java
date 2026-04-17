@@ -19,29 +19,29 @@
  */
 package org.openecomp.sdc.notification.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.LastNotificationDao;
 import org.openecomp.sdc.notification.dao.types.LastSeenNotificationEntity;
 
-public class LastNotificationDaoCassandraImpl extends CassandraBaseDao<LastSeenNotificationEntity> implements LastNotificationDao {
+public class LastNotificationDaoCassandraImpl extends CassandraBaseDao<LastSeenNotificationEntity>
+        implements LastNotificationDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static final Mapper<LastSeenNotificationEntity> mapper = noSqlDb.getMappingManager().mapper(LastSeenNotificationEntity.class);
-    private static final LastNotificationAccessor accessor = noSqlDb.getMappingManager().createAccessor(LastNotificationAccessor.class);
+    private final CqlSession session;
 
-    @Override
-    protected Mapper<LastSeenNotificationEntity> getMapper() {
-        return mapper;
+    public LastNotificationDaoCassandraImpl(CqlSession session) {
+        super(session);
+        this.session = session;
     }
 
     @Override
@@ -51,31 +51,56 @@ public class LastNotificationDaoCassandraImpl extends CassandraBaseDao<LastSeenN
 
     @Override
     public Collection<LastSeenNotificationEntity> list(LastSeenNotificationEntity entity) {
-        return accessor.list(entity.getOwnerId()).all();
+        Objects.requireNonNull(entity.getOwnerId());
+        String query = "SELECT owner_id, event_id FROM last_notification WHERE owner_id = ?";
+        ResultSet rs = session.execute(SimpleStatement.builder(query)
+                .addPositionalValue(entity.getOwnerId())
+                .build());
+
+        List<LastSeenNotificationEntity> result = new ArrayList<>();
+        for (Row row : rs) {
+            result.add(new LastSeenNotificationEntity(
+                    row.getString("owner_id"),
+                    row.getUuid("event_id")
+            ));
+        }
+        return result;
     }
 
     @Override
     public UUID getOwnerLastEventId(String ownerId) {
-        ResultSet ownerLastEventId = accessor.getOwnerLastEventId(ownerId);
-        Row one = ownerLastEventId.one();
-        return one != null ? one.getUUID("event_id") : null;
+        Objects.requireNonNull(ownerId);
+        String query = "SELECT event_id FROM last_notification WHERE owner_id = ?";
+        ResultSet rs = session.execute(SimpleStatement.builder(query)
+                .addPositionalValue(ownerId)
+                .build());
+
+        Row row = rs.one();
+        return row != null ? row.getUuid("event_id") : null;
     }
 
     @Override
     public void persistOwnerLastEventId(String ownerId, UUID eventId) {
-        accessor.updateOwnerLastEventId(eventId, ownerId);
+        Objects.requireNonNull(ownerId);
+        Objects.requireNonNull(eventId);
+        String query = "UPDATE last_notification SET event_id = ? WHERE owner_id = ?";
+        session.execute(SimpleStatement.builder(query)
+                .addPositionalValues(eventId, ownerId)
+                .build());
     }
 
-    @Accessor
-    interface LastNotificationAccessor {
+    @Override
+    protected String getTableName() {
+        return "last_notification";
+    }
 
-        @Query("select * from last_notification where owner_id=?")
-        Result<LastSeenNotificationEntity> list(String ownerId);
+    @Override
+    protected String[] getColumns(LastSeenNotificationEntity entity) {
+        return new String[]{"owner_id", "event_id"};
+    }
 
-        @Query("select event_id from last_notification where owner_id=?")
-        ResultSet getOwnerLastEventId(String ownerId);
-
-        @Query("update last_notification set event_id=? where owner_id=?")
-        ResultSet updateOwnerLastEventId(UUID eventId, String ownerId);
+    @Override
+    protected Object[] getValues(LastSeenNotificationEntity entity) {
+        return new Object[]{entity.getOwnerId(), entity.getLastEventId()};
     }
 }

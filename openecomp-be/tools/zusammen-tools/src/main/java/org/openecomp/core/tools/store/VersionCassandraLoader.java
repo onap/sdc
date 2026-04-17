@@ -19,59 +19,72 @@
  */
 package org.openecomp.core.tools.store;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import com.datastax.driver.mapping.annotations.QueryParameters;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+
 import com.google.common.collect.Sets;
-import java.util.Date;
-import java.util.Set;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.nosqldb.impl.cassandra.CassandraSessionFactory;
 import org.openecomp.core.tools.store.zusammen.datatypes.ElementEntity;
 import org.openecomp.core.tools.store.zusammen.datatypes.VersionEntity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
 public class VersionCassandraLoader {
 
-    private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static Mapper<VersionEntity> mapper = noSqlDb.getMappingManager().mapper(VersionEntity.class);
-    private static VersionAccessor accessor = noSqlDb.getMappingManager().createAccessor(VersionAccessor.class);
+    private static final CqlSession session = CassandraSessionFactory.getSession();
 
     public void insertElementToVersion(ElementEntity elementEntity) {
-        accessor.addElements(Sets.newHashSet(elementEntity.getElementId()), elementEntity.getSpace(), elementEntity.getItemId(),
-            elementEntity.getVersionId());
+        String cql = "UPDATE zusammen_dox.version_elements SET element_ids = element_ids + ? WHERE space=? AND item_id=? AND version_id=?";
+        BoundStatement stmt = session.prepare(cql)
+                .bind(Sets.newHashSet(elementEntity.getElementId()), elementEntity.getSpace(), elementEntity.getItemId(), elementEntity.getVersionId());
+        session.execute(stmt);
     }
 
     public void insertVersion(VersionEntity versionEntity) {
-        accessor.insertVersion(versionEntity.getSpace(), versionEntity.getItemId(), versionEntity.getVersionId(), versionEntity.getBaseVersionId(),
-            versionEntity.getCreationTime(), versionEntity.getInfo(), versionEntity.getModificationTime(), versionEntity.getRelations());
+        String cql = "INSERT INTO zusammen_dox.version " +
+                "(space, item_id, version_id, base_version_id, creation_time, info, modification_time, relations) " +
+                "VALUES (?,?,?,?,?,?,?,?)";
+        BoundStatement stmt = session.prepare(cql)
+                .bind(
+                        versionEntity.getSpace(),
+                        versionEntity.getItemId(),
+                        versionEntity.getVersionId(),
+                        versionEntity.getBaseVersionId(),
+                        versionEntity.getCreationTime(),
+                        versionEntity.getInfo(),
+                        versionEntity.getModificationTime(),
+                        versionEntity.getRelations()
+                );
+        session.execute(stmt);
     }
 
-    public Result<VersionEntity> list() {
-        return accessor.getAll();
+    public List<VersionEntity> list() {
+        String cql = "SELECT * FROM zusammen_dox.version";
+        ResultSet rs = session.execute(cql);
+        List<VersionEntity> list = new ArrayList<>();
+        for (Row row : rs) {
+            VersionEntity entity = new VersionEntity();
+            entity.setSpace(row.getString("space"));
+            entity.setItemId(row.getString("item_id"));
+            entity.setVersionId(row.getString("version_id"));
+            entity.setBaseVersionId(row.getString("base_version_id"));
+            entity.setCreationTime(row.getInstant("creation_time") != null ? row.getInstant("creation_time") : null);
+            entity.setModificationTime(row.getInstant("modification_time") != null ? row.getInstant("modification_time") : null);
+            entity.setInfo(row.getString("info"));
+            entity.setRelations(row.getString("relations"));
+            list.add(entity);
+        }
+        return list;
     }
 
-    public ResultSet listItemVersion() {
-        return accessor.getAllItemVersion();
-    }
-
-    @Accessor
-    interface VersionAccessor {
-
-        @Query("UPDATE zusammen_dox.version_elements SET element_ids=element_ids+? " + "WHERE space=? AND item_id=? AND version_id=?")
-        void addElements(Set<String> elementIds, String space, String itemId, String versionId);
-
-        @Query("insert into zusammen_dox.version (space,item_id,version_id,base_version_id,creation_time,info,modification_time,relations) values (?,?,?,?,?,?,?,?)")
-        void insertVersion(String space, String itemId, String versionId, String baseVersionId, Date createTime, String info, Date modificationTime,
-                           String relations);
-
-        @Query("select * from zusammen_dox.version ")
-        @QueryParameters(fetchSize = 400)
-        Result<VersionEntity> getAll();
-
-        @Query("select space,item_id,version_id from zusammen_dox.version ")
-        ResultSet getAllItemVersion();
+    public List<Row> listItemVersion() {
+        String cql = "SELECT space, item_id, version_id FROM zusammen_dox.version";
+        ResultSet rs = session.execute(cql);
+        return rs.all();
     }
 }

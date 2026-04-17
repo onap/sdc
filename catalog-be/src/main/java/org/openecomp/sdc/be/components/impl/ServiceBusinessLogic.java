@@ -672,25 +672,35 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
      * @return Either<Service, responseFormat>
      */
     public Either<Service, ResponseFormat> createService(Service service, User user) {
+        System.out.println("[DEBUG] Entering createService");
         // get user details
         user = validateUser(user, "Create Service", service, AuditingActionEnum.CREATE_RESOURCE, false);
+        System.out.println("[DEBUG] User after validateUser: " + (user != null ? user.getUserId() : "null"));
+
         log.debug("User returned from validation: {}", user);
         // validate user role
         validateUserRole(user, service, new ArrayList<>(), AuditingActionEnum.CREATE_RESOURCE, null);
+        System.out.println("[DEBUG] User role validated");
+
         service.setCreatorUserId(user.getUserId());
         // warn on overridden fields
         checkFieldsForOverideAttempt(service);
+        System.out.println("[DEBUG] Checked for overridden fields");
         // enrich object
         log.debug("enrich service with version and state");
+        System.out.println("[DEBUG] Enriching service with version and state");
         service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setVersion(INITIAL_VERSION);
         service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
         service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
         service.setComponentType(ComponentTypeEnum.SERVICE);
+
         Either<Service, ResponseFormat> createServiceResponse = validateServiceBeforeCreate(service, user, AuditingActionEnum.CREATE_RESOURCE);
+        System.out.println("[DEBUG] Result of validateServiceBeforeCreate: " + (createServiceResponse.isRight() ? "RIGHT" : "LEFT"));
         if (createServiceResponse.isRight()) {
             return createServiceResponse;
         }
+        System.out.println("[DEBUG] Proceeding to createServiceByDao");
         return createServiceByDao(service, user).left().bind(c -> updateCatalog(c, ChangeTypeEnum.LIFECYCLE).left().map(Service.class::cast));
     }
 
@@ -702,35 +712,49 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
+       System.out.println("[DEBUG] Entering createServiceByDao for service: " + service.getName());
         log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
         Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
         if (lockResult.isRight()) {
+            System.out.println("[DEBUG] Lock failed for service: " + service.getName());
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         }
+        System.out.println("[DEBUG] Lock acquired for service: " + service.getName());
         log.debug("System name locked is {}, status = {}", service.getSystemName(), lockResult);
         try {
+            System.out.println("[DEBUG] Creating mandatory artifacts and API artifacts");
             createMandatoryArtifactsData(service, user);
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
 
             if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
+                System.out.println("[DEBUG] Handling substitute/generic type for service");
                 final Resource genericType = fetchAndSetDerivedFromGenericType(service);
+                System.out.println("[DEBUG] Fetched generic type: " + (genericType != null ? genericType.getName() : "null"));
+
                 generatePropertiesFromGenericType(service, genericType);
+                System.out.println("[DEBUG] Generated properties from generic type");
                 if (Constants.DEFAULT_MODEL_NAME.equals(service.getModel()) || service.getModel() == null) {
                     generateAndAddInputsFromGenericTypeProperties(service, genericType);
+                    System.out.println("[DEBUG] Added inputs from generic type properties");
                 }
             }
+            System.out.println("[DEBUG] Calling beforeCreate hook");
             beforeCreate(service);
+            System.out.println("[DEBUG] Sending service to ToscaOperationFacade");
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
+            
             if (dataModelResponse.isLeft()) {
+                System.out.println("[DEBUG] Service '" + service.getName() + "' created successfully in DAO");
                 log.debug("Service '{}' created successfully", service.getName());
                 ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
                 componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
                 ASDCKpiApi.countCreatedServicesKPI();
                 return Either.left(dataModelResponse.left().value());
             }
+            System.out.println("[DEBUG] Service creation failed in DAO, rolling back");
             janusGraphDao.rollback();
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
@@ -739,6 +763,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
             return Either.right(responseFormat);
         } finally {
+            System.out.println("[DEBUG] Unlocking service: " + service.getName());
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
         }
     }

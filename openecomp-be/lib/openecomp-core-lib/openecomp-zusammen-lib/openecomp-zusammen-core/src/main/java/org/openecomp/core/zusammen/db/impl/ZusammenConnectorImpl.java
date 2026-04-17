@@ -273,6 +273,7 @@ public class ZusammenConnectorImpl implements ZusammenConnector {
     @Override
     public Collection<ElementInfo> listElements(SessionContext context, ElementContext elementContext, Id parentElementId) {
         Response<Collection<ElementInfo>> response = elementAdaptorFactory.createInterface(context).list(context, elementContext, parentElementId);
+        if (response == null) { throw new IllegalStateException("Adaptor returned null response"); }
         if (response.isSuccessful()) {
             return response.getValue();
         } else {

@@ -40,6 +40,11 @@
       <artifactId>javax.inject</artifactId>
       <version>${javax.inject.version}</version>
     </dependency>
+     <!-- <dependency>
+      <groupId>org.openecomp.sdc</groupId>
+      <artifactId>openecomp-sdc-versioning-api</artifactId>
+      <version>${project.version}</version>
+    </dependency> -->
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>

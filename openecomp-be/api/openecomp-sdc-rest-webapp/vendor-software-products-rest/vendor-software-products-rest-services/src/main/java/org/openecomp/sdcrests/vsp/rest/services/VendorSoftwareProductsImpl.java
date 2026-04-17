@@ -462,20 +462,24 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     @Override
     public Response actOnVendorSoftwareProduct(VersionSoftwareProductActionRequestDto request, String vspId, String versionId, String user)
         throws IOException {
+       System.out.println("[===>] actOnVendorSoftwareProduct called with vspId=" + vspId + ", versionId=" + versionId + ", action=" + request.getAction());     
         Version version = new Version(versionId);
         if (request.getAction() == VendorSoftwareProductAction.Submit) {
             if (!permissionsManager.isAllowed(vspId, user, SUBMIT_ITEM_ACTION)) {
                 return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.PERMISSIONS_ERROR.getErrorMessage())).build();
             }
             String message = request.getSubmitRequest() == null ? "Submit" : request.getSubmitRequest().getMessage();
+            System.out.println("[===>] actOnVendorSoftwareProduct submit message=" + message);
             Optional<ValidationResponse> validationResponse = submit(vspId, version, message, user);
             if (validationResponse.isPresent()) {
+                System.out.println("[===>] actOnVendorSoftwareProduct validationResponse present");
                 ValidationResponseDto validationResponseDto = new MapValidationResponseToDto()
                     .applyMapping(validationResponse.get(), ValidationResponseDto.class);
                 return Response.status(Response.Status.EXPECTATION_FAILED).entity(validationResponseDto).build();
             }
             notifyUsers(vspId, null, version, message, user, NotificationEventTypes.SUBMIT);
         } else if (request.getAction() == VendorSoftwareProductAction.Create_Package) {
+            System.out.println("[===>] actOnVendorSoftwareProduct action=Create_Package");
             return createPackage(vspId, version);
         }
         return Response.ok().build();
@@ -629,12 +633,16 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     private Optional<ValidationResponse> submit(String vspId, Version version, String message, String user) throws IOException {
+        System.out.println("[===>] submit called with vspId=" + vspId + ", version=" + version.getId());
         VspDetails vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+        System.out.println("[===>] submit fetched vspDetails id=" + vspDetails.getId() + ", version=" + vspDetails.getVersion());
         if (vspDetails.getVlmVersion() != null) {
             vspDetails.setVlmVersion(versioningManager.get(vspDetails.getVendorId(), vspDetails.getVlmVersion()));
         }
         ValidationResponse validationResponse = vendorSoftwareProductManager.validate(vspDetails);
+        System.out.println("[===>] submit validationResponse valid=" + validationResponse.isValid());
         Map<String, List<ErrorMessage>> compilationErrors = vendorSoftwareProductManager.compile(vspId, version);
+        System.out.println("[===>] submit compilationErrors empty=" + MapUtils.isEmpty(compilationErrors));
         if (!validationResponse.isValid() || MapUtils.isNotEmpty(compilationErrors)) {
             activityLogManager
                 .logActivity(new ActivityLogEntity(vspId, version, ActivityType.Submit, user, false, "Failed on validation before submit", ""));

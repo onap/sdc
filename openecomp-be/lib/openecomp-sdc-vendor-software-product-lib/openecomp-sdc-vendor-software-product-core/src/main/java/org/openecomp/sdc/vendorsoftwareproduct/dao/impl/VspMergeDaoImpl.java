@@ -28,36 +28,34 @@ import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Resolution;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.Row;
+
+
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeHintDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeMapper;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VspMergeMapperBuilder;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class VspMergeDaoImpl implements VspMergeDao {
 
     private static final String VSP_MODEL_NOT_EXIST = "Vsp model does not exist for Vsp %s, version %s.";
-    private static final VspMergeHintAccessor accessor;
-
-    static {
-        MappingManager mappingManager = NoSqlDbFactory.getInstance().createInterface().getMappingManager();
-        mappingManager.getSession().getCluster().getConfiguration().getCodecRegistry().register(new EnumNameCodec<>(Resolution.class));
-        accessor = mappingManager.createAccessor(VspMergeHintAccessor.class);
-    }
-
+    private final VspMergeHintDao dao;
     private ZusammenAdaptor zusammenAdaptor;
 
-    public VspMergeDaoImpl(ZusammenAdaptor zusammenAdaptor) {
-        this.zusammenAdaptor = zusammenAdaptor;
+    public VspMergeDaoImpl(CqlSession session, ZusammenAdaptor adaptor) {
+
+        VspMergeMapper mapper = new VspMergeMapperBuilder(session).build();
+        this.dao = mapper.vspMergeHintDao();
+        this.zusammenAdaptor = adaptor;
     }
 
     @Override
@@ -78,12 +76,12 @@ public class VspMergeDaoImpl implements VspMergeDao {
 
     @Override
     public void deleteHint(String vspId, Version version) {
-        accessor.delete(getUser(), vspId, version.getId());
+        dao.delete(getUser(), vspId, version.getId());
     }
 
     @Override
     public void updateConflictResolution(String vspId, Version version, Resolution resolution) {
-        accessor.updateModelResolution(resolution, getUser(), vspId, version.getId());
+        dao.updateModelResolution(resolution, getUser(), vspId, version.getId());
     }
 
     @Override
@@ -100,7 +98,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
             return;
         }
         String user = getUser();
-        Row row = accessor.get(user, vspId, version.getId()).one();
+        Row row = dao.get(user, vspId, version.getId());
         if (row == null) {
             throw new IllegalStateException("Vsp model id must exists if its conflict is being resolved");
         }
@@ -111,7 +109,7 @@ public class VspMergeDaoImpl implements VspMergeDao {
         Resolution resolution = Resolution.valueOf(resolutionValue);
         String localModelId = row.getString("model_id");
         String chosenModelId = keepOnlyChosenVspModel(context, elementContext, vspModels, resolution, localModelId);
-        accessor.update(chosenModelId, null, user, vspId, version.getId());
+        dao.update(chosenModelId, null, user, vspId, version.getId());
     }
 
     private String keepOnlyChosenVspModel(SessionContext context, ElementContext elementContext, List<ElementInfo> vspModels, Resolution resolution,
@@ -137,26 +135,11 @@ public class VspMergeDaoImpl implements VspMergeDao {
     }
 
     private void updateVspModelId(String vspId, Version version, String vspModelId) {
-        accessor.update(vspModelId, null, getUser(), vspId, version.getId());
+        dao.update(vspModelId, null, getUser(), vspId, version.getId());
     }
 
     private String getUser() {
         return SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
     }
 
-    @Accessor
-    interface VspMergeHintAccessor {
-
-        @Query("SELECT model_id, model_resolution FROM vsp_merge_hint " + "WHERE space=? AND item_id=? AND version_id=?")
-        ResultSet get(String space, String itemId, String versionId);
-
-        @Query("UPDATE vsp_merge_hint SET model_id=?, model_resolution=? " + "WHERE space=? AND item_id=? AND version_id=?")
-        void update(String vspModelId, Resolution modelResolution, String space, String itemId, String versionId);
-
-        @Query("UPDATE vsp_merge_hint SET model_resolution=? WHERE space=? AND item_id=? AND version_id=?")
-        void updateModelResolution(Resolution modelResolution, String space, String itemId, String versionId);
-
-        @Query("DELETE from vsp_merge_hint WHERE space=? AND item_id=? AND version_id=?")
-        void delete(String space, String itemId, String versionId);
-    }
 }

@@ -37,6 +37,13 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class HealthCheckManagerImpl implements HealthCheckManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckManagerImpl.class);
+    /**
+     * Healthcheck endpoints can be hit concurrently (e.g., by other BE components during startup).
+     * Some of the underlying Zusammen/Cassandra health logic is not thread-safe and may throw
+     * {@link java.util.ConcurrentModificationException}. Serialize the Zusammen portion to keep
+     * healthchecks stable under load.
+     */
+    private static final Object ZUSAMMEN_HEALTHCHECK_LOCK = new Object();
     private HealthCheckDao healthCheckDao;
 
     public HealthCheckManagerImpl() {
@@ -59,7 +66,9 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
             ZusammenAdaptor zusammenAdaptor = ZusammenAdaptorFactory.getInstance().createInterface();
             Collection<HealthInfo> zeHealthInfos = new ArrayList<>();
             try {
-                zeHealthInfos = zusammenAdaptor.checkHealth(context);
+                synchronized (ZUSAMMEN_HEALTHCHECK_LOCK) {
+                    zeHealthInfos = zusammenAdaptor.checkHealth(context);
+                }
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 zeHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.ZU, HealthCheckStatus.DOWN, zVersion, ex.getMessage());
@@ -74,7 +83,13 @@ public class HealthCheckManagerImpl implements HealthCheckManager {
                 cassandraHealthInfo = new org.openecomp.sdc.health.data.HealthInfo(MonitoredModules.CAS, HealthCheckStatus.DOWN, zVersion,
                     ex.getMessage());
             }
-            zVersion = zusammenAdaptor.getVersion(context);
+            try {
+                synchronized (ZUSAMMEN_HEALTHCHECK_LOCK) {
+                    zVersion = zusammenAdaptor.getVersion(context);
+                }
+            } catch (Exception ex) {
+                LOGGER.error(ex.getMessage(), ex);
+            }
             if (cassandraHealthInfo == null) {
                 HealthCheckStatus status = cassandraHealth ? HealthCheckStatus.UP : HealthCheckStatus.DOWN;
                 if (!cassandraHealth) {

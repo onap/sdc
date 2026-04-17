@@ -19,40 +19,44 @@
  */
 package org.openecomp.sdc.be.resources.data;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import java.util.Date;
+
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
 @Getter
 @Setter
-@Table(keyspace = "sdcrepository", name = "operationalEnvironment")
+@Entity(defaultKeyspace = "sdcrepository")
+@CqlName("operationalEnvironment")
 public class OperationalEnvironmentEntry {
 
     @PartitionKey(0)
-    @Column(name = "environment_id")
+    @CqlName("environment_id")
     private String environmentId;
-    @Column(name = "tenant")
+    @CqlName("tenant")
     private String tenant;
-    @Column(name = "is_production")
+    @CqlName("is_production")
     private Boolean isProduction;
-    @Column(name = "ecomp_workload_context")
+    @CqlName("ecomp_workload_context")
     private String ecompWorkloadContext;
-    @Column(name = "dmaap_ueb_address")
+    @CqlName("dmaap_ueb_address")
     private Set<String> dmaapUebAddress;
-    @Column(name = "ueb_api_key")
+    @CqlName("ueb_api_key")
     private String uebApikey;
-    @Column(name = "ueb_secret_key")
+    @CqlName("ueb_secret_key")
     private String uebSecretKey;
-    @Column(name = "status")
+    @CqlName("status")
     private String status;
-    @Column(name = "last_modified")
-    private Date lastModified;
+    @CqlName("last_modified")
+    private Instant lastModified;
 
     public void setStatus(EnvironmentStatusEnum status) {
         this.status = status.getName();

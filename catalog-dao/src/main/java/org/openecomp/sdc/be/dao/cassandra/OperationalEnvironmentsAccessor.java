@@ -19,15 +19,24 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
+
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
-@Accessor
+@Dao
 public interface OperationalEnvironmentsAccessor {
 
     @Query("SELECT * FROM sdcrepository.operationalenvironment WHERE status = :envStatus")
-    Result<OperationalEnvironmentEntry> getByEnvironmentsStatus(@Param("envStatus") String envStatus);
+    PagingIterable<OperationalEnvironmentEntry> getByEnvironmentsStatus(String envStatus);
+
+     @Insert
+    void saveOperationalEnvironmentEntry(OperationalEnvironmentEntry event);   
+
+    @Query("SELECT * FROM sdcrepository.operationalenvironment WHERE environment_id = :environmentId")
+    OperationalEnvironmentEntry getById(@CqlName("environment_id") String environmentId);
 }

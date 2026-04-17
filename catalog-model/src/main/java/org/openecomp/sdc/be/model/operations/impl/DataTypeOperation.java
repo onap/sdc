@@ -102,31 +102,28 @@ public class DataTypeOperation extends AbstractOperation {
         return dataTypesFound;
     }
 
-    public Map<String, List<String>> getAllDataTypeUidsToModels() {
-        final Map<String, List<String>> dataTypesFound = new HashMap<>();
-        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
+   
+ public Map<String, List<String>> getAllDataTypeUidsToModels() {
+
+    final Map<String, List<String>> dataTypesFound = new HashMap<>();
+    final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
             janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
 
-        final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
+    final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
 
-        for (DataTypeData dataType : dataTypesValidated) {
-            if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
-                dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
-            }
-            dataTypesFound.get(dataType.getUniqueId()).add(null);
-        }
-
-        modelOperation.findAllModels()
-            .forEach(model -> {
-                for (DataTypeData dataType : getAllDataTypesWithModel(model.getName())) {
-                    if (!dataTypesFound.containsKey(dataType.getUniqueId())) {
-                        dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
-                    }
-                    dataTypesFound.get(dataType.getUniqueId()).add(model.getName());
-                }
-            });
-        return dataTypesFound;
+    for (DataTypeData dataType : dataTypesValidated) {
+        dataTypesFound.computeIfAbsent(dataType.getUniqueId(), x -> new ArrayList<>()).add(null);
     }
+
+    modelOperation.findAllModels()
+        .forEach(model -> {
+            for (DataTypeData dataType : getAllDataTypesWithModel(model.getName())) {
+                dataTypesFound.computeIfAbsent(dataType.getUniqueId(), x -> new ArrayList<>()).add(model.getName());
+            }
+        });
+
+    return dataTypesFound;
+}
 
     public List<String> getAllDataTypeModels(final String dataTypeName) {
         final List<String> models = new ArrayList<>();

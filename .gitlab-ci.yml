@@ -1,0 +1,175 @@
+include:
+- project: 'tnap/development/ci-functions/malerin'
+  ref: 'v1'
+  file:
+    - 'ci/basics.yml'
+    - 'ci/linters.yml'
+    - 'ci/sonarqube.yml'
+- project: 'tnap/development/ci-functions/malerin'
+  file:
+    - 'ci/tests.yml'
+  rules:
+    #- if: $CI_COMMIT_BRANCH !~ '/^(master|tnap-master)$/'
+    - when: never
+
+services:
+  - name: 'dockerhub.devops.telekom.de/docker:20.10.12-dind'
+    command: ['--tls=false', '--host=tcp://0.0.0.0:2375', '--registry-mirror=https://dockerhub.devops.telekom.de']
+    alias: docker
+
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+  - lint
+  - prepare
+  - compile
+  - test
+  - integration-test
+  - build
+  - quality
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+lint_docker:
+  extends: .elint_docker
+  timeout: 2h
+  variables:
+    LINT_DOCKER_CONFIG: |
+      ---
+      ignored:
+        - DL3006  # Always tag the version
+        - DL3026  # Pin image versions
+        - DL3003  # Use WORKDIR
+        - DL3008  # Pin apt-get install
+        - DL3018  # Pin versions in apt-get
+        - DL3020  # use COPY command
+      failure-threshold: error
+      trustedRegistries:
+        - dockerhub.devops.telekom.de
+        - artifactory.devops.telekom.de
+        - nexus3.onap.org:10001
+        - nexus3.onap.org:10003
+      no-verify-base: true
+
+
+# This job is necessary to keep the tag of build image between pipelines and to be sure if nothing else has been merged
+predefiner:
+  extends: .predefiner
+  timeout: 2h
+
+compile:
+  stage: compile
+  image: artifactory.devops.telekom.de/tnap-docker/maven-docker:3-openjdk-11-slim
+  script:
+    - mvn clean compile -DskipTests
+  tags:
+    - ta5_tnaplab
+  timeout: 2h
+
+test:
+  stage: test
+  image: artifactory.devops.telekom.de/tnap-docker/maven-docker:3-openjdk-11-slim
+  dependencies:
+    - compile
+  script:
+    - MAVEN_OPTS="-Xmx2G -Xms1G" mvn test
+  tags:
+    - ta5_tnaplab
+  timeout: 2h
+  rules:
+    - when: never
+
+integration_test:
+  stage: integration-test
+  image: artifactory.devops.telekom.de/tnap-docker/maven-docker:3-openjdk-11-slim
+  dependencies:
+    - compile
+  script:
+    - MAVEN_OPTS="-Xmx2G -Xms1G" mvn clean install
+  tags:
+    - ta5_tnaplab
+  timeout: 4h
+  rules:
+    - when: manual
+
+integration_test_resume:
+  stage: integration-test
+  image: artifactory.devops.telekom.de/tnap-docker/maven-docker:3-openjdk-11-slim
+  dependencies:
+    - compile
+  script:
+    - MAVEN_OPTS="-Xmx2G -Xms1G" mvn clean install -rf :sdc-integration-tests
+  tags:
+    - ta5_tnaplab
+  timeout: 4h
+  rules:
+    - when: manual
+
+build:
+  stage: build
+  #  only:
+  #    refs:
+  #      - tnap-master
+  image: artifactory.devops.telekom.de/tnap-docker/maven-docker:3-openjdk-11-slim
+  tags:
+    - ta5_tnaplab
+  timeout: 4h
+  script:
+    - |
+      version_file_ver="$(tr -d '\r' < version 2>/dev/null || true)"
+      latest_release_ver="$(
+        ls -1 releases/*-container.yaml 2>/dev/null \
+          | sed 's#.*/##' \
+          | sed 's/-container.yaml$//' \
+          | sort -V \
+          | tail -n 1
+      )"
+
+      if [ -n "${SDC_IMAGE_TAG:-}" ]; then
+        build_ver="$SDC_IMAGE_TAG"
+      elif printf '%s' "$version_file_ver" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+        build_ver="$version_file_ver"
+      elif [ -n "$latest_release_ver" ]; then
+        build_ver="$latest_release_ver"
+      else
+        build_ver="$version_file_ver"
+      fi
+
+      export build_ver
+      echo "Using build_ver=$build_ver (version file: ${version_file_ver:-<empty>}, latest release: ${latest_release_ver:-<none>})"
+    # Login to Docker Artifactory
+    - docker login -u $ART_USERNAME -p $ART_PASSWORD artifactory.devops.telekom.de
+    - echo "$ART_PASSWORD" | docker login -u "$ART_USERNAME" --password-stdin artifactory.devops.telekom.de
+
+    # Maven build
+    - echo "Building project with Maven"
+    - mvn clean install -DskipTests
+    - mvn clean install docker:build -Pdocker -DskipTests
+
+    # Push all 'latest' images with sdc/onap prefix
+    - echo "Tagging and pushing 'latest' Docker images to Artifactory..."
+    - |
+      docker images --format "{{.Repository}}:{{.Tag}}" | grep -E '^onap/sdc-.*:latest' | while read original_image; do
+        image_repo=$(echo "$original_image" | cut -d':' -f1)
+        image_tag=$(echo "$original_image" | cut -d':' -f2)
+
+        image_name=$(basename "$image_repo")
+        tag_ver=$build_ver
+
+        target_image="artifactory.devops.telekom.de/tnap-docker/kalpana/tnap-sdc/${image_name}:${tag_ver}"
+
+        echo "Tagging $original_image → $target_image"
+        docker tag "$original_image" "$target_image"
+
+        echo "Pushing $target_image"
+        docker push "$target_image"
+      done
+
+    - echo "All relevant Docker images with 'latest' tag have been pushed.."
+  rules:
+    - when: manual

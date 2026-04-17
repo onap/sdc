@@ -15,11 +15,14 @@
  */
 package org.openecomp.sdc.notification.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.UUID;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,23 +30,24 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(keyspace = "dox", name = "notifications")
+@Entity
+@CqlName("notifications")
 public class NotificationEntity {
 
     public static final String ENTITY_TYPE = "Event Notification";
     @PartitionKey
-    @Column(name = "owner_id")
+    @CqlName("owner_id")
     private String ownerId;
-    @Column(name = "read")
+    @CqlName("read")
     private boolean read;
     @ClusteringColumn
-    @Column(name = "event_id")
+    @CqlName("event_id")
     private UUID eventId;
-    @Column(name = "event_type")
+    @CqlName("event_type")
     private String eventType;
-    @Column(name = "event_attributes")
+    @CqlName("event_attributes")
     private String eventAttributes;
-    @Column(name = "originator_id")
+    @CqlName("originator_id")
     private String originatorId;
 
     public NotificationEntity(String ownerId) {

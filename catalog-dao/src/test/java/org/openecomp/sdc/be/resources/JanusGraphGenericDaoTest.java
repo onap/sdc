@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration2.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -427,7 +427,6 @@ public class JanusGraphGenericDaoTest {
         Iterator<JanusGraphVertex> iter = vertices.iterator();
         while (iter.hasNext()) {
             Vertex ver = iter.next();
-            // System.out.println(com.tinkerpop.blueprints.util.ElementHelper.getProperties(ver));
             log.debug("{}", janusGraphDao.getProperties(ver));
         }
 

@@ -19,39 +19,47 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Table(keyspace = "dox", name = "license_agreement")
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Entity
+@CqlName("license_agreement")
 public class LicenseAgreementEntity implements VersionableEntity {
 
     public static final String ENTITY_TYPE = "License Agreement";
     @PartitionKey(value = 0)
-    @Column(name = "vlm_id")
+    @CqlName("vlm_id")
     private String vendorLicenseModelId;
     @PartitionKey(value = 1)
-    @Frozen
+
     private Version version;
     @ClusteringColumn
-    @Column(name = "la_id")
+    @CqlName("la_id")
     private String id;
     private String name;
     private String description;
-    @Column(name = "lic_term")
-    @Frozen
-    private ChoiceOrOther<LicenseTerm> licenseTerm;
-    @Column(name = "req_const")
+    @CqlName("lic_term")
+
+    private String licenseTerm;
+    @CqlName("req_const")
     private String requirementsAndConstrains;
-    @Column(name = "fg_ids")
+    @CqlName("fg_ids")
     private Set<String> featureGroupIds = new HashSet<>();
+
+    @Transient
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Every entity class must have a default constructor according to
@@ -75,12 +83,12 @@ public class LicenseAgreementEntity implements VersionableEntity {
         this.version = version;
     }
 
-    @Override
+
     public String getEntityType() {
         return ENTITY_TYPE;
     }
 
-    @Override
+
     public String getFirstClassCitizenId() {
         return getVendorLicenseModelId();
     }
@@ -129,14 +137,34 @@ public class LicenseAgreementEntity implements VersionableEntity {
         this.description = description;
     }
 
+    @Transient
     public ChoiceOrOther<LicenseTerm> getLicenseTerm() {
-        return licenseTerm;
+    if (licenseTerm == null) {
+        return null;
     }
+    try {
+        return MAPPER.readValue(
+            licenseTerm,
+            new TypeReference<ChoiceOrOther<LicenseTerm>>() {}
+        );
+    } catch (Exception e) {
+        throw new RuntimeException("Failed to deserialize licenseTerm", e);
+    }
+}
 
-    public void setLicenseTerm(ChoiceOrOther<LicenseTerm> licenseTerm) {
-        licenseTerm.resolveEnum(LicenseTerm.class);
-        this.licenseTerm = licenseTerm;
+@Transient
+public void setLicenseTerm(ChoiceOrOther<LicenseTerm> term) {
+    if (term != null) {
+        term.resolveEnum(LicenseTerm.class);
+        try {
+            this.licenseTerm = MAPPER.writeValueAsString(term);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize licenseTerm", e);
+        }
+    } else {
+        this.licenseTerm = null;
     }
+}
 
     public String getRequirementsAndConstrains() {
         return requirementsAndConstrains;
@@ -172,4 +200,6 @@ public class LicenseAgreementEntity implements VersionableEntity {
             && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(licenseTerm, that.licenseTerm)
             && Objects.equals(requirementsAndConstrains, that.requirementsAndConstrains) && Objects.equals(featureGroupIds, that.featureGroupIds);
     }
+
+    
 }

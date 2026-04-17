@@ -15,15 +15,15 @@
  */
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import org.openecomp.sdc.common.session.SessionContextProviderFactory;
 import org.openecomp.sdc.itempermissions.PermissionsRules;
 import org.openecomp.sdc.itempermissions.PermissionsServices;
-import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
+
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
  * Created by ayalaben on 6/22/2017.
@@ -31,18 +31,18 @@ import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 public class PermissionsServicesImpl implements PermissionsServices {
 
     private static final String CHANGE_PERMISSIONS = "Change_Item_Permissions";
-    private ItemPermissionsDao itemPermissionsDao;
+    private ItemPermissionsDaoImpl itemPermissionsDao;
     private UserPermissionsDao userPermissionsDao;
     private PermissionsRules permissionsRules;
 
-    public PermissionsServicesImpl(PermissionsRules permissionsRules, ItemPermissionsDao itemPermissionsDao, UserPermissionsDao userPermissionsDao) {
+    public PermissionsServicesImpl(PermissionsRules permissionsRules, ItemPermissionsDaoImpl itemPermissionsDao, UserPermissionsDao userPermissionsDao) {
         this.itemPermissionsDao = itemPermissionsDao;
         this.permissionsRules = permissionsRules;
         this.userPermissionsDao = userPermissionsDao;
     }
 
     @Override
-    public Collection<ItemPermissionsEntity> listItemPermissions(String itemId) {
+    public PagingIterable<ItemPermissionsEntity> listItemPermissions(String itemId) {
         return itemPermissionsDao.listItemPermissions(itemId);
     }
 
@@ -50,15 +50,28 @@ public class PermissionsServicesImpl implements PermissionsServices {
     public Set<String> listUserPermittedItems(String userId, String permission) {
         return userPermissionsDao.listUserPermittedItems(userId, permission);
     }
+@Override
+public void updateItemPermissions(String itemId,
+                                  String permission,
+                                  Set<String> addedUsersIds,
+                                  Set<String> removedUsersIds) {
+    String currentUserId = SessionContextProviderFactory.getInstance()
+        .createInterface().get().getUser().getUserId();
 
-    @Override
-    public void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds) {
-        String currentUserId = SessionContextProviderFactory.getInstance().createInterface().get().getUser().getUserId();
+    try {
         permissionsRules.executeAction(itemId, currentUserId, CHANGE_PERMISSIONS);
+
         permissionsRules.updatePermission(itemId, currentUserId, permission, addedUsersIds, removedUsersIds);
+
         itemPermissionsDao.updateItemPermissions(itemId, permission, addedUsersIds, removedUsersIds);
+
         userPermissionsDao.updatePermissions(itemId, permission, addedUsersIds, removedUsersIds);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw e;
     }
+}
 
     @Override
     public boolean isAllowed(String itemId, String userId, String action) {

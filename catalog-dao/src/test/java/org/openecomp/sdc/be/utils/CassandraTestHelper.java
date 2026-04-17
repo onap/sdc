@@ -21,8 +21,11 @@
  */
 package org.openecomp.sdc.be.utils;
 
-import com.datastax.driver.core.Cluster;
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.CqlSession;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
@@ -42,11 +45,18 @@ public class CassandraTestHelper {
         }
     }
 
-    public static Cluster createCluster() {
-        return Cluster.builder().addContactPoint(SERVER).withPort(BINARY_PORT).build();
+    public static CqlSession createSession(String keyspace) {
+        return CqlSession.builder()
+        .addContactPoint(new InetSocketAddress(SERVER, BINARY_PORT))
+        .withLocalDatacenter("datacenter1")
+        .withKeyspace(CqlIdentifier.fromCql(keyspace))
+        .build();
     }
 
-    public static Cluster createClusterWithNoSession() {
-        return Cluster.builder().addContactPoint(SERVER).build();
+    public static CqlSession createSessionWithoutKeyspace() {
+        return CqlSession.builder()
+        .addContactPoint(new InetSocketAddress(SERVER, BINARY_PORT))
+        .withLocalDatacenter("datacenter1")
+        .build();
     }
 }

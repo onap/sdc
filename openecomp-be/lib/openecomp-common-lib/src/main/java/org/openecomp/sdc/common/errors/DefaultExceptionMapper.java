@@ -70,6 +70,13 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         final ErrorCode code = coreException.code();
         LOGGER.error(code.message(), coreException);
         if (coreException.code().category().equals(ErrorCategory.APPLICATION)) {
+            String statusName = ERROR_CODE_TO_RESPONSE_STATUS.get(code.id());
+
+        if (statusName == null) {
+            LOGGER.warn("No status mapping found for error code id=" + code.id()
+                        + ", defaulting to INTERNAL_SERVER_ERROR");
+            return buildResponse(Status.INTERNAL_SERVER_ERROR, code);
+        }
             final Status errorStatus = Status.valueOf(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()));
             if (List.of(Status.BAD_REQUEST, Status.FORBIDDEN, Status.NOT_FOUND, Status.INTERNAL_SERVER_ERROR).contains(errorStatus)) {
                 return buildResponse(errorStatus, code);

@@ -110,6 +110,9 @@ public class JsonUtil {
      * @return the t
      */
     public static <T> T json2Object(InputStream is, Class<T> classOfT) {
+        if (is == null) {
+            return null;
+        }
         T type;
         try (Reader br = new BufferedReader(new InputStreamReader(is))) {
             type = new Gson().fromJson(br, classOfT);

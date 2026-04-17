@@ -3,8 +3,9 @@ FROM python:3.11-alpine
 RUN addgroup sdc && \
     adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 
-RUN apk add --no-cache wget && \
-    pip install --no-cache-dir cqlsh==6.2.1
+RUN apk add --no-cache wget gcc musl-dev python3-dev libffi-dev openssl-dev && \
+    pip install --no-cache-dir cqlsh==6.2.1 && \
+    apk del gcc musl-dev python3-dev libffi-dev openssl-dev
 
 USER sdc
 
@@ -18,12 +19,10 @@ RUN mkdir -p /root/.cassandra/ && \
     echo 'version=3.4.4' >> /root/.cassandra/cqlshrc
 
 USER sdc
-
 COPY --chown=sdc:sdc init_keyspaces.cql /home/sdc/
 COPY --chown=sdc:sdc init_schemas.cql /home/sdc/
 COPY --chown=sdc:sdc upgrade-scripts /home/sdc/upgrade-scripts
 COPY --chown=sdc:sdc startup.sh /home/sdc/
-
 RUN chmod 770 /home/sdc/startup.sh
 
 ENTRYPOINT [ "/home/sdc/startup.sh" ]

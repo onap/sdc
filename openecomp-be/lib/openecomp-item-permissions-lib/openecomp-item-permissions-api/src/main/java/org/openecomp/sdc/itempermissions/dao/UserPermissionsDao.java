@@ -17,9 +17,42 @@ package org.openecomp.sdc.itempermissions.dao;
 
 import java.util.Set;
 
+import org.openecomp.sdc.itempermissions.type.UserPermissionItemsEntity;
+
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
+
+@Dao
 public interface UserPermissionsDao {
 
-    Set<String> listUserPermittedItems(String userId, String permission);
+    
+    @Select
+    UserPermissionItemsEntity getUserPermissionItems(String userId, String permission);
 
-    void updatePermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds);
+    @Insert
+    void save(UserPermissionItemsEntity entity);
+
+    @Query("update user_permission_items set item_list = item_list + :items where user_id = :userId and permission = :permission")
+    void addItems(Set<String> items, String userId, String permission);
+
+    @Query("update user_permission_items set item_list = item_list - :items where user_id = :userId and permission = :permission")
+    void removeItems(Set<String> items, String userId, String permission);
+
+
+    default Set<String> listUserPermittedItems(String userId, String permission) {
+        UserPermissionItemsEntity entity = getUserPermissionItems(userId, permission);
+        return entity == null ? Set.of() : entity.getItemList();
+    }
+
+
+    default void updatePermissions(String itemId, String permission, Set<String> addedUserIds, Set<String> removedUserIds) {
+        if (addedUserIds != null && !addedUserIds.isEmpty()) {
+            addItems(addedUserIds, itemId, permission);
+        }
+        if (removedUserIds != null && !removedUserIds.isEmpty()) {
+            removeItems(removedUserIds, itemId, permission);
+        }
+    }
 }

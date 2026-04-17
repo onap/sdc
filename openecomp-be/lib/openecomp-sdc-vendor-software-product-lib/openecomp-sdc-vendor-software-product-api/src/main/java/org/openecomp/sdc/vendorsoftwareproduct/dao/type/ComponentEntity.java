@@ -19,12 +19,13 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
+
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
@@ -36,27 +37,28 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 
 @EqualsAndHashCode
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = "dox", name = "vsp_component")
+@Entity
+@CqlName("vsp_component")
 public class ComponentEntity implements CompositionEntity {
 
     public static final String ENTITY_TYPE = "Vendor Software Product Component";
     @PartitionKey
-    @Column(name = "vsp_id")
+    @CqlName("vsp_id")
     private String vspId;
     @PartitionKey(value = 1)
-    @Frozen
     private Version version;
     @ClusteringColumn
-    @Column(name = "component_id")
+    @CqlName("component_id")
     private String id;
-    @Column(name = "composition_data")
+    @CqlName("composition_data")
     private String compositionData;
-    @Column(name = "questionnaire_data")
+    @CqlName("questionnaire_data")
     private String questionnaireData;
     @Transient
     private List<NicEntity> nics = new ArrayList<>();
@@ -101,4 +103,6 @@ public class ComponentEntity implements CompositionEntity {
     public void setComponentCompositionData(ComponentData component) {
         this.compositionData = component == null ? null : JsonUtil.object2Json(component);
     }
+
+    
 }

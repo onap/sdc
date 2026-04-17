@@ -21,18 +21,15 @@ package org.openecomp.sdc.be.dao.cassandra;
 
 import static java.util.function.Predicate.not;
 import static org.openecomp.sdc.common.api.Constants.ADDITIONAL_TYPE_DEFINITIONS;
+import com.datastax.oss.driver.api.core.CqlSession;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.exception.CassandraDaoInitException;
 import org.openecomp.sdc.be.dao.api.exception.CassandraDaoInitExceptionProvider;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -45,24 +42,13 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
     private static final Logger LOGGER = Logger.getLogger(ToscaModelImportCassandraDao.class.getName());
 
     private ToscaImportByModelAccessor toscaImportByModelAccessor;
-    private Mapper<ToscaImportByModel> toscaImportByModelMapper;
+
 
     @Autowired
     public ToscaModelImportCassandraDao(final CassandraClient cassandraClient) {
         super(cassandraClient);
     }
 
-    /**
-     * For test purposes.
-     *
-     * @param toscaImportByModelAccessor the sdcartifact.tosca_import_by_model accessor
-     */
-    ToscaModelImportCassandraDao(final ToscaImportByModelAccessor toscaImportByModelAccessor,
-                                 final Mapper<ToscaImportByModel> toscaImportByModelMapper) {
-        super(null);
-        this.toscaImportByModelAccessor = toscaImportByModelAccessor;
-        this.toscaImportByModelMapper = toscaImportByModelMapper;
-    }
 
     @PostConstruct
     public void init() {
@@ -71,17 +57,16 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
             LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, ToscaModelImportCassandraDao.class.getName(), "Cassandra client isn't connected");
             return;
         }
-        final Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> connectionResult = client.connect(keyspace);
+        final Either<CqlSession , CassandraOperationStatus> connectionResult = client.connect(keyspace);
         if (connectionResult.isRight()) {
             final CassandraDaoInitException exception =
                 CassandraDaoInitExceptionProvider.keySpaceConnectError(keyspace, connectionResult.right().value()).get();
             LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, ToscaModelImportCassandraDao.class.getName(), exception.getMessage());
             throw exception;
         }
-        session = connectionResult.left().value().getLeft();
-        manager = connectionResult.left().value().getRight();
-        toscaImportByModelMapper = manager.mapper(ToscaImportByModel.class);
-        toscaImportByModelAccessor = manager.createAccessor(ToscaImportByModelAccessor.class);
+        session = connectionResult.left().value();
+        ToscaModelImportCassandraDaoMapper mapper = new ToscaModelImportCassandraDaoMapperBuilder(session).build();
+        toscaImportByModelAccessor = mapper.toscaImportByModelAccessor();
         LOGGER.info("{} successfully initialized", ToscaModelImportCassandraDao.class.getName());
     }
 
@@ -102,10 +87,8 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
             .filter(not(toscaImport -> ADDITIONAL_TYPE_DEFINITIONS.equals(toscaImport.getFullPath())))
             .collect(Collectors.toList());
 
-        importOfModelList.forEach(toscaImportByModelMapper::save);
-        removedImportList.forEach(toscaImportByModel ->
-            toscaImportByModelMapper.delete(toscaImportByModel.getModelId(), toscaImportByModel.getFullPath())
-        );
+        importOfModelList.forEach(toscaImportByModelAccessor::save);
+        removedImportList.forEach(toscaImportByModelAccessor::delete);
     }
 
     /**
@@ -117,7 +100,7 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
     public void saveAll(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
         toscaImportByModelList.stream()
             .filter(toscaImportByModel -> modelId.equals(toscaImportByModel.getModelId()))
-            .forEach(toscaImportByModelMapper::save);
+            .forEach(toscaImportByModelAccessor::save);
     }
 
     public List<ToscaImportByModel> findAllByModel(final String modelId) {
@@ -126,7 +109,7 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
 
     public void deleteAllByModel(final String modelId) {
         final List<ToscaImportByModel> allByModel = findAllByModel(modelId);
-        allByModel.forEach(toscaImportByModelMapper::delete);
+        allByModel.forEach(toscaImportByModelAccessor::delete);
     }
 
 }

@@ -19,19 +19,22 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.types;
 
-import com.datastax.driver.mapping.annotations.ClusteringColumn;
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.vendorlicense.VendorLicenseUtil;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.LimitForXml;
@@ -41,41 +44,43 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-@Getter
-@Setter
-@Table(keyspace = "dox", name = "entitlement_pool")
+@Entity
+@CqlName("entitlement_pool")
 public class EntitlementPoolEntity implements VersionableEntity {
 
     private static final String ENTITY_TYPE = "Entitlement Pool";
     @PartitionKey
-    @Column(name = "vlm_id")
+    @CqlName("vlm_id")
     private String vendorLicenseModelId;
     @PartitionKey(value = 1)
-    @Frozen
+   
     private Version version;
     @ClusteringColumn
-    @Column(name = "ep_id")
+    @CqlName("ep_id")
     private String id;
     private String name;
     private String description;
     private EntitlementPoolType type;
-    @Column(name = "threshold")
+    @CqlName("threshold")
     private Integer thresholdValue;
-    @Column(name = "threshold_unit")
+    @CqlName("threshold_unit")
     private ThresholdUnit thresholdUnit;
     private String increments;
-    @Column(name = "operational_scope")
-    @Frozen
-    private MultiChoiceOrOther<OperationalScope> operationalScope;
-    @Column(name = "ref_fg_ids")
+    @CqlName("operational_scope")
+    private String operationalScope;
+    @CqlName("ref_fg_ids")
     private Set<String> referencingFeatureGroups = new HashSet<>();
-    @Column(name = "version_uuid")
+    @CqlName("version_uuid")
     private String versionUuId;
     private String startDate;
     private String expiryDate;
+    @Transient
     private Collection<LimitEntity> limits;
     //Defined and used only for License Artifcat XMLs
     private String manufacturerReferenceNumber;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
 
     /**
      * Every entity class must have a default constructor according to
@@ -99,22 +104,196 @@ public class EntitlementPoolEntity implements VersionableEntity {
         this.id = id;
     }
 
-    @Override
+
     public String getEntityType() {
         return ENTITY_TYPE;
     }
 
-    @Override
+
     public String getFirstClassCitizenId() {
         return getVendorLicenseModelId();
     }
 
-    public void setOperationalScope(MultiChoiceOrOther<OperationalScope> operationalScope) {
-        if (operationalScope != null) {
-            operationalScope.resolveEnum(OperationalScope.class);
-        }
-        this.operationalScope = operationalScope;
+    @Override
+    public String getId() {
+        return id;
     }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+
+    @Override
+    public void setVersion(Version version) {
+        this.version = version;
+    }
+
+    @Override
+    public String getVersionUuId() {
+        return versionUuId;
+    }
+
+    @Override
+    public void setVersionUuId(String uuId) {
+        versionUuId = uuId;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(final String startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setStartDate(final Object startDate) {
+        this.startDate = startDate == null ? null : String.valueOf(startDate);
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(final String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public void setExpiryDate(final Object expiryDate) {
+        this.expiryDate = expiryDate == null ? null : String.valueOf(expiryDate);
+    }
+
+    public Collection<LimitEntity> getLimits() {
+        return limits;
+    }
+
+    public void setLimits(final Collection<LimitEntity> limits) {
+        this.limits = limits;
+    }
+
+    public String getVendorLicenseModelId() {
+        return vendorLicenseModelId;
+    }
+
+    public void setVendorLicenseModelId(String vendorLicenseModelId) {
+        this.vendorLicenseModelId = vendorLicenseModelId;
+    }
+
+    public Set<String> getReferencingFeatureGroups() {
+        return referencingFeatureGroups;
+    }
+
+    public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
+        this.referencingFeatureGroups = referencingFeatureGroups;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public EntitlementPoolType getType() {
+        return type;
+    }
+
+    public void setType(EntitlementPoolType type) {
+        this.type = type;
+    }
+
+    public Integer getThresholdValue() {
+        return thresholdValue;
+    }
+
+    public void setThresholdValue(Integer thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
+    public ThresholdUnit getThresholdUnit() {
+        return thresholdUnit;
+    }
+
+    public void setThresholdUnit(ThresholdUnit thresholdUnits) {
+        this.thresholdUnit = thresholdUnits;
+    }
+
+    public String getIncrements() {
+        return increments;
+    }
+
+    public void setIncrements(String increments) {
+        this.increments = increments;
+    }
+
+@Transient
+public MultiChoiceOrOther<OperationalScope> getOperationalScope() {
+    if (operationalScope == null) {
+        return null;
+    }
+    try {
+        MultiChoiceOrOther<OperationalScope> scope =
+            MAPPER.readValue(operationalScope,
+                new TypeReference<MultiChoiceOrOther<OperationalScope>>() {});
+
+        // Defensive: rebuild results if missing
+        if (scope.getResults() == null || scope.getResults().isEmpty()) {
+            if (scope.getChoices() != null && !scope.getChoices().isEmpty()) {
+                // Copy enum names from choices into results
+                Set<String> rebuiltResults = scope.getChoices().stream()
+                    .map(Enum::name)
+                    .collect(Collectors.toSet());
+                scope.setResults(rebuiltResults);
+            } else {
+                scope.setResults(new HashSet<>()); // safe default
+            }
+        }
+
+        // Rebuild choices from results if needed
+        scope.resolveEnum(OperationalScope.class);
+
+        return scope;
+    } catch (Exception e) {
+        throw new RuntimeException("Failed to parse operationalScope JSON", e);
+    }
+}
+
+
+  @Transient
+  public void setOperationalScope(MultiChoiceOrOther<OperationalScope> scope) {
+    if (scope != null) {
+        scope.resolveEnum(OperationalScope.class);
+
+        // Defensive fix: ensure results is not null
+        if (scope.getResults() == null || scope.getResults().isEmpty()) {
+            scope.setResults(scope.getChoices() != null
+                ? scope.getChoices().stream().map(Enum::name).collect(Collectors.toSet())
+                : new HashSet<>());
+        }
+
+        try {
+            this.operationalScope = MAPPER.writeValueAsString(scope);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize operationalScope", e);
+        }
+    } else {
+        this.operationalScope = null;
+    }
+}
 
     /**
      * Gets threshold for artifact.
@@ -220,12 +399,27 @@ public class EntitlementPoolEntity implements VersionableEntity {
      */
     public OperationalScopeForXml getOperationalScopeForArtifact() {
         OperationalScopeForXml obj = new OperationalScopeForXml();
-        if (operationalScope != null) {
-            if (operationalScope.getResults().size() > 0) {
-                obj.setValue(operationalScope.getResults());
-            }
+        MultiChoiceOrOther<OperationalScope> scope = getOperationalScope();
+
+        if (scope == null) {
+            obj.setValue(Collections.emptySet());
+            return obj;
         }
+
+        scope.resolveEnum(OperationalScope.class);
+        Set<String> results = scope.getResults();
+        obj.setValue(results == null ? Collections.emptySet() : results);
         return obj;
+    }
+
+
+    public String getManufacturerReferenceNumber() {
+        return manufacturerReferenceNumber;
+    }
+
+    //Defined and used only for License Artifcat XMLs
+    public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
+        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
     }
 
     public String getIsoFormatStartDate() {

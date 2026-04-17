@@ -194,8 +194,21 @@ public class OnboardingPackageProcessor {
     private ManifestContent getManifest() {
         ManifestContent manifest = null;
         try (InputStream zipFileManifest = packageContent.getFileContentAsStream(SdcCommon.MANIFEST_NAME)) {
+            System.out.println("DEBUG: Trying to read MANIFEST.json from package: " + packageFileName);
+            if (zipFileManifest == null) {
+            System.out.println("DEBUG: MANIFEST.json InputStream is null!");
+            return null;
+        }
+            int available = zipFileManifest.available();
+            System.out.println("DEBUG: MANIFEST.json InputStream available bytes = " + available);
+            if (available == 0) {
+            System.out.println("DEBUG: MANIFEST.json is empty!");
+            return null;
+        }
             manifest = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+            System.out.println("DEBUG: MANIFEST.json successfully parsed!");
         } catch (Exception e) {
+            System.out.println("ERROR: Could not read MANIFEST.json from package: " + packageFileName);
             final String message = COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName);
             LOGGER.error(message, e);
         }

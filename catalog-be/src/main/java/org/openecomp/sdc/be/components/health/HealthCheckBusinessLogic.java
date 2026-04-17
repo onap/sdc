@@ -177,18 +177,22 @@ public class HealthCheckBusinessLogic {
         HealthCheckInfo healthCheckInfo = new HealthCheckInfo(HC_COMPONENT_JANUSGRAPH, DOWN, null, null);
         try {
             isJanusGraphUp = janusGraphGenericDao.isGraphOpen();
+
         } catch (Exception e) {
             description = "JanusGraph error: " + e.getMessage();
+
             healthCheckInfo.setDescription(description);
             log.error(description);
             return healthCheckInfo;
         }
         if (isJanusGraphUp) {
             description = "OK";
+
             healthCheckInfo.setDescription(description);
             healthCheckInfo.setHealthCheckStatus(HealthCheckInfo.HealthCheckStatus.UP);
         } else {
             description = "JanusGraph graph is down";
+
             healthCheckInfo.setDescription(description);
         }
         return healthCheckInfo;
@@ -202,6 +206,7 @@ public class HealthCheckBusinessLogic {
             isCassandraUp = cassandraHealthCheck.getCassandraStatus();
         } catch (Exception e) {
             description = "Cassandra error: " + e.getMessage();
+
             log.error(description, e);
         }
         if (isCassandraUp) {
@@ -216,18 +221,22 @@ public class HealthCheckBusinessLogic {
     }
 
     private HealthCheckInfo getHostedComponentsBeHealthCheck(String componentName, String healthCheckUrl) {
+
         HealthCheckStatus healthCheckStatus;
         String description;
         String version = null;
         List<HealthCheckInfo> componentsInfo = new ArrayList<>();
-        final int timeout = 3000;
+        final int timeout = getHostedComponentTimeoutMs(componentName);
         if (healthCheckUrl != null) {
             try {
+
                 HttpResponse<String> httpResponse = HttpRequest.get(healthCheckUrl, new HttpClientConfig(new Timeouts(timeout, timeout)));
                 int statusCode = httpResponse.getStatusCode();
+
                 String aggDescription = "";
                 if ((statusCode == SC_OK || statusCode == SC_INTERNAL_SERVER_ERROR) && !componentName.equals(HC_COMPONENT_ECOMP_PORTAL)) {
                     String response = httpResponse.getResponse();
+
                     log.trace("{} Health Check response: {}", componentName, response);
                     ObjectMapper mapper = new ObjectMapper();
                     Map<String, Object> healthCheckMap = mapper.readValue(response, new TypeReference<Map<String, Object>>() {
@@ -261,6 +270,25 @@ public class HealthCheckBusinessLogic {
             componentsInfo.add(new HealthCheckInfo(HC_COMPONENT_BE, DOWN, null, description));
         }
         return new HealthCheckInfo(componentName, healthCheckStatus, version, description, componentsInfo);
+    }
+
+    private int getHostedComponentTimeoutMs(String componentName) {
+        final int defaultTimeoutMs = 3000;
+        if (!HC_COMPONENT_ON_BOARDING.equals(componentName)) {
+            return defaultTimeoutMs;
+        }
+        // Onboarding BE healthcheck may initialize Cassandra/Zusammen on first call and can take longer than 3s,
+        // especially after Cassandra/JanusGraph migrations.
+        final int onboardingDefaultTimeoutMs = 15000;
+        try {
+            Configuration config = ConfigurationManager.getConfigurationManager().getConfiguration();
+            if (config != null && config.getOnboarding() != null && config.getOnboarding().getTimeoutMs() != null) {
+                return config.getOnboarding().getTimeoutMs();
+            }
+        } catch (Exception e) {
+            log.debug("Failed to read onboarding timeout from configuration, using default", e);
+        }
+        return onboardingDefaultTimeoutMs;
     }
 
     private void addToHealthCheckInfoObject(String description, List<HealthCheckInfo> componentsInfo) {

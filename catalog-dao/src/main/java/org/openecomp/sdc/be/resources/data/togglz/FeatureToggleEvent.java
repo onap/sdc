@@ -19,12 +19,15 @@
  */
 package org.openecomp.sdc.be.resources.data.togglz;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+
+
 import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,18 +42,19 @@ import org.togglz.core.repository.FeatureState;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(keyspace = AuditingTypesConstants.REPO_KEYSPACE, name = AuditingTypesConstants.FEATURE_TOGGLE_STATE)
+@Entity(defaultKeyspace = AuditingTypesConstants.REPO_KEYSPACE)
+@CqlName(AuditingTypesConstants.FEATURE_TOGGLE_STATE)
 public class FeatureToggleEvent {
 
     private static final Logger logger = Logger.getLogger(FeatureToggleEvent.class);
     @PartitionKey
-    @Column(name = "feature_name")
+    @CqlName("feature_name")
     private String featureName;
-    @Column(name = "enabled")
+    @CqlName("enabled")
     private String enabled;
-    @Column(name = "strategy_id")
+    @CqlName("strategy_id")
     private String strategyId;
-    @Column(name = "parameters")
+    @CqlName("parameters")
     private String parameters;
 
     public FeatureToggleEvent(FeatureState featureState) {

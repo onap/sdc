@@ -19,12 +19,15 @@
  */
 package org.openecomp.sdc.healing.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import java.util.Optional;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.sdc.healing.dao.HealingDao;
 
 /**
@@ -33,26 +36,28 @@ import org.openecomp.sdc.healing.dao.HealingDao;
 public class HealingDaoImpl implements HealingDao {
 
     private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static HealingAccessor accessor = noSqlDb.getMappingManager().createAccessor(HealingAccessor.class);
+    private static final CqlSession session = noSqlDb.getSession();
+
+      private static final PreparedStatement selectStmt = session.prepare(
+        "SELECT healing_needed FROM healing WHERE space=? AND item_id=? AND version_id=?"
+    );
+
+    private static final PreparedStatement updateStmt = session.prepare(
+        "UPDATE healing SET healing_needed=? WHERE space=? AND item_id=? AND version_id=?"
+    );
 
     @Override
     public Optional<Boolean> getItemHealingFlag(String space, String itemId, String versionId) {
-        ResultSet result = accessor.getItemHealingFlag(space, itemId, versionId);
-        return result.getAvailableWithoutFetching() < 1 ? Optional.empty() : Optional.of(result.one().getBool("healing_needed"));
+        BoundStatement bound = selectStmt.bind(space, itemId, versionId);
+        ResultSet result = session.execute(bound);
+        Row row = result.one();
+        return row != null ? Optional.of(row.getBoolean("healing_needed")) : Optional.empty();
     }
+
 
     @Override
     public void setItemHealingFlag(boolean healingNeededFlag, String space, String itemId, String versionId) {
-        accessor.setItemHealingFlag(healingNeededFlag, space, itemId, versionId);
-    }
-
-    @Accessor
-    interface HealingAccessor {
-
-        @Query("SELECT healing_needed FROM healing WHERE space=? AND item_id=? AND version_id=?")
-        ResultSet getItemHealingFlag(String space, String itemId, String versionId);
-
-        @Query("UPDATE healing SET healing_needed=? WHERE space=? AND item_id=? AND version_id=?")
-        void setItemHealingFlag(boolean flag, String space, String itemId, String versionId);
+        BoundStatement bound = updateStmt.bind(healingNeededFlag, space, itemId, versionId);
+        session.execute(bound);
     }
 }
