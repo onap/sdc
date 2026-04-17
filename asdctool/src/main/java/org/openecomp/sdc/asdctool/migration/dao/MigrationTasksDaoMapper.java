@@ -1,8 +1,10 @@
 /*-
  * ============LICENSE_START=======================================================
  * SDC
+  * ================================================================================
+ * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
- * Copyright (C) 2019 Nokia. All rights reserved.
+ * Modifications copyright (c) 2025 Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +19,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
+package org.openecomp.sdc.asdctool.migration.dao;
 
-import org.junit.jupiter.api.Test;
+import com.datastax.oss.driver.api.mapper.annotations.DaoFactory;
+import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 
-public class VersionEntityTest {
-    @Test
-    public void hasValidGettersAndSettersTest() {
-        assertThat(VersionEntity.class, hasValidGettersAndSetters());
-    }
+@Mapper
+public interface MigrationTasksDaoMapper {
+    @DaoFactory
+    MigrationTasksAccessor migrationTasksAccessor();
 }

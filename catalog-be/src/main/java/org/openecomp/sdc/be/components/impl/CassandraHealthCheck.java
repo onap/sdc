@@ -21,9 +21,10 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
+import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.metadata.Metadata;
+import com.datastax.oss.driver.api.core.metadata.NodeState;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -88,28 +90,29 @@ public class CassandraHealthCheck {
                 return;
             }
             log.debug("Cluster Metadata: {}", metadata);
-            List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
-            List<Integer> replactionFactorList = new ArrayList<>();
+
+            List<Integer> replicationFactorList = new ArrayList<>();
             //Collect the keyspaces Replication Factor of current localDataCenter
-            for (KeyspaceMetadata keyspace : keyspaces) {
-                if (sdcKeyspaces.contains(keyspace.getName())) {
+            for (KeyspaceMetadata keyspace : metadata.getKeyspaces().values()) {
+                if (sdcKeyspaces.contains(keyspace.getName().asInternal())) {
                     log.debug("keyspace : {} , replication: {}", keyspace.getName(), keyspace.getReplication());
                     Map<String, String> replicationOptions = keyspace.getReplication();
                     //In 1 site with one data center
                     if (replicationOptions.containsKey("replication_factor")) {
-                        replactionFactorList.add(Integer.parseInt(replicationOptions.get("replication_factor")));
+                        replicationFactorList.add(Integer.parseInt(replicationOptions.get("replication_factor")));
                     }
                     //In multiple sites with some data center
                     else if (replicationOptions.containsKey(localDataCenterName)) {
-                        replactionFactorList.add(Integer.parseInt(replicationOptions.get(localDataCenterName)));
+                        replicationFactorList.add(Integer.parseInt(replicationOptions.get(localDataCenterName)));
                     }
+
                 }
             }
-            if (replactionFactorList.isEmpty()) {
+            if (replicationFactorList.isEmpty()) {
                 log.error("Replication factor NOT found in all keyspaces");
                 return;
             }
-            int maxReplicationFactor = Collections.max(replactionFactorList);
+            int maxReplicationFactor = Collections.max(replicationFactorList);
             log.debug("maxReplication Factor is: {}", maxReplicationFactor);
             int localQuorum = maxReplicationFactor / 2 + 1;
             log.debug("localQuorum is: {}", localQuorum);
@@ -125,7 +128,7 @@ public class CassandraHealthCheck {
             log.error("localDataCenter Name in configuration.yaml is missing.");
             return false;
         }
-        try (final Session session = sdcSchemaUtils.connect()) {
+        try (final CqlSession session = sdcSchemaUtils.connect()) {
             log.debug("creating cluster for Cassandra for monitoring.");
             log.debug("The cassandra session is {}", session);
             if (session == null) {
@@ -137,9 +140,14 @@ public class CassandraHealthCheck {
                 log.error("Failure get cassandra metadata.");
                 return false;
             }
-            log.debug("The number of cassandra nodes is:{}", metadata.getAllHosts().size());
+            log.debug("The number of Cassandra nodes is: {}", metadata.getNodes().size());
             //Count the number of data center nodes that are down
-            Long downHostsNumber = metadata.getAllHosts().stream().filter(x -> x.getDatacenter().equals(localDataCenterName) && !x.isUp()).count();
+            long downHostsNumber = metadata.getNodes()
+                               .values()
+                               .stream()
+                               .filter(node -> node.getDatacenter().equals(localDataCenterName)
+                                               && node.getState() != NodeState.UP)
+                               .count();
             if(downHostsNumber > 0) {
                 log.warn("{} cassandra nodes are down", downHostsNumber);
             } else {
@@ -155,8 +163,8 @@ public class CassandraHealthCheck {
     @PreDestroy
     public void closeClient() {
         if (sdcSchemaUtils != null) {
-            sdcSchemaUtils.closeCluster();
+            sdcSchemaUtils.closeSession();
         }
-        log.info("** sdcSchemaUtils cluster closed");
+        log.info("** sdcSchemaUtils session closed");
     }
 }

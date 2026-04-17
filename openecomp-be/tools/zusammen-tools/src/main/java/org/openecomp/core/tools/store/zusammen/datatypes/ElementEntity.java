@@ -15,11 +15,12 @@
  */
 package org.openecomp.core.tools.store.zusammen.datatypes;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import java.nio.ByteBuffer;
 import java.util.Set;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 /**
  * CREATE TABLE zusammen_dox.element (
@@ -38,36 +39,36 @@ import java.util.Set;
  * PRIMARY KEY ((space, item_id, version_id, element_id))
  * )
  */
-@Table(keyspace = "zusammen_dox", name = "element")
+@Entity
 public class ElementEntity {
 
-    @Column(name = "space")
+    @CqlName("space")
     @PartitionKey(0)
     private String space;
-    @Column(name = "item_id")
+    @CqlName("item_id")
     @PartitionKey(1)
     private String itemId;
-    @Column(name = "version_id")
+    @CqlName("version_id")
     @PartitionKey(2)
     private String versionId;
-    @Column(name = "element_id")
+    @CqlName("element_id")
     @PartitionKey(3)
     private String elementId;
-    @Column(name = "data")
+    @CqlName("data")
     private ByteBuffer data;
-    @Column(name = "info")
+    @CqlName("info")
     private String info;
-    @Column(name = "namespace")
+    @CqlName("namespace")
     private String namespace;
-    @Column(name = "parent_id")
+    @CqlName("parent_id")
     private String parentId;
-    @Column(name = "relations")
+    @CqlName("relations")
     private String relations;
-    @Column(name = "searchable_data")
+    @CqlName("searchable_data")
     private ByteBuffer searchableData;
-    @Column(name = "sub_element_ids")
+    @CqlName("sub_element_ids")
     private Set<String> subElementIds;
-    @Column(name = "visualization")
+    @CqlName("visualization")
     private ByteBuffer visualization;
 
     public String getSpace() {

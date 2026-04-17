@@ -19,13 +19,18 @@
  */
 package org.openecomp.sdc.be.resources.data;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
+
 import java.nio.ByteBuffer;
 import java.util.Date;
 
-@Table(keyspace = "sdccomponent", name = "componentcache")
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+
+
+@Entity(defaultKeyspace = "sdccomponent")
+@CqlName("componentcache")
 public class ComponentCacheData {
 
     public static final String RESOURCE_ID_FIELD = "resourceId";
@@ -34,17 +39,17 @@ public class ComponentCacheData {
     public static final String ARTIFACT_NAME_FIELD = "artifactName";
     public static final String delim = ":";
     @PartitionKey
-    @Column(name = "id")
+    @CqlName("id")
     private String id;
-    @Column
+    @CqlName("data")
     private ByteBuffer data;
-    @Column(name = "modification_time")
+    @CqlName("modification_time")
     private Date modificationTime;
-    @Column
+     @CqlName("type")
     private String type;
-    @Column(name = "is_dirty")
+    @CqlName("is_dirty")
     private boolean isDirty;
-    @Column(name = "is_zipped")
+    @CqlName("is_zipped")
     private boolean isZipped;
 
     public ComponentCacheData() {

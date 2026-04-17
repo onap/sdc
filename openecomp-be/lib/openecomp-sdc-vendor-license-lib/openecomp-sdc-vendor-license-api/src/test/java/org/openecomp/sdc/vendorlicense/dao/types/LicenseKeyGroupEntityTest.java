@@ -25,8 +25,21 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 public class LicenseKeyGroupEntityTest {
-    @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(LicenseKeyGroupEntity.class, hasValidGettersAndSettersExcluding("SPLimits", "entityType", "firstClassCitizenId", "isoFormatExpiryDate", "isoFormatStartDate", "operationalScopeForArtifact", "thresholdForArtifact", "typeForArtifact", "vendorLimits", "versionForArtifact"));
-    }
+
+@Test
+public void shouldHaveValidBasicGettersAndSetters() {
+    assertThat(LicenseKeyGroupEntity.class,
+        hasValidGettersAndSettersExcluding(
+            "SPLimits",
+            "entityType",
+            "firstClassCitizenId",
+            "isoFormatExpiryDate",
+            "isoFormatStartDate",
+            "operationalScope",
+            "operationalScopeForArtifact",
+            "thresholdForArtifact",
+            "typeForArtifact",
+            "vendorLimits",
+            "versionForArtifact"));
+}
 }

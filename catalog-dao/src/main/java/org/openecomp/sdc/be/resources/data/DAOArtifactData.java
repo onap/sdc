@@ -19,18 +19,22 @@
  */
 package org.openecomp.sdc.be.resources.data;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
+
 import java.nio.ByteBuffer;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
-@Table(keyspace = "sdcartifact", name = "resources")
+@Entity(defaultKeyspace = "sdcartifact")
+@CqlName("resources")
 public class DAOArtifactData {
 
     public static final String RRESOURCE_ID_FIELD = "resourceId";
@@ -39,13 +43,13 @@ public class DAOArtifactData {
     public static final String ARTIFACT_NAME_FIELD = "artifactName";
     public static final String delim = ":";
     @PartitionKey
-    @Column(name = "id")
+    @CqlName("id")
     @Setter
     private String id;
     /*
      * Base64 encoded Artifact file data
      */
-    @Column
+    @CqlName("data")
     private ByteBuffer data;
 
     public DAOArtifactData(String id) {

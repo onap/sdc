@@ -15,66 +15,89 @@
  */
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+import org.openecomp.sdc.itempermissions.dao.ItemPermissionMapper;
+import org.openecomp.sdc.itempermissions.dao.ItemPermissionMapperBuilder;
 import org.openecomp.sdc.itempermissions.dao.ItemPermissionsDao;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 /**
- * Created by ayalaben on 6/20/2017.
+ * Wrapper around the generated ItemPermissionsDao to provide business logic.
  */
 public class ItemPermissionsDaoImpl implements ItemPermissionsDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static ItemPermissionsAccessor accessor = noSqlDb.getMappingManager().createAccessor(ItemPermissionsAccessor.class);
+    private final ItemPermissionsDao dao;
 
-    @Override
-    public Collection<ItemPermissionsEntity> listItemPermissions(String itemId) {
-        return accessor.getItemPermissions(itemId).all();
+    public ItemPermissionsDaoImpl(CqlSession session) {
+        ItemPermissionMapper mapper = new ItemPermissionMapperBuilder(session).build();
+        this.dao = mapper.itemPermissionsDao();
     }
 
-    @Override
-    public void updateItemPermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds) {
-        addedUsersIds.forEach(userId -> accessor.addPermission(itemId, userId, permission));
-        removedUsersIds.stream().filter(
-            userId -> getUserItemPermission(itemId, userId).map(userPermissionOnItem -> userPermissionOnItem.equals(permission)).orElse(false))
-            .forEach(userId -> accessor.deletePermission(itemId, userId));
+    public ItemPermissionsDaoImpl(ItemPermissionsDao dao) {
+        this.dao = dao;
     }
 
-    @Override
+    /**
+     * List all permissions for an item.
+     */
+    public PagingIterable<ItemPermissionsEntity> listItemPermissions(String itemId) {
+        return dao.getItemPermissions(itemId);
+    }
+
+    /**
+     * Update item permissions by adding and removing users.
+     */
+    public void updateItemPermissions(String itemId, String permission,
+                                      Set<String> addedUsersIds, Set<String> removedUsersIds) {
+        // Add permissions
+        addedUsersIds.forEach(userId -> {
+            ItemPermissionsEntity entity = new ItemPermissionsEntity(itemId, userId, permission);
+            dao.addPermission(entity);
+        });
+
+        // Remove permissions only if existing permission matches
+        removedUsersIds.forEach(userId ->
+            dao.getUserItemPermissionEntity(itemId, userId)
+               .filter(e -> permission.equals(e.getPermission()))
+               .ifPresent(dao::deletePermission)
+        );
+    }
+
+    /**
+     * Get a single user’s permission for an item.
+     */
     public Optional<String> getUserItemPermission(String itemId, String userId) {
-        ResultSet result = accessor.getUserItemPermission(itemId, userId);
-        return result.getAvailableWithoutFetching() < 1 ? Optional.empty() : Optional.of(result.one().getString(0));
+        return dao.getUserItemPermissionEntity(itemId, userId)
+                  .map(ItemPermissionsEntity::getPermission);
+    }
+
+    /**
+     * Delete all permissions for an item.
+     */
+    public void deleteItemPermissions(String itemId) {
+        dao.deleteItemPermissions(itemId);
     }
 
     @Override
-    public void deleteItemPermissions(String itemId) {
-        accessor.deleteItemPermissions(itemId);
+    public PagingIterable<ItemPermissionsEntity> getItemPermissions(String itemId) {
+        return dao.getItemPermissions(itemId);
     }
 
-    @Accessor
-    interface ItemPermissionsAccessor {
+    @Override
+    public Optional<ItemPermissionsEntity> getUserItemPermissionEntity(String itemId, String userId) {
+        return dao.getUserItemPermissionEntity(itemId, userId);
+    }
 
-        @Query("select * from dox.item_permissions WHERE item_id = ?")
-        Result<ItemPermissionsEntity> getItemPermissions(String itemId);
+    @Override
+    public void addPermission(ItemPermissionsEntity entity) {
+       dao.addPermission(entity);
+    }
 
-        @Query("select permission from dox.item_permissions WHERE item_id = ? AND user_id=?")
-        ResultSet getUserItemPermission(String itemId, String userId);
-
-        @Query("delete from dox.item_permissions where item_id = ? and user_id = ?")
-        void deletePermission(String itemId, String userId);
-
-        @Query("insert into dox.item_permissions (item_id,user_id,permission) values (?,?,?)")
-        void addPermission(String itemId, String userId, String permission);
-
-        @Query("delete from dox.item_permissions where item_id=?")
-        void deleteItemPermissions(String itemId);
+    @Override
+    public void deletePermission(ItemPermissionsEntity entity) {
+        dao.deletePermission(entity);
     }
 }

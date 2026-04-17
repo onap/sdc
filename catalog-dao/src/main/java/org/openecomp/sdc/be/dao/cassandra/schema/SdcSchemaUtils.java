@@ -21,15 +21,20 @@
  */
 package org.openecomp.sdc.be.dao.cassandra.schema;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.SocketOptions;
-import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
-import com.datastax.driver.core.policies.TokenAwarePolicy;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
+import com.datastax.oss.driver.api.core.metadata.Metadata;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import com.datastax.oss.driver.api.core.config.ProgrammaticDriverConfigLoaderBuilder;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import java.time.Duration;
+
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.function.Supplier;
+
+import javax.net.ssl.SSLContext;
+
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -37,27 +42,28 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 public class SdcSchemaUtils {
 
     private static Logger log = Logger.getLogger(SdcSchemaUtils.class.getName());
-    private Cluster cluster;
+    private CqlSession session;
+
     private boolean isConnected;
 
     public SdcSchemaUtils() {
         super();
         try {
             isConnected = false;
-            cluster = createCluster();
+            session = createSession();
             isConnected = true;
         } catch (Exception e) {
             log.info("** CassandraClient isn't connected. error is", e);
         }
-        log.info("** cluster created");
+        log.info("** session created");
     }
 
     /**
-     * the method creates the cluster object using the supplied cassandra nodes in the configuration
+     * the method creates the session object using the supplied cassandra nodes in the configuration
      *
-     * @return cluster object our null in case of an invalid configuration
+     * @return session object our null in case of an invalid configuration
      */
-    public Cluster createCluster() {
+    public CqlSession createSession() {
         final Configuration.CassandrConfig config = getCassandraConfig();
         List<String> nodes = config.getCassandraHosts();
         Integer cassandraPort = config.getCassandraPort();
@@ -66,56 +72,60 @@ public class SdcSchemaUtils {
             return null;
         }
         log.info("Connecting to node: {} port: {}.", nodes, cassandraPort);
-        Cluster.Builder clusterBuilder = Cluster.builder();
-        nodes.forEach(node -> clusterBuilder.addContactPoint(node).withPort(cassandraPort));
+        CqlSessionBuilder  sessionBuilder = CqlSession.builder();
+        nodes.forEach(node -> sessionBuilder.addContactPoint(new InetSocketAddress(node, cassandraPort)));
         log.info("Connection timeout in seconds : {}", config.getMaxWaitSeconds());
-        clusterBuilder.withMaxSchemaAgreementWaitSeconds(config.getMaxWaitSeconds());
-        setSocketOptions(clusterBuilder, config);
-        if (!enableAuthentication(clusterBuilder, config)) {
+        DriverConfigLoader loader = DriverConfigLoader.programmaticBuilder()
+        .withDuration(
+            DefaultDriverOption.REQUEST_TIMEOUT,
+            Duration.ofSeconds(config.getMaxWaitSeconds())
+        )
+        .build();
+        sessionBuilder.withConfigLoader(loader);
+        config.getCassandraHosts().forEach(node ->
+        sessionBuilder.addContactPoint(new InetSocketAddress(node, config.getCassandraPort()))
+    );
+        setSocketOptions(sessionBuilder, config);
+        if (!enableAuthentication(sessionBuilder, config)) {
             return null;
         }
-        if (!enableSsl(clusterBuilder, config)) {
+        if (!enableSsl(sessionBuilder, config)) {
             return null;
         }
-        setLocalDc(clusterBuilder, config);
-        return clusterBuilder.build();
+        setLocalDc(sessionBuilder, config);
+        return sessionBuilder.build();
     }
 
     /**
      * @return
      */
-    public Session connect() {
-        Session session = null;
-        if (cluster != null) {
-            try {
-                session = cluster.connect();
-            } catch (Throwable e) {
-                log.debug("Failed to connect cluster, error :", e);
-            }
-        }
-        return session;
+  public CqlSession connect() {
+    try {
+        return createSession();
+    } catch (Throwable e) {
+        log.error("Failed to connect to Cassandra health check, error: ", e);
+        return null;
     }
+}
 
     public Metadata getMetadata() {
-        if (cluster != null) {
-            return cluster.getMetadata();
+        if (session != null) {
+            return session.getMetadata();
         }
         return null;
     }
 
-    private void setLocalDc(Cluster.Builder clusterBuilder, Configuration.CassandrConfig config) {
-        String localDataCenter = config.getLocalDataCenter();
-        if (localDataCenter != null) {
-            log.info("localDatacenter was provided, setting Cassndra clint to use datacenter: {} as local.", localDataCenter);
-            LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
-            clusterBuilder.withLoadBalancingPolicy(tokenAwarePolicy);
-        } else {
-            log.info(
-                "localDatacenter was provided,  the driver will use the datacenter of the first contact point that was reached at initialization");
-        }
+    private void setLocalDc(CqlSessionBuilder builder, Configuration.CassandrConfig config) {
+    String localDataCenter = config.getLocalDataCenter();
+    if (localDataCenter != null) {
+        log.info("localDatacenter was provided, setting Cassandra client to use datacenter: {} as local.", localDataCenter);
+        builder.withLocalDatacenter(localDataCenter);
+    } else {
+        log.info("localDatacenter was not provided, the driver will use the datacenter of the first contact point that was reached at initialization.");
     }
+}
 
-    private boolean enableSsl(Cluster.Builder clusterBuilder, Configuration.CassandrConfig config) {
+    private boolean enableSsl(CqlSessionBuilder sessionBuilder, Configuration.CassandrConfig config) {
         boolean ssl = config.isSsl();
         if (ssl) {
             String truststorePath = config.getTruststorePath();
@@ -126,28 +136,35 @@ public class SdcSchemaUtils {
             } else {
                 System.setProperty("javax.net.ssl.trustStore", truststorePath);
                 System.setProperty("javax.net.ssl.trustStorePassword", truststorePassword);
-                clusterBuilder.withSSL();
+                try {
+                SSLContext sslContext = SSLContext.getDefault();
+                sessionBuilder.withSslContext(sslContext); 
+            } catch (Exception e) {
+                log.error("Failed to enable SSL for Cassandra connection", e);
+                return false;
             }
+          }
         }
         return true;
     }
 
-    private void setSocketOptions(Cluster.Builder clusterBuilder, Configuration.CassandrConfig config) {
-        SocketOptions socketOptions = new SocketOptions();
+    private void setSocketOptions(CqlSessionBuilder sessionBuilder, Configuration.CassandrConfig config) {
+        ProgrammaticDriverConfigLoaderBuilder configBuilder = DriverConfigLoader.programmaticBuilder();
+
         Integer socketConnectTimeout = config.getSocketConnectTimeout();
         if (socketConnectTimeout != null) {
             log.info("SocketConnectTimeout was provided, setting Cassandra client to use SocketConnectTimeout: {} .", socketConnectTimeout);
-            socketOptions.setConnectTimeoutMillis(socketConnectTimeout);
+            configBuilder.withDuration(DefaultDriverOption.CONNECTION_CONNECT_TIMEOUT, Duration.ofMillis(socketConnectTimeout));
         }
         Integer socketReadTimeout = config.getSocketReadTimeout();
         if (socketReadTimeout != null) {
             log.info("SocketReadTimeout was provided, setting Cassandra client to use SocketReadTimeout: {} .", socketReadTimeout);
-            socketOptions.setReadTimeoutMillis(socketReadTimeout);
+            configBuilder.withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofMillis(socketReadTimeout));
         }
-        clusterBuilder.withSocketOptions(socketOptions);
+        sessionBuilder.withConfigLoader(configBuilder.build());
     }
 
-    private boolean enableAuthentication(Cluster.Builder clusterBuilder, Configuration.CassandrConfig config) {
+    private boolean enableAuthentication(CqlSessionBuilder sessionBuilder, Configuration.CassandrConfig config) {
         boolean authenticate = config.isAuthenticate();
         if (authenticate) {
             String username = config.getUsername();
@@ -156,26 +173,26 @@ public class SdcSchemaUtils {
                 log.error("authentication is enabled but username or password were not supplied.");
                 return false;
             } else {
-                clusterBuilder.withCredentials(username, password);
+                sessionBuilder.withCredentials(username, password);
             }
         }
         return true;
     }
 
     public boolean executeStatement(String statement) {
-        return executeStatement(this::createCluster, statement);
+        return executeStatement(this::createSession, statement);
     }
 
     public boolean executeStatements(String... statements) {
-        return executeStatements(this::createCluster, statements);
+        return executeStatements(this::createSession, statements);
     }
 
-    boolean executeStatement(Supplier<Cluster> clusterSupplier, String statement) {
-        return executeStatements(clusterSupplier, statement);
+    boolean executeStatement(Supplier<CqlSession> sessionSupplier, String statement) {
+        return executeStatements(sessionSupplier, statement);
     }
 
-    boolean executeStatements(Supplier<Cluster> clusterSupplier, String... statements) {
-        try (Cluster cluster = clusterSupplier.get(); Session session = cluster.connect()) {
+    boolean executeStatements(Supplier<CqlSession> sessionSupplier, String... statements) {
+        try (CqlSession session = sessionSupplier.get()) {
             for (String statement : statements) {
                 session.execute(statement);
             }
@@ -190,10 +207,10 @@ public class SdcSchemaUtils {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig();
     }
 
-    public void closeCluster() {
+    public void closeSession() {
         if (isConnected) {
-            cluster.close();
+            session.close();
         }
-        log.info("** CassandraClient cluster closed");
+        log.info("** CassandraClient session closed");
     }
 }

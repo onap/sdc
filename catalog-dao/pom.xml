@@ -289,12 +289,31 @@ Modifications copyright (c) 2018 Nokia
     <dependency>
       <groupId>org.apache.tinkerpop</groupId>
       <artifactId>gremlin-core</artifactId>
-      <version>3.4.13</version>
+      <version>3.5.6</version>
     </dependency>
     <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-inmemory</artifactId>
       <version>${janusgraph.version}</version>
+      <exclusions>
+    <!-- Prevent Jakarta Validation -->
+    <exclusion>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </exclusion>
+
+    <!-- Prevent Jakarta EL -->
+    <exclusion>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+    </exclusion>
+
+    <!-- Optional (safe) -->
+    <exclusion>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+    </exclusion>
+  </exclusions>
     </dependency>
     <dependency>
       <groupId>org.janusgraph</groupId>
@@ -342,12 +361,28 @@ Modifications copyright (c) 2018 Nokia
           <groupId>org.slf4j</groupId>
           <artifactId>jcl-over-slf4j</artifactId>
         </exclusion>
+        <exclusion>
+		  <groupId>jakarta.validation</groupId>
+		  <artifactId>jakarta.validation-api</artifactId>
+		</exclusion>
+		<exclusion>
+		  <groupId>jakarta.el</groupId>
+		  <artifactId>jakarta.el-api</artifactId>
+		</exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.janusgraph</groupId>
-      <artifactId>janusgraph-cassandra</artifactId>
+      <artifactId>janusgraph-cql</artifactId>
       <version>${janusgraph.version}</version>
       <scope>provided</scope>
       <exclusions>
@@ -372,13 +407,25 @@ Modifications copyright (c) 2018 Nokia
           <artifactId>commons-codec</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-validator</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>javax.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
+        <exclusion>
+		  <groupId>jakarta.validation</groupId>
+		  <artifactId>jakarta.validation-api</artifactId>
+		</exclusion>
+		<exclusion>
+		  <groupId>jakarta.el</groupId>
+		  <artifactId>jakarta.el-api</artifactId>
+		</exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
       </exclusions>
     </dependency>
 
@@ -398,50 +445,95 @@ Modifications copyright (c) 2018 Nokia
 
     <!-- CASSANDRA -->
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
       <version>${cassandra.driver.version}</version>
-      <scope>provided</scope>
-      <exclusions>
+      <exclusions> 
         <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-handler</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.github.jnr</groupId>
-          <artifactId>jnr-posix</artifactId>
-        </exclusion>
+        <groupId>jakarta.validation</groupId>
+        <artifactId>jakarta.validation-api</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>jakarta.el</groupId>
+        <artifactId>jakarta.el-api</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
       </exclusions>
     </dependency>
+   <dependency>
+    <groupId>com.datastax.oss</groupId>
+    <artifactId>java-driver-mapper-runtime</artifactId>
+    <version>${cassandra.driver.version}</version>
+    <exclusions>
+    <exclusion>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+    </exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+  </exclusions>
+    </dependency>
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-mapping</artifactId>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-query-builder</artifactId>
       <version>${cassandra.driver.version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-processor</artifactId>
+      <version>${cassandra.driver.version}</version>
+      <exclusions>
+    <exclusion>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+    </exclusion>
+    <exclusion>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+    </exclusion>
+    <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
+  </exclusions>
     </dependency>
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-common</artifactId>
       <version>${netty.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.datastax.oss</groupId>
-      <artifactId>java-driver-core</artifactId>
-      <version>${java.driver.core.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.tinkerpop</groupId>
-          <artifactId>gremlin-driver</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.github.jnr</groupId>
-          <artifactId>jnr-posix</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.cassandraunit</groupId>
@@ -538,6 +630,25 @@ Modifications copyright (c) 2018 Nokia
           <forkCount>1</forkCount>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>com.datastax.oss</groupId>
+              <artifactId>java-driver-mapper-processor</artifactId>
+              <version>${cassandra.driver.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+    </plugin>
     </plugins>
     <pluginManagement>
       <plugins>

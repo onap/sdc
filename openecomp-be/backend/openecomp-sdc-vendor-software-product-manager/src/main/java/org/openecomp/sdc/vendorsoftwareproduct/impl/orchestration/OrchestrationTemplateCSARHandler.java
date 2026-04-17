@@ -123,7 +123,6 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         if (CollectionUtils.isNotEmpty(validationResult.getErrors())) {
             return Map.of(SdcCommon.UPLOAD_FILE, validationResult.getErrors());
         }
-
         return Collections.emptyMap();
     }
 

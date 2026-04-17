@@ -21,6 +21,7 @@ package org.onap.sdc.frontend.ci.tests.flow;
 
 import com.aventstack.extentreports.Status;
 import java.util.Optional;
+import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
@@ -43,6 +44,14 @@ public class CreateResourceFromVspFlow extends AbstractUiTestFlow {
     public Optional<ResourceCreatePage> run(final PageObject... pageObjects) {
         resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
         extendTest.log(Status.INFO, String.format("Creating the Resource '%s'", resourceName));
+        final ResourceCreateData resourceCreateData = new ResourceCreateData();
+        resourceCreateData.setName(resourceName);
+        resourceCreateData.setDescription("description");
+        resourceCreateData.setContactId("cs0008");
+        resourceCreateData.setVendorName("EST");
+        resourceCreateData.setVendorRelease("1.0");
+        resourceCreateData.setVendorModelNumber("0001");
+        resourceCreatePage.fillMissingRequiredFields(resourceCreateData);
         resourceCreatePage.clickOnCreate();
         ExtentTestActions.takeScreenshot(Status.INFO, "resource-created",
             String.format("Resource '%s' was created", resourceName));

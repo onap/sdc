@@ -73,6 +73,8 @@ public final class GraphTestUtils {
         vertex.addMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
         vertex.addMetadataProperty(GraphPropertyEnum.RESOURCE_TYPE, type.name());
         vertex.addMetadataProperty(GraphPropertyEnum.IS_ABSTRACT, false);
+        vertex.addMetadataProperty(GraphPropertyEnum.IS_DELETED, false);
+        vertex.addMetadataProperty(GraphPropertyEnum.IS_ARCHIVED, false);
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());
         }
@@ -87,6 +89,9 @@ public final class GraphTestUtils {
         vertex.setUniqueId(uuid);
         vertex.addMetadataProperty(GraphPropertyEnum.LABEL, VertexTypeEnum.TOPOLOGY_TEMPLATE);
         vertex.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, uuid);
+        vertex.addMetadataProperty(GraphPropertyEnum.IS_DELETED, false);
+        vertex.addMetadataProperty(GraphPropertyEnum.IS_ARCHIVED, false);
+        vertex.addMetadataProperty(GraphPropertyEnum.IS_ABSTRACT, false);
         vertex.addMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());

@@ -1581,47 +1581,28 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     }
 
     public Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> getAllDataTypes() {
-        final Map<String, Map<String, DataTypeDefinition>> dataTypes = new HashMap<>();
-        Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result = Either.left(dataTypes);
-        final Map<String, DataTypeDefinition> allDataTypesFound = new HashMap<>();
+    final Map<String, Map<String, DataTypeDefinition>> dataTypes = new HashMap<>();
+    final Map<String, DataTypeDefinition> allDataTypesFound = new HashMap<>();
 
-        final Map<String, List<String>> dataTypeUidstoModels = dataTypeOperation.getAllDataTypeUidsToModels();
+    final Map<String, List<String>> dataTypeUidstoModels = dataTypeOperation.getAllDataTypeUidsToModels();
+    if (dataTypeUidstoModels != null) {
+        for (final Map.Entry<String, List<String>> entry : dataTypeUidstoModels.entrySet()) {
+            final String key = entry.getKey();
+            final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid =
+                this.getAndAddDataTypeByUid(key, allDataTypesFound);
+            if (dataTypeByUid.isRight()) {
+                return Either.right(dataTypeByUid.right().value());
+            }
 
-        if (dataTypeUidstoModels != null) {
-            log.trace("Number of data types to load is {}", dataTypeUidstoModels.size());
-            for (final Map.Entry<String, List<String>> entry : dataTypeUidstoModels.entrySet()) {
-                final String key = entry.getKey();
-                log.trace("Going to fetch data type with uid {}", key);
-                final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = this.getAndAddDataTypeByUid(key, allDataTypesFound);
-                if (dataTypeByUid.isRight()) {
-                    JanusGraphOperationStatus status = dataTypeByUid.right().value();
-                    if (status == JanusGraphOperationStatus.NOT_FOUND) {
-                        status = JanusGraphOperationStatus.INVALID_ID;
-                    }
-                    return Either.right(status);
-                }
-                for (final String model : entry.getValue()) {
-                    if (!dataTypes.containsKey(model)) {
-                        dataTypes.put(model, new HashMap<>());
-                    }
-                    DataTypeDefinition dataTypeDefinition = allDataTypesFound.get(entry.getKey());
-                    dataTypes.get(model).put(dataTypeDefinition.getName(), dataTypeDefinition);
-                }
+            for (final String model : entry.getValue()) {
+                dataTypes.computeIfAbsent(model, m -> new HashMap<>());
+                DataTypeDefinition def = allDataTypesFound.get(entry.getKey());
+                dataTypes.get(model).put(def.getName(), def);
             }
         }
-        if (log.isTraceEnabled()) {
-            if (result.isRight()) {
-                log.trace("After fetching all data types {}", result);
-            } else {
-                Map<String, Map<String, DataTypeDefinition>> map = result.left().value();
-                if (map != null) {
-                    String types = map.keySet().stream().collect(Collectors.joining(",", "[", "]"));
-                    log.trace("After fetching all data types {} ", types);
-                }
-            }
-        }
-        return result;
     }
+    return Either.left(dataTypes);
+}
 
     /**
      * Build Data type object from graph by unique id
@@ -1629,63 +1610,33 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
      * @param uniqueId
      * @return
      */
-    private Either<DataTypeDefinition, JanusGraphOperationStatus> getAndAddDataTypeByUid(String uniqueId,
-                                                                                         Map<String, DataTypeDefinition> allDataTypes) {
-        Either<DataTypeDefinition, JanusGraphOperationStatus> result = null;
-        if (allDataTypes.containsKey(uniqueId)) {
-            return Either.left(allDataTypes.get(uniqueId));
-        }
-        Either<DataTypeData, JanusGraphOperationStatus> dataTypesRes = janusGraphGenericDao
-            .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, DataTypeData.class);
-        if (dataTypesRes.isRight()) {
-            JanusGraphOperationStatus status = dataTypesRes.right().value();
-            log.debug(DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS, uniqueId, status);
-            return Either.right(status);
-        }
-        DataTypeData ctData = dataTypesRes.left().value();
-        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(ctData.getDataTypeDataDefinition());
-        JanusGraphOperationStatus propertiesStatus = fillProperties(uniqueId, dataTypeDefinition);
-        if (propertiesStatus != JanusGraphOperationStatus.OK) {
-            log.error(FAILED_TO_FETCH_PROPERTIES_OF_DATA_TYPE, uniqueId);
-            return Either.right(propertiesStatus);
-        }
-        allDataTypes.put(dataTypeDefinition.getUniqueId(), dataTypeDefinition);
-        String derivedFrom = dataTypeDefinition.getDerivedFromName();
-        if (allDataTypes.containsKey(derivedFrom)) {
-            DataTypeDefinition parentDataTypeDefinition = allDataTypes.get(derivedFrom);
-            dataTypeDefinition.setDerivedFrom(parentDataTypeDefinition);
-            return Either.left(dataTypeDefinition);
-        }
-        Either<ImmutablePair<DataTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
-                DataTypeData.class);
-        log.debug(AFTER_RETRIEVING_DERIVED_FROM_NODE_OF_STATUS_IS, uniqueId, parentNode);
-        if (parentNode.isRight()) {
-            JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
-            if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                log.error("Failed to find the parent data type of data type {}. status is {}", uniqueId, janusGraphOperationStatus);
-                result = Either.right(janusGraphOperationStatus);
-                return result;
-            }
-        } else {
-            // derived from node was found
-            ImmutablePair<DataTypeData, GraphEdge> immutablePair = parentNode.left().value();
-            DataTypeData parentCT = immutablePair.getKey();
-            String parentUniqueId = parentCT.getUniqueId();
-            Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = getDataTypeByUid(parentUniqueId);
-            if (dataTypeByUid.isRight()) {
-                return Either.right(dataTypeByUid.right().value());
-            }
-            DataTypeDefinition parentDataTypeDefinition = dataTypeByUid.left().value();
-            dataTypeDefinition.setDerivedFrom(parentDataTypeDefinition);
-            final var model = getModel(uniqueId);
-            if (StringUtils.isNotEmpty(model)) {
-                dataTypeDefinition.setModel(model);
-            }
-        }
-        result = Either.left(dataTypeDefinition);
-        return result;
+   private Either<DataTypeDefinition, JanusGraphOperationStatus> getAndAddDataTypeByUid(
+        String uniqueId, Map<String, DataTypeDefinition> allDataTypes) {
+
+    if (allDataTypes.containsKey(uniqueId)) {
+        return Either.left(allDataTypes.get(uniqueId));
     }
+
+    Either<DataTypeData, JanusGraphOperationStatus> dataTypesRes =
+        janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType),
+                                     uniqueId, DataTypeData.class);
+    if (dataTypesRes.isRight()) {
+        return Either.right(dataTypesRes.right().value());
+    }
+
+    DataTypeData ctData = dataTypesRes.left().value();
+    DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(ctData.getDataTypeDataDefinition());
+
+    JanusGraphOperationStatus propertiesStatus = fillProperties(uniqueId, dataTypeDefinition);
+
+    if (propertiesStatus != JanusGraphOperationStatus.OK) {
+        return Either.right(propertiesStatus);
+    }
+
+    allDataTypes.put(dataTypeDefinition.getUniqueId(), dataTypeDefinition);
+    return Either.left(dataTypeDefinition);
+}
+
 
     private String getModel(final String uniqueId) {
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(

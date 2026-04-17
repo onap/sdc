@@ -15,48 +15,87 @@
  */
 package org.openecomp.sdc.itempermissions.dao.impl;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
-import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
+
 import org.openecomp.sdc.itempermissions.dao.UserPermissionsDao;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsMapper;
+import org.openecomp.sdc.itempermissions.dao.UserPermissionsMapperBuilder;
+import org.openecomp.sdc.itempermissions.type.UserPermissionItemsEntity;
 
 public class UserPermissionsDaoImpl implements UserPermissionsDao {
 
-    private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-    private static UserPermissionsAccessor accessor = noSqlDb.getMappingManager().createAccessor(UserPermissionsAccessor.class);
+     private final UserPermissionsDao dao;
 
-    @Override
+     public UserPermissionsDaoImpl(CqlSession session) {
+        UserPermissionsMapper mapper = new UserPermissionsMapperBuilder(session).build();
+        this.dao = mapper.userPermissionsDao();
+    }
+
+     @Override
     public Set<String> listUserPermittedItems(String userId, String permission) {
-        ResultSet resultSet = accessor.getUserPermissionItems(userId, permission);
-        if (resultSet.isExhausted()) {
+        UserPermissionItemsEntity entity = dao.getUserPermissionItems(userId, permission);
+        if (entity == null || entity.getItemList() == null) {
             return new HashSet<>();
-        } else {
-            return resultSet.one().getSet(0, String.class);
         }
+        return entity.getItemList();
     }
 
     @Override
     public void updatePermissions(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds) {
         Set<String> itemSet = Collections.singleton(itemId);
-        addedUsersIds.forEach(userId -> accessor.addItem(itemSet, userId, permission));
-        removedUsersIds.forEach(userId -> accessor.removeItem(itemSet, userId, permission));
+
+        // Add item to each user
+        addedUsersIds.forEach(userId -> {
+            UserPermissionItemsEntity entity = dao.getUserPermissionItems(userId, permission);
+            if (entity == null) {
+                entity = new UserPermissionItemsEntity(userId, permission, itemSet);
+            } else {
+                Set<String> items = new HashSet<>(entity.getItemList());
+                items.addAll(itemSet);
+                entity.setItemList(items);
+            }
+            dao.save(entity);
+        });
+
+        // Remove item from each user
+        removedUsersIds.forEach(userId -> {
+            UserPermissionItemsEntity entity = dao.getUserPermissionItems(userId, permission);
+            if (entity != null && entity.getItemList() != null) {
+                Set<String> items = new HashSet<>(entity.getItemList());
+                items.removeAll(itemSet);
+                entity.setItemList(items);
+                dao.save(entity);
+            }
+        });
     }
 
-    @Accessor
-    interface UserPermissionsAccessor {
+    @Override
+    public UserPermissionItemsEntity getUserPermissionItems(String userId, String permission) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUserPermissionItems'");
+    }
 
-        @Query("select item_list from dox.user_permission_items WHERE user_id = ? AND permission = ?")
-        ResultSet getUserPermissionItems(String userId, String permission);
+    @Override
+    public void save(UserPermissionItemsEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
 
-        @Query("update dox.user_permission_items set item_list=item_list+? WHERE user_id = ? AND permission = ?")
-        void addItem(Set<String> items, String userId, String permission);
+    @Override
+    public void addItems(Set<String> items, String userId, String permission) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addItems'");
+    }
 
-        @Query("update dox.user_permission_items set item_list=item_list-? WHERE user_id = ? AND permission = ?")
-        void removeItem(Set<String> items, String userId, String permission);
+    @Override
+    public void removeItems(Set<String> items, String userId, String permission) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeItems'");
     }
 }

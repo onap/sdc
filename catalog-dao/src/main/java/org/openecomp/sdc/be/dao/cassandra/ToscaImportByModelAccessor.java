@@ -19,15 +19,28 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Param;
-import com.datastax.driver.mapping.annotations.Query;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 
-@Accessor
+
+
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
+
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+
+
+@Dao
 public interface ToscaImportByModelAccessor {
 
     @Query("SELECT * FROM sdcartifact.tosca_import_by_model WHERE model_id = :modelId")
-    Result<ToscaImportByModel> findAllByModel(@Param("modelId") String modelId);
+    PagingIterable<ToscaImportByModel> findAllByModel(@CqlName("modelId") String modelId);
+
+    @Insert
+    void save(ToscaImportByModel entity);
+
+    @Delete
+    void delete(ToscaImportByModel entity);
 }

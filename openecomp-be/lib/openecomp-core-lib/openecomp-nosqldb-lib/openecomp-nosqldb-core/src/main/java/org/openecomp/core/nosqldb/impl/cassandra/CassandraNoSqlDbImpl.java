@@ -15,56 +15,60 @@
  */
 package org.openecomp.core.nosqldb.impl.cassandra;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.util.CassandraUtils;
-import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.Version;
+import com.datastax.oss.driver.api.core.cql.BoundStatement;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.metadata.Node;
+
 class CassandraNoSqlDbImpl implements NoSqlDb {
 
-    private final Session session;
-    private final String keySpace;
-    private final MappingManager mappingManager;
+     private final CqlSession session;
+    private final String keyspace;
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public CassandraNoSqlDbImpl(Session session) {
+    public CassandraNoSqlDbImpl(CqlSession session) {
         this.session = session;
-        this.keySpace = this.session.getLoggedKeyspace();
-        this.mappingManager = new MappingManager(this.session);
+        this.keyspace = session.getKeyspace().map(Object::toString).orElse(null);
     }
 
-    @Override
+     @Override
     public void insert(String tableName, String[] colNames, Object[] values) {
         if (colNames.length != values.length) {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder())
-                .withMessage("number of colmuns[" + colNames.length + "] is not equal to the number of values[" + values.length + "].")
-                .withId("E0005").withCategory(ErrorCategory.APPLICATION).build());
+            throw new IllegalArgumentException(
+                    "Number of columns [" + colNames.length + "] does not match number of values [" + values.length + "]."
+            );
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("insert into ").append(tableName).append(" (").append(CommonMethods.arrayToCommaSeparatedString(colNames)).append(") values (")
-            .append(CommonMethods.duplicateStringWithDelimiter("?", ',', values.length)).append(")");
-        log.info(sb.toString());
-        PreparedStatement prepared = session.prepare(sb.toString());
-        BoundStatement bound;
-        bound = prepared.bind(values);
+
+        String placeholders = String.join(",", java.util.Collections.nCopies(values.length, "?"));
+        String columns = String.join(",", colNames);
+        String query = "INSERT INTO " + tableName + " (" + columns + ") VALUES (" + placeholders + ")";
+
+        log.info(query);
+
+        PreparedStatement prepared = session.prepare(query);
+        BoundStatement bound = prepared.bind(values);
         session.execute(bound);
     }
 
+
     @Override
     public ResultSet execute(String statement) {
-        return session.execute(statement);
+        return session.execute(SimpleStatement.newInstance(statement));
     }
 
     @Override
@@ -83,17 +87,22 @@ class CassandraNoSqlDbImpl implements NoSqlDb {
         }
     }
 
-    @Override
-    public MappingManager getMappingManager() {
-        return mappingManager;
+    public CqlSession getSession() {
+        return session;
     }
 
     @Override
     public String getVersion() {
         try {
-            Set<Host> allHosts = this.session.getCluster().getMetadata().getAllHosts();
-            Set<String> versions = allHosts.stream().map(host -> host.getCassandraVersion().toString()).collect(Collectors.toSet());
-            return versions.stream().collect(Collectors.joining(","));
+            Set<String> versions = session.getMetadata()
+                    .getNodes()
+                    .values()
+                    .stream()
+                    .map(Node::getCassandraVersion)   // returns Version
+                    .map(Version::toString)           // convert to string
+                    .collect(Collectors.toSet());
+
+            return String.join(",", versions);
         } catch (Exception e) {
             log.error("Failed to retrieve version", e);
             return "Failed to retrieve version";

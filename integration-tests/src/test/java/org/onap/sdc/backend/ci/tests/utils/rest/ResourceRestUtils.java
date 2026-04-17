@@ -64,6 +64,9 @@ public class ResourceRestUtils extends BaseRestUtils {
 	public static RestResponse createResource(ResourceReqDetails resourceDetails, User sdncModifierDetails)
 			throws Exception {
 
+				System.out.println("[createResource][REQ] name=" + resourceDetails.getName()
+        		+ ", csarUUID=" + resourceDetails.getCsarUUID());
+
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort());
 
@@ -75,8 +78,27 @@ public class ResourceRestUtils extends BaseRestUtils {
 		String userBodyJson = gson.toJson(resourceDetails);
 		String calculateMD5 = GeneralUtility.calculateMD5Base64EncodedByString(userBodyJson);
 		headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), calculateMD5);
+		 // ===== DEBUG OUTPUT =====
+		System.out.println("===== DEBUG: Create Resource =====");
+		System.out.println("URL: " + url);
+		System.out.println("UserID: " + userId);
+		System.out.println("Headers: " + headersMap);
+		System.out.println("Payload JSON: " + userBodyJson);
+		System.out.println("Calculated MD5: " + calculateMD5);
+		System.out.println("=================================");
 		HttpRequest http = new HttpRequest();
 		RestResponse createResourceResponse = http.httpSendPost(url, userBodyJson, headersMap);
+		if (createResourceResponse.getErrorCode() != STATUS_CODE_CREATED) {
+			System.out.println("[createResource][RESP][ERROR] status="
+					+ createResourceResponse.getErrorCode());
+			System.out.println("[createResource][RESP][ERROR] body="
+					+ createResourceResponse.getResponse());
+}
+		 // ===== DEBUG RESPONSE =====
+		System.out.println("===== DEBUG: Create Resource Response =====");
+		System.out.println("HTTP Status: " + createResourceResponse.getErrorCode());
+		System.out.println("Response Body: " + createResourceResponse.getResponse());
+		System.out.println("==========================================");
 		if (createResourceResponse.getErrorCode() == STATUS_CODE_CREATED) {
 			resourceDetails.setUUID(ResponseParser.getUuidFromResponse(createResourceResponse));
 			resourceDetails.setVersion(ResponseParser.getVersionFromResponse(createResourceResponse));
@@ -91,6 +113,9 @@ public class ResourceRestUtils extends BaseRestUtils {
 			// 12/1/2016
 			resourceDetails.setCreatorUserId(userId);
 			resourceDetails.setCreatorFullName(sdncModifierDetails.getFullName());
+		}else{
+			System.out.println("[WARN] Resource creation failed with status " + createResourceResponse.getErrorCode());
+
 		}
 		return createResourceResponse;
 

@@ -147,9 +147,16 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
     }
 
     private void addDummyHeatBase(InputStream zipFileManifest, FileContentHandler fileContentMap) {
+        if (zipFileManifest == null) {
+            return;
+        }
         ManifestContent manifestContent = JsonUtil.json2Object(zipFileManifest, ManifestContent.class);
+        if (manifestContent == null || manifestContent.getData() == null) {
+            return;
+        }
         for (FileData fileData : manifestContent.getData()) {
-            if (Objects.nonNull(fileData.getType()) && fileData.getType().equals(FileData.Type.HELM) && Boolean.TRUE.equals(fileData.getBase())) {
+            if (fileData != null && Objects.nonNull(fileData.getType()) && fileData.getType().equals(FileData.Type.HELM)
+                && Boolean.TRUE.equals(fileData.getBase())) {
                 String filePath = new File("").getAbsolutePath() + "/resources";
                 File envFilePath = new File(filePath + "/base_template.env");
                 File baseFilePath = new File(filePath + "/base_template.yaml");

@@ -64,6 +64,8 @@ public class GenericTypeBusinessLogic {
      */
     public Either<Resource, ResponseFormat> fetchDerivedFromGenericType(Component component) {
         String genericTypeToscaName = getGenericTypeToscaName(component);
+        log.debug("fetchDerivedFromGenericType called for component={}, genericTypeToscaName={}, derivedFromGenericVersion={}",
+            component.getName(), genericTypeToscaName, component.getDerivedFromGenericVersion());
         log.debug("Fetching generic tosca name {}", genericTypeToscaName);
         if (null == genericTypeToscaName) {
             log.debug("Failed to fetch certified generic node type for component {}", component.getName());
@@ -71,11 +73,15 @@ public class GenericTypeBusinessLogic {
         }
         Either<Resource, StorageOperationStatus> genericType;
         if (StringUtils.isEmpty(component.getDerivedFromGenericVersion())) {
+            log.debug("Calling getLatestByToscaResourceNameAndModel for {} with model={}", genericTypeToscaName, component.getModel());
             genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(genericTypeToscaName, component.getModel());
             if (genericType.isRight()) {
+                log.debug("getLatestByToscaResourceNameAndModel returned RIGHT for {}", genericTypeToscaName);
                 if (genericTypeToscaName.contains(ABSTRACT)) {
+                    log.debug("Trying getLatestCertifiedNodeTypeByToscaResourceName for {}", genericTypeToscaName);
                     genericType = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
                     if (genericType.isRight()) {
+                        log.debug("getLatestCertifiedNodeTypeByToscaResourceName returned RIGHT for {}", genericTypeToscaName);
                         log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
                         return Either.right(
                             componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
@@ -87,22 +93,43 @@ public class GenericTypeBusinessLogic {
                 }
             }
         } else {
+            log.debug("Calling getByToscaResourceNameAndVersion for {} version={} model={}",
+                genericTypeToscaName, component.getDerivedFromGenericVersion(), component.getModel());
             genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion(),
                 component.getModel());
-        }
 
+            if (genericType.isLeft()) {
+                log.debug("getByToscaResourceNameAndVersion returned LEFT for {}, resource name={}, version={}",
+                    genericTypeToscaName, genericType.left().value().getName(), genericType.left().value().getVersion());
+            } else {
+                log.debug("getByToscaResourceNameAndVersion returned RIGHT for {}, status={}",
+                    genericTypeToscaName, genericType.right().value());
+            }
+        }
         Resource genericTypeResource = genericType.left().value();
+        log.debug("genericTypeResource fetched for {}: name={}, id={}",
+            genericTypeToscaName,
+            genericTypeResource != null ? genericTypeResource.getName() : null,
+            genericTypeResource != null ? genericTypeResource.getUniqueId() : null);
         return Either.left(genericTypeResource);
     }
 
     public Either<Resource, ResponseFormat> fetchDerivedFromGenericType(final Component component, final String toscaType) {
+     
+        log.debug("fetchDerivedFromGenericType called for component={}, model={}, toscaType={}",
+            component.getName(), component.getModel(), toscaType);
         if (StringUtils.isNotEmpty(toscaType)) {
             final Either<Resource, StorageOperationStatus> genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(toscaType,
                 component.getModel());
+   
             if (genericType.isRight()) {
-                log.debug("Failed to fetch certified node type by tosca resource name {}", toscaType);
+                log.debug("Failed to fetch certified node type by tosca resource name {}, model {}, storage status {}",
+                    toscaType,
+                    component.getModel(),
+                    genericType.right().value());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), toscaType));
             }
+            log.debug("Successfully fetched generic type {}", genericType.left().value().getName());
             return Either.left(genericType.left().value());
         }
         return fetchDerivedFromGenericType(component);
@@ -161,10 +188,21 @@ public class GenericTypeBusinessLogic {
     }
 
     private <T extends Component> String getGenericTypeToscaName(T component) {
+        String genericName;
         if (component.getDerivedFromGenericType() != null && !component.getDerivedFromGenericType().isEmpty()) {
-            return component.getDerivedFromGenericType();
+            genericName = component.getDerivedFromGenericType();
+            log.debug("getGenericTypeToscaName: using derivedFromGenericType={}", genericName);
+            return genericName;
         }
-        return isCvfcHasDerivedFrom(component) ? ((Resource) component).getDerivedFrom().get(0) : component.fetchGenericTypeToscaNameFromConfig();
+
+        if (isCvfcHasDerivedFrom(component)) {
+            genericName = ((Resource) component).getDerivedFrom().get(0);
+            log.debug("getGenericTypeToscaName: using derivedFrom[0]={}", genericName);
+            return genericName;
+        }
+        genericName = component.fetchGenericTypeToscaNameFromConfig();
+        log.debug("getGenericTypeToscaName: using fetchGenericTypeToscaNameFromConfig={}", genericName);
+        return genericName;
     }
 
     private <T extends Component> boolean isCvfcHasDerivedFrom(T component) {

@@ -19,15 +19,19 @@
  */
 package org.openecomp.sdc.versioning.dao.types;
 
-import com.datastax.driver.mapping.annotations.Transient;
-import com.datastax.driver.mapping.annotations.UDT;
-import java.util.Date;
+
+import java.time.Instant;
 import java.util.Map;
+
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@UDT(name = "version", keyspace = "dox")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,9 +50,9 @@ public class Version {
     @Transient
     private String baseId;
     @Transient
-    private Date creationTime;
+    private Instant creationTime;
     @Transient
-    private Date modificationTime;
+    private Instant modificationTime;
     @Transient
     private VersionStatus status = VersionStatus.Draft;
     @Transient

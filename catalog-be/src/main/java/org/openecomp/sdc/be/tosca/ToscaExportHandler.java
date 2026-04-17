@@ -68,7 +68,7 @@ import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;

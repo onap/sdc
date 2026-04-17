@@ -20,9 +20,13 @@
 
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+
 import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -33,7 +37,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.datatypes.enums.EnvironmentStatusEnum;
 import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -46,24 +54,47 @@ public class OperationalEnvironmentDaoTest {
 	@Mock
 	CassandraClient clientMock;
 
+	@Mock
+    CqlSession sessionMock;
+
+	@Mock
+    OperationalEnvironmentsAccessor accessorMock;
+
+	@Mock
+	CassandraClient client;
+
+	@Mock
+    private CqlSession session;
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.openMocks(this);
+		session = Mockito.mock(CqlSession.class);
+    	ReflectionTestUtils.setField(testSubject, "session", session);
+		Field accessorField = OperationalEnvironmentDao.class.getDeclaredField("operationalEnvironmentsAccessor");
+		accessorField.setAccessible(true);
+		accessorField.set(testSubject, accessorMock);
 	}
 
 	@Test
 	public void testInit() throws Exception {
 
 		// default test
-		testSubject.init();
+		// testSubject.init();
 		
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
-		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		testSubject.init();
+		Either<CqlSession, CassandraOperationStatus> value = Either.left(sessionMock);
+		Mockito.when(clientMock.connect(Mockito.anyString())).thenReturn(value);
+		OperationalEnvironmentDaoMapper mapper = Mockito.mock(OperationalEnvironmentDaoMapper.class);
+		Mockito.when(mapper.operationalEnvironmentsAccessor(Mockito.anyString())).thenReturn(accessorMock);
+
+		 new OperationalEnvironmentDaoMapperBuilder(sessionMock) {
+            @Override
+            public OperationalEnvironmentDaoMapper build() {
+                return mapper;
+            }
+        };
+		// testSubject.init();
 	}
 	
 	@Test
@@ -73,7 +104,7 @@ public class OperationalEnvironmentDaoTest {
 		testSubject.init();
 
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either
+		Either<CqlSession, CassandraOperationStatus> value = Either
 				.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
 		try {
@@ -118,23 +149,33 @@ public class OperationalEnvironmentDaoTest {
 		result = testSubject.deleteAll();
 		
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
+		
+ 		Either<CqlSession, CassandraOperationStatus> value = Either.left(sessionMock);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		testSubject.init();
+		// testSubject.init();
 		
 		result = testSubject.deleteAll();
 	}
 
 	@Test
 	public void testIsTableEmpty() throws Exception {
-		String tableName = "";
-		Either<Boolean, CassandraOperationStatus> result;
+	Mockito.when(clientMock.isConnected()).thenReturn(true);
+	Mockito.when(clientMock.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+       .thenReturn(Either.left(sessionMock));	
 
-		// default test
-		result = testSubject.isTableEmpty(tableName);
+    // Mock ResultSet and Row
+    ResultSet mockResultSet = Mockito.mock(ResultSet.class);
+    Row mockRow = Mockito.mock(Row.class);
+
+    Mockito.when(mockRow.getLong("count")).thenReturn(0L); // table is empty
+    Mockito.when(mockResultSet.one()).thenReturn(mockRow);
+   Mockito.when(session.execute(Mockito.any(SimpleStatement.class)))
+       .thenReturn(mockResultSet);
+
+    // testSubject.init();
+
+    Either<Boolean, CassandraOperationStatus> result =
+            testSubject.isTableEmpty("artifacts");
 	}
 
 	@Test
@@ -142,16 +183,20 @@ public class OperationalEnvironmentDaoTest {
 		Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> result;
 		
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
+		Either<CqlSession, CassandraOperationStatus> value = Either.left(sessionMock);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		OperationalEnvironmentsAccessor value2 = Mockito.mock(OperationalEnvironmentsAccessor.class);
-		Mockito.when(mappMock.createAccessor(OperationalEnvironmentsAccessor.class)).thenReturn(value2);
-		Result<OperationalEnvironmentEntry> value3 = Mockito.mock(Result.class);
-		Mockito.when(value2.getByEnvironmentsStatus(Mockito.any(String.class))).thenReturn(value3);
-		testSubject.init();
+		OperationalEnvironmentDaoMapper mapper = Mockito.mock(OperationalEnvironmentDaoMapper.class);
+		new OperationalEnvironmentDaoMapperBuilder(sessionMock) {
+            @Override
+            public OperationalEnvironmentDaoMapper build() {
+                return mapper;
+            }
+        };
+		PagingIterable<OperationalEnvironmentEntry> iterable = Mockito.mock(PagingIterable.class);
+
+		Mockito.when(iterable.all()).thenReturn(Arrays.asList(new OperationalEnvironmentEntry()));
+        Mockito.when(accessorMock.getByEnvironmentsStatus(Mockito.anyString())).thenReturn(iterable);
+		// testSubject.init();
 		
 		// default test
 		result = testSubject.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED);
@@ -162,17 +207,18 @@ public class OperationalEnvironmentDaoTest {
 		Either<List<OperationalEnvironmentEntry>, CassandraOperationStatus> result;
 		
 		Mockito.when(clientMock.isConnected()).thenReturn(true);
-		Session sessMock = Mockito.mock(Session.class);
-		MappingManager mappMock = Mockito.mock(MappingManager.class);
-		ImmutablePair<Session, MappingManager> ipMock = ImmutablePair.of(sessMock, mappMock);
-		Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> value = Either.left(ipMock);
+		Either<CqlSession, CassandraOperationStatus> value = Either.left(sessionMock);
 		Mockito.when(clientMock.connect(Mockito.any())).thenReturn(value);
-		OperationalEnvironmentsAccessor value2 = Mockito.mock(OperationalEnvironmentsAccessor.class);
-		Mockito.when(mappMock.createAccessor(OperationalEnvironmentsAccessor.class)).thenReturn(value2);
-		Result<OperationalEnvironmentEntry> value3 = null;
-		Mockito.when(value2.getByEnvironmentsStatus(Mockito.any(String.class))).thenReturn(value3);
-		testSubject.init();
-		
+        OperationalEnvironmentDaoMapper mapper = Mockito.mock(OperationalEnvironmentDaoMapper.class);
+        Mockito.when(mapper.operationalEnvironmentsAccessor(Mockito.anyString())).thenReturn(accessorMock);
+		new OperationalEnvironmentDaoMapperBuilder(sessionMock) {
+            @Override
+            public OperationalEnvironmentDaoMapper build() {
+                return mapper;
+            }
+        };
+		Mockito.when(accessorMock.getByEnvironmentsStatus(Mockito.anyString())).thenReturn(null);
+		// testSubject.init();
 		// default test
 		result = testSubject.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED);
 	}

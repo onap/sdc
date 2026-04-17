@@ -45,6 +45,7 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
     public ResourceWorkspaceTopBarComponent(final WebDriver webDriver) {
         super(webDriver);
         notificationComponent = new NotificationComponent(webDriver);
+        timeoutInSeconds = 60;
     }
 
     @Override

@@ -19,8 +19,35 @@
  */
 package org.openecomp.core.dao;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.openecomp.core.dao.types.UniqueValueEntity;
 
-public interface UniqueValueDao extends BaseDao<UniqueValueEntity> {
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Select;
 
+@Dao
+public interface UniqueValueDao {
+
+    @Select
+    Optional<UniqueValueEntity> get(String type, String formattedValue);
+
+    // @Select(customWhereClause = "type = :type")
+    // PagingIterable<UniqueValueEntity> list(String type);
+
+    @Insert
+    void create(UniqueValueEntity entity);
+
+    // @Update
+    // void update(UniqueValueEntity entity);
+
+    @Delete
+    void delete(UniqueValueEntity entity);
+
+    @Select
+    List<UniqueValueEntity> listAll();
 }

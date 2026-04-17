@@ -87,14 +87,89 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-runtime</artifactId>
+      <version>${datastax.cassandra.version}</version>
+      <exclusions>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.validation</groupId>
+                  <artifactId>validation-api</artifactId>
+                </exclusion>
+              <exclusion>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+              </exclusion>
+            </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-processor</artifactId>
+      <version>${datastax.cassandra.version}</version>
+      <exclusions>
+                <exclusion>
+                    <groupId>jakarta.validation</groupId>
+                    <artifactId>jakarta.validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.el</groupId>
+                    <artifactId>jakarta.el-api</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>javax.validation</groupId>
+                  <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>org.hibernate.validator</groupId>
+                  <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>com.github.jnr</groupId>
           <artifactId>jnr-posix</artifactId>
         </exclusion>
+          <exclusion>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+         </exclusion>
+        <exclusion>
+          <groupId>com.sun.activation</groupId>
+          <artifactId>jakarta.activation</artifactId>
+        </exclusion>
+      <exclusion>
+        <groupId>jakarta.el</groupId>
+        <artifactId>jakarta.el-api</artifactId>
+      </exclusion>
+      <exclusion>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+      </exclusion>
+       <exclusion>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+      </exclusion>
       </exclusions>
     </dependency>
     <dependency>

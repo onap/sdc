@@ -463,14 +463,20 @@ public final class GeneralUIUtils {
     public static WebElement clickOnAreaJS(String areaId, int timeout) {
         try {
             ultimateWait();
-            WebElement area = getWebElementByTestID(areaId);
+            final WebElement area = getWebElementByTestID(areaId, timeout);
+            if (area == null) {
+                ExtentTestActions.log(Status.FAIL, String.format("Element with test id '%s' not found for JS click", areaId));
+                return null;
+            }
             JavascriptExecutor javascript = (JavascriptExecutor) getDriver();
-            Object executeScript = javascript.executeScript("arguments[0].click();", area, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
+            javascript.executeScript("arguments[0].scrollIntoView({block: 'center', inline: 'center'});", area);
+            javascript.executeScript("arguments[0].click();", area, COLOR_YELLOW_BORDER_4PX_SOLID_YELLOW);
             waitForLoader(timeout);
             ultimateWait();
             return area;
         } catch (Exception e) {
-            e.printStackTrace();
+            ExtentTestActions.log(Status.FAIL, String.format("Failed to JS click element with test id '%s'", areaId));
+            ExtentTestActions.log(Status.FAIL, e);
         }
         return null;
     }

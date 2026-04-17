@@ -105,17 +105,25 @@ public class ModelServlet extends AbstractValidationsServlet {
                                 @Parameter(description = "the model TOSCA imports zipped", required = true)
                                 @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
                                 @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+        System.out.println("[MODEL][CREATE] Entered createModel()");
+        System.out.println("[MODEL][CREATE] userId header = " + userId);
+        System.out.println("[MODEL][CREATE] modelCreateRequest is null? " + (modelCreateRequest == null));
+        System.out.println("[MODEL][CREATE] modelImportsZip is null? " + (modelImportsZip == null));
+
         validateUser(ValidationUtils.sanitizeInputString(userId));
         final var modelName = ValidationUtils.sanitizeInputString(modelCreateRequest.getName().trim());
         try {
+            System.out.println("[MODEL][CREATE] Calling modelBusinessLogic.createModel()");
             final Model createdModel = modelBusinessLogic
                 .createModel(new JMapper<>(Model.class, ModelCreateRequest.class).getDestination(modelCreateRequest));
             modelBusinessLogic.createModelImports(modelName, modelImportsZip);
+            System.out.println("[MODEL][CREATE] Model created successfully: " + modelName);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
                 RepresentationUtils.toRepresentation(createdModel));
         } catch (final BusinessException e) {
             throw e;
         } catch (final Exception e) {
+            System.out.println("[MODEL][CREATE] Exception occurred: " + e.getMessage());
             var errorMsg = String.format("Unexpected error while creating model '%s' imports", modelName);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
             log.error(errorMsg, e);

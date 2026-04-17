@@ -19,9 +19,13 @@
  */
 package org.openecomp.sdc.notification.factories.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.LastNotificationDao;
 import org.openecomp.sdc.notification.dao.impl.LastNotificationDaoCassandraImpl;
+
+import com.datastax.oss.driver.api.core.CqlSession;
 import org.openecomp.sdc.notification.factories.LastNotificationDaoFactory;
+
 
 /**
  * @author itzikpa
@@ -29,7 +33,12 @@ import org.openecomp.sdc.notification.factories.LastNotificationDaoFactory;
  */
 public class LastNotificationDaoFactoryImpl extends LastNotificationDaoFactory {
 
-    private static final LastNotificationDao INSTANCE = new LastNotificationDaoCassandraImpl();
+    private static final LastNotificationDao INSTANCE;
+
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new LastNotificationDaoCassandraImpl(session);
+    }
 
     @Override
     public LastNotificationDao createInterface() {

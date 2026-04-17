@@ -19,14 +19,21 @@
  */
 package org.openecomp.sdc.notification.factories.impl;
 
+import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.notification.dao.SubscribersDao;
 import org.openecomp.sdc.notification.dao.impl.SubscribersDaoCassandraImpl;
 import org.openecomp.sdc.notification.factories.SubscribersDaoFactory;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 public class SubscribersDaoFactoryImpl extends SubscribersDaoFactory {
 
-    private static final SubscribersDao INSTANCE = new SubscribersDaoCassandraImpl();
+    private static final SubscribersDao INSTANCE;
 
+    static{
+        CqlSession session = NoSqlDbFactory.getInstance().createInterface().getSession();
+        INSTANCE = new SubscribersDaoCassandraImpl(session);
+    }
     @Override
     public SubscribersDao createInterface() {
         return INSTANCE;

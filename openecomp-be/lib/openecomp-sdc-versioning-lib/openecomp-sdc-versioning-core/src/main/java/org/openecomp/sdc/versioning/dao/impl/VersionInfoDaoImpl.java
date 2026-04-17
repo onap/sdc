@@ -15,51 +15,111 @@
  */
 package org.openecomp.sdc.versioning.dao.impl;
 
-import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
-import java.util.Collection;
-import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.nosqldb.api.NoSqlDb;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.*;
+
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
-public class VersionInfoDaoImpl extends CassandraBaseDao<VersionInfoEntity> implements VersionInfoDao {
+public class VersionInfoDaoImpl implements VersionInfoDao {
 
-    private final NoSqlDb noSqlDb;
-    private final Mapper<VersionInfoEntity> mapper;
-    private final VersionInfoAccessor accessor;
+    private final CqlSession session;
 
-    public VersionInfoDaoImpl(NoSqlDb noSqlDb) {
-        this.noSqlDb = noSqlDb;
-        this.mapper = this.noSqlDb.getMappingManager().mapper(VersionInfoEntity.class);
-        this.accessor = this.noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
-        this.noSqlDb.getMappingManager().getSession().getCluster().getConfiguration().getCodecRegistry()
-            .register(new EnumNameCodec<>(VersionStatus.class));
+    public VersionInfoDaoImpl(CqlSession session) {
+        this.session = session;
     }
 
     @Override
-    protected Mapper<VersionInfoEntity> getMapper() {
-        return mapper;
+    public Collection<VersionInfoEntity> list(VersionInfoEntity probe) {
+        return list(probe.getEntityType());
+    }
+
+
+    public List<VersionInfoEntity> getAll(String entityType) {
+        return list(entityType);
+    }
+
+
+    public Optional<VersionInfoEntity> get(String entityType, String entityId) {
+        String query = "SELECT * FROM version_info WHERE entity_type = ? AND entity_id = ?";
+        PreparedStatement ps = session.prepare(query);
+        Row row = session.execute(ps.bind(entityType, entityId)).one();
+        return Optional.ofNullable(mapRow(row));
+    }
+
+
+    public List<VersionInfoEntity> list(String entityType) {
+        String query = "SELECT * FROM version_info WHERE entity_type = ?";
+        PreparedStatement ps = session.prepare(query);
+        ResultSet rs = session.execute(ps.bind(entityType));
+        List<VersionInfoEntity> results = new ArrayList<>();
+        for (Row row : rs) {
+            results.add(mapRow(row));
+        }
+        return results;
+    }
+
+    /* ---------- CRUD helpers ---------- */
+
+    public void create(VersionInfoEntity entity) {
+        String query = "INSERT INTO version_info " +
+                "(entity_type, entity_id, active_version, status, candidate, viewable_versions, latest_final_version) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = session.prepare(query);
+        session.execute(ps.bind(
+                entity.getEntityType(),
+                entity.getEntityId(),
+                entity.getActiveVersion(),
+                entity.getStatus(),
+                entity.getCandidate(),
+                entity.getViewableVersions(),
+                entity.getLatestFinalVersion()
+        ));
+    }
+
+    public void update(VersionInfoEntity entity) {
+        // Cassandra INSERT is an upsert
+        create(entity);
+    }
+
+    public void delete(String entityType, String entityId) {
+        String query = "DELETE FROM version_info WHERE entity_type = ? AND entity_id = ?";
+        PreparedStatement ps = session.prepare(query);
+        session.execute(ps.bind(entityType, entityId));
+    }
+
+    /* ---------- Row -> Entity mapper ---------- */
+
+    private VersionInfoEntity mapRow(Row row) {
+        if (row == null) {
+            return null;
+        }
+        VersionInfoEntity entity = new VersionInfoEntity();
+        entity.setEntityType(row.getString("entity_type"));
+        entity.setEntityId(row.getString("entity_id"));
+        entity.setActiveVersion(row.get("active_version", Version.class));
+        entity.setStatus(row.get("status", VersionStatus.class));
+        entity.setCandidate(row.get("candidate", UserCandidateVersion.class));
+        entity.setViewableVersions(row.getSet("viewable_versions", Version.class));
+        entity.setLatestFinalVersion(row.get("latest_final_version", Version.class));
+        return entity;
     }
 
     @Override
-    protected Object[] getKeys(VersionInfoEntity entity) {
-        return new Object[]{entity.getEntityType(), entity.getEntityId()};
+    public VersionInfoEntity get(VersionInfoEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
     }
 
     @Override
-    public Collection<VersionInfoEntity> list(VersionInfoEntity entity) {
-        return accessor.getAll(entity.getEntityType()).all();
-    }
-
-    @Accessor
-    interface VersionInfoAccessor {
-
-        @Query("select * from version_info where entity_type=?")
-        Result<VersionInfoEntity> getAll(String entityType);
+    public void delete(VersionInfoEntity entity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
 }

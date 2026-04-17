@@ -20,12 +20,14 @@ import java.util.Optional;
 import java.util.Set;
 import org.openecomp.sdc.itempermissions.type.ItemPermissionsEntity;
 
+import com.datastax.oss.driver.api.core.PagingIterable;
+
 /**
  * Created by ayalaben on 6/22/2017
  */
 public interface PermissionsServices {
 
-    Collection<ItemPermissionsEntity> listItemPermissions(String itemId);
+    PagingIterable<ItemPermissionsEntity> listItemPermissions(String itemId);
 
     Set<String> listUserPermittedItems(String userId, String permission);
 

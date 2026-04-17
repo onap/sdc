@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.resources.data.auditing.model.DistributionData;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceCommonInfo;
 import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -77,7 +78,7 @@ public class ExternalApiEventTest {
 	@Test
 	public void testGetTimestamp1() throws Exception {
 		ExternalApiEvent testSubject;
-		Date result;
+		Instant result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -88,7 +89,7 @@ public class ExternalApiEventTest {
 	@Test
 	public void testSetTimestamp1() throws Exception {
 		ExternalApiEvent testSubject;
-		Date timestamp1 = null;
+		Instant timestamp1 = null;
 
 		// default test
 		testSubject = createTestSubject();

@@ -19,12 +19,11 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.MappingManager;
+import com.datastax.oss.driver.api.core.CqlSession;
+
 import fj.data.Either;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.be.resources.data.togglz.FeatureToggleEvent;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -44,11 +43,11 @@ public class FeatureToggleDao extends CassandraDao {
     public void init() {
         String keyspace = AuditingTypesConstants.REPO_KEYSPACE;
         if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
+            Either <CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
             if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                featureToggleAccessor = manager.createAccessor(FeatureToggleAccessor.class);
+                session = result.left().value();
+                FeatureToggleDaoMapper featureToggleDaoMapper = new FeatureToggleDaoMapperBuilder(session).build();
+                featureToggleAccessor = featureToggleDaoMapper.featureToggleAccessor(keyspace);
                 logger.info("** FeatureToggleDao created");
             } else {
                 logger.info("** FeatureToggleDao failed");
@@ -61,18 +60,18 @@ public class FeatureToggleDao extends CassandraDao {
     }
 
     public CassandraOperationStatus save(FeatureToggleEvent featureToggleEvent) {
-        return client.save(featureToggleEvent, FeatureToggleEvent.class, manager);
+        return client.save(featureToggleEvent, FeatureToggleEvent.class);
     }
 
     public FeatureToggleEvent get(String feature_name) {
-        return client.getById(feature_name, FeatureToggleEvent.class, manager).left().on(r -> {
+        return client.getById(feature_name, FeatureToggleEvent.class).left().on(r -> {
             logger.debug("Failed to retrieve state of feature [{}] due to error {}", feature_name, r.toString());
             return null;
         });
     }
 
     public CassandraOperationStatus delete(String feature_name) {
-        return client.delete(feature_name, FeatureToggleEvent.class, manager);
+        return client.delete(feature_name, FeatureToggleEvent.class);
     }
 
     public List<FeatureToggleEvent> getAllFeatures() {

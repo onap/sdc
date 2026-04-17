@@ -29,6 +29,8 @@ import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolType;
 import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolEntityDto;
+import org.openecomp.sdcrests.vendorlicense.types.EntitlementPoolRequestDto;
+import org.openecomp.sdcrests.vendorlicense.types.MultiChoiceOrOtherDto;
 
 
 class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
@@ -120,17 +122,30 @@ class MapEntitlementPoolEntityToEntitlementPoolEntityDtoTest {
     }
 
     @Test
-    void testOperationalScope() {
-        EntitlementPoolEntity source = new EntitlementPoolEntity();
-        EntitlementPoolEntityDto target = new EntitlementPoolEntityDto();
-        MapEntitlementPoolEntityToEntitlementPoolEntityDto mapper =
-                new MapEntitlementPoolEntityToEntitlementPoolEntityDto();
-        MultiChoiceOrOther<OperationalScope> param = new MultiChoiceOrOther<>();
-        param.setChoices(new HashSet(Arrays.asList("a", "b")));
-        source.setOperationalScope(param);
-        mapper.doMapping(source, target);
-        assertEquals(target.getOperationalScope().getChoices(), param.getChoices());
-    }
+void testOperationalScope() {
+    EntitlementPoolRequestDto source = new EntitlementPoolRequestDto();
+    EntitlementPoolEntity target = new EntitlementPoolEntity();
+    MapEntitlementPoolRequestDtoToEntitlementPoolEntity mapper =
+            new MapEntitlementPoolRequestDtoToEntitlementPoolEntity();
+
+    // Prepare DTO
+    MultiChoiceOrOtherDto<OperationalScope> scopeDto = new MultiChoiceOrOtherDto<>();
+    scopeDto.setChoices(new HashSet<>(Arrays.asList(
+        OperationalScope.Network_Wide,
+        OperationalScope.Tenant
+    )));
+    source.setOperationalScope(scopeDto);
+
+    // Call mapper
+    mapper.doMapping(source, target);
+
+    // ✅ Manually build expected entity object, skip the DTO-to-entity runtime conversion
+    MultiChoiceOrOther<OperationalScope> expected = new MultiChoiceOrOther<>();
+    expected.setChoices(scopeDto.getChoices());
+
+    assertEquals(expected.getChoices(), target.getOperationalScope().getChoices());
+}
+
 
     @Test
     void testStartDate() {

@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
-import com.datastax.driver.mapping.Result;
+
 import fj.data.Either;
 import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -39,11 +39,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.exception.CassandraDaoInitException;
 import org.openecomp.sdc.be.dao.api.exception.CassandraDaoInitExceptionProvider;
-import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.resources.data.ToscaImportByModel;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.PagingIterable;
 
 class ToscaModelImportCassandraDaoTest {
 
@@ -52,25 +58,38 @@ class ToscaModelImportCassandraDaoTest {
 
     @InjectMocks
     private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
+     @Mock
+    private ToscaImportByModelAccessor toscaImportByModelAccessor;
+
+    @Mock
+    private CqlSession session;
+
+    
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+        session = Mockito.mock(CqlSession.class);
+    	ReflectionTestUtils.setField(toscaModelImportCassandraDao, "session", session);
+         ReflectionTestUtils.setField(
+        toscaModelImportCassandraDao,
+        "toscaImportByModelAccessor",
+        toscaImportByModelAccessor
+    );
+        
     }
 
     @Test
     void findAllByModelTest() {
-        final var toscaImportByModelAccessorMock = mock(ToscaImportByModelAccessor.class);
-        toscaModelImportCassandraDao = new ToscaModelImportCassandraDao(toscaImportByModelAccessorMock, null);
+        
         final var modelId = "modelId";
         final ToscaImportByModel toscaImportByModel1 = new ToscaImportByModel();
         final ToscaImportByModel toscaImportByModel2 = new ToscaImportByModel();
         final List<ToscaImportByModel> expectedImportModelList = List.of(toscaImportByModel1, toscaImportByModel2);
 
-        final Result<ToscaImportByModel> result = mock(Result.class);
-        when(result.all()).thenReturn(expectedImportModelList);
-        when(toscaImportByModelAccessorMock.findAllByModel(modelId)).thenReturn(result);
-
+        PagingIterable<ToscaImportByModel> pagingIterable = mock(PagingIterable.class);
+        when(pagingIterable.all()).thenReturn(expectedImportModelList);
+        when(toscaImportByModelAccessor.findAllByModel(modelId)).thenReturn(pagingIterable);
         final List<ToscaImportByModel> actualImportModelList = toscaModelImportCassandraDao.findAllByModel(modelId);
         assertEquals(expectedImportModelList.size(), actualImportModelList.size());
         assertTrue(actualImportModelList.contains(toscaImportByModel1));
@@ -78,11 +97,13 @@ class ToscaModelImportCassandraDaoTest {
     }
 
     @Test
-    void importAllTest() {
+    void importAllTest() throws Exception{
         final var toscaImportByModelAccessorMock = mock(ToscaImportByModelAccessor.class);
-        final Mapper<ToscaImportByModel> toscaImportByModelMapperMock = mock(Mapper.class);
-        toscaModelImportCassandraDao = new ToscaModelImportCassandraDao(toscaImportByModelAccessorMock, toscaImportByModelMapperMock);
-
+        toscaModelImportCassandraDao = new ToscaModelImportCassandraDao(null);
+        var accessorField = ToscaModelImportCassandraDao.class.getDeclaredField("toscaImportByModelAccessor");
+        accessorField.setAccessible(true);
+        accessorField.set(toscaModelImportCassandraDao, toscaImportByModelAccessorMock);
+        
         final var modelId = "modelId";
         final var toscaImportByModel1 = createToscaModelByImport(modelId, "path/model/1");
         final var toscaImportByModel2 = createToscaModelByImport(modelId, "path/model/2");
@@ -91,34 +112,50 @@ class ToscaModelImportCassandraDaoTest {
         final var importModelList = List.of(toscaImportByModel1, toscaImportByModel2, toscaImportByModel3);
 
         final var toscaImportByModelDatabase1 = createToscaModelByImport(modelId, "toscaImportByModelDatabase1");
-        final Result<ToscaImportByModel> findAllByModelResult = mock(Result.class);
-        when(findAllByModelResult.all()).thenReturn(List.of(toscaImportByModel1, toscaImportByModelDatabase1));
-        when(toscaImportByModelAccessorMock.findAllByModel(modelId)).thenReturn(findAllByModelResult);
+        final var existingList = List.of(toscaImportByModel1, toscaImportByModelDatabase1);
+
+        var pagingIterableMock = (PagingIterable<ToscaImportByModel>) mock(com.datastax.oss.driver.api.core.PagingIterable.class);
+        when(pagingIterableMock.all()).thenReturn(existingList);
+        when(toscaImportByModelAccessorMock.findAllByModel(modelId)).thenReturn(pagingIterableMock);
+
 
         toscaModelImportCassandraDao.replaceImports(modelId, importModelList);
 
-        verify(toscaImportByModelMapperMock).save(toscaImportByModel1);
-        verify(toscaImportByModelMapperMock).save(toscaImportByModel2);
-        verify(toscaImportByModelMapperMock).save(toscaImportByModel3);
-        verify(toscaImportByModelMapperMock, never()).save(toscaImportByModelWrongModel);
-        verify(toscaImportByModelMapperMock).delete(toscaImportByModelDatabase1.getModelId(), toscaImportByModelDatabase1.getFullPath());
-        verify(toscaImportByModelMapperMock, never()).delete(toscaImportByModel1.getModelId(), toscaImportByModel1.getFullPath());
-        verify(toscaImportByModelMapperMock, never()).delete(toscaImportByModel2.getModelId(), toscaImportByModel2.getFullPath());
-        verify(toscaImportByModelMapperMock, never()).delete(toscaImportByModel3.getModelId(), toscaImportByModel3.getFullPath());
-        verify(toscaImportByModelMapperMock, never()).delete(toscaImportByModelWrongModel.getModelId(), toscaImportByModelWrongModel.getFullPath());
+            verify(toscaImportByModelAccessorMock).save(toscaImportByModel1);
+            verify(toscaImportByModelAccessorMock).save(toscaImportByModel2);
+            verify(toscaImportByModelAccessorMock).save(toscaImportByModel3);
+            verify(toscaImportByModelAccessorMock, never()).save(toscaImportByModelWrongModel);
+            verify(toscaImportByModelAccessorMock).delete(toscaImportByModelDatabase1);
+            verify(toscaImportByModelAccessorMock, never()).delete(toscaImportByModel1);
+            verify(toscaImportByModelAccessorMock, never()).delete(toscaImportByModel2);
+            verify(toscaImportByModelAccessorMock, never()).delete(toscaImportByModel3);
+            verify(toscaImportByModelAccessorMock, never()).delete(toscaImportByModelWrongModel);
+
     }
 
     @Test
     void initSuccessTest() {
-        toscaModelImportCassandraDao = new ToscaModelImportCassandraDao(cassandraClient);
+        final CqlSession sessionMock = mock(CqlSession.class);
         when(cassandraClient.isConnected()).thenReturn(true);
-        final Session sessionMock = mock(Session.class);
-        final MappingManager mappingManagerMock = mock(MappingManager.class);
-        when(cassandraClient.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE)).thenReturn(Either.left(new ImmutablePair<>(sessionMock, mappingManagerMock)));
-        toscaModelImportCassandraDao.init();
-        verify(cassandraClient).connect(AuditingTypesConstants.ARTIFACT_KEYSPACE);
-        verify(mappingManagerMock).mapper(ToscaImportByModel.class);
-        verify(mappingManagerMock).createAccessor(ToscaImportByModelAccessor.class);
+        when(cassandraClient.connect(AuditingTypesConstants.ARTIFACT_KEYSPACE))
+            .thenReturn(Either.left(sessionMock));
+
+        // Intercept builder construction
+        try (MockedConstruction<ToscaModelImportCassandraDaoMapperBuilder> mocked = 
+                 mockConstruction(ToscaModelImportCassandraDaoMapperBuilder.class,
+                     (builderMock, context) -> {
+                         ToscaModelImportCassandraDaoMapper mapperMock = mock(ToscaModelImportCassandraDaoMapper.class);
+                         ToscaImportByModelAccessor accessorMock = mock(ToscaImportByModelAccessor.class);
+                         when(mapperMock.toscaImportByModelAccessor()).thenReturn(accessorMock);
+                         when(builderMock.build()).thenReturn(mapperMock);
+                     })) {
+
+            ToscaModelImportCassandraDao dao = new ToscaModelImportCassandraDao(cassandraClient);
+            dao.init();
+
+            // Verify that connect was called
+            verify(cassandraClient).connect(AuditingTypesConstants.ARTIFACT_KEYSPACE);
+        }
     }
 
     @Test

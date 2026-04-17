@@ -1,8 +1,10 @@
 /*-
  * ============LICENSE_START=======================================================
  * SDC
- * ================================================================================
+  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Modifications copyright (c) 2025 Deutsche Telekom.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +21,9 @@
  */
 package org.openecomp.sdc.asdctool.migration.dao;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.mapping.Mapper;
-import com.datastax.driver.mapping.MappingManager;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import fj.data.Either;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -46,7 +46,6 @@ public class MigrationTasksDao extends CassandraDao {
 
     private static Logger logger = Logger.getLogger(MigrationTasksDao.class.getName());
     private MigrationTasksAccessor migrationTasksAccessor;
-    private Mapper<MigrationTaskEntry> migrationTaskMapper;
 
     @Autowired
     public MigrationTasksDao(CassandraClient cassandraClient) {
@@ -57,23 +56,25 @@ public class MigrationTasksDao extends CassandraDao {
     public void init() {
         String keyspace = AuditingTypesConstants.REPO_KEYSPACE;
         if (client.isConnected()) {
-            Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result = client.connect(keyspace);
+            Either<CqlSession, CassandraOperationStatus> result = client.connect(keyspace);
             if (result.isLeft()) {
-                session = result.left().value().left;
-                manager = result.left().value().right;
-                migrationTasksAccessor = manager.createAccessor(MigrationTasksAccessor.class);
-                migrationTaskMapper = manager.mapper(MigrationTaskEntry.class);
+                session = result.left().value();
+
+                // Build Mapper & Accessor for 4.x
+                MigrationTasksDaoMapper daoMapper = new MigrationTasksDaoMapperBuilder(session).build();
+
+                migrationTasksAccessor = daoMapper.migrationTasksAccessor();
+
                 logger.info("** migrationTasksAccessor created");
             } else {
-                logger.info("** migrationTasksAccessor failed");
-                throw new RuntimeException("Artifact keyspace [" + keyspace + "] failed to connect with error : " + result.right().value());
+                logger.error("** migrationTasksAccessor failed to connect to keyspace [{}] with error: {}",
+                        keyspace, result.right().value());
+                throw new RuntimeException("Failed to connect to Cassandra keyspace " + keyspace);
             }
         } else {
-            logger.info("** Cassandra client isn't connected");
-            logger.info("** migrationTasksAccessor created, but not connected");
+            logger.warn("** Cassandra client isn't connected. Accessor not initialized.");
         }
     }
-
     public BigInteger getLatestMinorVersion(BigInteger majorVersion) {
         try {
             ResultSet latestMinorVersion = migrationTasksAccessor.getLatestMinorVersion(majorVersion.longValue());
@@ -111,6 +112,6 @@ public class MigrationTasksDao extends CassandraDao {
     }
 
     public void createMigrationTask(MigrationTaskEntry migrationTask) {
-        migrationTaskMapper.save(migrationTask);
+        migrationTasksAccessor.saveMigrationTask(migrationTask);
     }
 }

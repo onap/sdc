@@ -19,9 +19,9 @@
  */
 package org.openecomp.core.nosqldb.api;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.mapping.MappingManager;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 public interface NoSqlDb {
 
     //TODO: remove cassandra types from here!! (like done in SDC...).
@@ -31,7 +31,7 @@ public interface NoSqlDb {
 
     ResultSet execute(String statementName, Object... values);
 
-    MappingManager getMappingManager();
+    CqlSession getSession();
 
     String getVersion();
 }

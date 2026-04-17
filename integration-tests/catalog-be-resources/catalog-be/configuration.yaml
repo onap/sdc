@@ -971,6 +971,7 @@ onboarding:
     getVspUri: "/onboarding-api/v1.0/vendor-software-products/%s/versions/%s" # /onboarding-api/v1.0/vendor-software-products/:vspId/versions/:vspVersionId
     getLatestVspUri: "/onboarding-api/v1.0/vendor-software-products/%s" # /onboarding-api/v1.0/vendor-software-products/:vspId
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
+    timeoutMs: 15000
 
 # #GSS IDNS
 switchoverDetector:
@@ -1155,7 +1156,7 @@ dmaapConsumerConfiguration:
     aftDme2ClientSslCertAlias: certman
 
 dmaapProducerConfiguration:
-    active: true
+    active: false
     hosts: olsd004.com:3905
     consumerGroup: sdc-integration-test-1737011830
     consumerId: sdc-integration-test1-1737011830
@@ -1280,4 +1281,3 @@ dataValidatorFilterExcludedUrls: "/healthCheck,/followed,/authorize"
 
 #Space separated list of permitted ancestors
 permittedAncestors:
-

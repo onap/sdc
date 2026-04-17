@@ -19,14 +19,23 @@
  */
 package org.openecomp.sdc.be.dao.cassandra;
 
-import com.datastax.driver.mapping.Result;
-import com.datastax.driver.mapping.annotations.Accessor;
-import com.datastax.driver.mapping.annotations.Query;
+import com.datastax.oss.driver.api.core.PagingIterable;
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.Insert;
+import com.datastax.oss.driver.api.mapper.annotations.Query;
+
 import org.openecomp.sdc.be.resources.data.togglz.FeatureToggleEvent;
 
-@Accessor
+@Dao
 public interface FeatureToggleAccessor {
 
     @Query("SELECT * FROM sdcrepository.featuretogglestate")
-    Result<FeatureToggleEvent> getAllFeatures();
+    PagingIterable<FeatureToggleEvent> getAllFeatures();
+
+    @Query("SELECT * FROM featuretogglestate WHERE feature_name = :featureName")
+    FeatureToggleEvent getFeatureByName(@CqlName("featureName") String featureName);
+
+    @Insert
+    void saveFeatureToggleEvent(FeatureToggleEvent event);   
 }

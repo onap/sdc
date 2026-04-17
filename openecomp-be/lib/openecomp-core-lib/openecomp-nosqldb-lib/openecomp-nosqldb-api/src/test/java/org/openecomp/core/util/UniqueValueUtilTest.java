@@ -22,12 +22,13 @@ package org.openecomp.core.util;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Assertions;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.core.dao.UniqueValueDao;
 import org.openecomp.core.dao.types.UniqueValueEntity;
@@ -38,6 +39,9 @@ class UniqueValueUtilTest {
 
     private static final String ENTITLEMENT_POOL_NAME = "Entitlement Pool name";
     private static final String ORIGINAL_ENTITY_NAME = "originalEntityName";
+    private static final String LOWER_CASE_ENTITY_NAME = ORIGINAL_ENTITY_NAME.toLowerCase();
+    private static final String NON_EXISTING_NAME = "nonExistingName";
+    private static final String LOWER_CASE_NON_EXISTING = NON_EXISTING_NAME.toLowerCase();
 
     @Mock
     private UniqueValueDao uniqueValueDao;
@@ -45,33 +49,35 @@ class UniqueValueUtilTest {
     private UniqueValueUtil uniqueValueUtil;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         uniqueValueUtil = new UniqueValueUtil(uniqueValueDao);
+    }
+
+    private void stubDao(String value, boolean exists) {
+        Mockito.lenient().when(uniqueValueDao.get(Mockito.eq(ENTITLEMENT_POOL_NAME), Mockito.eq(value)))
+                .thenReturn(exists ? Optional.of(new UniqueValueEntity()) : Optional.empty());
     }
 
     @Test
     void testCreateUniqueValue() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(null);
+        stubDao(LOWER_CASE_ENTITY_NAME, false);
         uniqueValueUtil.createUniqueValue(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME);
-
         Mockito.verify(uniqueValueDao, Mockito.times(1)).create(Mockito.any());
     }
 
     @Test
     void testCreateUniqueValueNotUnique() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(new UniqueValueEntity());
-        Assertions.assertThrows(CoreException.class, () -> {
+        stubDao(LOWER_CASE_ENTITY_NAME, true);
+        org.junit.jupiter.api.Assertions.assertThrows(CoreException.class, () -> {
             uniqueValueUtil.createUniqueValue(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME);
         });
-
-        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.any());
+        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.eq(ENTITLEMENT_POOL_NAME), Mockito.eq(LOWER_CASE_ENTITY_NAME));
     }
 
     @Test
     void testDeleteUniqueValue() {
         Mockito.doNothing().when(uniqueValueDao).delete(Mockito.any());
         uniqueValueUtil.deleteUniqueValue(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME);
-
         Mockito.verify(uniqueValueDao, Mockito.times(1)).delete(Mockito.any());
     }
 
@@ -83,42 +89,54 @@ class UniqueValueUtilTest {
 
     @Test
     void testUpdateUniqueValue() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(null);
-        Mockito.doNothing().when(uniqueValueDao).delete(Mockito.any());
+    // Format: context_newname (last element lowercased)
+    String formattedNewValue = "context_newname";
+    Mockito.lenient().when(uniqueValueDao.get(
+            Mockito.eq(ENTITLEMENT_POOL_NAME),
+            Mockito.eq(formattedNewValue)
+    )).thenReturn(Optional.empty()); // not occupied
 
-        uniqueValueUtil.updateUniqueValue(ENTITLEMENT_POOL_NAME, "oldName", "newName", "uniqueContext");
+    Mockito.doNothing().when(uniqueValueDao).delete(Mockito.any());
 
-        Mockito.verify(uniqueValueDao, Mockito.times(1)).create(Mockito.any());
-        Mockito.verify(uniqueValueDao, Mockito.times(1)).delete(Mockito.any());
-    }
+    uniqueValueUtil.updateUniqueValue(ENTITLEMENT_POOL_NAME, "oldName", "newName", "context");
+
+    Mockito.verify(uniqueValueDao, Mockito.times(1)).create(Mockito.any());
+    Mockito.verify(uniqueValueDao, Mockito.times(1)).delete(Mockito.any());
+}
 
     @Test
     void testValidateUniqueValue() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(null);
+        stubDao(LOWER_CASE_ENTITY_NAME, false);
         uniqueValueUtil.validateUniqueValue(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME);
-
-        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.any());
+        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.eq(ENTITLEMENT_POOL_NAME), Mockito.eq(LOWER_CASE_ENTITY_NAME));
     }
 
     @Test
     void testValidateUniqueValueNotUnique() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(new UniqueValueEntity());
-        Assertions.assertThrows(CoreException.class, () -> {
+        stubDao(LOWER_CASE_ENTITY_NAME, true);
+        org.junit.jupiter.api.Assertions.assertThrows(CoreException.class, () -> {
             uniqueValueUtil.createUniqueValue(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME);
         });
-
-        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.any());
+        Mockito.verify(uniqueValueDao, Mockito.times(1)).get(Mockito.eq(ENTITLEMENT_POOL_NAME), Mockito.eq(LOWER_CASE_ENTITY_NAME));
     }
 
     @Test
-    void testIsUniqueValueOccupied() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(new UniqueValueEntity());
+    void testIsUniqueValueOccupiedTrue() {
+        stubDao(LOWER_CASE_ENTITY_NAME, true);
         assertTrue(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
     }
 
     @Test
     void testIsUniqueValueOccupiedFalse() {
-        Mockito.when(uniqueValueDao.get(Mockito.any())).thenReturn(null);
+        stubDao(LOWER_CASE_ENTITY_NAME, false);
         assertFalse(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, ORIGINAL_ENTITY_NAME));
     }
+
+    @Test
+    void testIsUniqueValueOccupiedFalseWithNonExisting() {
+        stubDao(LOWER_CASE_NON_EXISTING, false);
+        assertFalse(uniqueValueUtil.isUniqueValueOccupied(ENTITLEMENT_POOL_NAME, NON_EXISTING_NAME));
+    }
 }
+
+
