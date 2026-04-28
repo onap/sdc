@@ -1,9 +1,10 @@
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 RUN addgroup sdc && \
     adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 
-RUN apk add --no-cache wget && \
+RUN apt-get update && apt-get install -y --no-install-recommends wget && \
+    rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir cqlsh==6.2.1
 
 USER sdc
