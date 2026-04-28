@@ -4,7 +4,7 @@ RUN addgroup sdc && \
     adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 
 RUN apk add --no-cache wget && \
-    pip install --no-cache-dir cqlsh==6.2.1
+    CASS_DRIVER_NO_EXTENSIONS=1 pip install --no-cache-dir cqlsh==6.2.1
 
 USER sdc
 
