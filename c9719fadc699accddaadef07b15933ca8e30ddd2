@@ -254,6 +254,125 @@
       "message": "No sysout",
       "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2bbb1430_5e20e86d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/path/ForwardingPathBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "Can we enable this test again? If not, then we should add an explanatory comment why this test is disabled",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4cd1599_74e80779",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/utils/DataValidatorTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "Can we enable this test again? If not, then we should add an explanatory comment why this test is disabled",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "607b298c_ddf378a2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/utils/DataValidatorTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "Can we enable this test again? If not, then we should add an explanatory comment why this test is disabled",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66144e3a_9556341b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/ArtifactDaoMapper.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d1d527f_90f57406",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/AuditCassandraDao.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "Modifications copyright",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "848cf83a_326febff",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/AuditCassandraDao.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "No sysout",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf541898_a29a5809",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/AuditCassandraDao.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T09:24:57Z",
+      "side": 1,
+      "message": "No `**` in the log messages",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }
