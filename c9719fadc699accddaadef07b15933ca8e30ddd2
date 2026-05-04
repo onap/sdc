@@ -84,6 +84,176 @@
       "message": "`log.debug` here with [parameterised logging](https://www.baeldung.com/slf4j-parameterized-logging#parameterized-logging)",
       "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "92ddd17a_3090b0b8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "`log.debug` throughout this file (and all other files!) please or remove these newly added logs if they only helped in the implementation",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4ad864e5_75300c47",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/ItTraceLoggingFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0b738e6_7549f6fc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/ItTraceLoggingFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout logging, please remove this line",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35300dee_c6726985",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/filters/ItTraceLoggingFilter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "This block can be removed since it is Sys out and logs the same line that is logged anyways via `LOGGER.info`.\nAlso I find the conditional a bit strange: \"Log error responses or non-error responses but only when they have a traceId\". Or the other way round: \"Do not log successful requests without trace id\"",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a84df87d_054e8aa4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ComponentsUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "88bad146_59fb4d2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/AbstractValidationsServlet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout throughout this file",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cc6aba1b_06cb860d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ModelServlet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout throughout this file",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2485bc12_4a0df2d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourceUploadServlet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "Modifications copyright",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1d92990c_718dcf34",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourceUploadServlet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout throughout this file",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4fe3d90c_2f3e371b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "No sysout",
+      "revId": "c9719fadc699accddaadef07b15933ca8e30ddd2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     }
   ]
 }

@@ -69,6 +69,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66c96e7c_39bd6029",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/dao/MigrationTasksDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:38:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "101f53c6_7f34408c",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7d7fe68e_49c3cb91",
