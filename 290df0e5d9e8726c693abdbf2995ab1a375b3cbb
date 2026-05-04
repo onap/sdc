@@ -86,6 +86,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "75194cc8_74f7ba64",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/migration/dao/MigrationTasksDaoMapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:24:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d7fe68e_49c3cb91",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f2d03736_d4447ef1",
@@ -99,6 +117,24 @@
       "writtenOn": "2026-04-08T07:48:15Z",
       "side": 1,
       "message": "This change does not make much sense to me. How is this ip guaranteed to be available?",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b21fcbab_ffd96773",
+        "filename": "asdctool/src/main/resources/config/janusgraph.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:24:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2d03736_d4447ef1",
       "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -120,6 +156,24 @@
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "64a21060_61741cac",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CassandraHealthCheck.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:24:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4be5286a_f4da6511",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7dd9a854_d7c1fa4d",
@@ -133,6 +187,24 @@
       "writtenOn": "2026-04-08T07:48:15Z",
       "side": 1,
       "message": "Please use `log.debug` here and also in the lines below",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc2531f3_159a4565",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:24:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7dd9a854_d7c1fa4d",
       "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
@@ -167,6 +239,23 @@
       "writtenOn": "2026-04-08T07:48:15Z",
       "side": 1,
       "message": "Same here",
+      "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6253477e_8f631dc6",
+        "filename": "openecomp-be/tools/zusammen-tools/src/main/java/org/openecomp/core/tools/store/ItemHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 7849
+      },
+      "writtenOn": "2026-05-04T06:24:12Z",
+      "side": 1,
+      "message": "it\u0027s not ideal that we create the full list here first (which needs to be loaded into memory.\nA less readable but more performant version would be\n```\nIterable\u003cRow\u003e iterable \u003d () -\u003e resultSet.iterator();\nList\u003cString\u003e itemIds \u003d StreamSupport.stream(iterable.spliterator(), false)\n    .map(row -\u003e row.getString(\"item_id\"))\n    .collect(Collectors.toList());\nreturn itemIds;\n```\nwhich directly streams over the iterator and avoids the intermediate list creation",
       "revId": "290df0e5d9e8726c693abdbf2995ab1a375b3cbb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a"
     },
