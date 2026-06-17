@@ -21,10 +21,13 @@
 /**
  * Created by rc2122 on 6/1/2017.
  */
-import { Component, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
 import {ViewContainerRef, ViewChild} from '@angular/core';
 import * as $ from 'jquery';
 import { ButtonsModelMap, ModalModel } from 'app/models';
+import { FocusTrap } from 'app/ng2/shared/accessibility/focus-trap';
+
+let modalIdCounter = 0;
 
 @Component({
     selector: 'modal',
@@ -36,11 +39,22 @@ export class ModalComponent implements OnInit, OnDestroy {
     @Input() isMovable: boolean;
     @Input() input: ModalModel;
     @Input() dynamicContent: any;
-    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef; //Allows for custom component as body instead of simple message. See ModalService.createActionModal for implementation details, and HttpHelperService's catchError() for example.
+    @ViewChild('dynamicContentContainer', { read: ViewContainerRef }) dynamicContentContainer: ViewContainerRef;
+    modalId: number;
     private modalElement: JQuery;
+    private focusTrap: FocusTrap;
 
     constructor( el: ElementRef ) {
         this.modalElement = $(el.nativeElement);
+        this.modalId = ++modalIdCounter;
+        this.focusTrap = new FocusTrap();
+    }
+
+    @HostListener('keydown', ['$event'])
+    handleKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Escape' || event.keyCode === 27) {
+            this.close();
+        }
     }
 
     ngOnInit(): void {
@@ -48,15 +62,18 @@ export class ModalComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.focusTrap.deactivate();
         this.modalElement.remove();
     }
 
     open(): void {
         this.modalElement.show();
         $('body').addClass('modal-open');
+        this.focusTrap.activate(this.modalElement[0] as HTMLElement);
     }
 
     close(): void {
+        this.focusTrap.deactivate();
         this.modalElement.hide();
         $('body').removeClass('modal-open');
     }

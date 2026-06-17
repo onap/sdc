@@ -22,8 +22,9 @@ exports[`catalog component should match current snapshot of catalog component 1`
   <div
     class="sdc-catalog-container"
   >
-    <div
+    <main
       class="w-sdc-main-container"
+      id="main-content"
     >
       <div
         class="i-sdc-designer-leftbar-section-left-switch-header"
@@ -180,7 +181,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
           
         </div>
       </div>
-    </div>
+    </main>
     <top-nav />
   </div>
 </catalog>
