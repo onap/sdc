@@ -1,5 +1,5 @@
 <div class="sdc-catalog-container">
-    <div class="w-sdc-main-container">
+    <main id="main-content" class="w-sdc-main-container">
         <div class="i-sdc-designer-leftbar-section-left-switch-header"
              (click)="showCatalogSelector=!showCatalogSelector">
             <div class="i-sdc-designer-leftbar-section-left-switch-header-text">
@@ -108,7 +108,7 @@
                     <!-- Tile new -->
                 </div>
         </div>
-    </div>
+    </main>
 
     <top-nav [topLvlSelectedIndex]="1" [searchTerm]="search.filterTerm"
              (searchTermChange)="gui.changeFilterTerm($event)" [version]="version"></top-nav>

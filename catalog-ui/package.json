@@ -62,6 +62,10 @@
   },
   "devDependencies": {
     "@types/jest": "^21.1.2",
+    "axe-core": "^4.4.0",
+    "cypress-axe": "^1.0.0",
+    "jest-axe": "^5.0.1",
+    "codelyzer": "^4.5.0",
     "apache-server-configs": "^2.7.1",
     "autoprefixer": "^6.5.3",
     "copy-webpack-plugin": "^4.0.1",

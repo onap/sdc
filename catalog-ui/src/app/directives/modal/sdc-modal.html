@@ -15,11 +15,11 @@
   -->
  
  
-<div data-ng-class="{'w-sdc-modal': type===undefined, 'w-sdc-classic-modal': type==='classic'}">
+<div data-ng-class="{'w-sdc-modal': type===undefined, 'w-sdc-classic-modal': type==='classic'}" role="dialog" aria-modal="true" data-ng-attr-aria-labelledby="{{'sdc-modal-title-' + $id}}">
     <div class="w-sdc-modal-head">
-        <span data-ng-if="header" class="w-sdc-modal-head-text">{{header}}</span>
-        <span data-ng-if="headerTranslate" class="w-sdc-modal-head-text" translate="{{headerTranslate}}" translate-values="{{headerTranslateValues}}"></span>
-        <div data-ng-if="showCloseButton==='true'" class="w-sdc-modal-close" data-ng-click="cancel()"></div>
+        <span data-ng-if="header" class="w-sdc-modal-head-text" id="{{'sdc-modal-title-' + $id}}">{{header}}</span>
+        <span data-ng-if="headerTranslate" class="w-sdc-modal-head-text" id="{{'sdc-modal-title-' + $id}}" translate="{{headerTranslate}}" translate-values="{{headerTranslateValues}}"></span>
+        <button type="button" data-ng-if="showCloseButton==='true'" class="w-sdc-modal-close" data-ng-click="cancel()" aria-label="Close"></button>
     </div>
     <div class="w-sdc-modal-body" data-ng-class="{'classic': type==='classic'}">
         <ng-transclude></ng-transclude>

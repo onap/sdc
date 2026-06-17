@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
   
-<div class="custom-modal {{input.size}}">
+<div class="custom-modal {{input.size}}" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title-' + modalId">
     <div class="ng2-modal-content"
         [ngDraggable]="input.isMovable"
         [handle]="ModalHandle"
@@ -24,14 +24,14 @@
         <div #ModalHandle
             class="ng2-modal-header modal-type-{{input.type}}"
             [ngClass]="{'movable': input.isMovable}">
-            <span class="title">{{ input.title }}</span>
-            <span class="close-button" (click)="close()"></span>
+            <span class="title" [id]="'modal-title-' + modalId">{{ input.title }}</span>
+            <button type="button" class="close-button" (click)="close()" aria-label="Close dialog"></button>
         </div>
         <div class="ng2-modal-body" >
             <div *ngIf="input.content">{{input.content}}</div>
             <div #dynamicContentContainer></div>
         </div>
-        
+
         <div class="ng2-modal-footer">
             <button *ngFor="let button of input.buttons"
                     class="tlv-btn {{button.cssClass}}"
@@ -41,4 +41,4 @@
         </div>
     </div>
 </div>
-<div #ModalBounds class="modal-background" [ngClass]="{'transparent': input.isMovable}"></div>
+<div #ModalBounds class="modal-background" [ngClass]="{'transparent': input.isMovable}" aria-hidden="true"></div>
