@@ -1,5 +1,5 @@
 <div class="sdc-catalog-container">
-    <div class="w-sdc-main-container" *ngIf="user">
+    <main id="main-content" class="w-sdc-main-container" *ngIf="user">
 
         <div id="dashboard-main-scroll" infiniteScroll class="w-sdc-main-right-container" (infiniteScroll)="raiseNumberOfElementToDisplay()" [infiniteScrollDistance]="100">
 
@@ -92,7 +92,7 @@
             </div>
         </div>
 
-    </div>
+    </main>
 
     <top-nav [topLvlSelectedIndex]="0" [version]="version" [searchTerm]="homeFilter.search.filterTerm" (searchTermChange)="changeFilterTerm($event)" [notificationIconCallback]="notificationIconCallback"></top-nav>
 
