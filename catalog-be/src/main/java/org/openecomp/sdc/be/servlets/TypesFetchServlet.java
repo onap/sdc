@@ -160,8 +160,15 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
                 .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), modelName);
             String dataTypeJson = gson.toJson(dataTypes);
-            Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
-            responseWrapper.setInnerElement(okResponse);
+            String etag = Integer.toHexString(dataTypeJson.hashCode());
+            String ifNoneMatch = request.getHeader("If-None-Match");
+            if (etag.equals(ifNoneMatch)) {
+                return Response.notModified().header("ETag", etag).build();
+            }
+            Map<String, String> headers = new HashMap<>();
+            headers.put("ETag", etag);
+            responseWrapper.setInnerElement(
+                buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson, headers));
         }
         return responseWrapper.getInnerElement();
     }
@@ -201,8 +208,15 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 }
             });
             String dataTypeJson = gson.toJson(dataTypesList);
-            Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
-            responseWrapper.setInnerElement(okResponse);
+            String etag = Integer.toHexString(dataTypeJson.hashCode());
+            String ifNoneMatch = request.getHeader("If-None-Match");
+            if (etag.equals(ifNoneMatch)) {
+                return Response.notModified().header("ETag", etag).build();
+            }
+            Map<String, String> headers = new HashMap<>();
+            headers.put("ETag", etag);
+            responseWrapper.setInnerElement(
+                buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson, headers));
         }
         return responseWrapper.getInnerElement();
     }
