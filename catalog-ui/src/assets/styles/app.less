@@ -2,6 +2,32 @@
   width: 100%;
   height: 100%;
 }
+
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  padding: 8px 16px;
+  background: #009fdb;
+  color: #fff;
+  z-index: 10000;
+  transition: top 0.2s;
+  &:focus {
+    top: 0;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 @import 'variables.less';
 @import 'variables-old.less';
 @import 'mixins.less';

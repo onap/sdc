@@ -808,6 +808,15 @@ ng1appModule.run([
       if (toState.data && toState.data.bodyClass) {
         $rootScope.bodyClass = toState.data.bodyClass;
       }
+
+      // update page title for accessibility (WCAG 2.4.2)
+      const stateToTitle = {
+        'dashboard': 'SDC - Dashboard',
+        'catalog': 'SDC - Catalog',
+        'workspace': 'SDC - Workspace'
+      };
+      const baseName = toState.name.split('.')[0];
+      document.title = stateToTitle[baseName] || 'SDC';
     };
 
     const doesUserHasAccess: Function = (toState, user): boolean => {

@@ -115,6 +115,22 @@ export class GlobalModalView extends React.Component {
         title: ''
     };
 
+    componentDidMount() {
+        this.handleKeyDown = event => {
+            if (
+                (event.key === 'Escape' || event.keyCode === 27) &&
+                this.props.show
+            ) {
+                this.props.onClose();
+            }
+        };
+        document.addEventListener('keydown', this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+    }
+
     render() {
         let {
             title,

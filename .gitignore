@@ -197,4 +197,6 @@ node_modules
 node
 *.tar
 CLAUDE.md
+output*
+.playwright-mcp
 .claude
