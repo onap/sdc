@@ -663,14 +663,15 @@ public class ElementServlet extends BeGenericServlet {
             log.debug("method getConfCategoriesAndVersion failed with unexpected exception", e);
             throw e;
         }
-        String etag = Integer.toHexString(consolidatedObject.hashCode());
+        String json = new com.google.gson.Gson().toJson(consolidatedObject);
+        String etag = Integer.toHexString(json.hashCode());
         String ifNoneMatch = request.getHeader("If-None-Match");
         if (etag.equals(ifNoneMatch)) {
             return Response.notModified().header("ETag", etag).build();
         }
         Map<String, String> headers = new HashMap<>();
         headers.put("ETag", etag);
-        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), consolidatedObject, headers);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), json, headers);
     }
 
     private String getVersion(ServletContext servletContext) {

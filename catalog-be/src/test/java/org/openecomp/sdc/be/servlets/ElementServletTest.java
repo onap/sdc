@@ -202,6 +202,7 @@ class ElementServletTest extends JerseyTest {
     public void before() throws Exception {
         super.setUp();
         reset(elementBusinessLogic);
+        when(request.getHeader("If-None-Match")).thenReturn(null);
     }
 
     @AfterEach
@@ -338,6 +339,76 @@ class ElementServletTest extends JerseyTest {
             .get();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+        String etag = response.getHeaderString("ETag");
+        assertThat(etag).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    void setupUiReturnsStableETag() {
+        String path = "/v1/setup/ui";
+        Either<UiCategories, ResponseFormat> getAllCategoriesEither = Either.left(new UiCategories());
+        Either<List<ArtifactType>, ActionStatus> otherEither = Either.left(new ArrayList<>());
+        when(elementBusinessLogic.getDefaultHeatTimeout())
+            .thenReturn(Either.left(configurationManager.getConfiguration().getHeatArtifactDeploymentTimeout()));
+        when(elementBusinessLogic.getResourceTypesMap()).thenReturn(Either.left(new HashMap<String, String>()));
+        when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
+            .thenReturn(otherEither);
+        when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))
+            .thenReturn(getAllCategoriesEither);
+
+        Response response1 = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        Response response2 = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        assertThat(response1.getHeaderString("ETag"))
+            .isNotNull()
+            .isEqualTo(response2.getHeaderString("ETag"));
+    }
+
+    @Test
+    void setupUiReturns304WhenETagMatches() {
+        String path = "/v1/setup/ui";
+        Either<UiCategories, ResponseFormat> getAllCategoriesEither = Either.left(new UiCategories());
+        Either<List<ArtifactType>, ActionStatus> otherEither = Either.left(new ArrayList<>());
+        when(elementBusinessLogic.getDefaultHeatTimeout())
+            .thenReturn(Either.left(configurationManager.getConfiguration().getHeatArtifactDeploymentTimeout()));
+        when(elementBusinessLogic.getResourceTypesMap()).thenReturn(Either.left(new HashMap<String, String>()));
+        when(elementBusinessLogic.getAllArtifactTypes(designerUser.getUserId()))
+            .thenReturn(otherEither);
+        when(elementBusinessLogic.getAllCategories(designerUser.getUserId()))
+            .thenReturn(getAllCategoriesEither);
+
+        Response firstResponse = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .get();
+
+        String etag = firstResponse.getHeaderString("ETag");
+        assertThat(etag).isNotNull();
+
+        when(request.getHeader("If-None-Match")).thenReturn(etag);
+
+        Response secondResponse = target()
+            .path(path)
+            .request()
+            .accept(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, designerUser.getUserId())
+            .header("If-None-Match", etag)
+            .get();
+
+        assertThat(secondResponse.getStatus()).isEqualTo(HttpStatus.SC_NOT_MODIFIED);
     }
 
     @Test

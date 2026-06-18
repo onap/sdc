@@ -92,19 +92,6 @@
         <async-supported>true</async-supported>
     </filter>
 
-    <filter>
-        <filter-name>gzipResponseFilter</filter-name>
-        <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
-        <init-param>
-            <param-name>mimeTypes</param-name>
-            <param-value>application/json,text/html,text/plain,application/javascript</param-value>
-        </init-param>
-        <init-param>
-            <param-name>minGzipSize</param-name>
-            <param-value>1024</param-value>
-        </init-param>
-        <async-supported>true</async-supported>
-    </filter>
 
     <filter>
         <filter-name>cacheControlFilter</filter-name>
@@ -122,10 +109,6 @@
         <url-pattern>*.jsgz</url-pattern>
     </filter-mapping>
 
-    <filter-mapping>
-        <filter-name>gzipResponseFilter</filter-name>
-        <url-pattern>/feProxy/*</url-pattern>
-    </filter-mapping>
 
     <filter-mapping>
         <filter-name>cacheControlFilter</filter-name>
